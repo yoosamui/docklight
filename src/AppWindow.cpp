@@ -1,19 +1,23 @@
-/*
- * File:   AppWindow.cpp
- * Author: yoo
- *
- * Created on November 3, 2018, 2:45 PM
- */
-
+//*****************************************************************
+//
+//  Copyright (C) 2018 Juan R. Gonzalez
+//  Created on November 3, 2018, 2:45 PM
+//
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+// 
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+// 
+//  You should have received a copy of the GNU General Public License
+//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+//*****************************************************************
 #include <cairo/cairo.h>
-
-
-//#include <libwnck-3.0/libwnck/window.h>
-
-//#include <libwnck-3.0/libwnck/window.h>
-
-//#include <libwnck-3.0/libwnck/window.h>
-
 #include "AppWindow.h"
 #include "../config.h"
 #include "DockWindowHandler.h"
@@ -21,7 +25,11 @@
 #include "Animations.h"
 #include "Utilities.h"
 
-AppWindow::AppWindow() {
+bool AppWindow::m_isfullscreenSet;
+bool AppWindow::m_isfullscreen;
+
+AppWindow::AppWindow()
+{
     add_events(Gdk::BUTTON_PRESS_MASK);
     set_app_paintable(true);
 
@@ -36,11 +44,27 @@ AppWindow::AppWindow() {
         gtk_widget_set_visual(GTK_WIDGET(gobj()), visual);
     }
 
-    //#region test
+}
 
-    this->set_title(PACKAGE_NAME); //#endregion
+void AppWindow::LeaveFunc(GtkWidget *widget, GdkEvent *event, gpointer callback_data)
+{
+    // if (event==(GdkEvent *)NULL || event->type!=GDK_LEAVE_NOTIFY) {
+    // ErrorFunction( "LeaveFunc: NULL event or wrong type\n" );
+    // return; /* bogus event */
+    // }
+    /* event is good */
 
-    // The App Logo
+
+    g_print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+    exit(1);
+
+}
+
+int AppWindow::init()
+{
+
+
+    this->set_title(PACKAGE_NAME);
     //std::string iconFile = Utilities::getExecPath(DEF_LOGONAME);
     //this->set_icon_from_file(iconFile);
 
@@ -48,79 +72,18 @@ AppWindow::AppWindow() {
     // Used for creating the dock panel.
     this->set_skip_taskbar_hint(true);
     this->set_skip_pager_hint(true);
-    this->set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
-    /*
-     Members
-    GDK_WINDOW_TYPE_HINT_NORMAL
-
- 	 
-    GDK_WINDOW_TYPE_HINT_DIALOG
-
- 	 
-    GDK_WINDOW_TYPE_HINT_MENU
-
- 	 
-    GDK_WINDOW_TYPE_HINT_TOOLBAR
-
- 	 
-    GDK_WINDOW_TYPE_HINT_SPLASHSCREEN
-
- 	 
-    GDK_WINDOW_TYPE_HINT_UTILITY
-
- 	 
-    GDK_WINDOW_TYPE_HINT_DOCK
-
- 	 
-    GDK_WINDOW_TYPE_HINT_DESKTOP
-
- 	 
-    GDK_WINDOW_TYPE_HINT_DROPDOWN_MENU
-
- 	 
-    GDK_WINDOW_TYPE_HINT_POPUP_MENU
-
- 	 
-    GDK_WINDOW_TYPE_HINT_TOOLTIP
-
- 	 
-    GDK_WINDOW_TYPE_HINT_NOTIFICATION
-
- 	 
-    GDK_WINDOW_TYPE_HINT_COMBO
-
- 	 
-    GDK_WINDOW_TYPE_HINT_DND
- 
- 
-     */
-    //_NET_WM_TYPE_DOCK
     this->set_decorated(false);
+    this->set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
 
     // Add the dock panel
     this->add(m_dockpanel);
 
-
-
-    // it must be shown before changing properties.
-    // also need to call show to get a valid gdk_window
-
-    //  this->show();
-    // this->show_all();
-    //  this->add_events(Gdk::PROPERTY_CHANGE_MASK);
-    // Set masks for mouse events
     this->add_events(
-            Gdk::PROPERTY_CHANGE_MASK |
-            Gdk::BUTTON_PRESS_MASK |
-            Gdk::BUTTON_RELEASE_MASK |
-            Gdk::BUTTON_PRESS_MASK |
-            Gdk::SCROLL_MASK |
-            Gdk::SMOOTH_SCROLL_MASK |
-            Gdk::POINTER_MOTION_HINT_MASK |
-            Gdk::FOCUS_CHANGE_MASK |
-            Gdk::ENTER_NOTIFY_MASK |
-            Gdk::LEAVE_NOTIFY_MASK |
-            Gdk::POINTER_MOTION_MASK);
+                     Gdk::PROPERTY_CHANGE_MASK |
+                     Gdk::POINTER_MOTION_HINT_MASK |
+                     Gdk::ENTER_NOTIFY_MASK |
+                     Gdk::LEAVE_NOTIFY_MASK |
+                     Gdk::POINTER_MOTION_MASK);
 
     /*
     this->set_events(GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK |
@@ -137,18 +100,9 @@ GDK_PROPERTY_CHANGE_MASK | GDK_VISIBILITY_NOTIFY_MASK |
 GDK_PROXIMITY_IN_MASK | GDK_PROXIMITY_OUT_MASK | GDK_SUBSTRUCTURE_MASK |
 GDK_SCROLL_MASK | GDK_TOUCH_MASK | GDK_SMOOTH_SCROLL_MASK );
      */
-}
 
-void AppWindow::LeaveFunc(GtkWidget *widget, GdkEvent *event, gpointer callback_data) {
-    // if (event==(GdkEvent *)NULL || event->type!=GDK_LEAVE_NOTIFY) {
-    // ErrorFunction( "LeaveFunc: NULL event or wrong type\n" );
-    // return; /* bogus event */
-    // }
-    /* event is good */
 
-}
 
-int AppWindow::init() {
 
     //
     //    GdkScreen *screen = gdk_screen_get_default();
@@ -164,19 +118,19 @@ int AppWindow::init() {
     //            (gpointer) this);
 
 
-    //g_signal_connect (G_OBJECT (this), "property_change",
-    // G_CALLBACK(AppWindow::LeaveFunc), NULL);
+  //  g_signal_connect(G_OBJECT(wnckscreen), "property_change",
+    //                 G_CALLBACK(AppWindow::LeaveFunc), NULL);
 
     g_signal_connect(wnckscreen, "active_window_changed",
-            G_CALLBACK(AppWindow::on_active_window_changed_callback), NULL);
+                     G_CALLBACK(AppWindow::on_active_window_changed_callback), NULL);
 
 
 
     g_signal_connect(G_OBJECT(wnckscreen), "window_opened",
-            G_CALLBACK(window_opened_callback), NULL);
+                     G_CALLBACK(window_opened_callback), NULL);
 
     g_signal_connect(G_OBJECT(wnckscreen), "window_opened",
-            G_CALLBACK(window_opened_callback), NULL);
+                     G_CALLBACK(window_opened_callback), NULL);
 
 
     //   g_signal_connect(window, "geometry-changed",
@@ -202,10 +156,10 @@ int AppWindow::init() {
     //        return -1;
 
     Glib::signal_timeout().connect(sigc::mem_fun(*this,
-            &AppWindow::on_timeout), 100);
+                                                 &AppWindow::fullScreenTimer), 100);
 
     Glib::signal_timeout().connect(sigc::mem_fun(*this,
-            &AppWindow::autoHideTimer), DEF_FRAMERATE);
+                                                 &AppWindow::autoHideTimer), DEF_FRAMERATE);
 
     initTime = 0; //DockWindow::get_geometry().height-100;;
     // endPosition = DockWindow::get_geometry().height ;//- get_height();//Configuration::get_dockWindowSize();//+180);//DockWindow::get_geometry().height; //this->
@@ -217,16 +171,15 @@ int AppWindow::init() {
     return 0;
 }
 //bool visible = true;
-bool mouseIn = false;
-bool animate = false;
 
-bool AppWindow::autoHideTimer() {
+bool AppWindow::autoHideTimer()
+{
 
-    if (Configuration::is_autoHide() == false) {
+    if (Configuration::is_autoHide() == false || m_isfullscreenSet == true) {
         return true;
     }
 
-    if (!animate && mouseIn && DockWindow::is_visible()) {
+    if (!m_animate && m_mouseIn && DockWindow::is_visible()) {
         m_Timer.start();
         return true;
     }
@@ -235,8 +188,9 @@ bool AppWindow::autoHideTimer() {
     Utilities::getMousePosition(x, y);
     bool restore = false;
 
-    if (!mouseIn && !DockWindow::is_visible()) {
-        switch (Configuration::get_dockWindowLocation()) {
+    if (!m_mouseIn && !DockWindow::is_visible()) {
+        switch (Configuration::get_dockWindowLocation())
+        {
             case panel_locationType::TOP: restore = y < 6;
                 break;
             case panel_locationType::BOTTOM: restore = y >= DockWindow::get_geometry().height - 6;
@@ -248,25 +202,25 @@ bool AppWindow::autoHideTimer() {
         };
     }
 
-    if (!animate && !DockWindow::is_visible() && restore) {
-        animate = true;
+    if (!m_animate && !DockWindow::is_visible() && restore) {
+        m_animate = true;
 
         m_easing_duration = 1.f;
-        
-       //  DockWindow::updateStrut(Configuration::get_dockWindowSize());
+
+        //  DockWindow::updateStrut(Configuration::get_dockWindowSize());
     }
 
-    if (!animate && DockWindow::is_visible() && !mouseIn && m_Timer.elapsed() > 2.5) {
-        animate = true;
-         m_easing_duration = 16.f;
+    if (!m_animate && DockWindow::is_visible() && !m_mouseIn && m_Timer.elapsed() > 2.5) {
+        m_animate = true;
+        m_easing_duration = 16.f;
         if (Configuration::is_activateStrut()) {
             DockWindow::updateStrut(1);
         }
     }
 
-    if (animate) {
+    if (m_animate) {
         m_Timer.stop();
-      //  auto duration = 16.f;//m_easing_duration;
+        //  auto duration = 16.f;//m_easing_duration;
         auto endTime = initTime + m_easing_duration;
         auto now = atime;
         int currentPositionX = 0;
@@ -275,13 +229,15 @@ bool AppWindow::autoHideTimer() {
 
         position = ofxeasing::map_clamp(now, initTime, endTime, 0, endPosition, &ofxeasing::linear::easeIn);
 
-        switch (Configuration::get_dockWindowLocation()) {
+        switch (Configuration::get_dockWindowLocation())
+        {
             case panel_locationType::TOP:
                 if (DockWindow::is_visible()) {
                     startPosition = 0; //Configuration::get_dockWindowSize();
                     currentPositionY = startPosition - position;
 
-                } else {
+                }
+                else {
                     startPosition = -Configuration::get_dockWindowSize();
                     currentPositionY = startPosition + position;
                 }
@@ -292,7 +248,8 @@ bool AppWindow::autoHideTimer() {
                     startPosition = (DockWindow::get_geometry().height - Configuration::get_dockWindowSize());
                     currentPositionY = startPosition + position;
 
-                } else {
+                }
+                else {
                     startPosition = (DockWindow::get_geometry().height);
                     currentPositionY = startPosition - position;
                 }
@@ -302,7 +259,8 @@ bool AppWindow::autoHideTimer() {
                     startPosition = 0;
                     currentPositionX = startPosition - position;
 
-                } else {
+                }
+                else {
                     startPosition = -Configuration::get_dockWindowSize();
                     currentPositionX = startPosition + position;
                 }
@@ -314,7 +272,8 @@ bool AppWindow::autoHideTimer() {
                     startPosition = (DockWindow::get_geometry().width - Configuration::get_dockWindowSize());
                     currentPositionX = startPosition + position;
 
-                } else {
+                }
+                else {
                     startPosition = (DockWindow::get_geometry().width);
                     currentPositionX = startPosition - position;
                 }
@@ -325,7 +284,7 @@ bool AppWindow::autoHideTimer() {
 
         move(currentPositionX, currentPositionY);
         //  g_print("%f - %f > %f\n", currentPosition, position, endPosition);
-       // g_print("%d\n", currentPositionX);
+        // g_print("%d\n", currentPositionX);
 
 
         //  g_print("%f - %f > %f\n", currentPosition, position, endPosition);
@@ -339,7 +298,8 @@ bool AppWindow::autoHideTimer() {
         if (abs(position) >= abs(endPosition))
             //   if (currentPosition >=  endPosition)
         {
-            switch (Configuration::get_dockWindowLocation()) {
+            switch (Configuration::get_dockWindowLocation())
+            {
                 case panel_locationType::TOP:
                     DockWindow::set_visible(abs(currentPositionY) == 0); // > Configuration::get_dockWindowSize());
                     break;
@@ -365,8 +325,8 @@ bool AppWindow::autoHideTimer() {
 
             initTime = 0;
             atime = 0;
-            animate = false;
-          //  g_print("currpos: %d %d\n", currentPositionX, currentPositionY);
+            m_animate = false;
+            //  g_print("currpos: %d %d\n", currentPositionX, currentPositionY);
             // exit(1);
             //  if( DockWindow::is_visible())
             // 
@@ -377,60 +337,29 @@ bool AppWindow::autoHideTimer() {
     return true;
 }
 
-bool isfullscreenSet = false;
-bool isfullscreen = false;
-
-bool AppWindow::on_timeout() {
-    return true;
-
-    ////    if(isfullscreenSet && isfullscreen)
-    //   return true;
-
-    //     int x=0;
-    //        int y=0;
-    //
-    //        this->get_position(x,y);
-    //        if(isfullscreen && y < MonitorGeometry::GetGeometry().height){
-    //         return true;
-    //        }
-    isfullscreen = WindowControl::FullscreenActive();
-
-
-    if (isfullscreen && !isfullscreenSet) {
-
-        g_print("isfullscreen\n");
+bool AppWindow::fullScreenTimer()
+{
+    m_isfullscreen = WindowControl::FullscreenActive();
+   if (m_isfullscreen && !m_isfullscreenSet) {
+     //   g_print("m_isfullscreen\n");
         DockWindow::hide();
-
-        isfullscreenSet = true;
+        m_isfullscreenSet = true;
 
         return true;
-
     }
 
-    if (!isfullscreen && isfullscreenSet) {
-        //  isfullscreenSet=false;
-        isfullscreenSet = false;
-        //        if(!isfullscreenSet)
-        ////            return true;
-        //        int x=0;
-        //        int y=0;
-        //        this->get_position(x,y);
-
-        //        if(y != DockWindow::GetGeometry().height)
-        //        {
-        //            return true;
-        //        }
-
-        g_print("normal\n");
-
+    if (!m_isfullscreen && m_isfullscreenSet/* && !Configuration::is_autoHide()*/) {
+        m_isfullscreenSet = false;
+   //     g_print("normal\n");
         DockWindow::show();
-        isfullscreenSet = false;
+        m_isfullscreenSet = false;
     }
-
+ //g_print("check full sccreen\n");
     return true;
 }
 
-void AppWindow::monitor_size_changed_callback(GdkScreen *screen, gpointer gtkwindow) {
+void AppWindow::monitor_size_changed_callback(GdkScreen *screen, gpointer gtkwindow)
+{
     g_info("Monitor settings changed\n");
     // Adapt the monitor geometry and repositioning the window
     //  MonitorGeometry::update((Gtk::Window*)gtkwindow);
@@ -438,7 +367,8 @@ void AppWindow::monitor_size_changed_callback(GdkScreen *screen, gpointer gtkwin
 }
 
 void AppWindow::on_active_window_changed_callback(WnckScreen *screen,
-        WnckWindow *previously_active_window, gpointer user_data) {
+                                                  WnckWindow *previously_active_window, gpointer user_data)
+{
     // m_currentMoveIndex = -1;
 
     // if (m_previewWindowActive || DockPanel::m_dragdropsStarts)
@@ -452,13 +382,14 @@ void AppWindow::on_active_window_changed_callback(WnckScreen *screen,
 
 }
 
-void AppWindow::geometry_changed(WnckWindow *window) {
+void AppWindow::geometry_changed(WnckWindow *window)
+{
     // if (wnck_window_is_maximized(window)) {
     g_print("A window has been maximized\n");
     // }
 }
 
-void AppWindow::window_opened_callback(WnckScreen* screen, WnckWindow* window, gpointer data) {
+void AppWindow::window_opened_callback(WnckScreen* screen, WnckWindow* window, gpointer data){
     //g_print("open\n");
     // g_print(wnck_window_get_name(window) );
 
@@ -472,43 +403,45 @@ void AppWindow::window_opened_callback(WnckScreen* screen, WnckWindow* window, g
 
 WnckWindow *fullscreen_window = NULL;
 
-void AppWindow::window_geometry_changed_callback(WnckWindow *window, gpointer user_data) {
+void AppWindow::window_geometry_changed_callback(WnckWindow *window, gpointer user_data)
+{
+    return;
     // if( wnck_window_is_fullscreen(window))
     g_print("geo change\n");
 
 
 
 
-    isfullscreen = WindowControl::FullscreenActive();
+    m_isfullscreen = WindowControl::FullscreenActive();
 
-    if (isfullscreen) {
+    if (m_isfullscreen) {
         fullscreen_window = window;
         DockWindow::hide();
         return;
     }
 
-    if (isfullscreen && window == fullscreen_window) {
+    if (m_isfullscreen && window == fullscreen_window) {
         fullscreen_window = NULL;
         DockWindow::show();
     }
 
     return;
 
-    if (isfullscreen && !isfullscreenSet) {
+    if (m_isfullscreen && !m_isfullscreenSet) {
 
-        g_print("isfullscreen\n");
+        g_print("m_isfullscreen\n");
         DockWindow::hide();
 
-        isfullscreenSet = true;
+        m_isfullscreenSet = true;
 
         return;
 
     }
 
-    if (!isfullscreen && isfullscreenSet) {
-        //  isfullscreenSet=false;
-        isfullscreenSet = false;
-        //        if(!isfullscreenSet)
+    if (!m_isfullscreen && m_isfullscreenSet) {
+        //  m_isfullscreenSet=false;
+        m_isfullscreenSet = false;
+        //        if(!m_isfullscreenSet)
         ////            return true;
         //        int x=0;
         //        int y=0;
@@ -522,20 +455,20 @@ void AppWindow::window_geometry_changed_callback(WnckWindow *window, gpointer us
         //    g_print("normal\n");
 
         DockWindow::show();
-        isfullscreenSet = false;
+        m_isfullscreenSet = false;
     }
 
 }
 
-bool AppWindow::on_enter_notify_event(GdkEventCrossing* crossing_event) {
-    g_print("IN\n");
-    mouseIn = true;
+bool AppWindow::on_enter_notify_event(GdkEventCrossing* crossing_event)
+{
+    m_mouseIn = true;
     return true;
 }
 
-bool AppWindow::on_leave_notify_event(GdkEventCrossing* crossing_event) {
-    mouseIn = false;
-    g_print("OUT\n");
+bool AppWindow::on_leave_notify_event(GdkEventCrossing* crossing_event)
+{
+    m_mouseIn = false;
     return true;
 }
 
@@ -558,5 +491,4 @@ bool AppWindow::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
  */
 
 
-AppWindow::~AppWindow() {
-}
+AppWindow::~AppWindow(){ }

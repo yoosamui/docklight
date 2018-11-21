@@ -8,20 +8,21 @@
 #include "Configuration.h"
 #include "DockWindowHandler.h"
 
-namespace Configuration {
+namespace Configuration
+{
 
     panel_locationType get_dockWindowLocation() {
         return panel_locationType::BOTTOM;
     }
 
-    bool is_activateStrut()
-    {
+    bool is_activateStrut() {
         return true;
     }
-    bool is_autoHide()
-    {
+
+    bool is_autoHide() {
         return true;
     }
+
     unsigned int get_dockWindowSize() {
         return 64;
     }

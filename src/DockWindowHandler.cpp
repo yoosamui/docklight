@@ -8,7 +8,8 @@
 #include "DockWindowHandler.h"
 #include "WindowControl.h"
 
-namespace DockWindow {
+namespace DockWindow
+{
     GdkRectangle geometry;
     Gtk::Window* m_window = nullptr;
     GdkWindow* m_gdk_window = nullptr;
@@ -46,7 +47,8 @@ namespace DockWindow {
 
     unsigned int get_center() {
         unsigned int result = -1;
-        switch (m_location) {
+        switch (m_location)
+        {
             case panel_locationType::TOP:
             case panel_locationType::BOTTOM:
                 result = geometry.width / 2;
@@ -62,7 +64,8 @@ namespace DockWindow {
 
     unsigned int get_centerX() {
         unsigned int result = -1;
-        switch (m_location) {
+        switch (m_location)
+        {
             case panel_locationType::TOP:
             case panel_locationType::BOTTOM:
                 result = geometry.width / 2;
@@ -108,7 +111,7 @@ namespace DockWindow {
             g_critical(" MonitorGeometry::update: gdk_window is null.");
             return -1;
         }
-//auto screen = Gdk::Screen::get_default();
+        //auto screen = Gdk::Screen::get_default();
         //GdkScreen *defaultscreen = gdk_screen_get_default();
         //gint dm = gdk_screen_get_primary_monitor(defaultscreen);
         //screen->get_monitor_geometry(dm, monitor_geo);
@@ -136,7 +139,7 @@ namespace DockWindow {
         m_window = window;
         initSet = true;
 
-        return 0;//updateStrut(m_size);
+        return 0; //updateStrut(m_size);
     }
 
     unsigned int getDockItemWidth() {
@@ -154,18 +157,17 @@ namespace DockWindow {
      * @param window
      * @return 0 = success or -1 error
      */
-    int updateStrut()
-    {
-        if(!initSet)
-        {
+    int updateStrut() {
+        if (!initSet) {
             return 0;
         }
         return updateStrut(m_size);
     }
+
     int updateStrut(int m_size) {
 
 
-        
+
 
 
         //   m_window->show_all();
@@ -177,7 +179,8 @@ namespace DockWindow {
 
         // showDockWindow();
 
-        switch (m_location) {
+        switch (m_location)
+        {
             case panel_locationType::BOTTOM:
                 //   m_window->resize(geometry.width, m_size);
 
@@ -220,15 +223,15 @@ namespace DockWindow {
         //auto topw = m_window->get_toplevel();
         // we set _NET_WM_STRUT, the older mechanism as well as _NET_WM_STRUT_PARTIAL
         gdk_property_change(m_gdk_window,
-                gdk_atom_intern("_NET_WM_STRUT_PARTIAL", FALSE),
-                gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
-                (unsigned char *) &insets, 12);
+                            gdk_atom_intern("_NET_WM_STRUT_PARTIAL", FALSE),
+                            gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
+                            (unsigned char *) &insets, 12);
 
 
         gdk_property_change(m_gdk_window,
-                gdk_atom_intern("_NET_WM_STRUT", FALSE),
-                gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
-                (unsigned char *) &insets, 4);
+                            gdk_atom_intern("_NET_WM_STRUT", FALSE),
+                            gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
+                            (unsigned char *) &insets, 4);
 
 
 
@@ -238,12 +241,14 @@ namespace DockWindow {
 
         return 0;
     }
-    void removeStrut()
-    {
+
+    void removeStrut() {
         updateStrut(1);
     }
+
     void show() {
-        switch (m_location) {
+        switch (m_location)
+        {
             case panel_locationType::BOTTOM:
                 //  if( Configuration::getAutohide() == false)
                 m_window->resize(geometry.width, m_size);
@@ -277,7 +282,8 @@ namespace DockWindow {
     void hide() {
 
 
-        switch (m_location) {
+        switch (m_location)
+        {
             case panel_locationType::BOTTOM:
                 //  if( Configuration::getAutohide() == false)
                 m_window->move(geometry.x, geometry.height);

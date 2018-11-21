@@ -23,7 +23,7 @@ public:
     virtual ~AppWindow();
 private:
     DockPanel m_dockpanel;
-    
+
     float m_easing_duration;
     static void monitor_size_changed_callback(GdkScreen *screen, gpointer gtkwindow);
     static void window_geometry_changed_callback(WnckWindow *window, gpointer user_data);
@@ -42,20 +42,22 @@ private:
     Glib::Timer m_Timer;
 
     bool autoHideTimer();
-    bool on_timeout();
+    bool fullScreenTimer();
     //  bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr);
-// bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
-//        m_dockpanel.on_draw(cr);
-//    }
+    // bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
+    //        m_dockpanel.on_draw(cr);
+    //    }
 
     virtual bool on_enter_notify_event(GdkEventCrossing* crossing_event);
     virtual bool on_leave_notify_event(GdkEventCrossing* crossing_event);
 
-
-
+    static bool m_isfullscreenSet;
+    static bool m_isfullscreen;
+    bool m_mouseIn = false;
+    bool m_animate = false;
     float position = 0.f;
-    float initTime;
-    float endPosition;
+    float initTime = 0.f;
+    float endPosition = 0.f;
     float atime = 0.f;
 };
 
