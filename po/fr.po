@@ -1,0 +1,338 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-07-22 17:59+0700\n"
+"PO-Revision-Date: 2017-07-22 18:01+0700\n"
+"Last-Translator: \n"
+"Language-Team: THAI <LL@li.org>\n"
+"Language: th\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.11\n"
+
+#: ../src/About.cpp:115
+msgid ""
+"This program is a lightweight Dock Launcher for opening common applications "
+"for the GNOME Desktop"
+msgstr ""
+"Ce programme est un Dock lanceur allégé pour l'ouverture des applications "
+"communes pour le bureau GNOME"
+
+#: ../src/LauncherWindow.cpp:35 ../src/LauncherWindow.cpp:72
+msgid "Create Launcher"
+msgstr "Créer un démarrage"
+
+#: ../src/LauncherWindow.cpp:36
+msgid "Test Launcher"
+msgstr "Démarrage de Test"
+
+#: ../src/LauncherWindow.cpp:37 ../src/SessionWindow.cpp:125
+msgid "Cancel"
+msgstr "annuler"
+
+#: ../src/LauncherWindow.cpp:69
+msgid "Command: "
+msgstr "commande:"
+
+#: ../src/LauncherWindow.cpp:70
+msgid "Choose command"
+msgstr "Choisissez une commande"
+
+#: ../src/LauncherWindow.cpp:71
+msgid "Choose Icon"
+msgstr "Choisir l'icône"
+
+#: ../src/LauncherWindow.cpp:74
+msgid "Available"
+msgstr "disponible"
+
+#: ../src/LauncherWindow.cpp:76
+msgid "Name: "
+msgstr "Nom:"
+
+#: ../src/LauncherWindow.cpp:77
+msgid "Comment: "
+msgstr "commentaire:"
+
+#: ../src/LauncherWindow.cpp:78
+msgid "Icon: "
+msgstr "icône:"
+
+#: ../src/LauncherWindow.cpp:79
+msgid "Categories: "
+msgstr "catégories:"
+
+#: ../src/LauncherWindow.cpp:80
+msgid "Close"
+msgstr "fermer"
+
+#: ../src/LauncherWindow.cpp:83
+msgid "Docklight Launcher"
+msgstr "Démarrage de Docklight"
+
+#: ../src/LauncherWindow.cpp:216
+#, c-format
+msgid ""
+"Launcher for %s could not be found.\n"
+"You need to create a Launcher for this Application."
+msgstr ""
+"Le démarrage pour %s est introuvable.\n"
+"Vous devez créer un démarrage pour cette application."
+
+#: ../src/LauncherWindow.cpp:221
+msgid " Application"
+msgstr "application"
+
+#: ../src/LauncherWindow.cpp:241
+msgid "Launcher test Failed!"
+msgstr "Echec du test de lancement!"
+
+#. dialog.set_icon_name()
+#: ../src/LauncherWindow.cpp:243
+msgid ""
+"The command you enter is invalid.\n"
+"\n"
+"Some Applications are scripts files and others requires Administrator "
+"privileges:\n"
+"for scrips files you need to add the bash on the beginning:\n"
+"\n"
+"/bin/sh \"/usr/local/scriptfile.sh\"\n"
+"/usr/bin/bash \"/home/yoo/Develop/scriptfile\"\n"
+"\n"
+"for Applications that requires Administrator privileges:\n"
+"pkexec Application\n"
+"\n"
+"Please make sure that the Application starts from the command line.\n"
+"Open a terminal and navigate to the directory where the application is "
+"locate\n"
+"and trying the command from there..."
+msgstr ""
+"La commande que vous entrez est invalide.\n"
+"\n"
+"Certaines applications sont des fichiers de scripts et d'autres nécessitent "
+"des privilèges d'administrateur:\n"
+"scripts pour les fichiers dont vous avez besoin pour ajouter le bash sur le "
+"début\n"
+"\n"
+"/bin/sh \"/usr/local/scriptfile.sh\"\n"
+"/usr/bin/bash \"/home/yoo/Develop/scriptfile\"\n"
+"\n"
+"Pour les applications qui nécessite des privilèges d'administrateur:\n"
+"pkexec program\n"
+"\n"
+"faire S'il vous plaît assurer l'application qui commence à partir de la "
+"ligne de commande.\n"
+"Ouvrez un terminal et accédez au répertoire Lorsque la demande est de "
+"localiser\n"
+"et d'essayer la commande à partir de là.."
+
+#: ../src/LauncherWindow.cpp:276
+msgid ""
+"\n"
+"\n"
+"Copy template Error!\n"
+"\n"
+msgstr ""
+"\n"
+"\n"
+"Copier template Erreur!\n"
+"\n"
+
+#: ../src/LauncherWindow.cpp:362
+msgid ""
+"\n"
+"\n"
+"Permissions required. Please try again!\n"
+"\n"
+msgstr ""
+"\n"
+"\n"
+"Autorisations demandées. S'il vous plaît essayer à nouveau\n"
+"\n"
+
+#: ../src/LauncherWindow.cpp:368
+msgid ""
+"\n"
+"\n"
+"Launcher created successfully!\n"
+"\n"
+msgstr ""
+"\n"
+"\n"
+"Launcher créé avec succès!\n"
+"\n"
+
+#: ../src/LauncherWindow.cpp:376 ../src/LauncherWindow.cpp:402
+msgid "Please choose a file"
+msgstr "S'il vous plaît choisissez un fichier"
+
+#. Add response buttons the the dialog:
+#: ../src/LauncherWindow.cpp:382 ../src/LauncherWindow.cpp:408
+msgid "_Cancel"
+msgstr "_Annuler"
+
+#: ../src/LauncherWindow.cpp:383 ../src/LauncherWindow.cpp:409
+msgid "_Open"
+msgstr "_Ouvrir"
+
+#: ../src/LauncherWindow.cpp:412
+msgid "Image files"
+msgstr "Les fichiers d'image"
+
+#: ../src/LauncherWindow.cpp:438
+msgid "Browser could not be found!\n"
+msgstr "Le Browser est introuvable!\n"
+
+#: ../src/LauncherWindow.cpp:462
+msgid "Fields Name and Command can't be empty!\n"
+msgstr "Le nom et les champs de commande ne peuvent être vides!\n"
+
+#: ../src/DockPanel.cpp:120 ../src/DockPanel.cpp:121
+msgid "Desktop"
+msgstr "Bureau"
+
+#. Menus
+#. Home Menu items
+#: ../src/DockPanel.cpp:132
+msgid "Autohide"
+msgstr "Autohide"
+
+#: ../src/DockPanel.cpp:137 ../src/DockPanel.cpp:226
+msgid "Show all"
+msgstr "Montrer tous"
+
+#: ../src/DockPanel.cpp:141 ../src/DockPanel.cpp:230
+msgid "Minimize all except active"
+msgstr "Réduire tout sauf actif"
+
+#: ../src/DockPanel.cpp:146 ../src/DockPanel.cpp:234
+msgid "Minimize all"
+msgstr "Réduire tout"
+
+#: ../src/DockPanel.cpp:150 ../src/DockPanel.cpp:244
+msgid "Close all except active"
+msgstr "Fermer tout sauf actif"
+
+#: ../src/DockPanel.cpp:155 ../src/DockPanel.cpp:248
+msgid "Close all"
+msgstr "Fermer toutes les applications"
+
+#: ../src/DockPanel.cpp:174 ../src/Preferences.cpp:44
+msgid "Preferences"
+msgstr "Préférences"
+
+#: ../src/DockPanel.cpp:178
+msgid "Session-group"
+msgstr "Groupe de session"
+
+#: ../src/DockPanel.cpp:182
+msgid "Help"
+msgstr "Aider"
+
+#: ../src/DockPanel.cpp:186
+msgid "About"
+msgstr "A propos de "
+
+#: ../src/DockPanel.cpp:190
+msgid "Quit"
+msgstr "Quitter"
+
+#. Item Menu
+#: ../src/DockPanel.cpp:207 ../src/DockPanel.cpp:641
+msgid "Open new"
+msgstr "Ouvrir une nouvelle"
+
+#: ../src/DockPanel.cpp:214
+msgid "Attach to Dock"
+msgstr "Attacher au Dock"
+
+#: ../src/DockPanel.cpp:219
+msgid "Detach from Dock"
+msgstr "Détacher du Dock"
+
+#: ../src/DockPanel.cpp:645
+msgid "Configure"
+msgstr "Configurer"
+
+#: ../src/DockPanel.cpp:1245 ../src/DockPanel.cpp:2021
+#, c-format
+msgid "Session-group %d"
+msgstr "Groupe de session %d"
+
+#: ../src/DockPanel.cpp:1912
+#, c-format
+msgid ""
+"(%s) %d windows.\n"
+"there are to many windows open for a Preview.\n"
+"Close some windows and try again."
+msgstr ""
+"(%s) %d  fenêtres.\n"
+"Il y a trop de fenêtres ouvertes pour un aperçu.\n"
+"Fermez quelques fenêtres et réessayez."
+
+#: ../src/Launcher.cpp:36
+msgid "Gpk-update-viewer"
+msgstr "Visualiseur de package"
+
+#: ../src/Launcher.cpp:37
+msgid "Gpk-application"
+msgstr "Pack"
+
+#: ../src/Preferences.cpp:41
+msgid "Autohide on start"
+msgstr "Autohide au démarrage"
+
+#: ../src/SessionWindow.cpp:47
+msgid "Launch"
+msgstr "lancer"
+
+#: ../src/SessionWindow.cpp:48
+msgid "Remove"
+msgstr "Supprimer"
+
+#: ../src/SessionWindow.cpp:122
+msgid "Application"
+msgstr "Application"
+
+#: ../src/SessionWindow.cpp:123
+msgid "Add to list"
+msgstr "Ajouter à la liste"
+
+#: ../src/SessionWindow.cpp:124
+msgid "Save"
+msgstr "Sauvegarder"
+
+#: ../src/SessionWindow.cpp:126
+msgid "Session Name"
+msgstr "Titre"
+
+#: ../src/SessionWindow.cpp:222
+#, c-format
+msgid "Session group %d"
+msgstr "Groupe de session %d"
+
+#: ../src/SessionWindow.cpp:444
+msgid ""
+"\n"
+"\n"
+"Session group successfully saved!\n"
+"\n"
+msgstr ""
+"\n"
+"\n"
+"groupe de session enregistré avec succès!\n"
+"\n"
+
+#: ../src/SessionWindow.cpp:467
+msgid "Click here to get the Application name!"
+msgstr "Cliquez ici pour obtenir le nom de l'application!"
+
+#~ msgid "Add active"
+#~ msgstr "เพิ่มการใช้งาน"

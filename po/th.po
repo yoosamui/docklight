@@ -1,0 +1,328 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-07-22 18:02+0700\n"
+"PO-Revision-Date: 2017-07-22 18:02+0700\n"
+"Last-Translator: \n"
+"Language-Team: THAI <LL@li.org>\n"
+"Language: th\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.11\n"
+
+#: ../src/About.cpp:115
+msgid ""
+"This program is a lightweight Dock Launcher for opening common applications for the GNOME Desktop"
+msgstr "โปรแกรมนี้ใช้งานไม่ยาก Dock Launcher สำหรับการใช้งานเท่าไปเท่านั้น จัดทำเพื่อแปลภาษาหน้าเดสก์ท็อปของ GNOME "
+
+#: ../src/LauncherWindow.cpp:35 ../src/LauncherWindow.cpp:72
+msgid "Create Launcher"
+msgstr "สร้างตัวเปิดโปรแกรม"
+
+#: ../src/LauncherWindow.cpp:36
+msgid "Test Launcher"
+msgstr "เปิดทดสอบโปรแกรม"
+
+#: ../src/LauncherWindow.cpp:37 ../src/SessionWindow.cpp:125
+msgid "Cancel"
+msgstr "ยกเลิก"
+
+#: ../src/LauncherWindow.cpp:69
+msgid "Command: "
+msgstr "คำสั่ง"
+
+#: ../src/LauncherWindow.cpp:70
+msgid "Choose command"
+msgstr "เลือกคำสั่ง"
+
+#: ../src/LauncherWindow.cpp:71
+msgid "Choose Icon"
+msgstr "เลือกไอคอน"
+
+#: ../src/LauncherWindow.cpp:74
+msgid "Available"
+msgstr "ทำงานขณะนี้"
+
+#: ../src/LauncherWindow.cpp:76
+msgid "Name: "
+msgstr "ชื่อ"
+
+#: ../src/LauncherWindow.cpp:77
+msgid "Comment: "
+msgstr "ข้อคิดเห็น"
+
+#: ../src/LauncherWindow.cpp:78
+msgid "Icon: "
+msgstr "ไอคอน"
+
+#: ../src/LauncherWindow.cpp:79
+msgid "Categories: "
+msgstr "หมวดหมู่"
+
+#: ../src/LauncherWindow.cpp:80
+msgid "Close"
+msgstr "ปิด"
+
+#: ../src/LauncherWindow.cpp:83
+msgid "Docklight Launcher"
+msgstr "ตัวเปิด ด็อกไลท์"
+
+#: ../src/LauncherWindow.cpp:216
+#, c-format
+msgid ""
+"Launcher for %s could not be found.\n"
+"You need to create a Launcher for this Application."
+msgstr ""
+"ไม่มีสามารถเปิดใช้งานโปรแกรม %s ได้ \n"
+"ต้องการสร้างตัวเปิดทำงานใหม่ สำหรับ โปรแกรม"
+
+#: ../src/LauncherWindow.cpp:221
+msgid " Application"
+msgstr "โปรแกรม"
+
+#: ../src/LauncherWindow.cpp:241
+msgid "Launcher test Failed!"
+msgstr "ไม่สามารถเปิดทำงานได้"
+
+#. dialog.set_icon_name()
+#: ../src/LauncherWindow.cpp:243
+msgid ""
+"The command you enter is invalid.\n"
+"\n"
+"Some Applications are scripts files and others requires Administrator privileges:\n"
+"for scrips files you need to add the bash on the beginning:\n"
+"\n"
+"/bin/sh \"/usr/local/scriptfile.sh\"\n"
+"/usr/bin/bash \"/home/yoo/Develop/scriptfile\"\n"
+"\n"
+"for Applications that requires Administrator privileges:\n"
+"pkexec Application\n"
+"\n"
+"Please make sure that the Application starts from the command line.\n"
+"Open a terminal and navigate to the directory where the application is locate\n"
+"and trying the command from there..."
+msgstr ""
+"คำสั่งที่คุณป้อนไม่ถูกต้อง\n"
+"\n"
+"บางโปรแกรมเป็น ไฟล์สคริปต์หรือ ผู้อื่นต้องการใช้สิทธิ์ผู้ดูแลระบบ สำหรับ สคริปไฟล์คุณต้องการเพิ่ม bash การทำงานเบื้องต้น\n"
+"\n"
+"/bin/sh \"/usr/local/scriptfile.sh\"\n"
+"/usr/bin/bash \"/home/yoo/Develop/scriptfile\"\n"
+"\n"
+"สำหรับการใช้งานเฉพาะสิทธิ์ของผู้ดูแลเท่านั้น\n"
+"pkexec ใบสมัคร\n"
+"\n"
+"กรุณาตรวจสอบให้แน่ใจก่อนว่า โปรแกรมเริ่มต้นที่บรรทัดคำสั่ง\n"
+"เปิดใช้งาน terminal กับการนำทางไปยังไดเรกทอรี่ โปรแกรมที่คุณค้นหา\n"
+"ที่คุณพยายามป้อนคำสั่งจากที่นั่น"
+
+#: ../src/LauncherWindow.cpp:276
+msgid ""
+"\n"
+"\n"
+"Copy template Error!\n"
+"\n"
+msgstr ""
+"\n"
+"\n"
+"การคัดลอกผิดพลาด\n"
+"\n"
+
+#: ../src/LauncherWindow.cpp:362
+msgid ""
+"\n"
+"\n"
+"Permissions required. Please try again!\n"
+"\n"
+msgstr ""
+"\n"
+"\n"
+"ต้องการสิทธิ์ในการใช้งาน โปรดลองอีกครั้ง\n"
+"\n"
+
+#: ../src/LauncherWindow.cpp:368
+msgid ""
+"\n"
+"\n"
+"Launcher created successfully!\n"
+"\n"
+msgstr ""
+"\n"
+"\n"
+"สร้างตัวเปิดสำเร็จ!\n"
+"\n"
+
+#: ../src/LauncherWindow.cpp:376 ../src/LauncherWindow.cpp:402
+msgid "Please choose a file"
+msgstr "เลือกไฟล์"
+
+#. Add response buttons the the dialog:
+#: ../src/LauncherWindow.cpp:382 ../src/LauncherWindow.cpp:408
+msgid "_Cancel"
+msgstr "_ยกเลิก"
+
+#: ../src/LauncherWindow.cpp:383 ../src/LauncherWindow.cpp:409
+msgid "_Open"
+msgstr "_เปิด"
+
+#: ../src/LauncherWindow.cpp:412
+msgid "Image files"
+msgstr "ไฟล์ภาพ"
+
+#: ../src/LauncherWindow.cpp:438
+msgid "Browser could not be found!\n"
+msgstr "ไม่พบเบราเซอร์!\n"
+
+#: ../src/LauncherWindow.cpp:462
+msgid "Fields Name and Command can't be empty!\n"
+msgstr "เขตข้อมูลชื่อและคำสั่งต้องไม่ว่างเปล่า!\n"
+
+#: ../src/DockPanel.cpp:120 ../src/DockPanel.cpp:121
+msgid "Desktop"
+msgstr "หน้าเดสทอป"
+
+#. Menus
+#. Home Menu items
+#: ../src/DockPanel.cpp:132
+msgid "Autohide"
+msgstr "ซ่อนอัตโนมัติ"
+
+#: ../src/DockPanel.cpp:137 ../src/DockPanel.cpp:226
+msgid "Show all"
+msgstr "เปิดทั้งหมด"
+
+#: ../src/DockPanel.cpp:141 ../src/DockPanel.cpp:230
+msgid "Minimize all except active"
+msgstr "พับหน้าต่างที่ไม่ใช้งานชั่วคราว"
+
+#: ../src/DockPanel.cpp:146 ../src/DockPanel.cpp:234
+msgid "Minimize all"
+msgstr "พับหน้าต่างทั้งหมด"
+
+#: ../src/DockPanel.cpp:150 ../src/DockPanel.cpp:244
+msgid "Close all except active"
+msgstr "ปิดหน้าต่างที่ไม่ใช้งาน"
+
+#: ../src/DockPanel.cpp:155 ../src/DockPanel.cpp:248
+msgid "Close all"
+msgstr "ปิดหน้าต่างทั้งหมด"
+
+#: ../src/DockPanel.cpp:174 ../src/Preferences.cpp:44
+msgid "Preferences"
+msgstr "การตั้งค่า"
+
+#: ../src/DockPanel.cpp:178
+msgid "Session-group"
+msgstr "กลุ่มเซสซั่น"
+
+#: ../src/DockPanel.cpp:182
+msgid "Help"
+msgstr "ช่วยเหลือ"
+
+#: ../src/DockPanel.cpp:186
+msgid "About"
+msgstr "เกี่ยวกับ"
+
+#: ../src/DockPanel.cpp:190
+msgid "Quit"
+msgstr "ปิดการใช้งาน"
+
+#. Item Menu
+#: ../src/DockPanel.cpp:207 ../src/DockPanel.cpp:641
+msgid "Open new"
+msgstr "เปิดหน้าต่างใหม่"
+
+#: ../src/DockPanel.cpp:214
+msgid "Attach to Dock"
+msgstr "แนบกับ Dock"
+
+#: ../src/DockPanel.cpp:219
+msgid "Detach from Dock"
+msgstr "แยกออกจาก Dock"
+
+#: ../src/DockPanel.cpp:645
+msgid "Configure"
+msgstr "กำหนดค่า"
+
+#: ../src/DockPanel.cpp:1245 ../src/DockPanel.cpp:2021
+#, c-format
+msgid "Session-group %d"
+msgstr "กลุ่มเซสซั่น %d"
+
+#: ../src/DockPanel.cpp:1912
+#, c-format
+msgid ""
+"(%s) %d windows.\n"
+"there are to many windows open for a Preview.\n"
+"Close some windows and try again."
+msgstr ""
+"(%s) %d หน้าต่าง.\n"
+"มีหน้าต่างมากมายที่เปิดใช้งานอยู่.\n"
+"ปิดหน้าต่างแล้วลองอีกครั้ง."
+
+#: ../src/Launcher.cpp:36
+msgid "Gpk-update-viewer"
+msgstr "ผู้ชมแพคเกจ"
+
+#: ../src/Launcher.cpp:37
+msgid "Gpk-application"
+msgstr "แพคเกจ"
+
+#: ../src/Preferences.cpp:41
+msgid "Autohide on start"
+msgstr "ปิดอัตโนมัติเมื่อเปิดใช้งาน"
+
+#: ../src/SessionWindow.cpp:47
+msgid "Launch"
+msgstr "เปิดทดสอบโปรแกรม"
+
+#: ../src/SessionWindow.cpp:48
+msgid "Remove"
+msgstr "เอาออก"
+
+#: ../src/SessionWindow.cpp:122
+msgid "Application"
+msgstr "โปรแกรม"
+
+#: ../src/SessionWindow.cpp:123
+msgid "Add to list"
+msgstr "เพิ่มรายการ"
+
+#: ../src/SessionWindow.cpp:124
+msgid "Save"
+msgstr "บันทึก"
+
+#: ../src/SessionWindow.cpp:126
+msgid "Session Name"
+msgstr "หัวข้อ"
+
+#: ../src/SessionWindow.cpp:222
+#, c-format
+msgid "Session group %d"
+msgstr "กลุ่มเซสซั่น %d"
+
+#: ../src/SessionWindow.cpp:444
+msgid ""
+"\n"
+"\n"
+"Session group successfully saved!\n"
+"\n"
+msgstr ""
+"\n"
+"\n"
+"กลุ่มเซสชั่นบันทึกเรียบร้อยแล้ว!\n"
+"\n"
+
+#: ../src/SessionWindow.cpp:467
+msgid "Click here to get the Application name!"
+msgstr "คลิกที่นี่เพื่อรับชื่อโปรแกรม!"
+
+#~ msgid "Add active"
+#~ msgstr "เพิ่มการใช้งาน"
