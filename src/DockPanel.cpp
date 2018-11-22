@@ -320,14 +320,14 @@ static int position      = 0;
 
 bool DockPanel::on_enter_notify_event(GdkEventCrossing* crossing_event)
 {
-    g_print("Mp_IN\n");
+  //  g_print("Mp_IN\n");
   //  mouseIn = true;
     return true;
 }
 
 bool DockPanel::on_leave_notify_event(GdkEventCrossing* crossing_event)
 {
-    g_print("Mp_OUT\n");
+   // g_print("Mp_OUT\n");
   //  mouseIn = false;
     return true;
 }
@@ -340,8 +340,9 @@ bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     }
 
     int x1, y1, x2, y2, center;
+    
     // DockWindow Color
-    cr->set_source_rgba(0.0, 0.0, 0.8, 0.8); // partially translucent
+    cr->set_source_rgba(0.0, 0.0, 0.8, 0.0); // partially translucent
     cr->paint();
 
 

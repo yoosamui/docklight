@@ -12,11 +12,14 @@ namespace Configuration
 {
 
     panel_locationType get_dockWindowLocation() {
-        return panel_locationType::BOTTOM;
+        return panel_locationType::RIGHT;
     }
 
     bool is_activateStrut() {
-        return true;
+        if(!is_autoHide()){
+            return true;
+        }
+        return false;
     }
 
     bool is_autoHide() {
