@@ -75,6 +75,12 @@ typedef enum StrutsPosition_t {
 } strutsPosition;
 
 
+typedef enum Window_action_t
+{
+    OPEN,
+    CLOSE
+} Window_action;
+
 namespace Configuration {
 
 
@@ -87,6 +93,7 @@ namespace Configuration {
     unsigned int get_itemSize();
     bool is_autoHide();
      bool is_activateStrut();
+      bool is_panelMode();
 }
 
 #endif	/* CONFIGURATION_H */

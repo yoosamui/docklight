@@ -41,7 +41,8 @@ namespace DockWindow {
 //        
 //        
 //    }
-    unsigned int get_size();
+    void move(int x, int y);
+    unsigned int get_dockSize();
     GdkRectangle get_geometry();
     
     /**

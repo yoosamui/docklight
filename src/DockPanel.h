@@ -17,42 +17,55 @@
 #include "Configuration.h"
 #include "DockItem.h"
 #include "SessionWindow.h"
+
 class DockPanel : public Gtk::DrawingArea {
 public:
     DockPanel();
 
     virtual ~DockPanel();
-     SessionWindow* m_sessionWindow;
-private:
-   
-panel_locationType m_location;
-static std::vector<DockItem*> m_dockitems;
- static void on_window_opened(WnckScreen* screen, WnckWindow* window, gpointer data);
- 
-protected:
+    SessionWindow* m_sessionWindow;
 
+    unsigned int get_dockItemsWidth();
     
+     int getCurrentIndex()
+    {
+        return m_currentMoveIndex;
+    };
+    
+    int preInit(Gtk::Window* window);
+private:
+    static Gtk::Window* m_AppWindow;
+    static std::vector<DockItem*> m_dockitems;
+    panel_locationType m_location;
+ static int m_currentMoveIndex;
+   
+protected:
+  static void Update(WnckWindow* window, Window_action actiontype);
+    static void on_window_opened(WnckScreen* screen, WnckWindow* window, gpointer data);
+    static void on_window_closed(WnckScreen* screen, WnckWindow* window, gpointer data);
+   
+
     bool on_timeoutEasing();
     bool on_timeoutDraw();
-     // Fix for transparency in Appwindow
+    // Fix for transparency in Appwindow
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr);
 
- void RoundedRectangle(const Cairo::RefPtr<Cairo::Context>& cr,
+    void RoundedRectangle(const Cairo::RefPtr<Cairo::Context>& cr,
             double x, double y, double width, double height, double radius);
- 
- 
- 
- void get_dockItemPosition(int &x1, int &y1, int &x2 ,int &y2, int &center, int increment);
- 
- virtual bool on_enter_notify_event(GdkEventCrossing* crossing_event);
- virtual bool on_leave_notify_event(GdkEventCrossing* crossing_event);
- 
- 
- float m_time          = 0;
- 
- float position=0;
- float initTime;
-		float endPosition;
+
+
+
+    void get_dockItemPosition(int &x1, int &y1, int &x2, int &y2, int &center, int increment);
+
+    virtual bool on_enter_notify_event(GdkEventCrossing* crossing_event);
+    virtual bool on_leave_notify_event(GdkEventCrossing* crossing_event);
+
+
+    float m_time = 0;
+
+    float position = 0;
+    float initTime;
+    float endPosition;
 };
 
 #endif	/* DOCKPANEL_H */

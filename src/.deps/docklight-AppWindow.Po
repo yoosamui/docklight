@@ -1,7 +1,8 @@
 docklight-AppWindow.o: AppWindow.cpp /usr/include/stdc-predef.h \
  /usr/include/cairo/cairo.h /usr/include/cairo/cairo-version.h \
  /usr/include/cairo/cairo-features.h \
- /usr/include/cairo/cairo-deprecated.h AppWindow.h \
+ /usr/include/cairo/cairo-deprecated.h \
+ /usr/include/glibmm-2.4/glibmm/timer.h AppWindow.h \
  /usr/include/libwnck-3.0/libwnck/libwnck.h \
  /usr/include/libwnck-3.0/libwnck/window.h \
  /usr/include/glib-2.0/glib-object.h \
@@ -65,16 +66,12 @@ docklight-AppWindow.o: AppWindow.cpp /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/select.h \
  /usr/include/x86_64-linux-gnu/bits/types/sigset_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__sigset_t.h \
- /usr/include/x86_64-linux-gnu/bits/select2.h \
  /usr/include/x86_64-linux-gnu/sys/sysmacros.h \
  /usr/include/x86_64-linux-gnu/bits/sysmacros.h \
  /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
  /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
  /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
- /usr/include/alloca.h \
- /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
- /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
- /usr/include/x86_64-linux-gnu/bits/stdlib.h \
+ /usr/include/alloca.h /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
  /usr/include/glib-2.0/glib/gbacktrace.h /usr/include/signal.h \
  /usr/include/x86_64-linux-gnu/bits/signum.h \
  /usr/include/x86_64-linux-gnu/bits/signum-generic.h \
@@ -136,10 +133,7 @@ docklight-AppWindow.o: AppWindow.cpp /usr/include/stdc-predef.h \
  /usr/include/glib-2.0/glib/gstrfuncs.h \
  /usr/include/glib-2.0/glib/gstringchunk.h \
  /usr/include/glib-2.0/glib/gtestutils.h /usr/include/string.h \
- /usr/include/strings.h \
- /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
- /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
- /usr/include/glib-2.0/glib/gthreadpool.h \
+ /usr/include/strings.h /usr/include/glib-2.0/glib/gthreadpool.h \
  /usr/include/glib-2.0/glib/gtimer.h \
  /usr/include/glib-2.0/glib/gtrashstack.h \
  /usr/include/glib-2.0/glib/gtree.h \
@@ -207,7 +201,6 @@ docklight-AppWindow.o: AppWindow.cpp /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/confname.h \
  /usr/include/x86_64-linux-gnu/bits/getopt_posix.h \
  /usr/include/x86_64-linux-gnu/bits/getopt_core.h \
- /usr/include/x86_64-linux-gnu/bits/unistd.h \
  /usr/include/glib-2.0/gio/gdatagrambased.h \
  /usr/include/glib-2.0/gio/gdatainputstream.h \
  /usr/include/glib-2.0/gio/gdataoutputstream.h \
@@ -337,8 +330,6 @@ docklight-AppWindow.o: AppWindow.cpp /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
  /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
  /usr/include/x86_64-linux-gnu/bits/sys_errlist.h \
- /usr/include/x86_64-linux-gnu/bits/stdio.h \
- /usr/include/x86_64-linux-gnu/bits/stdio2.h \
  /usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-loader.h \
  /usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-enum-types.h \
  /usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-autocleanups.h \
@@ -702,7 +693,7 @@ docklight-AppWindow.o: AppWindow.cpp /usr/include/stdc-predef.h \
  /usr/include/wchar.h /usr/include/x86_64-linux-gnu/bits/wchar.h \
  /usr/include/x86_64-linux-gnu/bits/types/wint_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h \
- /usr/include/x86_64-linux-gnu/bits/wchar2.h /usr/include/c++/6/iterator \
+ /usr/include/c++/6/iterator \
  /usr/include/c++/6/bits/stl_iterator_base_types.h \
  /usr/include/c++/6/type_traits \
  /usr/include/c++/6/bits/stl_iterator_base_funcs.h \
@@ -891,7 +882,6 @@ docklight-AppWindow.o: AppWindow.cpp /usr/include/stdc-predef.h \
  /usr/include/freetype2/freetype/config/ftconfig.h \
  /usr/include/freetype2/freetype/config/ftoption.h \
  /usr/include/freetype2/freetype/config/ftstdlib.h /usr/include/setjmp.h \
- /usr/include/x86_64-linux-gnu/bits/setjmp2.h \
  /usr/include/freetype2/freetype/fttypes.h \
  /usr/include/freetype2/freetype/ftsystem.h \
  /usr/include/freetype2/freetype/ftimage.h \
@@ -922,7 +912,6 @@ docklight-AppWindow.o: AppWindow.cpp /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
  /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
  /usr/include/x86_64-linux-gnu/bits/iscanonical.h \
- /usr/include/x86_64-linux-gnu/bits/mathinline.h \
  /usr/include/c++/6/bits/valarray_array.h \
  /usr/include/c++/6/bits/valarray_array.tcc \
  /usr/include/c++/6/bits/valarray_before.h \
@@ -1400,6 +1389,8 @@ docklight-AppWindow.o: AppWindow.cpp /usr/include/stdc-predef.h \
 
 /usr/include/cairo/cairo-deprecated.h:
 
+/usr/include/glibmm-2.4/glibmm/timer.h:
+
 AppWindow.h:
 
 /usr/include/libwnck-3.0/libwnck/libwnck.h:
@@ -1546,8 +1537,6 @@ AppWindow.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/__sigset_t.h:
 
-/usr/include/x86_64-linux-gnu/bits/select2.h:
-
 /usr/include/x86_64-linux-gnu/sys/sysmacros.h:
 
 /usr/include/x86_64-linux-gnu/bits/sysmacros.h:
@@ -1560,11 +1549,7 @@ AppWindow.h:
 
 /usr/include/alloca.h:
 
-/usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h:
-
 /usr/include/x86_64-linux-gnu/bits/stdlib-float.h:
-
-/usr/include/x86_64-linux-gnu/bits/stdlib.h:
 
 /usr/include/glib-2.0/glib/gbacktrace.h:
 
@@ -1716,10 +1701,6 @@ AppWindow.h:
 
 /usr/include/strings.h:
 
-/usr/include/x86_64-linux-gnu/bits/strings_fortified.h:
-
-/usr/include/x86_64-linux-gnu/bits/string_fortified.h:
-
 /usr/include/glib-2.0/glib/gthreadpool.h:
 
 /usr/include/glib-2.0/glib/gtimer.h:
@@ -1867,8 +1848,6 @@ AppWindow.h:
 /usr/include/x86_64-linux-gnu/bits/getopt_posix.h:
 
 /usr/include/x86_64-linux-gnu/bits/getopt_core.h:
-
-/usr/include/x86_64-linux-gnu/bits/unistd.h:
 
 /usr/include/glib-2.0/gio/gdatagrambased.h:
 
@@ -2139,10 +2118,6 @@ AppWindow.h:
 /usr/include/x86_64-linux-gnu/bits/stdio_lim.h:
 
 /usr/include/x86_64-linux-gnu/bits/sys_errlist.h:
-
-/usr/include/x86_64-linux-gnu/bits/stdio.h:
-
-/usr/include/x86_64-linux-gnu/bits/stdio2.h:
 
 /usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-loader.h:
 
@@ -2914,8 +2889,6 @@ AppWindow.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h:
 
-/usr/include/x86_64-linux-gnu/bits/wchar2.h:
-
 /usr/include/c++/6/iterator:
 
 /usr/include/c++/6/bits/stl_iterator_base_types.h:
@@ -3372,8 +3345,6 @@ AppWindow.h:
 
 /usr/include/setjmp.h:
 
-/usr/include/x86_64-linux-gnu/bits/setjmp2.h:
-
 /usr/include/freetype2/freetype/fttypes.h:
 
 /usr/include/freetype2/freetype/ftsystem.h:
@@ -3439,8 +3410,6 @@ AppWindow.h:
 /usr/include/x86_64-linux-gnu/bits/mathcalls.h:
 
 /usr/include/x86_64-linux-gnu/bits/iscanonical.h:
-
-/usr/include/x86_64-linux-gnu/bits/mathinline.h:
 
 /usr/include/c++/6/bits/valarray_array.h:
 

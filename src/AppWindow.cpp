@@ -18,6 +18,7 @@
 //
 //*****************************************************************
 #include <cairo/cairo.h>
+#include <glibmm-2.4/glibmm/timer.h>
 #include "AppWindow.h"
 #include "../config.h"
 #include "DockWindowHandler.h"
@@ -27,6 +28,22 @@
 
 bool AppWindow::m_isfullscreenSet;
 bool AppWindow::m_isfullscreen;
+
+static const gchar* type_name(WnckWindowType type)
+{
+    switch (type)
+    {
+        case WNCK_WINDOW_NORMAL: return "normal";
+        case WNCK_WINDOW_DESKTOP: return "desktop";
+        case WNCK_WINDOW_DOCK: return "dock";
+        case WNCK_WINDOW_DIALOG: return "dialog";
+        case WNCK_WINDOW_TOOLBAR: return "toolbar";
+        case WNCK_WINDOW_MENU: return "menu";
+        case WNCK_WINDOW_UTILITY: return "utility";
+        case WNCK_WINDOW_SPLASHSCREEN: return "splashscreen";
+        default: return "UNKNOWN";
+    }
+}
 
 AppWindow::AppWindow()
 {
@@ -77,7 +94,7 @@ int AppWindow::init()
 
     // Add the dock panel
     this->add(m_dockpanel);
-
+   
     this->add_events(
                      Gdk::PROPERTY_CHANGE_MASK |
                      Gdk::POINTER_MOTION_HINT_MASK |
@@ -149,14 +166,14 @@ GDK_SCROLL_MASK | GDK_TOUCH_MASK | GDK_SMOOTH_SCROLL_MASK );
     if (Configuration::is_activateStrut()) {
         DockWindow::updateStrut();
     }
-
+ m_dockpanel.preInit(this);
 
     //    // repositioning10 the window
     //    if (DockWindow::updateStrut() != 0)
     //        return -1;
 
-    Glib::signal_timeout().connect(sigc::mem_fun(*this,
-                                                 &AppWindow::fullScreenTimer), 100);
+    //  Glib::signal_timeout().connect(sigc::mem_fun(*this,
+    //                                             &AppWindow::fullScreenTimer), 100);
 
     Glib::signal_timeout().connect(sigc::mem_fun(*this,
                                                  &AppWindow::autoHideTimer), DEF_FRAMERATE);
@@ -168,26 +185,77 @@ GDK_SCROLL_MASK | GDK_TOUCH_MASK | GDK_SMOOTH_SCROLL_MASK );
     // g_print("%f\n", endPosition);
 
     //time=10;
+
+    // test
+    WnckScreen *screen;
+    GList *window_l;
+
+    screen = wnck_screen_get_default();
+    wnck_screen_force_update(screen);
+    char* buf[512];
+    for (window_l = wnck_screen_get_windows(screen);
+         window_l != NULL; window_l = window_l->next) {
+
+        WnckWindow *window = WNCK_WINDOW(window_l->data);
+        if (window == NULL)
+            continue;
+        // char *buf[512];
+
+        if (g_strcmp0(wnck_window_get_class_instance_name(window), "")) {
+            //   auto instanceName = wnck_window_get_class_instance_name (window);
+
+            g_print("\nname=%s\niconname=%s\nclassgroup=%s\nclassinstance=%s\ntype=%s\n",
+                    wnck_window_get_name(window),
+                    wnck_window_get_icon_name(window),
+                    wnck_window_get_class_group_name(window),
+                    wnck_window_get_class_instance_name(window),
+                    type_name(wnck_window_get_window_type(window)));
+        }
+
+        /* Translators: A class is like a "family". E.g., all gvim windows are of the
+         * same class. The class instance is a way to differentiate windows belonging
+         * to the same class group. 
+         */
+        // g_print (_("Class Instance: %s\n"), buf);
+
+        g_print("XID: %lu\n", wnck_window_get_xid(window));
+
+        //auto& instanceName = wnck_window_get_class_instance_name(window);
+        //this->set_gravity(Gdk::GRAVITY_SOUTH_WEST);//.gdk.GRAVITY_SOUTH_EAST);
+    }
+
     return 0;
 }
 //bool visible = true;
 
+void AppWindow::update()
+{
+    if (DockWindow::is_visible()) {
+        DockWindow::show();
+    }
+    else {
+        DockWindow::hide();
+    }
+}
+
 bool AppWindow::autoHideTimer()
 {
-
     if (Configuration::is_autoHide() == false /*|| m_isfullscreenSet == true*/) {
         return true;
     }
 
-    if (!m_animate && m_mouseIn && DockWindow::is_visible()) {
+    if (!m_animate && !m_mouseIn && DockWindow::is_visible() && m_timerStoped) {
+        //  m_Timer.reset();
         m_Timer.start();
-        return true;
+        m_timerStoped = false;
+
+        // return true;
     }
 
     bool restore = false;
     int x, y;
     Utilities::getMousePosition(x, y);
-    if (!m_mouseIn && !DockWindow::is_visible()) {
+    if (!m_animate && !m_mouseIn && !DockWindow::is_visible()) {
         switch (Configuration::get_dockWindowLocation())
         {
             case panel_locationType::TOP:
@@ -195,6 +263,7 @@ bool AppWindow::autoHideTimer()
                 break;
             case panel_locationType::BOTTOM:
                 restore = y >= DockWindow::get_geometry().height - 6;
+                // m_mouseIn = true;
                 break;
             case panel_locationType::LEFT:
                 restore = x <= 6;
@@ -204,28 +273,35 @@ bool AppWindow::autoHideTimer()
                 break;
         };
     }
+
     // g_print("restore %d\n",restore);
     if (!m_animate && !DockWindow::is_visible() && restore) {
         m_animate = true;
-        m_easing_duration = 1.f;
+        m_easing_duration = 4.f;
+        g_print("Restore\n");
+        //  DockWindow::set_visible(true);
     }
 
-    if (!m_animate && DockWindow::is_visible() && !m_mouseIn && m_Timer.elapsed() > 2.5) {
+    if (!m_animate && DockWindow::is_visible() && !m_mouseIn && m_Timer.elapsed() > 2.0) {
+        m_Timer.stop();
+
         m_animate = true;
-        m_easing_duration = 16.f;
+        m_easing_duration = 6.f;
         if (Configuration::is_activateStrut()) {
             DockWindow::updateStrut(1);
         }
+
+        // m_Timer.reset();
+        g_print("Hide\n");
     }
 
     if (m_animate) {
-        m_Timer.stop();
 
         auto endTime = initTime + m_easing_duration;
         auto now = atime;
         int currentPositionX = 0;
         int currentPositionY = 0;
-        int startPosition = 0;
+        float startPosition = 0.f;
 
         position = ofxeasing::map_clamp(now, initTime, endTime, 0,
                                         endPosition, &ofxeasing::linear::easeIn);
@@ -238,31 +314,43 @@ bool AppWindow::autoHideTimer()
                     currentPositionY = startPosition - position;
 
                 }
-                else {
-                    startPosition = -Configuration::get_dockWindowSize();
+                else {//show
+                    startPosition = (int)-Configuration::get_dockWindowSize();
                     currentPositionY = startPosition + position;
                 }
 
                 break;
             case panel_locationType::BOTTOM:
                 if (DockWindow::is_visible()) {
-                    startPosition = (DockWindow::get_geometry().height - Configuration::get_dockWindowSize());
+                    startPosition = (DockWindow::get_geometry().height -
+                            Configuration::get_dockWindowSize());
                     currentPositionY = startPosition + position;
 
+                    //   g_print("hide pos: %f %f\n",currentPositionY, position);
+                    //  this->move(currentPositionX, currentPositionY );
                 }
                 else {
-                    startPosition = (DockWindow::get_geometry().height);
-                    currentPositionY = startPosition - position;
+                    //   DockWindow::set_visible(true);
+                    //show
+                    startPosition = (int)DockWindow::get_geometry().height;
+                    currentPositionY = (int)(startPosition - position);
+                    // currentPositionX=200;
+                    //                    int xx,yy;
+                    //                    this->get_position(xx,yy);
+                    //                    
+                    //                           g_print("winpos%d %d\n",xx, yy);
+
                 }
                 break;
             case panel_locationType::LEFT:
                 if (DockWindow::is_visible()) {
-                    startPosition = 0;
+                    //hide
+                    startPosition = (int)DockWindow::get_geometry().x;
                     currentPositionX = startPosition - position;
 
                 }
-                else {
-                    startPosition = -Configuration::get_dockWindowSize();
+                else { // show
+                    startPosition = (int)(DockWindow::get_geometry().x - Configuration::get_dockWindowSize());
                     currentPositionX = startPosition + position;
                 }
 
@@ -270,7 +358,8 @@ bool AppWindow::autoHideTimer()
 
             case panel_locationType::RIGHT:
                 if (DockWindow::is_visible()) {
-                    startPosition = (DockWindow::get_geometry().width - Configuration::get_dockWindowSize());
+                    startPosition = (DockWindow::get_geometry().width -
+                            Configuration::get_dockWindowSize());
                     currentPositionX = startPosition + position;
 
                 }
@@ -281,38 +370,52 @@ bool AppWindow::autoHideTimer()
                 break;
         };
 
-        move(currentPositionX, currentPositionY);
+        // this->move(currentPositionX, currentPositionY );
+        // this->show();
+        //   gtk_window_move(*this, currentPositionX, currentPositionY);
+        DockWindow::move(currentPositionX, currentPositionY);
+        g_print("start pos: %d %d\n", currentPositionX, currentPositionY);
 
         if (atime < m_easing_duration) {
             atime++;
         }
 
-        if (abs(position) >= abs(endPosition)) {
+        // if (abs(position) >= abs(endPosition))
+        if (position >= endPosition) {
+
             switch (Configuration::get_dockWindowLocation())
             {
                 case panel_locationType::TOP:
                     DockWindow::set_visible(abs(currentPositionY) == 0);
                     break;
                 case panel_locationType::BOTTOM:
-                    DockWindow::set_visible(currentPositionY < DockWindow::get_geometry().height);
+                    // DockWindow::set_visible(currentPositionY < DockWindow::get_geometry().height);
+                    DockWindow::set_visible(currentPositionY == DockWindow::get_geometry().height - Configuration::get_dockWindowSize());
                     break;
                 case panel_locationType::LEFT:
-                    DockWindow::set_visible(abs(currentPositionX) == 0);
+                    DockWindow::set_visible(currentPositionX == DockWindow::get_geometry().x);
                     break;
                 case panel_locationType::RIGHT:
                     DockWindow::set_visible(currentPositionX != DockWindow::get_geometry().width);
                     break;
             };
 
-            if (Configuration::is_activateStrut()) {
-                if (DockWindow::is_visible()) {
-                    DockWindow::updateStrut();
-                }
-            }
+            //            if (Configuration::is_activateStrut()) {
+            //                if (DockWindow::is_visible()) {
+            //                    DockWindow::updateStrut();
+            //                }
+            //            }
 
             initTime = 0;
             atime = 0;
             m_animate = false;
+            m_timerStoped = true;
+            //  m_Timer.reset();
+            //  m_Timer.start();
+
+            g_print("END\n");
+            //  m_Timer.reset();
+
         }
     }
     return true;

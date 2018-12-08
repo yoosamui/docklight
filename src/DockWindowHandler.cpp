@@ -7,6 +7,8 @@
 
 #include "DockWindowHandler.h"
 #include "WindowControl.h"
+#include "AppWindow.h"
+
 
 namespace DockWindow
 {
@@ -15,20 +17,30 @@ namespace DockWindow
     GdkWindow* m_gdk_window = nullptr;
     bool initSet = false;
     panel_locationType m_location;
-    unsigned int m_size;
+    unsigned int m_areaSize;
     int m_dockItemSize;
     bool m_visible = true;
 
-    GdkRectangle get_geometry() {
+    GdkRectangle get_geometry()
+    {
         return geometry;
 
     }
 
-    bool is_visible() {
+    bool is_visible()
+    {
+        // int x, y;
+        //m_window->get_position(x, y);
+
+        //  return y == (geometry.height - Configuration::get_dockWindowSize());
+        //  y >= DockWindow::get_geometry().height - 6;
+
+
         return m_visible;
     }
 
-    void set_visible(bool visible) {
+    void set_visible(bool visible)
+    {
         m_visible = visible;
     }
     //    namespace Monitor {
@@ -45,7 +57,8 @@ namespace DockWindow
     //        }
     //    }
 
-    unsigned int get_center() {
+    unsigned int get_center()
+    {
         unsigned int result = -1;
         switch (m_location)
         {
@@ -62,7 +75,8 @@ namespace DockWindow
         }
     }
 
-    unsigned int get_centerX() {
+    unsigned int get_centerX()
+    {
         unsigned int result = -1;
         switch (m_location)
         {
@@ -79,8 +93,9 @@ namespace DockWindow
         }
     }
 
-    unsigned int get_size() {
-        return m_size;
+    unsigned int get_dockSize()
+    {
+        return ((AppWindow*)m_window)->m_dockpanel.get_dockItemsWidth();
     }
 
     /**
@@ -88,7 +103,8 @@ namespace DockWindow
      * @param window the main window.
      * @return 0 is success -1 if any error.
      */
-    int init(Gtk::Window* window) {
+    int init(Gtk::Window* window)
+    {
         if (initSet) {
             g_warning(" MonitorGeometry::init already set.");
             return -1;
@@ -135,18 +151,20 @@ namespace DockWindow
         auto wncWindow = WindowControl::get_ExistingWindowDock();
 
         m_location = Configuration::get_dockWindowLocation();
-        m_size = Configuration::get_dockWindowSize();
+        m_areaSize = Configuration::get_dockWindowSize();
         m_window = window;
         initSet = true;
 
-        return 0; //updateStrut(m_size);
+        return 0; //updateStrut(m_areaSize);
     }
 
-    unsigned int getDockItemWidth() {
+    unsigned int getDockItemWidth()
+    {
         return m_window->get_width();
     }
 
-    unsigned int getDockItemHeight() {
+    unsigned int getDockItemHeight()
+    {
         // g_print("%d\n", m_window->get_width());
         return m_window->get_height();
     }
@@ -157,14 +175,16 @@ namespace DockWindow
      * @param window
      * @return 0 = success or -1 error
      */
-    int updateStrut() {
+    int updateStrut()
+    {
         if (!initSet) {
             return 0;
         }
-        return updateStrut(m_size);
+        return updateStrut(m_areaSize);
     }
 
-    int updateStrut(int m_size) {
+    int updateStrut(int m_areaSize)
+    {
 
 
 
@@ -182,35 +202,35 @@ namespace DockWindow
         switch (m_location)
         {
             case panel_locationType::BOTTOM:
-                //   m_window->resize(geometry.width, m_size);
+                //   m_window->resize(geometry.width, m_areaSize);
 
                 insets[strutsPosition::BottomStart] = geometry.y;
                 insets[strutsPosition::BottomEnd] = geometry.height;
-                insets[strutsPosition::Bottom] = m_size;
+                insets[strutsPosition::Bottom] = m_areaSize;
                 break;
 
             case panel_locationType::TOP:
-                // m_window->resize(geometry.width, m_size);
+                // m_window->resize(geometry.width, m_areaSize);
 
                 insets[strutsPosition::TopStart] = 0; //geometry.y;
                 insets[strutsPosition::TopEnd] = geometry.height;
-                insets[strutsPosition::Top] = m_size;
+                insets[strutsPosition::Top] = m_areaSize;
                 break;
 
             case panel_locationType::LEFT:
-                //m_window->resize(m_size, geometry.height);
+                //m_window->resize(m_areaSize, geometry.height);
 
                 insets[strutsPosition::LeftStart] = geometry.x;
                 insets[strutsPosition::LeftEnd] = geometry.width;
-                insets[strutsPosition::Left] = m_size;
+                insets[strutsPosition::Left] = m_areaSize;
                 break;
 
             case panel_locationType::RIGHT:
-                //m_window->resize(m_size, geometry.height);
+                //m_window->resize(m_areaSize, geometry.height);
 
                 insets[strutsPosition::RightStart] = geometry.x;
                 insets[strutsPosition::RightEnd] = geometry.width;
-                insets[strutsPosition::Right] = m_size;
+                insets[strutsPosition::Right] = m_areaSize;
                 break;
 
             default:
@@ -225,13 +245,13 @@ namespace DockWindow
         gdk_property_change(m_gdk_window,
                             gdk_atom_intern("_NET_WM_STRUT_PARTIAL", FALSE),
                             gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
-                            (unsigned char *) &insets, 12);
+                            (unsigned char *)&insets, 12);
 
 
         gdk_property_change(m_gdk_window,
                             gdk_atom_intern("_NET_WM_STRUT", FALSE),
                             gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
-                            (unsigned char *) &insets, 4);
+                            (unsigned char *)&insets, 4);
 
 
 
@@ -242,32 +262,82 @@ namespace DockWindow
         return 0;
     }
 
-    void removeStrut() {
+    void removeStrut()
+    {
         updateStrut(1);
     }
 
-    void show() {
+    void show()
+    {
         switch (m_location)
         {
             case panel_locationType::BOTTOM:
-                //  if( Configuration::getAutohide() == false)
-                m_window->resize(geometry.width, m_size);
-                m_window->move(geometry.x, geometry.height - m_size);
+            {
+                if (Configuration::is_panelMode()) {
+                    m_window->resize(geometry.width, m_areaSize);
+                    m_window->move(geometry.x, geometry.height - m_areaSize);
+                    break;
+                }
+                int width = get_dockSize();
+                m_window->resize(width, m_areaSize);
+                m_window->move(((geometry.x + geometry.width) / 2) - width / 2, geometry.height - m_areaSize);
+            }
                 break;
-
+                //
+                //            case panel_locationType::TOP:
+                //                m_window->resize(geometry.width, m_areaSize);
+                //                m_window->move(geometry.x, geometry.y);
+                //                break;
+                //            case panel_locationType::LEFT:
+                //                m_window->resize(m_areaSize, geometry.height);
+                //                m_window->move(geometry.x, geometry.y);
+                //                break;
+                //
+                //            case panel_locationType::RIGHT:
+                //                m_window->resize(m_areaSize, geometry.height);
+                //                m_window->move(geometry.x + (geometry.width / 2), geometry.y);
+                //                break;
+                
             case panel_locationType::TOP:
-                m_window->resize(geometry.width, m_size);
-                m_window->move(geometry.x, geometry.y);
-                break;
-            case panel_locationType::LEFT:
-                m_window->resize(m_size, geometry.height);
-                m_window->move(geometry.x, geometry.y);
-                break;
+            {
+                if (Configuration::is_panelMode()) {
+                    m_window->resize(geometry.width, m_areaSize);
+                    m_window->move(geometry.x, geometry.y);
+                    break;
+                }
 
-            case panel_locationType::RIGHT:
-                m_window->resize(m_size, geometry.height);
-                m_window->move(geometry.x + geometry.width - m_size, geometry.y);
+                int width = get_dockSize();
+                m_window->resize(width, m_areaSize);
+                m_window->move(((geometry.x + geometry.width) / 2) - width / 2, geometry.y);
                 break;
+            }
+            case panel_locationType::LEFT:
+            {
+                if (Configuration::is_panelMode()) {
+                    m_window->resize(m_areaSize, geometry.height);
+                    m_window->move(geometry.x, geometry.y);
+                    break;
+                }
+
+                int height = get_dockSize();
+                m_window->resize(m_areaSize, height);
+                m_window->move( geometry.x, ((geometry.y + geometry.height) / 2) - height / 2);
+                //     posY = ((geometry.y + geometry.height) / 2) - height / 2;
+                break;
+            }
+            case panel_locationType::RIGHT:
+            {
+                if (Configuration::is_panelMode()) {
+                    m_window->resize(m_areaSize, geometry.height);
+                    m_window->move(geometry.x + geometry.width, geometry.y);
+                    break;
+                }
+
+                int height = get_dockSize();
+                m_window->resize(m_areaSize, height);
+                m_window->move((geometry.x + geometry.width) - m_areaSize, ((geometry.y + geometry.height) / 2) - height / 2);
+                break;
+            }
 
             default:
                 break;
@@ -276,33 +346,107 @@ namespace DockWindow
         set_visible(true);
     }
 
+    void move(int x, int y)
+    {
+        int posX = x;
+        int posY = y;
+
+        switch (m_location)
+        {
+            case panel_locationType::BOTTOM:
+            case panel_locationType::TOP:
+
+            {
+                if (Configuration::is_panelMode() == false) {
+                    int width = get_dockSize();
+                    posX = ((geometry.x + geometry.width) / 2) - width / 2;
+                    posY = y;
+                }
+                m_window->move(posX, posY);
+
+            }
+                break;
+
+            case panel_locationType::LEFT:
+            case panel_locationType::RIGHT:
+            {
+                if (Configuration::is_panelMode() == false) {
+                    int height = get_dockSize();
+                    posX = x;
+                    posY = ((geometry.y + geometry.height) / 2) - height / 2;
+                }
+                m_window->move(posX, posY);
+
+            }
+                break;
+
+
+        }
+    }
+
     /**
      * 
      */
-    void hide() {
+    void hide()
+    {
 
 
         switch (m_location)
         {
             case panel_locationType::BOTTOM:
-                //  if( Configuration::getAutohide() == false)
-                m_window->move(geometry.x, geometry.height);
+            {
+                if (Configuration::is_panelMode()) {
+                    m_window->resize(geometry.width, m_areaSize);
+                    m_window->move(geometry.x, geometry.height);
+                    break;
+                }
+
+                int width = get_dockSize();
+                m_window->resize(width, m_areaSize);
+                m_window->move(((geometry.x + geometry.width) / 2) - width / 2, geometry.height);
+            }
                 break;
 
             case panel_locationType::TOP:
-                //  if( Configuration::getAutohide() == false)
-                m_window->move(geometry.x, -m_size);
+            {
+                if (Configuration::is_panelMode()) {
+                    m_window->resize(geometry.width, m_areaSize);
+                    m_window->move(geometry.x, -m_areaSize);
+                    break;
+                }
+
+                int width = get_dockSize();
+                m_window->resize(width, m_areaSize);
+                m_window->move(((geometry.x + geometry.width) / 2) - width / 2, -m_areaSize);
                 break;
+            }
             case panel_locationType::LEFT:
-                //  if( Configuration::getAutohide() == false)
-                m_window->move(geometry.x - m_size, geometry.y);
-                break;
+            {
+                if (Configuration::is_panelMode()) {
+                    m_window->resize(m_areaSize, geometry.height);
+                    m_window->move(geometry.x - m_areaSize, geometry.y);
+                    break;
+                }
 
+                int height = get_dockSize();
+                m_window->resize(m_areaSize, height);
+                m_window->move(geometry.x - m_areaSize, ((geometry.y + geometry.height) / 2) - height / 2);
+                //     posY = ((geometry.y + geometry.height) / 2) - height / 2;
+                break;
+            }
             case panel_locationType::RIGHT:
-                //  if( Configuration::getAutohide() == false)
-                m_window->move(geometry.x + geometry.width + m_size, geometry.y);
-                break;
+            {
+                if (Configuration::is_panelMode()) {
+                    m_window->resize(m_areaSize, geometry.height);
+                    m_window->move(geometry.x + geometry.width, geometry.y);
+                    break;
+                }
 
+                int height = get_dockSize();
+                m_window->resize(m_areaSize, height);
+                m_window->move(geometry.x - geometry.width, ((geometry.y + geometry.height) / 2) - height / 2);
+                break;
+            }
             default:
                 break;
         }

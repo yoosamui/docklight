@@ -6,8 +6,9 @@
  */
 
 #include "DockItem.h"
-
+#include "Configuration.h"
 DockItem::DockItem() {
+    this->m_width = Configuration::get_itemSize();
 }
 
 DockItem::DockItem(const DockItem& orig) {

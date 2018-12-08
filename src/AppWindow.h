@@ -21,8 +21,12 @@ public:
     AppWindow();
     int init();
     virtual ~AppWindow();
-private:
     DockPanel m_dockpanel;
+
+    void update();
+    
+private:
+
 
     float m_easing_duration;
     static void monitor_size_changed_callback(GdkScreen *screen, gpointer gtkwindow);
@@ -55,10 +59,12 @@ private:
     static bool m_isfullscreen;
     bool m_mouseIn = false;
     bool m_animate = false;
+    bool m_timerStoped = true;
     float position = 0.f;
     float initTime = 0.f;
     float endPosition = 0.f;
     float atime = 0.f;
+
 };
 
 #endif	/* APPWINDOW_H */
