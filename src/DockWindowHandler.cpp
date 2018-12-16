@@ -280,7 +280,10 @@ namespace DockWindow
                 }
                 int width = get_dockSize();
                 m_window->resize(width, m_areaSize);
-                m_window->move(((geometry.x + geometry.width) / 2) - width / 2, geometry.height - m_areaSize);
+                int posX = ((geometry.x + geometry.width) / 2) - width / 2;
+                    
+                m_window->move(posX, geometry.height - m_areaSize);
+                       
             }
                 break;
                 //

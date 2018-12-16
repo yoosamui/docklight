@@ -47,7 +47,7 @@ namespace Configuration
     }
 
     unsigned int get_itemSize() {
-        return 56; // DockWindowHandler::DockWindow::get_size() - (  get_separatorMargin() + get_bottomMargin());
+        return DEF_CELLWIDTH; // DockWindowHandler::DockWindow::get_size() - (  get_separatorMargin() + get_bottomMargin());
     }
 }
 

@@ -37,13 +37,24 @@ private:
     static Gtk::Window* m_AppWindow;
     static std::vector<DockItem*> m_dockitems;
     panel_locationType m_location;
+    std::string m_homeiconFilePath;
  static int m_currentMoveIndex;
+   int getIndex(int x, int y);
+   
+    int m_cellheight;
+    int m_cellwidth;
+    int m_previousCellwidth;
+    int m_iconsize;
+   
+   
    
 protected:
   static void Update(WnckWindow* window, Window_action actiontype);
     static void on_window_opened(WnckScreen* screen, WnckWindow* window, gpointer data);
     static void on_window_closed(WnckScreen* screen, WnckWindow* window, gpointer data);
-   
+    
+    virtual bool on_motion_notify_event(GdkEventMotion* event);
+  
 
     bool on_timeoutEasing();
     bool on_timeoutDraw();

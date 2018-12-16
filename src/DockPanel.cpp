@@ -12,17 +12,30 @@
 #include "Animations.h"
 #include "AppWindow.h"
 
+#include <glibmm/i18n.h>
+#include <gtkmm/window.h>
+#include <gtkmm/messagedialog.h>
+#include <gdkmm/cursor.h>
+#include <limits.h>
+#include <math.h>
+#include <fstream>
+#include <iostream>
+
 // static members
 std::vector<DockItem*> DockPanel::m_dockitems;
 int DockPanel::m_currentMoveIndex;
 Gtk::Window* DockPanel::m_AppWindow;
 
-DockPanel::DockPanel()
+DockPanel::DockPanel():
+m_cellwidth(DEF_CELLWIDTH),
+m_iconsize(DEF_ICONSIZE),
+m_previousCellwidth(DEF_CELLWIDTH),
+m_cellheight(DEF_CELLHIGHT),
+m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
 {
     DockPanel::m_currentMoveIndex = -1;
     m_location = Configuration::get_dockWindowLocation();
-    // Gets the default WnckScreen on the default display.
-    WnckScreen *wnckscreen = wnck_screen_get_default();
+
     initTime = 0;
     endPosition = 200.0;
     DockPanel::m_AppWindow = nullptr;
@@ -42,6 +55,8 @@ DockPanel::DockPanel()
                Gdk::POINTER_MOTION_MASK);
 
 
+    // Gets the default WnckScreen on the default display.
+    WnckScreen *wnckscreen = wnck_screen_get_default();
     g_signal_connect(G_OBJECT(wnckscreen), "window-opened",
                      G_CALLBACK(DockPanel::on_window_opened), NULL);
 
@@ -59,7 +74,6 @@ DockPanel::DockPanel()
     Glib::signal_timeout().connect(sigc::mem_fun(*this,
                                                  &DockPanel::on_timeoutDraw), 1000);
 
-
 }
 
 /**
@@ -71,6 +85,34 @@ DockPanel::DockPanel()
 int DockPanel::preInit(Gtk::Window* window)
 {
     this->m_AppWindow = window;
+
+    const char* filename = m_homeiconFilePath.c_str();
+    DockItem* dockItem = new DockItem();
+    try {
+        dockItem->m_image = Gdk::Pixbuf::create_from_file(filename,
+                                                          DEF_ICONSIZE, DEF_ICONSIZE, true);
+    }
+    catch (Glib::FileError fex) {
+        g_critical("preInit: file %s could not be found!\n", filename);
+        return -1;
+
+    }
+    catch (Gdk::PixbufError bex) {
+        g_critical("preInit: file %s PixbufError!\n", filename);
+        return -1;
+    }
+
+    dockItem->m_appname = _("Desktop");
+    dockItem->m_realgroupname = _("Desktop");
+    // m_dockitems.push_back(dockItem);
+
+    m_dockitems.insert(m_dockitems.begin(), dockItem);
+
+
+    if (m_AppWindow != nullptr) {
+        ((AppWindow*)m_AppWindow)->update();
+    }
+
 }
 
 DockPanel::~DockPanel(){ }
@@ -295,7 +337,72 @@ void DockPanel::Update(WnckWindow* window, Window_action actiontype)
 
 }
 
-unsigned int get_center(){ }
+/**
+ * get the item index from mouse coordinates.
+ * @param x
+ * @param y
+ * @return 
+ */
+int DockPanel::getIndex(int x, int y)
+{
+    int center = DockWindow::get_geometry().width / 2;
+    Gdk::Point mouse(x, y);
+    int result = -1;
+    int idx = 0;
+    int col = 0;
+
+
+    if (Configuration::is_panelMode()) {
+        col = center - (m_dockitems.size() * m_cellwidth) / 2;
+        col-= (Configuration::get_separatorMargin()+m_cellwidth);
+    }
+    else {
+        //int width = DockWindow::get_dockSize();
+        col = (m_cellwidth / 2) + (Configuration::get_separatorMargin() / 2);
+
+        //((( DockWindow::get_geometry().x + 
+        //        DockWindow::get_geometry().width) / 2) - width / 2) + 
+        //        
+    }
+
+
+   // g_print("col: %d\n", col);
+
+    for (auto item:m_dockitems) {
+        if (item->m_image == NULLPB)
+            continue;
+
+
+
+        if (mouse.get_x() >= col && mouse.get_x() <= col + m_cellwidth) {
+
+            result = idx;
+            break;
+            // return idx;
+        }
+
+        //   col += m_cellwidth + (Configu);
+        col += item->m_width + (Configuration::get_separatorMargin());
+        idx++;
+    }
+
+   // g_print("Mouse: %d/%d - %d\n", x, y, result);
+    return result;
+
+}
+
+/**
+ * handles Mouse motion: process mouse button event 
+ * true to stop other handlers from being invoked for the event.
+ * false to propagate the event further.
+ * @param event
+ * @return 
+ */
+bool DockPanel::on_motion_notify_event(GdkEventMotion*event)
+{
+    m_currentMoveIndex = this->getIndex(event->x, event->y);
+    return false;
+}
 
 void DockPanel::RoundedRectangle(const Cairo::RefPtr<Cairo::Context>& cr,
                                  double x, double y, double width, double height, double radius)
@@ -367,79 +474,6 @@ void DockPanel::get_dockItemPosition(int &x1, int &y1, int &x2, int &y2, int &ce
     // g_print("%d\n",y1);
 }
 
-
-//var box = document.getElementById("box");
-
-float compute(float t, float b, float c, float d)
-{
-    if (t == 0) return b;
-    if ((t /= d) == 1) return b + c;
-    float p = d * .3f;
-    float a = c;
-    float s = p / 4;
-    return (a * pow(2, -10 * t) * sin((t * d - s)*(2 * M_PI) / p) + c + b);
-}
-
-float linear(int time, int begin, int change, int duration)
-{
-    return change * (time / duration) + begin;
-}
-
-/*
-bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
-  // DockWindow Color
-    cr->set_source_rgba(0.0, 0.0, 0.8, 1.0); // partially translucent
-    cr->paint();
-    
-    
-    
-static int fps           = 30;
-static int duration	  = 2;                                   // seconds
-static int iterations	  = fps * duration;                      // 120 frames
-static int startPosition = 0;                                   // left end of the screen
-static int endPosition	  = 200;//window.innerWidth - box.clientWidth; // right end of the screen
-static int distance      = endPosition - startPosition;         // total distance
-static float timeIncrement = duration / iterations;
-static int position      = 0;
-//static int time          = 0;
-     
-
-
-    // int endPosition	  = 200;//window.innerWidth - box.clientWidth; // right end of the screen
-    //timeIncrement = 30;//2 / (30*2);
- //   m_time += 0.00001; //timeIncrement;
-   // m_time += 1.1f;
-    //int position = compute(m_time, 10, 10, 10);
-
-     auto duration =  50.f;
-    auto endTime = initTime + duration;
-    auto now = m_time; //ofGetElapsedTimef();
-    this->position = ofxeasing::map_clamp(now, initTime, endTime, 0, endPosition, &ofxeasing::cubic::easeIn) ;
-
- //   g_print("%f - %f\n", m_time, position);
-
-
-    if (m_time < duration){ 
-        m_time++;
-    }
-    
-    
-        if (position >= endPosition) {
-                //clearInterval(handler);
-                //box.style.left = endPosition + "px";
-            m_time=0;
-                return true;
-        }
-
-
-    RoundedRectangle(cr, 0, position, 100, 100, 0);
-    cr->fill();
-    
-   
-}
- */
-
-
 bool DockPanel::on_enter_notify_event(GdkEventCrossing* crossing_event)
 {
     //  g_print("Mp_IN\n");
@@ -473,6 +507,7 @@ bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
         cr->set_source_rgba(0.0, 0.0, 0.8, 0.0); // partially translucent
         cr->paint();
     }
+
 
     //        RoundedRectangle(cr, x1, y1, x2, y2, 3);
     //        cr->set_source_rgba(0.0, 0.0, 0.8, 1.0); // partially translucent
@@ -536,7 +571,7 @@ bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
 
         icon = item->m_image->scale_simple(DEF_ICONSIZE, DEF_ICONSIZE, Gdk::INTERP_BILINEAR);
-        Gdk::Cairo::set_source_pixbuf(cr, icon, x1 + 6, y1 + 2);
+        Gdk::Cairo::set_source_pixbuf(cr, icon, x1 + 6, y1 + 4);
 
         //        switch (m_location) {
         //            case panel_locationType::TOP:
@@ -554,6 +589,23 @@ bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
         idx++;
     }
 
+
+    if (m_currentMoveIndex != -1) {
+
+        int xx1, yy1, xx2, yy2;
+
+        this->get_dockItemPosition(xx1, yy1, xx2, yy2, center, m_currentMoveIndex);
+        RoundedRectangle(cr, xx1, yy1, xx2, yy2, 3);
+        cr->set_source_rgba(1.00, 1.50, 1.66, 0.4);
+        cr->fill();
+
+
+        cr->set_line_width(2.5);
+        cr->set_source_rgba(1.0, 1.0, 1.0, 1.0);
+        RoundedRectangle(cr, xx1, yy1, xx2, yy2, 3);
+
+        cr->stroke();
+    }
     // DEBUG
     this->get_dockItemPosition(x1, y1, x2, y2, center, 0);
     cr->set_line_width(1);

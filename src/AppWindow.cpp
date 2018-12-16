@@ -94,7 +94,7 @@ int AppWindow::init()
 
     // Add the dock panel
     this->add(m_dockpanel);
-   
+
     this->add_events(
                      Gdk::PROPERTY_CHANGE_MASK |
                      Gdk::POINTER_MOTION_HINT_MASK |
@@ -161,19 +161,20 @@ GDK_SCROLL_MASK | GDK_TOUCH_MASK | GDK_SMOOTH_SCROLL_MASK );
     if (DockWindow::init(this) != 0)
         return -1;
 
+   //DockWindow::hide();
     DockWindow::show();
 
     if (Configuration::is_activateStrut()) {
         DockWindow::updateStrut();
     }
- m_dockpanel.preInit(this);
+
 
     //    // repositioning10 the window
     //    if (DockWindow::updateStrut() != 0)
     //        return -1;
 
-    //  Glib::signal_timeout().connect(sigc::mem_fun(*this,
-    //                                             &AppWindow::fullScreenTimer), 100);
+      Glib::signal_timeout().connect(sigc::mem_fun(*this,
+                                                 &AppWindow::fullScreenTimer), 100);
 
     Glib::signal_timeout().connect(sigc::mem_fun(*this,
                                                  &AppWindow::autoHideTimer), DEF_FRAMERATE);
@@ -223,19 +224,21 @@ GDK_SCROLL_MASK | GDK_TOUCH_MASK | GDK_SMOOTH_SCROLL_MASK );
         //auto& instanceName = wnck_window_get_class_instance_name(window);
         //this->set_gravity(Gdk::GRAVITY_SOUTH_WEST);//.gdk.GRAVITY_SOUTH_EAST);
     }
-
+    m_dockpanel.preInit(this);
     return 0;
 }
 //bool visible = true;
 
 void AppWindow::update()
 {
+    g_print("--------------------------updated\n");
     if (DockWindow::is_visible()) {
         DockWindow::show();
     }
     else {
         DockWindow::hide();
     }
+    
 }
 
 bool AppWindow::autoHideTimer()
