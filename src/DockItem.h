@@ -31,7 +31,7 @@ public:
     virtual ~DockItem();
     DockItemType m_dockitemtype = DockItemType::SingleDock;
    
-    Glib::RefPtr<Gdk::Pixbuf> m_image;
+    Glib::RefPtr<Gdk::Pixbuf> m_image = NULLPB;
     guchar m_pixelsbuf[DEF_PREVIEW_WIDTH * DEF_PREVIEW_HEIGHT * 3] = {0};
     GdkPixbuf *m_scaledPixbuf;
     bool m_imageLoadedRequired;
@@ -58,6 +58,7 @@ public:
     gboolean isMovementDetected(GdkPixbuf *pixbuf);
     int m_dockitemSesssionGrpId = 0;
     int m_width = 0;
+    int m_height = 0;
 private:
     bool m_pixbufPreviousPass;
     

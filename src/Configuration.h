@@ -34,8 +34,9 @@
 
 
 #define DEF_ICONMAXSIZE 64
-#define DEF_CELLHIGHT  56                    // Cell Height
-#define DEF_CELLWIDTH DEF_CELLHIGHT -3//58                    // Cell Width
+#define DEF_CELLHIGHT  58                    // Cell Height
+#define DEF_CELLWIDTH 56 //-3//58                    // Cell Width
+
 #define DEF_CELLTOPMARGIN 6                 // Cell Top Position
 #define DEF_ICONSIZE DEF_CELLHIGHT -14      // Icon Size Width and height
 #define DEF_MINCONSIZE 20                   // Minimun Icon Size allowed

@@ -93,11 +93,16 @@ namespace DockWindow
         }
     }
 
-    unsigned int get_dockSize()
+    unsigned int get_dockWindowSize()
     {
-        return ((AppWindow*)m_window)->m_dockpanel.get_dockItemsWidth();
+        return ((AppWindow*)m_window)->m_dockpanel.get_dockItemsWidth()+
+                get_dockWindowStartEndMargin();
     }
 
+    guint get_dockWindowStartEndMargin()
+    {
+        return 80;
+    }
     /**
      * Initialize the window
      * @param window the main window.
@@ -158,12 +163,12 @@ namespace DockWindow
         return 0; //updateStrut(m_areaSize);
     }
 
-    unsigned int getDockItemWidth()
+    unsigned int getDockWindowWidth()
     {
         return m_window->get_width();
     }
 
-    unsigned int getDockItemHeight()
+    unsigned int getDockWindowHeight()
     {
         // g_print("%d\n", m_window->get_width());
         return m_window->get_height();
@@ -278,7 +283,7 @@ namespace DockWindow
                     m_window->move(geometry.x, geometry.height - m_areaSize);
                     break;
                 }
-                int width = get_dockSize();
+                int width = get_dockWindowSize();
                 m_window->resize(width, m_areaSize);
                 int posX = ((geometry.x + geometry.width) / 2) - width / 2;
                     
@@ -309,7 +314,7 @@ namespace DockWindow
                     break;
                 }
 
-                int width = get_dockSize();
+                int width = get_dockWindowSize();
                 m_window->resize(width, m_areaSize);
                 m_window->move(((geometry.x + geometry.width) / 2) - width / 2, geometry.y);
                 break;
@@ -322,7 +327,7 @@ namespace DockWindow
                     break;
                 }
 
-                int height = get_dockSize();
+                int height = get_dockWindowSize();
                 m_window->resize(m_areaSize, height);
                 m_window->move( geometry.x, ((geometry.y + geometry.height) / 2) - height / 2);
                 //     posY = ((geometry.y + geometry.height) / 2) - height / 2;
@@ -336,7 +341,7 @@ namespace DockWindow
                     break;
                 }
 
-                int height = get_dockSize();
+                int height = get_dockWindowSize();
                 m_window->resize(m_areaSize, height);
                 m_window->move((geometry.x + geometry.width) - m_areaSize, ((geometry.y + geometry.height) / 2) - height / 2);
                 break;
@@ -361,7 +366,7 @@ namespace DockWindow
 
             {
                 if (Configuration::is_panelMode() == false) {
-                    int width = get_dockSize();
+                    int width = get_dockWindowSize();
                     posX = ((geometry.x + geometry.width) / 2) - width / 2;
                     posY = y;
                 }
@@ -374,7 +379,7 @@ namespace DockWindow
             case panel_locationType::RIGHT:
             {
                 if (Configuration::is_panelMode() == false) {
-                    int height = get_dockSize();
+                    int height = get_dockWindowSize();
                     posX = x;
                     posY = ((geometry.y + geometry.height) / 2) - height / 2;
                 }
@@ -404,7 +409,7 @@ namespace DockWindow
                     break;
                 }
 
-                int width = get_dockSize();
+                int width = get_dockWindowSize();
                 m_window->resize(width, m_areaSize);
                 m_window->move(((geometry.x + geometry.width) / 2) - width / 2, geometry.height);
             }
@@ -418,7 +423,7 @@ namespace DockWindow
                     break;
                 }
 
-                int width = get_dockSize();
+                int width = get_dockWindowSize();
                 m_window->resize(width, m_areaSize);
                 m_window->move(((geometry.x + geometry.width) / 2) - width / 2, -m_areaSize);
                 break;
@@ -431,7 +436,7 @@ namespace DockWindow
                     break;
                 }
 
-                int height = get_dockSize();
+                int height = get_dockWindowSize();
                 m_window->resize(m_areaSize, height);
                 m_window->move(geometry.x - m_areaSize, ((geometry.y + geometry.height) / 2) - height / 2);
                 //     posY = ((geometry.y + geometry.height) / 2) - height / 2;
@@ -445,7 +450,7 @@ namespace DockWindow
                     break;
                 }
 
-                int height = get_dockSize();
+                int height = get_dockWindowSize();
                 m_window->resize(m_areaSize, height);
                 m_window->move(geometry.x - geometry.width, ((geometry.y + geometry.height) / 2) - height / 2);
                 break;
@@ -455,5 +460,10 @@ namespace DockWindow
         }
 
         set_visible(false);
+    }
+    
+    void Transform(int &x, int &y, int &width, int &height)
+    {
+        
     }
 }

@@ -26,35 +26,35 @@ public:
     SessionWindow* m_sessionWindow;
 
     unsigned int get_dockItemsWidth();
-    
-     int getCurrentIndex()
-    {
+    unsigned int get_dockItemsHeight();
+
+    int getCurrentIndex() {
         return m_currentMoveIndex;
     };
-    
+
     int preInit(Gtk::Window* window);
 private:
     static Gtk::Window* m_AppWindow;
     static std::vector<DockItem*> m_dockitems;
     panel_locationType m_location;
     std::string m_homeiconFilePath;
- static int m_currentMoveIndex;
-   int getIndex(int x, int y);
-   
+    static int m_currentMoveIndex;
+    int getIndex(int x, int y);
+
     int m_cellheight;
     int m_cellwidth;
     int m_previousCellwidth;
     int m_iconsize;
-   
-   
-   
+
+
+
 protected:
-  static void Update(WnckWindow* window, Window_action actiontype);
+    static void Update(WnckWindow* window, Window_action actiontype);
     static void on_window_opened(WnckScreen* screen, WnckWindow* window, gpointer data);
     static void on_window_closed(WnckScreen* screen, WnckWindow* window, gpointer data);
-    
+
     virtual bool on_motion_notify_event(GdkEventMotion* event);
-  
+
 
     bool on_timeoutEasing();
     bool on_timeoutDraw();
@@ -66,11 +66,16 @@ protected:
 
 
 
-    void get_dockItemPosition(int &x1, int &y1, int &x2, int &y2, int &center, int increment);
+    //void get_dockItemPosition(int &x1, int &y1, int &x2, int &y2, int &center, int increment);
+    void get_dockItemPosition(DockItem* item, int &x1, int &y1, int &x2, int &y2, int &center, int i);
 
     virtual bool on_enter_notify_event(GdkEventCrossing* crossing_event);
     virtual bool on_leave_notify_event(GdkEventCrossing* crossing_event);
 
+
+
+    unsigned int get_dockItemsWidthUntilIndex(int idx);
+    unsigned int get_dockItemsHeightUntilIndex(int idx);
 
     float m_time = 0;
 

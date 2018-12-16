@@ -12,15 +12,14 @@ namespace Configuration
 {
 
     panel_locationType get_dockWindowLocation() {
-        return panel_locationType::BOTTOM;
+        return panel_locationType::LEFT;
     }
-
     bool is_panelMode()
     {
         return false;
     }
     bool is_activateStrut() {
-        if(is_panelMode() || !is_autoHide()){
+        if(is_panelMode() && !is_autoHide()){
             return true;
         }
         return false;
@@ -34,6 +33,7 @@ namespace Configuration
         return 64;
     }
 
+    
     unsigned int get_topMargin() {
         return 4;
     }
