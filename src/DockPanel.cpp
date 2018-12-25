@@ -525,7 +525,7 @@ void DockPanel::get_dockItemPosition(DockItem* item, int &x1, int &y1, int &x2, 
             x1 = start + increment;
             y1 = Configuration::get_topMargin();
             x2 = item->m_width; //m_cellwidth;
-            y2 = item->m_height; //DockWindow::getDockWindowHeight() - Configuration::get_bottomMargin();
+            y2 = DEF_CELLHIGHT;// item->m_height; //DockWindow::getDockWindowHeight() - Configuration::get_bottomMargin();
         }
             break;
         case panel_locationType::RIGHT:
@@ -541,7 +541,7 @@ void DockPanel::get_dockItemPosition(DockItem* item, int &x1, int &y1, int &x2, 
 
             x1 = Configuration::get_topMargin();
             y1 = start + increment;
-            x2 = m_cellwidth;
+            x2 = DEF_CELLWIDTH;
             if (item->m_dockitemtype == DockItemType::Separator) {
                 y2 = item->m_width;
             }
