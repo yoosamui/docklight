@@ -34,7 +34,7 @@ DockPanel::DockPanel():
 //m_previousCellwidth(DEF_CELLWIDTH),
 m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
 {
-  
+
     // Set masks for mouse events
     add_events(Gdk::BUTTON_PRESS_MASK |
                Gdk::BUTTON_RELEASE_MASK |
@@ -46,23 +46,23 @@ m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
                Gdk::LEAVE_NOTIFY_MASK |
                Gdk::POINTER_MOTION_MASK);
 
-//    set_app_paintable(true);
-//
-//    GdkScreen *screen;
-//    GdkVisual *visual;
-//
-//    gtk_widget_set_app_paintable(GTK_WIDGET(gobj()), TRUE);
-//    screen = gdk_screen_get_default();
-//    visual = gdk_screen_get_rgba_visual(screen);
-//
-//    if (visual != NULL && gdk_screen_is_composited(screen)) {
-//        gtk_widget_set_visual(GTK_WIDGET(gobj()), visual);
-//    }
-//    
-    
-    
-    
-    
+    //    set_app_paintable(true);
+    //
+    //    GdkScreen *screen;
+    //    GdkVisual *visual;
+    //
+    //    gtk_widget_set_app_paintable(GTK_WIDGET(gobj()), TRUE);
+    //    screen = gdk_screen_get_default();
+    //    visual = gdk_screen_get_rgba_visual(screen);
+    //
+    //    if (visual != NULL && gdk_screen_is_composited(screen)) {
+    //        gtk_widget_set_visual(GTK_WIDGET(gobj()), visual);
+    //    }
+    //    
+
+
+
+
     DockPanel::m_currentMoveIndex = -1;
     m_location = Configuration::get_dockWindowLocation();
 
@@ -71,9 +71,9 @@ m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
     DockPanel::m_AppWindow = nullptr;
 
 
-   
-    
-    
+
+
+
 
 
     // Gets the default WnckScreen on the default display.
@@ -107,17 +107,17 @@ int DockPanel::preInit(Gtk::Window* window)
 {
     this->m_AppWindow = window;
 
-    
+
 
     m_cellwidth = Configuration::get_CellWidth();
-    m_cellheight =Configuration::get_CellHeight();
-    
-    
+    m_cellheight = Configuration::get_CellHeight();
+
+
     const char* filename = m_homeiconFilePath.c_str();
     DockItem* dockItem = new DockItem();
     try {
-        
-        int m_iconsize = m_cellwidth - ICON_CELL_WIDTH_MARGIN ;
+
+        int m_iconsize = m_cellwidth - ICON_CELL_WIDTH_MARGIN;
         dockItem->m_image = Gdk::Pixbuf::create_from_file(filename,
                                                           m_iconsize, m_iconsize, true);
     }
@@ -389,43 +389,61 @@ int DockPanel::getIndex(int x, int y)
     int col = 0;
 
 
-    if (Configuration::is_panelMode()) {
-        col = center - (m_dockitems.size() * m_cellwidth) / 2;
-        col -= (Configuration::get_separatorMargin() + m_cellwidth);
-    }
-    else {
-        //int width = DockWindow::get_dockSize();
-        col = (m_cellwidth / 2) + (Configuration::get_separatorMargin() / 2);
+    switch (m_location)
+    {
+        case panel_locationType::TOP:
+        case panel_locationType::BOTTOM:
+        {
+            if (Configuration::is_panelMode()) {
+                col = center - (m_dockitems.size() * m_cellwidth) / 2;
+                col -= (Configuration::get_separatorMargin() + m_cellwidth);
+            }
+            else {
+                col = (m_cellwidth / 2) + (Configuration::get_separatorMargin() / 2);
+            }
 
-        //((( DockWindow::get_geometry().x + 
-        //        DockWindow::get_geometry().width) / 2) - width / 2) + 
-        //        
-    }
+            for (auto item:m_dockitems) {
+                if (item->m_dockitemtype == DockItemType::Separator) {
+                    idx++;
+                    continue;
+                }
 
-
-    // g_print("col: %d\n", col);
-
-    for (auto item:m_dockitems) {
-        if (item->m_image == NULLPB)
-            continue;
-
-
-
-        if (mouse.get_x() >= col && mouse.get_x() <= col + m_cellwidth) {
-
-            result = idx;
-            break;
-            // return idx;
+                if (mouse.get_x() >= col && mouse.get_x() <= col + m_cellwidth) {
+                    result = idx;
+                    break;
+                }
+                col += item->m_width + (Configuration::get_separatorMargin());
+                idx++;
+            }
         }
+        case panel_locationType::LEFT:
+        case panel_locationType::RIGHT:
+        {
+            if (Configuration::is_panelMode()) {
+                col = center - (m_dockitems.size() * m_cellwidth) / 2;
+                col -= (Configuration::get_separatorMargin() + m_cellwidth);
+            }
+            else {
+                col = (m_cellwidth / 2) + (Configuration::get_separatorMargin() / 2);
+            }
 
-        //   col += m_cellwidth + (Configu);
-        col += item->m_width + (Configuration::get_separatorMargin());
-        idx++;
+            for (auto item:m_dockitems) {
+                if (item->m_dockitemtype == DockItemType::Separator) {
+                    idx++;
+                    continue;
+                }
+
+                if (mouse.get_y() + 6 >= col && mouse.get_y() -6 <= col + m_cellheight) {
+                    result = idx;
+                    break;
+                }
+                col += item->m_width + (Configuration::get_separatorMargin());
+                idx++;
+            }
+        }
+        break;
     }
-
-    // g_print("Mouse: %d/%d - %d\n", x, y, result);
     return result;
-
 }
 
 /**
@@ -478,8 +496,7 @@ unsigned int DockPanel::get_dockItemsHeightUntilIndex(int idx)
         if (count == idx) {
             break;
         }
-        if(item->m_dockitemtype == DockItemType::Separator)
-        {
+        if (item->m_dockitemtype == DockItemType::Separator) {
             size += item->m_width;
             count++;
             continue;
@@ -509,9 +526,8 @@ unsigned int DockPanel::get_dockItemsHeight()
 
     unsigned int size = 0;
     for (DockItem* item:m_dockitems) {
-        
-        if(item->m_dockitemtype == DockItemType::Separator)
-        {
+
+        if (item->m_dockitemtype == DockItemType::Separator) {
             size += item->m_width;
             continue;
         }
@@ -541,42 +557,41 @@ void DockPanel::get_dockItemPosition(DockItem* item, int &x1, int &y1, int &x2, 
 
             x1 = start + increment;
             y1 = CELL_TOP_MARGIN;
-            x2 = item->m_width; 
+            x2 = item->m_width;
             y2 = m_cellheight;
-            
+
         }
             break;
         case panel_locationType::RIGHT:
         case panel_locationType::LEFT:
         {
-           
+
             int itemsWidth = this->get_dockItemsHeight(); //+ (DockWindow::get_dockWindowStartEndMargin()/2);
             center = DockWindow::getDockWindowHeight() / 2;
-            start = center - (itemsWidth / 2); 
+            start = center - (itemsWidth / 2);
 
             increment = get_dockItemsWidthUntilIndex(i);
             increment += (i * Configuration::get_separatorMargin()) + Configuration::get_separatorMargin() / 2;
 
             x1 = 2;
             y1 = start + increment;
-            x2 = item->m_width; 
+            x2 = item->m_width;
             y2 = m_cellheight;
-            
-            if(item->m_dockitemtype == DockItemType::Separator)
-            {
+
+            if (item->m_dockitemtype == DockItemType::Separator) {
                 y2 = item->m_width;
                 x2 = m_cellwidth;
             }
         }
-           
-    
-    break;
 
 
-    default:
-    break;
-}
-// g_print("%d\n",y1);
+            break;
+
+
+        default:
+            break;
+    }
+    // g_print("%d\n",y1);
 }
 
 bool DockPanel::on_enter_notify_event(GdkEventCrossing* crossing_event)
@@ -606,15 +621,15 @@ bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
         cr->paint();
     }
     else {
-       cr->set_source_rgba(0.0, 0.0, 175.8, 0.4); // partially translucent
-    RoundedRectangle(cr, 0, 0,  DockWindow::getDockWindowWidth(), DockWindow::getDockWindowHeight(), 6);
-   cr->fill();
+        cr->set_source_rgba(0.0, 0.0, 175.8, 0.4); // partially translucent
+        RoundedRectangle(cr, 0, 0, DockWindow::getDockWindowWidth(), DockWindow::getDockWindowHeight(), 6);
+        cr->fill();
     }
 
-    
 
-    
-    
+
+
+
     //        RoundedRectangle(cr, x1, y1, x2, y2, 3);
     //        cr->set_source_rgba(0.0, 0.0, 0.8, 1.0); // partially translucent
     //        cr->fill();
@@ -657,28 +672,28 @@ bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
         }
 
 
-        
+
 
         // Draw circles
         double radius = 2.0;
-        int margin = 8;//TODO: define;
-        int iconsize = m_cellwidth -ICON_CELL_WIDTH_MARGIN;
+        int margin = 4; //TODO: define;
+        int iconsize = m_cellwidth - ICON_CELL_WIDTH_MARGIN;
         int center = (m_cellwidth / 2);
-        int centerPos = center - (iconsize/ 2 );
+        int centerPos = center - (iconsize / 2);
         int circlePos = center;
         int col = x1;
-       
-//      
-//        if (m_iconsize <= 25) {
-//            radius = 1.5;
-//            margin = 3;
-//        }
+
+        //      
+        //        if (m_iconsize <= 25) {
+        //            radius = 1.5;
+        //            margin = 3;
+        //        }
 
         cr->set_source_rgb(1.0, 1.0, 1.0);
 
         int heightPos = y1 + m_cellheight - CELL_BOTTOM_MARGIN - 4;
         if (item->m_items.size() == 1) {
-              cr->arc(col + circlePos,  heightPos, radius, 0, 2 * M_PI);
+            cr->arc(col + circlePos, heightPos, radius, 0, 2 * M_PI);
         }
         else if (item->m_items.size() > 1) {
             cr->arc(col + circlePos - margin, heightPos, radius, 0, 2 * M_PI);
@@ -687,23 +702,25 @@ bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
         cr->fill();
 
 
-      
-        
+
+
         icon = item->m_image->scale_simple(iconsize, iconsize, Gdk::INTERP_BILINEAR);
         Gdk::Cairo::set_source_pixbuf(cr, icon, x1 + centerPos, y1 + ICON_CELL_TOP_MARGIN);
         cr->paint();
 
-        
+
         idx++;
     }
 
-   
+
     if (m_currentMoveIndex != -1) {
 
         int xx1, yy1, xx2, yy2;
 
+        g_print("AA %d\n ", m_currentMoveIndex);
         auto item = m_dockitems.at(m_currentMoveIndex);
         this->get_dockItemPosition(item, xx1, yy1, xx2, yy2, center, m_currentMoveIndex);
+
         RoundedRectangle(cr, xx1, yy1, xx2, yy2, 3);
         cr->set_source_rgba(1.00, 1.50, 1.66, 0.4);
         cr->fill();

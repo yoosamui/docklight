@@ -12,7 +12,7 @@ namespace Configuration
 {
 
     panel_locationType get_dockWindowLocation() {
-        return panel_locationType::TOP;
+        return panel_locationType::RIGHT;
     }
     bool is_panelMode()
     {
