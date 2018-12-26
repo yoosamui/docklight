@@ -72,7 +72,7 @@ void AppWindow::LeaveFunc(GtkWidget *widget, GdkEvent *event, gpointer callback_
     /* event is good */
 
 
-    g_print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+   
     exit(1);
 
 }
@@ -168,16 +168,13 @@ GDK_SCROLL_MASK | GDK_TOUCH_MASK | GDK_SMOOTH_SCROLL_MASK );
         DockWindow::updateStrut();
     }
 
-
+m_dockpanel.preInit(this);
     //    // repositioning10 the window
     //    if (DockWindow::updateStrut() != 0)
     //        return -1;
 
-      Glib::signal_timeout().connect(sigc::mem_fun(*this,
-                                                 &AppWindow::fullScreenTimer), 100);
-
-    Glib::signal_timeout().connect(sigc::mem_fun(*this,
-                                                 &AppWindow::autoHideTimer), DEF_FRAMERATE);
+    Glib::signal_timeout().connect(sigc::mem_fun(*this, &AppWindow::fullScreenTimer), 100);
+    Glib::signal_timeout().connect(sigc::mem_fun(*this, &AppWindow::autoHideTimer), DEF_FRAMERATE);
 
     initTime = 0; //DockWindow::get_geometry().height-100;;
     // endPosition = DockWindow::get_geometry().height ;//- get_height();//Configuration::get_dockWindowSize();//+180);//DockWindow::get_geometry().height; //this->
@@ -186,7 +183,7 @@ GDK_SCROLL_MASK | GDK_TOUCH_MASK | GDK_SMOOTH_SCROLL_MASK );
     // g_print("%f\n", endPosition);
 
     //time=10;
-
+/*
     // test
     WnckScreen *screen;
     GList *window_l;
@@ -213,10 +210,10 @@ GDK_SCROLL_MASK | GDK_TOUCH_MASK | GDK_SMOOTH_SCROLL_MASK );
                     type_name(wnck_window_get_window_type(window)));
         }
 
-        /* Translators: A class is like a "family". E.g., all gvim windows are of the
-         * same class. The class instance is a way to differentiate windows belonging
-         * to the same class group. 
-         */
+        // Translators: A class is like a "family". E.g., all gvim windows are of the
+        //  same class. The class instance is a way to differentiate windows belonging
+        //  to the same class group. 
+       //  /
         // g_print (_("Class Instance: %s\n"), buf);
 
         g_print("XID: %lu\n", wnck_window_get_xid(window));
@@ -224,7 +221,9 @@ GDK_SCROLL_MASK | GDK_TOUCH_MASK | GDK_SMOOTH_SCROLL_MASK );
         //auto& instanceName = wnck_window_get_class_instance_name(window);
         //this->set_gravity(Gdk::GRAVITY_SOUTH_WEST);//.gdk.GRAVITY_SOUTH_EAST);
     }
-    m_dockpanel.preInit(this);
+*/
+
+    
     return 0;
 }
 //bool visible = true;

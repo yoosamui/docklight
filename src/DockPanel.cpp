@@ -5,6 +5,9 @@
  * Created on November 6, 2018, 7:31 PM
  */
 
+#include "DockItem.h"
+
+
 #include "DockPanel.h"
 #include "DockWindowHandler.h"
 #include "Configuration.h"
@@ -27,12 +30,39 @@ int DockPanel::m_currentMoveIndex;
 Gtk::Window* DockPanel::m_AppWindow;
 
 DockPanel::DockPanel():
-m_cellwidth(DEF_CELLWIDTH),
-m_iconsize(DEF_ICONSIZE),
-m_previousCellwidth(DEF_CELLWIDTH),
-m_cellheight(DEF_CELLHIGHT),
+
+//m_previousCellwidth(DEF_CELLWIDTH),
 m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
 {
+  
+    // Set masks for mouse events
+    add_events(Gdk::BUTTON_PRESS_MASK |
+               Gdk::BUTTON_RELEASE_MASK |
+               Gdk::SCROLL_MASK |
+               Gdk::SMOOTH_SCROLL_MASK |
+               Gdk::POINTER_MOTION_HINT_MASK |
+               Gdk::FOCUS_CHANGE_MASK |
+               Gdk::ENTER_NOTIFY_MASK |
+               Gdk::LEAVE_NOTIFY_MASK |
+               Gdk::POINTER_MOTION_MASK);
+
+//    set_app_paintable(true);
+//
+//    GdkScreen *screen;
+//    GdkVisual *visual;
+//
+//    gtk_widget_set_app_paintable(GTK_WIDGET(gobj()), TRUE);
+//    screen = gdk_screen_get_default();
+//    visual = gdk_screen_get_rgba_visual(screen);
+//
+//    if (visual != NULL && gdk_screen_is_composited(screen)) {
+//        gtk_widget_set_visual(GTK_WIDGET(gobj()), visual);
+//    }
+//    
+    
+    
+    
+    
     DockPanel::m_currentMoveIndex = -1;
     m_location = Configuration::get_dockWindowLocation();
 
@@ -41,21 +71,9 @@ m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
     DockPanel::m_AppWindow = nullptr;
 
 
-    m_cellwidth = DEF_CELLWIDTH;
-    m_cellheight = DEF_CELLHIGHT;
-
-
-    // Set masks for mouse events
-    add_events(Gdk::BUTTON_PRESS_MASK |
-               Gdk::BUTTON_RELEASE_MASK |
-               Gdk::BUTTON_PRESS_MASK |
-               Gdk::SCROLL_MASK |
-               Gdk::SMOOTH_SCROLL_MASK |
-               Gdk::POINTER_MOTION_HINT_MASK |
-               Gdk::FOCUS_CHANGE_MASK |
-               Gdk::ENTER_NOTIFY_MASK |
-               Gdk::LEAVE_NOTIFY_MASK |
-               Gdk::POINTER_MOTION_MASK);
+   
+    
+    
 
 
     // Gets the default WnckScreen on the default display.
@@ -89,11 +107,19 @@ int DockPanel::preInit(Gtk::Window* window)
 {
     this->m_AppWindow = window;
 
+    
+
+    m_cellwidth = Configuration::get_CellWidth();
+    m_cellheight =Configuration::get_CellHeight();
+    
+    
     const char* filename = m_homeiconFilePath.c_str();
     DockItem* dockItem = new DockItem();
     try {
+        
+        int m_iconsize = m_cellwidth - ICON_CELL_WIDTH_MARGIN ;
         dockItem->m_image = Gdk::Pixbuf::create_from_file(filename,
-                                                          DEF_ICONSIZE, DEF_ICONSIZE, true);
+                                                          m_iconsize, m_iconsize, true);
     }
     catch (Glib::FileError fex) {
         g_critical("preInit: file %s could not be found!\n", filename);
@@ -498,17 +524,8 @@ unsigned int DockPanel::get_dockItemsHeight()
 
 void DockPanel::get_dockItemPosition(DockItem* item, int &x1, int &y1, int &x2, int &y2, int &center, int i)
 {
-
-
-    // int itemSize = Configuration::get_itemSize() + Configuration::get_separatorMargin();
-
-
     int start = 0;
     int increment = 0;
-
-
-
-    //g_print("%d\n",DockWindow::getDockItemSize());
 
     switch (m_location)
     {
@@ -523,33 +540,35 @@ void DockPanel::get_dockItemPosition(DockItem* item, int &x1, int &y1, int &x2, 
             increment += (i * Configuration::get_separatorMargin()) + Configuration::get_separatorMargin() / 2;
 
             x1 = start + increment;
-            y1 = Configuration::get_topMargin();
-            x2 = item->m_width; //m_cellwidth;
-            y2 = DEF_CELLHIGHT;// item->m_height; //DockWindow::getDockWindowHeight() - Configuration::get_bottomMargin();
+            y1 = CELL_TOP_MARGIN;
+            x2 = item->m_width; 
+            y2 = m_cellheight;
+            
         }
             break;
         case panel_locationType::RIGHT:
         case panel_locationType::LEFT:
         {
-            int itemsHeight = this->get_dockItemsHeight();
-
+           
+            int itemsWidth = this->get_dockItemsHeight(); //+ (DockWindow::get_dockWindowStartEndMargin()/2);
             center = DockWindow::getDockWindowHeight() / 2;
-            start = center - (itemsHeight / 2);
+            start = center - (itemsWidth / 2); 
 
-            increment = get_dockItemsHeightUntilIndex(i);
+            increment = get_dockItemsWidthUntilIndex(i);
             increment += (i * Configuration::get_separatorMargin()) + Configuration::get_separatorMargin() / 2;
 
-            x1 = Configuration::get_topMargin();
+            x1 = 2;
             y1 = start + increment;
-            x2 = DEF_CELLWIDTH;
-            if (item->m_dockitemtype == DockItemType::Separator) {
+            x2 = item->m_width; 
+            y2 = m_cellheight;
+            
+            if(item->m_dockitemtype == DockItemType::Separator)
+            {
                 y2 = item->m_width;
-            }
-            else {
-                y2 = item->m_height;
+                x2 = m_cellwidth;
             }
         }
-            //m_cellheight;//item->m_width;;//DockWindow::getDockWindowWidth() - Configuration::get_bottomMargin();
+           
     
     break;
 
@@ -578,24 +597,24 @@ bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
 
 
-    if (!DockWindow::is_visible()) {
-        //return true;
-    }
 
     int x1, y1, x2, y2, center;
 
     // DockWindow Color
     if (Configuration::is_panelMode()) {
-        cr->set_source_rgba(0.0, 0.0, 0.8, 1.0); // partially translucent
+        cr->set_source_rgba(0.0, 0.0, 0.8, 0.4); // partially translucent
         cr->paint();
     }
     else {
-        cr->set_source_rgba(0.0, 0.0, 0.8, 0.0); // partially translucent
-        cr->paint();
+       cr->set_source_rgba(0.0, 0.0, 175.8, 0.4); // partially translucent
+    RoundedRectangle(cr, 0, 0,  DockWindow::getDockWindowWidth(), DockWindow::getDockWindowHeight(), 6);
+   cr->fill();
     }
 
-    cr->set_source_rgba(0.0, 0.0, 0.8, 1.0); // partially translucent
-    cr->paint();
+    
+
+    
+    
     //        RoundedRectangle(cr, x1, y1, x2, y2, 3);
     //        cr->set_source_rgba(0.0, 0.0, 0.8, 1.0); // partially translucent
     //        cr->fill();
@@ -610,7 +629,6 @@ bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     //int itemsHalf = itemsWidth / 2;
 
     // draw panel rectangle
-
 
     cr->set_line_width(1);
     cr->set_source_rgba(1, 1, 1, 1);
@@ -639,43 +657,47 @@ bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
         }
 
 
-
-
+        
 
         // Draw circles
         double radius = 2.0;
-        int margin = 4;
-
-        int m_iconsize = DEF_ICONSIZE;
+        int margin = 8;//TODO: define;
+        int iconsize = m_cellwidth -ICON_CELL_WIDTH_MARGIN;
+        int center = (m_cellwidth / 2);
+        int centerPos = center - (iconsize/ 2 );
+        int circlePos = center;
         int col = x1;
-        int m_cellwidth = DEF_CELLWIDTH;
-        int m_cellheight = DEF_CELLHIGHT;
-        if (m_iconsize <= 25) {
-            radius = 1.5;
-            margin = 3;
-        }
+       
+//      
+//        if (m_iconsize <= 25) {
+//            radius = 1.5;
+//            margin = 3;
+//        }
 
         cr->set_source_rgb(1.0, 1.0, 1.0);
 
+        int heightPos = y1 + m_cellheight - CELL_BOTTOM_MARGIN - 4;
         if (item->m_items.size() == 1) {
-            cr->arc(col + (m_cellwidth / 2), y1 + m_cellheight - 4, radius, 0, 2 * M_PI);
+              cr->arc(col + circlePos,  heightPos, radius, 0, 2 * M_PI);
         }
         else if (item->m_items.size() > 1) {
-            cr->arc((col + (m_cellwidth / 2)) - margin, y1 + m_cellheight - 4, radius, 0, 2 * M_PI);
-            cr->arc((col + (m_cellwidth / 2)) + margin, y1 + m_cellheight - 4, radius, 0, 2 * M_PI);
+            cr->arc(col + circlePos - margin, heightPos, radius, 0, 2 * M_PI);
+            cr->arc(col + circlePos + margin, heightPos, radius, 0, 2 * M_PI);
         }
         cr->fill();
 
 
-
-        icon = item->m_image->scale_simple(DEF_ICONSIZE, DEF_ICONSIZE, Gdk::INTERP_BILINEAR);
-        Gdk::Cairo::set_source_pixbuf(cr, icon, x1 + 6, y1 + 4);
+      
+        
+        icon = item->m_image->scale_simple(iconsize, iconsize, Gdk::INTERP_BILINEAR);
+        Gdk::Cairo::set_source_pixbuf(cr, icon, x1 + centerPos, y1 + ICON_CELL_TOP_MARGIN);
         cr->paint();
 
+        
         idx++;
     }
 
-
+   
     if (m_currentMoveIndex != -1) {
 
         int xx1, yy1, xx2, yy2;

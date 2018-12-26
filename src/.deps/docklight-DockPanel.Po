@@ -1,5 +1,5 @@
 docklight-DockPanel.o: DockPanel.cpp /usr/include/stdc-predef.h \
- DockPanel.h /usr/include/libwnck-3.0/libwnck/libwnck.h \
+ DockItem.h /usr/include/libwnck-3.0/libwnck/libwnck.h \
  /usr/include/libwnck-3.0/libwnck/window.h \
  /usr/include/glib-2.0/glib-object.h \
  /usr/include/glib-2.0/gobject/gbinding.h /usr/include/glib-2.0/glib.h \
@@ -681,13 +681,9 @@ docklight-DockPanel.o: DockPanel.cpp /usr/include/stdc-predef.h \
  /usr/include/libwnck-3.0/libwnck/util.h \
  /usr/include/libwnck-3.0/libwnck/version.h \
  /usr/include/libwnck-3.0/libwnck/wnck-enum-types.h \
- /usr/include/glibmm-2.4/glibmm/timer.h /usr/include/gtkmm-3.0/gtkmm.h \
- /usr/include/glibmm-2.4/glibmm.h \
- /usr/lib/x86_64-linux-gnu/glibmm-2.4/include/glibmmconfig.h \
- /usr/include/glibmm-2.4/glibmm/thread.h \
- /usr/include/glibmm-2.4/glibmm/error.h \
- /usr/include/glibmm-2.4/glibmm/exception.h \
+ /usr/include/gtkmm-3.0/gtkmm/window.h \
  /usr/include/glibmm-2.4/glibmm/ustring.h \
+ /usr/lib/x86_64-linux-gnu/glibmm-2.4/include/glibmmconfig.h \
  /usr/include/glibmm-2.4/glibmm/unicode.h /usr/include/c++/6/cctype \
  /usr/include/ctype.h /usr/include/c++/6/iosfwd \
  /usr/include/c++/6/bits/stringfwd.h /usr/include/c++/6/bits/memoryfwd.h \
@@ -764,7 +760,6 @@ docklight-DockPanel.o: DockPanel.cpp /usr/include/stdc-predef.h \
  /usr/include/c++/6/bits/istream.tcc \
  /usr/include/c++/6/bits/stream_iterator.h /usr/include/c++/6/sstream \
  /usr/include/c++/6/bits/sstream.tcc \
- /usr/include/glibmm-2.4/glibmm/timeval.h \
  /usr/include/sigc++-2.0/sigc++/sigc++.h \
  /usr/include/sigc++-2.0/sigc++/signal.h /usr/include/c++/6/list \
  /usr/include/c++/6/bits/stl_list.h \
@@ -800,22 +795,11 @@ docklight-DockPanel.o: DockPanel.cpp /usr/include/stdc-predef.h \
  /usr/include/sigc++-2.0/sigc++/adaptors/exception_catch.h \
  /usr/include/sigc++-2.0/sigc++/adaptors/track_obj.h \
  /usr/include/sigc++-2.0/sigc++/functors/functors.h \
- /usr/include/glibmm-2.4/glibmm/threads.h \
- /usr/include/glibmm-2.4/glibmm/arrayhandle.h \
- /usr/include/glibmm-2.4/glibmm/containerhandle_shared.h \
- /usr/include/glibmm-2.4/glibmm/refptr.h \
- /usr/include/glibmm-2.4/glibmm/variant.h \
- /usr/include/glibmm-2.4/glibmm/varianttype.h /usr/include/c++/6/vector \
- /usr/include/c++/6/bits/stl_construct.h \
+ /usr/include/c++/6/vector /usr/include/c++/6/bits/stl_construct.h \
  /usr/include/c++/6/bits/stl_uninitialized.h \
  /usr/include/c++/6/bits/stl_vector.h \
  /usr/include/c++/6/bits/stl_bvector.h /usr/include/c++/6/bits/vector.tcc \
- /usr/include/glibmm-2.4/glibmm/variantiter.h \
- /usr/include/glibmm-2.4/glibmm/variantdbusstring.h \
- /usr/include/c++/6/map /usr/include/c++/6/bits/stl_tree.h \
- /usr/include/c++/6/bits/stl_map.h /usr/include/c++/6/bits/stl_multimap.h \
- /usr/include/glibmm-2.4/glibmm/variant_basictypes.h \
- /usr/include/glibmm-2.4/glibmm/wrap.h \
+ /usr/include/glibmm-2.4/glibmm/object.h \
  /usr/include/glibmm-2.4/glibmm/objectbase.h \
  /usr/include/glibmm-2.4/glibmm/class.h \
  /usr/include/glibmm-2.4/glibmm/signalproxy.h \
@@ -823,11 +807,14 @@ docklight-DockPanel.o: DockPanel.cpp /usr/include/stdc-predef.h \
  /usr/include/glibmm-2.4/glibmm/propertyproxy.h \
  /usr/include/glibmm-2.4/glibmm/propertyproxy_base.h \
  /usr/include/glibmm-2.4/glibmm/value.h \
+ /usr/include/glibmm-2.4/glibmm/refptr.h \
  /usr/include/glibmm-2.4/glibmm/enums.h \
  /usr/include/glibmm-2.4/glibmm/value_custom.h \
  /usr/include/glibmm-2.4/glibmm/value_basictypes.h \
  /usr/include/glibmm-2.4/glibmm/quark.h \
- /usr/include/glibmm-2.4/glibmm/debug.h /usr/include/c++/6/memory \
+ /usr/include/glibmm-2.4/glibmm/debug.h /usr/include/c++/6/map \
+ /usr/include/c++/6/bits/stl_tree.h /usr/include/c++/6/bits/stl_map.h \
+ /usr/include/c++/6/bits/stl_multimap.h /usr/include/c++/6/memory \
  /usr/include/c++/6/bits/stl_tempbuf.h \
  /usr/include/c++/6/bits/stl_raw_storage_iter.h \
  /usr/include/c++/6/ext/concurrence.h \
@@ -840,81 +827,171 @@ docklight-DockPanel.o: DockPanel.cpp /usr/include/stdc-predef.h \
  /usr/include/c++/6/chrono /usr/include/c++/6/ratio \
  /usr/include/c++/6/limits /usr/include/c++/6/ctime \
  /usr/include/c++/6/bits/parse_numbers.h \
- /usr/include/c++/6/bits/std_mutex.h /usr/include/c++/6/algorithm \
- /usr/include/c++/6/bits/stl_algo.h \
+ /usr/include/c++/6/bits/std_mutex.h \
+ /usr/include/glibmm-2.4/glibmm/wrap.h \
+ /usr/include/glibmm-2.4/glibmm/utility.h \
+ /usr/include/glibmm-2.4/glibmm/containerhandle_shared.h \
+ /usr/include/glibmm-2.4/glibmm/variant.h \
+ /usr/include/glibmm-2.4/glibmm/varianttype.h \
+ /usr/include/glibmm-2.4/glibmm/variantiter.h \
+ /usr/include/glibmm-2.4/glibmm/variantdbusstring.h \
+ /usr/include/glibmm-2.4/glibmm/error.h \
+ /usr/include/glibmm-2.4/glibmm/exception.h \
+ /usr/include/glibmm-2.4/glibmm/variant_basictypes.h \
+ /usr/include/c++/6/algorithm /usr/include/c++/6/bits/stl_algo.h \
  /usr/include/c++/6/bits/algorithmfwd.h \
  /usr/include/c++/6/bits/stl_heap.h \
  /usr/include/c++/6/bits/uniform_int_dist.h /usr/include/c++/6/deque \
  /usr/include/c++/6/bits/stl_deque.h /usr/include/c++/6/bits/deque.tcc \
- /usr/include/glibmm-2.4/glibmm/balancedtree.h \
- /usr/include/glibmm-2.4/glibmm/base64.h \
- /usr/include/glibmm-2.4/glibmm/binding.h \
- /usr/include/glibmm-2.4/glibmm/object.h \
- /usr/include/glibmm-2.4/glibmm/utility.h \
- /usr/include/glibmm-2.4/glibmm/bytearray.h \
- /usr/include/sigc++-2.0/sigc++/slot.h \
- /usr/include/glibmm-2.4/glibmm/bytes.h \
- /usr/include/glibmm-2.4/glibmm/checksum.h \
- /usr/include/glibmm-2.4/glibmm/convert.h \
- /usr/include/glibmm-2.4/glibmm/date.h \
- /usr/include/glibmm-2.4/glibmm/datetime.h \
- /usr/include/glibmm-2.4/glibmm/dispatcher.h \
- /usr/include/glibmm-2.4/glibmm/main.h \
- /usr/include/glibmm-2.4/glibmm/priorities.h \
- /usr/include/glibmm-2.4/glibmm/iochannel.h \
- /usr/include/glibmm-2.4/glibmm/exceptionhandler.h \
- /usr/include/glibmm-2.4/glibmm/fileutils.h \
- /usr/include/glibmm-2.4/glibmm/helperlist.h \
- /usr/include/glibmm-2.4/glibmm/containers.h \
- /usr/include/glibmm-2.4/glibmm/sarray.h \
- /usr/include/glibmm-2.4/glibmm/interface.h \
- /usr/include/glibmm-2.4/glibmm/init.h \
- /usr/include/glibmm-2.4/glibmm/keyfile.h \
- /usr/include/glibmm-2.4/glibmm/streamiochannel.h \
+ /usr/include/gtkmm-3.0/gtkmm/bin.h \
+ /usr/include/gtkmm-3.0/gtkmm/container.h \
+ /usr/include/gtkmm-3.0/gtkmm/widget.h \
+ /usr/lib/x86_64-linux-gnu/gtkmm-3.0/include/gtkmmconfig.h \
+ /usr/lib/x86_64-linux-gnu/gdkmm-3.0/include/gdkmmconfig.h \
+ /usr/lib/x86_64-linux-gnu/pangomm-1.4/include/pangommconfig.h \
+ /usr/include/pangomm-1.4/pangomm/context.h \
+ /usr/include/glibmm-2.4/glibmm/arrayhandle.h \
  /usr/include/glibmm-2.4/glibmm/listhandle.h \
- /usr/include/glibmm-2.4/glibmm/markup.h \
- /usr/include/glibmm-2.4/glibmm/miscutils.h \
- /usr/include/glibmm-2.4/glibmm/module.h \
- /usr/include/glibmm-2.4/glibmm/nodetree.h /usr/include/c++/6/stack \
- /usr/include/c++/6/bits/stl_stack.h \
- /usr/include/glibmm-2.4/glibmm/optioncontext.h \
- /usr/include/glibmm-2.4/glibmm/optionentry.h \
- /usr/include/glibmm-2.4/glibmm/optiongroup.h \
- /usr/include/glibmm-2.4/glibmm/pattern.h \
- /usr/include/glibmm-2.4/glibmm/property.h \
- /usr/include/glibmm-2.4/glibmm/random.h \
- /usr/include/glibmm-2.4/glibmm/regex.h \
- /usr/include/glibmm-2.4/glibmm/shell.h \
+ /usr/include/pangomm-1.4/pangomm/fontdescription.h \
+ /usr/include/pangomm-1.4/pangomm/fontmetrics.h \
+ /usr/include/pangomm-1.4/pangomm/fontset.h \
+ /usr/include/pangomm-1.4/pangomm/language.h \
+ /usr/include/pangomm-1.4/pangomm/font.h \
+ /usr/include/pangomm-1.4/pangomm/rectangle.h \
+ /usr/include/pangomm-1.4/pangomm/glyph.h \
+ /usr/include/pangomm-1.4/pangomm/coverage.h \
+ /usr/include/pangomm-1.4/pangomm/fontmap.h \
+ /usr/include/pangomm-1.4/pangomm/fontfamily.h \
+ /usr/include/pangomm-1.4/pangomm/fontface.h \
+ /usr/include/pangomm-1.4/pangomm/item.h \
+ /usr/include/pangomm-1.4/pangomm/attributes.h \
+ /usr/include/pangomm-1.4/pangomm/color.h \
  /usr/include/glibmm-2.4/glibmm/slisthandle.h \
- /usr/include/glibmm-2.4/glibmm/spawn.h \
- /usr/include/glibmm-2.4/glibmm/stringutils.h \
- /usr/include/glibmm-2.4/glibmm/threadpool.h \
- /usr/include/glibmm-2.4/glibmm/timezone.h \
- /usr/include/glibmm-2.4/glibmm/uriutils.h \
- /usr/include/glibmm-2.4/glibmm/valuearray.h \
- /usr/include/glibmm-2.4/glibmm/variantdict.h \
- /usr/include/glibmm-2.4/glibmm/vectorutils.h \
- /usr/include/glibmm-2.4/glibmm/weakref.h /usr/include/giomm-2.4/giomm.h \
- /usr/include/giomm-2.4/giomm/action.h \
+ /usr/include/pangomm-1.4/pangomm/attrlist.h \
+ /usr/include/pangomm-1.4/pangomm/attriter.h \
+ /usr/include/pangomm-1.4/pangomm/types.h \
+ /usr/include/cairomm-1.0/cairomm/context.h \
+ /usr/include/cairomm-1.0/cairomm/surface.h \
+ /usr/include/sigc++-2.0/sigc++/slot.h \
+ /usr/include/cairomm-1.0/cairomm/enums.h /usr/include/cairo/cairo-ft.h \
+ /usr/include/cairo/cairo.h /usr/include/freetype2/ft2build.h \
+ /usr/include/freetype2/freetype/config/ftheader.h \
+ /usr/include/freetype2/freetype/freetype.h \
+ /usr/include/freetype2/freetype/config/ftconfig.h \
+ /usr/include/freetype2/freetype/config/ftoption.h \
+ /usr/include/freetype2/freetype/config/ftstdlib.h /usr/include/setjmp.h \
+ /usr/include/freetype2/freetype/fttypes.h \
+ /usr/include/freetype2/freetype/ftsystem.h \
+ /usr/include/freetype2/freetype/ftimage.h \
+ /usr/include/freetype2/freetype/fterrors.h \
+ /usr/include/freetype2/freetype/ftmoderr.h \
+ /usr/include/freetype2/freetype/fterrdef.h \
+ /usr/include/fontconfig/fontconfig.h \
+ /usr/include/x86_64-linux-gnu/sys/stat.h \
+ /usr/include/x86_64-linux-gnu/bits/stat.h \
+ /usr/include/cairomm-1.0/cairomm/exception.h \
+ /usr/include/cairomm-1.0/cairomm/device.h \
+ /usr/include/cairomm-1.0/cairomm/types.h \
+ /usr/include/cairomm-1.0/cairomm/refptr.h \
+ /usr/include/cairomm-1.0/cairomm/fontoptions.h \
+ /usr/include/cairo/cairo-pdf.h /usr/include/cairo/cairo-ps.h \
+ /usr/include/cairo/cairo-svg.h \
+ /usr/include/cairomm-1.0/cairomm/fontface.h \
+ /usr/include/cairomm-1.0/cairomm/matrix.h \
+ /usr/include/cairomm-1.0/cairomm/pattern.h \
+ /usr/include/cairomm-1.0/cairomm/path.h \
+ /usr/include/cairomm-1.0/cairomm/scaledfont.h \
+ /usr/include/c++/6/valarray /usr/include/c++/6/cmath /usr/include/math.h \
+ /usr/include/x86_64-linux-gnu/bits/math-vector.h \
+ /usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h \
+ /usr/include/x86_64-linux-gnu/bits/flt-eval-method.h \
+ /usr/include/x86_64-linux-gnu/bits/fp-logb.h \
+ /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
+ /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
+ /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+ /usr/include/x86_64-linux-gnu/bits/iscanonical.h \
+ /usr/include/c++/6/bits/valarray_array.h \
+ /usr/include/c++/6/bits/valarray_array.tcc \
+ /usr/include/c++/6/bits/valarray_before.h \
+ /usr/include/c++/6/bits/slice_array.h \
+ /usr/include/c++/6/bits/valarray_after.h \
+ /usr/include/c++/6/bits/gslice.h /usr/include/c++/6/bits/gslice_array.h \
+ /usr/include/c++/6/bits/mask_array.h \
+ /usr/include/c++/6/bits/indirect_array.h \
+ /usr/include/pangomm-1.4/pangomm/layout.h \
+ /usr/include/pangomm-1.4/pangomm/tabarray.h \
+ /usr/include/pangomm-1.4/pangomm/layoutline.h \
+ /usr/include/pangomm-1.4/pangomm/layoutiter.h \
+ /usr/include/pangomm-1.4/pangomm/layoutrun.h \
+ /usr/include/atkmm-1.6/atkmm/object.h \
+ /usr/include/atkmm-1.6/atkmm/component.h \
+ /usr/include/glibmm-2.4/glibmm/interface.h \
+ /usr/include/atkmm-1.6/atkmm/relation.h \
+ /usr/include/atkmm-1.6/atkmm/implementor.h \
+ /usr/include/gtkmm-3.0/gtkmm/object.h \
+ /usr/include/gtkmm-3.0/gtkmm/base.h \
+ /usr/include/gtkmm-3.0/gtkmm/buildable.h \
+ /usr/include/gdkmm-3.0/gdkmm/event.h \
+ /usr/include/gdkmm-3.0/gdkmm/types.h \
+ /usr/include/gdkmm-3.0/gdkmm/screen.h \
+ /usr/include/gdkmm-3.0/gdkmm/rectangle.h \
+ /usr/include/gdkmm-3.0/gdkmm/window.h \
+ /usr/include/gdkmm-3.0/gdkmm/dragcontext.h \
+ /usr/include/gdkmm-3.0/gdkmm/color.h \
+ /usr/include/gdkmm-3.0/gdkmm/pixbuf.h \
+ /usr/include/gdkmm-3.0/gdkmm/pixbufformat.h \
+ /usr/include/giomm-2.4/giomm/inputstream.h \
+ /usr/include/glibmm-2.4/glibmm/priorities.h \
+ /usr/include/glibmm-2.4/glibmm/bytes.h \
+ /usr/include/giomm-2.4/giomm/asyncresult.h \
  /usr/lib/x86_64-linux-gnu/giomm-2.4/include/giommconfig.h \
- /usr/include/giomm-2.4/giomm/actiongroup.h \
- /usr/include/giomm-2.4/giomm/actionmap.h \
- /usr/include/giomm-2.4/giomm/simpleaction.h \
+ /usr/include/giomm-2.4/giomm/cancellable.h \
+ /usr/include/giomm-2.4/giomm/icon.h \
+ /usr/include/gdkmm-3.0/gdkmm/device.h \
+ /usr/include/gdkmm-3.0/gdkmm/cursor.h \
+ /usr/include/gdkmm-3.0/gdkmm/display.h \
+ /usr/include/gdkmm-3.0/gdkmm/applaunchcontext.h \
  /usr/include/giomm-2.4/giomm/appinfo.h \
  /usr/include/giomm-2.4/giomm/applaunchcontext.h \
- /usr/include/giomm-2.4/giomm/icon.h \
- /usr/include/giomm-2.4/giomm/asyncresult.h \
- /usr/include/giomm-2.4/giomm/cancellable.h \
+ /usr/include/gdkmm-3.0/gdkmm/timecoord.h \
+ /usr/include/cairomm-1.0/cairomm/region.h \
+ /usr/include/gdkmm-3.0/gdkmm/visual.h \
+ /usr/include/gdkmm-3.0/gdkmm/rgba.h /usr/include/gtkmm-3.0/gtkmm/enums.h \
+ /usr/include/gtkmm-3.0/gtkmm/targetlist.h \
+ /usr/include/gtkmm-3.0/gtkmm/targetentry.h \
+ /usr/include/gtkmm-3.0/gtkmm/clipboard.h \
+ /usr/include/gtkmm-3.0/gtkmm/selectiondata.h \
+ /usr/include/gtkmm-3.0/gtkmm/requisition.h \
+ /usr/include/gtkmm-3.0/gtkmm/stylecontext.h \
+ /usr/include/gtkmm-3.0/gtkmm/styleprovider.h \
+ /usr/include/gtkmm-3.0/gtkmm/border.h \
+ /usr/include/gtkmm-3.0/gtkmm/iconsource.h \
+ /usr/include/gtkmm-3.0/gtkmm/iconset.h \
+ /usr/include/gtkmm-3.0/gtkmm/stockid.h \
+ /usr/include/gtkmm-3.0/gtkmm/widgetpath.h \
+ /usr/include/giomm-2.4/giomm/actiongroup.h \
+ /usr/include/gtkmm-3.0/gtkmm/childpropertyproxy.h \
+ /usr/include/gtkmm-3.0/gtkmm/childpropertyproxy_base.h \
+ /usr/include/gtkmm-3.0/gtkmm/application.h \
+ /usr/include/gtkmm-3.0/gtkmm/actiongroup.h \
+ /usr/include/gtkmm-3.0/gtkmm/action.h \
+ /usr/include/gtkmm-3.0/gtkmm/accelgroup.h \
+ /usr/include/gtkmm-3.0/gtkmm/accelkey.h \
  /usr/include/giomm-2.4/giomm/application.h \
+ /usr/include/giomm-2.4/giomm/actionmap.h \
+ /usr/include/giomm-2.4/giomm/simpleaction.h \
+ /usr/include/giomm-2.4/giomm/action.h \
  /usr/include/giomm-2.4/giomm/applicationcommandline.h \
  /usr/include/giomm-2.4/giomm/file.h \
  /usr/include/giomm-2.4/giomm/fileattributeinfolist.h \
  /usr/include/giomm-2.4/giomm/fileattributeinfo.h \
  /usr/include/giomm-2.4/giomm/fileenumerator.h \
  /usr/include/giomm-2.4/giomm/fileinfo.h \
+ /usr/include/glibmm-2.4/glibmm/datetime.h \
+ /usr/include/glibmm-2.4/glibmm/timeval.h \
  /usr/include/giomm-2.4/giomm/fileinputstream.h \
- /usr/include/giomm-2.4/giomm/inputstream.h \
  /usr/include/giomm-2.4/giomm/seekable.h \
+ /usr/include/glibmm-2.4/glibmm/iochannel.h \
  /usr/include/giomm-2.4/giomm/fileiostream.h \
  /usr/include/giomm-2.4/giomm/iostream.h \
  /usr/include/giomm-2.4/giomm/outputstream.h \
@@ -924,6 +1001,9 @@ docklight-DockPanel.o: DockPanel.cpp /usr/include/stdc-predef.h \
  /usr/include/giomm-2.4/giomm/drive.h \
  /usr/include/giomm-2.4/giomm/mount.h \
  /usr/include/giomm-2.4/giomm/error.h \
+ /usr/include/glibmm-2.4/glibmm/variantdict.h \
+ /usr/include/glibmm-2.4/glibmm/optionentry.h \
+ /usr/include/glibmm-2.4/glibmm/optiongroup.h \
  /usr/include/giomm-2.4/giomm/dbusconnection.h \
  /usr/include/giomm-2.4/giomm/initable.h \
  /usr/include/giomm-2.4/giomm/asyncinitable.h \
@@ -936,6 +1016,50 @@ docklight-DockPanel.o: DockPanel.cpp /usr/include/stdc-predef.h \
  /usr/include/giomm-2.4/giomm/dbussubtreevtable.h \
  /usr/include/giomm-2.4/giomm/dbusinterfacevtable.h \
  /usr/include/giomm-2.4/giomm/notification.h \
+ /usr/include/giomm-2.4/giomm/menumodel.h \
+ /usr/include/giomm-2.4/giomm/menu.h \
+ /usr/include/giomm-2.4/giomm/menuitem.h \
+ /usr/include/gtkmm-3.0/gtkmm/windowgroup.h \
+ /usr/include/glibmm-2.4/glibmm/timer.h Configuration.h DockPanel.h \
+ /usr/include/gtkmm-3.0/gtkmm.h /usr/include/glibmm-2.4/glibmm.h \
+ /usr/include/glibmm-2.4/glibmm/thread.h \
+ /usr/include/glibmm-2.4/glibmm/threads.h \
+ /usr/include/glibmm-2.4/glibmm/balancedtree.h \
+ /usr/include/glibmm-2.4/glibmm/base64.h \
+ /usr/include/glibmm-2.4/glibmm/binding.h \
+ /usr/include/glibmm-2.4/glibmm/bytearray.h \
+ /usr/include/glibmm-2.4/glibmm/checksum.h \
+ /usr/include/glibmm-2.4/glibmm/convert.h \
+ /usr/include/glibmm-2.4/glibmm/date.h \
+ /usr/include/glibmm-2.4/glibmm/dispatcher.h \
+ /usr/include/glibmm-2.4/glibmm/main.h \
+ /usr/include/glibmm-2.4/glibmm/exceptionhandler.h \
+ /usr/include/glibmm-2.4/glibmm/fileutils.h \
+ /usr/include/glibmm-2.4/glibmm/helperlist.h \
+ /usr/include/glibmm-2.4/glibmm/containers.h \
+ /usr/include/glibmm-2.4/glibmm/sarray.h \
+ /usr/include/glibmm-2.4/glibmm/init.h \
+ /usr/include/glibmm-2.4/glibmm/keyfile.h \
+ /usr/include/glibmm-2.4/glibmm/streamiochannel.h \
+ /usr/include/glibmm-2.4/glibmm/markup.h \
+ /usr/include/glibmm-2.4/glibmm/miscutils.h \
+ /usr/include/glibmm-2.4/glibmm/module.h \
+ /usr/include/glibmm-2.4/glibmm/nodetree.h /usr/include/c++/6/stack \
+ /usr/include/c++/6/bits/stl_stack.h \
+ /usr/include/glibmm-2.4/glibmm/optioncontext.h \
+ /usr/include/glibmm-2.4/glibmm/pattern.h \
+ /usr/include/glibmm-2.4/glibmm/property.h \
+ /usr/include/glibmm-2.4/glibmm/random.h \
+ /usr/include/glibmm-2.4/glibmm/regex.h \
+ /usr/include/glibmm-2.4/glibmm/shell.h \
+ /usr/include/glibmm-2.4/glibmm/spawn.h \
+ /usr/include/glibmm-2.4/glibmm/stringutils.h \
+ /usr/include/glibmm-2.4/glibmm/threadpool.h \
+ /usr/include/glibmm-2.4/glibmm/timezone.h \
+ /usr/include/glibmm-2.4/glibmm/uriutils.h \
+ /usr/include/glibmm-2.4/glibmm/valuearray.h \
+ /usr/include/glibmm-2.4/glibmm/vectorutils.h \
+ /usr/include/glibmm-2.4/glibmm/weakref.h /usr/include/giomm-2.4/giomm.h \
  /usr/include/giomm-2.4/giomm/bufferedinputstream.h \
  /usr/include/giomm-2.4/giomm/filterinputstream.h \
  /usr/include/giomm-2.4/giomm/bufferedoutputstream.h \
@@ -957,7 +1081,6 @@ docklight-DockPanel.o: DockPanel.cpp /usr/include/stdc-predef.h \
  /usr/include/giomm-2.4/giomm/dbuserrorutils.h \
  /usr/include/giomm-2.4/giomm/dbusinterface.h \
  /usr/include/giomm-2.4/giomm/dbusmenumodel.h \
- /usr/include/giomm-2.4/giomm/menumodel.h \
  /usr/include/giomm-2.4/giomm/dbusobject.h \
  /usr/include/giomm-2.4/giomm/dbusownname.h \
  /usr/include/giomm-2.4/giomm/dbusproxy.h \
@@ -981,8 +1104,6 @@ docklight-DockPanel.o: DockPanel.cpp /usr/include/stdc-predef.h \
  /usr/include/giomm-2.4/giomm/liststore.h \
  /usr/include/giomm-2.4/giomm/memoryinputstream.h \
  /usr/include/giomm-2.4/giomm/memoryoutputstream.h \
- /usr/include/giomm-2.4/giomm/menu.h \
- /usr/include/giomm-2.4/giomm/menuitem.h \
  /usr/include/giomm-2.4/giomm/menuattributeiter.h \
  /usr/include/giomm-2.4/giomm/menulinkiter.h \
  /usr/include/giomm-2.4/giomm/networkaddress.h \
@@ -1029,71 +1150,7 @@ docklight-DockPanel.o: DockPanel.cpp /usr/include/stdc-predef.h \
  /usr/include/giomm-2.4/giomm/volumemonitor.h \
  /usr/include/giomm-2.4/giomm/zlibcompressor.h \
  /usr/include/giomm-2.4/giomm/zlibdecompressor.h \
- /usr/include/gdkmm-3.0/gdkmm/dragcontext.h \
- /usr/include/gdkmm-3.0/gdkmm/color.h \
- /usr/lib/x86_64-linux-gnu/gdkmm-3.0/include/gdkmmconfig.h \
- /usr/lib/x86_64-linux-gnu/pangomm-1.4/include/pangommconfig.h \
- /usr/include/gdkmm-3.0/gdkmm/pixbuf.h \
- /usr/include/gdkmm-3.0/gdkmm/pixbufformat.h \
- /usr/include/gdkmm-3.0/gdkmm/types.h \
- /usr/include/cairomm-1.0/cairomm/surface.h \
- /usr/include/cairomm-1.0/cairomm/enums.h /usr/include/cairo/cairo-ft.h \
- /usr/include/cairo/cairo.h /usr/include/freetype2/ft2build.h \
- /usr/include/freetype2/freetype/config/ftheader.h \
- /usr/include/freetype2/freetype/freetype.h \
- /usr/include/freetype2/freetype/config/ftconfig.h \
- /usr/include/freetype2/freetype/config/ftoption.h \
- /usr/include/freetype2/freetype/config/ftstdlib.h /usr/include/setjmp.h \
- /usr/include/freetype2/freetype/fttypes.h \
- /usr/include/freetype2/freetype/ftsystem.h \
- /usr/include/freetype2/freetype/ftimage.h \
- /usr/include/freetype2/freetype/fterrors.h \
- /usr/include/freetype2/freetype/ftmoderr.h \
- /usr/include/freetype2/freetype/fterrdef.h \
- /usr/include/fontconfig/fontconfig.h \
- /usr/include/x86_64-linux-gnu/sys/stat.h \
- /usr/include/x86_64-linux-gnu/bits/stat.h \
- /usr/include/cairomm-1.0/cairomm/exception.h \
- /usr/include/cairomm-1.0/cairomm/device.h \
- /usr/include/cairomm-1.0/cairomm/types.h \
- /usr/include/cairomm-1.0/cairomm/refptr.h \
- /usr/include/cairomm-1.0/cairomm/fontoptions.h \
- /usr/include/cairo/cairo-pdf.h /usr/include/cairo/cairo-ps.h \
- /usr/include/cairo/cairo-svg.h /usr/include/gdkmm-3.0/gdkmm/device.h \
- /usr/include/gdkmm-3.0/gdkmm/cursor.h \
- /usr/include/gdkmm-3.0/gdkmm/display.h \
- /usr/include/gdkmm-3.0/gdkmm/screen.h \
- /usr/include/gdkmm-3.0/gdkmm/rectangle.h \
- /usr/include/gdkmm-3.0/gdkmm/applaunchcontext.h \
- /usr/include/gdkmm-3.0/gdkmm/event.h \
- /usr/include/gdkmm-3.0/gdkmm/timecoord.h /usr/include/gdkmm-3.0/gdkmm.h \
- /usr/include/gdkmm-3.0/gdkmm/visual.h \
- /usr/include/gdkmm-3.0/gdkmm/window.h \
- /usr/include/cairomm-1.0/cairomm/region.h \
- /usr/include/cairomm-1.0/cairomm/pattern.h \
- /usr/include/gdkmm-3.0/gdkmm/rgba.h \
- /usr/include/cairomm-1.0/cairomm/context.h \
- /usr/include/cairomm-1.0/cairomm/fontface.h \
- /usr/include/cairomm-1.0/cairomm/matrix.h \
- /usr/include/cairomm-1.0/cairomm/path.h \
- /usr/include/cairomm-1.0/cairomm/scaledfont.h \
- /usr/include/c++/6/valarray /usr/include/c++/6/cmath /usr/include/math.h \
- /usr/include/x86_64-linux-gnu/bits/math-vector.h \
- /usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h \
- /usr/include/x86_64-linux-gnu/bits/flt-eval-method.h \
- /usr/include/x86_64-linux-gnu/bits/fp-logb.h \
- /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
- /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
- /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
- /usr/include/x86_64-linux-gnu/bits/iscanonical.h \
- /usr/include/c++/6/bits/valarray_array.h \
- /usr/include/c++/6/bits/valarray_array.tcc \
- /usr/include/c++/6/bits/valarray_before.h \
- /usr/include/c++/6/bits/slice_array.h \
- /usr/include/c++/6/bits/valarray_after.h \
- /usr/include/c++/6/bits/gslice.h /usr/include/c++/6/bits/gslice_array.h \
- /usr/include/c++/6/bits/mask_array.h \
- /usr/include/c++/6/bits/indirect_array.h \
+ /usr/include/gdkmm-3.0/gdkmm.h \
  /usr/include/gdkmm-3.0/gdkmm/pixbufanimation.h \
  /usr/include/gdkmm-3.0/gdkmm/pixbufanimationiter.h \
  /usr/include/gdkmm-3.0/gdkmm/pixbufloader.h \
@@ -1105,66 +1162,10 @@ docklight-DockPanel.o: DockPanel.cpp /usr/include/stdc-predef.h \
  /usr/include/gdkmm-3.0/gdkmm/monitor.h \
  /usr/include/gdkmm-3.0/gdkmm/general.h \
  /usr/include/gtkmm-3.0/gtkmm/toggleaction.h \
- /usr/include/gtkmm-3.0/gtkmm/action.h \
- /usr/lib/x86_64-linux-gnu/gtkmm-3.0/include/gtkmmconfig.h \
- /usr/include/gtkmm-3.0/gtkmm/widget.h \
- /usr/include/pangomm-1.4/pangomm/context.h \
- /usr/include/pangomm-1.4/pangomm/fontdescription.h \
- /usr/include/pangomm-1.4/pangomm/fontmetrics.h \
- /usr/include/pangomm-1.4/pangomm/fontset.h \
- /usr/include/pangomm-1.4/pangomm/language.h \
- /usr/include/pangomm-1.4/pangomm/font.h \
- /usr/include/pangomm-1.4/pangomm/rectangle.h \
- /usr/include/pangomm-1.4/pangomm/glyph.h \
- /usr/include/pangomm-1.4/pangomm/coverage.h \
- /usr/include/pangomm-1.4/pangomm/fontmap.h \
- /usr/include/pangomm-1.4/pangomm/fontfamily.h \
- /usr/include/pangomm-1.4/pangomm/fontface.h \
- /usr/include/pangomm-1.4/pangomm/item.h \
- /usr/include/pangomm-1.4/pangomm/attributes.h \
- /usr/include/pangomm-1.4/pangomm/color.h \
- /usr/include/pangomm-1.4/pangomm/attrlist.h \
- /usr/include/pangomm-1.4/pangomm/attriter.h \
- /usr/include/pangomm-1.4/pangomm/types.h \
- /usr/include/pangomm-1.4/pangomm/layout.h \
- /usr/include/pangomm-1.4/pangomm/tabarray.h \
- /usr/include/pangomm-1.4/pangomm/layoutline.h \
- /usr/include/pangomm-1.4/pangomm/layoutiter.h \
- /usr/include/pangomm-1.4/pangomm/layoutrun.h \
- /usr/include/atkmm-1.6/atkmm/object.h \
- /usr/include/atkmm-1.6/atkmm/component.h \
- /usr/include/atkmm-1.6/atkmm/relation.h \
- /usr/include/atkmm-1.6/atkmm/implementor.h \
- /usr/include/gtkmm-3.0/gtkmm/object.h \
- /usr/include/gtkmm-3.0/gtkmm/base.h \
- /usr/include/gtkmm-3.0/gtkmm/buildable.h \
- /usr/include/gtkmm-3.0/gtkmm/enums.h \
- /usr/include/gtkmm-3.0/gtkmm/targetlist.h \
- /usr/include/gtkmm-3.0/gtkmm/targetentry.h \
- /usr/include/gtkmm-3.0/gtkmm/clipboard.h \
- /usr/include/gtkmm-3.0/gtkmm/selectiondata.h \
- /usr/include/gtkmm-3.0/gtkmm/requisition.h \
- /usr/include/gtkmm-3.0/gtkmm/stylecontext.h \
- /usr/include/gtkmm-3.0/gtkmm/styleprovider.h \
- /usr/include/gtkmm-3.0/gtkmm/border.h \
- /usr/include/gtkmm-3.0/gtkmm/iconsource.h \
- /usr/include/gtkmm-3.0/gtkmm/iconset.h \
- /usr/include/gtkmm-3.0/gtkmm/stockid.h \
- /usr/include/gtkmm-3.0/gtkmm/widgetpath.h \
- /usr/include/gtkmm-3.0/gtkmm/accelgroup.h \
  /usr/include/gtkmm-3.0/gtkmm/radioaction.h \
  /usr/include/gtkmm-3.0/gtkmm/radiobuttongroup.h \
  /usr/include/gtkmm-3.0/gtkmm/aboutdialog.h \
- /usr/include/gtkmm-3.0/gtkmm/dialog.h \
- /usr/include/gtkmm-3.0/gtkmm/window.h /usr/include/gtkmm-3.0/gtkmm/bin.h \
- /usr/include/gtkmm-3.0/gtkmm/container.h \
- /usr/include/gtkmm-3.0/gtkmm/childpropertyproxy.h \
- /usr/include/gtkmm-3.0/gtkmm/childpropertyproxy_base.h \
- /usr/include/gtkmm-3.0/gtkmm/application.h \
- /usr/include/gtkmm-3.0/gtkmm/actiongroup.h \
- /usr/include/gtkmm-3.0/gtkmm/accelkey.h \
- /usr/include/gtkmm-3.0/gtkmm/windowgroup.h \
- /usr/include/gtkmm-3.0/gtkmm/box.h \
+ /usr/include/gtkmm-3.0/gtkmm/dialog.h /usr/include/gtkmm-3.0/gtkmm/box.h \
  /usr/include/gtkmm-3.0/gtkmm/orientable.h \
  /usr/include/gtkmm-3.0/gtkmm/hvbox.h \
  /usr/include/gtkmm-3.0/gtkmm/button.h \
@@ -1372,19 +1373,19 @@ docklight-DockPanel.o: DockPanel.cpp /usr/include/stdc-predef.h \
  /usr/include/gtkmm-3.0/gtkmm/treestore.h \
  /usr/include/gtkmm-3.0/gtkmm/uimanager.h \
  /usr/include/gtkmm-3.0/gtkmm/viewport.h \
- /usr/include/gtkmm-3.0/gtkmm/volumebutton.h Configuration.h DockItem.h \
- SessionWindow.h Utilities.h /usr/include/c++/6/math.h IconLoader.h \
- DockWindowHandler.h Launcher.h /usr/include/c++/6/thread Animations.h \
- AppWindow.h /usr/include/glibmm-2.4/glibmm/i18n.h \
- /usr/include/glib-2.0/glib/gi18n.h /usr/include/libintl.h \
- /usr/include/c++/6/fstream /usr/include/c++/6/bits/codecvt.h \
+ /usr/include/gtkmm-3.0/gtkmm/volumebutton.h SessionWindow.h Utilities.h \
+ /usr/include/c++/6/math.h IconLoader.h DockWindowHandler.h Launcher.h \
+ /usr/include/c++/6/thread Animations.h AppWindow.h \
+ /usr/include/glibmm-2.4/glibmm/i18n.h /usr/include/glib-2.0/glib/gi18n.h \
+ /usr/include/libintl.h /usr/include/c++/6/fstream \
+ /usr/include/c++/6/bits/codecvt.h \
  /usr/include/x86_64-linux-gnu/c++/6/bits/basic_file.h \
  /usr/include/x86_64-linux-gnu/c++/6/bits/c++io.h \
  /usr/include/c++/6/bits/fstream.tcc /usr/include/c++/6/iostream
 
 /usr/include/stdc-predef.h:
 
-DockPanel.h:
+DockItem.h:
 
 /usr/include/libwnck-3.0/libwnck/libwnck.h:
 
@@ -2858,21 +2859,11 @@ DockPanel.h:
 
 /usr/include/libwnck-3.0/libwnck/wnck-enum-types.h:
 
-/usr/include/glibmm-2.4/glibmm/timer.h:
-
-/usr/include/gtkmm-3.0/gtkmm.h:
-
-/usr/include/glibmm-2.4/glibmm.h:
-
-/usr/lib/x86_64-linux-gnu/glibmm-2.4/include/glibmmconfig.h:
-
-/usr/include/glibmm-2.4/glibmm/thread.h:
-
-/usr/include/glibmm-2.4/glibmm/error.h:
-
-/usr/include/glibmm-2.4/glibmm/exception.h:
+/usr/include/gtkmm-3.0/gtkmm/window.h:
 
 /usr/include/glibmm-2.4/glibmm/ustring.h:
+
+/usr/lib/x86_64-linux-gnu/glibmm-2.4/include/glibmmconfig.h:
 
 /usr/include/glibmm-2.4/glibmm/unicode.h:
 
@@ -3074,8 +3065,6 @@ DockPanel.h:
 
 /usr/include/c++/6/bits/sstream.tcc:
 
-/usr/include/glibmm-2.4/glibmm/timeval.h:
-
 /usr/include/sigc++-2.0/sigc++/sigc++.h:
 
 /usr/include/sigc++-2.0/sigc++/signal.h:
@@ -3158,18 +3147,6 @@ DockPanel.h:
 
 /usr/include/sigc++-2.0/sigc++/functors/functors.h:
 
-/usr/include/glibmm-2.4/glibmm/threads.h:
-
-/usr/include/glibmm-2.4/glibmm/arrayhandle.h:
-
-/usr/include/glibmm-2.4/glibmm/containerhandle_shared.h:
-
-/usr/include/glibmm-2.4/glibmm/refptr.h:
-
-/usr/include/glibmm-2.4/glibmm/variant.h:
-
-/usr/include/glibmm-2.4/glibmm/varianttype.h:
-
 /usr/include/c++/6/vector:
 
 /usr/include/c++/6/bits/stl_construct.h:
@@ -3182,21 +3159,7 @@ DockPanel.h:
 
 /usr/include/c++/6/bits/vector.tcc:
 
-/usr/include/glibmm-2.4/glibmm/variantiter.h:
-
-/usr/include/glibmm-2.4/glibmm/variantdbusstring.h:
-
-/usr/include/c++/6/map:
-
-/usr/include/c++/6/bits/stl_tree.h:
-
-/usr/include/c++/6/bits/stl_map.h:
-
-/usr/include/c++/6/bits/stl_multimap.h:
-
-/usr/include/glibmm-2.4/glibmm/variant_basictypes.h:
-
-/usr/include/glibmm-2.4/glibmm/wrap.h:
+/usr/include/glibmm-2.4/glibmm/object.h:
 
 /usr/include/glibmm-2.4/glibmm/objectbase.h:
 
@@ -3212,6 +3175,8 @@ DockPanel.h:
 
 /usr/include/glibmm-2.4/glibmm/value.h:
 
+/usr/include/glibmm-2.4/glibmm/refptr.h:
+
 /usr/include/glibmm-2.4/glibmm/enums.h:
 
 /usr/include/glibmm-2.4/glibmm/value_custom.h:
@@ -3221,6 +3186,14 @@ DockPanel.h:
 /usr/include/glibmm-2.4/glibmm/quark.h:
 
 /usr/include/glibmm-2.4/glibmm/debug.h:
+
+/usr/include/c++/6/map:
+
+/usr/include/c++/6/bits/stl_tree.h:
+
+/usr/include/c++/6/bits/stl_map.h:
+
+/usr/include/c++/6/bits/stl_multimap.h:
 
 /usr/include/c++/6/memory:
 
@@ -3256,6 +3229,26 @@ DockPanel.h:
 
 /usr/include/c++/6/bits/std_mutex.h:
 
+/usr/include/glibmm-2.4/glibmm/wrap.h:
+
+/usr/include/glibmm-2.4/glibmm/utility.h:
+
+/usr/include/glibmm-2.4/glibmm/containerhandle_shared.h:
+
+/usr/include/glibmm-2.4/glibmm/variant.h:
+
+/usr/include/glibmm-2.4/glibmm/varianttype.h:
+
+/usr/include/glibmm-2.4/glibmm/variantiter.h:
+
+/usr/include/glibmm-2.4/glibmm/variantdbusstring.h:
+
+/usr/include/glibmm-2.4/glibmm/error.h:
+
+/usr/include/glibmm-2.4/glibmm/exception.h:
+
+/usr/include/glibmm-2.4/glibmm/variant_basictypes.h:
+
 /usr/include/c++/6/algorithm:
 
 /usr/include/c++/6/bits/stl_algo.h:
@@ -3272,129 +3265,297 @@ DockPanel.h:
 
 /usr/include/c++/6/bits/deque.tcc:
 
-/usr/include/glibmm-2.4/glibmm/balancedtree.h:
+/usr/include/gtkmm-3.0/gtkmm/bin.h:
 
-/usr/include/glibmm-2.4/glibmm/base64.h:
+/usr/include/gtkmm-3.0/gtkmm/container.h:
 
-/usr/include/glibmm-2.4/glibmm/binding.h:
+/usr/include/gtkmm-3.0/gtkmm/widget.h:
 
-/usr/include/glibmm-2.4/glibmm/object.h:
+/usr/lib/x86_64-linux-gnu/gtkmm-3.0/include/gtkmmconfig.h:
 
-/usr/include/glibmm-2.4/glibmm/utility.h:
+/usr/lib/x86_64-linux-gnu/gdkmm-3.0/include/gdkmmconfig.h:
 
-/usr/include/glibmm-2.4/glibmm/bytearray.h:
+/usr/lib/x86_64-linux-gnu/pangomm-1.4/include/pangommconfig.h:
 
-/usr/include/sigc++-2.0/sigc++/slot.h:
+/usr/include/pangomm-1.4/pangomm/context.h:
 
-/usr/include/glibmm-2.4/glibmm/bytes.h:
-
-/usr/include/glibmm-2.4/glibmm/checksum.h:
-
-/usr/include/glibmm-2.4/glibmm/convert.h:
-
-/usr/include/glibmm-2.4/glibmm/date.h:
-
-/usr/include/glibmm-2.4/glibmm/datetime.h:
-
-/usr/include/glibmm-2.4/glibmm/dispatcher.h:
-
-/usr/include/glibmm-2.4/glibmm/main.h:
-
-/usr/include/glibmm-2.4/glibmm/priorities.h:
-
-/usr/include/glibmm-2.4/glibmm/iochannel.h:
-
-/usr/include/glibmm-2.4/glibmm/exceptionhandler.h:
-
-/usr/include/glibmm-2.4/glibmm/fileutils.h:
-
-/usr/include/glibmm-2.4/glibmm/helperlist.h:
-
-/usr/include/glibmm-2.4/glibmm/containers.h:
-
-/usr/include/glibmm-2.4/glibmm/sarray.h:
-
-/usr/include/glibmm-2.4/glibmm/interface.h:
-
-/usr/include/glibmm-2.4/glibmm/init.h:
-
-/usr/include/glibmm-2.4/glibmm/keyfile.h:
-
-/usr/include/glibmm-2.4/glibmm/streamiochannel.h:
+/usr/include/glibmm-2.4/glibmm/arrayhandle.h:
 
 /usr/include/glibmm-2.4/glibmm/listhandle.h:
 
-/usr/include/glibmm-2.4/glibmm/markup.h:
+/usr/include/pangomm-1.4/pangomm/fontdescription.h:
 
-/usr/include/glibmm-2.4/glibmm/miscutils.h:
+/usr/include/pangomm-1.4/pangomm/fontmetrics.h:
 
-/usr/include/glibmm-2.4/glibmm/module.h:
+/usr/include/pangomm-1.4/pangomm/fontset.h:
 
-/usr/include/glibmm-2.4/glibmm/nodetree.h:
+/usr/include/pangomm-1.4/pangomm/language.h:
 
-/usr/include/c++/6/stack:
+/usr/include/pangomm-1.4/pangomm/font.h:
 
-/usr/include/c++/6/bits/stl_stack.h:
+/usr/include/pangomm-1.4/pangomm/rectangle.h:
 
-/usr/include/glibmm-2.4/glibmm/optioncontext.h:
+/usr/include/pangomm-1.4/pangomm/glyph.h:
 
-/usr/include/glibmm-2.4/glibmm/optionentry.h:
+/usr/include/pangomm-1.4/pangomm/coverage.h:
 
-/usr/include/glibmm-2.4/glibmm/optiongroup.h:
+/usr/include/pangomm-1.4/pangomm/fontmap.h:
 
-/usr/include/glibmm-2.4/glibmm/pattern.h:
+/usr/include/pangomm-1.4/pangomm/fontfamily.h:
 
-/usr/include/glibmm-2.4/glibmm/property.h:
+/usr/include/pangomm-1.4/pangomm/fontface.h:
 
-/usr/include/glibmm-2.4/glibmm/random.h:
+/usr/include/pangomm-1.4/pangomm/item.h:
 
-/usr/include/glibmm-2.4/glibmm/regex.h:
+/usr/include/pangomm-1.4/pangomm/attributes.h:
 
-/usr/include/glibmm-2.4/glibmm/shell.h:
+/usr/include/pangomm-1.4/pangomm/color.h:
 
 /usr/include/glibmm-2.4/glibmm/slisthandle.h:
 
-/usr/include/glibmm-2.4/glibmm/spawn.h:
+/usr/include/pangomm-1.4/pangomm/attrlist.h:
 
-/usr/include/glibmm-2.4/glibmm/stringutils.h:
+/usr/include/pangomm-1.4/pangomm/attriter.h:
 
-/usr/include/glibmm-2.4/glibmm/threadpool.h:
+/usr/include/pangomm-1.4/pangomm/types.h:
 
-/usr/include/glibmm-2.4/glibmm/timezone.h:
+/usr/include/cairomm-1.0/cairomm/context.h:
 
-/usr/include/glibmm-2.4/glibmm/uriutils.h:
+/usr/include/cairomm-1.0/cairomm/surface.h:
 
-/usr/include/glibmm-2.4/glibmm/valuearray.h:
+/usr/include/sigc++-2.0/sigc++/slot.h:
 
-/usr/include/glibmm-2.4/glibmm/variantdict.h:
+/usr/include/cairomm-1.0/cairomm/enums.h:
 
-/usr/include/glibmm-2.4/glibmm/vectorutils.h:
+/usr/include/cairo/cairo-ft.h:
 
-/usr/include/glibmm-2.4/glibmm/weakref.h:
+/usr/include/cairo/cairo.h:
 
-/usr/include/giomm-2.4/giomm.h:
+/usr/include/freetype2/ft2build.h:
 
-/usr/include/giomm-2.4/giomm/action.h:
+/usr/include/freetype2/freetype/config/ftheader.h:
+
+/usr/include/freetype2/freetype/freetype.h:
+
+/usr/include/freetype2/freetype/config/ftconfig.h:
+
+/usr/include/freetype2/freetype/config/ftoption.h:
+
+/usr/include/freetype2/freetype/config/ftstdlib.h:
+
+/usr/include/setjmp.h:
+
+/usr/include/freetype2/freetype/fttypes.h:
+
+/usr/include/freetype2/freetype/ftsystem.h:
+
+/usr/include/freetype2/freetype/ftimage.h:
+
+/usr/include/freetype2/freetype/fterrors.h:
+
+/usr/include/freetype2/freetype/ftmoderr.h:
+
+/usr/include/freetype2/freetype/fterrdef.h:
+
+/usr/include/fontconfig/fontconfig.h:
+
+/usr/include/x86_64-linux-gnu/sys/stat.h:
+
+/usr/include/x86_64-linux-gnu/bits/stat.h:
+
+/usr/include/cairomm-1.0/cairomm/exception.h:
+
+/usr/include/cairomm-1.0/cairomm/device.h:
+
+/usr/include/cairomm-1.0/cairomm/types.h:
+
+/usr/include/cairomm-1.0/cairomm/refptr.h:
+
+/usr/include/cairomm-1.0/cairomm/fontoptions.h:
+
+/usr/include/cairo/cairo-pdf.h:
+
+/usr/include/cairo/cairo-ps.h:
+
+/usr/include/cairo/cairo-svg.h:
+
+/usr/include/cairomm-1.0/cairomm/fontface.h:
+
+/usr/include/cairomm-1.0/cairomm/matrix.h:
+
+/usr/include/cairomm-1.0/cairomm/pattern.h:
+
+/usr/include/cairomm-1.0/cairomm/path.h:
+
+/usr/include/cairomm-1.0/cairomm/scaledfont.h:
+
+/usr/include/c++/6/valarray:
+
+/usr/include/c++/6/cmath:
+
+/usr/include/math.h:
+
+/usr/include/x86_64-linux-gnu/bits/math-vector.h:
+
+/usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h:
+
+/usr/include/x86_64-linux-gnu/bits/flt-eval-method.h:
+
+/usr/include/x86_64-linux-gnu/bits/fp-logb.h:
+
+/usr/include/x86_64-linux-gnu/bits/fp-fast.h:
+
+/usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h:
+
+/usr/include/x86_64-linux-gnu/bits/mathcalls.h:
+
+/usr/include/x86_64-linux-gnu/bits/iscanonical.h:
+
+/usr/include/c++/6/bits/valarray_array.h:
+
+/usr/include/c++/6/bits/valarray_array.tcc:
+
+/usr/include/c++/6/bits/valarray_before.h:
+
+/usr/include/c++/6/bits/slice_array.h:
+
+/usr/include/c++/6/bits/valarray_after.h:
+
+/usr/include/c++/6/bits/gslice.h:
+
+/usr/include/c++/6/bits/gslice_array.h:
+
+/usr/include/c++/6/bits/mask_array.h:
+
+/usr/include/c++/6/bits/indirect_array.h:
+
+/usr/include/pangomm-1.4/pangomm/layout.h:
+
+/usr/include/pangomm-1.4/pangomm/tabarray.h:
+
+/usr/include/pangomm-1.4/pangomm/layoutline.h:
+
+/usr/include/pangomm-1.4/pangomm/layoutiter.h:
+
+/usr/include/pangomm-1.4/pangomm/layoutrun.h:
+
+/usr/include/atkmm-1.6/atkmm/object.h:
+
+/usr/include/atkmm-1.6/atkmm/component.h:
+
+/usr/include/glibmm-2.4/glibmm/interface.h:
+
+/usr/include/atkmm-1.6/atkmm/relation.h:
+
+/usr/include/atkmm-1.6/atkmm/implementor.h:
+
+/usr/include/gtkmm-3.0/gtkmm/object.h:
+
+/usr/include/gtkmm-3.0/gtkmm/base.h:
+
+/usr/include/gtkmm-3.0/gtkmm/buildable.h:
+
+/usr/include/gdkmm-3.0/gdkmm/event.h:
+
+/usr/include/gdkmm-3.0/gdkmm/types.h:
+
+/usr/include/gdkmm-3.0/gdkmm/screen.h:
+
+/usr/include/gdkmm-3.0/gdkmm/rectangle.h:
+
+/usr/include/gdkmm-3.0/gdkmm/window.h:
+
+/usr/include/gdkmm-3.0/gdkmm/dragcontext.h:
+
+/usr/include/gdkmm-3.0/gdkmm/color.h:
+
+/usr/include/gdkmm-3.0/gdkmm/pixbuf.h:
+
+/usr/include/gdkmm-3.0/gdkmm/pixbufformat.h:
+
+/usr/include/giomm-2.4/giomm/inputstream.h:
+
+/usr/include/glibmm-2.4/glibmm/priorities.h:
+
+/usr/include/glibmm-2.4/glibmm/bytes.h:
+
+/usr/include/giomm-2.4/giomm/asyncresult.h:
 
 /usr/lib/x86_64-linux-gnu/giomm-2.4/include/giommconfig.h:
 
-/usr/include/giomm-2.4/giomm/actiongroup.h:
+/usr/include/giomm-2.4/giomm/cancellable.h:
 
-/usr/include/giomm-2.4/giomm/actionmap.h:
+/usr/include/giomm-2.4/giomm/icon.h:
 
-/usr/include/giomm-2.4/giomm/simpleaction.h:
+/usr/include/gdkmm-3.0/gdkmm/device.h:
+
+/usr/include/gdkmm-3.0/gdkmm/cursor.h:
+
+/usr/include/gdkmm-3.0/gdkmm/display.h:
+
+/usr/include/gdkmm-3.0/gdkmm/applaunchcontext.h:
 
 /usr/include/giomm-2.4/giomm/appinfo.h:
 
 /usr/include/giomm-2.4/giomm/applaunchcontext.h:
 
-/usr/include/giomm-2.4/giomm/icon.h:
+/usr/include/gdkmm-3.0/gdkmm/timecoord.h:
 
-/usr/include/giomm-2.4/giomm/asyncresult.h:
+/usr/include/cairomm-1.0/cairomm/region.h:
 
-/usr/include/giomm-2.4/giomm/cancellable.h:
+/usr/include/gdkmm-3.0/gdkmm/visual.h:
+
+/usr/include/gdkmm-3.0/gdkmm/rgba.h:
+
+/usr/include/gtkmm-3.0/gtkmm/enums.h:
+
+/usr/include/gtkmm-3.0/gtkmm/targetlist.h:
+
+/usr/include/gtkmm-3.0/gtkmm/targetentry.h:
+
+/usr/include/gtkmm-3.0/gtkmm/clipboard.h:
+
+/usr/include/gtkmm-3.0/gtkmm/selectiondata.h:
+
+/usr/include/gtkmm-3.0/gtkmm/requisition.h:
+
+/usr/include/gtkmm-3.0/gtkmm/stylecontext.h:
+
+/usr/include/gtkmm-3.0/gtkmm/styleprovider.h:
+
+/usr/include/gtkmm-3.0/gtkmm/border.h:
+
+/usr/include/gtkmm-3.0/gtkmm/iconsource.h:
+
+/usr/include/gtkmm-3.0/gtkmm/iconset.h:
+
+/usr/include/gtkmm-3.0/gtkmm/stockid.h:
+
+/usr/include/gtkmm-3.0/gtkmm/widgetpath.h:
+
+/usr/include/giomm-2.4/giomm/actiongroup.h:
+
+/usr/include/gtkmm-3.0/gtkmm/childpropertyproxy.h:
+
+/usr/include/gtkmm-3.0/gtkmm/childpropertyproxy_base.h:
+
+/usr/include/gtkmm-3.0/gtkmm/application.h:
+
+/usr/include/gtkmm-3.0/gtkmm/actiongroup.h:
+
+/usr/include/gtkmm-3.0/gtkmm/action.h:
+
+/usr/include/gtkmm-3.0/gtkmm/accelgroup.h:
+
+/usr/include/gtkmm-3.0/gtkmm/accelkey.h:
 
 /usr/include/giomm-2.4/giomm/application.h:
+
+/usr/include/giomm-2.4/giomm/actionmap.h:
+
+/usr/include/giomm-2.4/giomm/simpleaction.h:
+
+/usr/include/giomm-2.4/giomm/action.h:
 
 /usr/include/giomm-2.4/giomm/applicationcommandline.h:
 
@@ -3408,11 +3569,15 @@ DockPanel.h:
 
 /usr/include/giomm-2.4/giomm/fileinfo.h:
 
+/usr/include/glibmm-2.4/glibmm/datetime.h:
+
+/usr/include/glibmm-2.4/glibmm/timeval.h:
+
 /usr/include/giomm-2.4/giomm/fileinputstream.h:
 
-/usr/include/giomm-2.4/giomm/inputstream.h:
-
 /usr/include/giomm-2.4/giomm/seekable.h:
+
+/usr/include/glibmm-2.4/glibmm/iochannel.h:
 
 /usr/include/giomm-2.4/giomm/fileiostream.h:
 
@@ -3431,6 +3596,12 @@ DockPanel.h:
 /usr/include/giomm-2.4/giomm/mount.h:
 
 /usr/include/giomm-2.4/giomm/error.h:
+
+/usr/include/glibmm-2.4/glibmm/variantdict.h:
+
+/usr/include/glibmm-2.4/glibmm/optionentry.h:
+
+/usr/include/glibmm-2.4/glibmm/optiongroup.h:
 
 /usr/include/giomm-2.4/giomm/dbusconnection.h:
 
@@ -3455,6 +3626,104 @@ DockPanel.h:
 /usr/include/giomm-2.4/giomm/dbusinterfacevtable.h:
 
 /usr/include/giomm-2.4/giomm/notification.h:
+
+/usr/include/giomm-2.4/giomm/menumodel.h:
+
+/usr/include/giomm-2.4/giomm/menu.h:
+
+/usr/include/giomm-2.4/giomm/menuitem.h:
+
+/usr/include/gtkmm-3.0/gtkmm/windowgroup.h:
+
+/usr/include/glibmm-2.4/glibmm/timer.h:
+
+Configuration.h:
+
+DockPanel.h:
+
+/usr/include/gtkmm-3.0/gtkmm.h:
+
+/usr/include/glibmm-2.4/glibmm.h:
+
+/usr/include/glibmm-2.4/glibmm/thread.h:
+
+/usr/include/glibmm-2.4/glibmm/threads.h:
+
+/usr/include/glibmm-2.4/glibmm/balancedtree.h:
+
+/usr/include/glibmm-2.4/glibmm/base64.h:
+
+/usr/include/glibmm-2.4/glibmm/binding.h:
+
+/usr/include/glibmm-2.4/glibmm/bytearray.h:
+
+/usr/include/glibmm-2.4/glibmm/checksum.h:
+
+/usr/include/glibmm-2.4/glibmm/convert.h:
+
+/usr/include/glibmm-2.4/glibmm/date.h:
+
+/usr/include/glibmm-2.4/glibmm/dispatcher.h:
+
+/usr/include/glibmm-2.4/glibmm/main.h:
+
+/usr/include/glibmm-2.4/glibmm/exceptionhandler.h:
+
+/usr/include/glibmm-2.4/glibmm/fileutils.h:
+
+/usr/include/glibmm-2.4/glibmm/helperlist.h:
+
+/usr/include/glibmm-2.4/glibmm/containers.h:
+
+/usr/include/glibmm-2.4/glibmm/sarray.h:
+
+/usr/include/glibmm-2.4/glibmm/init.h:
+
+/usr/include/glibmm-2.4/glibmm/keyfile.h:
+
+/usr/include/glibmm-2.4/glibmm/streamiochannel.h:
+
+/usr/include/glibmm-2.4/glibmm/markup.h:
+
+/usr/include/glibmm-2.4/glibmm/miscutils.h:
+
+/usr/include/glibmm-2.4/glibmm/module.h:
+
+/usr/include/glibmm-2.4/glibmm/nodetree.h:
+
+/usr/include/c++/6/stack:
+
+/usr/include/c++/6/bits/stl_stack.h:
+
+/usr/include/glibmm-2.4/glibmm/optioncontext.h:
+
+/usr/include/glibmm-2.4/glibmm/pattern.h:
+
+/usr/include/glibmm-2.4/glibmm/property.h:
+
+/usr/include/glibmm-2.4/glibmm/random.h:
+
+/usr/include/glibmm-2.4/glibmm/regex.h:
+
+/usr/include/glibmm-2.4/glibmm/shell.h:
+
+/usr/include/glibmm-2.4/glibmm/spawn.h:
+
+/usr/include/glibmm-2.4/glibmm/stringutils.h:
+
+/usr/include/glibmm-2.4/glibmm/threadpool.h:
+
+/usr/include/glibmm-2.4/glibmm/timezone.h:
+
+/usr/include/glibmm-2.4/glibmm/uriutils.h:
+
+/usr/include/glibmm-2.4/glibmm/valuearray.h:
+
+/usr/include/glibmm-2.4/glibmm/vectorutils.h:
+
+/usr/include/glibmm-2.4/glibmm/weakref.h:
+
+/usr/include/giomm-2.4/giomm.h:
 
 /usr/include/giomm-2.4/giomm/bufferedinputstream.h:
 
@@ -3497,8 +3766,6 @@ DockPanel.h:
 /usr/include/giomm-2.4/giomm/dbusinterface.h:
 
 /usr/include/giomm-2.4/giomm/dbusmenumodel.h:
-
-/usr/include/giomm-2.4/giomm/menumodel.h:
 
 /usr/include/giomm-2.4/giomm/dbusobject.h:
 
@@ -3545,10 +3812,6 @@ DockPanel.h:
 /usr/include/giomm-2.4/giomm/memoryinputstream.h:
 
 /usr/include/giomm-2.4/giomm/memoryoutputstream.h:
-
-/usr/include/giomm-2.4/giomm/menu.h:
-
-/usr/include/giomm-2.4/giomm/menuitem.h:
 
 /usr/include/giomm-2.4/giomm/menuattributeiter.h:
 
@@ -3642,153 +3905,7 @@ DockPanel.h:
 
 /usr/include/giomm-2.4/giomm/zlibdecompressor.h:
 
-/usr/include/gdkmm-3.0/gdkmm/dragcontext.h:
-
-/usr/include/gdkmm-3.0/gdkmm/color.h:
-
-/usr/lib/x86_64-linux-gnu/gdkmm-3.0/include/gdkmmconfig.h:
-
-/usr/lib/x86_64-linux-gnu/pangomm-1.4/include/pangommconfig.h:
-
-/usr/include/gdkmm-3.0/gdkmm/pixbuf.h:
-
-/usr/include/gdkmm-3.0/gdkmm/pixbufformat.h:
-
-/usr/include/gdkmm-3.0/gdkmm/types.h:
-
-/usr/include/cairomm-1.0/cairomm/surface.h:
-
-/usr/include/cairomm-1.0/cairomm/enums.h:
-
-/usr/include/cairo/cairo-ft.h:
-
-/usr/include/cairo/cairo.h:
-
-/usr/include/freetype2/ft2build.h:
-
-/usr/include/freetype2/freetype/config/ftheader.h:
-
-/usr/include/freetype2/freetype/freetype.h:
-
-/usr/include/freetype2/freetype/config/ftconfig.h:
-
-/usr/include/freetype2/freetype/config/ftoption.h:
-
-/usr/include/freetype2/freetype/config/ftstdlib.h:
-
-/usr/include/setjmp.h:
-
-/usr/include/freetype2/freetype/fttypes.h:
-
-/usr/include/freetype2/freetype/ftsystem.h:
-
-/usr/include/freetype2/freetype/ftimage.h:
-
-/usr/include/freetype2/freetype/fterrors.h:
-
-/usr/include/freetype2/freetype/ftmoderr.h:
-
-/usr/include/freetype2/freetype/fterrdef.h:
-
-/usr/include/fontconfig/fontconfig.h:
-
-/usr/include/x86_64-linux-gnu/sys/stat.h:
-
-/usr/include/x86_64-linux-gnu/bits/stat.h:
-
-/usr/include/cairomm-1.0/cairomm/exception.h:
-
-/usr/include/cairomm-1.0/cairomm/device.h:
-
-/usr/include/cairomm-1.0/cairomm/types.h:
-
-/usr/include/cairomm-1.0/cairomm/refptr.h:
-
-/usr/include/cairomm-1.0/cairomm/fontoptions.h:
-
-/usr/include/cairo/cairo-pdf.h:
-
-/usr/include/cairo/cairo-ps.h:
-
-/usr/include/cairo/cairo-svg.h:
-
-/usr/include/gdkmm-3.0/gdkmm/device.h:
-
-/usr/include/gdkmm-3.0/gdkmm/cursor.h:
-
-/usr/include/gdkmm-3.0/gdkmm/display.h:
-
-/usr/include/gdkmm-3.0/gdkmm/screen.h:
-
-/usr/include/gdkmm-3.0/gdkmm/rectangle.h:
-
-/usr/include/gdkmm-3.0/gdkmm/applaunchcontext.h:
-
-/usr/include/gdkmm-3.0/gdkmm/event.h:
-
-/usr/include/gdkmm-3.0/gdkmm/timecoord.h:
-
 /usr/include/gdkmm-3.0/gdkmm.h:
-
-/usr/include/gdkmm-3.0/gdkmm/visual.h:
-
-/usr/include/gdkmm-3.0/gdkmm/window.h:
-
-/usr/include/cairomm-1.0/cairomm/region.h:
-
-/usr/include/cairomm-1.0/cairomm/pattern.h:
-
-/usr/include/gdkmm-3.0/gdkmm/rgba.h:
-
-/usr/include/cairomm-1.0/cairomm/context.h:
-
-/usr/include/cairomm-1.0/cairomm/fontface.h:
-
-/usr/include/cairomm-1.0/cairomm/matrix.h:
-
-/usr/include/cairomm-1.0/cairomm/path.h:
-
-/usr/include/cairomm-1.0/cairomm/scaledfont.h:
-
-/usr/include/c++/6/valarray:
-
-/usr/include/c++/6/cmath:
-
-/usr/include/math.h:
-
-/usr/include/x86_64-linux-gnu/bits/math-vector.h:
-
-/usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h:
-
-/usr/include/x86_64-linux-gnu/bits/flt-eval-method.h:
-
-/usr/include/x86_64-linux-gnu/bits/fp-logb.h:
-
-/usr/include/x86_64-linux-gnu/bits/fp-fast.h:
-
-/usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h:
-
-/usr/include/x86_64-linux-gnu/bits/mathcalls.h:
-
-/usr/include/x86_64-linux-gnu/bits/iscanonical.h:
-
-/usr/include/c++/6/bits/valarray_array.h:
-
-/usr/include/c++/6/bits/valarray_array.tcc:
-
-/usr/include/c++/6/bits/valarray_before.h:
-
-/usr/include/c++/6/bits/slice_array.h:
-
-/usr/include/c++/6/bits/valarray_after.h:
-
-/usr/include/c++/6/bits/gslice.h:
-
-/usr/include/c++/6/bits/gslice_array.h:
-
-/usr/include/c++/6/bits/mask_array.h:
-
-/usr/include/c++/6/bits/indirect_array.h:
 
 /usr/include/gdkmm-3.0/gdkmm/pixbufanimation.h:
 
@@ -3812,100 +3929,6 @@ DockPanel.h:
 
 /usr/include/gtkmm-3.0/gtkmm/toggleaction.h:
 
-/usr/include/gtkmm-3.0/gtkmm/action.h:
-
-/usr/lib/x86_64-linux-gnu/gtkmm-3.0/include/gtkmmconfig.h:
-
-/usr/include/gtkmm-3.0/gtkmm/widget.h:
-
-/usr/include/pangomm-1.4/pangomm/context.h:
-
-/usr/include/pangomm-1.4/pangomm/fontdescription.h:
-
-/usr/include/pangomm-1.4/pangomm/fontmetrics.h:
-
-/usr/include/pangomm-1.4/pangomm/fontset.h:
-
-/usr/include/pangomm-1.4/pangomm/language.h:
-
-/usr/include/pangomm-1.4/pangomm/font.h:
-
-/usr/include/pangomm-1.4/pangomm/rectangle.h:
-
-/usr/include/pangomm-1.4/pangomm/glyph.h:
-
-/usr/include/pangomm-1.4/pangomm/coverage.h:
-
-/usr/include/pangomm-1.4/pangomm/fontmap.h:
-
-/usr/include/pangomm-1.4/pangomm/fontfamily.h:
-
-/usr/include/pangomm-1.4/pangomm/fontface.h:
-
-/usr/include/pangomm-1.4/pangomm/item.h:
-
-/usr/include/pangomm-1.4/pangomm/attributes.h:
-
-/usr/include/pangomm-1.4/pangomm/color.h:
-
-/usr/include/pangomm-1.4/pangomm/attrlist.h:
-
-/usr/include/pangomm-1.4/pangomm/attriter.h:
-
-/usr/include/pangomm-1.4/pangomm/types.h:
-
-/usr/include/pangomm-1.4/pangomm/layout.h:
-
-/usr/include/pangomm-1.4/pangomm/tabarray.h:
-
-/usr/include/pangomm-1.4/pangomm/layoutline.h:
-
-/usr/include/pangomm-1.4/pangomm/layoutiter.h:
-
-/usr/include/pangomm-1.4/pangomm/layoutrun.h:
-
-/usr/include/atkmm-1.6/atkmm/object.h:
-
-/usr/include/atkmm-1.6/atkmm/component.h:
-
-/usr/include/atkmm-1.6/atkmm/relation.h:
-
-/usr/include/atkmm-1.6/atkmm/implementor.h:
-
-/usr/include/gtkmm-3.0/gtkmm/object.h:
-
-/usr/include/gtkmm-3.0/gtkmm/base.h:
-
-/usr/include/gtkmm-3.0/gtkmm/buildable.h:
-
-/usr/include/gtkmm-3.0/gtkmm/enums.h:
-
-/usr/include/gtkmm-3.0/gtkmm/targetlist.h:
-
-/usr/include/gtkmm-3.0/gtkmm/targetentry.h:
-
-/usr/include/gtkmm-3.0/gtkmm/clipboard.h:
-
-/usr/include/gtkmm-3.0/gtkmm/selectiondata.h:
-
-/usr/include/gtkmm-3.0/gtkmm/requisition.h:
-
-/usr/include/gtkmm-3.0/gtkmm/stylecontext.h:
-
-/usr/include/gtkmm-3.0/gtkmm/styleprovider.h:
-
-/usr/include/gtkmm-3.0/gtkmm/border.h:
-
-/usr/include/gtkmm-3.0/gtkmm/iconsource.h:
-
-/usr/include/gtkmm-3.0/gtkmm/iconset.h:
-
-/usr/include/gtkmm-3.0/gtkmm/stockid.h:
-
-/usr/include/gtkmm-3.0/gtkmm/widgetpath.h:
-
-/usr/include/gtkmm-3.0/gtkmm/accelgroup.h:
-
 /usr/include/gtkmm-3.0/gtkmm/radioaction.h:
 
 /usr/include/gtkmm-3.0/gtkmm/radiobuttongroup.h:
@@ -3913,24 +3936,6 @@ DockPanel.h:
 /usr/include/gtkmm-3.0/gtkmm/aboutdialog.h:
 
 /usr/include/gtkmm-3.0/gtkmm/dialog.h:
-
-/usr/include/gtkmm-3.0/gtkmm/window.h:
-
-/usr/include/gtkmm-3.0/gtkmm/bin.h:
-
-/usr/include/gtkmm-3.0/gtkmm/container.h:
-
-/usr/include/gtkmm-3.0/gtkmm/childpropertyproxy.h:
-
-/usr/include/gtkmm-3.0/gtkmm/childpropertyproxy_base.h:
-
-/usr/include/gtkmm-3.0/gtkmm/application.h:
-
-/usr/include/gtkmm-3.0/gtkmm/actiongroup.h:
-
-/usr/include/gtkmm-3.0/gtkmm/accelkey.h:
-
-/usr/include/gtkmm-3.0/gtkmm/windowgroup.h:
 
 /usr/include/gtkmm-3.0/gtkmm/box.h:
 
@@ -4351,10 +4356,6 @@ DockPanel.h:
 /usr/include/gtkmm-3.0/gtkmm/viewport.h:
 
 /usr/include/gtkmm-3.0/gtkmm/volumebutton.h:
-
-Configuration.h:
-
-DockItem.h:
 
 SessionWindow.h:
 

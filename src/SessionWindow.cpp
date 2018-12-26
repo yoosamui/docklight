@@ -353,9 +353,10 @@ void SessionWindow::addToList()
         return;
     }
 
+    int iconsize = Configuration::get_dockWindowSize() - CELL_WIDTH_MARGIN;
     appIcon = IconLoader::GetWindowIcon(m_window);
-    appIcon = appIcon->scale_simple(DEF_ICONSIZE,
-            DEF_ICONSIZE, Gdk::INTERP_BILINEAR);
+    appIcon = appIcon->scale_simple(iconsize,
+            iconsize, Gdk::INTERP_BILINEAR);
 
     auto row = Gtk::manage(new ListRow(
             m_EntryAppName.get_text(), "", the_appname, appIcon));

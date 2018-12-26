@@ -33,12 +33,32 @@
 #define NULLPB (Glib::RefPtr<Gdk::Pixbuf>)NULL
 
 
-#define DEF_ICONMAXSIZE 64
-#define DEF_CELLHIGHT  58                    // Cell Height
-#define DEF_CELLWIDTH 56 //-3//58                    // Cell Width
+#define DOCK_WINDOW_HEIGHT 46
+#define CELL_TOP_MARGIN 2                 // Cell Top Position
+#define CELL_BOTTOM_MARGIN 2
+#define CELL_WIDTH_MARGIN  4
 
-#define DEF_CELLTOPMARGIN 6                 // Cell Top Position
-#define DEF_ICONSIZE DEF_CELLHIGHT -14      // Icon Size Width and height
+#define ICON_CELL_WIDTH_MARGIN 12
+#define ICON_CELL_TOP_MARGIN  2
+#define ICON_CELL_LEFT_MARGIN  2
+
+//#define ICON_CELL_WIDTH_MARGIN  8
+
+
+
+
+
+
+
+////////////////////////////////////////
+#define DEF_ICONMAXSIZE 64
+//#define DEF_CELLHIGHT  58                    // Cell Height
+//#define DEF_CELLWIDTH 56 //-3//58                    // Cell Width
+
+#define DEF_CELLTOPMARGIN 2                 // Cell Top Position
+#define DEF_CELLBOTTOMMARGIN 14
+
+//#define DEF_ICONSIZE DEF_CELLHIGHT -14      // Icon Size Width and height
 #define DEF_MINCONSIZE 20                   // Minimun Icon Size allowed
 #define DEF_ICONTOPMARGIN 10                // Icon top Margin from panel
 
@@ -75,9 +95,7 @@ typedef enum StrutsPosition_t {
     BottomEnd = 11
 } strutsPosition;
 
-
-typedef enum Window_action_t
-{
+typedef enum Window_action_t {
     OPEN,
     CLOSE
 } Window_action;
@@ -93,8 +111,14 @@ namespace Configuration {
     unsigned int get_separatorMargin();
     unsigned int get_itemSize();
     bool is_autoHide();
-     bool is_activateStrut();
-      bool is_panelMode();
+    bool is_activateStrut();
+    bool is_panelMode();
+
+
+    unsigned int get_CellHeight();
+
+    unsigned int get_CellWidth();
+
 }
 
 #endif	/* CONFIGURATION_H */

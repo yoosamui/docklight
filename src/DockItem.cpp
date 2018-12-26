@@ -8,8 +8,9 @@
 #include "DockItem.h"
 #include "Configuration.h"
 DockItem::DockItem() {
-    this->m_width = DEF_CELLWIDTH;
-    this->m_height = DEF_CELLHIGHT;//Configuration::get_itemSize();
+    
+    this->m_width = Configuration::get_CellWidth();
+    this->m_height = Configuration::get_CellHeight();
 }
 
 DockItem::DockItem(const DockItem& orig) {

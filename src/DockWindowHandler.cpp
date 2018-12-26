@@ -18,7 +18,7 @@ namespace DockWindow
     bool initSet = false;
     panel_locationType m_location;
     unsigned int m_areaSize;
-    int m_dockItemSize;
+   // int m_dockItemSize;
     bool m_visible = true;
 
     GdkRectangle get_geometry()
@@ -101,7 +101,7 @@ namespace DockWindow
 
     guint get_dockWindowStartEndMargin()
     {
-        return 80;
+        return 24;
     }
     /**
      * Initialize the window
@@ -120,7 +120,7 @@ namespace DockWindow
             return -1;
         }
 
-        m_dockItemSize = Configuration::get_itemSize();
+     //   m_dockItemSize =DockWindow::get_size();//Configuration::get_itemSize();
 
         //        auto toplevel = gtk_window_new (GTK_WINDOW_TOPLEVEL);
         // auto  m_gdk_window = gtk_widget_get_window(toplevel);
@@ -278,6 +278,7 @@ namespace DockWindow
         {
             case panel_locationType::BOTTOM:
             {
+                
                 if (Configuration::is_panelMode()) {
                     m_window->resize(geometry.width, m_areaSize);
                     m_window->move(geometry.x, geometry.height - m_areaSize);
@@ -287,24 +288,11 @@ namespace DockWindow
                 m_window->resize(width, m_areaSize);
                 int posX = ((geometry.x + geometry.width) / 2) - width / 2;
                     
-                m_window->move(posX, geometry.height - m_areaSize);
+                m_window->move(posX, geometry.height - m_areaSize  );
                        
             }
                 break;
-                //
-                //            case panel_locationType::TOP:
-                //                m_window->resize(geometry.width, m_areaSize);
-                //                m_window->move(geometry.x, geometry.y);
-                //                break;
-                //            case panel_locationType::LEFT:
-                //                m_window->resize(m_areaSize, geometry.height);
-                //                m_window->move(geometry.x, geometry.y);
-                //                break;
-                //
-                //            case panel_locationType::RIGHT:
-                //                m_window->resize(m_areaSize, geometry.height);
-                //                m_window->move(geometry.x + (geometry.width / 2), geometry.y);
-                //                break;
+               
                 
             case panel_locationType::TOP:
             {
