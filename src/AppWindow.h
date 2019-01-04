@@ -1,4 +1,4 @@
-/* 
+ /* 
  * File:   AppWindow.h
  * Author: yoo
  *
@@ -15,6 +15,7 @@
 #include <gdkmm/screen.h>
 
 #include "DockPanel.h"
+//#include "DockBckPanel.h"
 
 class AppWindow : public Gtk::Window {
 public:
@@ -22,13 +23,15 @@ public:
     int init();
     virtual ~AppWindow();
     DockPanel m_dockpanel;
-
-    void update();
+   // DockBckPanel dockBckPanel;
+    
+    void update(bool mode);
     
 private:
 
 
     float m_easing_duration;
+    
     static void monitor_size_changed_callback(GdkScreen *screen, gpointer gtkwindow);
     static void window_geometry_changed_callback(WnckWindow *window, gpointer user_data);
     static void geometry_changed(WnckWindow *window);
@@ -47,6 +50,7 @@ private:
 
     bool autoHideTimer();
     bool fullScreenTimer();
+   //  bool on_timeoutDraw();
     //  bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr);
     // bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) {
     //        m_dockpanel.on_draw(cr);
@@ -64,6 +68,9 @@ private:
     float initTime = 0.f;
     float endPosition = 0.f;
     float atime = 0.f;
+    
+    
+   //  bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr);
 
 };
 

@@ -1,10 +1,8 @@
 docklight-DockWindowHandler.o: DockWindowHandler.cpp \
- /usr/include/stdc-predef.h DockWindowHandler.h \
- /usr/include/libwnck-3.0/libwnck/libwnck.h \
- /usr/include/libwnck-3.0/libwnck/window.h \
- /usr/include/glib-2.0/glib-object.h \
- /usr/include/glib-2.0/gobject/gbinding.h /usr/include/glib-2.0/glib.h \
- /usr/include/glib-2.0/glib/galloca.h /usr/include/glib-2.0/glib/gtypes.h \
+ /usr/include/stdc-predef.h Configuration.h \
+ /usr/include/gtk-3.0/gdk/gdk.h /usr/include/gtk-3.0/gdk/gdkconfig.h \
+ /usr/include/glib-2.0/glib.h /usr/include/glib-2.0/glib/galloca.h \
+ /usr/include/glib-2.0/glib/gtypes.h \
  /usr/lib/x86_64-linux-gnu/glib-2.0/include/glibconfig.h \
  /usr/include/glib-2.0/glib/gmacros.h \
  /usr/lib/gcc/x86_64-linux-gnu/6/include/stddef.h \
@@ -146,6 +144,11 @@ docklight-DockWindowHandler.o: DockWindowHandler.cpp \
  /usr/include/x86_64-linux-gnu/bits/cpu-set.h \
  /usr/include/x86_64-linux-gnu/bits/setjmp.h \
  /usr/include/glib-2.0/glib/glib-autocleanups.h \
+ /usr/include/gtk-3.0/gdk/gdkversionmacros.h \
+ /usr/include/gtk-3.0/gdk/gdkapplaunchcontext.h \
+ /usr/include/glib-2.0/gio/gio.h /usr/include/glib-2.0/gio/giotypes.h \
+ /usr/include/glib-2.0/gio/gioenums.h /usr/include/glib-2.0/glib-object.h \
+ /usr/include/glib-2.0/gobject/gbinding.h \
  /usr/include/glib-2.0/gobject/gobject.h \
  /usr/include/glib-2.0/gobject/gtype.h \
  /usr/include/glib-2.0/gobject/gvalue.h \
@@ -163,13 +166,7 @@ docklight-DockWindowHandler.o: DockWindowHandler.cpp \
  /usr/include/glib-2.0/gobject/gvaluearray.h \
  /usr/include/glib-2.0/gobject/gvaluetypes.h \
  /usr/include/glib-2.0/gobject/gobject-autocleanups.h \
- /usr/include/libwnck-3.0/libwnck/screen.h \
- /usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf.h \
- /usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-macros.h \
- /usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-features.h \
- /usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-core.h \
- /usr/include/glib-2.0/gio/gio.h /usr/include/glib-2.0/gio/giotypes.h \
- /usr/include/glib-2.0/gio/gioenums.h /usr/include/glib-2.0/gio/gaction.h \
+ /usr/include/glib-2.0/gio/gaction.h \
  /usr/include/glib-2.0/gio/gactiongroup.h \
  /usr/include/glib-2.0/gio/gactiongroupexporter.h \
  /usr/include/glib-2.0/gio/gactionmap.h \
@@ -316,27 +313,6 @@ docklight-DockWindowHandler.o: DockWindowHandler.cpp \
  /usr/include/glib-2.0/gio/glistmodel.h \
  /usr/include/glib-2.0/gio/gliststore.h \
  /usr/include/glib-2.0/gio/gio-autocleanups.h \
- /usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-transform.h \
- /usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-animation.h \
- /usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-simple-anim.h \
- /usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-io.h \
- /usr/include/stdio.h /usr/include/x86_64-linux-gnu/bits/types/__FILE.h \
- /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
- /usr/include/x86_64-linux-gnu/bits/libio.h \
- /usr/include/x86_64-linux-gnu/bits/_G_config.h \
- /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
- /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
- /usr/include/x86_64-linux-gnu/bits/sys_errlist.h \
- /usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-loader.h \
- /usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-enum-types.h \
- /usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-autocleanups.h \
- /usr/include/libwnck-3.0/libwnck/application.h \
- /usr/include/libwnck-3.0/libwnck/class-group.h \
- /usr/include/libwnck-3.0/libwnck/workspace.h \
- /usr/include/libwnck-3.0/libwnck/pager.h /usr/include/gtk-3.0/gtk/gtk.h \
- /usr/include/gtk-3.0/gdk/gdk.h /usr/include/gtk-3.0/gdk/gdkconfig.h \
- /usr/include/gtk-3.0/gdk/gdkversionmacros.h \
- /usr/include/gtk-3.0/gdk/gdkapplaunchcontext.h \
  /usr/include/gtk-3.0/gdk/gdktypes.h /usr/include/pango-1.0/pango/pango.h \
  /usr/include/pango-1.0/pango/pango-attributes.h \
  /usr/include/pango-1.0/pango/pango-font.h \
@@ -361,8 +337,16 @@ docklight-DockWindowHandler.o: DockWindowHandler.cpp \
  /usr/include/pango-1.0/pango/pango-layout.h \
  /usr/include/pango-1.0/pango/pango-tabs.h \
  /usr/include/pango-1.0/pango/pango-renderer.h \
- /usr/include/pango-1.0/pango/pango-utils.h /usr/include/cairo/cairo.h \
- /usr/include/cairo/cairo-version.h /usr/include/cairo/cairo-features.h \
+ /usr/include/pango-1.0/pango/pango-utils.h /usr/include/stdio.h \
+ /usr/include/x86_64-linux-gnu/bits/types/__FILE.h \
+ /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
+ /usr/include/x86_64-linux-gnu/bits/libio.h \
+ /usr/include/x86_64-linux-gnu/bits/_G_config.h \
+ /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
+ /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
+ /usr/include/x86_64-linux-gnu/bits/sys_errlist.h \
+ /usr/include/cairo/cairo.h /usr/include/cairo/cairo-version.h \
+ /usr/include/cairo/cairo-features.h \
  /usr/include/cairo/cairo-deprecated.h \
  /usr/include/gtk-3.0/gdk/gdkscreen.h \
  /usr/include/gtk-3.0/gdk/gdkdisplay.h \
@@ -379,6 +363,17 @@ docklight-DockWindowHandler.o: DockWindowHandler.cpp \
  /usr/include/gtk-3.0/gdk/gdkcairo.h \
  /usr/include/gtk-3.0/gdk/deprecated/gdkcolor.h \
  /usr/include/gtk-3.0/gdk/gdkrgba.h /usr/include/gtk-3.0/gdk/gdkpixbuf.h \
+ /usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf.h \
+ /usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-macros.h \
+ /usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-features.h \
+ /usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-core.h \
+ /usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-transform.h \
+ /usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-animation.h \
+ /usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-simple-anim.h \
+ /usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-io.h \
+ /usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-loader.h \
+ /usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-enum-types.h \
+ /usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-autocleanups.h \
  /usr/include/pango-1.0/pango/pangocairo.h \
  /usr/include/gtk-3.0/gdk/gdkcursor.h \
  /usr/include/gtk-3.0/gdk/gdkdevicepad.h \
@@ -392,7 +387,14 @@ docklight-DockWindowHandler.o: DockWindowHandler.cpp \
  /usr/include/gtk-3.0/gdk/gdktestutils.h \
  /usr/include/gtk-3.0/gdk/gdkthreads.h \
  /usr/include/gtk-3.0/gdk/gdkvisual.h \
- /usr/include/gtk-3.0/gdk/gdk-autocleanup.h \
+ /usr/include/gtk-3.0/gdk/gdk-autocleanup.h DockWindowHandler.h \
+ /usr/include/libwnck-3.0/libwnck/libwnck.h \
+ /usr/include/libwnck-3.0/libwnck/window.h \
+ /usr/include/libwnck-3.0/libwnck/screen.h \
+ /usr/include/libwnck-3.0/libwnck/application.h \
+ /usr/include/libwnck-3.0/libwnck/class-group.h \
+ /usr/include/libwnck-3.0/libwnck/workspace.h \
+ /usr/include/libwnck-3.0/libwnck/pager.h /usr/include/gtk-3.0/gtk/gtk.h \
  /usr/include/gtk-3.0/gtk/gtkaboutdialog.h \
  /usr/include/gtk-3.0/gtk/gtkdialog.h \
  /usr/include/gtk-3.0/gtk/gtkwindow.h \
@@ -1373,21 +1375,17 @@ docklight-DockWindowHandler.o: DockWindowHandler.cpp \
  /usr/include/gtkmm-3.0/gtkmm/treestore.h \
  /usr/include/gtkmm-3.0/gtkmm/uimanager.h \
  /usr/include/gtkmm-3.0/gtkmm/viewport.h \
- /usr/include/gtkmm-3.0/gtkmm/volumebutton.h Configuration.h \
- WindowControl.h /usr/include/X11/X.h AppWindow.h DockPanel.h DockItem.h \
- SessionWindow.h Utilities.h /usr/include/c++/6/math.h IconLoader.h
+ /usr/include/gtkmm-3.0/gtkmm/volumebutton.h WindowControl.h \
+ /usr/include/X11/X.h AppWindow.h DockPanel.h DockItem.h SessionWindow.h \
+ Utilities.h /usr/include/c++/6/math.h IconLoader.h
 
 /usr/include/stdc-predef.h:
 
-DockWindowHandler.h:
+Configuration.h:
 
-/usr/include/libwnck-3.0/libwnck/libwnck.h:
+/usr/include/gtk-3.0/gdk/gdk.h:
 
-/usr/include/libwnck-3.0/libwnck/window.h:
-
-/usr/include/glib-2.0/glib-object.h:
-
-/usr/include/glib-2.0/gobject/gbinding.h:
+/usr/include/gtk-3.0/gdk/gdkconfig.h:
 
 /usr/include/glib-2.0/glib.h:
 
@@ -1727,6 +1725,20 @@ DockWindowHandler.h:
 
 /usr/include/glib-2.0/glib/glib-autocleanups.h:
 
+/usr/include/gtk-3.0/gdk/gdkversionmacros.h:
+
+/usr/include/gtk-3.0/gdk/gdkapplaunchcontext.h:
+
+/usr/include/glib-2.0/gio/gio.h:
+
+/usr/include/glib-2.0/gio/giotypes.h:
+
+/usr/include/glib-2.0/gio/gioenums.h:
+
+/usr/include/glib-2.0/glib-object.h:
+
+/usr/include/glib-2.0/gobject/gbinding.h:
+
 /usr/include/glib-2.0/gobject/gobject.h:
 
 /usr/include/glib-2.0/gobject/gtype.h:
@@ -1760,22 +1772,6 @@ DockWindowHandler.h:
 /usr/include/glib-2.0/gobject/gvaluetypes.h:
 
 /usr/include/glib-2.0/gobject/gobject-autocleanups.h:
-
-/usr/include/libwnck-3.0/libwnck/screen.h:
-
-/usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf.h:
-
-/usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-macros.h:
-
-/usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-features.h:
-
-/usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-core.h:
-
-/usr/include/glib-2.0/gio/gio.h:
-
-/usr/include/glib-2.0/gio/giotypes.h:
-
-/usr/include/glib-2.0/gio/gioenums.h:
 
 /usr/include/glib-2.0/gio/gaction.h:
 
@@ -2083,54 +2079,6 @@ DockWindowHandler.h:
 
 /usr/include/glib-2.0/gio/gio-autocleanups.h:
 
-/usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-transform.h:
-
-/usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-animation.h:
-
-/usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-simple-anim.h:
-
-/usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-io.h:
-
-/usr/include/stdio.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/__FILE.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/FILE.h:
-
-/usr/include/x86_64-linux-gnu/bits/libio.h:
-
-/usr/include/x86_64-linux-gnu/bits/_G_config.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h:
-
-/usr/include/x86_64-linux-gnu/bits/stdio_lim.h:
-
-/usr/include/x86_64-linux-gnu/bits/sys_errlist.h:
-
-/usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-loader.h:
-
-/usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-enum-types.h:
-
-/usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-autocleanups.h:
-
-/usr/include/libwnck-3.0/libwnck/application.h:
-
-/usr/include/libwnck-3.0/libwnck/class-group.h:
-
-/usr/include/libwnck-3.0/libwnck/workspace.h:
-
-/usr/include/libwnck-3.0/libwnck/pager.h:
-
-/usr/include/gtk-3.0/gtk/gtk.h:
-
-/usr/include/gtk-3.0/gdk/gdk.h:
-
-/usr/include/gtk-3.0/gdk/gdkconfig.h:
-
-/usr/include/gtk-3.0/gdk/gdkversionmacros.h:
-
-/usr/include/gtk-3.0/gdk/gdkapplaunchcontext.h:
-
 /usr/include/gtk-3.0/gdk/gdktypes.h:
 
 /usr/include/pango-1.0/pango/pango.h:
@@ -2183,6 +2131,22 @@ DockWindowHandler.h:
 
 /usr/include/pango-1.0/pango/pango-utils.h:
 
+/usr/include/stdio.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/__FILE.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/FILE.h:
+
+/usr/include/x86_64-linux-gnu/bits/libio.h:
+
+/usr/include/x86_64-linux-gnu/bits/_G_config.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h:
+
+/usr/include/x86_64-linux-gnu/bits/stdio_lim.h:
+
+/usr/include/x86_64-linux-gnu/bits/sys_errlist.h:
+
 /usr/include/cairo/cairo.h:
 
 /usr/include/cairo/cairo-version.h:
@@ -2227,6 +2191,28 @@ DockWindowHandler.h:
 
 /usr/include/gtk-3.0/gdk/gdkpixbuf.h:
 
+/usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf.h:
+
+/usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-macros.h:
+
+/usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-features.h:
+
+/usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-core.h:
+
+/usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-transform.h:
+
+/usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-animation.h:
+
+/usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-simple-anim.h:
+
+/usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-io.h:
+
+/usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-loader.h:
+
+/usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-enum-types.h:
+
+/usr/include/gdk-pixbuf-2.0/gdk-pixbuf/gdk-pixbuf-autocleanups.h:
+
 /usr/include/pango-1.0/pango/pangocairo.h:
 
 /usr/include/gtk-3.0/gdk/gdkcursor.h:
@@ -2258,6 +2244,24 @@ DockWindowHandler.h:
 /usr/include/gtk-3.0/gdk/gdkvisual.h:
 
 /usr/include/gtk-3.0/gdk/gdk-autocleanup.h:
+
+DockWindowHandler.h:
+
+/usr/include/libwnck-3.0/libwnck/libwnck.h:
+
+/usr/include/libwnck-3.0/libwnck/window.h:
+
+/usr/include/libwnck-3.0/libwnck/screen.h:
+
+/usr/include/libwnck-3.0/libwnck/application.h:
+
+/usr/include/libwnck-3.0/libwnck/class-group.h:
+
+/usr/include/libwnck-3.0/libwnck/workspace.h:
+
+/usr/include/libwnck-3.0/libwnck/pager.h:
+
+/usr/include/gtk-3.0/gtk/gtk.h:
 
 /usr/include/gtk-3.0/gtk/gtkaboutdialog.h:
 
@@ -4346,8 +4350,6 @@ DockWindowHandler.h:
 /usr/include/gtkmm-3.0/gtkmm/viewport.h:
 
 /usr/include/gtkmm-3.0/gtkmm/volumebutton.h:
-
-Configuration.h:
 
 WindowControl.h:
 

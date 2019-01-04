@@ -12,25 +12,27 @@ namespace Configuration
 {
 
     panel_locationType get_dockWindowLocation() {
-        return panel_locationType::RIGHT;
+        return panel_locationType::BOTTOM;
     }
     bool is_panelMode()
     {
         return false;
     }
     bool is_activateStrut() {
+         return true;
         if(is_panelMode() && !is_autoHide()){
             return false;
         }
-        return false;
+        return true;
     }
 
     bool is_autoHide() {
         return false;
     }
 
+    // TODO: REMOVE THIS
     unsigned int get_dockWindowSize() {
-        return DOCK_WINDOW_HEIGHT;
+        return 50;//DOCK_WINDOW_HEIGHT;
     }
 
    
@@ -49,12 +51,12 @@ namespace Configuration
 
     unsigned int get_CellHeight()
     {
-      return Configuration::get_dockWindowSize() - (CELL_BOTTOM_MARGIN + CELL_TOP_MARGIN);
+      return Configuration::get_dockWindowSize() - (CELL_BOTTOM_MARGIN + CELL_TOP_MARGIN) ;
     }
     
     unsigned int get_CellWidth()
     {
-      return Configuration::get_dockWindowSize() - CELL_WIDTH_MARGIN;
+      return get_CellHeight() - 2;//CELL_WIDTH_MARGIN;
          
     }
 }

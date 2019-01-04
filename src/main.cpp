@@ -19,7 +19,9 @@
 //
 //****************************************************************
 #include <gtkmm/application.h>
+#include "DockBckPanel.h"
 #include "AppWindow.h"
+
 #include <sstream>
 //////////////////////////////////////#include "Utilities.h"
 ///////////////////////////////////////#include "Configuration.h"
@@ -55,6 +57,8 @@ int main(int argc, char *argv[]) {
     //  Gtk::Application::create(argc, argv, "org.gtkmm.docklight");
 
     auto app = Gtk::Application::create(argc, argv, "org.gtkmm.example");
+    
+    
     g_print("CREATE AppWindow\n");
     AppWindow win;
     

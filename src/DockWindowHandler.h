@@ -43,7 +43,7 @@ namespace DockWindow {
 //    }
      guint get_dockWindowStartEndMargin();
     void move(int x, int y);
-    unsigned int get_dockWindowSize();
+  // / unsigned int get_dockWindowSize();
     GdkRectangle get_geometry();
     
     /**
@@ -53,8 +53,8 @@ namespace DockWindow {
      */
     int init(Gtk::Window* window);
 
-      unsigned int getDockWindowWidth();
-        unsigned int getDockWindowHeight();
+       int getDockWindowWidth();
+         int getDockWindowHeight();
       
          bool is_visible();
    
@@ -62,8 +62,9 @@ namespace DockWindow {
    
         
    
+    void resetStrut();
     
-    
+     void updateGeometry();
     
     namespace DockWindow
     {

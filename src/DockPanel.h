@@ -18,10 +18,12 @@
 #include "DockItem.h"
 #include "SessionWindow.h"
 
+
 class DockPanel : public Gtk::DrawingArea {
 public:
     DockPanel();
 
+    float m_easing_duration;
     virtual ~DockPanel();
     SessionWindow* m_sessionWindow;
 
@@ -82,6 +84,19 @@ protected:
     float position = 0;
     float initTime;
     float endPosition;
+    
+    
+    bool m_mouseIn = false;
+    bool m_animate = false;
+    bool m_timerStoped = true;
+    bool m_visible = true;
+    float atime = 0.f;
+    
+     Glib::Timer m_Timer;
+     
+     
+   void draw_Panel(const Cairo::RefPtr<Cairo::Context>& cr, int x, int y);
+   void draw_Items(const Cairo::RefPtr<Cairo::Context>& cr, int currentposX, int currentposY);
 };
 
 #endif	/* DOCKPANEL_H */
