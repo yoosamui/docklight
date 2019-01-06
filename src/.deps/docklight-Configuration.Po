@@ -1,6 +1,5 @@
 docklight-Configuration.o: Configuration.cpp /usr/include/stdc-predef.h \
- Configuration.h DockWindowHandler.h \
- /usr/include/libwnck-3.0/libwnck/libwnck.h \
+ Configuration.h DockWindow.h /usr/include/libwnck-3.0/libwnck/libwnck.h \
  /usr/include/libwnck-3.0/libwnck/window.h \
  /usr/include/glib-2.0/glib-object.h \
  /usr/include/glib-2.0/gobject/gbinding.h /usr/include/glib-2.0/glib.h \
@@ -1373,13 +1372,15 @@ docklight-Configuration.o: Configuration.cpp /usr/include/stdc-predef.h \
  /usr/include/gtkmm-3.0/gtkmm/treestore.h \
  /usr/include/gtkmm-3.0/gtkmm/uimanager.h \
  /usr/include/gtkmm-3.0/gtkmm/viewport.h \
- /usr/include/gtkmm-3.0/gtkmm/volumebutton.h
+ /usr/include/gtkmm-3.0/gtkmm/volumebutton.h AppWindow.h DockPanel.h \
+ DockItem.h SessionWindow.h Utilities.h /usr/include/c++/6/math.h \
+ IconLoader.h Screen.h Struts.h
 
 /usr/include/stdc-predef.h:
 
 Configuration.h:
 
-DockWindowHandler.h:
+DockWindow.h:
 
 /usr/include/libwnck-3.0/libwnck/libwnck.h:
 
@@ -4346,3 +4347,21 @@ DockWindowHandler.h:
 /usr/include/gtkmm-3.0/gtkmm/viewport.h:
 
 /usr/include/gtkmm-3.0/gtkmm/volumebutton.h:
+
+AppWindow.h:
+
+DockPanel.h:
+
+DockItem.h:
+
+SessionWindow.h:
+
+Utilities.h:
+
+/usr/include/c++/6/math.h:
+
+IconLoader.h:
+
+Screen.h:
+
+Struts.h:

@@ -28,8 +28,12 @@ AM_CPPFLAGS = -g -Wall   -Wno-reorder -std=c++11
 # list of source files needed to generate target (docklight)
 docklight_SOURCES =  \
 main.cpp \
-DockBckPanel.cpp \
-DockBckPanel.h \
+DockWindow.cpp \
+DockWindow.h \
+Screen.cpp \
+Screen.h \
+Struts.cpp \
+Struts.h \
 Animations.h \
 AppWindow.cpp\
 AppWindow.h \
@@ -49,8 +53,6 @@ MoReader.cpp \
 MoReader.h \
 Utilities.cpp \
 Utilities.h \
-DockWindowHandler.cpp \
-DockWindowHandler.h \
 Configuration.cpp \
 Configuration.h \
 $(NULL)

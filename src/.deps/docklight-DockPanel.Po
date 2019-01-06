@@ -1374,8 +1374,8 @@ docklight-DockPanel.o: DockPanel.cpp /usr/include/stdc-predef.h \
  /usr/include/gtkmm-3.0/gtkmm/uimanager.h \
  /usr/include/gtkmm-3.0/gtkmm/viewport.h \
  /usr/include/gtkmm-3.0/gtkmm/volumebutton.h SessionWindow.h Utilities.h \
- /usr/include/c++/6/math.h IconLoader.h DockWindowHandler.h Launcher.h \
- /usr/include/c++/6/thread Animations.h AppWindow.h \
+ /usr/include/c++/6/math.h IconLoader.h DockWindow.h AppWindow.h Screen.h \
+ Struts.h Launcher.h /usr/include/c++/6/thread Animations.h \
  /usr/include/glibmm-2.4/glibmm/i18n.h /usr/include/glib-2.0/glib/gi18n.h \
  /usr/include/libintl.h /usr/include/c++/6/fstream \
  /usr/include/c++/6/bits/codecvt.h \
@@ -4365,15 +4365,19 @@ Utilities.h:
 
 IconLoader.h:
 
-DockWindowHandler.h:
+DockWindow.h:
+
+AppWindow.h:
+
+Screen.h:
+
+Struts.h:
 
 Launcher.h:
 
 /usr/include/c++/6/thread:
 
 Animations.h:
-
-AppWindow.h:
 
 /usr/include/glibmm-2.4/glibmm/i18n.h:
 

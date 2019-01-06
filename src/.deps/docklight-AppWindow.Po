@@ -1376,8 +1376,9 @@ docklight-AppWindow.o: AppWindow.cpp /usr/include/stdc-predef.h \
  /usr/include/gtkmm-3.0/gtkmm/viewport.h \
  /usr/include/gtkmm-3.0/gtkmm/volumebutton.h Configuration.h DockItem.h \
  SessionWindow.h Utilities.h /usr/include/c++/6/math.h IconLoader.h \
- ../config.h DockWindowHandler.h WindowControl.h /usr/include/X11/X.h \
- Animations.h
+ Screen.h Struts.h ../config.h DockWindow.h WindowControl.h \
+ /usr/include/X11/X.h Animations.h /usr/include/c++/6/iostream \
+ /usr/include/c++/6/thread
 
 /usr/include/stdc-predef.h:
 
@@ -4367,12 +4368,20 @@ Utilities.h:
 
 IconLoader.h:
 
+Screen.h:
+
+Struts.h:
+
 ../config.h:
 
-DockWindowHandler.h:
+DockWindow.h:
 
 WindowControl.h:
 
 /usr/include/X11/X.h:
 
 Animations.h:
+
+/usr/include/c++/6/iostream:
+
+/usr/include/c++/6/thread:

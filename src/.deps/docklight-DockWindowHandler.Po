@@ -1375,9 +1375,9 @@ docklight-DockWindowHandler.o: DockWindowHandler.cpp \
  /usr/include/gtkmm-3.0/gtkmm/treestore.h \
  /usr/include/gtkmm-3.0/gtkmm/uimanager.h \
  /usr/include/gtkmm-3.0/gtkmm/viewport.h \
- /usr/include/gtkmm-3.0/gtkmm/volumebutton.h WindowControl.h \
- /usr/include/X11/X.h AppWindow.h DockPanel.h DockItem.h SessionWindow.h \
- Utilities.h /usr/include/c++/6/math.h IconLoader.h
+ /usr/include/gtkmm-3.0/gtkmm/volumebutton.h AppWindow.h DockPanel.h \
+ DockItem.h SessionWindow.h Utilities.h /usr/include/c++/6/math.h \
+ IconLoader.h Screen.h Struts.h WindowControl.h /usr/include/X11/X.h
 
 /usr/include/stdc-predef.h:
 
@@ -4351,10 +4351,6 @@ DockWindowHandler.h:
 
 /usr/include/gtkmm-3.0/gtkmm/volumebutton.h:
 
-WindowControl.h:
-
-/usr/include/X11/X.h:
-
 AppWindow.h:
 
 DockPanel.h:
@@ -4368,3 +4364,11 @@ Utilities.h:
 /usr/include/c++/6/math.h:
 
 IconLoader.h:
+
+Screen.h:
+
+Struts.h:
+
+WindowControl.h:
+
+/usr/include/X11/X.h:

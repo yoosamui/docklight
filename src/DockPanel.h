@@ -19,6 +19,8 @@
 #include "SessionWindow.h"
 
 
+
+
 class DockPanel : public Gtk::DrawingArea {
 public:
     DockPanel();
@@ -36,7 +38,8 @@ public:
 
     int preInit(Gtk::Window* window);
 private:
-    static Gtk::Window* m_AppWindow;
+   // static Gtk::Window* m_AppWindow;
+   // static DockWindow* m_DockWindow;
     static std::vector<DockItem*> m_dockitems;
     panel_locationType m_location;
     std::string m_homeiconFilePath;

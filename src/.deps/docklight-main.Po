@@ -1000,7 +1000,7 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
  /usr/include/giomm-2.4/giomm/notification.h \
  /usr/include/giomm-2.4/giomm/menumodel.h \
  /usr/include/giomm-2.4/giomm/menu.h \
- /usr/include/giomm-2.4/giomm/menuitem.h DockBckPanel.h \
+ /usr/include/giomm-2.4/giomm/menuitem.h AppWindow.h \
  /usr/include/libwnck-3.0/libwnck/libwnck.h \
  /usr/include/libwnck-3.0/libwnck/window.h \
  /usr/include/libwnck-3.0/libwnck/screen.h \
@@ -1014,6 +1014,11 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
  /usr/include/libwnck-3.0/libwnck/util.h \
  /usr/include/libwnck-3.0/libwnck/version.h \
  /usr/include/libwnck-3.0/libwnck/wnck-enum-types.h \
+ /usr/include/gtkmm-3.0/gtkmm/window.h /usr/include/gtkmm-3.0/gtkmm/bin.h \
+ /usr/include/gtkmm-3.0/gtkmm/container.h \
+ /usr/include/gtkmm-3.0/gtkmm/childpropertyproxy.h \
+ /usr/include/gtkmm-3.0/gtkmm/childpropertyproxy_base.h \
+ /usr/include/gtkmm-3.0/gtkmm/windowgroup.h DockPanel.h \
  /usr/include/glibmm-2.4/glibmm/timer.h /usr/include/gtkmm-3.0/gtkmm.h \
  /usr/include/glibmm-2.4/glibmm.h /usr/include/glibmm-2.4/glibmm/thread.h \
  /usr/include/glibmm-2.4/glibmm/threads.h \
@@ -1158,13 +1163,7 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
  /usr/include/gtkmm-3.0/gtkmm/radioaction.h \
  /usr/include/gtkmm-3.0/gtkmm/radiobuttongroup.h \
  /usr/include/gtkmm-3.0/gtkmm/aboutdialog.h \
- /usr/include/gtkmm-3.0/gtkmm/dialog.h \
- /usr/include/gtkmm-3.0/gtkmm/window.h /usr/include/gtkmm-3.0/gtkmm/bin.h \
- /usr/include/gtkmm-3.0/gtkmm/container.h \
- /usr/include/gtkmm-3.0/gtkmm/childpropertyproxy.h \
- /usr/include/gtkmm-3.0/gtkmm/childpropertyproxy_base.h \
- /usr/include/gtkmm-3.0/gtkmm/windowgroup.h \
- /usr/include/gtkmm-3.0/gtkmm/box.h \
+ /usr/include/gtkmm-3.0/gtkmm/dialog.h /usr/include/gtkmm-3.0/gtkmm/box.h \
  /usr/include/gtkmm-3.0/gtkmm/orientable.h \
  /usr/include/gtkmm-3.0/gtkmm/hvbox.h \
  /usr/include/gtkmm-3.0/gtkmm/button.h \
@@ -1372,9 +1371,9 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
  /usr/include/gtkmm-3.0/gtkmm/treestore.h \
  /usr/include/gtkmm-3.0/gtkmm/uimanager.h \
  /usr/include/gtkmm-3.0/gtkmm/viewport.h \
- /usr/include/gtkmm-3.0/gtkmm/volumebutton.h DockPanel.h Configuration.h \
- DockItem.h SessionWindow.h Utilities.h /usr/include/c++/6/math.h \
- IconLoader.h AppWindow.h /usr/include/glibmm-2.4/glibmm/i18n.h \
+ /usr/include/gtkmm-3.0/gtkmm/volumebutton.h Configuration.h DockItem.h \
+ SessionWindow.h Utilities.h /usr/include/c++/6/math.h IconLoader.h \
+ Screen.h Struts.h /usr/include/glibmm-2.4/glibmm/i18n.h \
  /usr/include/glib-2.0/glib/gi18n.h /usr/include/libintl.h ../config.h \
  /usr/include/gtk-3.0/gtk/gtk.h
 
@@ -3590,7 +3589,7 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
 
 /usr/include/giomm-2.4/giomm/menuitem.h:
 
-DockBckPanel.h:
+AppWindow.h:
 
 /usr/include/libwnck-3.0/libwnck/libwnck.h:
 
@@ -3617,6 +3616,20 @@ DockBckPanel.h:
 /usr/include/libwnck-3.0/libwnck/version.h:
 
 /usr/include/libwnck-3.0/libwnck/wnck-enum-types.h:
+
+/usr/include/gtkmm-3.0/gtkmm/window.h:
+
+/usr/include/gtkmm-3.0/gtkmm/bin.h:
+
+/usr/include/gtkmm-3.0/gtkmm/container.h:
+
+/usr/include/gtkmm-3.0/gtkmm/childpropertyproxy.h:
+
+/usr/include/gtkmm-3.0/gtkmm/childpropertyproxy_base.h:
+
+/usr/include/gtkmm-3.0/gtkmm/windowgroup.h:
+
+DockPanel.h:
 
 /usr/include/glibmm-2.4/glibmm/timer.h:
 
@@ -3915,18 +3928,6 @@ DockBckPanel.h:
 /usr/include/gtkmm-3.0/gtkmm/aboutdialog.h:
 
 /usr/include/gtkmm-3.0/gtkmm/dialog.h:
-
-/usr/include/gtkmm-3.0/gtkmm/window.h:
-
-/usr/include/gtkmm-3.0/gtkmm/bin.h:
-
-/usr/include/gtkmm-3.0/gtkmm/container.h:
-
-/usr/include/gtkmm-3.0/gtkmm/childpropertyproxy.h:
-
-/usr/include/gtkmm-3.0/gtkmm/childpropertyproxy_base.h:
-
-/usr/include/gtkmm-3.0/gtkmm/windowgroup.h:
 
 /usr/include/gtkmm-3.0/gtkmm/box.h:
 
@@ -4348,8 +4349,6 @@ DockBckPanel.h:
 
 /usr/include/gtkmm-3.0/gtkmm/volumebutton.h:
 
-DockPanel.h:
-
 Configuration.h:
 
 DockItem.h:
@@ -4362,7 +4361,9 @@ Utilities.h:
 
 IconLoader.h:
 
-AppWindow.h:
+Screen.h:
+
+Struts.h:
 
 /usr/include/glibmm-2.4/glibmm/i18n.h:
 

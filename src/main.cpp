@@ -19,8 +19,9 @@
 //
 //****************************************************************
 #include <gtkmm/application.h>
-#include "DockBckPanel.h"
+
 #include "AppWindow.h"
+
 
 #include <sstream>
 //////////////////////////////////////#include "Utilities.h"
@@ -67,7 +68,6 @@ int main(int argc, char *argv[]) {
         g_print("Appwindow init error.\n");
         exit(r);
     }
-    
     
     //Shows the window and returns when it is closed.
     int result = app->run(win);

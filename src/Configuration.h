@@ -118,7 +118,11 @@ namespace Configuration {
     unsigned int get_CellHeight();
 
     unsigned int get_CellWidth();
-
+    unsigned int set_WindowDockMonitorMargin_Top();
+    unsigned int set_WindowDockMonitorMargin_Right();
+    unsigned int set_WindowDockMonitorMargin_Left();
+    unsigned int set_WindowDockMonitorMargin_Bottom();
+    
 }
 
 #endif	/* CONFIGURATION_H */
