@@ -10,12 +10,20 @@
 
 namespace Configuration
 {
-
+    bool m_autohide = false;
+    bool m_allowDraw = true;
+    panel_locationType m_locatiom = panel_locationType::TOP; 
+    
     panel_locationType get_dockWindowLocation()
     {
-        return panel_locationType::TOP;
+        return m_locatiom;
     }
 
+    void set_dockWindowLocation(panel_locationType location)
+    {
+        m_locatiom = location;
+    }
+    
     bool is_panelMode()
     {
         return false;
@@ -24,7 +32,7 @@ namespace Configuration
     bool is_activateStrut()
     {
         return true;
-        if (is_panelMode() && !is_autoHide()) {
+        if (/* !is_panelMode() &&*/ m_autohide ) {
             return false;
         }
         return true;
@@ -32,7 +40,23 @@ namespace Configuration
 
     bool is_autoHide()
     {
-        return false;
+        return m_autohide;
+    }
+    
+    void set_autoHide(bool value)
+    {
+        m_autohide = value;
+    }
+    
+    
+    bool is_allowDraw()
+    {
+        return m_allowDraw;
+    }
+    
+    void set_allowDraw(bool value)
+    {
+        m_allowDraw = value;
     }
 
     unsigned int get_dockWindowSize()
@@ -56,12 +80,12 @@ namespace Configuration
     
     unsigned int set_WindowDockMonitorMargin_Bottom()
     {
-        return 64;
+        return 0;
     }
     
     unsigned int get_separatorMargin()
     {
-        return 6;
+        return 12;
     }
 
     unsigned int get_CellHeight()

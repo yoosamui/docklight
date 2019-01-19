@@ -111,17 +111,18 @@ namespace Configuration {
     unsigned int get_separatorMargin();
     unsigned int get_itemSize();
     bool is_autoHide();
+    void set_autoHide(bool value);
     bool is_activateStrut();
     bool is_panelMode();
-
-
+    bool is_allowDraw();
+    void set_allowDraw(bool value);
     unsigned int get_CellHeight();
-
     unsigned int get_CellWidth();
     unsigned int set_WindowDockMonitorMargin_Top();
     unsigned int set_WindowDockMonitorMargin_Right();
     unsigned int set_WindowDockMonitorMargin_Left();
     unsigned int set_WindowDockMonitorMargin_Bottom();
+    void set_dockWindowLocation(panel_locationType location);
     
 }
 

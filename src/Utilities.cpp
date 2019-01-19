@@ -48,13 +48,11 @@ namespace Utilities
         return result;
     }
 
-    
-    
     bool isNumeric(const std::string& s)
     {
-        return( strspn( s.c_str(), " ,.0123456789" ) == s.size() );
+        return ( strspn(s.c_str(), " ,.0123456789") == s.size());
     }
-    
+
     /*
      * getExecPath()
      *
@@ -67,33 +65,33 @@ namespace Utilities
     {
         char szTmp[32];
         sprintf(szTmp, "/proc/%d/exe", getpid());
-        
+
         char buffer[ PATH_MAX ];
-        ssize_t count = readlink( szTmp, buffer, PATH_MAX );
-        std::string result = std::string( buffer, (count > 0) ? count : 0 );
+        ssize_t count = readlink(szTmp, buffer, PATH_MAX);
+        std::string result = std::string(buffer, (count > 0) ? count : 0);
         std::size_t found = result.find_last_of("/");
         if (found != std::string::npos)
-             result = result.substr(0, found);
-        
+            result = result.substr(0, found);
+
         return result;
-        
-        
-        
-        
-        
-//        ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
-//        if (count == -1) {
-//            g_critical("getExecPath Fail!\n"); 
-//            return "";
-//        }      
-//        
-//        std::string path = result;
-//        std::size_t found = path.find_last_of("/\\");
-//        
-//        if(  found )
-//            path = path.substr(0, found);
-//       
-//        return std::string(path);
+
+
+
+
+
+        //        ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
+        //        if (count == -1) {
+        //            g_critical("getExecPath Fail!\n"); 
+        //            return "";
+        //        }      
+        //        
+        //        std::string path = result;
+        //        std::size_t found = path.find_last_of("/\\");
+        //        
+        //        if(  found )
+        //            path = path.substr(0, found);
+        //       
+        //        return std::string(path);
     }
 
     /*
@@ -139,7 +137,7 @@ namespace Utilities
      * RoundedRectangle helper
      */
     void RoundedRectangle(const Cairo::RefPtr<Cairo::Context>& cr,
-            double x, double y, double width, double height, double radius)
+                          double x, double y, double width, double height, double radius)
     {
         // radius can be no larger than half our height or width
         radius = std::min(radius, std::min(width / 2, height / 2));
@@ -158,7 +156,7 @@ namespace Utilities
         if (found != std::string::npos) {
             // let's replace the extension with an empty string:
             text.replace(text.find(extension),
-                    text.length(), "");
+                         text.length(), "");
         }
         return text;
     }
@@ -166,13 +164,13 @@ namespace Utilities
     std::string removeExtension(std::string text, const std::string extensions[])
     {
         // find extensions
-        for (int i = 0; i < (int) extensions->size() - 1; i++) {
+        for (int i = 0; i < (int)extensions->size() - 1; i++) {
             std::string e = extensions[i];
             std::size_t found = text.find(e);
             if (found != std::string::npos) {
                 // let's replace the extension with an empty string:
                 text.replace(text.find(e),
-                        text.length(), "");
+                             text.length(), "");
             }
         }
         return text;
@@ -202,7 +200,8 @@ namespace Utilities
                 if (fgets(buffer, 128, pipe) != NULL)
                     result += buffer;
             }
-        } catch (...) {
+        }
+        catch (...) {
             pclose(pipe);
             throw;
         }
@@ -230,8 +229,8 @@ namespace Utilities
 
         Window root_window = XRootWindow(display, XDefaultScreen(display));
         Bool found = XQueryPointer(display, root_window, &window_returned,
-                &window_returned, &root_x, &root_y, &win_x, &win_y,
-                &mask_return);
+                                   &window_returned, &root_x, &root_y, &win_x, &win_y,
+                                   &mask_return);
         if (found) {
             x = win_x;
             y = win_y;
@@ -239,5 +238,11 @@ namespace Utilities
 
         XCloseDisplay(display);
         return found;
+    }
+
+    std::vector<std::string>& Arguments()
+    {
+        static std::vector<std::string> arguments;
+        return arguments;
     }
 }

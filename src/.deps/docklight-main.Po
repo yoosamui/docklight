@@ -1375,7 +1375,7 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
  SessionWindow.h Utilities.h /usr/include/c++/6/math.h IconLoader.h \
  Screen.h Struts.h /usr/include/glibmm-2.4/glibmm/i18n.h \
  /usr/include/glib-2.0/glib/gi18n.h /usr/include/libintl.h ../config.h \
- /usr/include/gtk-3.0/gtk/gtk.h
+ /usr/include/gtk-3.0/gtk/gtk.h /usr/include/c++/6/iostream
 
 /usr/include/stdc-predef.h:
 
@@ -4374,3 +4374,5 @@ Struts.h:
 ../config.h:
 
 /usr/include/gtk-3.0/gtk/gtk.h:
+
+/usr/include/c++/6/iostream:

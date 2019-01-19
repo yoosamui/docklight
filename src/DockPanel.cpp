@@ -31,7 +31,6 @@ int DockPanel::m_currentMoveIndex;
 //Gtk::Window* DockPanel::m_AppWindow;
 //DockWindow* DockPanel::m_DockWindow;
 
-
 DockPanel::DockPanel():
 
 //m_previousCellwidth(DEF_CELLWIDTH),
@@ -67,11 +66,11 @@ m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
 
 
     DockPanel::m_currentMoveIndex = -1;
-    m_location = Configuration::get_dockWindowLocation();
+    // m_location = Configuration::get_dockWindowLocation();
 
     initTime = 0;
     endPosition = 200.0;
-   // DockPanel::m_DockWindow = nullptr;
+    // DockPanel::m_DockWindow = nullptr;
 
 
 
@@ -110,7 +109,7 @@ m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
  */
 int DockPanel::preInit(Gtk::Window* window)
 {
-   
+
     //this->m_DockWindow = (DockWindow*) window;
 
     //getDockWindowWidth(); //+180);//DockWindow::get_geometry().height; //this->
@@ -153,9 +152,9 @@ int DockPanel::preInit(Gtk::Window* window)
 
 
     DockWindow::update();
-//    if (m_AppWindow != nullptr) {
-//        ((AppWindow*)m_AppWindow)->update(true);
-//    }
+    //    if (m_AppWindow != nullptr) {
+    //        ((AppWindow*)m_AppWindow)->update(true);
+    //    }
 
 }
 
@@ -311,9 +310,9 @@ void DockPanel::Update(WnckWindow* window, Window_action actiontype)
         dockItem->m_items.push_back(childItem);
         m_dockitems.push_back(std::move(dockItem));
 
-//        if (m_AppWindow != nullptr) {
-//            ((AppWindow*)m_AppWindow)->update(true);
-//        }
+        //        if (m_AppWindow != nullptr) {
+        //            ((AppWindow*)m_AppWindow)->update(true);
+        //        }
         DockWindow::update();
 
     }
@@ -364,7 +363,7 @@ void DockPanel::Update(WnckWindow* window, Window_action actiontype)
                     if (c->m_xid == xid) {
                         delete(c);
                         item->m_items.erase(item->m_items.begin() + idx);
-                         DockWindow::update();
+                        DockWindow::update();
                         return;
                     }
                     idx++;
@@ -384,15 +383,14 @@ void DockPanel::Update(WnckWindow* window, Window_action actiontype)
  */
 int DockPanel::getIndex(int x, int y)
 {
-    //JUAN int center = DockWindow::get_geometry().width / 2;
-    int center = DockWindow::get_geometry().width / 2;
+    int center = DockWindow::get_DockWindowWidth() / 2;
     Gdk::Point mouse(x, y);
     int result = -1;
     int idx = 0;
     int col = 0;
 
 
-    switch (m_location)
+    switch (Configuration::get_dockWindowLocation())
     {
         case panel_locationType::TOP:
         case panel_locationType::BOTTOM:
@@ -402,50 +400,65 @@ int DockPanel::getIndex(int x, int y)
                 col -= (Configuration::get_separatorMargin() + m_cellwidth);
             }
             else {
-                col = (m_cellwidth / 2) + (Configuration::get_separatorMargin() / 2);
+                // col = (Configuration::get_CellWidth() / 2) + (Configuration::get_separatorMargin() / 2);
+                col = center - (this->get_dockItemsWidth() / 2) +  (Configuration::get_separatorMargin() / 2);
+                //col+= (DockWindow::get_dockWindowStartEndMargin()/2);
+
+                //- (DockWindow::get_dockWindowStartEndMargin()/2);
+                // g_print("%d\n", col);
             }
 
+          //  g_print("...col = : %d\n", col);
+            
             for (auto item:m_dockitems) {
-                if (item->m_dockitemtype == DockItemType::Separator) {
-                    idx++;
-                    continue;
-                }
-
-                if (mouse.get_x() >= col && mouse.get_x() <= col + m_cellwidth) {
+                if (mouse.get_x() >= col && mouse.get_x() <= (col + item->m_width)) {
+                 //   g_print(".............%d %d %d %d\n", mouse.get_x() , col , (col + item->m_width), idx);
                     result = idx;
                     break;
                 }
-                col += item->m_width + (Configuration::get_separatorMargin());
+                col += item->m_width + Configuration::get_separatorMargin();
                 idx++;
             }
         }
+            break;
         case panel_locationType::LEFT:
         case panel_locationType::RIGHT:
         {
+
+            center = DockWindow::get_DockWindowHeight() / 2;
+            col = 0;
             if (Configuration::is_panelMode()) {
                 col = center - (m_dockitems.size() * m_cellwidth) / 2;
                 col -= (Configuration::get_separatorMargin() + m_cellwidth);
             }
             else {
-                col = (m_cellwidth / 2) + (Configuration::get_separatorMargin() / 2);
+                col = center - (this->get_dockItemsHeight() / 2) + (Configuration::get_separatorMargin() / 2);
             }
 
-            for (auto item:m_dockitems) {
+           //  g_print("...index = : %d\n", result);
+            int height = 0;
+            for (DockItem* item:m_dockitems) {
+                height = item->m_height;
                 if (item->m_dockitemtype == DockItemType::Separator) {
-                    idx++;
-                    continue;
+                    height = item->m_width;
                 }
 
-                if (mouse.get_y() + 6 >= col && mouse.get_y() <= col + m_cellheight) {
+                if (mouse.get_y() >= col && mouse.get_y() <= col + height) {
                     result = idx;
+                   // g_print("............y:%d  col:%d d:%d h:%d idx:%d\n", mouse.get_y(),
+                  //          col, (col + height), height, idx);
+                    // g_print(".............%d col: %d \n", mouse.get_y() , col );
                     break;
                 }
-                col += item->m_width + (Configuration::get_separatorMargin());
+                col += height + (Configuration::get_separatorMargin());
                 idx++;
             }
+
         }
             break;
     }
+
+    // g_print("%d %d \n", mouse.get_x(), result);
     return result;
 }
 
@@ -546,18 +559,18 @@ void DockPanel::get_dockItemPosition(DockItem* item, int &x1, int &y1, int &x2, 
     int start = 0;
     int increment = 0;
 
-    switch (m_location)
+    switch (Configuration::get_dockWindowLocation())
     {
         case panel_locationType::TOP:
         case panel_locationType::BOTTOM:
         {
-            // JUAN endPosition = DockWindow::getDockWindowHeight();
+
             endPosition = DockWindow::get_DockWindowHeight();
 
             int itemsWidth = this->get_dockItemsWidth();
             //JUAN center = DockWindow::getDockWindowWidth() / 2;
             center = DockWindow::get_DockWindowWidth() / 2;
-            
+
             start = center - (itemsWidth / 2);
 
             increment = get_dockItemsWidthUntilIndex(i);
@@ -573,11 +586,11 @@ void DockPanel::get_dockItemPosition(DockItem* item, int &x1, int &y1, int &x2, 
         case panel_locationType::LEFT:
         case panel_locationType::RIGHT:
         {
-            
+
             endPosition = DockWindow::get_DockWindowWidth();
 
             int itemsHeight = this->get_dockItemsHeight();
-            // JUAN center = DockWindow::getDockWindowHeight() / 2;
+
             center = DockWindow::get_DockWindowHeight() / 2;
             start = center - (itemsHeight / 2);
 
@@ -586,9 +599,9 @@ void DockPanel::get_dockItemPosition(DockItem* item, int &x1, int &y1, int &x2, 
 
             x1 = 6;
 
-            if (m_location == panel_locationType::LEFT) {
+            if (Configuration::get_dockWindowLocation() == panel_locationType::LEFT) {
                 // JUAN x1 = DockWindow::getDockWindowWidth() - Configuration::get_CellWidth() - 6;
-                
+
                 x1 = DockWindow::get_DockWindowWidth() - Configuration::get_CellWidth() - 6;
             }
 
@@ -623,6 +636,10 @@ bool DockPanel::on_leave_notify_event(GdkEventCrossing* crossing_event)
 
 bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
+    if (Configuration::is_allowDraw() == false) {
+        return true;
+    }
+
     int currentPositionX = 0;
     int currentPositionY = 0;
 
@@ -635,38 +652,21 @@ bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
             m_timerStoped = false;
         }
 
-
         if (!m_animate && m_mouseIn && !m_visible) {
             m_animate = true;
             m_easing_duration = 4.f;
 
-            if (Configuration::is_activateStrut()) {
-                DockWindow::updateStrut();
-            }
-            // g_print("Restore\n");
+
         }
-
-
 
         if (!m_animate && m_visible && !m_mouseIn && m_Timer.elapsed() > 1.5) {
             m_Timer.stop();
 
             m_animate = true;
             m_easing_duration = 4.f;
-            
-            DockWindow::updateStrut();
-            
-
-            // m_Timer.reset();
-            //  g_print("Hide\n");
         }
 
-
-
         if (m_animate) {
-            //  g_print("Animate\n");
-
-            //this->show();
 
             auto endTime = initTime + m_easing_duration;
             auto now = atime;
@@ -686,11 +686,11 @@ bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
                         currentPositionY = (int)startPosition - (int)position;
 
                     }
-                    else { // show
-                       //JUAN /startPosition = -DockWindow::getDockWindowHeight();
-                        
+                    else {
+
+
                         startPosition = -DockWindow::get_DockWindowHeight();
-                                
+
                         currentPositionY = (int)startPosition + (int)position;
                     }
                     break;
@@ -702,13 +702,11 @@ bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
                     }
                     else { // show
-                        //JUAN startPosition = DockWindow::getDockWindowHeight();
+
                         startPosition = DockWindow::get_DockWindowHeight();
-                        
+
                         currentPositionY = (int)startPosition - (int)position;
                     }
-
-
 
                     break;
                 case panel_locationType::LEFT:
@@ -720,10 +718,10 @@ bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
                     }
                     else { // show
-                        //JUAN startPosition = -DockWindow::getDockWindowWidth();
-                        
+
+
                         startPosition = -DockWindow::get_DockWindowWidth();
-                                
+
                         currentPositionX = (int)startPosition + (int)position;
                     }
 
@@ -738,65 +736,47 @@ bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
                     }
                     else {
-                        //JUAN startPosition = (DockWindow::getDockWindowWidth());
+
                         startPosition = DockWindow::get_DockWindowWidth();
-                        
+
                         currentPositionX = startPosition - position;
                     }
                     break;
             }
 
-
-            //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
             this->draw_Panel(cr, currentPositionX, currentPositionY);
             this->draw_Items(cr, currentPositionX, currentPositionY);
 
-
-            //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-            // g_print("%d %d Pos: %d \n", currentPositionX, currentPositionY, (int)position);
             if (atime < m_easing_duration) {
                 atime++;
             }
 
             if (position >= endPosition) {
-
-
                 initTime = 0;
                 atime = 0;
                 m_animate = false;
                 m_timerStoped = true;
-                //  m_Timer.reset();
-                //  m_Timer.start();
-
-                // g_print("END\n");
-
                 m_visible = !m_visible;
 
                 if (!m_visible) {
+
                     DockWindow::removeStrut();
                 }
-                //            else
-                //            {
-                //                 DockWindow::updateStrut();
-                //            }
+                else {
+                    DockWindow::updateStrut();
+                }
             }
         }
-        else {
 
-        }
     }
 
     if (!m_animate && m_visible) {
-
         this->draw_Panel(cr, currentPositionX, currentPositionY);
         this->draw_Items(cr, currentPositionX, currentPositionY);
+
+
+
     }
-    // end Animation block #####################################################     
-
-
-
 
     return true;
 }
@@ -809,48 +789,10 @@ bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
  */
 void DockPanel::draw_Panel(const Cairo::RefPtr<Cairo::Context>& cr, int x, int y)
 {
+
     cr->set_source_rgba(0.0, 0.0, 175.8, 0.4);
-
-    /*
-    switch (Configuration::get_dockWindowLocation())
-    {
-        case panel_locationType::TOP:
-        case panel_locationType::BOTTOM:
-        {
-            if (Configuration::is_panelMode()) {
-                RoundedRectangle(cr, 0, y, DockWindow::getDockWindowWidth(), DockWindow::getDockWindowHeight(), 6);
-                break;
-            }
-
-            int itemsHeight = this->get_dockItemsHeight() + DockWindow::get_dockWindowStartEndMargin();
-            RoundedRectangle(cr, 0, y, itemsHeight, DockWindow::getDockWindowHeight(), 6);
-        }
-            break;
-
-        case panel_locationType::LEFT:
-        case panel_locationType::RIGHT:
-        {
-            if (Configuration::is_panelMode()) {
-                RoundedRectangle(cr, x, 0, DockWindow::getDockWindowWidth(), DockWindow::getDockWindowHeight(), 6);
-                break;
-            }
-
-            int itemsWidth = this->get_dockItemsWidth() + DockWindow::get_dockWindowStartEndMargin();
-           // RoundedRectangle(cr, x, 0, itemsWidth, DockWindow::getDockWindowWidth(), 6);
-             RoundedRectangle(cr, x, 0, DockWindow::getDockWindowWidth(), DockWindow::getDockWindowHeight(), 6);
-
-        }
-            break;
-    }
-     */
-    // JUAN RoundedRectangle(cr, x, y, DockWindow::getDockWindowWidth(), DockWindow::getDockWindowHeight(), 6);
-
-    
     RoundedRectangle(cr, x, y, DockWindow::get_DockWindowWidth(), DockWindow::get_DockWindowHeight(), 6);
-    
-    
     cr->fill();
-
 }
 
 void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr, int currentposX, int currentposY)
@@ -859,24 +801,43 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr, int currentp
     int x, y, width, height;
     int idx = 0;
     int center = 0;
-    for (auto item:m_dockitems) {
+    for (DockItem* item:m_dockitems) {
+        if (item->m_dockitemtype == DockItemType::Separator) {
+            idx++;
+            continue;
+        }
+
         this->get_dockItemPosition(item, x, y, width, height, center, idx);
+
 
         // Draw cells
         RoundedRectangle(cr, x + currentposX, y + currentposY, width, height, 3);
         cr->set_source_rgba(0.00, 0.50, 0.66, 1);
         cr->fill();
 
+        cr->set_line_width(1.5);
         RoundedRectangle(cr, x + currentposX, y + currentposY, width, height, 3);
         cr->set_source_rgba(255.0, 255.0, 255.0, 1);
         cr->stroke();
 
-        if (item->m_dockitemtype == DockItemType::Separator) {
-            idx++;
-            continue;
-        }
+        
+          /* DEBUG
+        cr->save();
+        char buffer[50];
+        sprintf(buffer, "%d", x + currentposX);
 
+        cr->set_font_size(13);
+        cr->move_to(x + currentposX, 13); //x + currentposX+100,y + currentposY);
+        cr->show_text(buffer);
+        cr->restore();
+            
+         */ 
+        
+        
+        
+        
         // Draw circles
+
         double radius = 2.0;
         int margin = 4;
 
@@ -893,7 +854,6 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr, int currentp
         startX += currentposX + x;
         startY += (currentposY + y) - 4;
 
-
         cr->set_source_rgb(1.0, 1.0, 1.0);
 
         int heightPos = y + currentposY + Configuration::get_CellHeight() - 6;
@@ -909,13 +869,33 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr, int currentp
         cr->fill();
 
         // Draw icons
-        auto icon = item->m_image->scale_simple(iconsize, iconsize, Gdk::INTERP_BILINEAR);
-        Gdk::Cairo::set_source_pixbuf(cr, icon, startX, startY);
+        if (item->m_image != NULLPB) {
+            auto icon = item->m_image->scale_simple(iconsize, iconsize, Gdk::INTERP_BILINEAR);
+            Gdk::Cairo::set_source_pixbuf(cr, icon, startX, startY);
 
-        cr->paint();
+            cr->paint();
+        }
 
+      
 
         idx++;
+    }
+
+    // Selector
+    if (m_currentMoveIndex != -1) {
+        int x, y, width, height, center;
+        DockItem* item = m_dockitems.at(m_currentMoveIndex);
+        if (item->m_dockitemtype != DockItemType::Separator) {
+            this->get_dockItemPosition(item, x, y, width, height, center, m_currentMoveIndex);
+            cr->set_source_rgba(255.0, 255.0, 255.0, 0.4);
+            RoundedRectangle(cr, x + currentposX, y + currentposY, width, height, 3);
+            cr->fill();
+
+            cr->set_line_width(2.5);
+            cr->set_source_rgba(255.0, 255.0, 255.0, 1);
+            RoundedRectangle(cr, x + currentposX, y + currentposY, width, height, 3);
+            cr->stroke();
+        }
     }
 
 }

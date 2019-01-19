@@ -41,7 +41,7 @@ private:
    // static Gtk::Window* m_AppWindow;
    // static DockWindow* m_DockWindow;
     static std::vector<DockItem*> m_dockitems;
-    panel_locationType m_location;
+    //panel_locationType m_location;
     std::string m_homeiconFilePath;
     static int m_currentMoveIndex;
     int getIndex(int x, int y);

@@ -51,27 +51,14 @@ namespace WindowControl {
     }
     
     bool FullscreenActive() {
-        WnckScreen *screen;
-        GList *window_l;
-        
-        screen = wnck_screen_get_default();
-        //  wnck_screen_force_update(screen);
-        
         // Gets the active WnckWindow on screen . May return NULL sometimes, since
         // not all window managers guarantee that a window is always active.
-        WnckWindow *wckwindow = wnck_screen_get_active_window (screen);
+        WnckWindow *wckwindow = wnck_screen_get_active_window (wnck_screen_get_default());
         if(wckwindow == NULL){
             return false;
         }
        
        return wnck_window_is_fullscreen(wckwindow);
-        
-        
-        
-       
-
-       
-     
     }
 
 
