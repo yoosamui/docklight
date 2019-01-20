@@ -55,7 +55,7 @@ void Struts::update(bool reset)
                     //0,0,410,0,0,0,0,0,2560,4479,0,0
                     if (primary->geometry.x > 0) {
                         insets[strutsPosition::Top] = primary->geometry.y + areaSize + 
-                                Configuration::set_WindowDockMonitorMargin_Top();
+                                Configuration::get_WindowDockMonitorMargin_Top();
                         insets[strutsPosition::TopStart] = next->geometry.width;
                         insets[strutsPosition::TopEnd] = (primary->geometry.width + next->geometry.width) - 1;
                         break;
@@ -63,7 +63,7 @@ void Struts::update(bool reset)
                 }
                  
                 insets[strutsPosition::Top] = areaSize + primary->geometry.y +
-                        Configuration::set_WindowDockMonitorMargin_Top();
+                        Configuration::get_WindowDockMonitorMargin_Top();
                 insets[strutsPosition::TopStart] = 0;
                 insets[strutsPosition::TopEnd] =primary->geometry.height -1;
                         //primary->geometry.height + primary->workarea.y;
@@ -73,7 +73,7 @@ void Struts::update(bool reset)
 
             case panel_locationType::BOTTOM:
             {
-                areaSize += Configuration::set_WindowDockMonitorMargin_Bottom();
+                areaSize += Configuration::get_WindowDockMonitorMargin_Bottom();
                 if (this->screen->get_MonitorsCount() > 1) {
                     //0,0,0,50,0,0,0,0,0,0,2560,4479
                     if (primary->geometry.x > 0) {
@@ -94,7 +94,7 @@ void Struts::update(bool reset)
 
             case panel_locationType::LEFT:
             {
-                areaSize += Configuration::set_WindowDockMonitorMargin_Left();
+                areaSize += Configuration::get_WindowDockMonitorMargin_Left();
                 if (this->screen->get_MonitorsCount() > 1) {
 
                     //0,0,2560,0,0,0,0,0,2560,2600,0,0
@@ -117,7 +117,7 @@ void Struts::update(bool reset)
             case panel_locationType::RIGHT:
             {
                 
-                areaSize += Configuration::set_WindowDockMonitorMargin_Right();
+                areaSize += Configuration::get_WindowDockMonitorMargin_Right();
                 if (this->screen->get_MonitorsCount() > 1) {
                     // 0,60,0,0,0,0,0,1080,0,0,0,0
                     if (primary->geometry.x > 0) {

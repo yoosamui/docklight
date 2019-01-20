@@ -73,6 +73,13 @@
 #define DEF_PREVIEW_WIDTH 220               // the preview popup window width
 #define DEF_PREVIEW_HEIGHT 200              // the preview popup window height
 
+typedef enum Horizontal_alignment_t
+{
+    LEFT_TOP,
+    RIGHT_BOTTOM,
+    CENTER
+} Horizontal_alignment_type;
+
 typedef enum panel_location_t {
     LEFT,
     RIGHT,
@@ -105,6 +112,7 @@ namespace Configuration {
 
 
     panel_locationType get_dockWindowLocation();
+    Horizontal_alignment_type get_HorizontalAlignment();
     unsigned int get_dockWindowSize();
     unsigned int get_topMargin();
     unsigned int get_bottomMargin();
@@ -118,10 +126,10 @@ namespace Configuration {
     void set_allowDraw(bool value);
     unsigned int get_CellHeight();
     unsigned int get_CellWidth();
-    unsigned int set_WindowDockMonitorMargin_Top();
-    unsigned int set_WindowDockMonitorMargin_Right();
-    unsigned int set_WindowDockMonitorMargin_Left();
-    unsigned int set_WindowDockMonitorMargin_Bottom();
+    unsigned int get_WindowDockMonitorMargin_Top();
+    unsigned int get_WindowDockMonitorMargin_Right();
+    unsigned int get_WindowDockMonitorMargin_Left();
+    unsigned int get_WindowDockMonitorMargin_Bottom();
     void set_dockWindowLocation(panel_locationType location);
     
 }

@@ -102,27 +102,35 @@ inline namespace DockWindow
             case panel_locationType::BOTTOM:
             {
                 if (Configuration::is_panelMode()) {
-                    m_window->resize(areaSize, geometry.height);
-                    m_window->move((geometry.x + geometry.width) - areaSize, geometry.y);
+                    m_window->resize(geometry.width, areaSize);
+
+                    if (location == panel_locationType::TOP) {
+                        m_window->move(geometry.x, geometry.y + Configuration::get_WindowDockMonitorMargin_Top());
+                        break;
+                    }
+
+                    m_window->move(geometry.x, (geometry.y + geometry.height) 
+                    - (areaSize + Configuration::get_WindowDockMonitorMargin_Bottom()));
+
                     break;
                 }
 
-                int itemsSize = ((AppWindow*)m_window)->m_dockpanel.get_dockItemsWidth() +  get_dockWindowStartEndMargin();
-                
+                int itemsSize = ((AppWindow*)m_window)->m_dockpanel.get_dockItemsWidth() + get_dockWindowStartEndMargin();
+
                 int center = (/*(geometry.x +*/ geometry.width / 2);
                 int startX = center - (itemsSize / 2);
 
                 m_window->resize(itemsSize, areaSize);
 
                 if (location == panel_locationType::TOP) {
-                   // m_window->move(workarea.x + startX, workarea.y);
-                     m_window->move(geometry.x + startX, geometry.y + Configuration::set_WindowDockMonitorMargin_Top());
+                    // m_window->move(workarea.x + startX, workarea.y);
+                    m_window->move(geometry.x + startX, geometry.y + Configuration::get_WindowDockMonitorMargin_Top());
                 }
                 else {
 
-                    areaSize += Configuration::set_WindowDockMonitorMargin_Bottom();
+                    areaSize += Configuration::get_WindowDockMonitorMargin_Bottom();
                     m_window->move(geometry.x + startX, (geometry.y + geometry.height) - areaSize);
-                      
+
                 }
 
 
@@ -132,6 +140,12 @@ inline namespace DockWindow
             case panel_locationType::RIGHT:
             {
                 if (Configuration::is_panelMode()) {
+                    if (location == panel_locationType::LEFT) {
+                        m_window->resize(areaSize, geometry.height);
+                        m_window->move(geometry.x + Configuration::get_WindowDockMonitorMargin_Left(), geometry.y);
+                        break;
+                    }
+
                     m_window->resize(areaSize, geometry.height);
                     m_window->move((geometry.x + geometry.width) - areaSize, geometry.y);
                     break;
@@ -145,10 +159,10 @@ inline namespace DockWindow
                 m_window->resize(areaSize, itemsSize);
 
                 if (location == panel_locationType::LEFT) {
-                    m_window->move(geometry.x + Configuration::set_WindowDockMonitorMargin_Left(), geometry.y + startY);
+                    m_window->move(geometry.x + Configuration::get_WindowDockMonitorMargin_Left(), geometry.y + startY);
                 }
                 else {
-                    areaSize += Configuration::set_WindowDockMonitorMargin_Right();
+                    areaSize += Configuration::get_WindowDockMonitorMargin_Right();
                     m_window->move((geometry.x + geometry.width) - areaSize, geometry.y + startY);
                 }
 

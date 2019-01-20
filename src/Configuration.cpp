@@ -13,6 +13,12 @@ namespace Configuration
     bool m_autohide = false;
     bool m_allowDraw = true;
     panel_locationType m_locatiom = panel_locationType::TOP; 
+    Horizontal_alignment_type m_HorizontalAlignment =  Horizontal_alignment_type::LEFT_TOP;
+    
+    Horizontal_alignment_type get_HorizontalAlignment()
+    {
+        return m_HorizontalAlignment;
+    }
     
     panel_locationType get_dockWindowLocation()
     {
@@ -26,7 +32,7 @@ namespace Configuration
     
     bool is_panelMode()
     {
-        return false;
+        return true;
     }
 
     bool is_activateStrut()
@@ -64,23 +70,23 @@ namespace Configuration
         return 50; //DOCK_WINDOW_AREA;
     }
 
-    unsigned int set_WindowDockMonitorMargin_Top()
+    unsigned int get_WindowDockMonitorMargin_Top()
     {
         return 27;
     }
-    unsigned int set_WindowDockMonitorMargin_Right()
+    unsigned int get_WindowDockMonitorMargin_Right()
     {
         return 0;
     }
 
-    unsigned int set_WindowDockMonitorMargin_Left()
+    unsigned int get_WindowDockMonitorMargin_Left()
     {
-        return 0;
+        return 8;
     }
     
-    unsigned int set_WindowDockMonitorMargin_Bottom()
+    unsigned int get_WindowDockMonitorMargin_Bottom()
     {
-        return 0;
+        return 4;
     }
     
     unsigned int get_separatorMargin()
