@@ -34,8 +34,8 @@
 
 
 #define DOCK_WINDOW_HEIGHT 46
-#define CELL_TOP_MARGIN 4                 // Cell Top Position
-#define CELL_BOTTOM_MARGIN 4
+#define CELL_TOP_MARGIN 8                // Cell Top Position
+#define CELL_BOTTOM_MARGIN 8
 #define CELL_WIDTH_MARGIN  8
 
 #define ICON_CELL_WIDTH_MARGIN 12
@@ -55,7 +55,7 @@
 //#define DEF_CELLHIGHT  58                    // Cell Height
 //#define DEF_CELLWIDTH 56 //-3//58                    // Cell Width
 
-#define DEF_CELLTOPMARGIN 2                 // Cell Top Position
+#define DEF_CELLTOPMARGIN 6                // Cell Top Position
 #define DEF_CELLBOTTOMMARGIN 14
 
 //#define DEF_ICONSIZE DEF_CELLHIGHT -14      // Icon Size Width and height

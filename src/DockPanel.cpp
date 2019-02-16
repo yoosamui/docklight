@@ -580,7 +580,7 @@ void DockPanel::get_dockItemPosition(DockItem* item, int &x1, int &y1, int &x2, 
             x1 = start + increment;
             y1 = CELL_TOP_MARGIN;
             x2 = item->m_width;
-            y2 = m_cellheight;
+            y2 = Configuration::get_CellHeight();//m_cellheight;
 
         }
             break;
@@ -600,17 +600,18 @@ void DockPanel::get_dockItemPosition(DockItem* item, int &x1, int &y1, int &x2, 
             increment = get_dockItemsHeightUntilIndex(i);
             increment += (i * Configuration::get_separatorMargin()) + Configuration::get_separatorMargin() / 2;
 
-            x1 = 6;
+            
+            x1 = (DockWindow::get_DockWindowWidth()/2) - (Configuration::get_CellWidth()/2) ;
 
-            if (Configuration::get_dockWindowLocation() == panel_locationType::LEFT) {
-                // JUAN x1 = DockWindow::getDockWindowWidth() - Configuration::get_CellWidth() - 6;
-
-                x1 = DockWindow::get_DockWindowWidth() - Configuration::get_CellWidth() - 6;
-            }
+//            if (Configuration::get_dockWindowLocation() == panel_locationType::LEFT) {
+//                // JUAN x1 = DockWindow::getDockWindowWidth() - Configuration::get_CellWidth() - 6;
+//
+//                x1 = DockWindow::get_DockWindowWidth() - Configuration::get_CellWidth() - 6;
+//            }
 
             y1 = start + increment;
             x2 = Configuration::get_CellWidth();
-            y2 = m_cellheight;
+            y2 = Configuration::get_CellHeight(); //m_cellheight;
 
             if (item->m_dockitemtype == DockItemType::Separator) {
                 y2 = 8;
