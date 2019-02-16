@@ -30,6 +30,8 @@ docklight_SOURCES =  \
 main.cpp \
 DockWindow.cpp \
 DockWindow.h \
+AppUpdater.cpp \
+AppUpdater.h \
 Screen.cpp \
 Screen.h \
 Struts.cpp \

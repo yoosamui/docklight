@@ -54,14 +54,16 @@ inline namespace DockWindow
 
     GdkRectangle get_geometry()
     {
-        if (m_window != nullptr)
-            ((AppWindow*)m_window)->m_screen.get_PrimaryMonitor()->geometry;
+        if (m_window != nullptr){
+          return ((AppWindow*)m_window)->m_screen.get_PrimaryMonitor()->geometry;
+        }
     }
 
     GdkRectangle get_workarea()
     {
-        if (m_window != nullptr)
-            ((AppWindow*)m_window)->m_screen.get_PrimaryMonitor()->workarea;
+        if (m_window != nullptr){
+           return ((AppWindow*)m_window)->m_screen.get_PrimaryMonitor()->workarea;
+        }
     }
 
     void updateGeometry()

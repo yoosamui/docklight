@@ -81,12 +81,12 @@ namespace Configuration
 
     unsigned int get_WindowDockMonitorMargin_Left()
     {
-        return 6;
+        return 4;
     }
     
     unsigned int get_WindowDockMonitorMargin_Bottom()
     {
-        return 0;
+        return 6;
     }
     
     unsigned int get_separatorMargin()
