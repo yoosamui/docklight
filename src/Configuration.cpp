@@ -12,7 +12,7 @@ namespace Configuration
 {
     bool m_autohide = true;
     bool m_allowDraw = true;
-    panel_locationType m_locatiom = panel_locationType::TOP; 
+    panel_locationType m_locatiom = panel_locationType::RIGHT; 
     Horizontal_alignment_type m_HorizontalAlignment =  Horizontal_alignment_type::CENTER;
     
     Horizontal_alignment_type get_HorizontalAlignment()
@@ -91,7 +91,7 @@ namespace Configuration
     
     unsigned int get_separatorMargin()
     {
-        return 12;
+        return 8;
     }
 
     unsigned int get_CellHeight()

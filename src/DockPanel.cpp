@@ -173,9 +173,9 @@ bool DockPanel::on_timeoutDraw()
 
 bool DockPanel::canShow()
 {
-//    if (this->m_mouseIn == false) {
-//        return false;
-//    }
+    //    if (this->m_mouseIn == false) {
+    //        return false;
+    //    }
 
     int x, y;
     Utilities::getMousePosition(x, y);
@@ -184,7 +184,10 @@ bool DockPanel::canShow()
     {
         case panel_locationType::TOP:
         {
-            if (y - 10 < Configuration::get_WindowDockMonitorMargin_Top()) {
+            int startX = abs( (DockWindow::get_geometry().width/2) - (DockWindow::get_DockWindowWidth()/2));
+            int endX = startX + DockWindow::get_DockWindowWidth();
+            
+            if (x > startX && x < endX && y - 5 < Configuration::get_WindowDockMonitorMargin_Top()) {
                 m_mouseIn = true;
                 return true;
             }
@@ -192,7 +195,11 @@ bool DockPanel::canShow()
         }
         case panel_locationType::BOTTOM:
         {
-            if (y + 10 > (DockWindow::get_geometry().height - Configuration::get_WindowDockMonitorMargin_Bottom())) {
+            int startX = abs( (DockWindow::get_geometry().width/2) - (DockWindow::get_DockWindowWidth()/2));
+            int endX = startX + DockWindow::get_DockWindowWidth();
+            
+            //g_print("%d %d\n", x, startX);
+            if ( x > startX && x < endX && y + 5 > (DockWindow::get_geometry().height - Configuration::get_WindowDockMonitorMargin_Bottom())) {
                 m_mouseIn = true;
                 return true;
             }
@@ -200,15 +207,21 @@ bool DockPanel::canShow()
         }
         case panel_locationType::LEFT:
         {
-            if (x <= 1 || x - 10 < Configuration::get_WindowDockMonitorMargin_Left()) {
+            int startY = abs( (DockWindow::get_geometry().height/2) - (DockWindow::get_DockWindowHeight()/2));
+            int endY = startY + DockWindow::get_DockWindowHeight();
+            
+            if ( ( y > startY && y < endY)  && (x <= 1 ||  x - 5 < Configuration::get_WindowDockMonitorMargin_Left())) {
                 m_mouseIn = true;
                 return true;
             }
             break;
         }
-         case panel_locationType::RIGHT:
+        case panel_locationType::RIGHT:
         {
-            if (x + 10 > (DockWindow::get_geometry().width - Configuration::get_WindowDockMonitorMargin_Bottom())) {
+            int startY = abs( (DockWindow::get_geometry().height/2) - (DockWindow::get_DockWindowHeight()/2));
+            int endY = startY + DockWindow::get_DockWindowHeight();
+          
+            if ((y > startY && y < endY) && (x + 5 > (DockWindow::get_geometry().width - Configuration::get_WindowDockMonitorMargin_Right()))) {
                 m_mouseIn = true;
                 return true;
             }
@@ -246,11 +259,13 @@ int DockPanel::getIndex(int x, int y)
             }
             else {
                 col = (Configuration::get_separatorMargin() / 2);
-                if (Configuration::get_HorizontalAlignment() == Horizontal_alignment_type::CENTER) {
-                    col = center - (this->get_dockItemsWidth() / 2) + (Configuration::get_separatorMargin() / 2);
-                }
+               
             }
 
+             if (Configuration::get_HorizontalAlignment() == Horizontal_alignment_type::CENTER) {
+                    col = center - (this->get_dockItemsWidth() / 2) + (Configuration::get_separatorMargin() / 2);
+                }
+            
             for (auto item:this->m_appUpdater.m_dockitems) {
                 if (mouse.get_x() >= col && mouse.get_x() <= (col + item->m_width)) {
                     result = idx;
@@ -267,18 +282,20 @@ int DockPanel::getIndex(int x, int y)
 
             center = DockWindow::get_DockWindowHeight() / 2;
             col = (Configuration::get_separatorMargin() / 2);
-            if (Configuration::is_panelMode()) {
-                //col = center - (m_dockitems.size() * m_cellwidth) / 2;
-                //col -= (Configuration::get_separatorMargin() + m_cellwidth);
-                //col = (Configuration::get_separatorMargin() / 2); 
-            }
-            else {
+//            if (Configuration::is_panelMode()) {
+//                //col = center - (m_dockitems.size() * m_cellwidth) / 2;
+//                //col -= (Configuration::get_separatorMargin() + m_cellwidth);
+//                //col = (Configuration::get_separatorMargin() / 2); 
+//            }
+//            else {
+//
+//                
+//            }
 
-                if (Configuration::get_HorizontalAlignment() == Horizontal_alignment_type::CENTER) {
+            if (Configuration::get_HorizontalAlignment() == Horizontal_alignment_type::CENTER) {
                     col = center - (this->get_dockItemsHeight() / 2) + (Configuration::get_separatorMargin() / 2);
                 }
-            }
-
+            
             //  g_print("...index = : %d\n", result);
             int height = 0;
             for (DockItem* item:this->m_appUpdater.m_dockitems) {
@@ -496,26 +513,31 @@ bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     this->get_dockItemPosition(this->m_appUpdater.m_dockitems.at(0), x1, y1, x2, y2, center, 0);
 
     if (Configuration::is_autoHide()) {
-        if (canShow()) {
-            if (!m_animate && !m_mouseIn && m_visible && m_timerStoped) {
-                m_Timer.start();
-                m_timerStoped = false;
-            }
 
+        if (!m_animate && !m_mouseIn && m_visible && m_timerStoped) {
+             m_Timer.start();
+            m_timerStoped = false;
+        }
+        if (!m_animate && m_mouseIn && !m_timerStoped)
+        {
+            m_timerStoped = true;
+        }
+        
+        if (canShow() ) {
             if (!m_animate && m_mouseIn && !m_visible) {
                 m_animate = true;
                 m_easing_duration = 4.f;
             }
         }
+
         if (!m_animate && m_visible && !m_mouseIn && m_Timer.elapsed() > 1.5) {
             m_Timer.stop();
+            m_timerStoped = true;
             m_animate = true;
             m_easing_duration = 4.f;
-
         }
 
         if (m_animate) {
-
             auto endTime = initTime + m_easing_duration;
             auto now = atime;
             int currentPositionX = x1;
@@ -529,21 +551,20 @@ bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
             {
                 case panel_locationType::TOP:
                     currentPositionX = 0;
+                    
                     if (m_visible) {
-                        startPosition = 0; //DockWindow::getDockWindowHeight();
+                        startPosition = 0; 
                         currentPositionY = (int)startPosition - (int)position;
-
                     }
                     else {
-
-
                         startPosition = -DockWindow::get_DockWindowHeight();
-
                         currentPositionY = (int)startPosition + (int)position;
                     }
+                    
                     break;
                 case panel_locationType::BOTTOM:
                     currentPositionX = 0;
+                    
                     if (m_visible) {
                         startPosition = 0;
                         currentPositionY = (int)startPosition + (int)position;
@@ -552,7 +573,6 @@ bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
                     else { // show
 
                         startPosition = DockWindow::get_DockWindowHeight();
-
                         currentPositionY = (int)startPosition - (int)position;
                     }
 
@@ -566,27 +586,20 @@ bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
                     }
                     else { // show
-
-
                         startPosition = -DockWindow::get_DockWindowWidth();
-
                         currentPositionX = (int)startPosition + (int)position;
                     }
 
                     break;
                 case panel_locationType::RIGHT:
-
                     currentPositionY = 0;
+                    
                     if (m_visible) {
-
                         startPosition = 0;
                         currentPositionX = startPosition + position;
-
                     }
                     else {
-
                         startPosition = DockWindow::get_DockWindowWidth();
-
                         currentPositionX = startPosition - position;
                     }
                     break;
@@ -603,11 +616,9 @@ bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
                 initTime = 0;
                 atime = 0;
                 m_animate = false;
-                m_timerStoped = true;
                 m_visible = !m_visible;
 
                 if (!m_visible) {
-
                     DockWindow::removeStrut();
                 }
                 else {
@@ -615,15 +626,11 @@ bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
                 }
             }
         }
-
     }
 
     if (!m_animate && m_visible) {
         this->draw_Panel(cr, currentPositionX, currentPositionY);
         this->draw_Items(cr, currentPositionX, currentPositionY);
-
-
-
     }
 
     return true;
