@@ -9,15 +9,19 @@
 #include "DockWindow.h"
 #include "Launcher.h"
 
+#include <fstream>
+#include <iostream>
+
 // static members
 std::vector<DockItem*> AppUpdater::m_dockitems;
 
 AppUpdater::AppUpdater()
 {
-
+    this->Load();
+ 
     // Gets the default WnckScreen on the default display.
     WnckScreen *wnckscreen = wnck_screen_get_default();
-    
+
     g_signal_connect(G_OBJECT(wnckscreen), "window-opened",
                      G_CALLBACK(AppUpdater::on_window_opened), NULL);
 
@@ -27,6 +31,160 @@ AppUpdater::AppUpdater()
 }
 
 AppUpdater::~AppUpdater(){ }
+
+/**
+ * Load Attachments
+ */
+void AppUpdater::Load()
+{
+    std::string filePath = this->getFilePath();
+    size_t result;
+
+    FILE* f;
+    f = fopen(filePath.c_str(), "rb");
+    if (!f) {
+        g_critical("Load: can't open file.");
+        return;
+    }
+
+    struct attachments_data st;
+
+    while (1) {
+        result = fread(&st, sizeof (st), 1, f);
+
+        if (feof(f) != 0)
+            break;
+
+        if (result == 0)
+            g_critical("Load Error reading file fread\n");
+
+        DockItem* dockItem = new DockItem();
+        dockItem->m_isAttached = true;
+        dockItem->m_appname = st.appname;
+        dockItem->m_titlename = st.titlename;
+        dockItem->m_realgroupname = st.realgroupname;
+        dockItem->m_instancename = st.instancename;
+        dockItem->m_dockitemtype = (DockItemType)st.dockitemtype;
+        dockItem->m_width = st.width;
+        dockItem->m_height = st.height;
+        dockItem->m_index = st.index;
+        dockItem->m_attachedIndex = st.index;
+        dockItem->m_isDirty = true;
+        
+        
+         /*
+        std::string theme_iconname ="";
+        dockItem->m_image = IconLoader::GetIconByAppName(
+                dockItem->m_instancename.c_str(),theme_iconname);
+        */
+        
+        if (st.pixbuff) {
+            try {
+                auto loader = Gdk::PixbufLoader::create();
+                loader->write(st.pixbuff, sizeof (st.pixbuff));
+                dockItem->m_image = loader->get_pixbuf();
+                loader->close();
+            }
+            catch (Gdk::PixbufError pe) {
+                g_critical("SessionWindow::init: Gdk::PixbufError\n");
+            }
+            catch (Glib::FileError fe) {
+                g_critical("SessionWindow::init: Glib::FileError\n");
+            }
+
+        }
+
+        m_dockitems.push_back(std::move(dockItem));
+        g_print("%d\n",st.dockitemtype);
+    }
+
+    fclose(f);
+      
+}
+
+/**
+ * Save Attachments
+ */
+void AppUpdater::Save()
+{
+    std::string filePath = this->getFilePath();
+
+    FILE* f;
+    f = fopen(filePath.c_str(), "wb");
+    if (!f) {
+        g_critical("SessionWindow::save: can't create file.");
+        return;
+    }
+
+    gchar* iconBuffer;
+    gsize buffer_size;
+    struct attachments_data st;
+
+    int index = 0;
+    for (DockItem *item:m_dockitems) {
+
+        if (index == 0) {
+            index++;
+            continue;
+        }
+
+        if (!item->m_isAttached) {
+            continue;
+        }
+
+        if (item->m_image != NULLPB) {
+            try {
+                item->m_image->save_to_buffer(iconBuffer, buffer_size);
+                memcpy(st.pixbuff, iconBuffer, buffer_size);
+                delete [] (gchar*)iconBuffer;
+            }
+            catch (Gdk::PixbufError pe) {
+                g_critical("Attachments::save: Gdk::PixbufError\n");
+            }
+            catch (Glib::FileError fe) {
+                g_critical("Attachments::save: Glib::FileError\n");
+            }
+
+            if (buffer_size > DEF_PIXBUFFER_MAX) {
+                g_critical("Attachments::save: pixbuf  size out of range.");
+                continue;
+            }
+        }
+
+        strncpy(st.appname, item->m_appname.c_str(), DEF_FIELD_MAX);
+        strncpy(st.titlename, item->m_titlename.c_str(), DEF_FIELD_MAX);
+        strncpy(st.realgroupname, item->m_realgroupname.c_str(), DEF_FIELD_MAX);
+        strncpy(st.instancename, item->m_instancename.c_str(), DEF_FIELD_MAX);
+
+        item->m_index = index;
+        st.attachedIndex = item->m_attachedIndex;
+        st.dockitemtype = (int)item->m_dockitemtype;
+        st.width = item->m_width;
+        st.height = item->m_height;
+        
+        st.index = (int)item->m_index;
+
+        size_t result = fwrite(&st, sizeof (st), 1, f);
+        if (result == 0)
+            g_critical("Attachments::save:: Error writing file> fwrite\n");
+
+       // g_print("%d\n",index);
+        index++;
+    }
+
+    fclose(f);
+}
+
+std::string AppUpdater::getFilePath()
+{
+    std::string path = Utilities::getExecPath();
+    char buff[PATH_MAX];
+    sprintf(buff, "%s/%s", path.c_str(), DEF_ATTACHMENTDIR);
+    Utilities::CreateDirectoryIfNotExitst(buff);
+    sprintf(buff, "%s/%s/attachments.dat", path.c_str(), DEF_ATTACHMENTDIR);
+
+    return buff;
+}
 
 /**
  * Emitted when a new Wnck.Window is opened on screen.
@@ -160,9 +318,6 @@ void AppUpdater::Update(WnckWindow* window, Window_action actiontype)
         dockItem->m_items.push_back(childItem);
         m_dockitems.push_back(std::move(dockItem));
 
-        //        if (m_AppWindow != nullptr) {
-        //            ((AppWindow*)m_AppWindow)->update(true);
-        //        }
         DockWindow::update();
 
     }
@@ -201,7 +356,7 @@ void AppUpdater::Update(WnckWindow* window, Window_action actiontype)
 
                 // if is not attached then it is at the end on the list.
                 // we need to reset the index.
-                /////////////////// m_currentMoveIndex = -1;
+                //  m_currentMoveIndex = -1;
 
                 DockWindow::update();
                 return;

@@ -32,6 +32,7 @@
 #include <stdexcept>
 #include <stdio.h>
 #include <string>
+#include <sys/stat.h>
 
 
 namespace Utilities
@@ -244,5 +245,44 @@ namespace Utilities
     {
         static std::vector<std::string> arguments;
         return arguments;
+    }
+
+#include <dirent.h>
+
+    bool DirectoryExists(const char* pzPath)
+    {
+        if (pzPath == NULL) return false;
+
+        DIR *pDir;
+        bool bExists = false;
+
+        pDir = opendir(pzPath);
+
+        if (pDir != NULL) {
+            bExists = true;
+            (void)closedir(pDir);
+        }
+
+        return bExists;
+    }
+
+    
+    bool CreateDirectory(const char* dirNamePath)
+    {
+        const int dir_err = mkdir(dirNamePath, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+        if (-1 == dir_err) {
+            printf("Error creating directory!n");
+            return false;
+        }
+        
+        return true;
+    }
+    
+    bool CreateDirectoryIfNotExitst(const char* dirNamePath)
+    {
+        if(!DirectoryExists(dirNamePath)){
+         return CreateDirectory(dirNamePath);   
+        }
+        return false;
     }
 }

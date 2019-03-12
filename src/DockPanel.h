@@ -10,6 +10,8 @@
 
 #define WNCK_I_KNOW_THIS_IS_UNSTABLE  1
 
+
+
 #include <libwnck/libwnck.h>
 #include <glibmm/timer.h>
 #include <gtkmm.h> 
@@ -18,8 +20,6 @@
 #include "DockItem.h"
 #include "SessionWindow.h"
 #include "AppUpdater.h"
-
-
 
 class DockPanel : public Gtk::DrawingArea {
 public:
@@ -38,28 +38,36 @@ public:
 
     int preInit(Gtk::Window* window);
 private:
-    
+
     AppUpdater m_appUpdater;
-   // static Gtk::Window* m_AppWindow;
-   // static DockWindow* m_DockWindow;
-   // static std::vector<DockItem*> m_dockitems;
+    // static Gtk::Window* m_AppWindow;
+    // static DockWindow* m_DockWindow;
+    // static std::vector<DockItem*> m_dockitems;
     //panel_locationType m_location;
     std::string m_homeiconFilePath;
     static int m_currentMoveIndex;
     int getIndex(int x, int y);
 
-   // int m_cellheight;
-   // int m_cellwidth;
+    // int m_cellheight;
+    // int m_cellwidth;
     int m_previousCellwidth;
     int m_iconsize;
 
+    bool m_mouseLeftButtonDown = false;
+    bool m_mouseRightButtonDown = false;
+float m_mouseclickEventTime = 0.0f;
     bool canShow();
 
 protected:
-   // static void Update(WnckWindow* window, Window_action actiontype);
-   // static void on_window_opened(WnckScreen* screen, WnckWindow* window, gpointer data);
-   // static void on_window_closed(WnckScreen* screen, WnckWindow* window, gpointer data);
 
+    void ExecuteApp(GdkEventButton* event);
+    void on_menuNew_event();
+
+    // static void Update(WnckWindow* window, Window_action actiontype);
+    // static void on_window_opened(WnckScreen* screen, WnckWindow* window, gpointer data);
+    // static void on_window_closed(WnckScreen* screen, WnckWindow* window, gpointer data);
+    virtual bool on_button_press_event(GdkEventButton *event);
+    virtual bool on_button_release_event(GdkEventButton *event);
     virtual bool on_motion_notify_event(GdkEventMotion* event);
 
 
@@ -89,19 +97,19 @@ protected:
     float position = 0;
     float initTime;
     float endPosition;
-    
-    
+
+
     bool m_mouseIn = false;
     bool m_animate = false;
     bool m_timerStoped = true;
     bool m_visible = true;
     float atime = 0.f;
-    
-     Glib::Timer m_Timer;
-     
-     
-   void draw_Panel(const Cairo::RefPtr<Cairo::Context>& cr, int x, int y);
-   void draw_Items(const Cairo::RefPtr<Cairo::Context>& cr, int currentposX, int currentposY);
+
+    Glib::Timer m_Timer;
+
+
+    void draw_Panel(const Cairo::RefPtr<Cairo::Context>& cr, int x, int y);
+    void draw_Items(const Cairo::RefPtr<Cairo::Context>& cr, int currentposX, int currentposY);
 };
 
 #endif	/* DOCKPANEL_H */

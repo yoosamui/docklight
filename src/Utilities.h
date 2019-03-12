@@ -50,6 +50,10 @@ namespace Utilities
     bool getMousePosition(int&x,int &y);
     bool isNumeric(const std::string& s);
     std::vector<std::string>& Arguments();
+    bool DirectoryExists(const char* pzPath);
+    bool CreateDirectoryIfNotExitst(const char* dirNamePath);
+    bool CreateDirectory(const char* dirNamePath);
+    
 
 }
 

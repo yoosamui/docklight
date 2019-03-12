@@ -30,6 +30,7 @@
 #define DOCKLIGHT_INSTANCENAME  "docklight"
 #define DOCKLIGHTLAUNCHER       "DockLight Launcher"
 #define DOCKLIGHT_INSTANCENAME "docklight"
+
 #define NULLPB (Glib::RefPtr<Gdk::Pixbuf>)NULL
 
 
