@@ -70,7 +70,6 @@ protected:
     virtual bool on_button_release_event(GdkEventButton *event);
     virtual bool on_motion_notify_event(GdkEventMotion* event);
 
-
     bool on_timeoutEasing();
     bool on_timeoutDraw();
     // Fix for transparency in Appwindow

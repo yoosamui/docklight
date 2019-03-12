@@ -18,7 +18,7 @@ std::vector<DockItem*> AppUpdater::m_dockitems;
 AppUpdater::AppUpdater()
 {
     this->Load();
- 
+
     // Gets the default WnckScreen on the default display.
     WnckScreen *wnckscreen = wnck_screen_get_default();
 
@@ -27,6 +27,15 @@ AppUpdater::AppUpdater()
 
     g_signal_connect(wnckscreen, "window_closed",
                      G_CALLBACK(AppUpdater::on_window_closed), NULL);
+
+
+    // signal for icon themes changes
+    GdkScreen *screen = gdk_screen_get_default();
+    auto icon_theme = g_object_get_data(G_OBJECT(screen), "gtk-icon-theme");
+    auto settings = gtk_settings_get_for_screen(screen);
+    g_signal_connect(settings, "notify::gtk-icon-theme-name",
+                     G_CALLBACK(AppUpdater::on_theme_changed), icon_theme);
+
 
 }
 
@@ -64,20 +73,21 @@ void AppUpdater::Load()
         dockItem->m_titlename = st.titlename;
         dockItem->m_realgroupname = st.realgroupname;
         dockItem->m_instancename = st.instancename;
+        dockItem->m_theme_iconname = st.themeiconname;
         dockItem->m_dockitemtype = (DockItemType)st.dockitemtype;
         dockItem->m_width = st.width;
         dockItem->m_height = st.height;
         dockItem->m_index = st.index;
         dockItem->m_attachedIndex = st.index;
         dockItem->m_isDirty = true;
-        
-        
-         /*
-        std::string theme_iconname ="";
-        dockItem->m_image = IconLoader::GetIconByAppName(
-                dockItem->m_instancename.c_str(),theme_iconname);
-        */
-        
+
+
+        /*
+       std::string theme_iconname ="";
+       dockItem->m_image = IconLoader::GetIconByAppName(
+               dockItem->m_instancename.c_str(),theme_iconname);
+         */
+
         if (st.pixbuff) {
             try {
                 auto loader = Gdk::PixbufLoader::create();
@@ -94,12 +104,12 @@ void AppUpdater::Load()
 
         }
 
+        setIconByTheme(dockItem);
         m_dockitems.push_back(std::move(dockItem));
-        g_print("%d\n",st.dockitemtype);
     }
 
     fclose(f);
-      
+
 }
 
 /**
@@ -155,20 +165,21 @@ void AppUpdater::Save()
         strncpy(st.titlename, item->m_titlename.c_str(), DEF_FIELD_MAX);
         strncpy(st.realgroupname, item->m_realgroupname.c_str(), DEF_FIELD_MAX);
         strncpy(st.instancename, item->m_instancename.c_str(), DEF_FIELD_MAX);
+        strncpy(st.themeiconname, item->m_theme_iconname.c_str(), DEF_FIELD_MAX);
 
         item->m_index = index;
         st.attachedIndex = item->m_attachedIndex;
         st.dockitemtype = (int)item->m_dockitemtype;
         st.width = item->m_width;
         st.height = item->m_height;
-        
+
         st.index = (int)item->m_index;
 
         size_t result = fwrite(&st, sizeof (st), 1, f);
         if (result == 0)
             g_critical("Attachments::save:: Error writing file> fwrite\n");
 
-       // g_print("%d\n",index);
+        // g_print("%d\n",index);
         index++;
     }
 
@@ -379,4 +390,25 @@ void AppUpdater::Update(WnckWindow* window, Window_action actiontype)
 
 
 }
+
+void AppUpdater::setIconByTheme(DockItem *item)
+{
+    if (!item->m_image || item->m_theme_iconname == "") {
+        return;
+    }
+
+    const char* appname = item->m_instancename.c_str();
+    auto image = IconLoader::GetIconByAppName(appname, item->m_theme_iconname);
+    if (image) {
+        item->m_image = image;
+    }
+}
+
+void AppUpdater::on_theme_changed(GtkSettings *settings, GParamSpec *pspec, GtkIconTheme *icon_theme)
+{
+    for (DockItem* item:m_dockitems) {
+        setIconByTheme(item);
+    }
+}
+
 

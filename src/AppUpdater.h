@@ -28,6 +28,7 @@ struct attachments_data
     char titlename[DEF_FIELD_MAX] = {'\0'};
     char instancename[DEF_FIELD_MAX] = {'\0'};
     char realgroupname[DEF_FIELD_MAX] = {'\0'};
+    char themeiconname[DEF_FIELD_MAX] = {'\0'};
                                          
     int attachedIndex = -1;
     int dockitemtype = 0;
@@ -48,7 +49,9 @@ protected:
     static void Update(WnckWindow* window, Window_action actiontype);
     static void on_window_opened(WnckScreen* screen, WnckWindow* window, gpointer data);
     static void on_window_closed(WnckScreen* screen, WnckWindow* window, gpointer data);
+    static void on_theme_changed(GtkSettings *settings, GParamSpec *pspec, GtkIconTheme *icon_theme);
 private:
+    static void setIconByTheme(DockItem *item);
 
 };
 

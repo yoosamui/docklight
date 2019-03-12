@@ -35,6 +35,9 @@ private:
     static void LeaveFunc(GtkWidget *widget, GdkEvent *event, gpointer callback_data);
     static void on_active_window_changed_callback(WnckScreen* screen,
             WnckWindow* previously_active_window, gpointer user_data);
+    
+   
+    
     float m_easing_duration;
     bool fullscreenActive();
     bool fullScreenTimer();

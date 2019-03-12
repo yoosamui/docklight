@@ -157,6 +157,10 @@ int DockPanel::preInit(Gtk::Window* window)
     //        ((AppWindow*)m_AppWindow)->update(true);
     //    }
 
+    
+    
+  
+    
 }
 
 DockPanel::~DockPanel(){ }
@@ -384,8 +388,11 @@ void DockPanel::ExecuteApp(GdkEventButton* event)
         return;
     }
 
-    if (item->m_items.size() == 1) {
-        WnckWindow *window = item->m_window;
+    // TEST must be item->m_items.size() == 1
+    // must be item->m_items.size() >1 // open preview
+    if (item->m_items.size() >= 1) {
+        DockItem* firstChild = item->m_items.at(0);
+        WnckWindow *window = firstChild->m_window;
         
         auto ct = gtk_get_current_event_time();
         if (wnck_window_is_minimized(window)) {
@@ -396,17 +403,13 @@ void DockPanel::ExecuteApp(GdkEventButton* event)
         if (wnck_window_is_active(window) == false) {
              wnck_window_unminimize(window,ct);
             wnck_window_activate(window, ct);
+             return;
          }
         
         if (wnck_window_is_active(window) == true) {
               wnck_window_minimize(window);
-           // wnck_window_activate(window, ct);
-         }
-        
-//        if (wnck_window_is_active(window)) {
-//            wnck_window_minimize(window);
-//            return;
-//        }
+               return;
+        }
 
         if (wnck_window_is_minimized(window)) {
             wnck_window_unminimize(window,ct);
@@ -780,6 +783,7 @@ void DockPanel::ExecuteApp(GdkEventButton* event)
             return true;
         }
 
+        
         int currentPositionX = 0;
         int currentPositionY = 0;
 
@@ -802,7 +806,7 @@ void DockPanel::ExecuteApp(GdkEventButton* event)
                     m_easing_duration = 4.f;
                 }
             }
-
+            
             if (!m_animate && m_visible && !m_mouseIn && m_Timer.elapsed() > 1.5) {
                 m_Timer.stop();
                 m_timerStoped = true;
@@ -878,8 +882,10 @@ void DockPanel::ExecuteApp(GdkEventButton* event)
                         break;
                 }
 
+                if(m_animate){
                 this->draw_Panel(cr, currentPositionX, currentPositionY);
                 this->draw_Items(cr, currentPositionX, currentPositionY);
+                }
 
                 if (atime < m_easing_duration) {
                     atime++;
