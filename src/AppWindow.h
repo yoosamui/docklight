@@ -37,10 +37,31 @@ private:
             WnckWindow* previously_active_window, gpointer user_data);
     
    
-    
+    // autohide members
     float m_easing_duration;
+    float m_time = 0;
+
+    //float position = 0;
+    float m_initTime = 0;
+    //float m_endPosition;
+
+
+    
+    bool m_animate = false;
+    bool m_timerStoped = true;
+    bool m_visible = true;
+    float atime = 0.f;
+
+    Glib::Timer m_Timer;
+    
+    
+    
+    
+    
+    
     bool fullscreenActive();
     bool fullScreenTimer();
+    bool autohideTimer();
     virtual bool on_enter_notify_event(GdkEventCrossing* crossing_event);
     virtual bool on_leave_notify_event(GdkEventCrossing* crossing_event);
     static bool m_isfullscreenSet;

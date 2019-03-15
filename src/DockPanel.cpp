@@ -444,7 +444,9 @@ void DockPanel::ExecuteApp(GdkEventButton* event)
 
     bool DockPanel::on_timeoutDraw()
     {
-        Gtk::Widget::queue_draw();
+        if(m_mouseIn){
+            Gtk::Widget::queue_draw();
+        }
         return true;
     }
 

@@ -30,6 +30,7 @@ inline namespace DockWindow {
     void removeStrut();
     void showDockWindow();
     guint get_dockWindowStartEndMargin();
+    gint getClientSize();
 }
 
 /*

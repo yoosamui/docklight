@@ -26,7 +26,6 @@ inline namespace DockWindow
     {
         m_window = window;
         updateStrut();
-        showDockWindow();
         return 0;
     }
 
@@ -88,6 +87,27 @@ inline namespace DockWindow
         }
     }
 
+    gint getClientSize()
+    {
+        if (m_window == nullptr) {
+            return 0;
+        }
+         
+        int width = 0, height = 0;
+        m_window->get_size(width,height);
+        
+        switch (Configuration::get_dockWindowLocation())
+        {
+            case panel_locationType::TOP:
+            case panel_locationType::BOTTOM:
+                return height;
+            case panel_locationType::LEFT:
+            case panel_locationType::RIGHT:
+                return width;
+        }
+        
+        return 0;
+    }
     void showDockWindow()
     {
         if (m_window == nullptr) {
