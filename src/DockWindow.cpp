@@ -5,13 +5,10 @@
  * Created on November 4, 2018, 12:45 PM
  */
 
-#include "Configuration.h"
 
-
-//#include <gtk-3.0/gdk/gdkdisplay.h>
 #include <gdk/gdk.h>
-//#include <X11/Xlib.h> 
 
+#include "Configuration.h"
 #include "DockWindow.h"
 #include "WindowControl.h"
 #include "AppWindow.h"
@@ -21,14 +18,21 @@
 inline namespace DockWindow
 {
     Gtk::Window* m_window = nullptr;
+    bool m_visible;
 
     int init(Gtk::Window* window)
     {
         m_window = window;
         updateStrut();
-        showDockWindow();
+        reSize(true);
+        //     showDockWindow();
         return 0;
     }
+
+    bool set_Visibility(bool visible)
+    {
+        m_visible = visible;
+    };
 
     int get_DockWindowWidth()
     {
@@ -49,9 +53,14 @@ inline namespace DockWindow
 
     void update()
     {
+        update(false);
+    }
+
+    void update(bool move)
+    {
         //g_print("Update from dockpanel\n");
         if (m_window != nullptr) {
-            reSize();
+            reSize(move);
         }
     }
 
@@ -115,6 +124,11 @@ inline namespace DockWindow
 
     void reSize()
     {
+        reSize(false);
+    }
+
+    void reSize(bool forceMove)
+    {
         if (m_window == nullptr) {
             return;
         }
@@ -142,114 +156,31 @@ inline namespace DockWindow
                     break;
                 }
 
+                // calculate window size and position
                 int itemsSize = ((AppWindow*)m_window)->m_dockpanel.get_dockItemsWidth() + get_dockWindowStartEndMargin();
-
-                int center = (/*(geometry.x +*/ geometry.width / 2);
-                int startX = center - (itemsSize / 2);
-
+                int startX = ((geometry.x + geometry.width) / 2) - (itemsSize / 2);
+                
+                // resize the window
                 m_window->resize(itemsSize, areaSize);
 
-                if (location == panel_locationType::TOP) {
-                    // m_window->move(workarea.x + startX, workarea.y);
-                    m_window->move(geometry.x + startX, geometry.y + Configuration::get_WindowDockMonitorMargin_Top());
-                }
-                else {
-
-                    areaSize += Configuration::get_WindowDockMonitorMargin_Bottom();
-                    m_window->move(geometry.x + startX, (geometry.y + geometry.height) - areaSize);
-
-                }
-
-
-                break;
-            }
-            case panel_locationType::LEFT:
-            case panel_locationType::RIGHT:
-            {
-                if (Configuration::is_panelMode()) {
-                    if (location == panel_locationType::LEFT) {
-                        m_window->resize(areaSize, geometry.height);
-                    //    m_window->move(geometry.x + Configuration::get_WindowDockMonitorMargin_Left(), geometry.y);
-                        break;
-                    }
-
-                    m_window->resize(areaSize, geometry.height);
-               //     m_window->move((geometry.x + geometry.width) - areaSize, geometry.y);
+                 // avoid show window when apps add or remove. 
+                if (Configuration::is_autoHide() && !m_visible && !forceMove) {
+                    int x, y;
+                    m_window->get_position(x, y);
+                    m_window->move(startX,y);
                     break;
                 }
-
-                int itemsSize = ((AppWindow*)m_window)->m_dockpanel.get_dockItemsHeight() + get_dockWindowStartEndMargin();
-
-                int center = (geometry.height / 2);
-                int startY = center - (itemsSize / 2);
-
-                m_window->resize(areaSize, itemsSize);
-
-                if (location == panel_locationType::LEFT) {
-               //     m_window->move(geometry.x + Configuration::get_WindowDockMonitorMargin_Left(), geometry.y + startY);
-                }
-                else {
-                    areaSize += Configuration::get_WindowDockMonitorMargin_Right();
-
-                  //  m_window->move((geometry.x + geometry.width) - areaSize, geometry.y + startY);
-                }
-
-
-                break;
-            }
-        }
-
-    }
-
-    void showDockWindow()
-    {
-        if (m_window == nullptr) {
-            return;
-        }
-
-        g_print("showDockWindow\n");
-        auto geometry = ((AppWindow*)m_window)->m_screen.get_PrimaryMonitor()->geometry;
-        auto areaSize = Configuration::get_dockWindowSize();
-        auto location = Configuration::get_dockWindowLocation();
-        switch (location)
-        {
-            case panel_locationType::TOP:
-            case panel_locationType::BOTTOM:
-            {
-                if (Configuration::is_panelMode()) {
-                    m_window->resize(geometry.width, areaSize);
-
-                    if (location == panel_locationType::TOP) {
-                        m_window->move(geometry.x, geometry.y + Configuration::get_WindowDockMonitorMargin_Top());
-                        break;
-                    }
-
-                    m_window->move(geometry.x, (geometry.y + geometry.height)
-                                   - (areaSize + Configuration::get_WindowDockMonitorMargin_Bottom()));
-
+                
+                if (location == panel_locationType::TOP) {
+                    m_window->move(geometry.x + startX, geometry.y + Configuration::get_WindowDockMonitorMargin_Top());
+                    m_visible = true;
                     break;
                 }
-
-                int itemsSize = ((AppWindow*)m_window)->m_dockpanel.get_dockItemsWidth() + get_dockWindowStartEndMargin();
-
-                int center = (/*(geometry.x +*/ geometry.width / 2);
-                int startX = center - (itemsSize / 2);
-
-                m_window->resize(itemsSize, areaSize);
-
-                if (location == panel_locationType::TOP) {
-                    // m_window->move(workarea.x + startX, workarea.y);
-                    m_window->move(geometry.x + startX, geometry.y + Configuration::get_WindowDockMonitorMargin_Top());
-                }
-                else {
-
-                    areaSize += Configuration::get_WindowDockMonitorMargin_Bottom();
-                    m_window->move(geometry.x + startX, (geometry.y + geometry.height) - areaSize);
-
-                }
-
-
-                break;
+                
+                 areaSize += Configuration::get_WindowDockMonitorMargin_Bottom();
+                 m_window->move(geometry.x + startX, (geometry.y + geometry.height) - areaSize);
+                 m_visible = true;
+                 break;
             }
             case panel_locationType::LEFT:
             case panel_locationType::RIGHT:
@@ -263,29 +194,39 @@ inline namespace DockWindow
 
                     m_window->resize(areaSize, geometry.height);
                     m_window->move((geometry.x + geometry.width) - areaSize, geometry.y);
+                    m_visible = true;
                     break;
                 }
 
+                // calculate window size and position
                 int itemsSize = ((AppWindow*)m_window)->m_dockpanel.get_dockItemsHeight() + get_dockWindowStartEndMargin();
+                int startY = (geometry.height / 2) - (itemsSize / 2);
+                areaSize += Configuration::get_WindowDockMonitorMargin_Right();
+                int posx = (geometry.x + geometry.width) - areaSize;
+                int posy = geometry.y + startY;
 
-                int center = (geometry.height / 2);
-                int startY = center - (itemsSize / 2);
-
+                // resize the window
                 m_window->resize(areaSize, itemsSize);
+
+                // avoid show window when apps add in. 
+                if (Configuration::is_autoHide() && !m_visible && !forceMove) {
+                    int x, y;
+                    m_window->get_position(x, y);
+                    m_window->move(x, posy);
+                    break;
+                }
 
                 if (location == panel_locationType::LEFT) {
                     m_window->move(geometry.x + Configuration::get_WindowDockMonitorMargin_Left(), geometry.y + startY);
-                }
-                else {
-                    areaSize += Configuration::get_WindowDockMonitorMargin_Right();
-
-                    m_window->move((geometry.x + geometry.width) - areaSize, geometry.y + startY);
+                    m_visible = true;
+                    break;
                 }
 
+                m_window->move(posx, posy);
+                m_visible = true;
 
                 break;
             }
         }
-
     }
 }

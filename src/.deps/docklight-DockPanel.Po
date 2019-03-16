@@ -1381,7 +1381,8 @@ docklight-DockPanel.o: DockPanel.cpp /usr/include/stdc-predef.h \
  /usr/include/c++/6/fstream /usr/include/c++/6/bits/codecvt.h \
  /usr/include/x86_64-linux-gnu/c++/6/bits/basic_file.h \
  /usr/include/x86_64-linux-gnu/c++/6/bits/c++io.h \
- /usr/include/c++/6/bits/fstream.tcc /usr/include/c++/6/iostream
+ /usr/include/c++/6/bits/fstream.tcc /usr/include/c++/6/iostream \
+ /usr/include/cairo/cairo.h
 
 /usr/include/stdc-predef.h:
 
@@ -4398,3 +4399,5 @@ Animations.h:
 /usr/include/c++/6/bits/fstream.tcc:
 
 /usr/include/c++/6/iostream:
+
+/usr/include/cairo/cairo.h:

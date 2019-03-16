@@ -19,18 +19,20 @@
 class AppWindow;
 
 inline namespace DockWindow {
+    bool set_Visibility(bool visible);
     int init(Gtk::Window* window);
     int get_DockWindowWidth();
     int get_DockWindowHeight();
-    void update();
     GdkRectangle get_geometry();
     GdkRectangle get_workarea();
     void updateGeometry();
     void updateStrut();
     void removeStrut();
-    void showDockWindow();
     guint get_dockWindowStartEndMargin();
     gint getClientSize();
+    void update();
+    void update(bool move);
+    void reSize(bool forceMove);
     void reSize();
 }
 

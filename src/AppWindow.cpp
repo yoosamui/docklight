@@ -138,7 +138,7 @@ int AppWindow::init()
 
 /**
  * Auto hide this window if auto hide property is enabled.
- * @return 
+ * @return true
  */
 bool AppWindow::autohideTimer()
 {
@@ -158,7 +158,6 @@ bool AppWindow::autohideTimer()
     }
 
     if (!m_animate && m_visible && !m_mouseIn && abs(m_Timer.elapsed()) > 1.5f) {
-        g_print("timer: %f %d\n", abs(this->m_Timer.elapsed()), m_mouseIn);
         m_Timer.reset();
         m_Timer.stop();
         m_timerStoped = true;
@@ -167,7 +166,6 @@ bool AppWindow::autohideTimer()
     }
     
     if (m_animate) {
-        g_print("Animate\n");
         auto endTime = m_initTime + m_easing_duration;
         auto now = atime;
         int currentPositionX = 0;
@@ -327,6 +325,8 @@ bool AppWindow::autohideTimer()
             else {
                 DockWindow::updateStrut();
             }
+            
+            DockWindow::set_Visibility(this->m_visible);
         }
     }
     return true;
@@ -370,7 +370,7 @@ void AppWindow::monitor_changed_callback(GdkScreen *screen, gpointer gtkwindow)
      */
     DockWindow::removeStrut();
     DockWindow::updateGeometry();
-    DockWindow::showDockWindow();
+    DockWindow::reSize();
 
     if (Configuration::is_autoHide() == false) {
 
