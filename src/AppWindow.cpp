@@ -88,10 +88,10 @@ int AppWindow::init()
     //https://developer.gnome.org/gtk-tutorial/stable/x2431.html
     this->add_events(
                      Gdk::PROPERTY_CHANGE_MASK |
-                     Gdk::POINTER_MOTION_HINT_MASK |
-                     Gdk::ENTER_NOTIFY_MASK |
-                     Gdk::LEAVE_NOTIFY_MASK |
-                     Gdk::POINTER_MOTION_MASK |
+                     //     Gdk::POINTER_MOTION_HINT_MASK |
+                     //       Gdk::ENTER_NOTIFY_MASK |
+                     //       Gdk::LEAVE_NOTIFY_MASK |
+                     //      Gdk::POINTER_MOTION_MASK |
                      Gdk::STRUCTURE_MASK |
                      Gdk::PROPERTY_CHANGE_MASK);
 
@@ -109,7 +109,7 @@ int AppWindow::init()
                      (gpointer) this);
 
     // Launch timer every second
-    Glib::signal_timeout().connect(sigc::mem_fun(*this, &AppWindow::fullScreenTimer), 1000);
+    Glib::signal_timeout().connect(sigc::mem_fun(*this, &AppWindow::fullScreenTimer), 100);
     Glib::signal_timeout().connect(sigc::mem_fun(*this, &AppWindow::autohideTimer), DEF_FRAMERATE);
 
 
@@ -137,7 +137,7 @@ int AppWindow::init()
 }
 
 /**
- * Autohides this window if autohide property is enabled.
+ * Auto hide this window if auto hide property is enabled.
  * @return 
  */
 bool AppWindow::autohideTimer()
@@ -156,14 +156,18 @@ bool AppWindow::autohideTimer()
         m_animate = true;
         m_easing_duration = 4.f;
     }
-    if (!m_animate && m_visible && !m_mouseIn && m_Timer.elapsed() > 1.5) {
+
+    if (!m_animate && m_visible && !m_mouseIn && abs(m_Timer.elapsed()) > 1.5f) {
+        g_print("timer: %f %d\n", abs(this->m_Timer.elapsed()), m_mouseIn);
+        m_Timer.reset();
         m_Timer.stop();
         m_timerStoped = true;
         m_animate = true;
         m_easing_duration = 4.f;
     }
-
+    
     if (m_animate) {
+        g_print("Animate\n");
         auto endTime = m_initTime + m_easing_duration;
         auto now = atime;
         int currentPositionX = 0;
@@ -180,16 +184,19 @@ bool AppWindow::autohideTimer()
         switch (location)
         {
             case panel_locationType::TOP:
+            {
                 // avoid hidden if the mouse is in the margin area
-                if (m_visible && Configuration::get_WindowDockMonitorMargin_Top() > 0) {
+                int margin = Configuration::get_WindowDockMonitorMargin_Top();
+                if (m_visible && margin > 0 && !this->m_mouseIn) {
                     Utilities::getMousePosition(mouseX, mouseY);
-                    if (mouseY <= Configuration::get_WindowDockMonitorMargin_Top() &&
-                        mouseX > xpos && mouseX < xpos + DockWindow::getClientSize()) {
-                        this->m_mouseIn = true;
-                        this->m_Timer.reset();
+                    if (mouseY <= margin &&
+                        mouseX > xpos && mouseX < xpos + this->get_width()) {
+                        m_animate = false;
                         return true;
                     }
                 }
+                
+                // set start and end position for hide/show 
                 if (m_visible) { // Hide
                     startPosition = ypos;
                     endPosition -= DockWindow::getClientSize() - 1;
@@ -199,19 +206,21 @@ bool AppWindow::autohideTimer()
                     endPosition = Configuration::get_WindowDockMonitorMargin_Top();
                 }
                 break;
-
+            }    
             case panel_locationType::BOTTOM:
+            {
                 // avoid hidden if the mouse is in the margin area
-                if (m_visible && Configuration::get_WindowDockMonitorMargin_Bottom() > 0) {
+                int margin = Configuration::get_WindowDockMonitorMargin_Bottom();
+                if (m_visible && margin > 0 && !this->m_mouseIn) {
                     Utilities::getMousePosition(mouseX, mouseY);
-                    if (mouseY >= DockWindow::get_geometry().height -
-                        Configuration::get_WindowDockMonitorMargin_Bottom()
-                        && mouseX > xpos && mouseX < xpos + DockWindow::getClientSize()) {
-                        this->m_mouseIn = true;
-                        this->m_Timer.reset();
+                    if (mouseY > DockWindow::get_geometry().height - margin
+                        && mouseX > xpos && mouseX < xpos + this->get_width()) {
+                        m_animate = false;
                         return true;
                     }
                 }
+                
+                // set start and end position for hide/show 
                 if (m_visible) { // Hide
                     startPosition = ypos;
                     endPosition = DockWindow::get_geometry().height - 1;
@@ -223,16 +232,20 @@ bool AppWindow::autohideTimer()
                             Configuration::get_WindowDockMonitorMargin_Bottom());
                 }
                 break;
+            }
             case panel_locationType::LEFT:
+            {
                 // avoid hidden if the mouse is in the margin area
-                if (m_visible && Configuration::get_WindowDockMonitorMargin_Left() > 0) {
+                int margin = Configuration::get_WindowDockMonitorMargin_Left();
+                if (m_visible && margin > 0 && !this->m_mouseIn) {
                     Utilities::getMousePosition(mouseX, mouseY);
-                    if (mouseX >= DockWindow::get_geometry().x && mouseX <= xpos) {
-                        this->m_mouseIn = true;
-                        this->m_Timer.reset();
+                    if (mouseX <= margin &&
+                        mouseY > ypos && mouseY < ypos + this->get_height()) {
+                        m_animate = false;
                         return true;
                     }
                 }
+                // set start and end position for hide/show 
                 if (m_visible) { // Hide
                     startPosition = xpos;
                     endPosition -= DockWindow::getClientSize() - 1;
@@ -242,19 +255,20 @@ bool AppWindow::autohideTimer()
                     endPosition = Configuration::get_WindowDockMonitorMargin_Left();
                 }
                 break;
-
+            }
             case panel_locationType::RIGHT:
-                // avoid hiden if the mouse in the margin area
-                if (Configuration::get_WindowDockMonitorMargin_Right() > 0) {
+            {
+                // avoid hidden if the mouse in the margin area
+                int margin = Configuration::get_WindowDockMonitorMargin_Right();
+                if (m_visible && margin > 0 && !this->m_mouseIn) {
                     Utilities::getMousePosition(mouseX, mouseY);
-                    if (mouseX <= DockWindow::get_geometry().width &&
-                        mouseX >= xpos + DockWindow::getClientSize()) {
-                        this->m_mouseIn = true;
-                        this->m_Timer.reset();
+                    if (mouseX > DockWindow::get_geometry().width - margin
+                        && mouseY > ypos && mouseY < ypos + this->get_height()) {
+                        m_animate = false;
                         return true;
                     }
                 }
-
+                // set start and end position for hide/show 
                 if (m_visible) {
                     startPosition = xpos;
                     endPosition = DockWindow::get_geometry().width - 1;
@@ -266,6 +280,7 @@ bool AppWindow::autohideTimer()
                             DockWindow::getClientSize());
                 }
                 break;
+            }
         }
 
         float position = ofxeasing::map_clamp(now,
@@ -273,9 +288,7 @@ bool AppWindow::autohideTimer()
                                               endTime,
                                               startPosition,
                                               endPosition,
-                                              &ofxeasing::linear::easeIn);
-
-
+                                              &ofxeasing::linear::easeInOut);
 
         switch (location)
         {
@@ -292,42 +305,35 @@ bool AppWindow::autohideTimer()
         }
 
         // g_print("X:%d Y:%d P:%f\n", currentPositionX, currentPositionY, position);
-        // g_print(":%f :%d \n", position, currentPositionX);
-        
+        //  ease move
         this->move(currentPositionX, currentPositionY);
 
         if (atime < m_easing_duration) {
             atime++;
         }
 
+        // check the end of animation
         if ((int)position == (int)endPosition) {
-
-            //if ( location == panel_locationType::LEFT && position <= endPosition) || (!m_visible && position <= endPosition)) {
-
             m_initTime = 0;
             atime = 0;
             m_animate = false;
             m_visible = !m_visible;
-            m_Timer.reset();
+            this->m_Timer.reset();
+            this->m_Timer.stop();
 
             if (!m_visible) {
                 DockWindow::removeStrut();
             }
             else {
-
                 DockWindow::updateStrut();
             }
-
-           // g_print("Finish %d\n", endPosition);
         }
     }
-
     return true;
 }
 
 bool AppWindow::fullScreenTimer()
 {
-    return true;
     m_isfullscreen = WindowControl::FullscreenActive();
     if (m_isfullscreen && !m_isfullscreenSet) {
         Configuration::set_allowDraw(false);
