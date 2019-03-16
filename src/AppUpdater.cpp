@@ -297,7 +297,6 @@ void AppUpdater::Update(WnckWindow* window, Window_action actiontype)
             }
         }
 
-
         Glib::RefPtr<Gdk::Pixbuf> appIcon = NULLPB;
 
         std::string theme_iconname = "";
@@ -357,7 +356,7 @@ void AppUpdater::Update(WnckWindow* window, Window_action actiontype)
                     delete( item->m_items.at(0));
                     item->m_items.erase(item->m_items.begin());
 
-                    DockWindow::update();
+                  ///////////////////////  DockWindow::update();
                     return;
                 }
 
@@ -369,7 +368,7 @@ void AppUpdater::Update(WnckWindow* window, Window_action actiontype)
                 // we need to reset the index.
                 //  m_currentMoveIndex = -1;
 
-                DockWindow::update();
+               /////////////////////////////// DockWindow::update();
                 return;
             }
             else {
@@ -379,7 +378,7 @@ void AppUpdater::Update(WnckWindow* window, Window_action actiontype)
                     if (c->m_xid == xid) {
                         delete(c);
                         item->m_items.erase(item->m_items.begin() + idx);
-                        DockWindow::update();
+                       //////////////// DockWindow::update();
                         return;
                     }
                     idx++;

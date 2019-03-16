@@ -25,7 +25,13 @@ public:
     virtual ~AppWindow();
     DockPanel m_dockpanel;
     static Screen m_screen;
+    DockPanel* get_DockPanel()
+    {
+        return &m_dockpanel;
+    }
 private:
+    static void on_window_opened(WnckScreen* screen, WnckWindow* window, gpointer data);
+    static void on_window_closed(WnckScreen* screen, WnckWindow* window, gpointer data);
     static void monitor_size_changed_callback(GdkScreen *screen, gpointer gtkwindow);
     static void monitor_changed_callback(GdkScreen *screen, gpointer gtkwindow);
     static void window_geometry_changed_callback(WnckWindow *window, gpointer user_data);

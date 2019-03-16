@@ -25,7 +25,7 @@ inline namespace DockWindow
         m_window = window;
         updateStrut();
         reSize(true);
-        //     showDockWindow();
+        
         return 0;
     }
 
@@ -133,6 +133,11 @@ inline namespace DockWindow
             return;
         }
 
+//        m_window->resize(600, 60);
+//         m_window->move( 100,100 );
+//         
+//         return;
+        
         g_print("Resize\n");
         auto geometry = ((AppWindow*)m_window)->m_screen.get_PrimaryMonitor()->geometry;
         auto areaSize = Configuration::get_dockWindowSize();
@@ -156,8 +161,7 @@ inline namespace DockWindow
                     break;
                 }
 
-                // calculate window size and position
-                int itemsSize = ((AppWindow*)m_window)->m_dockpanel.get_dockItemsWidth() + get_dockWindowStartEndMargin();
+                int itemsSize = ((AppWindow*)m_window)->get_DockPanel()->get_dockItemsWidth() + get_dockWindowStartEndMargin();
                 int startX = ((geometry.x + geometry.width) / 2) - (itemsSize / 2);
                 
                 // resize the window

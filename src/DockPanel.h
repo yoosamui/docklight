@@ -24,13 +24,15 @@
 class DockPanel : public Gtk::DrawingArea {
 public:
     DockPanel();
-
+    
+    
     float m_easing_duration;
     virtual ~DockPanel();
     SessionWindow* m_sessionWindow;
 
-    unsigned int get_dockItemsWidth();
-    unsigned int get_dockItemsHeight();
+    
+    int get_dockItemsWidth();
+    int get_dockItemsHeight();
 
     int getCurrentIndex() {
         return m_currentMoveIndex;
@@ -40,10 +42,7 @@ public:
 private:
 
     AppUpdater m_appUpdater;
-    // static Gtk::Window* m_AppWindow;
-    // static DockWindow* m_DockWindow;
-    // static std::vector<DockItem*> m_dockitems;
-    //panel_locationType m_location;
+    
     std::string m_homeiconFilePath;
     static int m_currentMoveIndex;
     int getIndex(int x, int y);

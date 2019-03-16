@@ -32,6 +32,8 @@ int DockPanel::m_currentMoveIndex;
 //Gtk::Window* DockPanel::m_AppWindow;
 //DockWindow* DockPanel::m_DockWindow;
 
+//AppUpdater DockPanel::m_appUpdater;
+
 DockPanel::DockPanel():
 
 //m_previousCellwidth(DEF_CELLWIDTH),
@@ -249,6 +251,7 @@ bool DockPanel::on_button_press_event(GdkEventButton *event)
  */
 bool DockPanel::on_button_release_event(GdkEventButton *event)
 {
+    
     /*
     // Check if a item was drop
     if (m_dragdropMouseDown) {
@@ -667,19 +670,18 @@ unsigned int DockPanel::get_dockItemsHeightUntilIndex(int idx)
     return size;
 }
 
-unsigned int DockPanel::get_dockItemsWidth()
-{
 
+inline int DockPanel::get_dockItemsWidth()
+{
     unsigned int size = 0;
     for (DockItem* item:this->m_appUpdater.m_dockitems) {
         size += item->m_width;
     }
 
-    return size + (Configuration::get_separatorMargin() * this->m_appUpdater.m_dockitems.size())
-            ; //+            Configuration::get_itemSize(); //Margin 
+    return size + (Configuration::get_separatorMargin() * this->m_appUpdater.m_dockitems.size());
 }
 
-inline unsigned int DockPanel::get_dockItemsHeight()
+inline int DockPanel::get_dockItemsHeight()
 {
     unsigned int size = 0;
     for (DockItem* item:this->m_appUpdater.m_dockitems) {
@@ -782,6 +784,8 @@ bool DockPanel::on_leave_notify_event(GdkEventCrossing * crossing_event)
 
 bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
+    
+   
     if (Configuration::is_allowDraw() == false) {
         return true;
     }
@@ -793,127 +797,127 @@ bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     int x1, y1, x2, y2, center;
     this->get_dockItemPosition(this->m_appUpdater.m_dockitems.at(0), x1, y1, x2, y2, center, 0);
 
-    if (Configuration::is_autoHide()) {
+//    if (Configuration::is_autoHide()) {
+//
+//        if (!m_animate && !m_mouseIn && m_visible && m_timerStoped) {
+//            m_Timer.start();
+//            m_timerStoped = false;
+//        }
+//        if (!m_animate && m_mouseIn && !m_timerStoped) {
+//            m_timerStoped = true;
+//        }
+//
+//        if (canShow()) {
+//            if (!m_animate && m_mouseIn && !m_visible) {
+//                m_animate = true;
+//                m_easing_duration = 4.f;
+//            }
+//        }
+//
+//        if (!m_animate && m_visible && !m_mouseIn && m_Timer.elapsed() > 1.5) {
+//            m_Timer.stop();
+//            m_timerStoped = true;
+//            m_animate = true;
+//            m_easing_duration = 4.f;
+//        }
+//
+//        if (m_animate) {
+//            auto endTime = initTime + m_easing_duration;
+//            auto now = atime;
+//            int currentPositionX = x1;
+//            int currentPositionY = y1;
+//            float startPosition = 0.f;
+//
+//            position = ofxeasing::map_clamp(now, initTime, endTime, 0,
+//                                            endPosition, &ofxeasing::linear::easeIn);
+//
+//            switch (Configuration::get_dockWindowLocation())
+//            {
+//                case panel_locationType::TOP:
+//                    currentPositionX = 0;
+//
+//                    if (m_visible) {
+//                        startPosition = 0;
+//                        currentPositionY = (int)startPosition - (int)position;
+//                    }
+//                    else {
+//                        startPosition = -DockWindow::get_DockWindowHeight();
+//                        currentPositionY = (int)startPosition + (int)position;
+//                    }
+//
+//                    break;
+//                case panel_locationType::BOTTOM:
+//                    currentPositionX = 0;
+//
+//                    if (m_visible) {
+//                        startPosition = 0;
+//                        currentPositionY = (int)startPosition + (int)position;
+//
+//                    }
+//                    else { // show
+//
+//                        startPosition = DockWindow::get_DockWindowHeight();
+//                        currentPositionY = (int)startPosition - (int)position;
+//                    }
+//
+//                    break;
+//                case panel_locationType::LEFT:
+//
+//                    currentPositionY = 0;
+//                    if (m_visible) {
+//                        startPosition = 0;
+//                        currentPositionX = (int)startPosition - (int)position;
+//
+//                    }
+//                    else { // show
+//                        startPosition = -DockWindow::get_DockWindowWidth();
+//                        currentPositionX = (int)startPosition + (int)position;
+//                    }
+//
+//                    break;
+//                case panel_locationType::RIGHT:
+//                    currentPositionY = 0;
+//
+//                    if (m_visible) {
+//                        startPosition = 0;
+//                        currentPositionX = startPosition + position;
+//                    }
+//                    else {
+//                        startPosition = DockWindow::get_DockWindowWidth();
+//                        currentPositionX = startPosition - position;
+//                    }
+//                    break;
+//            }
+//
+//            if (m_animate) {
+//                this->draw_Panel(cr, currentPositionX, currentPositionY);
+//                this->draw_Items(cr, currentPositionX, currentPositionY);
+//            }
+//
+//            if (atime < m_easing_duration) {
+//                atime++;
+//            }
+//
+//            if (position >= endPosition) {
+//                initTime = 0;
+//                atime = 0;
+//                m_animate = false;
+//                m_visible = !m_visible;
+//
+//                if (!m_visible) {
+//                    DockWindow::removeStrut();
+//                }
+//                else {
+//                    DockWindow::updateStrut();
+//                }
+//            }
+//        }
+//    }
 
-        if (!m_animate && !m_mouseIn && m_visible && m_timerStoped) {
-            m_Timer.start();
-            m_timerStoped = false;
-        }
-        if (!m_animate && m_mouseIn && !m_timerStoped) {
-            m_timerStoped = true;
-        }
-
-        if (canShow()) {
-            if (!m_animate && m_mouseIn && !m_visible) {
-                m_animate = true;
-                m_easing_duration = 4.f;
-            }
-        }
-
-        if (!m_animate && m_visible && !m_mouseIn && m_Timer.elapsed() > 1.5) {
-            m_Timer.stop();
-            m_timerStoped = true;
-            m_animate = true;
-            m_easing_duration = 4.f;
-        }
-
-        if (m_animate) {
-            auto endTime = initTime + m_easing_duration;
-            auto now = atime;
-            int currentPositionX = x1;
-            int currentPositionY = y1;
-            float startPosition = 0.f;
-
-            position = ofxeasing::map_clamp(now, initTime, endTime, 0,
-                                            endPosition, &ofxeasing::linear::easeIn);
-
-            switch (Configuration::get_dockWindowLocation())
-            {
-                case panel_locationType::TOP:
-                    currentPositionX = 0;
-
-                    if (m_visible) {
-                        startPosition = 0;
-                        currentPositionY = (int)startPosition - (int)position;
-                    }
-                    else {
-                        startPosition = -DockWindow::get_DockWindowHeight();
-                        currentPositionY = (int)startPosition + (int)position;
-                    }
-
-                    break;
-                case panel_locationType::BOTTOM:
-                    currentPositionX = 0;
-
-                    if (m_visible) {
-                        startPosition = 0;
-                        currentPositionY = (int)startPosition + (int)position;
-
-                    }
-                    else { // show
-
-                        startPosition = DockWindow::get_DockWindowHeight();
-                        currentPositionY = (int)startPosition - (int)position;
-                    }
-
-                    break;
-                case panel_locationType::LEFT:
-
-                    currentPositionY = 0;
-                    if (m_visible) {
-                        startPosition = 0;
-                        currentPositionX = (int)startPosition - (int)position;
-
-                    }
-                    else { // show
-                        startPosition = -DockWindow::get_DockWindowWidth();
-                        currentPositionX = (int)startPosition + (int)position;
-                    }
-
-                    break;
-                case panel_locationType::RIGHT:
-                    currentPositionY = 0;
-
-                    if (m_visible) {
-                        startPosition = 0;
-                        currentPositionX = startPosition + position;
-                    }
-                    else {
-                        startPosition = DockWindow::get_DockWindowWidth();
-                        currentPositionX = startPosition - position;
-                    }
-                    break;
-            }
-
-            if (m_animate) {
-                this->draw_Panel(cr, currentPositionX, currentPositionY);
-                this->draw_Items(cr, currentPositionX, currentPositionY);
-            }
-
-            if (atime < m_easing_duration) {
-                atime++;
-            }
-
-            if (position >= endPosition) {
-                initTime = 0;
-                atime = 0;
-                m_animate = false;
-                m_visible = !m_visible;
-
-                if (!m_visible) {
-                    DockWindow::removeStrut();
-                }
-                else {
-                    DockWindow::updateStrut();
-                }
-            }
-        }
-    }
-
-    if (!m_animate && m_visible) {
+    
         this->draw_Panel(cr, currentPositionX, currentPositionY);
         this->draw_Items(cr, currentPositionX, currentPositionY);
-    }
+
 
     return true;
 }
@@ -1020,16 +1024,14 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr, int currentp
 
             cr->paint();
         }
-
-
-
         idx++;
     }
 
     // Selector
-    if (m_currentMoveIndex != -1) {
+    if (m_currentMoveIndex != -1 && m_currentMoveIndex < this->m_appUpdater.m_dockitems.size()) {
         int x, y, width, height, center;
         DockItem* item = this->m_appUpdater.m_dockitems.at(m_currentMoveIndex);
+        
         if (item->m_dockitemtype != DockItemType::Separator) {
             this->get_dockItemPosition(item, x, y, width, height, center, m_currentMoveIndex);
             cr->set_source_rgba(255.0, 255.0, 255.0, 0.4);

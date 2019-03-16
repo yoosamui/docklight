@@ -108,6 +108,12 @@ int AppWindow::init()
                      G_CALLBACK(monitor_changed_callback),
                      (gpointer) this);
 
+     g_signal_connect(G_OBJECT(wnckscreen), "window-opened",
+                     G_CALLBACK(AppWindow::on_window_opened), NULL);
+
+    g_signal_connect(wnckscreen, "window_closed",
+                     G_CALLBACK(AppWindow::on_window_closed), NULL);
+    
     // Launch timer every second
     Glib::signal_timeout().connect(sigc::mem_fun(*this, &AppWindow::fullScreenTimer), 100);
     Glib::signal_timeout().connect(sigc::mem_fun(*this, &AppWindow::autohideTimer), DEF_FRAMERATE);
@@ -349,6 +355,29 @@ bool AppWindow::fullScreenTimer()
     }
     return true;
 }
+
+/**
+ * Emitted when a new Wnck.Window is opened on screen.
+ * @param screen
+ * @param window
+ * @param data
+ */
+void AppWindow::on_window_opened(WnckScreen *screen, WnckWindow* window, gpointer data)
+{
+    DockWindow::update();
+}
+
+/**
+ * Emitted when a Wnck.Window is closed on screen.
+ * @param screen
+ * @param window
+ * @param data
+ */
+void AppWindow::on_window_closed(WnckScreen *screen, WnckWindow *window, gpointer data)
+{
+    DockWindow::update();
+}
+
 
 void AppWindow::monitor_size_changed_callback(GdkScreen *screen, gpointer gtkwindow){ }
 
