@@ -115,7 +115,7 @@ int AppWindow::init()
                      G_CALLBACK(AppWindow::on_window_closed), NULL);
     
     // Launch timer every second
-    Glib::signal_timeout().connect(sigc::mem_fun(*this, &AppWindow::fullScreenTimer), 100);
+    Glib::signal_timeout().connect(sigc::mem_fun(*this, &AppWindow::fullScreenTimer), 1000);
     Glib::signal_timeout().connect(sigc::mem_fun(*this, &AppWindow::autohideTimer), DEF_FRAMERATE);
 
 
@@ -343,7 +343,10 @@ bool AppWindow::fullScreenTimer()
     m_isfullscreen = WindowControl::FullscreenActive();
     if (m_isfullscreen && !m_isfullscreenSet) {
         Configuration::set_allowDraw(false);
+        
+        DockWindow::hide();
         m_isfullscreenSet = true;
+        g_print("Enter full screen\n");
         return true;
     }
 
@@ -351,6 +354,8 @@ bool AppWindow::fullScreenTimer()
 
         m_isfullscreenSet = false;
         Configuration::set_allowDraw(true);
+        DockWindow::reSize();
+        g_print("leaven fullscreen\n");
         m_isfullscreenSet = false;
     }
     return true;

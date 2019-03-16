@@ -32,7 +32,7 @@ namespace Configuration
     
     bool is_panelMode()
     {
-        return false;
+        return false;//!m_autohide;
     }
 
     bool is_activateStrut()

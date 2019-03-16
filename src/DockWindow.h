@@ -34,6 +34,7 @@ inline namespace DockWindow {
     void update(bool move);
     void reSize(bool forceMove);
     void reSize();
+    void hide();
 }
 
 /*

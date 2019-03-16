@@ -133,11 +133,6 @@ inline namespace DockWindow
             return;
         }
 
-//        m_window->resize(600, 60);
-//         m_window->move( 100,100 );
-//         
-//         return;
-        
         g_print("Resize\n");
         auto geometry = ((AppWindow*)m_window)->m_screen.get_PrimaryMonitor()->geometry;
         auto areaSize = Configuration::get_dockWindowSize();
@@ -197,7 +192,8 @@ inline namespace DockWindow
                     }
 
                     m_window->resize(areaSize, geometry.height);
-                    m_window->move((geometry.x + geometry.width) - areaSize, geometry.y);
+                    //m_window->move((geometry.x + geometry.width) - (areaSize + Configuration::get_WindowDockMonitorMargin_Right()), geometry.y);
+                    m_window->move((geometry.x + geometry.width) - areaSize , geometry.y);
                     m_visible = true;
                     break;
                 }
@@ -227,6 +223,56 @@ inline namespace DockWindow
                 }
 
                 m_window->move(posx, posy);
+                m_visible = true;
+
+                break;
+            }
+        }
+    }
+    
+    /**
+     * Hide the window;
+     */
+    void hide()
+    {
+        if (m_window == nullptr) {
+            return;
+        }
+        
+        g_print("Hide\n");
+        auto geometry = ((AppWindow*)m_window)->m_screen.get_PrimaryMonitor()->geometry;
+        auto areaSize = Configuration::get_dockWindowSize();
+        auto location = Configuration::get_dockWindowLocation();
+        switch (location)
+        {
+            case panel_locationType::TOP:
+            case panel_locationType::BOTTOM:
+            {
+//                if (location == panel_locationType::TOP) {
+//                    m_window->move(geometry.x + startX, geometry.y + Configuration::get_WindowDockMonitorMargin_Top());
+//                    m_visible = true;
+//                    break;
+//                }
+//                
+//                 
+//                 m_window->move(geometry.x + startX, (geometry.y + geometry.height) - areaSize);
+//                 m_visible = true;
+                 break;
+            }
+            case panel_locationType::LEFT:
+            case panel_locationType::RIGHT:
+            {
+                int x, y;
+                m_window->get_position(x, y);
+                
+                if (location == panel_locationType::LEFT) {
+                    m_window->move(geometry.x - (DockWindow::getClientSize() - 1) , y);
+                    m_visible = true;
+                    break;
+                }
+
+              
+                m_window->move(DockWindow::get_geometry().width + DockWindow::getClientSize() -1 , y);
                 m_visible = true;
 
                 break;

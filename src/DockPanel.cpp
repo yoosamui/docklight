@@ -784,8 +784,6 @@ bool DockPanel::on_leave_notify_event(GdkEventCrossing * crossing_event)
 
 bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
-    
-   
     if (Configuration::is_allowDraw() == false) {
         return true;
     }
@@ -932,7 +930,7 @@ void DockPanel::draw_Panel(const Cairo::RefPtr<Cairo::Context>& cr, int x, int y
 {
     if (Configuration::is_panelMode()) {
 
-        cr->set_source_rgba(0.0, 0.0, 0.0, 1.0);
+        cr->set_source_rgba(0.0, 0.0, 0.0, 0.5);
         cr->paint();
         //RoundedRectangle(cr, x, y, DockWindow::get_DockWindowWidth(), DockWindow::get_DockWindowHeight(), 6);
     }
