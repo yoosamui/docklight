@@ -80,7 +80,7 @@ void AppUpdater::Load()
         dockItem->m_index = st.index;
         dockItem->m_attachedIndex = st.index;
         dockItem->m_isDirty = true;
-
+        
 
         /*
        std::string theme_iconname ="";
@@ -92,7 +92,11 @@ void AppUpdater::Load()
             try {
                 auto loader = Gdk::PixbufLoader::create();
                 loader->write(st.pixbuff, sizeof (st.pixbuff));
-                dockItem->m_image = loader->get_pixbuf();
+                auto appIcon = loader->get_pixbuf();
+                
+                int iconsize = Configuration::get_CellWidth() - 8;
+                dockItem->m_image = appIcon->scale_simple(iconsize, iconsize, Gdk::INTERP_BILINEAR);
+                
                 loader->close();
             }
             catch (Gdk::PixbufError pe) {
@@ -301,8 +305,12 @@ void AppUpdater::Update(WnckWindow* window, Window_action actiontype)
 
         std::string theme_iconname = "";
         appIcon = IconLoader::GetWindowIcon(window, theme_iconname);
-        appIcon = appIcon->scale_simple(DEF_ICONMAXSIZE,
-                                        DEF_ICONMAXSIZE, Gdk::INTERP_BILINEAR);
+        
+        int iconsize = Configuration::get_CellWidth() - 8;
+        appIcon = appIcon->scale_simple(iconsize, iconsize, Gdk::INTERP_BILINEAR);
+                
+        //appIcon = appIcon->scale_simple(DEF_ICONMAXSIZE,
+        //                                DEF_ICONMAXSIZE, Gdk::INTERP_BILINEAR);
 
         // Create a new Item
         DockItem* dockItem = new DockItem();
@@ -314,6 +322,7 @@ void AppUpdater::Update(WnckWindow* window, Window_action actiontype)
         dockItem->m_xid = wnck_window_get_xid(window);
         dockItem->m_image = appIcon;
         dockItem->m_theme_iconname = theme_iconname;
+        
 
         // Create a child items
         DockItem* childItem = new DockItem();
@@ -397,9 +406,10 @@ void AppUpdater::setIconByTheme(DockItem *item)
     }
 
     const char* appname = item->m_instancename.c_str();
-    auto image = IconLoader::GetIconByAppName(appname, item->m_theme_iconname);
-    if (image) {
-        item->m_image = image;
+    auto appIcon = IconLoader::GetIconByAppName(appname, item->m_theme_iconname);
+    if (appIcon) {
+        int iconsize = Configuration::get_CellWidth() - 8;
+        item->m_image = appIcon->scale_simple(iconsize, iconsize, Gdk::INTERP_BILINEAR);
     }
 }
 

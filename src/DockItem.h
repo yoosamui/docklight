@@ -59,6 +59,7 @@ public:
     int m_dockitemSesssionGrpId = 0;
     int m_width = 0;
     int m_height = 0;
+    bool m_image_draw = true; // NOT USED
 private:
     bool m_pixbufPreviousPass;
     
