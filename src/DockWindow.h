@@ -29,11 +29,11 @@ inline namespace DockWindow {
     void updateStrut();
     void removeStrut();
     guint get_dockWindowStartEndMargin();
-    gint getClientSize();
+    //gint getClientSize();
     void update();
     void update(bool move);
-    void reSize(bool forceMove);
-    void reSize();
+    int reSize(bool forceMove);
+    int reSize();
     void hide();
 }
 

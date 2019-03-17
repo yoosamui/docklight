@@ -32,7 +32,11 @@ namespace Configuration
     
     bool is_panelMode()
     {
-        return false;//!m_autohide;
+        if(m_autohide){
+            return false;
+        }
+        
+        return false; // Explicite set
     }
 
     bool is_activateStrut()
@@ -76,12 +80,12 @@ namespace Configuration
     }
     unsigned int get_WindowDockMonitorMargin_Right()
     {
-        return 6;
+        return 0;
     }
 
     unsigned int get_WindowDockMonitorMargin_Left()
     {
-        return 4;
+        return 6;
     }
     
     unsigned int get_WindowDockMonitorMargin_Bottom()
@@ -97,6 +101,7 @@ namespace Configuration
     unsigned int get_CellHeight()
     {
         return Configuration::get_dockWindowSize() - (CELL_BOTTOM_MARGIN + CELL_TOP_MARGIN);
+        
     }
 
     unsigned int get_CellWidth()

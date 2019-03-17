@@ -25,7 +25,7 @@ inline namespace DockWindow
         m_window = window;
         updateStrut();
         reSize(true);
-        
+
         return 0;
     }
 
@@ -100,37 +100,44 @@ inline namespace DockWindow
         }
     }
 
-    gint getClientSize()
+//    gint getClientSize()
+//    {
+//        if (m_window == nullptr) {
+//            return 0;
+//        }
+//
+//        int width = 0, height = 0;
+//        //m_window->get_size(width, height);
+//        m_window->get_size_request(width, height);
+//
+//        switch (Configuration::get_dockWindowLocation())
+//        {
+//            case panel_locationType::TOP:
+//            case panel_locationType::BOTTOM:
+//                return height;
+//            case panel_locationType::LEFT:
+//            case panel_locationType::RIGHT:
+//                return width;
+//        }
+//
+//        return 0;
+//    }
+
+    int reSize()
+    {
+      return reSize(false);
+    }
+
+    /**
+     * Count the items and calculate the size of the window.
+     * Resizes the window and positioning it.      
+     * @param forceMove
+     * @return the ClietSize
+     */
+    int reSize(bool forceMove)
     {
         if (m_window == nullptr) {
             return 0;
-        }
-
-        int width = 0, height = 0;
-        m_window->get_size(width, height);
-
-        switch (Configuration::get_dockWindowLocation())
-        {
-            case panel_locationType::TOP:
-            case panel_locationType::BOTTOM:
-                return height;
-            case panel_locationType::LEFT:
-            case panel_locationType::RIGHT:
-                return width;
-        }
-
-        return 0;
-    }
-
-    void reSize()
-    {
-        reSize(false);
-    }
-
-    void reSize(bool forceMove)
-    {
-        if (m_window == nullptr) {
-            return;
         }
 
         g_print("Resize\n");
@@ -158,28 +165,28 @@ inline namespace DockWindow
 
                 int itemsSize = ((AppWindow*)m_window)->get_DockPanel()->get_dockItemsWidth() + get_dockWindowStartEndMargin();
                 int startX = ((geometry.x + geometry.width) / 2) - (itemsSize / 2);
-                
+
                 // resize the window
                 m_window->resize(itemsSize, areaSize);
 
-                 // avoid show window when apps add or remove. 
+                // avoid show window when apps add or remove. 
                 if (Configuration::is_autoHide() && !m_visible && !forceMove) {
                     int x, y;
                     m_window->get_position(x, y);
-                    m_window->move(startX,y);
+                    m_window->move(startX, y);
                     break;
                 }
-                
+
                 if (location == panel_locationType::TOP) {
                     m_window->move(geometry.x + startX, geometry.y + Configuration::get_WindowDockMonitorMargin_Top());
                     m_visible = true;
                     break;
                 }
-                
-                 areaSize += Configuration::get_WindowDockMonitorMargin_Bottom();
-                 m_window->move(geometry.x + startX, (geometry.y + geometry.height) - areaSize);
-                 m_visible = true;
-                 break;
+
+                areaSize += Configuration::get_WindowDockMonitorMargin_Bottom();
+                m_window->move(geometry.x + startX, (geometry.y + geometry.height) - areaSize);
+                m_visible = true;
+                break;
             }
             case panel_locationType::LEFT:
             case panel_locationType::RIGHT:
@@ -193,7 +200,8 @@ inline namespace DockWindow
 
                     m_window->resize(areaSize, geometry.height);
                     //m_window->move((geometry.x + geometry.width) - (areaSize + Configuration::get_WindowDockMonitorMargin_Right()), geometry.y);
-                    m_window->move((geometry.x + geometry.width) - areaSize , geometry.y);
+                    areaSize += Configuration::get_WindowDockMonitorMargin_Right();
+                    m_window->move((geometry.x + geometry.width) - areaSize, geometry.y);
                     m_visible = true;
                     break;
                 }
@@ -222,14 +230,16 @@ inline namespace DockWindow
                     break;
                 }
 
-                m_window->move(posx, posy);
+                m_window->move(posx - Configuration::get_WindowDockMonitorMargin_Right() , posy);
                 m_visible = true;
 
                 break;
             }
         }
+        
+        return areaSize;
     }
-    
+
     /**
      * Hide the window;
      */
@@ -238,42 +248,44 @@ inline namespace DockWindow
         if (m_window == nullptr) {
             return;
         }
-        
+
         g_print("Hide\n");
         auto geometry = ((AppWindow*)m_window)->m_screen.get_PrimaryMonitor()->geometry;
         auto areaSize = Configuration::get_dockWindowSize();
         auto location = Configuration::get_dockWindowLocation();
+        
+         int x, y;
+         m_window->get_position(x, y);
+                
         switch (location)
         {
             case panel_locationType::TOP:
             case panel_locationType::BOTTOM:
             {
-//                if (location == panel_locationType::TOP) {
-//                    m_window->move(geometry.x + startX, geometry.y + Configuration::get_WindowDockMonitorMargin_Top());
-//                    m_visible = true;
-//                    break;
-//                }
-//                
-//                 
-//                 m_window->move(geometry.x + startX, (geometry.y + geometry.height) - areaSize);
-//                 m_visible = true;
-                 break;
+                if (location == panel_locationType::TOP) {
+                    m_window->move(x, geometry.y - (Configuration::get_dockWindowSize() - 1));
+                    m_visible = false;
+                    break;
+                }
+
+                m_window->move(x, DockWindow::get_geometry().height  + Configuration::get_dockWindowSize() - 1);
+                m_visible = false;
+                break;
             }
             case panel_locationType::LEFT:
             case panel_locationType::RIGHT:
             {
-                int x, y;
-                m_window->get_position(x, y);
                 
                 if (location == panel_locationType::LEFT) {
-                    m_window->move(geometry.x - (DockWindow::getClientSize() - 1) , y);
-                    m_visible = true;
+                    areaSize+= Configuration::get_WindowDockMonitorMargin_Left();
+                    m_window->move(geometry.x - (areaSize + 4) , y);
+                    m_visible = false;
                     break;
                 }
 
-              
-                m_window->move(DockWindow::get_geometry().width + DockWindow::getClientSize() -1 , y);
-                m_visible = true;
+                areaSize+= Configuration::get_WindowDockMonitorMargin_Right();
+                m_window->move(DockWindow::get_geometry().width + (areaSize - 4), y);
+                m_visible = false;
 
                 break;
             }

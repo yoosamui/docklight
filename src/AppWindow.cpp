@@ -115,7 +115,7 @@ int AppWindow::init()
                      G_CALLBACK(AppWindow::on_window_closed), NULL);
     
     // Launch timer every second
-    Glib::signal_timeout().connect(sigc::mem_fun(*this, &AppWindow::fullScreenTimer), 1000);
+    Glib::signal_timeout().connect(sigc::mem_fun(*this, &AppWindow::fullScreenTimer), 500);
     Glib::signal_timeout().connect(sigc::mem_fun(*this, &AppWindow::autohideTimer), DEF_FRAMERATE);
 
 
@@ -160,7 +160,7 @@ bool AppWindow::autohideTimer()
     }
     if (!m_animate && m_mouseIn && !m_visible) {
         m_animate = true;
-        m_easing_duration = 4.f;
+        m_easing_duration = 2.f;
     }
 
     if (!m_animate && m_visible && !m_mouseIn && abs(m_Timer.elapsed()) > 1.5f) {
@@ -203,7 +203,7 @@ bool AppWindow::autohideTimer()
                 // set start and end position for hide/show 
                 if (m_visible) { // Hide
                     startPosition = ypos;
-                    endPosition -= DockWindow::getClientSize() - 1;
+                    endPosition -= Configuration::get_dockWindowSize() - 1;
                 }
                 else { // Show
                     startPosition = ypos;
@@ -232,7 +232,7 @@ bool AppWindow::autohideTimer()
                 else { // Show
                     startPosition = ypos;
                     endPosition = DockWindow::get_geometry().height -
-                            (DockWindow::getClientSize() +
+                            (Configuration::get_dockWindowSize() +
                             Configuration::get_WindowDockMonitorMargin_Bottom());
                 }
                 break;
@@ -252,7 +252,7 @@ bool AppWindow::autohideTimer()
                 // set start and end position for hide/show 
                 if (m_visible) { // Hide
                     startPosition = xpos;
-                    endPosition -= DockWindow::getClientSize() - 1;
+                    endPosition -= (Configuration::get_dockWindowSize() + Configuration::get_WindowDockMonitorMargin_Left()) + 1;
                 }
                 else { // Show
                     startPosition = xpos;
@@ -275,13 +275,13 @@ bool AppWindow::autohideTimer()
                 // set start and end position for hide/show 
                 if (m_visible) {
                     startPosition = xpos;
-                    endPosition = DockWindow::get_geometry().width - 1;
+                    endPosition = (DockWindow::get_geometry().width - 1) ;
                 }
                 else {
                     startPosition = DockWindow::get_geometry().width - 1;
-                    endPosition = DockWindow::get_geometry().width -
-                            (Configuration::get_WindowDockMonitorMargin_Right() +
-                            DockWindow::getClientSize());
+                    //endPosition = DockWindow::get_geometry().width - (Configuration::get_WindowDockMonitorMargin_Right() + Configuration::get_dockWindowSize()) - 4;
+                    endPosition = DockWindow::get_geometry().width;
+                    endPosition -= (Configuration::get_dockWindowSize() + Configuration::get_WindowDockMonitorMargin_Right() * 2) ;
                 }
                 break;
             }
@@ -337,7 +337,10 @@ bool AppWindow::autohideTimer()
     }
     return true;
 }
-
+/**
+ * Hide the window if the active is in full screen mode.
+ * @return true
+ */
 bool AppWindow::fullScreenTimer()
 {
     m_isfullscreen = WindowControl::FullscreenActive();
@@ -345,8 +348,9 @@ bool AppWindow::fullScreenTimer()
         Configuration::set_allowDraw(false);
         
         DockWindow::hide();
+        this->m_visible = false;
         m_isfullscreenSet = true;
-        g_print("Enter full screen\n");
+      //  g_print("Enter full screen\n");
         return true;
     }
 
@@ -355,7 +359,12 @@ bool AppWindow::fullScreenTimer()
         m_isfullscreenSet = false;
         Configuration::set_allowDraw(true);
         DockWindow::reSize();
-        g_print("leaven fullscreen\n");
+        
+        //if(!Configuration::is_autoHide()){
+            this->m_visible = true;
+       // }
+        
+       // g_print("leaven fullscreen\n");
         m_isfullscreenSet = false;
     }
     return true;

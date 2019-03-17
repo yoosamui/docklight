@@ -22,6 +22,7 @@
 #include "DockPanel.h"
 #include "WindowControl.h"
 #include "Launcher.h"
+#include "DockWindow.h"
 #include <glibmm/i18n.h>
 #include <cstdio>
 

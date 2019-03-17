@@ -7,6 +7,7 @@
 
 #include "Struts.h"
 #include "Screen.h"
+#include "DockWindow.h"
 
 Struts::Struts(Gtk::Window* window, Screen* screen)
 {
@@ -38,7 +39,7 @@ void Struts::update(bool reset)
 
     if (!reset) {
         this->screen->update();
-        guint areaSize = Configuration::get_dockWindowSize();
+        guint areaSize = DockWindow::reSize();//DockWindow::getClientSize(); //Configuration::get_dockWindowSize();
         auto primary = this->screen->get_PrimaryMonitor();
         auto next = this->screen->get_NextMonitor();
         
@@ -108,7 +109,8 @@ void Struts::update(bool reset)
                 
                 insets[strutsPosition::Left] = areaSize;
                 insets[strutsPosition::LeftStart] = primary->geometry.x - 1;
-                insets[strutsPosition::LeftEnd] = primary->geometry.x + primary->geometry.height;
+                insets[strutsPosition::LeftEnd] = primary->geometry.x + primary->geometry.height; 
+                        
 
                 break;
 
@@ -138,9 +140,9 @@ void Struts::update(bool reset)
                 }
 
                 //0,0,2560,0,0,0,0,0,2500,2550,0,0
-                insets[strutsPosition::Top] = primary->geometry.width - 1;
-                insets[strutsPosition::TopStart] = primary->geometry.width - areaSize;
-                insets[strutsPosition::TopEnd] = insets[strutsPosition::TopStart] + areaSize;
+                insets[strutsPosition::Top] = primary->geometry.width -1 ;
+                insets[strutsPosition::TopStart] = primary->geometry.width - areaSize ;
+                insets[strutsPosition::TopEnd] = insets[strutsPosition::TopStart] + areaSize ;
                 break;
             }
         }
