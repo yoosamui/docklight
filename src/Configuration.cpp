@@ -10,9 +10,9 @@
 
 namespace Configuration
 {
-    bool m_autohide = false;
+    bool m_autohide = true;
     bool m_allowDraw = true;
-    panel_locationType m_locatiom = panel_locationType::BOTTOM; 
+    panel_locationType m_locatiom = panel_locationType::RIGHT; 
     Horizontal_alignment_type m_HorizontalAlignment =  Horizontal_alignment_type::CENTER;
     
     Horizontal_alignment_type get_HorizontalAlignment()

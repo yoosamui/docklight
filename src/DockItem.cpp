@@ -11,7 +11,6 @@ DockItem::DockItem() {
     
     this->m_width = Configuration::get_CellWidth();
     this->m_height = Configuration::get_CellHeight();
-    this->m_image_draw = true; //// NOT USED
 }
 
 DockItem::DockItem(const DockItem& orig) {
