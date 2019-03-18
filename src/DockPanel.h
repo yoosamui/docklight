@@ -24,13 +24,13 @@
 class DockPanel : public Gtk::DrawingArea {
 public:
     DockPanel();
-    
-    
+
+
     float m_easing_duration;
     virtual ~DockPanel();
     SessionWindow* m_sessionWindow;
 
-    
+
     gint get_dockItemsWidth();
     gint get_dockItemsHeight();
 
@@ -39,10 +39,12 @@ public:
     };
 
     int preInit(Gtk::Window* window);
+   
 private:
 
+    //static Gtk::Window* m_AppWindow;
     AppUpdater m_appUpdater;
-    
+
     std::string m_homeiconFilePath;
     static int m_currentMoveIndex;
     int getIndex(int x, int y);
@@ -54,14 +56,18 @@ private:
 
     bool m_mouseLeftButtonDown = false;
     bool m_mouseRightButtonDown = false;
-float m_mouseclickEventTime = 0.0f;
+    float m_mouseclickEventTime = 0.0f;
     bool canShow();
+   
 
 protected:
 
     void ExecuteApp(GdkEventButton* event);
     void on_menuNew_event();
-
+    
+    static void on_window_opened(WnckScreen* screen, WnckWindow* window, gpointer data);
+    static void on_window_closed(WnckScreen* screen, WnckWindow* window, gpointer data);
+    
     // Mouse handlers
     // http://www.horde3d.org/wiki/index.php5?title=Tutorial_-_Setup_Horde_with_Gtkmm  
     virtual bool on_button_press_event(GdkEventButton *event);
@@ -69,10 +75,13 @@ protected:
     virtual bool on_motion_notify_event(GdkEventMotion* event);
     virtual bool on_scroll_event(GdkEventScroll* e);
 
-    bool on_timeoutEasing();
+    
     bool on_timeoutDraw();
     // Fix for transparency in Appwindow
-    bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr);
+    bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
+    //Override default signal handler:
+//  bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
+
 
     void RoundedRectangle(const Cairo::RefPtr<Cairo::Context>& cr,
             double x, double y, double width, double height, double radius);

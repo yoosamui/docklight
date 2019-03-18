@@ -10,6 +10,10 @@
 namespace WnckHandler
 {
 
+    /**
+     * Active the current Active window
+     * @param window
+     */
     void ActivateWindow(WnckWindow* window)
     {
         if (window == NULL)
@@ -27,24 +31,29 @@ namespace WnckHandler
             wnck_window_unminimize(window, ct);
     }
 
+    /**
+     * check if any active window in cild items exists.
+     * if yes the window pointer will return otherwise null.
+     * @param the child items.
+     * @return the window pointer will return when an active  window is found otherwise null.
+     */
     WnckWindow* get_ActiveWindowIfAny(DockItem* item)
     {
         WnckWindow* window = nullptr;
 
         for (DockItem* citem:item->m_items) {
-            
+
             if (citem->m_window == nullptr) {
                 continue;
             }
 
-            if (!wnck_window_is_active(citem->m_window))
-            {
+            if (!wnck_window_is_active(citem->m_window)) {
                 continue;
             }
-            
+
             window = citem->m_window;
         }
-        
+
         return window;
     }
 }

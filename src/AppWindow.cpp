@@ -34,7 +34,7 @@
 
 bool AppWindow::m_isfullscreenSet;
 bool AppWindow::m_isfullscreen;
-
+//DockPanel AppWindow::m_dockpanel;
 Screen AppWindow::m_screen;
 
 static const gchar* type_name(WnckWindowType type)
@@ -65,6 +65,8 @@ AppWindow::AppWindow()
     if (visual != NULL && gdk_screen_is_composited(screen)) {
         gtk_widget_set_visual(GTK_WIDGET(gobj()), visual);
     }
+    
+    //m_dockpanel = (DockPanel*)NULL;
 }
 
 int AppWindow::init()
@@ -83,7 +85,7 @@ int AppWindow::init()
     this->set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
 
 
-    this->add(m_dockpanel);
+    
 
     //https://developer.gnome.org/gtk-tutorial/stable/x2431.html
     this->add_events(
@@ -123,6 +125,7 @@ int AppWindow::init()
     //https://lazka.github.io/pgi-docs/Wnck-3.0/classes/Window.html
 
 
+    this->add(m_dockpanel);
     this->show_all();
 
     //    for(auto arg : Utilities::Arguments())
@@ -379,6 +382,7 @@ bool AppWindow::fullScreenTimer()
 void AppWindow::on_window_opened(WnckScreen *screen, WnckWindow* window, gpointer data)
 {
     DockWindow::update();
+   // m_dockpanel.update();
 }
 
 /**
@@ -390,6 +394,7 @@ void AppWindow::on_window_opened(WnckScreen *screen, WnckWindow* window, gpointe
 void AppWindow::on_window_closed(WnckScreen *screen, WnckWindow *window, gpointer data)
 {
     DockWindow::update();
+   // m_dockpanel.update();
 }
 
 

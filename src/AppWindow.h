@@ -23,8 +23,10 @@ public:
     int init();
     int postInit();
     virtual ~AppWindow();
+    
     DockPanel m_dockpanel;
     static Screen m_screen;
+    
     DockPanel* get_DockPanel()
     {
         return &m_dockpanel;

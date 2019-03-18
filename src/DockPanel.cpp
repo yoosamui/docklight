@@ -31,6 +31,9 @@
 //std::vector<DockItem*> DockPanel::m_dockitems;
 int DockPanel::m_currentMoveIndex;
 //Gtk::Window* DockPanel::m_AppWindow;
+
+
+//Gtk::Window* DockPanel::m_AppWindow;
 //DockWindow* DockPanel::m_DockWindow;
 
 //AppUpdater DockPanel::m_appUpdater;
@@ -102,6 +105,12 @@ m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
     //                                             &DockPanel::on_timeoutDraw), 1000);
 
 
+     g_signal_connect(G_OBJECT(wnckscreen), "window-opened",
+                     G_CALLBACK(DockPanel::on_window_opened), NULL);
+
+    g_signal_connect(wnckscreen, "window_closed",
+                     G_CALLBACK(DockPanel::on_window_closed), NULL);
+    
 
 }
 
@@ -114,6 +123,7 @@ m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
 int DockPanel::preInit(Gtk::Window* window)
 {
 
+   // this->m_AppWindow = window;
     //this->m_DockWindow = (DockWindow*) window;
 
     //getDockWindowWidth(); //+180);//DockWindow::get_geometry().height; //this->
@@ -168,11 +178,38 @@ int DockPanel::preInit(Gtk::Window* window)
 }
 
 DockPanel::~DockPanel(){ }
-
-bool DockPanel::on_timeoutEasing()
+static bool m_forceDraw = false;
+/**
+ * Emitted when a new Wnck.Window is opened on screen.
+ * @param screen
+ * @param window
+ * @param data
+ */
+void DockPanel::on_window_opened(WnckScreen *screen, WnckWindow* window, gpointer data)
 {
-    m_time++;
+    m_forceDraw = true;
+// force our program to redraw the entire clock.
+//    auto win = m_AppWindow;
+//    if (win)
+//    {
+//        Gdk::Rectangle r(0, 0, DockWindow::get_DockWindowWidth(), DockWindow::get_DockWindowHeight());
+//        m_AppWindow->dr
+//        win->invalidate_rect(r, false);
+//    }
+   //gtk_widget_queue_draw_area(m_AppWindow,0,0,0,0) ;
 }
+
+/**
+ * Emitted when a Wnck.Window is closed on screen.
+ * @param screen
+ * @param window
+ * @param data
+ */
+void DockPanel::on_window_closed(WnckScreen *screen, WnckWindow *window, gpointer data)
+{
+m_forceDraw = true;
+}
+
 
 /** 
  * bool DockPanel::on_button_press_event(GdkEventButton *event)
@@ -432,7 +469,6 @@ void DockPanel::ExecuteApp(GdkEventButton* event)
 
 void DockPanel::on_menuNew_event()
 {
-    ;
     if (m_currentMoveIndex < 1)
         return;
 
@@ -455,8 +491,9 @@ void DockPanel::on_menuNew_event()
 
 bool DockPanel::on_timeoutDraw()
 {
-    if (m_mouseIn) {
+    if (m_mouseIn || m_forceDraw) {
         Gtk::Widget::queue_draw();
+        m_forceDraw = false;
     }
     return true;
 }
@@ -787,136 +824,19 @@ bool DockPanel::on_leave_notify_event(GdkEventCrossing * crossing_event)
     return true;
 }
 
+
+
 bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
     if (Configuration::is_allowDraw() == false) {
         return true;
     }
-
-
+            
     int currentPositionX = 0;
     int currentPositionY = 0;
 
     int x1, y1, x2, y2, center;
     this->get_dockItemPosition(this->m_appUpdater.m_dockitems.at(0), x1, y1, x2, y2, center, 0);
-
-    //    if (Configuration::is_autoHide()) {
-    //
-    //        if (!m_animate && !m_mouseIn && m_visible && m_timerStoped) {
-    //            m_Timer.start();
-    //            m_timerStoped = false;
-    //        }
-    //        if (!m_animate && m_mouseIn && !m_timerStoped) {
-    //            m_timerStoped = true;
-    //        }
-    //
-    //        if (canShow()) {
-    //            if (!m_animate && m_mouseIn && !m_visible) {
-    //                m_animate = true;
-    //                m_easing_duration = 4.f;
-    //            }
-    //        }
-    //
-    //        if (!m_animate && m_visible && !m_mouseIn && m_Timer.elapsed() > 1.5) {
-    //            m_Timer.stop();
-    //            m_timerStoped = true;
-    //            m_animate = true;
-    //            m_easing_duration = 4.f;
-    //        }
-    //
-    //        if (m_animate) {
-    //            auto endTime = initTime + m_easing_duration;
-    //            auto now = atime;
-    //            int currentPositionX = x1;
-    //            int currentPositionY = y1;
-    //            float startPosition = 0.f;
-    //
-    //            position = ofxeasing::map_clamp(now, initTime, endTime, 0,
-    //                                            endPosition, &ofxeasing::linear::easeIn);
-    //
-    //            switch (Configuration::get_dockWindowLocation())
-    //            {
-    //                case panel_locationType::TOP:
-    //                    currentPositionX = 0;
-    //
-    //                    if (m_visible) {
-    //                        startPosition = 0;
-    //                        currentPositionY = (int)startPosition - (int)position;
-    //                    }
-    //                    else {
-    //                        startPosition = -DockWindow::get_DockWindowHeight();
-    //                        currentPositionY = (int)startPosition + (int)position;
-    //                    }
-    //
-    //                    break;
-    //                case panel_locationType::BOTTOM:
-    //                    currentPositionX = 0;
-    //
-    //                    if (m_visible) {
-    //                        startPosition = 0;
-    //                        currentPositionY = (int)startPosition + (int)position;
-    //
-    //                    }
-    //                    else { // show
-    //
-    //                        startPosition = DockWindow::get_DockWindowHeight();
-    //                        currentPositionY = (int)startPosition - (int)position;
-    //                    }
-    //
-    //                    break;
-    //                case panel_locationType::LEFT:
-    //
-    //                    currentPositionY = 0;
-    //                    if (m_visible) {
-    //                        startPosition = 0;
-    //                        currentPositionX = (int)startPosition - (int)position;
-    //
-    //                    }
-    //                    else { // show
-    //                        startPosition = -DockWindow::get_DockWindowWidth();
-    //                        currentPositionX = (int)startPosition + (int)position;
-    //                    }
-    //
-    //                    break;
-    //                case panel_locationType::RIGHT:
-    //                    currentPositionY = 0;
-    //
-    //                    if (m_visible) {
-    //                        startPosition = 0;
-    //                        currentPositionX = startPosition + position;
-    //                    }
-    //                    else {
-    //                        startPosition = DockWindow::get_DockWindowWidth();
-    //                        currentPositionX = startPosition - position;
-    //                    }
-    //                    break;
-    //            }
-    //
-    //            if (m_animate) {
-    //                this->draw_Panel(cr, currentPositionX, currentPositionY);
-    //                this->draw_Items(cr, currentPositionX, currentPositionY);
-    //            }
-    //
-    //            if (atime < m_easing_duration) {
-    //                atime++;
-    //            }
-    //
-    //            if (position >= endPosition) {
-    //                initTime = 0;
-    //                atime = 0;
-    //                m_animate = false;
-    //                m_visible = !m_visible;
-    //
-    //                if (!m_visible) {
-    //                    DockWindow::removeStrut();
-    //                }
-    //                else {
-    //                    DockWindow::updateStrut();
-    //                }
-    //            }
-    //        }
-    //    }
-
 
     this->draw_Panel(cr, currentPositionX, currentPositionY);
     this->draw_Items(cr, currentPositionX, currentPositionY);
