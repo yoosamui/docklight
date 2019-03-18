@@ -14,6 +14,7 @@
 #include <gtkmm.h>
 #include "Configuration.h"
 #include "AppWindow.h"
+#include "DockPanel.h"
 
 
 class AppWindow;

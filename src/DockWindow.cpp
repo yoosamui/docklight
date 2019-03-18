@@ -8,6 +8,7 @@
 
 #include <gdk/gdk.h>
 
+
 #include "Configuration.h"
 #include "DockWindow.h"
 #include "WindowControl.h"

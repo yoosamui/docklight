@@ -31,8 +31,8 @@ public:
     SessionWindow* m_sessionWindow;
 
     
-    int get_dockItemsWidth();
-    int get_dockItemsHeight();
+    gint get_dockItemsWidth();
+    gint get_dockItemsHeight();
 
     int getCurrentIndex() {
         return m_currentMoveIndex;
@@ -62,12 +62,12 @@ protected:
     void ExecuteApp(GdkEventButton* event);
     void on_menuNew_event();
 
-    // static void Update(WnckWindow* window, Window_action actiontype);
-    // static void on_window_opened(WnckScreen* screen, WnckWindow* window, gpointer data);
-    // static void on_window_closed(WnckScreen* screen, WnckWindow* window, gpointer data);
+    // Mouse handlers
+    // http://www.horde3d.org/wiki/index.php5?title=Tutorial_-_Setup_Horde_with_Gtkmm  
     virtual bool on_button_press_event(GdkEventButton *event);
     virtual bool on_button_release_event(GdkEventButton *event);
     virtual bool on_motion_notify_event(GdkEventMotion* event);
+    virtual bool on_scroll_event(GdkEventScroll* e);
 
     bool on_timeoutEasing();
     bool on_timeoutDraw();
