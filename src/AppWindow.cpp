@@ -65,7 +65,7 @@ AppWindow::AppWindow()
     if (visual != NULL && gdk_screen_is_composited(screen)) {
         gtk_widget_set_visual(GTK_WIDGET(gobj()), visual);
     }
-    
+
     //m_dockpanel = (DockPanel*)NULL;
 }
 
@@ -85,7 +85,7 @@ int AppWindow::init()
     this->set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
 
 
-    
+
 
     //https://developer.gnome.org/gtk-tutorial/stable/x2431.html
     this->add_events(
@@ -110,14 +110,14 @@ int AppWindow::init()
                      G_CALLBACK(monitor_changed_callback),
                      (gpointer) this);
 
-     g_signal_connect(G_OBJECT(wnckscreen), "window-opened",
+    g_signal_connect(G_OBJECT(wnckscreen), "window-opened",
                      G_CALLBACK(AppWindow::on_window_opened), NULL);
 
     g_signal_connect(wnckscreen, "window_closed",
                      G_CALLBACK(AppWindow::on_window_closed), NULL);
-    
+
     // Launch timer every second
-    Glib::signal_timeout().connect(sigc::mem_fun(*this, &AppWindow::fullScreenTimer), 500);
+    Glib::signal_timeout().connect(sigc::mem_fun(*this, &AppWindow::fullScreenTimer), 100);
     Glib::signal_timeout().connect(sigc::mem_fun(*this, &AppWindow::autohideTimer), DEF_FRAMERATE);
 
 
@@ -161,7 +161,7 @@ bool AppWindow::autohideTimer()
     if (!m_animate && m_mouseIn && !m_timerStoped) {
         m_timerStoped = true;
     }
-    if (!m_animate && m_mouseIn && !m_visible) {
+    if (!m_animate && m_mouseIn && !m_visible && !m_isfullscreenSet) {
         m_animate = true;
         m_easing_duration = 2.f;
     }
@@ -173,7 +173,7 @@ bool AppWindow::autohideTimer()
         m_animate = true;
         m_easing_duration = 4.f;
     }
-    
+
     if (m_animate) {
         auto endTime = m_initTime + m_easing_duration;
         auto now = atime;
@@ -202,7 +202,7 @@ bool AppWindow::autohideTimer()
                         return true;
                     }
                 }
-                
+
                 // set start and end position for hide/show 
                 if (m_visible) { // Hide
                     startPosition = ypos;
@@ -213,7 +213,7 @@ bool AppWindow::autohideTimer()
                     endPosition = Configuration::get_WindowDockMonitorMargin_Top();
                 }
                 break;
-            }    
+            }
             case panel_locationType::BOTTOM:
             {
                 // avoid hidden if the mouse is in the margin area
@@ -226,7 +226,7 @@ bool AppWindow::autohideTimer()
                         return true;
                     }
                 }
-                
+
                 // set start and end position for hide/show 
                 if (m_visible) { // Hide
                     startPosition = ypos;
@@ -255,7 +255,10 @@ bool AppWindow::autohideTimer()
                 // set start and end position for hide/show 
                 if (m_visible) { // Hide
                     startPosition = xpos;
-                    endPosition -= (Configuration::get_dockWindowSize() + Configuration::get_WindowDockMonitorMargin_Left()) + 1;
+                    endPosition -= Configuration::get_dockWindowSize() - 1;
+                    
+                    //endPosition -= (Configuration::get_dockWindowSize() + Configuration::get_WindowDockMonitorMargin_Left());
+                    //endPosition +=  2;
                 }
                 else { // Show
                     startPosition = xpos;
@@ -278,13 +281,13 @@ bool AppWindow::autohideTimer()
                 // set start and end position for hide/show 
                 if (m_visible) {
                     startPosition = xpos;
-                    endPosition = (DockWindow::get_geometry().width - 1) ;
+                    endPosition = (DockWindow::get_geometry().width - 1);
                 }
                 else {
                     startPosition = DockWindow::get_geometry().width - 1;
                     //endPosition = DockWindow::get_geometry().width - (Configuration::get_WindowDockMonitorMargin_Right() + Configuration::get_dockWindowSize()) - 4;
                     endPosition = DockWindow::get_geometry().width;
-                    endPosition -= (Configuration::get_dockWindowSize() + Configuration::get_WindowDockMonitorMargin_Right() * 2) ;
+                    endPosition -= (Configuration::get_dockWindowSize() + Configuration::get_WindowDockMonitorMargin_Right() * 2);
                 }
                 break;
             }
@@ -334,12 +337,13 @@ bool AppWindow::autohideTimer()
             else {
                 DockWindow::updateStrut();
             }
-            
+
             DockWindow::set_Visibility(this->m_visible);
         }
     }
     return true;
 }
+
 /**
  * Hide the window if the active is in full screen mode.
  * @return true
@@ -348,26 +352,27 @@ bool AppWindow::fullScreenTimer()
 {
     m_isfullscreen = WindowControl::FullscreenActive();
     if (m_isfullscreen && !m_isfullscreenSet) {
-        Configuration::set_allowDraw(false);
+        if (!Configuration::is_autoHide()) {
+            Configuration::set_allowDraw(false);
+             DockWindow::hide();
+            DockWindow::removeStrut();
+            this->m_visible = false;
+        }
         
-        DockWindow::hide();
-        this->m_visible = false;
         m_isfullscreenSet = true;
-      //  g_print("Enter full screen\n");
         return true;
     }
 
     if (!m_isfullscreen && m_isfullscreenSet) {
 
         m_isfullscreenSet = false;
-        Configuration::set_allowDraw(true);
-        DockWindow::reSize();
-        
-        //if(!Configuration::is_autoHide()){
+        if (!Configuration::is_autoHide()) {
+            DockWindow::updateStrut();
+            Configuration::set_allowDraw(true);
+            DockWindow::reSize();
             this->m_visible = true;
-       // }
+        }
         
-       // g_print("leaven fullscreen\n");
         m_isfullscreenSet = false;
     }
     return true;
@@ -382,7 +387,7 @@ bool AppWindow::fullScreenTimer()
 void AppWindow::on_window_opened(WnckScreen *screen, WnckWindow* window, gpointer data)
 {
     DockWindow::update();
-   // m_dockpanel.update();
+    // m_dockpanel.update();
 }
 
 /**
@@ -394,9 +399,8 @@ void AppWindow::on_window_opened(WnckScreen *screen, WnckWindow* window, gpointe
 void AppWindow::on_window_closed(WnckScreen *screen, WnckWindow *window, gpointer data)
 {
     DockWindow::update();
-   // m_dockpanel.update();
+    // m_dockpanel.update();
 }
-
 
 void AppWindow::monitor_size_changed_callback(GdkScreen *screen, gpointer gtkwindow){ }
 

@@ -74,7 +74,7 @@ void Struts::update(bool reset)
 
             case panel_locationType::BOTTOM:
             {
-                areaSize += Configuration::get_WindowDockMonitorMargin_Bottom();
+                areaSize;// += Configuration::get_WindowDockMonitorMargin_Bottom();
                 if (this->screen->get_MonitorsCount() > 1) {
                     //0,0,0,50,0,0,0,0,0,0,2560,4479
                     if (primary->geometry.x > 0) {

@@ -159,7 +159,7 @@ inline namespace DockWindow
                     }
 
                     m_window->move(geometry.x, (geometry.y + geometry.height)
-                                   - (areaSize + Configuration::get_WindowDockMonitorMargin_Bottom()));
+                                   - (areaSize /*+ Configuration::get_WindowDockMonitorMargin_Bottom()*/));
 
                     break;
                 }
