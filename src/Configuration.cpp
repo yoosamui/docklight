@@ -12,7 +12,7 @@ namespace Configuration
 {
     bool m_autohide = true;
     bool m_allowDraw = true;
-    panel_locationType m_locatiom = panel_locationType::RIGHT; 
+    panel_locationType m_locatiom = panel_locationType::TOP; 
     Horizontal_alignment_type m_HorizontalAlignment =  Horizontal_alignment_type::CENTER;
     
     Horizontal_alignment_type get_HorizontalAlignment()
@@ -37,10 +37,10 @@ namespace Configuration
 
     bool is_activateStrut()
     {
-        if ( m_autohide ) {
-            return false;
-        }
-        return true;
+//        if ( m_autohide ) {
+//            return false;
+//        }
+        return !m_autohide;
     }
 
     bool is_autoHide()

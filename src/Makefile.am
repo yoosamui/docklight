@@ -58,7 +58,9 @@ Utilities.h \
 Configuration.cpp \
 Configuration.h \
 WnckHandler.cpp \
-WnckHandler.h
+WnckHandler.h \
+AppRunThread.cpp \
+AppRunThread.h \
 $(NULL)
 
 # this works - it deletes testSubDir in src
