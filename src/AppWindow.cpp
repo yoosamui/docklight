@@ -154,33 +154,27 @@ bool AppWindow::autohideTimer()
     if (!Configuration::is_autoHide()) {
         return true;
     }
-    
     if (/*!m_animate && */!m_mouseIn && m_visible && m_timerStoped) {
         m_Timer.start();
         m_timerStoped = false;
     }
-    
     if (!m_animate && m_mouseIn && !m_timerStoped) {
         m_timerStoped = true;
     }
-    
     if ((m_mouseIn && !m_visible && !m_isfullscreenSet) /*|| (!m_animate && !m_isfullscreenSet)*/) {
         m_animate = true;
-        m_easing_duration = 4.f;
+        m_easing_duration = 6.f;
     }
-    
     if ((m_mouseIn && m_visible && !m_timerStoped) /*|| (!m_animate && !m_isfullscreenSet)*/) {
         m_animate = false;
-       // m_easing_duration = 4.f;
         m_visible = false;
-      //   m_timerStoped = true;
     }
     if (!m_animate && m_visible && !m_mouseIn && abs(m_Timer.elapsed()) > 1.5f) {
         m_Timer.reset();
         m_Timer.stop();
         m_timerStoped = true;
         m_animate = true;
-        m_easing_duration = 40.f;
+        m_easing_duration = 12.f;
     }
 
     if (m_animate) {
@@ -207,22 +201,18 @@ bool AppWindow::autohideTimer()
                     Utilities::getMousePosition(mouseX, mouseY);
                     if (mouseY <= margin &&
                         mouseX > xpos && mouseX < xpos + this->get_width()) {
-                       // m_animate = false;
-                       // m_visible = false;
                         m_timerStoped = true;
-                      //  m_mouseIn = true;
                         return true;
                     }
                 }
-
                 // set start and end position for hide/show 
                 if (m_visible) { // Hide
-                    startPosition = ypos;
-                    endPosition -= Configuration::get_dockWindowSize() - 1;
+                    startPosition = margin;
+                    endPosition -= this->get_height() - 1;
                 }
                 else { // Show
-                    startPosition = ypos;
-                    endPosition = Configuration::get_WindowDockMonitorMargin_Top();
+                    startPosition -= this->get_height() - 1;
+                    endPosition = margin;
                 }
                 break;
             }
@@ -234,21 +224,18 @@ bool AppWindow::autohideTimer()
                     Utilities::getMousePosition(mouseX, mouseY);
                     if (mouseY > DockWindow::get_geometry().height - margin
                         && mouseX > xpos && mouseX < xpos + this->get_width()) {
-                        m_animate = false;
+                        m_timerStoped = true;
                         return true;
                     }
                 }
-
                 // set start and end position for hide/show 
                 if (m_visible) { // Hide
-                    startPosition = ypos;
-                    endPosition = DockWindow::get_geometry().height - 1;
+                    startPosition = DockWindow::get_geometry().height - ( margin + this->get_height() );
+                    endPosition = startPosition + this->get_height() + margin - 1;
                 }
                 else { // Show
-                    startPosition = ypos;
-                    endPosition = DockWindow::get_geometry().height -
-                            (Configuration::get_dockWindowSize() +
-                            Configuration::get_WindowDockMonitorMargin_Bottom());
+                    startPosition =  DockWindow::get_geometry().height  + this->get_height() + margin - 1;
+                    endPosition = DockWindow::get_geometry().height - ( margin + this->get_height() );
                 }
                 break;
             }
@@ -260,18 +247,18 @@ bool AppWindow::autohideTimer()
                     Utilities::getMousePosition(mouseX, mouseY);
                     if (mouseX <= margin &&
                         mouseY > ypos && mouseY < ypos + this->get_height()) {
-                        m_animate = false;
+                        m_timerStoped = true;
                         return true;
                     }
                 }
                 // set start and end position for hide/show 
                 if (m_visible) { // Hide
-                    startPosition = xpos;
-                    endPosition -= Configuration::get_dockWindowSize() - 1;
+                    startPosition = margin;
+                    endPosition -= this->get_width() - 1;
                 }
                 else { // Show
-                    startPosition = xpos;
-                    endPosition = Configuration::get_WindowDockMonitorMargin_Left();
+                    startPosition -= this->get_width() - 1;
+                    endPosition = margin;
                 }
                 break;
             }
@@ -283,20 +270,18 @@ bool AppWindow::autohideTimer()
                     Utilities::getMousePosition(mouseX, mouseY);
                     if (mouseX > DockWindow::get_geometry().width - margin
                         && mouseY > ypos && mouseY < ypos + this->get_height()) {
-                        m_animate = false;
+                        m_timerStoped = true;
                         return true;
                     }
                 }
-                // set start and end position for hide/show 
-                if (m_visible) {
-                    startPosition = xpos;
-                    endPosition = (DockWindow::get_geometry().width - 1);
+                 // set start and end position for hide/show 
+                if (m_visible) { // Hide
+                    startPosition = DockWindow::get_geometry().width - ( margin + this->get_width() );
+                    endPosition = startPosition + this->get_width() + margin - 1;
                 }
-                else {
-                    startPosition = DockWindow::get_geometry().width - 1;
-                    //endPosition = DockWindow::get_geometry().width - (Configuration::get_WindowDockMonitorMargin_Right() + Configuration::get_dockWindowSize()) - 4;
-                    endPosition = DockWindow::get_geometry().width;
-                    endPosition -= (Configuration::get_dockWindowSize() + Configuration::get_WindowDockMonitorMargin_Right() * 2);
+                else { // Show
+                    startPosition =  DockWindow::get_geometry().width  + this->get_width() + margin - 1;
+                    endPosition = DockWindow::get_geometry().width - ( margin + this->get_width() );
                 }
                 break;
             }
@@ -307,7 +292,7 @@ bool AppWindow::autohideTimer()
                                               endTime,
                                               startPosition,
                                               endPosition,
-                                              &ofxeasing::linear::easeInOut);
+                                              &ofxeasing::linear::easeIn);
 
         switch (location)
         {
@@ -323,7 +308,6 @@ bool AppWindow::autohideTimer()
                 break;
         }
 
-        // g_print("X:%d Y:%d P:%f\n", currentPositionX, currentPositionY, position);
         //  ease move
         this->move(currentPositionX, currentPositionY);
 
@@ -339,13 +323,6 @@ bool AppWindow::autohideTimer()
             m_visible = !m_visible;
             this->m_Timer.reset();
             this->m_Timer.stop();
-//
-//            if (!m_visible) {
-//                DockWindow::removeStrut();
-//            }
-//            else {
-//                DockWindow::updateStrut();
-//            }
 
             DockWindow::set_Visibility(this->m_visible);
         }
@@ -363,11 +340,11 @@ bool AppWindow::fullScreenTimer()
     if (m_isfullscreen && !m_isfullscreenSet) {
         if (!Configuration::is_autoHide()) {
             Configuration::set_allowDraw(false);
-             DockWindow::hide();
+            DockWindow::hide();
             DockWindow::removeStrut();
             this->m_visible = false;
         }
-        
+
         m_isfullscreenSet = true;
         return true;
     }
@@ -381,7 +358,7 @@ bool AppWindow::fullScreenTimer()
             DockWindow::reSize();
             this->m_visible = true;
         }
-        
+
         m_isfullscreenSet = false;
     }
     return true;
@@ -396,7 +373,6 @@ bool AppWindow::fullScreenTimer()
 void AppWindow::on_window_opened(WnckScreen *screen, WnckWindow* window, gpointer data)
 {
     DockWindow::update();
-    // m_dockpanel.update();
 }
 
 /**
@@ -408,7 +384,6 @@ void AppWindow::on_window_opened(WnckScreen *screen, WnckWindow* window, gpointe
 void AppWindow::on_window_closed(WnckScreen *screen, WnckWindow *window, gpointer data)
 {
     DockWindow::update();
-    // m_dockpanel.update();
 }
 
 void AppWindow::monitor_size_changed_callback(GdkScreen *screen, gpointer gtkwindow){ }
@@ -437,7 +412,7 @@ void AppWindow::monitor_changed_callback(GdkScreen *screen, gpointer gtkwindow)
 
         DockWindow::updateStrut();
     }
-    
+
 
 
 
@@ -450,14 +425,12 @@ void AppWindow::window_geometry_changed_callback(WnckWindow *window, gpointer us
 bool AppWindow::on_enter_notify_event(GdkEventCrossing* crossing_event)
 {
     m_mouseIn = true;
-    g_print("mouse in\n");
     return true;
 }
 
 bool AppWindow::on_leave_notify_event(GdkEventCrossing* crossing_event)
 {
     m_mouseIn = false;
-    g_print("mouse out\n");
     return true;
 }
 

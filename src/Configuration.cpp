@@ -10,10 +10,10 @@
 
 namespace Configuration
 {
-    bool m_autohide = true;
+    bool m_autohide = false;
     bool m_allowDraw = true;
-    panel_locationType m_locatiom = panel_locationType::TOP; 
-    Horizontal_alignment_type m_HorizontalAlignment =  Horizontal_alignment_type::CENTER;
+    panel_locationType m_locatiom = panel_locationType::BOTTOM; 
+    Horizontal_alignment_type m_HorizontalAlignment =  Horizontal_alignment_type::LEFT_TOP;
     
     Horizontal_alignment_type get_HorizontalAlignment()
     {
@@ -32,15 +32,12 @@ namespace Configuration
     
     bool is_panelMode()
     {
-        return false; // Explicite set
+        return true; // Explicite set
     }
 
     bool is_activateStrut()
     {
-//        if ( m_autohide ) {
-//            return false;
-//        }
-        return !m_autohide;
+        return m_autohide == false;
     }
 
     bool is_autoHide()
@@ -79,7 +76,7 @@ namespace Configuration
     }
     unsigned int get_WindowDockMonitorMargin_Right()
     {
-          if(is_panelMode()){
+          if(is_panelMode() || !is_autoHide()){
             return 0;
         }
           
@@ -88,16 +85,16 @@ namespace Configuration
 
     unsigned int get_WindowDockMonitorMargin_Left()
     {
-          if(is_panelMode()){
+          if(is_panelMode() || !is_autoHide()){
             return 0;
         }
           
-        return 6;
+        return 27;
     }
     
     unsigned int get_WindowDockMonitorMargin_Bottom()
     {
-        if(is_panelMode()){
+       if(is_panelMode() || !is_autoHide()){
             return 0;
         }
         

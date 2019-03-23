@@ -145,20 +145,19 @@ inline namespace DockWindow
         auto geometry = ((AppWindow*)m_window)->m_screen.get_PrimaryMonitor()->geometry;
         auto areaSize = Configuration::get_dockWindowSize();
         auto location = Configuration::get_dockWindowLocation();
-        
-        if (Configuration::is_autoHide() && !m_visible && !forceMove) {
-            return areaSize;
-        }
-        
+
+
         switch (location)
         {
             case panel_locationType::TOP:
             case panel_locationType::BOTTOM:
             {
                 if (Configuration::is_panelMode()) {
-                    
-                    m_window->resize(geometry.width, areaSize);
 
+                    m_window->resize(geometry.width, areaSize);
+                    if (Configuration::is_autoHide() && !m_visible && !forceMove) {
+                        return areaSize;
+                    }
                     if (location == panel_locationType::TOP) {
                         m_window->move(geometry.x, geometry.y);
                         break;
@@ -173,6 +172,10 @@ inline namespace DockWindow
 
                 // resize the window
                 m_window->resize(itemsSize, areaSize);
+                if (Configuration::is_autoHide() && !m_visible && !forceMove) {
+                    return areaSize;
+                }
+
 
                 if (location == panel_locationType::TOP) {
                     m_window->move(geometry.x + startX, geometry.y + Configuration::get_WindowDockMonitorMargin_Top());
@@ -191,11 +194,17 @@ inline namespace DockWindow
                 if (Configuration::is_panelMode()) {
                     if (location == panel_locationType::LEFT) {
                         m_window->resize(areaSize, geometry.height);
+                        if (Configuration::is_autoHide() && !m_visible && !forceMove) {
+                            return areaSize;
+                        }
                         m_window->move(geometry.x + Configuration::get_WindowDockMonitorMargin_Left(), geometry.y);
                         break;
                     }
 
                     m_window->resize(areaSize, geometry.height);
+                     if (Configuration::is_autoHide() && !m_visible && !forceMove) {
+                        return areaSize;
+                    }
                     //m_window->move((geometry.x + geometry.width) - (areaSize + Configuration::get_WindowDockMonitorMargin_Right()), geometry.y);
                     areaSize += Configuration::get_WindowDockMonitorMargin_Right();
                     m_window->move((geometry.x + geometry.width) - areaSize, geometry.y);
