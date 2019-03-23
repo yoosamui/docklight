@@ -105,12 +105,12 @@ m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
     //                                             &DockPanel::on_timeoutDraw), 1000);
 
 
-     g_signal_connect(G_OBJECT(wnckscreen), "window-opened",
+    g_signal_connect(G_OBJECT(wnckscreen), "window-opened",
                      G_CALLBACK(DockPanel::on_window_opened), NULL);
 
     g_signal_connect(wnckscreen, "window_closed",
                      G_CALLBACK(DockPanel::on_window_closed), NULL);
-    
+
 
 }
 
@@ -123,7 +123,7 @@ m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
 int DockPanel::preInit(Gtk::Window* window)
 {
 
-   // this->m_AppWindow = window;
+    // this->m_AppWindow = window;
     //this->m_DockWindow = (DockWindow*) window;
 
     //getDockWindowWidth(); //+180);//DockWindow::get_geometry().height; //this->
@@ -179,6 +179,7 @@ int DockPanel::preInit(Gtk::Window* window)
 
 DockPanel::~DockPanel(){ }
 static bool m_forceDraw = false;
+
 /**
  * Emitted when a new Wnck.Window is opened on screen.
  * @param screen
@@ -188,15 +189,15 @@ static bool m_forceDraw = false;
 void DockPanel::on_window_opened(WnckScreen *screen, WnckWindow* window, gpointer data)
 {
     m_forceDraw = true;
-// force our program to redraw the entire clock.
-//    auto win = m_AppWindow;
-//    if (win)
-//    {
-//        Gdk::Rectangle r(0, 0, DockWindow::get_DockWindowWidth(), DockWindow::get_DockWindowHeight());
-//        m_AppWindow->dr
-//        win->invalidate_rect(r, false);
-//    }
-   //gtk_widget_queue_draw_area(m_AppWindow,0,0,0,0) ;
+    // force our program to redraw the entire clock.
+    //    auto win = m_AppWindow;
+    //    if (win)
+    //    {
+    //        Gdk::Rectangle r(0, 0, DockWindow::get_DockWindowWidth(), DockWindow::get_DockWindowHeight());
+    //        m_AppWindow->dr
+    //        win->invalidate_rect(r, false);
+    //    }
+    //gtk_widget_queue_draw_area(m_AppWindow,0,0,0,0) ;
 }
 
 /**
@@ -207,9 +208,8 @@ void DockPanel::on_window_opened(WnckScreen *screen, WnckWindow* window, gpointe
  */
 void DockPanel::on_window_closed(WnckScreen *screen, WnckWindow *window, gpointer data)
 {
-m_forceDraw = true;
+    m_forceDraw = true;
 }
-
 
 /** 
  * bool DockPanel::on_button_press_event(GdkEventButton *event)
@@ -455,29 +455,54 @@ void DockPanel::ExecuteApp(GdkEventButton* event)
     // TEST must be item->m_items.size() == 1
     // must be item->m_items.size() >1 // open preview
     if (item->m_items.size() >= 1) {
-        WnckWindow *window = nullptr; 
+        WnckWindow *window = nullptr;
         window = WnckHandler::get_ActiveWindowIfAny(item);
-        if(window == nullptr)
-        {
+        if (window == nullptr) {
             DockItem* firstChild = item->m_items.at(0);
             window = firstChild->m_window;
         }
-        
+
         WnckHandler::ActivateWindow(window);
     }
 }
 
+DockItem* DockPanel::getCurrentItem()
+{
+    if (m_currentMoveIndex < 1 || m_currentMoveIndex > this->m_appUpdater.m_dockitems.size()) {
+        return nullptr;
+    }
+
+    return this->m_appUpdater.m_dockitems.at(m_currentMoveIndex);
+}
+
+void DockPanel::AppRunAnimationLauncherCompleted()
+{
+    m_AppRunThreadLauncher->detach();
+    delete m_AppRunThreadLauncher;
+    m_AppRunThreadLauncher = nullptr;
+}
+
 void DockPanel::on_menuNew_event()
 {
-    if (m_currentMoveIndex < 1)
-        return;
 
-    DockItem * item = this->m_appUpdater.m_dockitems.at(m_currentMoveIndex);
+    if (m_currentMoveIndex < 1 || m_currentMoveIndex > this->m_appUpdater.m_dockitems.size()) {
+        return;
+    }
+
+    DockItem* item = this->m_appUpdater.m_dockitems.at(m_currentMoveIndex);
 
     if (item->m_dockitemSesssionGrpId > 0) {
         //  createSessionWindow();
         return;
 
+    }
+
+    // start run animation
+    if (m_AppRunThreadLauncher == nullptr) {
+        Glib::RefPtr<Gdk::Pixbuf> m_image = item->m_image;
+        m_AppRunThreadLauncher = new std::thread([this, m_image]{
+            m_AppRunAnimation.start(*this, m_image);
+        });
     }
 
     // m_selectorAnimationItemIndex = m_currentMoveIndex;
@@ -487,6 +512,12 @@ void DockPanel::on_menuNew_event()
     }
 
 
+
+}
+
+void DockPanel::update()
+{
+    Gtk::Widget::queue_draw();
 }
 
 bool DockPanel::on_timeoutDraw()
@@ -496,68 +527,6 @@ bool DockPanel::on_timeoutDraw()
         m_forceDraw = false;
     }
     return true;
-}
-
-bool DockPanel::canShow()
-{
-    //    if (this->m_mouseIn == false) {
-    //        return false;
-    //    }
-
-    int x, y;
-    Utilities::getMousePosition(x, y);
-
-    switch (Configuration::get_dockWindowLocation())
-    {
-        case panel_locationType::TOP:
-        {
-            int startX = abs((DockWindow::get_geometry().width / 2) - (DockWindow::get_DockWindowWidth() / 2));
-            int endX = startX + DockWindow::get_DockWindowWidth();
-
-            if (x > startX && x < endX && y - 5 < Configuration::get_WindowDockMonitorMargin_Top()) {
-                m_mouseIn = true;
-                return true;
-            }
-            break;
-        }
-        case panel_locationType::BOTTOM:
-        {
-            int startX = abs((DockWindow::get_geometry().width / 2) - (DockWindow::get_DockWindowWidth() / 2));
-            int endX = startX + DockWindow::get_DockWindowWidth();
-
-            //g_print("%d %d\n", x, startX);
-            if (x > startX && x < endX && y + 5 > (DockWindow::get_geometry().height - Configuration::get_WindowDockMonitorMargin_Bottom())) {
-                m_mouseIn = true;
-                return true;
-            }
-            break;
-        }
-        case panel_locationType::LEFT:
-        {
-            int startY = abs((DockWindow::get_geometry().height / 2) - (DockWindow::get_DockWindowHeight() / 2));
-            int endY = startY + DockWindow::get_DockWindowHeight();
-
-            if ((y > startY && y < endY) && (x <= 1 || x - 5 < Configuration::get_WindowDockMonitorMargin_Left())) {
-                m_mouseIn = true;
-                return true;
-            }
-            break;
-        }
-        case panel_locationType::RIGHT:
-        {
-            int startY = abs((DockWindow::get_geometry().height / 2) - (DockWindow::get_DockWindowHeight() / 2));
-            int endY = startY + DockWindow::get_DockWindowHeight();
-
-            if ((y > startY && y < endY) && (x + 5 > (DockWindow::get_geometry().width - Configuration::get_WindowDockMonitorMargin_Right()))) {
-                m_mouseIn = true;
-                return true;
-            }
-            break;
-        }
-    }
-
-
-    return false;
 }
 
 /**
@@ -824,14 +793,12 @@ bool DockPanel::on_leave_notify_event(GdkEventCrossing * crossing_event)
     return true;
 }
 
-
-
 bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
     if (Configuration::is_allowDraw() == false) {
         return true;
     }
-            
+
     int currentPositionX = 0;
     int currentPositionY = 0;
 
@@ -942,10 +909,13 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr, int currentp
 
         // Draw icons
         if (item->m_image != NULLPB) {
+
             auto icon = item->m_image->scale_simple(iconsize, iconsize, Gdk::INTERP_BILINEAR);
             Gdk::Cairo::set_source_pixbuf(cr, icon, startX, startY);
-
             cr->paint();
+
+
+
         }
         idx++;
     }

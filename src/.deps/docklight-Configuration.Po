@@ -1386,7 +1386,8 @@ docklight-Configuration.o: Configuration.cpp /usr/include/stdc-predef.h \
  /usr/include/gtkmm-3.0/gtkmm/viewport.h \
  /usr/include/gtkmm-3.0/gtkmm/volumebutton.h AppWindow.h DockPanel.h \
  DockItem.h SessionWindow.h Utilities.h /usr/include/c++/6/math.h \
- IconLoader.h AppUpdater.h Screen.h Struts.h
+ IconLoader.h AppUpdater.h AppRunAnimation.h /usr/include/c++/6/thread \
+ Screen.h Struts.h
 
 /usr/include/stdc-predef.h:
 
@@ -4397,6 +4398,10 @@ Utilities.h:
 IconLoader.h:
 
 AppUpdater.h:
+
+AppRunAnimation.h:
+
+/usr/include/c++/6/thread:
 
 Screen.h:
 
