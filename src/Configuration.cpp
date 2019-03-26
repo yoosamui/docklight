@@ -13,7 +13,7 @@ namespace Configuration
     bool m_autohide = false;
     bool m_allowDraw = true;
     panel_locationType m_locatiom = panel_locationType::BOTTOM; 
-    Horizontal_alignment_type m_HorizontalAlignment =  Horizontal_alignment_type::LEFT_TOP;
+    Horizontal_alignment_type m_HorizontalAlignment =  Horizontal_alignment_type::CENTER;
     
     Horizontal_alignment_type get_HorizontalAlignment()
     {
@@ -32,7 +32,7 @@ namespace Configuration
     
     bool is_panelMode()
     {
-        return true; // Explicite set
+        return false; // Explicite set
     }
 
     bool is_activateStrut()
@@ -103,7 +103,7 @@ namespace Configuration
     
     unsigned int get_separatorMargin()
     {
-        return 8;
+        return 16;
     }
 
     unsigned int get_CellHeight()

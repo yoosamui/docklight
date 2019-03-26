@@ -24,6 +24,7 @@ inline namespace DockWindow {
     int init(Gtk::Window* window);
     int get_DockWindowWidth();
     int get_DockWindowHeight();
+    void get_DockWindowPosition(int& x, int& y);
     GdkRectangle get_geometry();
     GdkRectangle get_workarea();
     void updateGeometry();

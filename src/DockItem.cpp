@@ -53,4 +53,26 @@ DockItem* DockItem::GetNext()
 
 }
 
+std::string DockItem::getTitle()
+{
+    if (!m_titlename.empty())
+        return m_titlename;
+
+    return m_realgroupname;
+}
+
+std::string DockItem::getGroupName()
+{
+    std::replace(m_realgroupname.begin(), 
+            m_realgroupname.end(), ' ', '-');
+
+    return m_realgroupname;
+}
+
+std::string DockItem::getDesktopFileName()
+{
+  return getGroupName() + ".desktop";
+}
+
+
 

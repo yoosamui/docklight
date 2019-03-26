@@ -1,7 +1,7 @@
 //*****************************************************************
 //
-//  Copyright (C) 2016 Juan R. Gonzalez
-//  Created on December, 2016 
+//  Copyright (C) 2015 Juan R. Gonzalez
+//  Created on November 20, 2015, 12:17 PM 
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -18,23 +18,30 @@
 //
 //****************************************************************
 
-#ifndef ICONLOADER_H
-#define ICONLOADER_H
+#ifndef TITLEWINDOW_H
+#define	TITLEWINDOW_H
 
-#define WNCK_I_KNOW_THIS_IS_UNSTABLE  1
+#include <gtkmm/window.h>
+#include <gtkmm/box.h>
+#include <gtkmm/label.h>
 
-#include <libwnck/libwnck.h>
-#include <gdkmm/pixbuf.h>
-
-namespace IconLoader
+class TitleWindow : public Gtk::Window
 {
-    Glib::RefPtr<Gdk::Pixbuf> GetWindowIcon(WnckWindow* window);
-    Glib::RefPtr<Gdk::Pixbuf> GetWindowIcon(WnckWindow* window, std::string &theme_iconname);
-    Glib::RefPtr<Gdk::Pixbuf> GetWindowIcon(WnckWindow* window,GdkPixbuf *icon,std::string &theme_iconname);
-    Glib::RefPtr<Gdk::Pixbuf> GetWindowIconFromDesktopFile(WnckWindow* window,GdkPixbuf *icon);
-    Glib::RefPtr<Gdk::Pixbuf> PixbufConvert(GdkPixbuf* icon);
-    Glib::RefPtr<Gdk::Pixbuf> GetIconByAppName(const char* appname,std::string &theme_iconname);
-}
+public:
+    TitleWindow();
+    virtual ~TitleWindow();
+    void setText(const Glib::ustring text);
+        
+private:
+    
+    bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr);
+    
+    Pango::FontDescription font;
+    
+    //Child widgets:
+    Gtk::Box m_HBox;
+    Gtk::Label m_Label;
+};
 
-#endif /* ICONLOADER_H */
+#endif	/* TITLEWINDOW_H */
 

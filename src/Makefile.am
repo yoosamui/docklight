@@ -63,6 +63,10 @@ AppRunAnimation.cpp \
 AppRunAnimation.h \
 IconWindow.cpp \
 IconWindow.h \
+TitleWindow.cpp \
+TitleWindow.h \
+DockItemPositions.cpp \
+DockItemPositions.h \
 $(NULL)
 
 # this works - it deletes testSubDir in src

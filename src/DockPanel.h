@@ -19,6 +19,8 @@
 #include "SessionWindow.h"
 #include "AppUpdater.h"
 #include "AppRunAnimation.h"
+#include "TitleWindow.h"
+
 
 
 
@@ -41,6 +43,9 @@ public:
     void update();
 private:
 
+    TitleWindow m_titlewindow;
+    TitleWindow m_infowindow;
+    
     AppUpdater m_appUpdater;
     std::string m_homeiconFilePath;
     static int m_currentMoveIndex;
@@ -53,6 +58,14 @@ private:
    
     
     DockItem* getCurrentItem();
+    
+    // Timer for showing the title window
+    Glib::Timer m_titleTimer;
+    
+    gdouble m_titleElapsedSeconds;
+    int m_titleItemOldindex = 0;
+    bool m_titleShow = false;
+    
     
 protected:
 
@@ -96,8 +109,9 @@ protected:
     float atime = 0.f;
     Glib::Timer m_Timer;
 
-    void draw_Panel(const Cairo::RefPtr<Cairo::Context>& cr, int x, int y);
-    void draw_Items(const Cairo::RefPtr<Cairo::Context>& cr, int currentposX, int currentposY);
+    void draw_Panel(const Cairo::RefPtr<Cairo::Context>& cr);
+    void draw_Items(const Cairo::RefPtr<Cairo::Context>& cr);
+    void draw_Title(const Cairo::RefPtr<Cairo::Context>& cr);
 
     std::thread* m_AppRunThreadLauncher = nullptr;
     AppRunAnimation m_AppRunAnimation;

@@ -47,9 +47,17 @@ inline namespace DockWindow
             return m_window->get_height();
     }
 
+    void get_DockWindowPosition(int& x, int& y)
+    {
+        x = y = 0;
+        if (m_window != nullptr) {
+            m_window->get_position(x, y);
+        }
+    }
+
     guint get_dockWindowStartEndMargin()
     {
-        return 40;
+        return 20;
     }
 
     void update()
@@ -202,7 +210,7 @@ inline namespace DockWindow
                     }
 
                     m_window->resize(areaSize, geometry.height);
-                     if (Configuration::is_autoHide() && !m_visible && !forceMove) {
+                    if (Configuration::is_autoHide() && !m_visible && !forceMove) {
                         return areaSize;
                     }
                     //m_window->move((geometry.x + geometry.width) - (areaSize + Configuration::get_WindowDockMonitorMargin_Right()), geometry.y);

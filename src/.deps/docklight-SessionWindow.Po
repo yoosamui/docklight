@@ -1388,11 +1388,11 @@ docklight-SessionWindow.o: SessionWindow.cpp /usr/include/stdc-predef.h \
  /usr/include/libwnck-3.0/libwnck/version.h \
  /usr/include/libwnck-3.0/libwnck/wnck-enum-types.h IconLoader.h \
  DockPanel.h Configuration.h DockItem.h AppUpdater.h AppRunAnimation.h \
- /usr/include/c++/6/thread WindowControl.h /usr/include/X11/X.h \
- Launcher.h DockWindow.h AppWindow.h Screen.h Struts.h \
- /usr/include/glibmm-2.4/glibmm/i18n.h /usr/include/glib-2.0/glib/gi18n.h \
- /usr/include/libintl.h /usr/include/c++/6/fstream \
- /usr/include/c++/6/bits/codecvt.h \
+ /usr/include/c++/6/thread TitleWindow.h WindowControl.h \
+ /usr/include/X11/X.h Launcher.h DockWindow.h AppWindow.h Screen.h \
+ Struts.h /usr/include/glibmm-2.4/glibmm/i18n.h \
+ /usr/include/glib-2.0/glib/gi18n.h /usr/include/libintl.h \
+ /usr/include/c++/6/fstream /usr/include/c++/6/bits/codecvt.h \
  /usr/include/x86_64-linux-gnu/c++/6/bits/basic_file.h \
  /usr/include/x86_64-linux-gnu/c++/6/bits/c++io.h \
  /usr/include/c++/6/bits/fstream.tcc /usr/include/c++/6/iostream
@@ -4406,6 +4406,8 @@ AppUpdater.h:
 AppRunAnimation.h:
 
 /usr/include/c++/6/thread:
+
+TitleWindow.h:
 
 WindowControl.h:
 

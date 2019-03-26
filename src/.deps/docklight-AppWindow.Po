@@ -1388,9 +1388,9 @@ docklight-AppWindow.o: AppWindow.cpp /usr/include/stdc-predef.h \
  /usr/include/gtkmm-3.0/gtkmm/viewport.h \
  /usr/include/gtkmm-3.0/gtkmm/volumebutton.h Configuration.h DockItem.h \
  SessionWindow.h Utilities.h /usr/include/c++/6/math.h IconLoader.h \
- AppUpdater.h AppRunAnimation.h /usr/include/c++/6/thread Screen.h \
- Struts.h ../config.h DockWindow.h WindowControl.h /usr/include/X11/X.h \
- Animations.h /usr/include/c++/6/iostream
+ AppUpdater.h AppRunAnimation.h /usr/include/c++/6/thread TitleWindow.h \
+ Screen.h Struts.h ../config.h DockWindow.h WindowControl.h \
+ /usr/include/X11/X.h Animations.h /usr/include/c++/6/iostream
 
 /usr/include/stdc-predef.h:
 
@@ -4407,6 +4407,8 @@ AppUpdater.h:
 AppRunAnimation.h:
 
 /usr/include/c++/6/thread:
+
+TitleWindow.h:
 
 Screen.h:
 
