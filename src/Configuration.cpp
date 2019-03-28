@@ -10,7 +10,7 @@
 
 namespace Configuration
 {
-    bool m_autohide = false;
+    bool m_autohide = true;
     bool m_allowDraw = true;
     panel_locationType m_locatiom = panel_locationType::BOTTOM; 
     Horizontal_alignment_type m_HorizontalAlignment =  Horizontal_alignment_type::CENTER;
@@ -37,7 +37,7 @@ namespace Configuration
 
     bool is_activateStrut()
     {
-        return m_autohide == false;
+        return is_autoHide() == false;
     }
 
     bool is_autoHide()
@@ -103,7 +103,7 @@ namespace Configuration
     
     unsigned int get_separatorMargin()
     {
-        return 16;
+        return 12;
     }
 
     unsigned int get_CellHeight()

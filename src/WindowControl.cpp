@@ -10,55 +10,78 @@
 #include "WindowControl.h"
 #include "Configuration.h"
 
-namespace WindowControl {
-//https://developer.gnome.org/libwnck/stable/WnckWindow.html#WnckWindowType
+namespace WindowControl
+{
+    //https://developer.gnome.org/libwnck/stable/WnckWindow.html#WnckWindowType
     // ++++
+
     WnckWindow* get_ExistingWindowDock()
     {
-          WnckScreen *screen;
+        WnckScreen *screen;
         GList *window_l;
 
-         screen = wnck_screen_get_default();
-         wnck_screen_force_update(screen);
+        screen = wnck_screen_get_default();
+        wnck_screen_force_update(screen);
         for (window_l = wnck_screen_get_windows(screen);
-                window_l != NULL; window_l = window_l->next) {
-            
+             window_l != NULL; window_l = window_l->next) {
+
             WnckWindow *window = WNCK_WINDOW(window_l->data);
             if (window == NULL)
                 continue;
-                     
+
             auto instance = wnck_window_get_class_instance_name(window);
-           auto wname = wnck_window_get_name(window);
-            
-            g_print("%s %s\n",instance,wname);
-//
-//            WnckWindowType wt = wnck_window_get_window_type(window);
-//
-//            if (wt != WNCK_WINDOW_DOCK )
-//            {
-//             
-//                continue;
-//            }
+            auto wname = wnck_window_get_name(window);
+
+            g_print("%s %s\n", instance, wname);
+            //
+            //            WnckWindowType wt = wnck_window_get_window_type(window);
+            //
+            //            if (wt != WNCK_WINDOW_DOCK )
+            //            {
+            //             
+            //                continue;
+            //            }
 
             const char* instancename = wnck_window_get_class_instance_name(window);
             if (instancename != NULL && strcmp(instancename, DOCKLIGHT_INSTANCENAME) == 0) {
                 continue;
             }
-          //  return window;
+            //  return window;
         }
         return NULL;
-       
+
     }
-    
-    bool FullscreenActive() {
-        // Gets the active WnckWindow on screen . May return NULL sometimes, since
-        // not all window managers guarantee that a window is always active.
-        WnckWindow *wckwindow = wnck_screen_get_active_window (wnck_screen_get_default());
-        if(wckwindow == NULL){
-            return false;
+
+    /**
+     * Gets the active WnckWindow on screen . May return NULL sometimes, since
+     * not all window managers guarantee that a window is always active.
+     * @return true if any window is in fullscreen otherwise false;
+     */
+    bool FullscreenActive()
+    {
+        WnckWindow *wckwindow = wnck_screen_get_active_window(wnck_screen_get_default());
+        if (wckwindow != NULL && wnck_window_is_fullscreen(wckwindow)) {
+            return true;
         }
-       
-       return wnck_window_is_fullscreen(wckwindow);
+
+        WnckScreen *screen;
+        GList *window_l;
+
+        screen = wnck_screen_get_default();
+        wnck_screen_force_update(screen);
+
+        for (window_l = wnck_screen_get_windows(screen);
+             window_l != NULL; window_l = window_l->next) {
+
+            wckwindow = WNCK_WINDOW(window_l->data);
+            if (wckwindow == NULL)
+                continue;
+
+            if (wnck_window_is_fullscreen(wckwindow)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
