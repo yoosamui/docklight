@@ -145,12 +145,10 @@ inline namespace DockWindow
      */
     int reSize(bool forceMove)
     {
-        if (m_window == nullptr || Configuration::is_allowDraw() == false) {
+        if (m_window == nullptr) {
             return 0;
         }
 
-         //Configuration::set_allowDraw(false);
-         
         g_print("Resize\n");
         auto geometry = ((AppWindow*)m_window)->m_screen.get_PrimaryMonitor()->geometry;
         auto areaSize = Configuration::get_dockWindowSize();
