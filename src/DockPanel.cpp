@@ -1,7 +1,7 @@
-/* 
+/*
  * File:   DockPanel.cpp
  * Author: yoo
- * 
+ *
  * Created on November 6, 2018, 7:31 PM
  */
 
@@ -29,19 +29,12 @@
 #include <cairo/cairo.h>
 
 // static members
-//std::vector<DockItem*> DockPanel::m_dockitems;
 int DockPanel::m_currentMoveIndex;
-//Gtk::Window* DockPanel::m_AppWindow;
 
-
-//Gtk::Window* DockPanel::m_AppWindow;
-//DockWindow* DockPanel::m_DockWindow;
-
-//AppUpdater DockPanel::m_appUpdater;
-
+/*
+ * this class is the main dock render.
+ */
 DockPanel::DockPanel():
-
-//m_previousCellwidth(DEF_CELLWIDTH),
 m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
 {
 
@@ -59,7 +52,7 @@ m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
     //    set_app_paintable(true);
     //
     //    GdkScreen *screen;
-    //    GdkVisual *visual;
+    //    GdkVisual sual;
     //
     //    gtk_widget_set_app_paintable(GTK_WIDGET(gobj()), TRUE);
     //    screen = gdk_screen_get_default();
@@ -68,7 +61,7 @@ m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
     //    if (visual != NULL && gdk_screen_is_composited(screen)) {
     //        gtk_widget_set_visual(GTK_WIDGET(gobj()), visual);
     //    }
-    //    
+    //
 
 
 
@@ -116,7 +109,7 @@ m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
 }
 
 /**
- * preInit load the attached icons and initializes variables, 
+ * preInit load the attached icons and initializes variables,
  * and create the popup menus
  * @param Gtk::Window*  window
  * @return return 0 is success or -1 is an error found
@@ -212,12 +205,12 @@ void DockPanel::on_window_closed(WnckScreen *screen, WnckWindow *window, gpointe
     m_forceDraw = true;
 }
 
-/** 
+/**
  * bool DockPanel::on_button_press_event(GdkEventButton *event)
- * 
- * handles Mouse button press : process mouse button event 
+ *
+ * handles Mouse button press : process mouse button event
  * true to stop other handlers from being invoked for the event.
- * false to propagate the event further. 
+ * false to propagate the event further.
  */
 bool DockPanel::on_button_press_event(GdkEventButton *event)
 {
@@ -238,11 +231,11 @@ bool DockPanel::on_button_press_event(GdkEventButton *event)
                             (int) m_dockitems.size(), m_dragdropItemIndex,
                             m_cellwidth, (int) event->x);
 
-                    // sets the relative item mouse coordinates         
+                    // sets the relative item mouse coordinates
                     m_dragdropMousePoint.set_x(relativex);
                     m_dragdropMousePoint.set_y((int) event->y);
 
-                    // Variables are set 
+                    // Variables are set
                     m_dragdropTimerSet = true;
                     // Start the timer
                     m_dragdropMouseDown = true;
@@ -251,7 +244,7 @@ bool DockPanel::on_button_press_event(GdkEventButton *event)
                 }
          */
 
-        // remember the time to check it later 
+        // remember the time to check it later
         m_mouseclickEventTime = gtk_get_current_event_time();
 
         // Check if the event is a left button click.
@@ -265,7 +258,7 @@ bool DockPanel::on_button_press_event(GdkEventButton *event)
             m_mouseRightButtonDown = true;
             // The event has been handled.
 
-            // Items 
+            // Items
             if (m_currentMoveIndex > 0) {
                 DockItem *dockitem = m_appUpdater.m_dockitems.at(m_currentMoveIndex);
                 dockitem->m_isAttached = true;
@@ -279,14 +272,14 @@ bool DockPanel::on_button_press_event(GdkEventButton *event)
     return false;
 }
 
-/** 
+/**
  * bool DockPanel::on_button_release_event(GdkEventButton *event)
  * Returning TRUE means we handled the event, so the signal
  * emission should be stopped (don’t call any further callbacks
  * that may be connected). Return FALSE to continue invoking callbacks.
- * handles Mouse button released : process mouse button event 
+ * handles Mouse button released : process mouse button event
  * true to stop other handlers from being invoked for the event.
- * false to propagate the event further. 
+ * false to propagate the event further.
  */
 bool DockPanel::on_button_release_event(GdkEventButton *event)
 {
@@ -334,7 +327,7 @@ bool DockPanel::on_button_release_event(GdkEventButton *event)
             m_mouseRightClick = true;
             m_mouseRightButtonDown = false;
 
-            // Items 
+            // Items
             if (m_currentMoveIndex > 0) {
                 DockItem *dockitem = m_dockitems.at(m_currentMoveIndex);
                 int isExitstWindows =
@@ -382,7 +375,7 @@ bool DockPanel::on_button_release_event(GdkEventButton *event)
                 m_popupMenuOn = true;
                 return true;
             }
-        
+
             //Home
             if (m_currentMoveIndex == 0) {
 
@@ -534,7 +527,7 @@ bool DockPanel::on_timeoutDraw()
  * get the item index from mouse coordinates.
  * @param x
  * @param y
- * @return 
+ * @return
  */
 int DockPanel::getIndex(int x, int y)
 {
@@ -576,11 +569,11 @@ int DockPanel::getIndex(int x, int y)
             //            if (Configuration::is_panelMode()) {
             //                //col = center - (m_dockitems.size() * m_cellwidth) / 2;
             //                //col -= (Configuration::get_separatorMargin() + m_cellwidth);
-            //                //col = (Configuration::get_separatorMargin() / 2); 
+            //                //col = (Configuration::get_separatorMargin() / 2);
             //            }
             //            else {
             //
-            //                
+            //
             //            }
 
             if (Configuration::get_HorizontalAlignment() == Horizontal_alignment_type::CENTER) {
@@ -615,11 +608,11 @@ int DockPanel::getIndex(int x, int y)
 }
 
 /**
- * handles Mouse motion: process mouse button event 
+ * handles Mouse motion: process mouse button event
  * true to stop other handlers from being invoked for the event.
  * false to propagate the event further.
  * @param event
- * @return 
+ * @return
  */
 bool DockPanel::on_motion_notify_event(GdkEventMotion * event)
 {
@@ -687,12 +680,7 @@ unsigned int DockPanel::get_dockItemsHeightUntilIndex(int idx)
 gint DockPanel::get_dockItemsWidth()
 {
     unsigned int size = 0;
-    for (DockItem* item:this->m_appUpdater.m_dockitems) {
-        //        if (item->m_dockitemtype == DockItemType::Separator) {
-        //            size += item->m_width;
-        //            continue;
-        //        }
-
+    for (DockItem* item : this->m_appUpdater.m_dockitems) {
         size += item->m_width + Configuration::get_separatorMargin();
     }
 
@@ -702,17 +690,17 @@ gint DockPanel::get_dockItemsWidth()
 gint DockPanel::get_dockItemsHeight()
 {
     unsigned int size = 0;
-    for (DockItem* item:this->m_appUpdater.m_dockitems) {
-
+    for (DockItem* item : this->m_appUpdater.m_dockitems) {
         if (item->m_dockitemtype == DockItemType::Separator) {
             size += item->m_width;
             continue;
         }
 
-        size += item->m_height;
+        size += item->m_height + Configuration::get_separatorMargin();
     }
 
-    return size + (Configuration::get_separatorMargin() * this->m_appUpdater.m_dockitems.size());
+    return size - Configuration::get_separatorMargin();
+
 }
 
 void DockPanel::get_dockItemPosition(DockItem* item, int &x1, int &y1, int &x2, int &y2, int &center, int i)
@@ -850,8 +838,8 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
     int selectorCurrentPos = -1;
     int y = CELL_TOP_MARGIN;
     int startPos = DockWindow::get_dockWindowStartEndMargin() / 2;
-    
-    for (DockItem* item : this->m_appUpdater.m_dockitems) {
+
+    for (DockItem* item:this->m_appUpdater.m_dockitems) {
         // Draw cells
         cr->set_source_rgba(0.00, 0.50, 0.66, 1);
         RoundedRectangle(cr, startPos, y, item->m_width, item->m_height, 3);
@@ -865,21 +853,22 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
         if (item->m_dockitemtype != DockItemType::Separator) {
             // Dots
             center = (item->m_width / 2);
-            cr->set_source_rgb(1.0, 1.0, 1.0);
-            if (item->m_items.size() == 1) {
-                cr->arc(startPos + center, item->m_height + 3, 2.0, 0, 2 * M_PI);
+            if (item->m_items.size() > 0) {
+                cr->set_source_rgb(1.0, 1.0, 1.0);
+                if (item->m_items.size() == 1) {
+                    cr->arc(startPos + center, item->m_height + 3, 2.0, 0, 2 * M_PI);
+                }
+                else if (item->m_items.size() > 1) {
+                    cr->arc(startPos + center - 4, item->m_height + 3, 2.0, 0, 2 * M_PI);
+                    cr->arc(startPos + center + 4, item->m_height + 3, 2.0, 0, 2 * M_PI);
+                }
+                cr->fill();
             }
-            else if (item->m_items.size() > 1) {
-                cr->arc(startPos + center - 3, item->m_height + 3, 2.0, 0, 2 * M_PI);
-                cr->arc(startPos + center + 3, item->m_height + 3, 2.0, 0, 2 * M_PI);
-            }
-            cr->fill();
-
             // icons
             if (item->m_image != NULLPB) {
                 iconsize = item->m_width - 8;
                 auto icon = item->m_image->scale_simple(iconsize, iconsize, Gdk::INTERP_BILINEAR);
-                Gdk::Cairo::set_source_pixbuf(cr, icon, startPos + center - iconsize / 2 , y + 1);
+                Gdk::Cairo::set_source_pixbuf(cr, icon, startPos + center - iconsize / 2, y + 1);
                 cr->paint();
             }
         }
@@ -942,9 +931,9 @@ void DockPanel::draw_Title(const Cairo::RefPtr<Cairo::Context>& cr)
 
             //            int xx , yy;
             //            m_titlewindow.get_position(xx,yy);
-            //            
+            //
             //            title += " " + std::to_string(xx);
-            //            
+            //
 
             if (item->m_items.size() > 1) {
                 char buff[NAME_MAX];
@@ -963,7 +952,7 @@ void DockPanel::draw_Title(const Cairo::RefPtr<Cairo::Context>& cr)
 
             //                int y = MonitorGeometry::getScreenHeight() - m_titlewindow.get_height() -
             //                        MonitorGeometry::getStrutHeight();
-            //                
+            //
             int y = DockWindow::get_geometry().height - this->get_height() - m_titlewindow.get_height();
 
 
