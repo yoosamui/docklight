@@ -95,6 +95,8 @@ src/.deps/
 /stamp-h1
 
 
+*.7z
+tags
 
 
 # Prerequisites
