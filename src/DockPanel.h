@@ -32,8 +32,8 @@ public:
 
     float m_easing_duration;
     SessionWindow* m_sessionWindow;
-    gint get_dockItemsWidth();
-    gint get_dockItemsHeight();
+    guint get_dockItemsWidth();
+    guint get_dockItemsHeight();
 
     int getCurrentIndex() {
         return m_currentMoveIndex;
@@ -65,8 +65,8 @@ private:
     gdouble m_titleElapsedSeconds;
     int m_titleItemOldindex = 0;
     bool m_titleShow = false;
-    
-    
+    void get_Position(const DockItemType dockType, int& x, int& y, int& width, int& height);
+
 protected:
 
     void ExecuteApp(GdkEventButton* event);

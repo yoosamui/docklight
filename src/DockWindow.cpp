@@ -30,6 +30,19 @@ inline namespace DockWindow
         return 0;
     }
 
+    bool is_Horizontal()
+    {
+        switch (Configuration::get_dockWindowLocation())
+        {
+            case panel_locationType::TOP:
+            case panel_locationType::BOTTOM:
+                return true;
+            case panel_locationType::LEFT:
+            case panel_locationType::RIGHT:
+                return false;
+        }
+    }
+
     bool set_Visibility(bool visible)
     {
         m_visible = visible;

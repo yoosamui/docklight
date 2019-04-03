@@ -35,19 +35,19 @@ int DockPanel::m_currentMoveIndex;
  * this class is the main dock render.
  */
 DockPanel::DockPanel():
-m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
+    m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
 {
 
     // Set masks for mouse events
     add_events(Gdk::BUTTON_PRESS_MASK |
-               Gdk::BUTTON_RELEASE_MASK |
-               Gdk::SCROLL_MASK |
-               Gdk::SMOOTH_SCROLL_MASK |
-               Gdk::POINTER_MOTION_HINT_MASK |
-               Gdk::FOCUS_CHANGE_MASK |
-               Gdk::ENTER_NOTIFY_MASK |
-               Gdk::LEAVE_NOTIFY_MASK |
-               Gdk::POINTER_MOTION_MASK);
+            Gdk::BUTTON_RELEASE_MASK |
+            Gdk::SCROLL_MASK |
+            Gdk::SMOOTH_SCROLL_MASK |
+            Gdk::POINTER_MOTION_HINT_MASK |
+            Gdk::FOCUS_CHANGE_MASK |
+            Gdk::ENTER_NOTIFY_MASK |
+            Gdk::LEAVE_NOTIFY_MASK |
+            Gdk::POINTER_MOTION_MASK);
 
     //    set_app_paintable(true);
     //
@@ -92,7 +92,7 @@ m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
 
 
     Glib::signal_timeout().connect(sigc::mem_fun(*this,
-                                                 &DockPanel::on_timeoutDraw), DEF_FRAMERATE);
+                &DockPanel::on_timeoutDraw), DEF_FRAMERATE);
 
     // Launch timer every second
     // Glib::signal_timeout().connect(sigc::mem_fun(*this,
@@ -100,10 +100,10 @@ m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
 
 
     g_signal_connect(G_OBJECT(wnckscreen), "window-opened",
-                     G_CALLBACK(DockPanel::on_window_opened), NULL);
+            G_CALLBACK(DockPanel::on_window_opened), NULL);
 
     g_signal_connect(wnckscreen, "window_closed",
-                     G_CALLBACK(DockPanel::on_window_closed), NULL);
+            G_CALLBACK(DockPanel::on_window_closed), NULL);
 
 
 }
@@ -132,7 +132,7 @@ int DockPanel::preInit(Gtk::Window* window)
 
         int m_iconsize = Configuration::get_CellWidth() - ICON_CELL_WIDTH_MARGIN;
         dockItem->m_image = Gdk::Pixbuf::create_from_file(filename,
-                                                          m_iconsize, m_iconsize, true);
+                m_iconsize, m_iconsize, true);
     }
     catch (Glib::FileError fex) {
         g_critical("preInit: file %s could not be found!\n", filename);
@@ -153,12 +153,12 @@ int DockPanel::preInit(Gtk::Window* window)
 
     // testt separator
     /*
-    dockItem = new DockItem();
-    dockItem->m_dockitemtype = DockItemType::Separator;
-    dockItem->m_isAttached = true;
-    dockItem->m_width = 12;
-    this->m_appUpdater.m_dockitems.push_back(dockItem);
-     */
+       dockItem = new DockItem();
+       dockItem->m_dockitemtype = DockItemType::Separator;
+       dockItem->m_isAttached = true;
+       dockItem->m_width = 12;
+       this->m_appUpdater.m_dockitems.push_back(dockItem);
+       */
 
     DockWindow::update();
     //    if (m_AppWindow != nullptr) {
@@ -170,7 +170,10 @@ int DockPanel::preInit(Gtk::Window* window)
 
 
 }
-
+/*
+ *
+ *
+ */
 DockPanel::~DockPanel(){ }
 static bool m_forceDraw = false;
 
@@ -222,27 +225,27 @@ bool DockPanel::on_button_press_event(GdkEventButton *event)
         // g_print("MDOWN %d\n", m_currentMoveIndex);
         //      m_mouseRightClick = false;
         /*
-                // Set Drag and drop variables and Starts the timer
-                if (event->button == 1 && !m_dragdropTimerSet && m_currentMoveIndex > 0) {
+        // Set Drag and drop variables and Starts the timer
+        if (event->button == 1 && !m_dragdropTimerSet && m_currentMoveIndex > 0) {
 
-                    // remember the item we want to drag
-                    m_dragdropItemIndex = m_currentMoveIndex;
-                    int relativex = DockPosition::getDockItemRelativeMouseXPos(
-                            (int) m_dockitems.size(), m_dragdropItemIndex,
-                            m_cellwidth, (int) event->x);
+        // remember the item we want to drag
+        m_dragdropItemIndex = m_currentMoveIndex;
+        int relativex = DockPosition::getDockItemRelativeMouseXPos(
+        (int) m_dockitems.size(), m_dragdropItemIndex,
+        m_cellwidth, (int) event->x);
 
-                    // sets the relative item mouse coordinates
-                    m_dragdropMousePoint.set_x(relativex);
-                    m_dragdropMousePoint.set_y((int) event->y);
+        // sets the relative item mouse coordinates
+        m_dragdropMousePoint.set_x(relativex);
+        m_dragdropMousePoint.set_y((int) event->y);
 
-                    // Variables are set
-                    m_dragdropTimerSet = true;
-                    // Start the timer
-                    m_dragdropMouseDown = true;
-                    m_dragdropTimer.start();
-                    // g_print("Drag timer starts\n");
-                }
-         */
+        // Variables are set
+        m_dragdropTimerSet = true;
+        // Start the timer
+        m_dragdropMouseDown = true;
+        m_dragdropTimer.start();
+        // g_print("Drag timer starts\n");
+        }
+        */
 
         // remember the time to check it later
         m_mouseclickEventTime = gtk_get_current_event_time();
@@ -287,21 +290,21 @@ bool DockPanel::on_button_release_event(GdkEventButton *event)
     /*
     // Check if a item was drop
     if (m_dragdropMouseDown) {
-        m_dragdropsStarts = false;
-        m_dragdropTimerSet = false;
-        m_dragdropMouseDown = false;
-        m_dragDropWindow.Hide();
-        m_dragdropTimer.stop();
+    m_dragdropsStarts = false;
+    m_dragdropTimerSet = false;
+    m_dragdropMouseDown = false;
+    m_dragDropWindow.Hide();
+    m_dragdropTimer.stop();
 
-        if (m_dragdropItemIndex != m_currentMoveIndex
-                && m_currentMoveIndex > 0) {
+    if (m_dragdropItemIndex != m_currentMoveIndex
+    && m_currentMoveIndex > 0) {
 
-            dropDockItem(event);
+    dropDockItem(event);
 
-            m_dragdropItemIndex = -1;
-        }
+    m_dragdropItemIndex = -1;
     }
-     */
+    }
+    */
 
     // Taking Too Long To Release the mouse.
     // That is not a valid Click.
@@ -322,91 +325,91 @@ bool DockPanel::on_button_release_event(GdkEventButton *event)
         return TRUE;
     }
     /*
-        if (m_mouseRightButtonDown) {
-            m_preview.hideMe();
-            m_mouseRightClick = true;
-            m_mouseRightButtonDown = false;
+       if (m_mouseRightButtonDown) {
+       m_preview.hideMe();
+       m_mouseRightClick = true;
+       m_mouseRightButtonDown = false;
 
-            // Items
-            if (m_currentMoveIndex > 0) {
-                DockItem *dockitem = m_dockitems.at(m_currentMoveIndex);
-                int isExitstWindows =
-                        WindowControl::isExitstWindowsByDockItem(dockitem);
-                bool isExitstActiveWindow =
-                        WindowControl::isExitsActivetWindowByDockItem(dockitem);
-                bool maximizedexistst =
-                        WindowControl::isExistsUnMaximizedWindowsByDockItem(dockitem);
-
-
-                m_MenuItemNewApp.set_label(_("Open new"));
-                m_MenuItemNewApp.set_sensitive(true);
-                if (dockitem->m_dockitemSesssionGrpId > 0) {
-
-                    m_MenuItemNewApp.set_label(_("Configure"));
-                    m_MenuItemNewApp.set_sensitive(true);
-
-                }
+// Items
+if (m_currentMoveIndex > 0) {
+DockItem *dockitem = m_dockitems.at(m_currentMoveIndex);
+int isExitstWindows =
+WindowControl::isExitstWindowsByDockItem(dockitem);
+bool isExitstActiveWindow =
+WindowControl::isExitsActivetWindowByDockItem(dockitem);
+bool maximizedexistst =
+WindowControl::isExistsUnMaximizedWindowsByDockItem(dockitem);
 
 
-                m_MenuItemMinimizedAll.set_sensitive(isExitstWindows > 0 && maximizedexistst);
+m_MenuItemNewApp.set_label(_("Open new"));
+m_MenuItemNewApp.set_sensitive(true);
+if (dockitem->m_dockitemSesssionGrpId > 0) {
 
-                m_MenuItemMinimizedAllExceptActive.set_sensitive(isExitstWindows > 1
-                        && maximizedexistst && isExitstActiveWindow);
-                m_MenuItemUnMinimizedAll.set_sensitive(isExitstWindows);
+m_MenuItemNewApp.set_label(_("Configure"));
+m_MenuItemNewApp.set_sensitive(true);
 
-
-                m_MenuItemCloseAllExceptActive.set_sensitive(isExitstWindows > 1 && isExitstActiveWindow);
-                m_MenuItemCloseAll.set_sensitive(isExitstWindows);
-
-                m_MenuItemAttach.set_sensitive(dockitem->m_isAttached == false);
-                m_MenuItemDetach.set_sensitive(dockitem->m_isAttached &&
-                        dockitem->m_items.size() == 0);
+}
 
 
-                if (!m_Menu_Popup.get_attach_widget())
-                    m_Menu_Popup.attach_to_widget(*this);
+m_MenuItemMinimizedAll.set_sensitive(isExitstWindows > 0 && maximizedexistst);
+
+m_MenuItemMinimizedAllExceptActive.set_sensitive(isExitstWindows > 1
+&& maximizedexistst && isExitstActiveWindow);
+m_MenuItemUnMinimizedAll.set_sensitive(isExitstWindows);
 
 
-                //m_HomeMenu_Popup.resize_children();
-                m_Menu_Popup.set_halign(Gtk::Align::ALIGN_CENTER);
-                m_Menu_Popup.popup(sigc::mem_fun(*this,
-                        &DockPanel::on_popup_menu_position), 1, event->time);
+m_MenuItemCloseAllExceptActive.set_sensitive(isExitstWindows > 1 && isExitstActiveWindow);
+m_MenuItemCloseAll.set_sensitive(isExitstWindows);
 
-                m_popupMenuOn = true;
-                return true;
-            }
+m_MenuItemAttach.set_sensitive(dockitem->m_isAttached == false);
+m_MenuItemDetach.set_sensitive(dockitem->m_isAttached &&
+dockitem->m_items.size() == 0);
 
-            //Home
-            if (m_currentMoveIndex == 0) {
 
-                int wincount = WindowControl::windowscount();
-                //int minimizedexitst = WindowControl::isExistsMinimizedWindows();
-                int unminimized = WindowControl::unMinimizedWindowsCount();
+if (!m_Menu_Popup.get_attach_widget())
+m_Menu_Popup.attach_to_widget(*this);
 
-                m_HomeCloseAllWindowsMenuItem.set_sensitive(wincount > 0);
-                m_HomeCloseAllWindowsExceptActiveMenuItem.set_sensitive(wincount > 1);
-                m_HomeMinimizeAllWindowsMenuItem.set_sensitive(unminimized > 0);
-                m_HomeUnMinimizeAllWindowsMenuItem.set_sensitive(wincount > 0);
 
-                m_HomeMinimizeAllWindowsExceptActiveMenuItem.set_sensitive(unminimized > 1);
+//m_HomeMenu_Popup.resize_children();
+m_Menu_Popup.set_halign(Gtk::Align::ALIGN_CENTER);
+m_Menu_Popup.popup(sigc::mem_fun(*this,
+&DockPanel::on_popup_menu_position), 1, event->time);
 
-                if (!m_HomeMenu_Popup.get_attach_widget())
-                    m_HomeMenu_Popup.attach_to_widget(*this);
+m_popupMenuOn = true;
+return true;
+}
 
-                //m_HomeMenu_Popup.resize_children();
-                m_HomeMenu_Popup.set_halign(Gtk::Align::ALIGN_CENTER);
-                m_HomeMenu_Popup.popup(sigc::mem_fun(*this,
-                        &DockPanel::on_popup_homemenu_position), 1, event->time);
+//Home
+if (m_currentMoveIndex == 0) {
 
-                m_popupMenuOn = true;
+int wincount = WindowControl::windowscount();
+//int minimizedexitst = WindowControl::isExistsMinimizedWindows();
+int unminimized = WindowControl::unMinimizedWindowsCount();
 
-                return true;
-            }
+m_HomeCloseAllWindowsMenuItem.set_sensitive(wincount > 0);
+m_HomeCloseAllWindowsExceptActiveMenuItem.set_sensitive(wincount > 1);
+m_HomeMinimizeAllWindowsMenuItem.set_sensitive(unminimized > 0);
+m_HomeUnMinimizeAllWindowsMenuItem.set_sensitive(wincount > 0);
 
-            return TRUE;
-        }
-     */
-    return TRUE;
+m_HomeMinimizeAllWindowsExceptActiveMenuItem.set_sensitive(unminimized > 1);
+
+if (!m_HomeMenu_Popup.get_attach_widget())
+m_HomeMenu_Popup.attach_to_widget(*this);
+
+//m_HomeMenu_Popup.resize_children();
+m_HomeMenu_Popup.set_halign(Gtk::Align::ALIGN_CENTER);
+m_HomeMenu_Popup.popup(sigc::mem_fun(*this,
+            &DockPanel::on_popup_homemenu_position), 1, event->time);
+
+m_popupMenuOn = true;
+
+return true;
+}
+
+return TRUE;
+}
+*/
+return TRUE;
 }
 
 bool DockPanel::on_scroll_event(GdkEventScroll * e)
@@ -495,8 +498,8 @@ void DockPanel::on_menuNew_event()
     if (m_AppRunThreadLauncher == nullptr) {
         Glib::RefPtr<Gdk::Pixbuf> m_image = item->m_image;
         m_AppRunThreadLauncher = new std::thread([this, m_image]{
-            m_AppRunAnimation.start(*this, m_image);
-        });
+                m_AppRunAnimation.start(*this, m_image);
+                });
     }
 
     // m_selectorAnimationItemIndex = m_currentMoveIndex;
@@ -546,60 +549,60 @@ int DockPanel::getIndex(int x, int y)
     {
         case panel_locationType::TOP:
         case panel_locationType::BOTTOM:
-        {
-            for (auto item:this->m_appUpdater.m_dockitems) {
-                if (mouse.get_x() >= startPostX && mouse.get_x() <= startPostX + item->m_width) {
-                    return idx;
+            {
+                for (auto item:this->m_appUpdater.m_dockitems) {
+                    if (mouse.get_x() >= startPostX && mouse.get_x() <= startPostX + item->m_width) {
+                        return idx;
+                    }
+
+                    startPostX += item->m_width + Configuration::get_separatorMargin();
+                    idx++;
                 }
 
-                startPostX += item->m_width + Configuration::get_separatorMargin();
-                idx++;
+                return -1;
             }
-
-            return -1;
-        }
 
             break;
         case panel_locationType::LEFT:
         case panel_locationType::RIGHT:
-        {
+            {
 
-            center = DockWindow::get_DockWindowHeight() / 2;
-            col = (Configuration::get_separatorMargin() / 2);
-            //            if (Configuration::is_panelMode()) {
-            //                //col = center - (m_dockitems.size() * m_cellwidth) / 2;
-            //                //col -= (Configuration::get_separatorMargin() + m_cellwidth);
-            //                //col = (Configuration::get_separatorMargin() / 2);
-            //            }
-            //            else {
-            //
-            //
-            //            }
+                center = DockWindow::get_DockWindowHeight() / 2;
+                col = (Configuration::get_separatorMargin() / 2);
+                //            if (Configuration::is_panelMode()) {
+                //                //col = center - (m_dockitems.size() * m_cellwidth) / 2;
+                //                //col -= (Configuration::get_separatorMargin() + m_cellwidth);
+                //                //col = (Configuration::get_separatorMargin() / 2);
+                //            }
+                //            else {
+                //
+                //
+                //            }
 
-            if (Configuration::get_HorizontalAlignment() == Horizontal_alignment_type::CENTER) {
-                col = center - (this->get_dockItemsHeight() / 2) + (Configuration::get_separatorMargin() / 2);
-            }
-
-            //  g_print("...index = : %d\n", result);
-            int height = 0;
-            for (DockItem* item:this->m_appUpdater.m_dockitems) {
-                height = item->m_height;
-                if (item->m_dockitemtype == DockItemType::Separator) {
-                    height = item->m_width;
+                if (Configuration::get_HorizontalAlignment() == Horizontal_alignment_type::CENTER) {
+                    col = center - (this->get_dockItemsHeight() / 2) + (Configuration::get_separatorMargin() / 2);
                 }
 
-                if (mouse.get_y() >= col && mouse.get_y() <= col + height) {
-                    result = idx;
-                    // g_print("............y:%d  col:%d d:%d h:%d idx:%d\n", mouse.get_y(),
-                    //          col, (col + height), height, idx);
-                    // g_print(".............%d col: %d \n", mouse.get_y() , col );
-                    break;
-                }
-                col += height + (Configuration::get_separatorMargin());
-                idx++;
-            }
+                //  g_print("...index = : %d\n", result);
+                int height = 0;
+                for (DockItem* item:this->m_appUpdater.m_dockitems) {
+                    height = item->m_height;
+                    if (item->m_dockitemtype == DockItemType::Separator) {
+                        height = item->m_width;
+                    }
 
-        }
+                    if (mouse.get_y() >= col && mouse.get_y() <= col + height) {
+                        result = idx;
+                        // g_print("............y:%d  col:%d d:%d h:%d idx:%d\n", mouse.get_y(),
+                        //          col, (col + height), height, idx);
+                        // g_print(".............%d col: %d \n", mouse.get_y() , col );
+                        break;
+                    }
+                    col += height + (Configuration::get_separatorMargin());
+                    idx++;
+                }
+
+            }
             break;
     }
 
@@ -621,7 +624,7 @@ bool DockPanel::on_motion_notify_event(GdkEventMotion * event)
 }
 
 void DockPanel::RoundedRectangle(const Cairo::RefPtr<Cairo::Context>& cr,
-                                 double x, double y, double width, double height, double radius)
+        double x, double y, double width, double height, double radius)
 {
     // radius can be no larger than half our height or width
     radius = std::min(radius, std::min(width / 2, height / 2));
@@ -675,11 +678,13 @@ unsigned int DockPanel::get_dockItemsHeightUntilIndex(int idx)
 
 /**
  * Compute the width of all items.
- * @return The width of all items.
+ * The result width will resize the dockwindow width.
+ * referenced by DockWindow.
+ * @return The width of the dockwindow.
  */
-gint DockPanel::get_dockItemsWidth()
+guint DockPanel::get_dockItemsWidth()
 {
-    unsigned int size = 0;
+    guint size = DockWindow::get_dockWindowStartEndMargin();
     for (DockItem* item : this->m_appUpdater.m_dockitems) {
         size += item->m_width + Configuration::get_separatorMargin();
     }
@@ -687,9 +692,15 @@ gint DockPanel::get_dockItemsWidth()
     return size - Configuration::get_separatorMargin();
 }
 
-gint DockPanel::get_dockItemsHeight()
+/**
+ * Compute the height of all items
+ * The result width will resize the dockwindow height.
+ * referenced by DockWindow.
+ * @return the height of the dockwindow.
+ */
+guint DockPanel::get_dockItemsHeight()
 {
-    unsigned int size = 0;
+    guint size = DockWindow::get_dockWindowStartEndMargin();
     for (DockItem* item : this->m_appUpdater.m_dockitems) {
         if (item->m_dockitemtype == DockItemType::Separator) {
             size += item->m_width;
@@ -700,7 +711,6 @@ gint DockPanel::get_dockItemsHeight()
     }
 
     return size - Configuration::get_separatorMargin();
-
 }
 
 void DockPanel::get_dockItemPosition(DockItem* item, int &x1, int &y1, int &x2, int &y2, int &center, int i)
@@ -712,61 +722,61 @@ void DockPanel::get_dockItemPosition(DockItem* item, int &x1, int &y1, int &x2, 
     {
         case panel_locationType::TOP:
         case panel_locationType::BOTTOM:
-        {
+            {
 
-            endPosition = DockWindow::get_DockWindowHeight();
+                endPosition = DockWindow::get_DockWindowHeight();
 
-            int itemsWidth = this->get_dockItemsWidth();
-            center = DockWindow::get_DockWindowWidth() / 2;
+                int itemsWidth = this->get_dockItemsWidth();
+                center = DockWindow::get_DockWindowWidth() / 2;
 
-            start = 0;
-            if (Configuration::get_HorizontalAlignment() == Horizontal_alignment_type::CENTER) {
-                start = center - (itemsWidth / 2);
+                start = 0;
+                if (Configuration::get_HorizontalAlignment() == Horizontal_alignment_type::CENTER) {
+                    start = center - (itemsWidth / 2);
+                }
+
+                increment = get_dockItemsWidthUntilIndex(i);
+                increment += (i * Configuration::get_separatorMargin()) + Configuration::get_separatorMargin() / 2;
+
+                x1 = start + increment;
+                y1 = CELL_TOP_MARGIN;
+                x2 = item->m_width;
+                y2 = Configuration::get_CellHeight(); //m_cellheight;
+
             }
-
-            increment = get_dockItemsWidthUntilIndex(i);
-            increment += (i * Configuration::get_separatorMargin()) + Configuration::get_separatorMargin() / 2;
-
-            x1 = start + increment;
-            y1 = CELL_TOP_MARGIN;
-            x2 = item->m_width;
-            y2 = Configuration::get_CellHeight(); //m_cellheight;
-
-        }
             break;
         case panel_locationType::LEFT:
         case panel_locationType::RIGHT:
-        {
+            {
 
-            endPosition = DockWindow::get_DockWindowWidth();
+                endPosition = DockWindow::get_DockWindowWidth();
 
-            int itemsHeight = this->get_dockItemsHeight();
-            start = 0;
-            if (Configuration::get_HorizontalAlignment() == Horizontal_alignment_type::CENTER) {
-                center = DockWindow::get_DockWindowHeight() / 2;
-                start = center - (itemsHeight / 2);
+                int itemsHeight = this->get_dockItemsHeight();
+                start = 0;
+                if (Configuration::get_HorizontalAlignment() == Horizontal_alignment_type::CENTER) {
+                    center = DockWindow::get_DockWindowHeight() / 2;
+                    start = center - (itemsHeight / 2);
+                }
+
+                increment = get_dockItemsHeightUntilIndex(i);
+                increment += (i * Configuration::get_separatorMargin()) + Configuration::get_separatorMargin() / 2;
+
+
+                x1 = (DockWindow::get_DockWindowWidth() / 2) - (Configuration::get_CellWidth() / 2);
+
+                //            if (Configuration::get_dockWindowLocation() == panel_locationType::LEFT) {
+                //                // JUAN x1 = DockWindow::getDockWindowWidth() - Configuration::get_CellWidth() - 6;
+                //
+                //                x1 = DockWindow::get_DockWindowWidth() - Configuration::get_CellWidth() - 6;
+                //            }
+
+                y1 = start + increment;
+                x2 = Configuration::get_CellWidth();
+                y2 = Configuration::get_CellHeight(); //m_cellheight;
+
+                if (item->m_dockitemtype == DockItemType::Separator) {
+                    y2 = 8;
+                }
             }
-
-            increment = get_dockItemsHeightUntilIndex(i);
-            increment += (i * Configuration::get_separatorMargin()) + Configuration::get_separatorMargin() / 2;
-
-
-            x1 = (DockWindow::get_DockWindowWidth() / 2) - (Configuration::get_CellWidth() / 2);
-
-            //            if (Configuration::get_dockWindowLocation() == panel_locationType::LEFT) {
-            //                // JUAN x1 = DockWindow::getDockWindowWidth() - Configuration::get_CellWidth() - 6;
-            //
-            //                x1 = DockWindow::get_DockWindowWidth() - Configuration::get_CellWidth() - 6;
-            //            }
-
-            y1 = start + increment;
-            x2 = Configuration::get_CellWidth();
-            y2 = Configuration::get_CellHeight(); //m_cellheight;
-
-            if (item->m_dockitemtype == DockItemType::Separator) {
-                y2 = 8;
-            }
-        }
             break;
 
         default:
@@ -790,6 +800,42 @@ bool DockPanel::on_leave_notify_event(GdkEventCrossing * crossing_event)
     m_infowindow.hide();
 
     return true;
+}
+
+/**
+ * Calculate the draw position for all items.
+ */
+inline void DockPanel::get_Position(const DockItemType dockType, int& x, int& y, int& width, int& height)
+{
+    static int cellsize = 0;
+
+    if (DockWindow::is_Horizontal())
+    {
+        if (x == 0 )
+        {
+            y = (DockWindow::get_DockWindowHeight() / 2) - Configuration::get_CellHeight() / 2;
+            x = DockWindow::get_dockWindowStartEndMargin();
+            cellsize = width;
+
+            return;
+        }
+
+        // if the item is a separator the wisth is probably not equal.
+        // in this case wie remeber the size for use it in the next item.
+        if( dockType == DockItemType::Separator)
+        {
+            x +=  cellsize + Configuration::get_separatorMargin();
+            cellsize = width;
+
+            return;
+        }
+
+        x +=  cellsize + Configuration::get_separatorMargin();
+        cellsize = width;
+    }
+    else
+    {
+    }
 }
 
 bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
@@ -836,18 +882,56 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
     int center = 0;
     int iconsize = 0;
     int selectorCurrentPos = -1;
-    int y = CELL_TOP_MARGIN;
-    int startPos = DockWindow::get_dockWindowStartEndMargin() / 2;
-
+    int y = 0;//CELL_TOP_MARGIN;
+    int x = 0; //startPos = DockWindow::get_dockWindowStartEndMargin() / 2;
+    int width = 0;
+    int height = 0;
     for (DockItem* item:this->m_appUpdater.m_dockitems) {
+        
+        width = item->m_width;
+        height = item->m_height;
+
+        this->get_Position(item->m_dockitemtype, x, y, width, height);
+
         // Draw cells
         cr->set_source_rgba(0.00, 0.50, 0.66, 1);
-        RoundedRectangle(cr, startPos, y, item->m_width, item->m_height, 3);
+        RoundedRectangle(cr, x, y, width, height, 3);
         cr->fill();
+
         cr->set_line_width(1.5);
-        RoundedRectangle(cr, startPos, y, item->m_width, item->m_height, 3);
+        RoundedRectangle(cr, x, y, width, height, 3);
         cr->set_source_rgba(255.0, 255.0, 255.0, 1);
         cr->stroke();
+
+
+        // Draw dots and icons if the item is not a user separator
+        if (item->m_dockitemtype != DockItemType::Separator) {
+            // Dots
+            center = (width / 2);
+            if (item->m_items.size() > 0) {
+                cr->set_source_rgb(1.0, 1.0, 1.0);
+                if (item->m_items.size() == 1) {
+                    cr->arc(x + center, y + 3, 2.0, 0, 2 * M_PI);
+                }
+                else if (item->m_items.size() > 1) {
+                    cr->arc(x + center - 4, y + 3, 2.0, 0, 2 * M_PI);
+                    cr->arc(x + center + 4, y + 3, 2.0, 0, 2 * M_PI);
+                }
+                cr->fill();
+            }
+            // icons
+            if (item->m_image != NULLPB) {
+                iconsize = width - 8;
+                auto icon = item->m_image->scale_simple(iconsize, iconsize, Gdk::INTERP_BILINEAR);
+                Gdk::Cairo::set_source_pixbuf(cr, icon, x + center - iconsize / 2, y + 1);
+                cr->paint();
+            }
+        }
+
+
+
+
+/*
 
         // Draw dots and icons if the item is not a user separator
         if (item->m_dockitemtype != DockItemType::Separator) {
@@ -880,6 +964,7 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
 
         // calculate next position
         startPos += item->m_width + Configuration::get_separatorMargin();
+        */
         idx++;
     }
 
@@ -943,9 +1028,9 @@ void DockPanel::draw_Title(const Cairo::RefPtr<Cairo::Context>& cr)
 
             m_titlewindow.setText(title);
             int centerpos = DockItemPositions::getStartPos(*item,
-                                                           this->m_appUpdater.m_dockitems.size(),
-                                                           m_currentMoveIndex,
-                                                           m_titlewindow.get_width());
+                    this->m_appUpdater.m_dockitems.size(),
+                    m_currentMoveIndex,
+                    m_titlewindow.get_width());
 
 
 

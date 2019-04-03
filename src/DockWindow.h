@@ -37,6 +37,7 @@ inline namespace DockWindow {
     int reSize(bool forceMove);
     int reSize();
     void hide();
+    bool is_Horizontal();
 }
 
 /*
