@@ -527,87 +527,51 @@ bool DockPanel::on_timeoutDraw()
 }
 
 /**
- * get the item index from mouse coordinates.
+ * calculate the item index from mouse coordinates.
  * @param x
  * @param y
- * @return
+ * @return the item index or -1 if could not be found.
  */
-int DockPanel::getIndex(int x, int y)
+inline int DockPanel::getIndex(const int& mouseX, const int& mouseY)
 {
-    int center = DockWindow::get_DockWindowWidth() / 2;
-    Gdk::Point mouse(x, y);
-    int result = -1;
+    Gdk::Point mouse(mouseX, mouseY);
     int idx = 0;
-    int col = 0;
+    int startPosition = DockWindow::get_dockWindowStartEndMargin() / 2;
+    int x = startPosition;
+    int y = startPosition;
 
-
-
-    int startPostY = 0;
-    int startPostX = DockWindow::get_dockWindowStartEndMargin() / 2;
-
-    switch (Configuration::get_dockWindowLocation())
+    if (DockWindow::is_Horizontal())
     {
-        case panel_locationType::TOP:
-        case panel_locationType::BOTTOM:
-            {
-                for (auto item:this->m_appUpdater.m_dockitems) {
-                    if (mouse.get_x() >= startPostX && mouse.get_x() <= startPostX + item->m_width) {
-                        return idx;
-                    }
-
-                    startPostX += item->m_width + Configuration::get_separatorMargin();
-                    idx++;
-                }
-
-                return -1;
+        for (auto item : this->m_appUpdater.m_dockitems) {
+            if (mouse.get_x() >= x && mouse.get_x() <= x + item->m_width)                     {
+                g_print("%d %d \n", mouse.get_x(), idx);
+                return idx;
             }
 
-            break;
-        case panel_locationType::LEFT:
-        case panel_locationType::RIGHT:
-            {
-
-                center = DockWindow::get_DockWindowHeight() / 2;
-                col = (Configuration::get_separatorMargin() / 2);
-                //            if (Configuration::is_panelMode()) {
-                //                //col = center - (m_dockitems.size() * m_cellwidth) / 2;
-                //                //col -= (Configuration::get_separatorMargin() + m_cellwidth);
-                //                //col = (Configuration::get_separatorMargin() / 2);
-                //            }
-                //            else {
-                //
-                //
-                //            }
-
-                if (Configuration::get_HorizontalAlignment() == Horizontal_alignment_type::CENTER) {
-                    col = center - (this->get_dockItemsHeight() / 2) + (Configuration::get_separatorMargin() / 2);
-                }
-
-                //  g_print("...index = : %d\n", result);
-                int height = 0;
-                for (DockItem* item:this->m_appUpdater.m_dockitems) {
-                    height = item->m_height;
-                    if (item->m_dockitemtype == DockItemType::Separator) {
-                        height = item->m_width;
-                    }
-
-                    if (mouse.get_y() >= col && mouse.get_y() <= col + height) {
-                        result = idx;
-                        // g_print("............y:%d  col:%d d:%d h:%d idx:%d\n", mouse.get_y(),
-                        //          col, (col + height), height, idx);
-                        // g_print(".............%d col: %d \n", mouse.get_y() , col );
-                        break;
-                    }
-                    col += height + (Configuration::get_separatorMargin());
-                    idx++;
-                }
-
+            x += item->m_width + Configuration::get_separatorMargin();
+            idx++;
+        }
+    }
+    else
+    {   
+        int height;
+        for (DockItem* item : this->m_appUpdater.m_dockitems) {
+            height = item->m_height;
+            if (item->m_dockitemtype == DockItemType::Separator) {
+                height = item->m_width;
             }
-            break;
+
+            if (mouse.get_y() >= y && mouse.get_y() <= y + height) {
+                g_print("m:%d < %d \n", mouse.get_y(), y + height);
+                return idx;
+            }
+            y += height + Configuration::get_separatorMargin();
+            idx++;
+        }
     }
 
-    // g_print("%d %d \n", mouse.get_x(), result);
-    return result;
+    g_print("%d %d \n", mouse.get_x(), -1);
+    return -1;
 }
 
 /**
@@ -710,79 +674,9 @@ guint DockPanel::get_dockItemsHeight()
         size += item->m_height + Configuration::get_separatorMargin();
     }
 
-    return size - Configuration::get_separatorMargin();
+    return size;
 }
 
-void DockPanel::get_dockItemPosition(DockItem* item, int &x1, int &y1, int &x2, int &y2, int &center, int i)
-{
-    int start = 0;
-    int increment = 0;
-
-    switch (Configuration::get_dockWindowLocation())
-    {
-        case panel_locationType::TOP:
-        case panel_locationType::BOTTOM:
-            {
-
-                endPosition = DockWindow::get_DockWindowHeight();
-
-                int itemsWidth = this->get_dockItemsWidth();
-                center = DockWindow::get_DockWindowWidth() / 2;
-
-                start = 0;
-                if (Configuration::get_HorizontalAlignment() == Horizontal_alignment_type::CENTER) {
-                    start = center - (itemsWidth / 2);
-                }
-
-                increment = get_dockItemsWidthUntilIndex(i);
-                increment += (i * Configuration::get_separatorMargin()) + Configuration::get_separatorMargin() / 2;
-
-                x1 = start + increment;
-                y1 = CELL_TOP_MARGIN;
-                x2 = item->m_width;
-                y2 = Configuration::get_CellHeight(); //m_cellheight;
-
-            }
-            break;
-        case panel_locationType::LEFT:
-        case panel_locationType::RIGHT:
-            {
-
-                endPosition = DockWindow::get_DockWindowWidth();
-
-                int itemsHeight = this->get_dockItemsHeight();
-                start = 0;
-                if (Configuration::get_HorizontalAlignment() == Horizontal_alignment_type::CENTER) {
-                    center = DockWindow::get_DockWindowHeight() / 2;
-                    start = center - (itemsHeight / 2);
-                }
-
-                increment = get_dockItemsHeightUntilIndex(i);
-                increment += (i * Configuration::get_separatorMargin()) + Configuration::get_separatorMargin() / 2;
-
-
-                x1 = (DockWindow::get_DockWindowWidth() / 2) - (Configuration::get_CellWidth() / 2);
-
-                //            if (Configuration::get_dockWindowLocation() == panel_locationType::LEFT) {
-                //                // JUAN x1 = DockWindow::getDockWindowWidth() - Configuration::get_CellWidth() - 6;
-                //
-                //                x1 = DockWindow::get_DockWindowWidth() - Configuration::get_CellWidth() - 6;
-                //            }
-
-                y1 = start + increment;
-                x2 = Configuration::get_CellWidth();
-                y2 = Configuration::get_CellHeight(); //m_cellheight;
-
-                if (item->m_dockitemtype == DockItemType::Separator) {
-                    y2 = 8;
-                }
-            }
-            break;
-
-        default:
-            break;
-    }
-}
 
 bool DockPanel::on_enter_notify_event(GdkEventCrossing * crossing_event)
 {
@@ -805,7 +699,7 @@ bool DockPanel::on_leave_notify_event(GdkEventCrossing * crossing_event)
 /**
  * Calculate the draw position for all items.
  */
-inline void DockPanel::get_Position(const DockItemType dockType, int& x, int& y, int& width, int& height)
+inline void DockPanel::get_ItemPosition(const DockItemType dockType, int& x, int& y, int& width, int& height)
 {
     static int cellsize = 0;
 
@@ -835,6 +729,29 @@ inline void DockPanel::get_Position(const DockItemType dockType, int& x, int& y,
     }
     else
     {
+        if (y == 0 )
+        {
+            x = (DockWindow::get_DockWindowWidth() / 2) - Configuration::get_CellWidth() / 2;
+            y = DockWindow::get_dockWindowStartEndMargin();
+            cellsize = height;
+
+            return;
+        }
+
+        // if the item is a separator the wisth is probably not equal.
+        // in this case wie remeber the size for use it in the next item.
+        if( dockType == DockItemType::Separator)
+        {
+            y +=  cellsize + Configuration::get_separatorMargin();
+            height = cellsize = width;
+            width = Configuration::get_CellWidth();
+
+            return;
+        }
+
+        y +=  cellsize + Configuration::get_separatorMargin();
+        cellsize = height;
+
     }
 }
 
@@ -882,6 +799,7 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
     int center = 0;
     int iconsize = 0;
     int selectorCurrentPos = -1;
+
     int y = 0;//CELL_TOP_MARGIN;
     int x = 0; //startPos = DockWindow::get_dockWindowStartEndMargin() / 2;
     int width = 0;
@@ -891,7 +809,7 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
         width = item->m_width;
         height = item->m_height;
 
-        this->get_Position(item->m_dockitemtype, x, y, width, height);
+        this->get_ItemPosition(item->m_dockitemtype, x, y, width, height);
 
         // Draw cells
         cr->set_source_rgba(0.00, 0.50, 0.66, 1);
@@ -911,77 +829,43 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
             if (item->m_items.size() > 0) {
                 cr->set_source_rgb(1.0, 1.0, 1.0);
                 if (item->m_items.size() == 1) {
-                    cr->arc(x + center, y + 3, 2.0, 0, 2 * M_PI);
+                    cr->arc(x + center, y + height - 5, 2.0, 0, 2 * M_PI);
                 }
                 else if (item->m_items.size() > 1) {
-                    cr->arc(x + center - 4, y + 3, 2.0, 0, 2 * M_PI);
-                    cr->arc(x + center + 4, y + 3, 2.0, 0, 2 * M_PI);
+                    cr->arc(x + center - 4, y + height - 5, 2.0, 0, 2 * M_PI);
+                    cr->arc(x + center + 4, y + height - 5, 2.0, 0, 2 * M_PI);
                 }
                 cr->fill();
             }
             // icons
             if (item->m_image != NULLPB) {
                 iconsize = width - 8;
+
+                //TODO: avoid scale
                 auto icon = item->m_image->scale_simple(iconsize, iconsize, Gdk::INTERP_BILINEAR);
                 Gdk::Cairo::set_source_pixbuf(cr, icon, x + center - iconsize / 2, y + 1);
                 cr->paint();
             }
         }
 
-
-
-
-/*
-
-        // Draw dots and icons if the item is not a user separator
-        if (item->m_dockitemtype != DockItemType::Separator) {
-            // Dots
-            center = (item->m_width / 2);
-            if (item->m_items.size() > 0) {
-                cr->set_source_rgb(1.0, 1.0, 1.0);
-                if (item->m_items.size() == 1) {
-                    cr->arc(startPos + center, item->m_height + 3, 2.0, 0, 2 * M_PI);
-                }
-                else if (item->m_items.size() > 1) {
-                    cr->arc(startPos + center - 4, item->m_height + 3, 2.0, 0, 2 * M_PI);
-                    cr->arc(startPos + center + 4, item->m_height + 3, 2.0, 0, 2 * M_PI);
-                }
-                cr->fill();
-            }
-            // icons
-            if (item->m_image != NULLPB) {
-                iconsize = item->m_width - 8;
-                auto icon = item->m_image->scale_simple(iconsize, iconsize, Gdk::INTERP_BILINEAR);
-                Gdk::Cairo::set_source_pixbuf(cr, icon, startPos + center - iconsize / 2, y + 1);
-                cr->paint();
-            }
-        }
-
-        // save the selected current index position
+        // Selector
         if (idx == m_currentMoveIndex) {
-            selectorCurrentPos = startPos;
-        }
+            cr->set_source_rgba(255.0, 255.0, 255.0, 0.4);
+            RoundedRectangle(cr, x, y, width, height, 3);
+            cr->fill();
 
-        // calculate next position
-        startPos += item->m_width + Configuration::get_separatorMargin();
-        */
+            cr->set_line_width(2.5);
+            cr->set_source_rgba(255.0, 255.0, 255.0, 1);
+            RoundedRectangle(cr, x, y, width, height, 3);
+            cr->stroke();
+        }
+        
         idx++;
     }
 
-    // Selector
-    if (m_currentMoveIndex != -1 && m_currentMoveIndex < this->m_appUpdater.m_dockitems.size()) {
-        DockItem* item = this->m_appUpdater.m_dockitems.at(m_currentMoveIndex);
-        cr->set_source_rgba(255.0, 255.0, 255.0, 0.4);
-        RoundedRectangle(cr, selectorCurrentPos, y, item->m_width, item->m_height, 3);
-        cr->fill();
-        cr->set_line_width(2.5);
-        cr->set_source_rgba(255.0, 255.0, 255.0, 1);
-        RoundedRectangle(cr, selectorCurrentPos, y, item->m_width, item->m_height, 3);
-        cr->stroke();
-    }
 
     // Draw the app title
-    draw_Title(cr);
+   // draw_Title(cr);
 }
 
 void DockPanel::draw_Title(const Cairo::RefPtr<Cairo::Context>& cr)

@@ -49,7 +49,7 @@ private:
     AppUpdater m_appUpdater;
     std::string m_homeiconFilePath;
     static int m_currentMoveIndex;
-    int getIndex(int x, int y);
+    int getIndex(const int& mouseX, const int& mouseY);
     int m_previousCellwidth;
     int m_iconsize;
     bool m_mouseLeftButtonDown = false;
@@ -65,9 +65,7 @@ private:
     gdouble m_titleElapsedSeconds;
     int m_titleItemOldindex = 0;
     bool m_titleShow = false;
-    void get_Position(const DockItemType dockType, int& x, int& y, int& width, int& height);
-
-protected:
+    void get_ItemPosition(const DockItemType dockType, int& x, int& y, int& width, int& height);
 
     void ExecuteApp(GdkEventButton* event);
     void on_menuNew_event();
@@ -89,8 +87,6 @@ protected:
 
     void RoundedRectangle(const Cairo::RefPtr<Cairo::Context>& cr,
             double x, double y, double width, double height, double radius);
-
-    void get_dockItemPosition(DockItem* item, int &x1, int &y1, int &x2, int &y2, int &center, int i);
 
     virtual bool on_enter_notify_event(GdkEventCrossing* crossing_event);
     virtual bool on_leave_notify_event(GdkEventCrossing* crossing_event);
