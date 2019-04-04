@@ -530,47 +530,38 @@ bool DockPanel::on_timeoutDraw()
  * calculate the item index from mouse coordinates.
  * @param x
  * @param y
- * @return the item index or -1 if could not be found.
+ * @return the item index or -1 if the item could not be found.
  */
 inline int DockPanel::getIndex(const int& mouseX, const int& mouseY)
 {
     Gdk::Point mouse(mouseX, mouseY);
     int idx = 0;
-    int startPosition = DockWindow::get_dockWindowStartEndMargin() / 2;
-    int x = startPosition;
-    int y = startPosition;
+    int x = DockWindow::get_dockWindowStartEndMargin() / 2;
+    int y = x;
 
-    if (DockWindow::is_Horizontal())
-    {
+    if (DockWindow::is_Horizontal())  {
         for (auto item : this->m_appUpdater.m_dockitems) {
             if (mouse.get_x() >= x && mouse.get_x() <= x + item->m_width)                     {
-                g_print("%d %d \n", mouse.get_x(), idx);
                 return idx;
             }
 
             x += item->m_width + Configuration::get_separatorMargin();
             idx++;
         }
-    }
-    else
-    {   
+    } else  {   
         int height;
         for (DockItem* item : this->m_appUpdater.m_dockitems) {
-            height = item->m_height;
-            if (item->m_dockitemtype == DockItemType::Separator) {
-                height = item->m_width;
-            }
+            height = item->m_dockitemtype == DockItemType::Separator ? item->m_width : item->m_height;
 
             if (mouse.get_y() >= y && mouse.get_y() <= y + height) {
-                g_print("m:%d < %d \n", mouse.get_y(), y + height);
                 return idx;
             }
+
             y += height + Configuration::get_separatorMargin();
             idx++;
         }
     }
 
-    g_print("%d %d \n", mouse.get_x(), -1);
     return -1;
 }
 
@@ -674,7 +665,7 @@ guint DockPanel::get_dockItemsHeight()
         size += item->m_height + Configuration::get_separatorMargin();
     }
 
-    return size;
+    return size - Configuration::get_separatorMargin();
 }
 
 
@@ -701,15 +692,15 @@ bool DockPanel::on_leave_notify_event(GdkEventCrossing * crossing_event)
  */
 inline void DockPanel::get_ItemPosition(const DockItemType dockType, int& x, int& y, int& width, int& height)
 {
-    static int cellsize = 0;
+    static int nextsize = 0;
 
     if (DockWindow::is_Horizontal())
     {
         if (x == 0 )
         {
             y = (DockWindow::get_DockWindowHeight() / 2) - Configuration::get_CellHeight() / 2;
-            x = DockWindow::get_dockWindowStartEndMargin();
-            cellsize = width;
+            x = DockWindow::get_dockWindowStartEndMargin() / 2;
+            nextsize = width;
 
             return;
         }
@@ -718,22 +709,22 @@ inline void DockPanel::get_ItemPosition(const DockItemType dockType, int& x, int
         // in this case wie remeber the size for use it in the next item.
         if( dockType == DockItemType::Separator)
         {
-            x +=  cellsize + Configuration::get_separatorMargin();
-            cellsize = width;
+            x +=  nextsize + Configuration::get_separatorMargin();
+            nextsize = width;
 
             return;
         }
 
-        x +=  cellsize + Configuration::get_separatorMargin();
-        cellsize = width;
+        x +=  nextsize + Configuration::get_separatorMargin();
+        nextsize = width;
     }
     else
     {
         if (y == 0 )
         {
             x = (DockWindow::get_DockWindowWidth() / 2) - Configuration::get_CellWidth() / 2;
-            y = DockWindow::get_dockWindowStartEndMargin();
-            cellsize = height;
+            y = DockWindow::get_dockWindowStartEndMargin() / 2;
+            nextsize = height;
 
             return;
         }
@@ -742,15 +733,15 @@ inline void DockPanel::get_ItemPosition(const DockItemType dockType, int& x, int
         // in this case wie remeber the size for use it in the next item.
         if( dockType == DockItemType::Separator)
         {
-            y +=  cellsize + Configuration::get_separatorMargin();
-            height = cellsize = width;
+            y +=  nextsize + Configuration::get_separatorMargin();
+            height = nextsize = width;
             width = Configuration::get_CellWidth();
 
             return;
         }
 
-        y +=  cellsize + Configuration::get_separatorMargin();
-        cellsize = height;
+        y +=  nextsize + Configuration::get_separatorMargin();
+        nextsize = height;
 
     }
 }

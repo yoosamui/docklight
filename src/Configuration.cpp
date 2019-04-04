@@ -103,7 +103,7 @@ namespace Configuration
     
     unsigned int get_separatorMargin()
     {
-        return 12;
+        return 20;
     }
 
     unsigned int get_CellHeight()
