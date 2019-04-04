@@ -20,25 +20,26 @@
 
 #include <glibmm/i18n.h>
 #include <gtkmm/window.h>
-#include <gtkmm/messagedialog.h>
-#include <gdkmm/cursor.h>
-#include <limits.h>
-#include <math.h>
-#include <fstream>
-#include <iostream>
-#include <cairo/cairo.h>
+//#include <gtkmm/messagedialog.h>
+//#include <gdkmm/cursor.h>
+//#include <limits.h>
+//#include <math.h>
+//#include <fstream>
+//#include <iostream>
+//#include <cairo/cairo.h>
 
 // static members
 int DockPanel::m_currentMoveIndex;
 
 /*
- * this class is the main dock render.
+ * this class is the main dock renderer.
+ *
  */
 DockPanel::DockPanel():
     m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
 {
 
-    // Set masks for mouse events
+    // Set event masks 
     add_events(Gdk::BUTTON_PRESS_MASK |
             Gdk::BUTTON_RELEASE_MASK |
             Gdk::SCROLL_MASK |
@@ -49,63 +50,24 @@ DockPanel::DockPanel():
             Gdk::LEAVE_NOTIFY_MASK |
             Gdk::POINTER_MOTION_MASK);
 
-    //    set_app_paintable(true);
-    //
-    //    GdkScreen *screen;
-    //    GdkVisual sual;
-    //
-    //    gtk_widget_set_app_paintable(GTK_WIDGET(gobj()), TRUE);
-    //    screen = gdk_screen_get_default();
-    //    visual = gdk_screen_get_rgba_visual(screen);
-    //
-    //    if (visual != NULL && gdk_screen_is_composited(screen)) {
-    //        gtk_widget_set_visual(GTK_WIDGET(gobj()), visual);
-    //    }
-    //
-
-
-
-
+    // set the static member to the default value -1;
     DockPanel::m_currentMoveIndex = -1;
-    // m_location = Configuration::get_dockWindowLocation();
-
-    initTime = 0;
-    endPosition = 200.0;
-    // DockPanel::m_DockWindow = nullptr;
-
-
-
-
-
-
 
     // Gets the default WnckScreen on the default display.
     WnckScreen *wnckscreen = wnck_screen_get_default();
-    //    g_signal_connect(G_OBJECT(wnckscreen), "window-opened",
-    //                     G_CALLBACK(DockPanel::on_window_opened), NULL);
-    //
-    //    g_signal_connect(wnckscreen, "window_closed",
-    //                     G_CALLBACK(DockPanel::on_window_closed), NULL);
-
-    //    g_signal_connect(wnckscreen, "active_window_changed",
-    //                     G_CALLBACK(DockPanel::on_active_window_changed_callback), NULL);
-
-
-    Glib::signal_timeout().connect(sigc::mem_fun(*this,
-                &DockPanel::on_timeoutDraw), DEF_FRAMERATE);
-
-    // Launch timer every second
-    // Glib::signal_timeout().connect(sigc::mem_fun(*this,
-    //                                             &DockPanel::on_timeoutDraw), 1000);
-
-
+    
+    // set the required signals handlers
     g_signal_connect(G_OBJECT(wnckscreen), "window-opened",
             G_CALLBACK(DockPanel::on_window_opened), NULL);
 
     g_signal_connect(wnckscreen, "window_closed",
             G_CALLBACK(DockPanel::on_window_closed), NULL);
 
+    //    g_signal_connect(wnckscreen, "active_window_changed",
+    //                     G_CALLBACK(DockPanel::on_active_window_changed_callback), NULL);
 
+
+    Glib::signal_timeout().connect(sigc::mem_fun(*this, &DockPanel::on_timeoutDraw), DEF_FRAMERATE);
 }
 
 /**
