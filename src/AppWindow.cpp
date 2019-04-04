@@ -140,9 +140,7 @@ int AppWindow::init()
         return -1;
     }
 
-    m_dockpanel.preInit(this);
-
-    return 0;
+   return  m_dockpanel.Init();
 }
 
 /**

@@ -38,10 +38,12 @@ public:
     int getCurrentIndex() {
         return m_currentMoveIndex;
     };
-    int preInit(Gtk::Window* window);
+    int Init();
     void AppRunAnimationLauncherCompleted();
     void update();
 private:
+
+    static bool m_forceDraw;    
 
     TitleWindow m_titlewindow;
     TitleWindow m_infowindow;

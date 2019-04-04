@@ -30,15 +30,13 @@
 
 // static members
 int DockPanel::m_currentMoveIndex;
-
+bool DockPanel::m_forceDraw;    
 /*
  * this class is the main dock renderer.
  *
  */
-DockPanel::DockPanel():
-    m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
+DockPanel::DockPanel(): m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
 {
-
     // Set event masks 
     add_events(Gdk::BUTTON_PRESS_MASK |
             Gdk::BUTTON_RELEASE_MASK |
@@ -52,10 +50,12 @@ DockPanel::DockPanel():
 
     // set the static member to the default value -1;
     DockPanel::m_currentMoveIndex = -1;
+    DockPanel::m_forceDraw = false;
+
 
     // Gets the default WnckScreen on the default display.
     WnckScreen *wnckscreen = wnck_screen_get_default();
-    
+
     // set the required signals handlers
     g_signal_connect(G_OBJECT(wnckscreen), "window-opened",
             G_CALLBACK(DockPanel::on_window_opened), NULL);
@@ -76,25 +76,14 @@ DockPanel::DockPanel():
  * @param Gtk::Window*  window
  * @return return 0 is success or -1 is an error found
  */
-int DockPanel::preInit(Gtk::Window* window)
+int DockPanel::Init()
 {
-
-    // this->m_AppWindow = window;
-    //this->m_DockWindow = (DockWindow*) window;
-
-    //getDockWindowWidth(); //+180);//DockWindow::get_geometry().height; //this->
-
-
-    //  m_cellheight = Configuration::get_CellHeight();
-    //  m_cellwidth = Configuration::get_CellWidth();
-
     const char* filename = m_homeiconFilePath.c_str();
     DockItem* dockItem = new DockItem();
     try {
 
-        int m_iconsize = Configuration::get_CellWidth() - ICON_CELL_WIDTH_MARGIN;
-        dockItem->m_image = Gdk::Pixbuf::create_from_file(filename,
-                m_iconsize, m_iconsize, true);
+        int iconsize = Configuration::get_CellWidth() - ICON_CELL_WIDTH_MARGIN;
+        dockItem->m_image = Gdk::Pixbuf::create_from_file(filename, iconsize, iconsize, true);
     }
     catch (Glib::FileError fex) {
         g_critical("preInit: file %s could not be found!\n", filename);
@@ -122,22 +111,13 @@ int DockPanel::preInit(Gtk::Window* window)
        this->m_appUpdater.m_dockitems.push_back(dockItem);
        */
 
-    DockWindow::update();
-    //    if (m_AppWindow != nullptr) {
-    //        ((AppWindow*)m_AppWindow)->update(true);
-    //    }
-
-
-
-
-
+ return 0;
 }
 /*
  *
  *
  */
 DockPanel::~DockPanel(){ }
-static bool m_forceDraw = false;
 
 /**
  * Emitted when a new Wnck.Window is opened on screen.
@@ -148,15 +128,6 @@ static bool m_forceDraw = false;
 void DockPanel::on_window_opened(WnckScreen *screen, WnckWindow* window, gpointer data)
 {
     m_forceDraw = true;
-    // force our program to redraw the entire clock.
-    //    auto win = m_AppWindow;
-    //    if (win)
-    //    {
-    //        Gdk::Rectangle r(0, 0, DockWindow::get_DockWindowWidth(), DockWindow::get_DockWindowHeight());
-    //        m_AppWindow->dr
-    //        win->invalidate_rect(r, false);
-    //    }
-    //gtk_widget_queue_draw_area(m_AppWindow,0,0,0,0) ;
 }
 
 /**
