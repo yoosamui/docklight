@@ -68,6 +68,11 @@ inline namespace DockWindow
         }
     }
 
+    /**
+     * !!!WARNING!!!
+     * minimal value must be greater then 1.
+     * Division by 2 should never be 0.
+     */
     guint get_dockWindowStartEndMargin()
     {
         return 20;

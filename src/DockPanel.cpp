@@ -52,7 +52,6 @@ DockPanel::DockPanel(): m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
     DockPanel::m_currentMoveIndex = -1;
     DockPanel::m_forceDraw = false;
 
-
     // Gets the default WnckScreen on the default display.
     WnckScreen *wnckscreen = wnck_screen_get_default();
 
@@ -103,13 +102,20 @@ int DockPanel::Init()
 
 
     // testt separator
-    /*
+    
        dockItem = new DockItem();
        dockItem->m_dockitemtype = DockItemType::Separator;
        dockItem->m_isAttached = true;
        dockItem->m_width = 12;
        this->m_appUpdater.m_dockitems.push_back(dockItem);
-       */
+       
+       dockItem = new DockItem();
+       dockItem->m_dockitemtype = DockItemType::Separator;
+       dockItem->m_isAttached = true;
+       dockItem->m_width = 12;
+       this->m_appUpdater.m_dockitems.push_back(dockItem);
+
+
 
  return 0;
 }
@@ -572,12 +578,15 @@ unsigned int DockPanel::get_dockItemsHeightUntilIndex(int idx)
  */
 guint DockPanel::get_dockItemsWidth()
 {
-    guint size = DockWindow::get_dockWindowStartEndMargin();
-    for (DockItem* item : this->m_appUpdater.m_dockitems) {
+    guint separatorMargin = Configuration::get_separatorMargin();
+    guint size = 0;
+
+    for (DockItem* item : this->m_appUpdater.m_dockitems) 
+    {
         size += item->m_width + Configuration::get_separatorMargin();
     }
 
-    return size - Configuration::get_separatorMargin();
+    return size - separatorMargin;
 }
 
 /**
@@ -588,17 +597,21 @@ guint DockPanel::get_dockItemsWidth()
  */
 guint DockPanel::get_dockItemsHeight()
 {
-    guint size = DockWindow::get_dockWindowStartEndMargin();
-    for (DockItem* item : this->m_appUpdater.m_dockitems) {
-        if (item->m_dockitemtype == DockItemType::Separator) {
-            size += item->m_width;
+    guint separatorMargin = Configuration::get_separatorMargin();
+    guint size = 0;
+
+    for (auto item : this->m_appUpdater.m_dockitems)
+    {
+        if (item->m_dockitemtype == DockItemType::Separator) 
+        {
+            size += item->m_width + separatorMargin;
             continue;
         }
 
-        size += item->m_height + Configuration::get_separatorMargin();
+        size += item->m_height + separatorMargin;
     }
 
-    return size - Configuration::get_separatorMargin();
+    return size - separatorMargin;
 }
 
 
