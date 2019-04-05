@@ -11,6 +11,60 @@
 
 namespace DockItemPositions
 {
+    /**
+     * Compute the width of all items.
+     * The result width will resize the dockwindow width.
+     * referenced by DockWindow.
+     * @return The width of the dockwindow.
+     */
+    guint get_dockItemsWidth()
+    {
+        guint separatorMargin = Configuration::get_separatorMargin();
+        guint size = DockWindow::get_dockWindowStartEndMargin();
+
+        for (auto item : AppUpdater::m_dockitems) {
+            size += item->m_width + Configuration::get_separatorMargin();
+        }
+
+        return size - separatorMargin;
+    }
+
+    /**
+     * Compute the height of all items
+     * The result width will resize the dockwindow height.
+     * referenced by DockWindow.
+     * @return the height of the dockwindow.
+     */
+    guint get_dockItemsHeight()
+    {
+        guint separatorMargin = Configuration::get_separatorMargin();
+        guint size = DockWindow::get_dockWindowStartEndMargin();
+
+        for (auto item : AppUpdater::m_dockitems) {
+            if (item->m_dockitemtype == DockItemType::Separator){
+                size += item->m_width + separatorMargin;
+                continue;
+            }
+
+            size += item->m_height + separatorMargin;
+        }
+
+        return size - separatorMargin;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     int getItemsSizeUntilIndex(const int index)
     {
@@ -22,7 +76,7 @@ namespace DockItemPositions
             }
 
             if (Configuration::get_dockWindowLocation() == panel_locationType::LEFT ||
-                Configuration::get_dockWindowLocation() == panel_locationType::RIGHT) {
+                    Configuration::get_dockWindowLocation() == panel_locationType::RIGHT) {
                 if (item->m_dockitemtype == DockItemType::Separator) {
                     size += item->m_width;
                     count++;
@@ -65,8 +119,8 @@ namespace DockItemPositions
 
         int size = getItemsSizeUntilIndex(index);
         int position = x + DockWindow::get_dockWindowStartEndMargin() / 2 +
-                Configuration::get_separatorMargin() / 2 + size -
-                (width / 2 - item.m_width / 2);
+            Configuration::get_separatorMargin() / 2 + size -
+            (width / 2 - item.m_width / 2);
 
         // g_print("width %d\n", width);
         return position + center;
@@ -76,9 +130,8 @@ namespace DockItemPositions
 
     int getCenter(int count, int index, int width)
     {
-
-        int monitorWidth = DockWindow::get_geometry().width;
-        int monitorX = DockWindow::get_geometry().x;
+        int monitorWidth = DockWindow::Monitor::get_geometry().width;
+        int monitorX = DockWindow::Monitor::get_geometry().x;
         int monitorcenter = monitorWidth / 2;
         int intemcenter = (count * Configuration::get_CellWidth()) / 2;
         int firstItempos = monitorX + (monitorcenter - intemcenter);

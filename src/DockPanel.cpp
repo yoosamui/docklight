@@ -6,8 +6,6 @@
  */
 
 #include "DockItem.h"
-
-
 #include "DockPanel.h"
 #include "DockWindow.h"
 #include "Configuration.h"
@@ -19,18 +17,11 @@
 #include "WnckHandler.h"
 
 #include <glibmm/i18n.h>
-#include <gtkmm/window.h>
-//#include <gtkmm/messagedialog.h>
-//#include <gdkmm/cursor.h>
-//#include <limits.h>
-//#include <math.h>
-//#include <fstream>
-//#include <iostream>
-//#include <cairo/cairo.h>
 
 // static members
 int DockPanel::m_currentMoveIndex;
 bool DockPanel::m_forceDraw;    
+
 /*
  * this class is the main dock renderer.
  *
@@ -102,7 +93,7 @@ int DockPanel::Init()
 
 
     // testt separator
-    
+/*    
        dockItem = new DockItem();
        dockItem->m_dockitemtype = DockItemType::Separator;
        dockItem->m_isAttached = true;
@@ -114,7 +105,7 @@ int DockPanel::Init()
        dockItem->m_isAttached = true;
        dockItem->m_width = 12;
        this->m_appUpdater.m_dockitems.push_back(dockItem);
-
+*/
 
 
  return 0;
@@ -478,21 +469,28 @@ inline int DockPanel::getIndex(const int& mouseX, const int& mouseY)
     int x = DockWindow::get_dockWindowStartEndMargin() / 2;
     int y = x;
 
-    if (DockWindow::is_Horizontal())  {
-        for (auto item : this->m_appUpdater.m_dockitems) {
-            if (mouse.get_x() >= x && mouse.get_x() <= x + item->m_width)                     {
+    if (DockWindow::is_Horizontal())
+    {
+        for (auto item : this->m_appUpdater.m_dockitems) 
+        {
+            if (mouse.get_x() >= x && mouse.get_x() <= x + item->m_width)                 
+            {
                 return idx;
             }
 
             x += item->m_width + Configuration::get_separatorMargin();
             idx++;
         }
-    } else  {   
+    }
+    else 
+    {   
         int height;
-        for (DockItem* item : this->m_appUpdater.m_dockitems) {
+        for (DockItem* item : this->m_appUpdater.m_dockitems) 
+        {
             height = item->m_dockitemtype == DockItemType::Separator ? item->m_width : item->m_height;
 
-            if (mouse.get_y() >= y && mouse.get_y() <= y + height) {
+            if (mouse.get_y() >= y && mouse.get_y() <= y + height) 
+            {
                 return idx;
             }
 
@@ -531,7 +529,7 @@ void DockPanel::RoundedRectangle(const Cairo::RefPtr<Cairo::Context>& cr,
 }
 
 //obsolete use DockItemPosition instead
-
+/*
 unsigned int DockPanel::get_dockItemsWidthUntilIndex(int idx)
 {
     unsigned int size = 0;
@@ -547,8 +545,9 @@ unsigned int DockPanel::get_dockItemsWidthUntilIndex(int idx)
 
     return size;
 }
+*/
 //obsolete use DockItemPosition instead
-
+/*
 unsigned int DockPanel::get_dockItemsHeightUntilIndex(int idx)
 {
     unsigned int size = 0;
@@ -569,50 +568,7 @@ unsigned int DockPanel::get_dockItemsHeightUntilIndex(int idx)
 
     return size;
 }
-
-/**
- * Compute the width of all items.
- * The result width will resize the dockwindow width.
- * referenced by DockWindow.
- * @return The width of the dockwindow.
- */
-guint DockPanel::get_dockItemsWidth()
-{
-    guint separatorMargin = Configuration::get_separatorMargin();
-    guint size = 0;
-
-    for (DockItem* item : this->m_appUpdater.m_dockitems) 
-    {
-        size += item->m_width + Configuration::get_separatorMargin();
-    }
-
-    return size - separatorMargin;
-}
-
-/**
- * Compute the height of all items
- * The result width will resize the dockwindow height.
- * referenced by DockWindow.
- * @return the height of the dockwindow.
- */
-guint DockPanel::get_dockItemsHeight()
-{
-    guint separatorMargin = Configuration::get_separatorMargin();
-    guint size = 0;
-
-    for (auto item : this->m_appUpdater.m_dockitems)
-    {
-        if (item->m_dockitemtype == DockItemType::Separator) 
-        {
-            size += item->m_width + separatorMargin;
-            continue;
-        }
-
-        size += item->m_height + separatorMargin;
-    }
-
-    return size - separatorMargin;
-}
+*/
 
 
 bool DockPanel::on_enter_notify_event(GdkEventCrossing * crossing_event)
@@ -642,22 +598,18 @@ inline void DockPanel::get_ItemPosition(const DockItemType dockType, int& x, int
 
     if (DockWindow::is_Horizontal())
     {
-        if (x == 0 )
-        {
+        if (x == 0 ) {
             y = (DockWindow::get_DockWindowHeight() / 2) - Configuration::get_CellHeight() / 2;
             x = DockWindow::get_dockWindowStartEndMargin() / 2;
             nextsize = width;
-
             return;
         }
 
         // if the item is a separator the wisth is probably not equal.
         // in this case wie remeber the size for use it in the next item.
-        if( dockType == DockItemType::Separator)
-        {
+        if( dockType == DockItemType::Separator){
             x +=  nextsize + Configuration::get_separatorMargin();
             nextsize = width;
-
             return;
         }
 
@@ -666,32 +618,30 @@ inline void DockPanel::get_ItemPosition(const DockItemType dockType, int& x, int
     }
     else
     {
-        if (y == 0 )
-        {
+        if (y == 0 ){
             x = (DockWindow::get_DockWindowWidth() / 2) - Configuration::get_CellWidth() / 2;
             y = DockWindow::get_dockWindowStartEndMargin() / 2;
             nextsize = height;
-
             return;
         }
 
         // if the item is a separator the wisth is probably not equal.
         // in this case wie remeber the size for use it in the next item.
-        if( dockType == DockItemType::Separator)
-        {
+        if( dockType == DockItemType::Separator){
             y +=  nextsize + Configuration::get_separatorMargin();
             height = nextsize = width;
             width = Configuration::get_CellWidth();
-
             return;
         }
 
         y +=  nextsize + Configuration::get_separatorMargin();
         nextsize = height;
-
     }
 }
-
+/**
+ * The cairo main renderer
+ * @param the cairo contex.
+ */
 bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
     if (Configuration::is_allowDraw() == false) {
@@ -859,7 +809,7 @@ void DockPanel::draw_Title(const Cairo::RefPtr<Cairo::Context>& cr)
             //                int y = MonitorGeometry::getScreenHeight() - m_titlewindow.get_height() -
             //                        MonitorGeometry::getStrutHeight();
             //
-            int y = DockWindow::get_geometry().height - this->get_height() - m_titlewindow.get_height();
+            int y = DockWindow::Monitor::get_geometry().height - this->get_height() - m_titlewindow.get_height();
 
 
             m_titlewindow.move(centerpos, y);

@@ -12,6 +12,12 @@
 
 namespace DockItemPositions
 {
+    guint get_dockItemsWidth();
+    guint get_dockItemsHeight();
+
+
+    
+
     int getStartPos(const DockItem& item, const int count, const int index, const int width);
     int getCenter(int count, int index, int width);
 

@@ -220,7 +220,7 @@ bool AppWindow::autohideTimer()
                 int margin = Configuration::get_WindowDockMonitorMargin_Bottom();
                 if (m_visible && margin > 0 && !this->m_mouseIn) {
                     Utilities::getMousePosition(mouseX, mouseY);
-                    if (mouseY > DockWindow::get_geometry().height - margin
+                    if (mouseY > DockWindow::Monitor::get_geometry().height - margin
                         && mouseX > xpos && mouseX < xpos + this->get_width()) {
                         m_timerStoped = true;
                         return true;
@@ -228,12 +228,12 @@ bool AppWindow::autohideTimer()
                 }
                 // set start and end position for hide/show 
                 if (m_visible) { // Hide
-                    startPosition = DockWindow::get_geometry().height - ( margin + this->get_height() );
+                    startPosition = DockWindow::Monitor::get_geometry().height - ( margin + this->get_height() );
                     endPosition = startPosition + this->get_height() + margin - 1;
                 }
                 else { // Show
-                    startPosition =  DockWindow::get_geometry().height  + this->get_height() + margin - 1;
-                    endPosition = DockWindow::get_geometry().height - ( margin + this->get_height() );
+                    startPosition =  DockWindow::Monitor::get_geometry().height  + this->get_height() + margin - 1;
+                    endPosition = DockWindow::Monitor::get_geometry().height - ( margin + this->get_height() );
                 }
                 break;
             }
@@ -266,7 +266,7 @@ bool AppWindow::autohideTimer()
                 int margin = Configuration::get_WindowDockMonitorMargin_Right();
                 if (m_visible && margin > 0 && !this->m_mouseIn) {
                     Utilities::getMousePosition(mouseX, mouseY);
-                    if (mouseX > DockWindow::get_geometry().width - margin
+                    if (mouseX > DockWindow::Monitor::get_geometry().width - margin
                         && mouseY > ypos && mouseY < ypos + this->get_height()) {
                         m_timerStoped = true;
                         return true;
@@ -274,12 +274,12 @@ bool AppWindow::autohideTimer()
                 }
                  // set start and end position for hide/show 
                 if (m_visible) { // Hide
-                    startPosition = DockWindow::get_geometry().width - ( margin + this->get_width() );
+                    startPosition = DockWindow::Monitor::get_geometry().width - ( margin + this->get_width() );
                     endPosition = startPosition + this->get_width() + margin - 1;
                 }
                 else { // Show
-                    startPosition =  DockWindow::get_geometry().width  + this->get_width() + margin - 1;
-                    endPosition = DockWindow::get_geometry().width - ( margin + this->get_width() );
+                    startPosition =  DockWindow::Monitor::get_geometry().width  + this->get_width() + margin - 1;
+                    endPosition = DockWindow::Monitor::get_geometry().width - ( margin + this->get_width() );
                 }
                 break;
             }
@@ -339,7 +339,7 @@ bool AppWindow::fullScreenTimer()
         if (!Configuration::is_autoHide()) {
             Configuration::set_allowDraw(false);
             DockWindow::hide();
-            DockWindow::removeStrut();
+            DockWindow::Monitor::removeStrut();
             this->m_visible = false;
         }
 
@@ -351,7 +351,7 @@ bool AppWindow::fullScreenTimer()
 
         m_isfullscreenSet = false;
         if (!Configuration::is_autoHide()) {
-            DockWindow::updateStrut();
+            DockWindow::Monitor::updateStrut();
             Configuration::set_allowDraw(true);
             DockWindow::reSize();
             this->m_visible = true;
@@ -402,13 +402,13 @@ void AppWindow::monitor_changed_callback(GdkScreen *screen, gpointer gtkwindow)
     std::this_thread::sleep_for(2s);
 
      */
-    DockWindow::removeStrut();
-    DockWindow::updateGeometry();
+    DockWindow::Monitor::removeStrut();
+    DockWindow::Monitor::updateGeometry();
     DockWindow::reSize();
 
     if (Configuration::is_autoHide() == false) {
 
-        DockWindow::updateStrut();
+        DockWindow::Monitor::updateStrut();
     }
 
 
