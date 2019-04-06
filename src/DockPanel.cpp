@@ -29,7 +29,6 @@ bool DockPanel::m_AppThreadRunning;
 
 /*
  * this class is the main dock renderer.
- *
  */
 DockPanel::DockPanel(): m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
 {
@@ -200,7 +199,7 @@ bool DockPanel::on_button_press_event(GdkEventButton *event)
 
     if ((event->type == GDK_BUTTON_PRESS)) {
 
-        m_currentMoveIndex = getIndex(event->x, event->y);
+        m_currentMoveIndex = get_Index(event->x, event->y);
 
         // g_print("MDOWN %d\n", m_currentMoveIndex);
         //      m_mouseRightClick = false;
@@ -443,7 +442,10 @@ void DockPanel::ExecuteApp(GdkEventButton* event)
     }
 }
 
-DockItem* DockPanel::getCurrentItem()
+/**
+ * Gets the current dock Item.
+ */
+inline DockItem* DockPanel::get_CurrentItem()
 {
     if (m_currentMoveIndex < 0 || m_currentMoveIndex > this->m_appUpdater.m_dockitems.size()) {
         return nullptr;
@@ -518,7 +520,7 @@ bool DockPanel::on_timeoutDraw()
  * @param y
  * @return the item index or -1 if the item could not be found.
  */
-inline int DockPanel::getIndex(const int& mouseX, const int& mouseY)
+inline int DockPanel::get_Index(const int& mouseX, const int& mouseY)
 {
     Gdk::Point mouse(mouseX, mouseY);
     int idx = 0;
@@ -563,11 +565,11 @@ inline int DockPanel::getIndex(const int& mouseX, const int& mouseY)
  * true to stop other handlers from being invoked for the event.
  * false to propagate the event further.
  * @param event
- * @return
+ * @return false
  */
 bool DockPanel::on_motion_notify_event(GdkEventMotion * event)
 {
-    m_currentMoveIndex = this->getIndex(event->x, event->y);
+    m_currentMoveIndex = this->get_Index(event->x, event->y);
     return false;
 }
 
@@ -661,7 +663,7 @@ inline void DockPanel::get_ItemPosition(const DockItemType dockType, int& x, int
             return;
         }
 
-        // if the item is a separator the wisth is probably not equal.
+        // if the item is a separator the width is probably not equal.
         // in this case wie remeber the size for use it in the next item.
         if( dockType == DockItemType::Separator){
             x +=  nextsize + Configuration::get_separatorMargin();
@@ -808,15 +810,17 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
 
 
     // Draw the app title
-    // draw_Title(cr);
+     draw_Title(cr);
 }
 
+/**
+ * Show the application title.
+ */
 void DockPanel::draw_Title(const Cairo::RefPtr<Cairo::Context>& cr)
 {
     if (m_currentMoveIndex < 0 || m_currentMoveIndex > this->m_appUpdater.m_dockitems.size()) {
         return;
     }
-
 
     // title window
     if (m_titleItemOldindex != m_currentMoveIndex) {
@@ -834,19 +838,13 @@ void DockPanel::draw_Title(const Cairo::RefPtr<Cairo::Context>& cr)
 
     if (m_titleItemOldindex == m_currentMoveIndex) {
         if (m_titleElapsedSeconds > 0.3 && m_titleShow == false /* && !m_previewWindowActive*/) {
+            int x, y;
 
-            DockItem* item = this->getCurrentItem();
+            DockItem* item = this->get_CurrentItem();
             if (item == nullptr)
                 return;
-
-            std::string title = item->getTitle();
-
-            //            int xx , yy;
-            //            m_titlewindow.get_position(xx,yy);
-            //
-            //            title += " " + std::to_string(xx);
-            //
-
+            
+            std::string title = item->get_Title();
             if (item->m_items.size() > 1) {
                 char buff[NAME_MAX];
                 sprintf(buff, "%s (%d)", title.c_str(), (int)item->m_items.size());
@@ -854,27 +852,12 @@ void DockPanel::draw_Title(const Cairo::RefPtr<Cairo::Context>& cr)
             }
 
             m_titlewindow.setText(title);
-            int centerpos = DockItemPositions::getStartPos(*item,
-                    this->m_appUpdater.m_dockitems.size(),
-                    m_currentMoveIndex,
-                    m_titlewindow.get_width());
-
-
-
-
-            //                int y = MonitorGeometry::getScreenHeight() - m_titlewindow.get_height() -
-            //                        MonitorGeometry::getStrutHeight();
-            //
-            int y = DockWindow::Monitor::get_geometry().height - this->get_height() - m_titlewindow.get_height();
-
-
-            m_titlewindow.move(centerpos, y);
+            DockItemPositions::get_CenterPositionByItem(*item, x, y , m_titlewindow.get_width(), m_titlewindow.get_height() );
+            m_titlewindow.move(x, y);
             m_titleShow = true;
 
         }
 
         m_titleElapsedSeconds = m_titleTimer.elapsed();
     }
-
-
 }

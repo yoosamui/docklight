@@ -34,7 +34,7 @@ public:
    // guint get_dockItemsWidth();
    // guint get_dockItemsHeight();
 
-    int getCurrentIndex() {
+    int get_CurrentIndex() {
         return m_currentMoveIndex;
     };
     int Init();
@@ -49,7 +49,7 @@ private:
     AppUpdater m_appUpdater;
     std::string m_homeiconFilePath;
     static int m_currentMoveIndex;
-    int getIndex(const int& mouseX, const int& mouseY);
+    int get_Index(const int& mouseX, const int& mouseY);
     int m_previousCellwidth;
     int m_iconsize;
     bool m_mouseLeftButtonDown = false;
@@ -57,7 +57,7 @@ private:
     float m_mouseclickEventTime = 0.0f;
    
     
-    DockItem* getCurrentItem();
+    DockItem* get_CurrentItem();
     
     // Timer for showing the title window
     Glib::Timer m_titleTimer;

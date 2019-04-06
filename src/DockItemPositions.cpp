@@ -106,9 +106,63 @@ namespace DockItemPositions
         return size + (Configuration::get_separatorMargin() * AppUpdater::m_dockitems.size());
     }
 
-    int getStartPos(const DockItem& item, const int count, const int index, const int width)
+    /*
+     * returns the start position from the given item.
+     * The position is the absolute position from the current monitor.
+     * @param: DockItem, x , y and the  width of the source window.
+     * @references: the start position. x and y. Depending of the DockWindow location.
+     */
+    void get_CenterPositionByItem(const DockItem& item, int& x, int& y, const guint width, const guint height)
     {
+        DockWindow::get_DockWindowPosition(x, y);
 
+        if (DockWindow::is_Horizontal()){
+            x += DockWindow::get_dockWindowStartEndMargin() / 2;
+            if (Configuration::get_dockWindowLocation() == panel_locationType::BOTTOM){
+                y -= height + 2;
+            }
+            else{
+                y += DockWindow::get_DockWindowHeight() + 2;
+            }
+
+            for (DockItem* citem : AppUpdater::m_dockitems){
+                if( citem->m_index == item.m_index){
+                    x -= (width / 2) - citem->m_width  / 2;
+                    break;
+                }
+
+                x += citem->m_width + Configuration::get_separatorMargin();
+            }
+        }
+        else{
+            y += DockWindow::get_dockWindowStartEndMargin() / 2;
+            if (Configuration::get_dockWindowLocation() == panel_locationType::RIGHT){
+                x -= width + 2;
+            }
+            else{
+                x += DockWindow::get_DockWindowWidth() + 2;
+            }
+
+            for (DockItem* citem : AppUpdater::m_dockitems){
+                if( citem->m_index == item.m_index){
+                    y -= (height / 2) - citem->m_height  / 2;
+                    break;
+                }
+                
+                if (citem->m_dockitemtype == DockItemType::Separator){
+                    y += citem->m_width + Configuration::get_separatorMargin();
+                }
+                else {
+                    y += citem->m_height + Configuration::get_separatorMargin();
+                }
+            }
+        }
+
+// calculate center
+
+        
+
+/*
         int x, y;
         int center = 0;
         DockWindow::get_DockWindowPosition(x, y);
@@ -124,8 +178,9 @@ namespace DockItemPositions
 
         // g_print("width %d\n", width);
         return position + center;
+*/
 
-
+       
     }
 
     int getCenter(int count, int index, int width)

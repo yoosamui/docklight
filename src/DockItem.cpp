@@ -53,7 +53,7 @@ DockItem* DockItem::GetNext()
 
 }
 
-std::string DockItem::getTitle()
+std::string DockItem::get_Title()
 {
     if (!m_titlename.empty())
         return m_titlename;

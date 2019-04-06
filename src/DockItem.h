@@ -52,7 +52,7 @@ public:
     bool m_isDirty = false;
     bool visible = true;
     int m_frames;
-    std::string getTitle();
+    std::string get_Title();
     std::string getGroupName();
     std::string getDesktopFileName();
     gboolean isMovementDetected(GdkPixbuf *pixbuf);
