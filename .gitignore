@@ -94,6 +94,7 @@ src/.deps/
 /src/docklight
 /stamp-h1
 
+*.src.swp
 *.swp
 *.7z
 tags
