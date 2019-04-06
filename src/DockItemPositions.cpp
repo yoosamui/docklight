@@ -150,7 +150,7 @@ namespace DockItemPositions
 
             for (DockItem* citem : AppUpdater::m_dockitems){
                 if( citem->m_index == item->m_index){
-                    g_print("index %d\n", item->m_index);
+                    g_print("index %d/%d\n", item->m_index, index);
                     y -= (height / 2) - citem->m_height  / 2;
                     return true;
                 }

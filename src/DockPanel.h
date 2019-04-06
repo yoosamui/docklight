@@ -116,6 +116,28 @@ private:
     static Glib::RefPtr<Gdk::Pixbuf> m_AppRunImage;
     static bool m_AppThreadRunning;
 
+    // Mome menu
+    Gtk::Menu m_HomeMenu;
+
+    Gtk::MenuItem m_QuitMenuItem;
+    void on_QuitMenu_event();
+
+  // void on_menuNew_event();
+ //callback slot
+    void on_popup_homemenu_position(int& x, int& y, bool& push_in);
+
+
+
+     // Item menu
+    Gtk::Menu m_ItemMenu;
+    Gtk::MenuItem m_MenuItemNewApp;
+    Gtk::MenuItem m_MenuItemAttach;
+    Gtk::MenuItem m_MenuItemDetach;
+    void on_popup_itemmenu_position(int& x, int& y, bool& push_in);
+
+
+    Gtk::SeparatorMenuItem m_separatorMenuItem0;
+
 };
 
 #endif	/* DOCKPANEL_H */

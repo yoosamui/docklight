@@ -115,7 +115,33 @@ int DockPanel::Init()
           this->m_appUpdater.m_dockitems.push_back(dockItem);
           */
 
+    // Menus
+    // Home Menu
+     m_QuitMenuItem.set_label(_("Quit"));
+    // m_QuitMenuItem.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_QuitMenu_event));
+     m_HomeMenu.append(m_QuitMenuItem);
 
+    m_HomeMenu.show_all();
+    m_HomeMenu.accelerate(*this);
+
+    // Item Menu
+    
+    m_MenuItemDetach.set_label(_("Detach from Dock"));
+//    m_MenuItemDetach.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_DetachFromDock_event));
+    m_ItemMenu.append(m_MenuItemDetach);
+    
+     
+    m_MenuItemAttach.set_label(_("Attach to Dock"));
+  //  m_MenuItemAttach.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_AttachToDock_event));
+    m_ItemMenu.append(m_MenuItemAttach);
+     
+    m_MenuItemNewApp.set_label(_("Open new"));
+    m_MenuItemNewApp.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_menuNew_event));
+    m_ItemMenu.append(m_separatorMenuItem0);
+    m_ItemMenu.append(m_MenuItemNewApp);
+
+    m_ItemMenu.show_all();
+    m_ItemMenu.accelerate(*this);
     return 0;
 }
 /*
@@ -303,12 +329,40 @@ bool DockPanel::on_button_release_event(GdkEventButton *event)
         //  SelectWindow(m_currentMoveIndex, event);
         return TRUE;
     }
-    /*
-       if (m_mouseRightButtonDown) {
-       m_preview.hideMe();
-       m_mouseRightClick = true;
-       m_mouseRightButtonDown = false;
 
+    // Right mouse click
+    if (m_mouseRightButtonDown) {
+        // m_preview.hideMe();
+        //  m_mouseRightClick = true;
+        m_mouseRightButtonDown = false;
+
+
+
+        // Home menu
+        if (m_currentMoveIndex == 0) {
+
+            if (!m_HomeMenu.get_attach_widget()){
+                m_HomeMenu.attach_to_widget(*this);
+                m_HomeMenu.set_halign(Gtk::Align::ALIGN_CENTER);
+            }
+            m_HomeMenu.popup(sigc::mem_fun(*this, &DockPanel::on_popup_homemenu_position), 1, event->time);
+
+        }
+
+        // Item Menu
+        if (m_currentMoveIndex > 0) {
+            if (!m_ItemMenu.get_attach_widget()){
+                m_ItemMenu.attach_to_widget(*this);
+                m_ItemMenu.set_halign(Gtk::Align::ALIGN_CENTER);
+
+            }
+
+            m_ItemMenu.popup(sigc::mem_fun(*this,&DockPanel::on_popup_itemmenu_position), 1, event->time);
+        }
+}
+// mouse right       
+
+/*
 // Items
 if (m_currentMoveIndex > 0) {
 DockItem *dockitem = m_dockitems.at(m_currentMoveIndex);
@@ -391,7 +445,7 @@ return TRUE;
 return TRUE;
 }
 
-bool DockPanel::on_scroll_event(GdkEventScroll * e)
+bool DockPanel::on_scroll_event(GdkEventScroll* e)
 {
     int index = m_currentMoveIndex;
     if (index == -1 || index == 0)
@@ -411,6 +465,21 @@ bool DockPanel::on_scroll_event(GdkEventScroll * e)
 
     // Event has been handled
     return true;
+}
+/**
+ * Handle the home menu popup position.
+ * @param x
+ * @param y
+ * @param push_in
+ */
+void DockPanel::on_popup_homemenu_position(int& x, int& y, bool& push_in)
+{
+    DockItemPositions::get_CenterPosition(m_currentMoveIndex, x, y, m_HomeMenu.get_width(), m_HomeMenu.get_height());
+}
+
+void DockPanel::on_popup_itemmenu_position(int& x, int& y, bool& push_in)
+{
+    DockItemPositions::get_CenterPosition(m_currentMoveIndex, x, y, m_ItemMenu.get_width(), m_ItemMenu.get_height());
 }
 
 void DockPanel::ExecuteApp(GdkEventButton* event)
@@ -457,11 +526,6 @@ inline DockItem* DockPanel::get_CurrentItem()
 
 void DockPanel::on_menuNew_event()
 {
-
-    if (m_currentMoveIndex < 1 || m_currentMoveIndex > this->m_appUpdater.m_dockitems.size()) {
-        return;
-    }
-
     DockItem* item = this->get_CurrentItem();
     if (item == nullptr)
         return;
@@ -840,7 +904,7 @@ void DockPanel::show_Title()
             int x, y;
 
             DockItem* item = this->get_CurrentItem();
-            if (item == nullptr)
+            if (item == nullptr || item->m_dockitemtype == DockItemType::Separator)
                 return;
             
             std::string title = item->get_Title();
