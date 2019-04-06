@@ -131,7 +131,7 @@ DockPanel::~DockPanel(){
     delete m_AppRunThreadLauncher;
 
     // pointed dangling to ptr NULL
-    m_AppunThreadLuncher = NULL;
+    m_AppRunThreadLauncher = NULL;
 }
 
 /**
