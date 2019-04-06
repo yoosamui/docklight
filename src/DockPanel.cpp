@@ -16,11 +16,16 @@
 #include "DockWindow.h"
 #include "WnckHandler.h"
 
+#include <iostream>
+#include <thread>
+
 #include <glibmm/i18n.h>
 
 // static members
 int DockPanel::m_currentMoveIndex;
 bool DockPanel::m_forceDraw;    
+Glib::RefPtr<Gdk::Pixbuf> DockPanel::m_AppRunImage;
+bool DockPanel::m_AppThreadRunning;
 
 /*
  * this class is the main dock renderer.
@@ -39,9 +44,10 @@ DockPanel::DockPanel(): m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
             Gdk::LEAVE_NOTIFY_MASK |
             Gdk::POINTER_MOTION_MASK);
 
-    // set the static member to the default value -1;
+    // set the static member to the default values
     DockPanel::m_currentMoveIndex = -1;
     DockPanel::m_forceDraw = false;
+    DockPanel::m_AppThreadRunning = true;
 
     // Gets the default WnckScreen on the default display.
     WnckScreen *wnckscreen = wnck_screen_get_default();
@@ -85,37 +91,81 @@ int DockPanel::Init()
         return -1;
     }
 
+    // add the home icon
     dockItem->m_appname = _("Desktop");
     dockItem->m_realgroupname = _("Desktop");
     dockItem->m_dockitemtype = DockItemType::SingleDock;
-
     this->m_appUpdater.m_dockitems.insert(this->m_appUpdater.m_dockitems.begin(), dockItem);
+
+    // Start the background thread for application start animation
+    m_AppRunThreadLauncher = new std::thread(AppRunAnimation); 
 
 
     // testt separator
-/*    
-       dockItem = new DockItem();
-       dockItem->m_dockitemtype = DockItemType::Separator;
-       dockItem->m_isAttached = true;
-       dockItem->m_width = 12;
-       this->m_appUpdater.m_dockitems.push_back(dockItem);
-       
-       dockItem = new DockItem();
-       dockItem->m_dockitemtype = DockItemType::Separator;
-       dockItem->m_isAttached = true;
-       dockItem->m_width = 12;
-       this->m_appUpdater.m_dockitems.push_back(dockItem);
-*/
+    /*    
+          dockItem = new DockItem();
+          dockItem->m_dockitemtype = DockItemType::Separator;
+          dockItem->m_isAttached = true;
+          dockItem->m_width = 12;
+          this->m_appUpdater.m_dockitems.push_back(dockItem);
+
+          dockItem = new DockItem();
+          dockItem->m_dockitemtype = DockItemType::Separator;
+          dockItem->m_isAttached = true;
+          dockItem->m_width = 12;
+          this->m_appUpdater.m_dockitems.push_back(dockItem);
+          */
 
 
- return 0;
+    return 0;
 }
 /*
- *
- *
+ * Class destructor
  */
-DockPanel::~DockPanel(){ }
+DockPanel::~DockPanel(){ 
 
+    // tell the background thread to terminate.
+    m_AppThreadRunning = false;
+    
+    // free memory
+    delete m_AppRunThreadLauncher;
+
+    // pointed dangling to ptr NULL
+    m_AppunThreadLuncher = NULL;
+}
+
+/**
+ * This method will be call from the background tread to manage the application image animation.
+ * The animation consists in invert the colors of the image. 
+ */
+void DockPanel::AppRunAnimation()
+{
+    gint x, y, i;
+    while(m_AppThreadRunning){
+        if (m_AppRunImage && m_AppRunImage->get_colorspace() == Gdk::COLORSPACE_RGB && m_AppRunImage->get_bits_per_sample() == 8){
+            int w = m_AppRunImage->get_width();
+            int h = m_AppRunImage->get_height();
+            int channels = m_AppRunImage->get_n_channels();
+            gint rowstride = m_AppRunImage->get_rowstride();
+            gint pixel_offset;
+            for (i = 0; i < 6; i++) {
+                for (y = 0; y < h; y++) {
+                    for (x = 0; x < w; x++) {
+                        pixel_offset = y * rowstride + x * channels;
+                        guchar* pixel = &m_AppRunImage->get_pixels()[pixel_offset];
+
+                        pixel[0] = 255 - pixel[0];
+                        pixel[1] = 255 - pixel[1];
+                        pixel[2] = 255 - pixel[2];
+                    }
+                }
+                std::this_thread::sleep_for(std::chrono::milliseconds(80));
+            }
+            m_AppRunImage = NULLPB;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+    }
+}
 /**
  * Emitted when a new Wnck.Window is opened on screen.
  * @param screen
@@ -402,12 +452,6 @@ DockItem* DockPanel::getCurrentItem()
     return this->m_appUpdater.m_dockitems.at(m_currentMoveIndex);
 }
 
-void DockPanel::AppRunAnimationLauncherCompleted()
-{
-    m_AppRunThreadLauncher->detach();
-    delete m_AppRunThreadLauncher;
-    m_AppRunThreadLauncher = nullptr;
-}
 
 void DockPanel::on_menuNew_event()
 {
@@ -425,12 +469,12 @@ void DockPanel::on_menuNew_event()
     }
 
     // start run animation
-    if (m_AppRunThreadLauncher == nullptr) {
-        Glib::RefPtr<Gdk::Pixbuf> m_image = item->m_image;
-        m_AppRunThreadLauncher = new std::thread([this, m_image]{
-                m_AppRunAnimation.start(*this, m_image);
-                });
-    }
+    //
+    //
+
+    // DockPanel::m_appRunImage = item->m_image;
+
+
 
     // m_selectorAnimationItemIndex = m_currentMoveIndex;
     if (!Launcher::Launch(item->m_realgroupname)) {
@@ -438,18 +482,30 @@ void DockPanel::on_menuNew_event()
         //   createLauncher(item);
     }
 
+    // start the animation
+    m_AppRunImage = item->m_image;
 
+    /*
+       if (m_AppRunThreadLauncher == nullptr) {
+       Glib::RefPtr<Gdk::Pixbuf> m_image = item->m_image;
+       m_AppRunThreadLauncher = new std::thread([this, m_image]{           
+
+       AppRunAnimation(e);
+
+
+       });
+       }
+       */
 
 }
 
 void DockPanel::update()
 {
-    Gtk::Widget::queue_draw();
 }
 
 bool DockPanel::on_timeoutDraw()
 {
-    if (m_mouseIn || m_forceDraw) {
+    if (m_mouseIn || m_forceDraw || m_AppRunImage) {
         Gtk::Widget::queue_draw();
         m_forceDraw = false;
     }
@@ -530,45 +586,45 @@ void DockPanel::RoundedRectangle(const Cairo::RefPtr<Cairo::Context>& cr,
 
 //obsolete use DockItemPosition instead
 /*
-unsigned int DockPanel::get_dockItemsWidthUntilIndex(int idx)
-{
-    unsigned int size = 0;
-    int count = 0;
-    for (DockItem* item:this->m_appUpdater.m_dockitems) {
-        if (count == idx) {
-            break;
-        }
-        size += item->m_width;
+   unsigned int DockPanel::get_dockItemsWidthUntilIndex(int idx)
+   {
+   unsigned int size = 0;
+   int count = 0;
+   for (DockItem* item:this->m_appUpdater.m_dockitems) {
+   if (count == idx) {
+   break;
+   }
+   size += item->m_width;
 
-        count++;
-    }
+   count++;
+   }
 
-    return size;
-}
-*/
+   return size;
+   }
+   */
 //obsolete use DockItemPosition instead
 /*
-unsigned int DockPanel::get_dockItemsHeightUntilIndex(int idx)
-{
-    unsigned int size = 0;
-    int count = 0;
-    for (DockItem* item:this->m_appUpdater.m_dockitems) {
-        if (count == idx) {
-            break;
-        }
-        if (item->m_dockitemtype == DockItemType::Separator) {
-            size += item->m_width;
-            count++;
-            continue;
-        }
-        size += item->m_height;
+   unsigned int DockPanel::get_dockItemsHeightUntilIndex(int idx)
+   {
+   unsigned int size = 0;
+   int count = 0;
+   for (DockItem* item:this->m_appUpdater.m_dockitems) {
+   if (count == idx) {
+   break;
+   }
+   if (item->m_dockitemtype == DockItemType::Separator) {
+   size += item->m_width;
+   count++;
+   continue;
+   }
+   size += item->m_height;
 
-        count++;
-    }
+   count++;
+   }
 
-    return size;
-}
-*/
+   return size;
+   }
+   */
 
 
 bool DockPanel::on_enter_notify_event(GdkEventCrossing * crossing_event)
@@ -692,7 +748,7 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
     int width = 0;
     int height = 0;
     for (DockItem* item:this->m_appUpdater.m_dockitems) {
-        
+
         width = item->m_width;
         height = item->m_height;
 
@@ -746,13 +802,13 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
             RoundedRectangle(cr, x, y, width, height, 3);
             cr->stroke();
         }
-        
+
         idx++;
     }
 
 
     // Draw the app title
-   // draw_Title(cr);
+    // draw_Title(cr);
 }
 
 void DockPanel::draw_Title(const Cairo::RefPtr<Cairo::Context>& cr)

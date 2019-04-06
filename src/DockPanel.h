@@ -29,17 +29,15 @@ class DockPanel : public Gtk::DrawingArea {
 public:
     DockPanel();
     virtual ~DockPanel();
-
-    float m_easing_duration;
+//    float m_easing_duration;
     SessionWindow* m_sessionWindow;
-    guint get_dockItemsWidth();
-    guint get_dockItemsHeight();
+   // guint get_dockItemsWidth();
+   // guint get_dockItemsHeight();
 
     int getCurrentIndex() {
         return m_currentMoveIndex;
     };
     int Init();
-    void AppRunAnimationLauncherCompleted();
     void update();
 private:
 
@@ -111,8 +109,13 @@ private:
     void draw_Items(const Cairo::RefPtr<Cairo::Context>& cr);
     void draw_Title(const Cairo::RefPtr<Cairo::Context>& cr);
 
+
+    // Animation thread related
     std::thread* m_AppRunThreadLauncher = nullptr;
-    AppRunAnimation m_AppRunAnimation;
+    static void AppRunAnimation();
+    static Glib::RefPtr<Gdk::Pixbuf> m_AppRunImage;
+    static bool m_AppThreadRunning;
+
 };
 
 #endif	/* DOCKPANEL_H */
