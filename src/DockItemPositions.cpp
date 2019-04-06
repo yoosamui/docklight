@@ -112,8 +112,13 @@ namespace DockItemPositions
      * @param: DockItem, x , y and the  width of the source window.
      * @references: the start position. x and y. Depending of the DockWindow location.
      */
-    void get_CenterPositionByItem(const DockItem& item, int& x, int& y, const guint width, const guint height)
+    bool get_CenterPosition(const int index, int& x, int& y, const guint width, const guint height)
     {
+        if (index < 0 || index > AppUpdater::m_dockitems.size()){
+            return false;
+        }
+
+        DockItem* item = AppUpdater::m_dockitems[index];
         DockWindow::get_DockWindowPosition(x, y);
 
         if (DockWindow::is_Horizontal()){
@@ -126,9 +131,9 @@ namespace DockItemPositions
             }
 
             for (DockItem* citem : AppUpdater::m_dockitems){
-                if( citem->m_index == item.m_index){
+                if( citem->m_index == item->m_index){
                     x -= (width / 2) - citem->m_width  / 2;
-                    break;
+                    return true;
                 }
 
                 x += citem->m_width + Configuration::get_separatorMargin();
@@ -144,9 +149,10 @@ namespace DockItemPositions
             }
 
             for (DockItem* citem : AppUpdater::m_dockitems){
-                if( citem->m_index == item.m_index){
+                if( citem->m_index == item->m_index){
+                    g_print("index %d\n", item->m_index);
                     y -= (height / 2) - citem->m_height  / 2;
-                    break;
+                    return true;
                 }
                 
                 if (citem->m_dockitemtype == DockItemType::Separator){
@@ -157,6 +163,8 @@ namespace DockItemPositions
                 }
             }
         }
+
+return true;
 
 // calculate center
 

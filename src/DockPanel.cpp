@@ -242,7 +242,7 @@ bool DockPanel::on_button_press_event(GdkEventButton *event)
 
             // Items
             if (m_currentMoveIndex > 0) {
-                DockItem *dockitem = m_appUpdater.m_dockitems.at(m_currentMoveIndex);
+                DockItem *dockitem = m_appUpdater.m_dockitems[m_currentMoveIndex];
                 dockitem->m_isAttached = true;
                 dockitem->m_attachedIndex = m_currentMoveIndex;
                 this->m_appUpdater.Save();
@@ -397,7 +397,7 @@ bool DockPanel::on_scroll_event(GdkEventScroll * e)
     if (index == -1 || index == 0)
         return true;
 
-    DockItem * item = this->m_appUpdater.m_dockitems.at(index)->GetNext();
+    DockItem * item = this->m_appUpdater.m_dockitems[index]->get_Next();
     if (item == nullptr)
         return true;
 
@@ -418,7 +418,7 @@ void DockPanel::ExecuteApp(GdkEventButton* event)
     if (m_currentMoveIndex < 1)
         return;
 
-    DockItem * item = this->m_appUpdater.m_dockitems.at(m_currentMoveIndex);
+    DockItem * item = this->m_appUpdater.m_dockitems[m_currentMoveIndex];
     if (item->m_dockitemtype == DockItemType::Separator) {
         return;
     }
@@ -434,7 +434,7 @@ void DockPanel::ExecuteApp(GdkEventButton* event)
         WnckWindow *window = nullptr;
         window = WnckHandler::get_ActiveWindowIfAny(item);
         if (window == nullptr) {
-            DockItem* firstChild = item->m_items.at(0);
+            DockItem* firstChild = item->m_items[0];
             window = firstChild->m_window;
         }
 
@@ -451,7 +451,7 @@ inline DockItem* DockPanel::get_CurrentItem()
         return nullptr;
     }
 
-    return this->m_appUpdater.m_dockitems.at(m_currentMoveIndex);
+    return this->m_appUpdater.m_dockitems[m_currentMoveIndex];
 }
 
 
@@ -462,7 +462,9 @@ void DockPanel::on_menuNew_event()
         return;
     }
 
-    DockItem* item = this->m_appUpdater.m_dockitems.at(m_currentMoveIndex);
+    DockItem* item = this->get_CurrentItem();
+    if (item == nullptr)
+        return;
 
     if (item->m_dockitemSesssionGrpId > 0) {
         //  createSessionWindow();
@@ -708,6 +710,7 @@ bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
     this->draw_Panel(cr);
     this->draw_Items(cr);
+    this->show_Title();
 
     return true;
 }
@@ -807,16 +810,12 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
 
         idx++;
     }
-
-
-    // Draw the app title
-     draw_Title(cr);
 }
 
 /**
  * Show the application title.
  */
-void DockPanel::draw_Title(const Cairo::RefPtr<Cairo::Context>& cr)
+void DockPanel::show_Title()
 {
     if (m_currentMoveIndex < 0 || m_currentMoveIndex > this->m_appUpdater.m_dockitems.size()) {
         return;
@@ -852,7 +851,7 @@ void DockPanel::draw_Title(const Cairo::RefPtr<Cairo::Context>& cr)
             }
 
             m_titlewindow.setText(title);
-            DockItemPositions::get_CenterPositionByItem(*item, x, y , m_titlewindow.get_width(), m_titlewindow.get_height() );
+            DockItemPositions::get_CenterPosition(m_currentMoveIndex, x, y, m_titlewindow.get_width(), m_titlewindow.get_height());
             m_titlewindow.move(x, y);
             m_titleShow = true;
 

@@ -80,7 +80,7 @@ namespace Configuration
             return 0;
         }
           
-        return 6;
+        return 4;
     }
 
     unsigned int get_WindowDockMonitorMargin_Left()
@@ -89,7 +89,7 @@ namespace Configuration
             return 0;
         }
           
-        return 27;
+        return 4;
     }
     
     unsigned int get_WindowDockMonitorMargin_Bottom()
@@ -98,7 +98,7 @@ namespace Configuration
             return 0;
         }
         
-        return 6;
+        return 4;
     }
     
     unsigned int get_separatorMargin()

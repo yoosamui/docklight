@@ -107,7 +107,7 @@ private:
 
     void draw_Panel(const Cairo::RefPtr<Cairo::Context>& cr);
     void draw_Items(const Cairo::RefPtr<Cairo::Context>& cr);
-    void draw_Title(const Cairo::RefPtr<Cairo::Context>& cr);
+    void show_Title();
 
 
     // Animation thread related

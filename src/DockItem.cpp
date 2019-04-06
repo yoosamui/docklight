@@ -20,7 +20,7 @@ DockItem::~DockItem() {
  * get the current item from the items vector
  * @return DockItem*
  */
-DockItem* DockItem::GetCurrent()
+DockItem* DockItem::get_Current()
 {
     if (m_items.size() == 0)
         return nullptr;
@@ -28,7 +28,7 @@ DockItem* DockItem::GetCurrent()
     if (m_index >= (int) m_items.size())
         m_index = 0;
 
-    DockItem* result = m_items.at(m_index);
+    DockItem* result = m_items[m_index];
 
     return result;
 
@@ -38,7 +38,7 @@ DockItem* DockItem::GetCurrent()
  * get the next item from the items vector
  * @return DockItem*
  */
-DockItem* DockItem::GetNext()
+DockItem* DockItem::get_Next()
 {
     if (m_items.size() == 0)
         return nullptr;
@@ -46,7 +46,7 @@ DockItem* DockItem::GetNext()
     if (m_index >= (int) m_items.size())
         m_index = 0;
 
-    DockItem* result = m_items.at(m_index);
+    DockItem* result = m_items[m_index];
     m_index++;
 
     return result;
@@ -61,7 +61,7 @@ std::string DockItem::get_Title()
     return m_realgroupname;
 }
 
-std::string DockItem::getGroupName()
+std::string DockItem::get_GroupName()
 {
     std::replace(m_realgroupname.begin(), 
             m_realgroupname.end(), ' ', '-');
@@ -69,9 +69,9 @@ std::string DockItem::getGroupName()
     return m_realgroupname;
 }
 
-std::string DockItem::getDesktopFileName()
+std::string DockItem::get_DesktopFileName()
 {
-  return getGroupName() + ".desktop";
+  return get_GroupName() + ".desktop";
 }
 
 

@@ -30,14 +30,13 @@ public:
     DockItem(const DockItem& orig);
     virtual ~DockItem();
     DockItemType m_dockitemtype = DockItemType::SingleDock;
-   
     Glib::RefPtr<Gdk::Pixbuf> m_image = NULLPB;
     guchar m_pixelsbuf[DEF_PREVIEW_WIDTH * DEF_PREVIEW_HEIGHT * 3] = {0};
     GdkPixbuf *m_scaledPixbuf;
     bool m_imageLoadedRequired;
     bool m_isDynamic;
-    DockItem* GetCurrent();
-    DockItem* GetNext();
+    DockItem* get_Current();
+    DockItem* get_Next();
     WnckWindow *m_window;
     std::string m_theme_iconname;
     std::string m_titlename;
@@ -53,8 +52,8 @@ public:
     bool visible = true;
     int m_frames;
     std::string get_Title();
-    std::string getGroupName();
-    std::string getDesktopFileName();
+    std::string get_GroupName();
+    std::string get_DesktopFileName();
     gboolean isMovementDetected(GdkPixbuf *pixbuf);
     int m_dockitemSesssionGrpId = 0;
     int m_width = 0;
