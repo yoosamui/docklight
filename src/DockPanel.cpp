@@ -83,7 +83,6 @@ int DockPanel::Init(Gtk::Window* window)
     const char* filename = m_homeiconFilePath.c_str();
     DockItem* dockItem = new DockItem();
     try {
-
         int iconsize = Configuration::get_CellWidth() - ICON_CELL_WIDTH_MARGIN;
         dockItem->m_image = Gdk::Pixbuf::create_from_file(filename, iconsize, iconsize, true);
     }
