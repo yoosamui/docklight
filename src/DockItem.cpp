@@ -13,7 +13,18 @@ DockItem::DockItem() {
     this->m_height = Configuration::get_CellHeight();
 }
 
-DockItem::~DockItem() {
+/**
+ * Destructor
+ */
+DockItem::~DockItem() 
+{
+    for (int i = this->m_items.size() - 1; i >= 0; i--){
+        delete m_items[i];
+        m_items[i] = NULL;
+        m_items.erase(m_items.begin() + i);
+    }
+
+    g_print("DockItem destroy.\n");
 }
 
 /**

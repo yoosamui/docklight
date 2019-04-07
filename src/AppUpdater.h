@@ -45,6 +45,7 @@ public:
     void Load();
     void Save();
     std::string getFilePath();
+    bool RemoveItem(const int index);
 protected:
     static void Update(WnckWindow* window, Window_action actiontype);
     static void on_window_opened(WnckScreen* screen, WnckWindow* window, gpointer data);

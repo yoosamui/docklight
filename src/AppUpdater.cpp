@@ -39,7 +39,19 @@ AppUpdater::AppUpdater()
 
 }
 
-AppUpdater::~AppUpdater(){ }
+/**
+ * Destructor.
+ */
+AppUpdater::~AppUpdater()
+{
+    for (int i = m_dockitems.size() - 1; i >= 0; i--) {
+        delete(m_dockitems[i]);
+        m_dockitems[i] = NULL;
+        m_dockitems.erase(m_dockitems.begin() + i);
+    }
+
+    g_print("AppUpdater destroy.\n");
+}
 
 /**
  * Load Attachments
@@ -185,6 +197,27 @@ void AppUpdater::Save()
     }
 
     fclose(f);
+}
+
+/**
+ * Remove an Item form vector by the give index.
+ */
+
+bool AppUpdater::RemoveItem(const int index)
+{
+    if (index < 0 || index > this->m_dockitems.size()){
+        return false;
+    }
+
+    delete this->m_dockitems[index];
+    this->m_dockitems[index] = NULL;
+
+    // Deletes the element by index;
+    this->m_dockitems.erase(this->m_dockitems.begin() + index);
+    
+    this->Save();
+
+    return true;
 }
 
 std::string AppUpdater::getFilePath()
@@ -357,7 +390,6 @@ void AppUpdater::Update(WnckWindow* window, Window_action actiontype)
                     delete( item->m_items.at(0));
                     item->m_items.erase(item->m_items.begin());
 
-                  ///////////////////////  DockWindow::update();
                     return;
                 }
 
@@ -369,7 +401,6 @@ void AppUpdater::Update(WnckWindow* window, Window_action actiontype)
                 // we need to reset the index.
                 //  m_currentMoveIndex = -1;
 
-               /////////////////////////////// DockWindow::update();
                 return;
             }
             else {
@@ -379,7 +410,6 @@ void AppUpdater::Update(WnckWindow* window, Window_action actiontype)
                     if (c->m_xid == xid) {
                         delete(c);
                         item->m_items.erase(item->m_items.begin() + idx);
-                       //////////////// DockWindow::update();
                         return;
                     }
                     idx++;

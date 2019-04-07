@@ -1387,11 +1387,11 @@ docklight-DockPanel.o: DockPanel.cpp /usr/include/stdc-predef.h \
  /usr/include/gtkmm-3.0/gtkmm/viewport.h \
  /usr/include/gtkmm-3.0/gtkmm/volumebutton.h SessionWindow.h Utilities.h \
  /usr/include/c++/6/math.h IconLoader.h AppUpdater.h AppRunAnimation.h \
- /usr/include/c++/6/thread TitleWindow.h DockWindow.h AppWindow.h \
- Screen.h Struts.h DockItemPositions.h Launcher.h Animations.h \
- WnckHandler.h /usr/include/X11/X.h /usr/include/c++/6/iostream \
+ /usr/include/c++/6/thread TitleWindow.h DockMenu.h \
  /usr/include/glibmm-2.4/glibmm/i18n.h /usr/include/glib-2.0/glib/gi18n.h \
- /usr/include/libintl.h
+ /usr/include/libintl.h DockWindow.h AppWindow.h Screen.h Struts.h \
+ DockItemPositions.h Launcher.h Animations.h WnckHandler.h \
+ /usr/include/X11/X.h /usr/include/c++/6/iostream
 
 /usr/include/stdc-predef.h:
 
@@ -4405,6 +4405,14 @@ AppRunAnimation.h:
 
 TitleWindow.h:
 
+DockMenu.h:
+
+/usr/include/glibmm-2.4/glibmm/i18n.h:
+
+/usr/include/glib-2.0/glib/gi18n.h:
+
+/usr/include/libintl.h:
+
 DockWindow.h:
 
 AppWindow.h:
@@ -4424,9 +4432,3 @@ WnckHandler.h:
 /usr/include/X11/X.h:
 
 /usr/include/c++/6/iostream:
-
-/usr/include/glibmm-2.4/glibmm/i18n.h:
-
-/usr/include/glib-2.0/glib/gi18n.h:
-
-/usr/include/libintl.h:

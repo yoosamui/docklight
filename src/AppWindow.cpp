@@ -140,7 +140,7 @@ int AppWindow::init()
         return -1;
     }
 
-   return  m_dockpanel.Init();
+   return  m_dockpanel.Init(this);
 }
 
 /**
@@ -432,4 +432,8 @@ bool AppWindow::on_leave_notify_event(GdkEventCrossing* crossing_event)
     return true;
 }
 
-AppWindow::~AppWindow(){ }
+AppWindow::~AppWindow()
+{
+g_print("AppWindow destroy\n");
+
+}

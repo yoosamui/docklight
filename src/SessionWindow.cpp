@@ -212,7 +212,7 @@ SessionWindow::~SessionWindow()
         ListRow* row = (ListRow*) m_ListBox.get_row_at_index(i);
         delete row;
     }
-
+    g_print("SessionWindow relesed\n");
 }
 
 void SessionWindow::init(DockPanel& panel, DockItem* dockitem, const int id)

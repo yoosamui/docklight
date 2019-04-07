@@ -67,6 +67,8 @@ TitleWindow.cpp \
 TitleWindow.h \
 DockItemPositions.cpp \
 DockItemPositions.h \
+DockMenu.cpp \
+DockMenu.h \
 $(NULL)
 
 # this works - it deletes testSubDir in src

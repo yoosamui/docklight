@@ -28,7 +28,7 @@ Glib::RefPtr<Gdk::Pixbuf> DockPanel::m_AppRunImage;
 bool DockPanel::m_AppThreadRunning;
 
 /*
- * this class is the main dock renderer.
+ * This class is the  main dock renderer.
  */
 DockPanel::DockPanel(): m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
 {
@@ -52,27 +52,34 @@ DockPanel::DockPanel(): m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
     WnckScreen *wnckscreen = wnck_screen_get_default();
 
     // set the required signals handlers
-    g_signal_connect(G_OBJECT(wnckscreen), "window-opened",
-            G_CALLBACK(DockPanel::on_window_opened), NULL);
-
-    g_signal_connect(wnckscreen, "window_closed",
-            G_CALLBACK(DockPanel::on_window_closed), NULL);
-
-    //    g_signal_connect(wnckscreen, "active_window_changed",
-    //                     G_CALLBACK(DockPanel::on_active_window_changed_callback), NULL);
-
-
+    g_signal_connect(G_OBJECT(wnckscreen), "window-opened", G_CALLBACK(DockPanel::on_window_opened), NULL);
+    g_signal_connect(wnckscreen, "window_closed", G_CALLBACK(DockPanel::on_window_closed), NULL);
+    g_signal_connect(wnckscreen, "active_window_changed", G_CALLBACK(DockPanel::on_active_window_changed_callback), NULL);
     Glib::signal_timeout().connect(sigc::mem_fun(*this, &DockPanel::on_timeoutDraw), DEF_FRAMERATE);
+
+    // Menus
+    m_HomeMenu.attach_to_widget(*this);
+    m_HomeMenu.accelerate(*this);
+    m_HomeMenu.signal_hide().connect(sigc::mem_fun(*this, &DockPanel::on_HideMenu_event));
+    m_QuitMenuItem.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_QuitMenu_event));
+
+    m_ItemMenu.attach_to_widget(*this);
+    m_ItemMenu.accelerate(*this);
+    m_ItemMenu.signal_hide().connect(sigc::mem_fun(*this, &DockPanel::on_HideMenu_event));
+    m_MenuItemNewApp.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_NewMenu_event));
+    m_MenuItemAttach.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_AttachMenu_event));
+    m_MenuItemDetach.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_DettachMenu_event));
 }
 
 /**
- * preInit load the attached icons and initializes variables,
- * and create the popup menus
+ * preInit load the attached icons and initializes variables.
  * @param Gtk::Window*  window
  * @return return 0 is success or -1 is an error found
  */
-int DockPanel::Init()
+int DockPanel::Init(Gtk::Window* window)
 {
+   this->m_AppWindow = window; 
+    
     const char* filename = m_homeiconFilePath.c_str();
     DockItem* dockItem = new DockItem();
     try {
@@ -115,68 +122,30 @@ int DockPanel::Init()
           dockItem->m_width = 12;
           this->m_appUpdater.m_dockitems.push_back(dockItem);
           */
+  //     if (!m_HomeMenu.get_attach_widget()){
 
-    // Menus
-    // Home Menu
-     m_QuitMenuItem.set_label(_("Quit"));
-    // m_QuitMenuItem.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_QuitMenu_event));
-     m_HomeMenu.append(m_QuitMenuItem);
 
-    m_HomeMenu.show_all();
-    m_HomeMenu.accelerate(*this);
-
-    // Item Menu
-    
-    m_MenuItemDetach.set_label(_("Detach from Dock"));
-//    m_MenuItemDetach.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_DetachFromDock_event));
-//    // Delete the window when it is hidden.
-    
-    //m_ItemMenu.signal_hide().connect(sigc::bind<Gtk::Window*>(sigc::mem_fun(*this, &DockPanel::on_MenuHide), appwindow));
-   // m_ItemMenu.signal_hide().connect(sigc::mem_fun(*this, &DockPanel::on_HideMenu_event));
-    m_ItemMenu.append(m_MenuItemDetach);
-    
-     
-    m_MenuItemAttach.set_label(_("Attach to Dock"));
-  //  m_MenuItemAttach.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_AttachToDock_event));
-    m_ItemMenu.append(m_MenuItemAttach);
-     
-    m_MenuItemNewApp.set_label(_("Open new"));
-    m_ItemMenu.append(m_separatorMenuItem0);
-    m_ItemMenu.append(m_MenuItemNewApp);
-
-    m_MenuItemNewApp.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_menuNew_event));
-    m_ItemMenu.signal_hide().connect(sigc::mem_fun(*this, &DockPanel::on_HideMenu_event));
-
-    m_ItemMenu.show_all();
-    m_ItemMenu.accelerate(*this);
     return 0;
 }
 
-void DockPanel::on_HideMenu_event()
-{
-    this->m_popupMenuOn = false;    
-}
 /*
-void DockPanel::on_MenuHide(Gtk::Window* window)
-{
-//  delete window;
-}
-*/
-
-
-/*
- * Class destructor
+ *  destructor
  */
-DockPanel::~DockPanel(){ 
-
+DockPanel::~DockPanel()
+{ 
     // tell the background thread to terminate.
     m_AppThreadRunning = false;
-    
+
+    // Detach 
+    m_AppRunThreadLauncher->detach();
+
     // free memory
     delete m_AppRunThreadLauncher;
 
     // pointed dangling to ptr NULL
     m_AppRunThreadLauncher = NULL;
+
+    g_print("DockPanel destroy.\n");
 }
 
 /**
@@ -232,12 +201,94 @@ void DockPanel::on_window_closed(WnckScreen *screen, WnckWindow *window, gpointe
 {
     m_forceDraw = true;
 }
+/**
+ * Emitted when the active window on screen has changed.
+ * @param screen
+ * @param previously_active_window
+ * @param user_data
+ */
+void DockPanel::on_active_window_changed_callback(WnckScreen *screen, WnckWindow *previously_active_window, gpointer user_data)
+{
+/*
+    m_currentMoveIndex = -1;
+
+    if (m_previewWindowActive || DockPanel::m_dragdropsStarts)
+        return;
+
+    WnckWindow * window = wnck_screen_get_active_window(screen);
+    if (window == NULL)
+
+        return;
+    DockPanel::setItemImdexFromActiveWindow();
+    */
+}
+
+/**
+ * Emitted when the menu is clicked.
+ */
+void DockPanel::on_NewMenu_event()
+{
+    DockItem* item = this->get_CurrentItem();
+    if (item == nullptr)
+        return;
+
+    if (item->m_dockitemSesssionGrpId > 0) {
+        //  createSessionWindow();
+        return;
+
+    }
+
+    // start application launcher
+    if (!Launcher::Launch(item->m_realgroupname)) {
+
+        //   createLauncher(item);
+    }
+
+    // start the animation
+    m_AppRunImage = item->m_image;
+
+}
+
+/**
+ * Close application and release resources.
+ */
+void DockPanel::on_QuitMenu_event()
+{
+    m_AppWindow->close();
+}
+
+/**
+ * Emitted when the menu hides.
+ */
+void DockPanel::on_HideMenu_event()
+{
+    this->m_popupMenuOn = false;    
+}
+
+
+void DockPanel::on_AttachMenu_event()
+{
+    this->m_appUpdater.Save();
+}
+
+void DockPanel::on_DettachMenu_event()
+{
+    if (!this->m_appUpdater.RemoveItem(this->m_currentMoveIndex)){
+        return;
+    }
+
+    this->update();       
+
+    // force resize the dock window.   
+    DockWindow::update();
+
+}
+
 
 /**
  * bool DockPanel::on_button_press_event(GdkEventButton *event)
  *
- * handles Mouse button press : process mouse button event
- * true to stop other handlers from being invoked for the event.
+ * handles Mouse button press : process mouse button event true to stop other handlers from being invoked for the event.
  * false to propagate the event further.
  */
 bool DockPanel::on_button_press_event(GdkEventButton *event)
@@ -301,13 +352,9 @@ bool DockPanel::on_button_press_event(GdkEventButton *event)
 }
 
 /**
- * bool DockPanel::on_button_release_event(GdkEventButton *event)
- * Returning TRUE means we handled the event, so the signal
- * emission should be stopped (don’t call any further callbacks
- * that may be connected). Return FALSE to continue invoking callbacks.
- * handles Mouse button released : process mouse button event
- * true to stop other handlers from being invoked for the event.
- * false to propagate the event further.
+ * Returning TRUE means we handled the event, so the signal emission should be stopped (don’t call any further callbacks
+ * that may be connected). Return FALSE to continue invoking callbacks. handles Mouse button released : process mouse button event
+ * true to stop other handlers from being invoked for the event. false to propagate the event further.
  */
 bool DockPanel::on_button_release_event(GdkEventButton *event)
 {
@@ -344,7 +391,6 @@ bool DockPanel::on_button_release_event(GdkEventButton *event)
 
     if (m_mouseLeftButtonDown) {
         m_mouseLeftButtonDown = false;
-        g_print("Click \n");
         this->ExecuteApp(event);
         //  SelectWindow(m_currentMoveIndex, event);
         return TRUE;
@@ -356,31 +402,16 @@ bool DockPanel::on_button_release_event(GdkEventButton *event)
         //  m_mouseRightClick = true;
         m_mouseRightButtonDown = false;
 
-
-
-        // Home menu
+        // Menus
         if (m_currentMoveIndex == 0) {
-
-            if (!m_HomeMenu.get_attach_widget()){
-                m_HomeMenu.attach_to_widget(*this);
-                m_HomeMenu.set_halign(Gtk::Align::ALIGN_CENTER);
-            }
             m_HomeMenu.popup(sigc::mem_fun(*this, &DockPanel::on_popup_homemenu_position), 1, event->time);
             this->m_popupMenuOn = true;
         }
-
-        // Item Menu
-        if (m_currentMoveIndex > 0) {
-            if (!m_ItemMenu.get_attach_widget()){
-                m_ItemMenu.attach_to_widget(*this);
-                m_ItemMenu.set_halign(Gtk::Align::ALIGN_CENTER);
-
-            }
-
+        else  if (m_currentMoveIndex > 0) {
             m_ItemMenu.popup(sigc::mem_fun(*this,&DockPanel::on_popup_itemmenu_position), 1, event->time);
             this->m_popupMenuOn = true;
         }
-}
+    }
 // mouse right       
 
 /*
@@ -495,6 +526,7 @@ bool DockPanel::on_scroll_event(GdkEventScroll* e)
  */
 void DockPanel::on_popup_homemenu_position(int& x, int& y, bool& push_in)
 {
+    
     DockItemPositions::get_CenterPosition(m_currentMoveIndex, x, y, m_HomeMenu.get_width(), m_HomeMenu.get_height());
 }
 
@@ -514,7 +546,7 @@ void DockPanel::ExecuteApp(GdkEventButton* event)
     }
 
     if (item->m_items.size() == 0) {
-        on_menuNew_event();
+        on_NewMenu_event();
         return;
     }
 
@@ -545,57 +577,23 @@ inline DockItem* DockPanel::get_CurrentItem()
 }
 
 
-void DockPanel::on_menuNew_event()
-{
-    DockItem* item = this->get_CurrentItem();
-    if (item == nullptr)
-        return;
-
-    if (item->m_dockitemSesssionGrpId > 0) {
-        //  createSessionWindow();
-        return;
-
-    }
-
-    // start run animation
-    //
-    //
-
-    // DockPanel::m_appRunImage = item->m_image;
-
-
-
-    // m_selectorAnimationItemIndex = m_currentMoveIndex;
-    if (!Launcher::Launch(item->m_realgroupname)) {
-
-        //   createLauncher(item);
-    }
-
-    // start the animation
-    m_AppRunImage = item->m_image;
-
-    /*
-       if (m_AppRunThreadLauncher == nullptr) {
-       Glib::RefPtr<Gdk::Pixbuf> m_image = item->m_image;
-       m_AppRunThreadLauncher = new std::thread([this, m_image]{           
-
-       AppRunAnimation(e);
-
-
-       });
-       }
-       */
-
-}
 
 bool DockPanel::get_AutohideAllow()
 {
     return this->m_popupMenuOn == false;
 }
+
+/**
+ * Force redraw. 
+ */
 void DockPanel::update()
 {
+    m_forceDraw = true;
 }
 
+/**
+ * Run at defined FRAMERATE
+ */
 bool DockPanel::on_timeoutDraw()
 {
     if (m_mouseIn || m_forceDraw || m_AppRunImage) {
@@ -911,12 +909,16 @@ void DockPanel::show_Title()
 {
 
     if (Configuration::is_autoHide() && !DockWindow::is_Visible()){
+        m_titlewindow.hide();
+        m_infowindow.hide();
         return;
     }
 
 
     DockItem* item = this->get_CurrentItem();
     if (item == nullptr || item->m_dockitemtype == DockItemType::Separator){
+        m_titlewindow.hide();
+        m_infowindow.hide();
         return;
     }
 
