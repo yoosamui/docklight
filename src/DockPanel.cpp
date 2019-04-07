@@ -94,6 +94,7 @@ int DockPanel::Init()
     dockItem->m_appname = _("Desktop");
     dockItem->m_realgroupname = _("Desktop");
     dockItem->m_dockitemtype = DockItemType::SingleDock;
+    dockItem->m_index = 0;
     this->m_appUpdater.m_dockitems.insert(this->m_appUpdater.m_dockitems.begin(), dockItem);
 
     // Start the background thread for application start animation
@@ -887,6 +888,7 @@ void DockPanel::show_Title()
 
     // title window
     if (m_titleItemOldindex != m_currentMoveIndex) {
+
         m_titleItemOldindex = m_currentMoveIndex;
         m_titleElapsedSeconds = 0;
         m_titleTimer.start();
@@ -900,7 +902,9 @@ void DockPanel::show_Title()
     }
 
     if (m_titleItemOldindex == m_currentMoveIndex) {
+
         if (m_titleElapsedSeconds > 0.3 && m_titleShow == false /* && !m_previewWindowActive*/) {
+            
             int x, y;
 
             DockItem* item = this->get_CurrentItem();
@@ -924,3 +928,4 @@ void DockPanel::show_Title()
         m_titleElapsedSeconds = m_titleTimer.elapsed();
     }
 }
+

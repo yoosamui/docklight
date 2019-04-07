@@ -20,6 +20,8 @@ DockItem::~DockItem() {
  * get the current item from the items vector
  * @return DockItem*
  */
+//piece of shit is obsolete
+/*
 DockItem* DockItem::get_Current()
 {
     if (m_items.size() == 0)
@@ -33,6 +35,7 @@ DockItem* DockItem::get_Current()
     return result;
 
 }
+*/
 
 /**
  * get the next item from the items vector
@@ -40,14 +43,16 @@ DockItem* DockItem::get_Current()
  */
 DockItem* DockItem::get_Next()
 {
+    static int index = 0;
+
     if (m_items.size() == 0)
         return nullptr;
 
-    if (m_index >= (int) m_items.size())
-        m_index = 0;
+    if (index >= (int) m_items.size())
+        index  = 0;
 
-    DockItem* result = m_items[m_index];
-    m_index++;
+    DockItem* result = m_items[index];
+    index++;
 
     return result;
 

@@ -39,8 +39,10 @@ public:
     };
     int Init();
     void update();
+    bool get_AutohideAllow()
 private:
 
+    static bool m_popupMenuOn;
     static bool m_forceDraw;    
 
     TitleWindow m_titlewindow;

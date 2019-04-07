@@ -35,7 +35,7 @@ public:
     GdkPixbuf *m_scaledPixbuf;
     bool m_imageLoadedRequired;
     bool m_isDynamic;
-    DockItem* get_Current();
+//    DockItem* get_Current();
     DockItem* get_Next();
     WnckWindow *m_window;
     std::string m_theme_iconname;

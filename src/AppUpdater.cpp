@@ -48,7 +48,7 @@ void AppUpdater::Load()
 {
     std::string filePath = this->getFilePath();
     size_t result;
-
+    int index = 1;
     FILE* f;
     f = fopen(filePath.c_str(), "rb");
     if (!f) {
@@ -77,7 +77,7 @@ void AppUpdater::Load()
         dockItem->m_dockitemtype = (DockItemType)st.dockitemtype;
         dockItem->m_width = st.width;
         dockItem->m_height = st.height;
-        dockItem->m_index = st.index;
+        dockItem->m_index = index;//st.index;
         dockItem->m_attachedIndex = st.index;
         dockItem->m_isDirty = true;
 
@@ -106,6 +106,7 @@ void AppUpdater::Load()
 
         setIconByTheme(dockItem);
         m_dockitems.push_back(std::move(dockItem));
+        index++;
     }
 
     fclose(f);
