@@ -62,15 +62,20 @@ namespace DockWindow
         }
     }
 
-    /**
-     * sets the visible flag.
-     * @param: the visible flag.
-     * @return: true if visible otherwise false.
-     */
-    bool set_Visibility(bool visible)
+    
+    void set_Visibility(bool visible)
     {
         m_visible = visible;
     };
+
+    /**
+     * Get the visibility flag.
+     * @return true if the window is visible otherwise false.
+     */
+    bool is_Visible()
+    {
+        return m_visible;
+    }
 
     /**
      * returns the window width.

@@ -129,6 +129,10 @@ int DockPanel::Init()
     
     m_MenuItemDetach.set_label(_("Detach from Dock"));
 //    m_MenuItemDetach.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_DetachFromDock_event));
+//    // Delete the window when it is hidden.
+    
+    //m_ItemMenu.signal_hide().connect(sigc::bind<Gtk::Window*>(sigc::mem_fun(*this, &DockPanel::on_MenuHide), appwindow));
+   // m_ItemMenu.signal_hide().connect(sigc::mem_fun(*this, &DockPanel::on_HideMenu_event));
     m_ItemMenu.append(m_MenuItemDetach);
     
      
@@ -137,14 +141,29 @@ int DockPanel::Init()
     m_ItemMenu.append(m_MenuItemAttach);
      
     m_MenuItemNewApp.set_label(_("Open new"));
-    m_MenuItemNewApp.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_menuNew_event));
     m_ItemMenu.append(m_separatorMenuItem0);
     m_ItemMenu.append(m_MenuItemNewApp);
+
+    m_MenuItemNewApp.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_menuNew_event));
+    m_ItemMenu.signal_hide().connect(sigc::mem_fun(*this, &DockPanel::on_HideMenu_event));
 
     m_ItemMenu.show_all();
     m_ItemMenu.accelerate(*this);
     return 0;
 }
+
+void DockPanel::on_HideMenu_event()
+{
+    this->m_popupMenuOn = false;    
+}
+/*
+void DockPanel::on_MenuHide(Gtk::Window* window)
+{
+//  delete window;
+}
+*/
+
+
 /*
  * Class destructor
  */
@@ -347,7 +366,7 @@ bool DockPanel::on_button_release_event(GdkEventButton *event)
                 m_HomeMenu.set_halign(Gtk::Align::ALIGN_CENTER);
             }
             m_HomeMenu.popup(sigc::mem_fun(*this, &DockPanel::on_popup_homemenu_position), 1, event->time);
-
+            this->m_popupMenuOn = true;
         }
 
         // Item Menu
@@ -359,6 +378,7 @@ bool DockPanel::on_button_release_event(GdkEventButton *event)
             }
 
             m_ItemMenu.popup(sigc::mem_fun(*this,&DockPanel::on_popup_itemmenu_position), 1, event->time);
+            this->m_popupMenuOn = true;
         }
 }
 // mouse right       
@@ -568,6 +588,10 @@ void DockPanel::on_menuNew_event()
 
 }
 
+bool DockPanel::get_AutohideAllow()
+{
+    return this->m_popupMenuOn == false;
+}
 void DockPanel::update()
 {
 }
@@ -700,6 +724,9 @@ bool DockPanel::on_enter_notify_event(GdkEventCrossing * crossing_event)
 {
     //  g_print("Mp_IN\n");
     m_mouseIn = true;
+    m_HomeMenu.hide();
+    m_ItemMenu.hide();
+//    Gtk::Menu::signal_hide(
     return true;
 }
 
@@ -882,7 +909,14 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
  */
 void DockPanel::show_Title()
 {
-    if (m_currentMoveIndex < 0 || m_currentMoveIndex > this->m_appUpdater.m_dockitems.size()) {
+
+    if (Configuration::is_autoHide() && !DockWindow::is_Visible()){
+        return;
+    }
+
+
+    DockItem* item = this->get_CurrentItem();
+    if (item == nullptr || item->m_dockitemtype == DockItemType::Separator){
         return;
     }
 
@@ -907,9 +941,6 @@ void DockPanel::show_Title()
             
             int x, y;
 
-            DockItem* item = this->get_CurrentItem();
-            if (item == nullptr || item->m_dockitemtype == DockItemType::Separator)
-                return;
             
             std::string title = item->get_Title();
             if (item->m_items.size() > 1) {

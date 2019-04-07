@@ -33,7 +33,7 @@
 class AppWindow;
 
 namespace DockWindow {
-    bool set_Visibility(bool visible);
+    void set_Visibility(bool visible);
     int init(Gtk::Window* window);
     int get_DockWindowWidth();
     int get_DockWindowHeight();
@@ -46,6 +46,7 @@ namespace DockWindow {
     int reSize();
     void hide();
     bool is_Horizontal();
+    bool is_Visible();
     namespace Monitor
     {
         GdkRectangle get_geometry();

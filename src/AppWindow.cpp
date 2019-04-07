@@ -167,7 +167,7 @@ bool AppWindow::autohideTimer()
         m_animate = false;
         m_visible = false;
     }
-    if (!m_animate && m_visible && !m_mouseIn && abs(m_Timer.elapsed()) > 1.5f) {
+    if (this->m_dockpanel.get_AutohideAllow() && !m_animate && m_visible && !m_mouseIn && abs(m_Timer.elapsed()) > 1.5f) {
         m_Timer.reset();
         m_Timer.stop();
         m_timerStoped = true;

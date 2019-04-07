@@ -39,10 +39,10 @@ public:
     };
     int Init();
     void update();
-    bool get_AutohideAllow()
+    bool get_AutohideAllow();
 private:
 
-    static bool m_popupMenuOn;
+    bool m_popupMenuOn = false;
     static bool m_forceDraw;    
 
     TitleWindow m_titlewindow;
@@ -140,7 +140,8 @@ private:
 
     Gtk::SeparatorMenuItem m_separatorMenuItem0;
 
-};
+void on_HideMenu_event();
 
+};
 #endif	/* DOCKPANEL_H */
 
