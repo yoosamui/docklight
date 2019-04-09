@@ -56,11 +56,18 @@ public:
     std::string get_DesktopFileName();
     gboolean isMovementDetected(GdkPixbuf *pixbuf);
     int m_dockitemSesssionGrpId = 0;
-    int m_width = 0;
-    int m_height = 0;
+    guint get_Width();
+    guint get_Height();
+    guint get_InmutableWidth();
+    guint get_InmutableHeight();
+    //void set_Width(guint value);
+    //void set_Height(guint value);
+
 private:
     bool m_pixbufPreviousPass;
     
+    int m_width = 0;
+    int m_height = 0;
 
 };
 

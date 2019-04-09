@@ -118,6 +118,7 @@ namespace Configuration {
     unsigned int get_topMargin();
     unsigned int get_bottomMargin();
     unsigned int get_separatorMargin();
+    unsigned int get_inmutableSeparatorMargin();
     unsigned int get_itemSize();
     bool is_autoHide();
     void set_autoHide(bool value);
@@ -132,6 +133,7 @@ namespace Configuration {
     unsigned int get_WindowDockMonitorMargin_Left();
     unsigned int get_WindowDockMonitorMargin_Bottom();
     void set_dockWindowLocation(panel_locationType location);
+    //void set_SeparatorMargin(unsigned int  margin);
     
 }
 

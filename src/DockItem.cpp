@@ -7,6 +7,8 @@
 
 #include "DockItem.h"
 #include "Configuration.h"
+#include "DockPanel.h"
+
 DockItem::DockItem() {
     
     this->m_width = Configuration::get_CellWidth();
@@ -26,6 +28,38 @@ DockItem::~DockItem()
 
     g_print("DockItem destroy.\n");
 }
+
+guint DockItem::get_Width()
+{
+    return this->m_width - DockPanel::get_LimitDecrementX();
+}
+guint DockItem::get_Height()
+{
+    return this->m_height - DockPanel::get_LimitDecrementY();
+}
+ guint DockItem::get_InmutableWidth()
+ {
+    return this->m_width;
+ }
+
+guint DockItem::get_InmutableHeight()
+{
+    return this->m_height;
+}
+
+/*    
+void DockItem::set_Width(guint value)
+{
+   this->m_width = value;
+}
+
+void DockItem::set_Height(guint value)
+{
+   this->m_height = value;
+
+}
+*/
+
 
 /**
  * get the current item from the items vector

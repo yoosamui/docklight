@@ -36,8 +36,18 @@ public:
         return m_currentMoveIndex;
     };
 
+    static guint get_LimitDecrementX(){
+        return m_limitDecrementX;
+    }
+
+    static guint get_LimitDecrementY(){
+        return m_limitDecrementY;
+    }
 private:
-    
+
+    static guint m_limitDecrementX;
+    static guint m_limitDecrementY;
+
     Gtk::Window* m_AppWindow = nullptr;
     bool m_popupMenuOn = false;
     static bool m_forceDraw;    

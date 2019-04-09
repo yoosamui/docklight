@@ -87,8 +87,8 @@ void AppUpdater::Load()
         dockItem->m_instancename = st.instancename;
         dockItem->m_theme_iconname = st.themeiconname;
         dockItem->m_dockitemtype = (DockItemType)st.dockitemtype;
-        dockItem->m_width = st.width;
-        dockItem->m_height = st.height;
+       // dockItem->set_Width(st.width);
+      //  dockItem->set_Height(st.height);
         dockItem->m_index = index;//st.index;
         dockItem->m_attachedIndex = st.index;
         dockItem->m_isDirty = true;
@@ -183,8 +183,8 @@ void AppUpdater::Save()
         item->m_index = index;
         st.attachedIndex = item->m_attachedIndex;
         st.dockitemtype = (int)item->m_dockitemtype;
-        st.width = item->m_width;
-        st.height = item->m_height;
+       // st.width = item->get_Width();
+       // st.height = item->get_Height();
 
         st.index = (int)item->m_index;
 
@@ -200,9 +200,26 @@ void AppUpdater::Save()
 }
 
 /**
+ * Attacht the item by the given index.
+ */
+bool AppUpdater::AttachItem(const int index)
+{
+    if (index < 0 || index > this->m_dockitems.size()){
+        return false;
+    }
+
+    DockItem* item = m_dockitems[index];
+    item->m_attachedIndex = index;
+    item->m_isAttached = true;
+
+    this->Save();
+
+    return true;
+
+}
+/**
  * Remove an Item form vector by the give index.
  */
-
 bool AppUpdater::RemoveItem(const int index)
 {
     if (index < 0 || index > this->m_dockitems.size()){
@@ -348,6 +365,7 @@ void AppUpdater::Update(WnckWindow* window, Window_action actiontype)
         dockItem->m_xid = wnck_window_get_xid(window);
         dockItem->m_image = appIcon;
         dockItem->m_theme_iconname = theme_iconname;
+        dockItem->m_index = m_dockitems.size() + 1;
 
         // Create a child items
         DockItem* childItem = new DockItem();

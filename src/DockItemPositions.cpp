@@ -1,5 +1,4 @@
-/* 
- * File:   DockItemPositions.cpp
+/* File:   DockItemPositions.cpp
  * Author: yoo
  * 
  * Created on March 24, 2019, 12:59 PM
@@ -11,9 +10,46 @@
 
 namespace DockItemPositions
 {
+    
     /**
-     * Compute the width of all items.
-     * The result width will resize the dockwindow width.
+     * Compute the original width of all items.
+     * @return The width of all items.
+     */
+    guint get_inmutableItemsWidth()
+    {
+        guint separatorMargin = Configuration::get_inmutableSeparatorMargin();
+        guint size = DockWindow::get_dockWindowStartEndMargin();
+
+        for (auto item : AppUpdater::m_dockitems) {
+            size += item->get_InmutableWidth() + separatorMargin;
+        }
+
+        return size - separatorMargin;
+    }
+
+    /**
+     * Compute the original height of all items.
+     * @return The height of all items.
+     */
+    guint get_inmutableItemsHeight()
+    {
+        guint separatorMargin = Configuration::get_inmutableSeparatorMargin();
+        guint size = DockWindow::get_dockWindowStartEndMargin();
+
+        for (auto item : AppUpdater::m_dockitems) {
+            if (item->m_dockitemtype == DockItemType::Separator){
+                size += item->get_InmutableWidth() + separatorMargin;
+                continue;
+            }
+
+            size += item->get_InmutableHeight() + separatorMargin;
+        }
+
+        return size - separatorMargin;
+    }
+    
+    /**
+     * Compute the width of all items. The result width will resize the dockwindow width.
      * referenced by DockWindow.
      * @return The width of the dockwindow.
      */
@@ -23,15 +59,14 @@ namespace DockItemPositions
         guint size = DockWindow::get_dockWindowStartEndMargin();
 
         for (auto item : AppUpdater::m_dockitems) {
-            size += item->m_width + Configuration::get_separatorMargin();
+            size += item->get_Width() + separatorMargin;
         }
 
         return size - separatorMargin;
     }
 
     /**
-     * Compute the height of all items
-     * The result width will resize the dockwindow height.
+     * Compute the height of all items. The result width will resize the dockwindow height.
      * referenced by DockWindow.
      * @return the height of the dockwindow.
      */
@@ -42,11 +77,11 @@ namespace DockItemPositions
 
         for (auto item : AppUpdater::m_dockitems) {
             if (item->m_dockitemtype == DockItemType::Separator){
-                size += item->m_width + separatorMargin;
+                size += item->get_Width() + separatorMargin;
                 continue;
             }
 
-            size += item->m_height + separatorMargin;
+            size += item->get_Height() + separatorMargin;
         }
 
         return size - separatorMargin;
@@ -78,16 +113,16 @@ namespace DockItemPositions
             if (Configuration::get_dockWindowLocation() == panel_locationType::LEFT ||
                     Configuration::get_dockWindowLocation() == panel_locationType::RIGHT) {
                 if (item->m_dockitemtype == DockItemType::Separator) {
-                    size += item->m_width;
+                    size += item->get_Width();
                     count++;
                     continue;
                 }
-                size += item->m_height;
+                size += item->get_Height();
             }
             else {
 
-                size += item->m_width;
-                g_print("--------%d---%d\n", count, item->m_width);
+                size += item->get_Width();
+                g_print("--------%d---%d\n", count, item->get_Width());
             }
 
             count++;
@@ -100,7 +135,7 @@ namespace DockItemPositions
     {
         unsigned int size = 0;
         for (DockItem* item:AppUpdater::m_dockitems) {
-            size += item->m_width;
+            size += item->get_Width();
         }
 
         return size + (Configuration::get_separatorMargin() * AppUpdater::m_dockitems.size());
@@ -132,11 +167,11 @@ namespace DockItemPositions
 
             for (DockItem* citem : AppUpdater::m_dockitems){
                 if( citem->m_index == item->m_index){
-                    x -= (width / 2) - citem->m_width  / 2;
+                    x -= (width / 2) - citem->get_Width()  / 2;
                     return true;
                 }
 
-                x += citem->m_width + Configuration::get_separatorMargin();
+                x += citem->get_Width() + Configuration::get_separatorMargin();
             }
         }
         else{
@@ -151,15 +186,15 @@ namespace DockItemPositions
             for (DockItem* citem : AppUpdater::m_dockitems){
                 if( citem->m_index == item->m_index){
                     g_print("index %d/%d\n", item->m_index, index);
-                    y -= (height / 2) - citem->m_height  / 2;
+                    y -= (height / 2) - citem->get_Height()  / 2;
                     return true;
                 }
                 
                 if (citem->m_dockitemtype == DockItemType::Separator){
-                    y += citem->m_width + Configuration::get_separatorMargin();
+                    y += citem->get_Width() + Configuration::get_separatorMargin();
                 }
                 else {
-                    y += citem->m_height + Configuration::get_separatorMargin();
+                    y += citem->get_Height() + Configuration::get_separatorMargin();
                 }
             }
         }
