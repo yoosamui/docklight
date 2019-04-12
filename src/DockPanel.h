@@ -36,17 +36,17 @@ public:
         return m_currentMoveIndex;
     };
 
-    static guint get_LimitDecrementX(){
-        return m_limitDecrementX;
+    static guint get_WidthDecrement(){
+        return m_widthDecrement;
     }
 
-    static guint get_LimitDecrementY(){
-        return m_limitDecrementY;
+    static guint get_HeightDecrement(){
+        return m_heightDecrement;
     }
 private:
 
-    static guint m_limitDecrementX;
-    static guint m_limitDecrementY;
+    static guint m_widthDecrement;
+    static guint m_heightDecrement;
 
     Gtk::Window* m_AppWindow = nullptr;
     bool m_popupMenuOn = false;
@@ -93,8 +93,7 @@ private:
     //Override default signal handler:
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
-    void RoundedRectangle(const Cairo::RefPtr<Cairo::Context>& cr,
-            double x, double y, double width, double height, double radius);
+    void RoundedRectangle(const Cairo::RefPtr<Cairo::Context>& cr, double x, double y, double width, double height, double radius);
 
     virtual bool on_enter_notify_event(GdkEventCrossing* crossing_event);
     virtual bool on_leave_notify_event(GdkEventCrossing* crossing_event);

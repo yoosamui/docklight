@@ -16,6 +16,8 @@ namespace DockItemPositions
     guint get_dockItemsHeight();
     guint get_inmutableItemsWidth();
     guint get_inmutableItemsHeight();
+    guint get_ResizeHeightDecrement();
+    guint get_ResizeWidthDecrement();
     bool get_CenterPosition(const int index, int& x, int& y, const guint width, const guint height);
 }
 

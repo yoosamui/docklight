@@ -31,11 +31,11 @@ DockItem::~DockItem()
 
 guint DockItem::get_Width()
 {
-    return this->m_width - DockPanel::get_LimitDecrementX();
+    return this->m_width - DockPanel::get_WidthDecrement();
 }
 guint DockItem::get_Height()
 {
-    return this->m_height - DockPanel::get_LimitDecrementY();
+    return this->m_height - DockPanel::get_HeightDecrement();
 }
  guint DockItem::get_InmutableWidth()
  {

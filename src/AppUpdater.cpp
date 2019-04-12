@@ -8,15 +8,15 @@
 #include "AppUpdater.h"
 #include "DockWindow.h"
 #include "Launcher.h"
-
+#include "DockItemPositions.h" 
 #include <fstream>
 #include <iostream>
 
 // static members
 std::vector<DockItem*> AppUpdater::m_dockitems;
-
 AppUpdater::AppUpdater()
 {
+    // load attachments
     this->Load();
 
     // Gets the default WnckScreen on the default display.
@@ -114,6 +114,10 @@ void AppUpdater::Load()
                 g_critical("SessionWindow::init: Glib::FileError\n");
             }
 
+        }
+
+        if (get_IsLimitsReached()){
+            break;
         }
 
         setIconByTheme(dockItem);
@@ -256,6 +260,7 @@ std::string AppUpdater::getFilePath()
  */
 void AppUpdater::on_window_opened(WnckScreen *screen, WnckWindow* window, gpointer data)
 {
+
     Update(window, Window_action::OPEN);
 }
 
@@ -348,6 +353,10 @@ void AppUpdater::Update(WnckWindow* window, Window_action actiontype)
             }
         }
 
+        if (get_IsLimitsReached()){
+            return;
+        }
+
         Glib::RefPtr<Gdk::Pixbuf> appIcon = NULLPB;
 
         std::string theme_iconname = "";
@@ -437,6 +446,32 @@ void AppUpdater::Update(WnckWindow* window, Window_action actiontype)
     }
 
 
+}
+
+/**
+ *  We check the limits here. We avoid that incomming items are out of range.
+ *  If the items width/height are to small this function will return true.
+ *  Otherwise false.
+ */
+bool AppUpdater::get_IsLimitsReached()
+{
+    guint decrement = 0;
+    if (DockWindow::is_Horizontal()){
+
+        decrement = DockItemPositions::get_ResizeWidthDecrement();
+        if (decrement > 0 && m_dockitems[0]->get_InmutableWidth() - decrement  <= 26){
+            return true;
+        }
+    }
+    else {
+
+        decrement = DockItemPositions::get_ResizeHeightDecrement();
+        if (decrement > 0 && m_dockitems[0]->get_InmutableHeight() - decrement  <= 26){
+            return true;
+        }
+    }
+
+    return false;
 }
 
 void AppUpdater::setIconByTheme(DockItem *item)

@@ -351,9 +351,9 @@ bool AppWindow::fullScreenTimer()
 
         m_isfullscreenSet = false;
         if (!Configuration::is_autoHide()) {
-            DockWindow::Monitor::updateStrut();
             Configuration::set_allowDraw(true);
-            DockWindow::reSize();
+            DockWindow::update(true);//reSize();
+            DockWindow::Monitor::updateStrut();
             this->m_visible = true;
         }
 

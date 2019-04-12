@@ -47,14 +47,13 @@ public:
     std::string getFilePath();
     bool RemoveItem(const int index);
     bool AttachItem(const int index);
-protected:
+private:
     static void Update(WnckWindow* window, Window_action actiontype);
     static void on_window_opened(WnckScreen* screen, WnckWindow* window, gpointer data);
     static void on_window_closed(WnckScreen* screen, WnckWindow* window, gpointer data);
     static void on_theme_changed(GtkSettings *settings, GParamSpec *pspec, GtkIconTheme *icon_theme);
-private:
     static void setIconByTheme(DockItem *item);
-
+    static bool get_IsLimitsReached();
 };
 
 #endif	/* APPUPDATER_H */

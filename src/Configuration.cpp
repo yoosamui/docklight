@@ -14,7 +14,7 @@ namespace Configuration
     bool m_allowDraw = true;
     guint m_separatorMargin = 20;
 
-    panel_locationType m_locatiom = panel_locationType::RIGHT; 
+    panel_locationType m_locatiom = panel_locationType::BOTTOM; 
     Horizontal_alignment_type m_HorizontalAlignment =  Horizontal_alignment_type::CENTER;
     
     Horizontal_alignment_type get_HorizontalAlignment()
@@ -116,8 +116,8 @@ namespace Configuration
     unsigned int get_separatorMargin()
     {
         int decrement = DockWindow::is_Horizontal() ?  
-            DockPanel::get_LimitDecrementX() :
-            DockPanel::get_LimitDecrementY();
+            DockPanel::get_WidthDecrement() :
+            DockPanel::get_HeightDecrement();
         
         if( m_separatorMargin - decrement < 1){
             return 1;

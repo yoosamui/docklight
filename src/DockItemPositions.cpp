@@ -10,7 +10,27 @@
 
 namespace DockItemPositions
 {
-    
+   
+
+    guint get_ResizeHeightDecrement()
+    {
+        int diff = DockWindow::Monitor::get_geometry().height - get_inmutableItemsHeight();
+        if (diff < 0 ){
+            return (guint) abs(diff) / AppUpdater::m_dockitems.size();
+        }
+
+        return 0;
+    }
+
+    guint get_ResizeWidthDecrement()
+    {
+        int diff = DockWindow::Monitor::get_geometry().width - get_inmutableItemsWidth();
+        if (diff < 0 ){
+            return (guint) abs(diff) / AppUpdater::m_dockitems.size();
+        }
+
+        return 0;
+    }
     /**
      * Compute the original width of all items.
      * @return The width of all items.

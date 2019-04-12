@@ -19,15 +19,15 @@
 #include <iostream>
 #include <thread>
 
-#include <glibmm/i18n.h>
+//#include <glibmm/i18n.h>
 
 // static members
 int DockPanel::m_currentMoveIndex;
 bool DockPanel::m_forceDraw;    
 Glib::RefPtr<Gdk::Pixbuf> DockPanel::m_AppRunImage;
 bool DockPanel::m_AppThreadRunning;
-guint DockPanel::m_limitDecrementX;
-guint DockPanel::m_limitDecrementY;
+guint DockPanel::m_widthDecrement;
+guint DockPanel::m_heightDecrement;
 
 /*
  * This class is the  main dock renderer.
@@ -49,8 +49,8 @@ DockPanel::DockPanel(): m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
     DockPanel::m_currentMoveIndex = -1;
     DockPanel::m_forceDraw = false;
     DockPanel::m_AppThreadRunning = true;
-    DockPanel::m_limitDecrementX = 0;
-    DockPanel::m_limitDecrementY = 0;
+    DockPanel::m_widthDecrement = 0;
+    DockPanel::m_heightDecrement = 0;
 
     // Gets the default WnckScreen on the default display.
     WnckScreen *wnckscreen = wnck_screen_get_default();
@@ -841,6 +841,9 @@ bool m_isResized = false;
  */
 void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
 {
+    static guint widthDecrement = 0;
+    static guint heightDecrement = 0; 
+    
     int idx = 0;
     int center = 0;
     int iconsizeWidth = 0;
@@ -853,56 +856,32 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
 
     int itemsCount = this->m_appUpdater.m_dockitems.size();
 
-
-    this->m_limitDecrementX = 0;
-    this->m_limitDecrementY = 0;
+    this->m_widthDecrement = 0;
+    this->m_heightDecrement = 0;
 
     if (DockWindow::is_Horizontal()){
-        int diff = (DockWindow::Monitor::get_geometry().width/2) - DockItemPositions::get_inmutableItemsWidth();
-  //  g_print("diff %d \n", diff);
-        if (diff < -490) {
-    //        diff = -490;
-            g_print("min.........\n");
-            return;
-            }
 
-            if (diff < 0 ){
-                this->m_limitDecrementX = (int) abs(diff) / this->m_appUpdater.m_dockitems.size();
-                DockWindow::update();
-                m_isResized = true;
-            }
-            else if (m_isResized){
-                DockWindow::update();
-                m_isResized = false;
-            }
-        
+        this->m_widthDecrement = DockItemPositions::get_ResizeWidthDecrement();
+        if (widthDecrement != this->m_widthDecrement){
+
+            widthDecrement = this->m_widthDecrement;
+            DockWindow::update();
+        }
+
     }else{
-    
-        int diff = (DockWindow::Monitor::get_geometry().height/2) - DockItemPositions::get_inmutableItemsHeight();
-        if (diff < -240) {
-    //        diff = -490;
-            g_print("min.........\n");
-            itemsCount--;
-            //return;
-            }
-        if (diff < 0 ){
-            this->m_limitDecrementY = (int) abs(diff) / this->m_appUpdater.m_dockitems.size();
-            int factor = (int) abs(diff) / this->m_appUpdater.m_dockitems.size();
-    g_print("diff %d factor %d\n", diff,  factor);
+
+        this->m_heightDecrement = DockItemPositions::get_ResizeHeightDecrement();
+        if (heightDecrement != this->m_heightDecrement){
+
+            heightDecrement = this->m_heightDecrement;
             DockWindow::update();
-            m_isResized = true;
         }
-        else if (m_isResized){
-            DockWindow::update();
-            m_isResized = false;
-        }
-        
     }
 
+    // Draw all items with cairo
+    for (idx = 0; idx < itemsCount; idx++) {
 
-    for (int i = 0; i < itemsCount; i++) {
-
-        DockItem* item = this->m_appUpdater.m_dockitems[i];
+        DockItem* item = this->m_appUpdater.m_dockitems[idx];
         width = item->get_Width();
         height = item->get_Height();
 
@@ -954,80 +933,7 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
             RoundedRectangle(cr, x, y, width, height, 3);
             cr->stroke();
         }
-
-        idx++;
     }
-/*
-    //Monitor x 1920 
-//    g_print("max %d 1920-%d\n", x, 1920-x );
-    int diffX = (DockWindow::Monitor::get_geometry().width/2) - (x + Configuration::get_CellWidth()) ;// -  ;//- x + Configuration::get_CellWidth();
-    int factor = (int) abs(diffX) / idx ;
-    g_print("Calculate : .X; %d...vor.....diff %d....currentlimit ..%d factor %d [%d]\n",x + Configuration::get_CellWidth(), diffX, m_limitDecrementX, factor, m_previewCellSizeX);
-    if( diffX < 0 )
-    {
-        m_limitDecrementX = factor;
-        DockWindow::update();
-        g_print("SET\n");
-       return;
-    }
-return;
-
-
-
-
-    if( diffX > 0 ){
-
-         m_previewCellSizeX = x;//this->m_appUpdater.m_dockitems[0]->get_Width();
-        if( this->m_appUpdater.m_dockitems[0]->get_Width() == Configuration::get_CellWidth()){
-            m_limitDecrementX = 0;
-        DockWindow::update();
-            g_print("..............Reset..%d\n",diffX);
-            return;  
-        }
-    }
-    else
-    {
-            
-
-        m_limitDecrementX = factor;
-        DockWindow::update();
-
-         m_previewCellSizeX = x;//this->m_appUpdater.m_dockitems[0]->get_Width();
-        g_print("SET .X; %d...vor.....diff %d....currentlimit ..%d factor %d \n",x + Configuration::get_CellWidth(), diffX, m_limitDecrementX, factor);
-    }
-    
-  */  
-    
-    
-    
-    
-   /* 
-    if( diffX ==  9999999 )
-    {
-        //g_print("max %d 1920-%d diff %d\n", x, 1920-x, factor );
-        g_print("CHANGE FACTOR diffx %d factor = %d \n",diffX, factor);
-        if( factor >=0){
-        m_limitDecrementX = factor;
-        DockWindow::update();
-        }
-    //
-
-    }
-    */
-
-
-    /*
-    else if(diffX>0)
-    {
-       // g_print("..............Reset..%d\n",diffX);
-       int factor = abs((int) ((abs(diffX)) / idx));
-        //g_print("max %d 1920-%d diff %d\n", x, 1920-x, factor );
-        g_print("................diff %d factor = %d \n",diffX, factor);
-     //   m_limitDecrementX = factor;
-        m_limitDecrementX = 0;
-        DockWindow::update();
-        }
-    */
 }
 
 /**
