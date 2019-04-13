@@ -9,12 +9,17 @@
 #include "Configuration.h"
 #include "DockPanel.h"
 
-DockItem::DockItem() {
-    
-    this->m_width = Configuration::get_CellWidth();
-    this->m_height = Configuration::get_CellHeight();
+DockItem::DockItem():
+    DockItem(Configuration::get_CellWidth(), Configuration::get_CellHeight())
+{
+
 }
 
+DockItem::DockItem(const guint width, const guint height)
+{
+    this->m_width = width == 0 ? Configuration::get_CellWidth() : width;
+    this->m_height = height == 0 ? Configuration::get_CellHeight() : height;
+}
 /**
  * Destructor
  */
@@ -37,10 +42,10 @@ guint DockItem::get_Height()
 {
     return this->m_height - DockPanel::get_HeightDecrement();
 }
- guint DockItem::get_InmutableWidth()
- {
+guint DockItem::get_InmutableWidth()
+{
     return this->m_width;
- }
+}
 
 guint DockItem::get_InmutableHeight()
 {
@@ -48,17 +53,17 @@ guint DockItem::get_InmutableHeight()
 }
 
 /*    
-void DockItem::set_Width(guint value)
-{
-   this->m_width = value;
-}
+      void DockItem::set_Width(guint value)
+      {
+      this->m_width = value;
+      }
 
-void DockItem::set_Height(guint value)
-{
-   this->m_height = value;
+      void DockItem::set_Height(guint value)
+      {
+      this->m_height = value;
 
-}
-*/
+      }
+      */
 
 
 /**
@@ -67,20 +72,20 @@ void DockItem::set_Height(guint value)
  */
 //piece of shit is obsolete
 /*
-DockItem* DockItem::get_Current()
-{
-    if (m_items.size() == 0)
-        return nullptr;
+   DockItem* DockItem::get_Current()
+   {
+   if (m_items.size() == 0)
+   return nullptr;
 
-    if (m_index >= (int) m_items.size())
-        m_index = 0;
+   if (m_index >= (int) m_items.size())
+   m_index = 0;
 
-    DockItem* result = m_items[m_index];
+   DockItem* result = m_items[m_index];
 
-    return result;
+   return result;
 
-}
-*/
+   }
+   */
 
 /**
  * get the next item from the items vector
@@ -121,7 +126,7 @@ std::string DockItem::get_GroupName()
 
 std::string DockItem::get_DesktopFileName()
 {
-  return get_GroupName() + ".desktop";
+    return get_GroupName() + ".desktop";
 }
 
 

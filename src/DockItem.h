@@ -27,7 +27,7 @@ typedef enum DockItem_t {
 class DockItem {
 public:
     DockItem();
-    DockItem(const DockItem& orig);
+    DockItem(const guint, const guint height);
     virtual ~DockItem();
     DockItemType m_dockitemtype = DockItemType::SingleDock;
     Glib::RefPtr<Gdk::Pixbuf> m_image = NULLPB;
@@ -46,7 +46,6 @@ public:
     std::vector<DockItem*> m_items;
     int m_xid;
     int m_index = 0;
-    int m_attachedIndex = 0;
     bool m_isAttached = false;
     bool m_isDirty = false;
     bool visible = true;
@@ -66,8 +65,8 @@ public:
 private:
     bool m_pixbufPreviousPass;
     
-    int m_width = 0;
-    int m_height = 0;
+    guint m_width = 0;
+    guint m_height = 0;
 
 };
 

@@ -12,7 +12,7 @@ namespace Configuration
 {
     bool m_autohide = false;
     bool m_allowDraw = true;
-    guint m_separatorMargin = 20;
+    guint m_separatorMargin = 10;
 
     panel_locationType m_locatiom = panel_locationType::BOTTOM; 
     Horizontal_alignment_type m_HorizontalAlignment =  Horizontal_alignment_type::CENTER;
@@ -118,7 +118,7 @@ namespace Configuration
         int decrement = DockWindow::is_Horizontal() ?  
             DockPanel::get_WidthDecrement() :
             DockPanel::get_HeightDecrement();
-        
+
         if( m_separatorMargin - decrement < 1){
             return 1;
         }

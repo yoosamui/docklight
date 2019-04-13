@@ -31,10 +31,8 @@
 #include <chrono>
 #include <thread>
 
-
 bool AppWindow::m_isfullscreenSet;
 bool AppWindow::m_isfullscreen;
-//DockPanel AppWindow::m_dockpanel;
 Screen AppWindow::m_screen;
 
 static const gchar* type_name(WnckWindowType type)

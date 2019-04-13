@@ -14,6 +14,10 @@ namespace DockItemPositions
 
     guint get_ResizeHeightDecrement()
     {
+        if (DockWindow::get_DockWindowHeight() + Configuration::get_CellHeight() <  DockWindow::Monitor::get_geometry().height ){
+            return 0;
+        }
+
         int diff = DockWindow::Monitor::get_geometry().height - get_inmutableItemsHeight();
         if (diff < 0 ){
             return (guint) abs(diff) / AppUpdater::m_dockitems.size();
@@ -24,6 +28,10 @@ namespace DockItemPositions
 
     guint get_ResizeWidthDecrement()
     {
+        if (DockWindow::get_DockWindowWidth() + Configuration::get_CellWidth() <  DockWindow::Monitor::get_geometry().width ){
+            return 0;
+        }
+
         int diff = DockWindow::Monitor::get_geometry().width - get_inmutableItemsWidth();
         if (diff < 0 ){
             return (guint) abs(diff) / AppUpdater::m_dockitems.size();

@@ -22,19 +22,15 @@ AppUpdater::AppUpdater()
     // Gets the default WnckScreen on the default display.
     WnckScreen *wnckscreen = wnck_screen_get_default();
 
-    g_signal_connect(G_OBJECT(wnckscreen), "window-opened",
-                     G_CALLBACK(AppUpdater::on_window_opened), NULL);
-
-    g_signal_connect(wnckscreen, "window_closed",
-                     G_CALLBACK(AppUpdater::on_window_closed), NULL);
+    g_signal_connect(G_OBJECT(wnckscreen), "window-opened", G_CALLBACK(AppUpdater::on_window_opened), NULL);
+    g_signal_connect(wnckscreen, "window_closed", G_CALLBACK(AppUpdater::on_window_closed), NULL);
 
 
     // signal for icon themes changes
     GdkScreen *screen = gdk_screen_get_default();
     auto icon_theme = g_object_get_data(G_OBJECT(screen), "gtk-icon-theme");
     auto settings = gtk_settings_get_for_screen(screen);
-    g_signal_connect(settings, "notify::gtk-icon-theme-name",
-                     G_CALLBACK(AppUpdater::on_theme_changed), icon_theme);
+    g_signal_connect(settings, "notify::gtk-icon-theme-name", G_CALLBACK(AppUpdater::on_theme_changed), icon_theme);
 
 
 }
@@ -60,16 +56,15 @@ void AppUpdater::Load()
 {
     std::string filePath = this->getFilePath();
     size_t result;
-    int index = 1;
     FILE* f;
+    struct attachments_data st;
+    
     f = fopen(filePath.c_str(), "rb");
     if (!f) {
         g_critical("Load: can't open file.");
         return;
     }
-
-    struct attachments_data st;
-
+    int index = 1;
     while (1) {
         result = fread(&st, sizeof (st), 1, f);
 
@@ -79,7 +74,7 @@ void AppUpdater::Load()
         if (result == 0)
             g_critical("Load Error reading file fread\n");
 
-        DockItem* dockItem = new DockItem();
+        DockItem* dockItem = new DockItem(st.width, st.height);
         dockItem->m_isAttached = true;
         dockItem->m_appname = st.appname;
         dockItem->m_titlename = st.titlename;
@@ -87,18 +82,15 @@ void AppUpdater::Load()
         dockItem->m_instancename = st.instancename;
         dockItem->m_theme_iconname = st.themeiconname;
         dockItem->m_dockitemtype = (DockItemType)st.dockitemtype;
-       // dockItem->set_Width(st.width);
-      //  dockItem->set_Height(st.height);
-        dockItem->m_index = index;//st.index;
-        dockItem->m_attachedIndex = st.index;
         dockItem->m_isDirty = true;
-
+        
+        dockItem->m_index  = index;
 
         /*
-       std::string theme_iconname ="";
-       dockItem->m_image = IconLoader::GetIconByAppName(
-               dockItem->m_instancename.c_str(),theme_iconname);
-         */
+           std::string theme_iconname ="";
+           dockItem->m_image = IconLoader::GetIconByAppName(
+           dockItem->m_instancename.c_str(),theme_iconname);
+           */
 
         if (st.pixbuff) {
             try {
@@ -116,20 +108,20 @@ void AppUpdater::Load()
 
         }
 
-        if (get_IsLimitsReached()){
-            break;
-        }
 
         setIconByTheme(dockItem);
         m_dockitems.push_back(std::move(dockItem));
         index++;
+        if (get_IsLimitsReached()){
+            break;
+        }
     }
 
     fclose(f);
-
 }
 
 /**
+ *
  * Save Attachments
  */
 void AppUpdater::Save()
@@ -145,16 +137,13 @@ void AppUpdater::Save()
 
     gchar* iconBuffer;
     gsize buffer_size;
+    guint idx;
     struct attachments_data st;
 
-    int index = 0;
-    for (DockItem *item:m_dockitems) {
-
-        if (index == 0) {
-            index++;
-            continue;
-        }
-
+    for (idx = 1; idx < this->m_dockitems.size(); idx++) {
+        
+        DockItem* item = this->m_dockitems[idx];
+        
         if (!item->m_isAttached) {
             continue;
         }
@@ -184,25 +173,33 @@ void AppUpdater::Save()
         strncpy(st.instancename, item->m_instancename.c_str(), DEF_FIELD_MAX);
         strncpy(st.themeiconname, item->m_theme_iconname.c_str(), DEF_FIELD_MAX);
 
-        item->m_index = index;
-        st.attachedIndex = item->m_attachedIndex;
-        st.dockitemtype = (int)item->m_dockitemtype;
-       // st.width = item->get_Width();
-       // st.height = item->get_Height();
+        st.width = item->get_InmutableWidth();
+        st.height = item->get_InmutableHeight();
 
-        st.index = (int)item->m_index;
+        st.dockitemtype = item->m_dockitemtype;
 
         size_t result = fwrite(&st, sizeof (st), 1, f);
         if (result == 0)
             g_critical("Attachments::save:: Error writing file> fwrite\n");
-
-        // g_print("%d\n",index);
-        index++;
     }
 
     fclose(f);
 }
+/**
+ * gets the next available index.
+ */
+//guint AppUpdater::get_NextIndex()
+//{
+    //guint index = 0;
 
+    //for (auto item : m_dockitems){
+        //if (index > item->m_index){
+            //index = item->m_index;
+        //}
+    //}
+    //g_print("NextIndex %d\n",index);
+    //return index;
+//}
 /**
  * Attacht the item by the given index.
  */
@@ -213,7 +210,11 @@ bool AppUpdater::AttachItem(const int index)
     }
 
     DockItem* item = m_dockitems[index];
-    item->m_attachedIndex = index;
+    if (item->m_isAttached){
+        return false;
+    }
+    
+    item->m_index = index;
     item->m_isAttached = true;
 
     this->Save();
@@ -235,7 +236,7 @@ bool AppUpdater::RemoveItem(const int index)
 
     // Deletes the element by index;
     this->m_dockitems.erase(this->m_dockitems.begin() + index);
-    
+
     this->Save();
 
     return true;
@@ -247,7 +248,7 @@ std::string AppUpdater::getFilePath()
     char buff[PATH_MAX];
     sprintf(buff, "%s/%s", path.c_str(), DEF_ATTACHMENTDIR);
     Utilities::CreateDirectoryIfNotExitst(buff);
-    sprintf(buff, "%s/%s/attachments.dat", path.c_str(), DEF_ATTACHMENTDIR);
+    sprintf(buff, "%s/%s/attachments.conf", path.c_str(), DEF_ATTACHMENTDIR);
 
     return buff;
 }
@@ -281,9 +282,9 @@ void AppUpdater::Update(WnckWindow* window, Window_action actiontype)
     WnckWindowType wt = wnck_window_get_window_type(window);
 
     if (wt == WNCK_WINDOW_DESKTOP ||
-        wt == WNCK_WINDOW_DOCK ||
-        wt == WNCK_WINDOW_MENU ||
-        wt == WNCK_WINDOW_SPLASHSCREEN) {
+            wt == WNCK_WINDOW_DOCK ||
+            wt == WNCK_WINDOW_MENU ||
+            wt == WNCK_WINDOW_SPLASHSCREEN) {
         return;
     }
 
@@ -294,10 +295,10 @@ void AppUpdater::Update(WnckWindow* window, Window_action actiontype)
         std::string the_titlename;
 
         if (Launcher::getAppNameByWindow(window,
-                                         the_appname,
-                                         the_instancename,
-                                         the_groupname,
-                                         the_titlename) == FALSE) {
+                    the_appname,
+                    the_instancename,
+                    the_groupname,
+                    the_titlename) == FALSE) {
             return;
         }
 
@@ -309,19 +310,19 @@ void AppUpdater::Update(WnckWindow* window, Window_action actiontype)
                 the_titlename.c_str());
 
         /*
-   
-                if (m_currentsessionItem != nullptr && m_sessiondata.size() > 0) {
-                    for (int i = m_sessiondata.size() - 1; i >= 0; i--) {
-                        std::string appname(m_sessiondata[i].appname);
-                        if (appname == the_groupname) {
-                            if (attachToSessiongrp(window)) {
-                                m_sessiondata.erase(m_sessiondata.begin() + i);
-                                break;
-                            }
-                        }
-                    }
-                }
-         */
+
+           if (m_currentsessionItem != nullptr && m_sessiondata.size() > 0) {
+           for (int i = m_sessiondata.size() - 1; i >= 0; i--) {
+           std::string appname(m_sessiondata[i].appname);
+           if (appname == the_groupname) {
+           if (attachToSessiongrp(window)) {
+           m_sessiondata.erase(m_sessiondata.begin() + i);
+           break;
+           }
+           }
+           }
+           }
+           */
 
 
         // handle DockItems groups
@@ -362,7 +363,7 @@ void AppUpdater::Update(WnckWindow* window, Window_action actiontype)
         std::string theme_iconname = "";
         appIcon = IconLoader::GetWindowIcon(window, theme_iconname);
         appIcon = appIcon->scale_simple(DEF_ICONMAXSIZE,
-                                        DEF_ICONMAXSIZE, Gdk::INTERP_BILINEAR);
+                DEF_ICONMAXSIZE, Gdk::INTERP_BILINEAR);
 
         // Create a new Item
         DockItem* dockItem = new DockItem();
@@ -374,7 +375,7 @@ void AppUpdater::Update(WnckWindow* window, Window_action actiontype)
         dockItem->m_xid = wnck_window_get_xid(window);
         dockItem->m_image = appIcon;
         dockItem->m_theme_iconname = theme_iconname;
-        dockItem->m_index = m_dockitems.size() + 1;
+        dockItem->m_index = m_dockitems.size();
 
         // Create a child items
         DockItem* childItem = new DockItem();
@@ -455,6 +456,11 @@ void AppUpdater::Update(WnckWindow* window, Window_action actiontype)
  */
 bool AppUpdater::get_IsLimitsReached()
 {
+
+    if (m_dockitems.size() == 0 ){
+        return false;
+    }
+
     guint decrement = 0;
     if (DockWindow::is_Horizontal()){
 

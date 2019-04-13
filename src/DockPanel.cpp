@@ -112,20 +112,17 @@ int DockPanel::Init(Gtk::Window* window)
 
 
     // testt separator
-    /*    
-          dockItem = new DockItem();
-          dockItem->m_dockitemtype = DockItemType::Separator;
-          dockItem->m_isAttached = true;
-          dockItem->get_Width() = 12;
-          this->m_appUpdater.m_dockitems.push_back(dockItem);
+        
+          //dockItem = new DockItem(12, Configuration::get_CellHeight());
+          //dockItem->m_dockitemtype = DockItemType::Separator;
+          //dockItem->m_isAttached = true;
+          //this->m_appUpdater.m_dockitems.push_back(dockItem);
 
-          dockItem = new DockItem();
-          dockItem->m_dockitemtype = DockItemType::Separator;
-          dockItem->m_isAttached = true;
-          dockItem->get_Width() = 12;
-          this->m_appUpdater.m_dockitems.push_back(dockItem);
-          */
-  //     if (!m_HomeMenu.get_attach_widget()){
+          //dockItem = new DockItem(24, Configuration::get_CellHeight());
+          //dockItem->m_dockitemtype = DockItemType::Separator;
+          //dockItem->m_isAttached = true;
+          //this->m_appUpdater.m_dockitems.push_back(dockItem);
+          
 
 
     return 0;
@@ -344,10 +341,10 @@ bool DockPanel::on_button_press_event(GdkEventButton *event)
 
             // Items
             if (m_currentMoveIndex > 0) {
-                DockItem *dockitem = m_appUpdater.m_dockitems[m_currentMoveIndex];
-                dockitem->m_isAttached = true;
-                dockitem->m_attachedIndex = m_currentMoveIndex;
-                this->m_appUpdater.Save();
+                //DockItem *dockitem = m_appUpdater.m_dockitems[m_currentMoveIndex];
+                //dockitem->m_isAttached = true;
+                //dockitem->m_attachedIndex = m_currentMoveIndex;
+                //this->m_appUpdater.Save();
             }
 
             return true;
@@ -832,9 +829,6 @@ void DockPanel::draw_Panel(const Cairo::RefPtr<Cairo::Context>& cr)
 
 }
 
-
-int m_previewCellSizeX = 0;
-bool m_isResized = false;
 /**
  * Render all dock items
  * @param cr cairo context
@@ -950,7 +944,7 @@ void DockPanel::show_Title()
 
 
     DockItem* item = this->get_CurrentItem();
-    if (item == nullptr || item->m_dockitemtype == DockItemType::Separator){
+    if (item == nullptr/* || item->m_dockitemtype == DockItemType::Separator*/){
         m_titlewindow.hide();
         m_infowindow.hide();
         return;
@@ -979,11 +973,12 @@ void DockPanel::show_Title()
 
             
             std::string title = item->get_Title();
-            if (item->m_items.size() > 1) {
+           // if (item->m_items.size() > 1) {
                 char buff[NAME_MAX];
-                sprintf(buff, "%s (%d)", title.c_str(), (int)item->m_items.size());
+                //sprintf(buff, "%s (%d)", title.c_str(), (int)item->m_items.size());
+                sprintf(buff, "%s idx: (%d)", title.c_str(), (int)item->m_index);
                 title = buff;
-            }
+          //  }
 
             m_titlewindow.setText(title);
             DockItemPositions::get_CenterPosition(m_currentMoveIndex, x, y, m_titlewindow.get_width(), m_titlewindow.get_height());

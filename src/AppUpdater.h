@@ -23,18 +23,17 @@
 
 struct attachments_data
 {
+    char titlename[DEF_FIELD_MAX] = {'\0'};
     guint8 pixbuff[ DEF_PIXBUFFER_MAX] = {0};
     char appname[DEF_FIELD_MAX] = {'\0'};
-    char titlename[DEF_FIELD_MAX] = {'\0'};
     char instancename[DEF_FIELD_MAX] = {'\0'};
     char realgroupname[DEF_FIELD_MAX] = {'\0'};
     char themeiconname[DEF_FIELD_MAX] = {'\0'};
                                          
-    int attachedIndex = -1;
-    int dockitemtype = 0;
+    guint dockitemtype = 0;
     int index = -1;
-    int width = 0;
-    int height = 0;
+    guint width = 0;
+    guint height = 0;
 };
 
 class AppUpdater {
