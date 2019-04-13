@@ -413,6 +413,13 @@ bool DockPanel::on_button_release_event(GdkEventButton *event)
             m_ItemMenu.popup(sigc::mem_fun(*this,&DockPanel::on_popup_itemmenu_position), 1, event->time);
             this->m_popupMenuOn = true;
         }
+
+        DockItem* item = this->get_CurrentItem();
+        if (item != nullptr){
+            m_MenuItemAttach.set_sensitive(item->m_isAttached == false);
+            m_MenuItemDetach.set_sensitive(item->m_isAttached /*&& item->m_items.size() == 0*/);
+        }
+
     }
 // mouse right       
 
@@ -449,8 +456,7 @@ m_MenuItemCloseAllExceptActive.set_sensitive(isExitstWindows > 1 && isExitstActi
 m_MenuItemCloseAll.set_sensitive(isExitstWindows);
 
 m_MenuItemAttach.set_sensitive(dockitem->m_isAttached == false);
-m_MenuItemDetach.set_sensitive(dockitem->m_isAttached &&
-dockitem->m_items.size() == 0);
+m_MenuItemDetach.set_sensitive(dockitem->m_isAttached && dockitem->m_items.size() == 0);
 
 
 if (!m_Menu_Popup.get_attach_widget())
