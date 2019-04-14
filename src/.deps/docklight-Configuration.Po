@@ -1388,8 +1388,8 @@ docklight-Configuration.o: Configuration.cpp /usr/include/stdc-predef.h \
  DockItem.h SessionWindow.h Utilities.h /usr/include/c++/6/math.h \
  IconLoader.h AppUpdater.h AppRunAnimation.h /usr/include/c++/6/thread \
  TitleWindow.h DockMenu.h /usr/include/glibmm-2.4/glibmm/i18n.h \
- /usr/include/glib-2.0/glib/gi18n.h /usr/include/libintl.h Screen.h \
- Struts.h
+ /usr/include/glib-2.0/glib/gi18n.h /usr/include/libintl.h \
+ DragAndDropWindow.h Screen.h Struts.h
 
 /usr/include/stdc-predef.h:
 
@@ -4414,6 +4414,8 @@ DockMenu.h:
 /usr/include/glib-2.0/glib/gi18n.h:
 
 /usr/include/libintl.h:
+
+DragAndDropWindow.h:
 
 Screen.h:
 

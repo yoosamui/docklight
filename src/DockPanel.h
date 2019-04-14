@@ -21,6 +21,7 @@
 #include "AppRunAnimation.h"
 #include "TitleWindow.h"
 #include "DockMenu.h"
+#include "DragAndDropWindow.h"
 
 class DockPanel : public Gtk::DrawingArea, DockMenu {
 
@@ -44,7 +45,7 @@ public:
         return m_heightDecrement;
     }
 private:
-
+    DragAndDropWindow* m_DragAndDropWindow = nullptr;
     static guint m_widthDecrement;
     static guint m_heightDecrement;
 
@@ -128,6 +129,13 @@ private:
     void on_NewMenu_event();
     void on_DettachMenu_event();
     void on_AttachMenu_event();
+
+
+
+    // Drag & Drop
+    Glib::Timer m_dragdropTimer;
+    bool  m_DragDropBegin = false;
+    Gdk::Point m_dragdropMousePoint;
 };
 #endif	/* DOCKPANEL_H */
 

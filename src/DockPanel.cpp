@@ -286,6 +286,9 @@ void DockPanel::on_DettachMenu_event()
 
 }
 
+guint32 m_dragdrop_currentEventTime = 0;
+guint32 m_dragdrop_previousEventTime = 0;
+
 
 /**
  * bool DockPanel::on_button_press_event(GdkEventButton *event)
@@ -298,8 +301,57 @@ bool DockPanel::on_button_press_event(GdkEventButton *event)
 
     if ((event->type == GDK_BUTTON_PRESS)) {
 
-        m_currentMoveIndex = get_Index(event->x, event->y);
+        m_mouseclickEventTime = gtk_get_current_event_time();
 
+        // Check if the event is a left button click.
+        if (event->button == 1 && !m_mouseLeftButtonDown) {
+            m_mouseLeftButtonDown = true;
+
+            // start drag & drop timer
+            if (this->m_currentMoveIndex > 0){
+
+                //int x, y;
+                //Utilities::getMousePosition(x, y);
+                //// sets the relative item mouse coordinates         
+                //m_dragdropMousePoint.set_x((int) x);
+                //m_dragdropMousePoint.set_y((int) y);
+                //int x, y;
+                //DockWindow::get_DockWindowPosition(x, y);
+
+                m_dragdropMousePoint.set_x((int) event->x);
+                m_dragdropMousePoint.set_y((int) event->y);
+                m_dragdropTimer.start();
+                g_print("Mose %d/%d \n", (int)event->x, (int)event->y);
+            }
+
+            // The event has been handled.
+            return true;
+        }
+
+
+
+                //g_print("START DRAG.......................\n");
+        //m_currentMoveIndex = get_Index(event->x, event->y);
+
+        //// Set Drag and drop variables and Starts the timer
+        //if (event->button == 1 &&  m_currentMoveIndex > 0) {
+
+            
+        ////    if (currentMillis - previousMillis >= mouseDelay) {
+
+
+            //if (gtk_get_current_event_time() - m_mouseclickEventTime > 2000) {
+
+            //}
+            //else{
+                //// remember the time to check it later
+                //m_mouseclickEventTime = gtk_get_current_event_time();
+
+            //}
+        //}
+        
+        
+        
         // g_print("MDOWN %d\n", m_currentMoveIndex);
         //      m_mouseRightClick = false;
         /*
@@ -325,15 +377,7 @@ bool DockPanel::on_button_press_event(GdkEventButton *event)
         }
         */
 
-        // remember the time to check it later
-        m_mouseclickEventTime = gtk_get_current_event_time();
 
-        // Check if the event is a left button click.
-        if (event->button == 1 && !m_mouseLeftButtonDown) {
-            m_mouseLeftButtonDown = true;
-            // The event has been handled.
-            return true;
-        }
         // Check if the event is a right button click.
         if (event->button == 3 && !m_mouseRightButtonDown) {
             m_mouseRightButtonDown = true;
@@ -379,6 +423,15 @@ bool DockPanel::on_button_release_event(GdkEventButton *event)
     }
     }
     */
+    
+    if (m_DragDropBegin){
+
+        delete m_DragAndDropWindow;
+        m_DragAndDropWindow = nullptr;
+
+        m_DragDropBegin = false;
+        g_print("Drop\n");
+      }
 
     // Taking Too Long To Release the mouse.
     // That is not a valid Click.
@@ -604,6 +657,23 @@ void DockPanel::update()
  */
 bool DockPanel::on_timeoutDraw()
 {
+    if (!m_DragDropBegin && this->m_currentMoveIndex > 0 &&  m_mouseLeftButtonDown && m_dragdropTimer.elapsed() >= 0.20 ){
+        g_print("timer mouse down %f\n", m_dragdropTimer.elapsed());
+        m_dragdropTimer.stop();
+        m_dragdropTimer.reset();
+        
+        DockItem* item =  this->get_CurrentItem();
+        if (item != nullptr){
+            m_DragDropBegin = true;
+
+            this->m_DragAndDropWindow = new DragAndDropWindow();
+            this->m_DragAndDropWindow->Show(item->m_image, item, m_dragdropMousePoint);
+//            this->m_DragAndDropWindow->show();
+        
+        }
+    }
+
+
     if (m_mouseIn || m_forceDraw || m_AppRunImage) {
         Gtk::Widget::queue_draw();
         m_forceDraw = false;
@@ -612,6 +682,7 @@ bool DockPanel::on_timeoutDraw()
 }
 
 /**
+ * A
  * calculate the item index from mouse coordinates.
  * @param x
  * @param y
@@ -886,7 +957,10 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
         height = item->get_Height();
 
         this->get_ItemPosition(item->m_dockitemtype, x, y, width, height);
-       
+      
+        item->m_posX = x;
+        item->m_posY = y;
+
         // Draw cells
         cr->set_source_rgba(0.00, 0.50, 0.66, 1);
         RoundedRectangle(cr, x, y, width, height, 3);
@@ -914,8 +988,8 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
             }
             // icons
             if (item->m_image != NULLPB) {
-                iconsizeWidth = width - 8;
-                iconsizeHeight = height - 8;
+                iconsizeWidth = width - CELL_MARGIN;
+                iconsizeHeight = height - CELL_MARGIN;
                 auto icon = item->m_image->scale_simple(iconsizeWidth, iconsizeHeight, Gdk::INTERP_BILINEAR);
                 Gdk::Cairo::set_source_pixbuf(cr, icon, x + center - iconsizeWidth / 2, y + 1);
                 cr->paint();
