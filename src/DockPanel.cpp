@@ -113,10 +113,10 @@ int DockPanel::Init(Gtk::Window* window)
 
     // testt separator
         
-          //dockItem = new DockItem(12, Configuration::get_CellHeight());
-          //dockItem->m_dockitemtype = DockItemType::Separator;
-          //dockItem->m_isAttached = true;
-          //this->m_appUpdater.m_dockitems.push_back(dockItem);
+          dockItem = new DockItem(12, Configuration::get_CellHeight());
+          dockItem->m_dockitemtype = DockItemType::Separator;
+          dockItem->m_isAttached = true;
+          this->m_appUpdater.m_dockitems.push_back(dockItem);
 
           //dockItem = new DockItem(24, Configuration::get_CellHeight());
           //dockItem->m_dockitemtype = DockItemType::Separator;
@@ -404,33 +404,20 @@ bool DockPanel::on_button_press_event(GdkEventButton *event)
  */
 bool DockPanel::on_button_release_event(GdkEventButton *event)
 {
-
-    /*
     // Check if a item was drop
-    if (m_dragdropMouseDown) {
-    m_dragdropsStarts = false;
-    m_dragdropTimerSet = false;
-    m_dragdropMouseDown = false;
-    m_dragDropWindow.Hide();
-    m_dragdropTimer.stop();
-
-    if (m_dragdropItemIndex != m_currentMoveIndex
-    && m_currentMoveIndex > 0) {
-
-    dropDockItem(event);
-
-    m_dragdropItemIndex = -1;
-    }
-    }
-    */
-    
     if (m_DragDropBegin){
 
         delete m_DragAndDropWindow;
         m_DragAndDropWindow = nullptr;
 
         m_DragDropBegin = false;
-        g_print("Drop\n");
+
+    //    if(this->m_mouseIn){
+            this->m_DragDropTargetIndex = this->m_currentMoveIndex;
+            this->m_appUpdater.SwapItems(this->m_DragDropSourceIndex, this->m_DragDropTargetIndex);
+      //  }
+
+        this->m_DragDropSourceIndex = this->m_DragDropTargetIndex = 0;
       }
 
     // Taking Too Long To Release the mouse.
@@ -665,11 +652,10 @@ bool DockPanel::on_timeoutDraw()
         DockItem* item =  this->get_CurrentItem();
         if (item != nullptr){
             m_DragDropBegin = true;
+            this->m_DragDropSourceIndex = this->m_currentMoveIndex;
 
             this->m_DragAndDropWindow = new DragAndDropWindow();
             this->m_DragAndDropWindow->Show(item->m_image, item, m_dragdropMousePoint);
-//            this->m_DragAndDropWindow->show();
-        
         }
     }
 

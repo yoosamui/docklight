@@ -6,6 +6,7 @@
  */
 
 #include "AppUpdater.h"
+#include "DockItem.h"
 #include "DockWindow.h"
 #include "Launcher.h"
 #include "DockItemPositions.h" 
@@ -218,7 +219,7 @@ bool AppUpdater::AttachItem(const int index)
     item->m_isAttached = true;
 
     this->Save();
-
+g_print("ATTACHET %d \n",index);
     return true;
 
 }
@@ -493,11 +494,43 @@ void AppUpdater::setIconByTheme(DockItem *item)
     }
 }
 
+
+inline void AppUpdater::Reindex()
+{
+    guint idx = 0;
+
+    for (auto item : this->m_dockitems){
+        item->m_index = idx;
+
+        idx++;
+    }
+}
+
+
+bool AppUpdater::SwapItems(guint sourceIdx, guint targetIdx)
+{
+    if (sourceIdx == targetIdx || sourceIdx < 1 || targetIdx < 1 || sourceIdx > this->m_dockitems.size() || targetIdx > this->m_dockitems.size()){
+        return false;
+    }
+    
+    // save source
+    DockItem* tmp = this->m_dockitems[sourceIdx];
+    tmp->m_isAttached = true;
+    
+    // Deletes the element by index and insert the source element in the target;
+    this->m_dockitems.erase(this->m_dockitems.begin() + sourceIdx);
+    this->m_dockitems.insert(this->m_dockitems.begin() + targetIdx, tmp);
+
+    this->Reindex();
+    this->Save();
+
+}
 void AppUpdater::on_theme_changed(GtkSettings *settings, GParamSpec *pspec, GtkIconTheme *icon_theme)
 {
     for (DockItem* item:m_dockitems) {
         setIconByTheme(item);
     }
 }
+
 
 

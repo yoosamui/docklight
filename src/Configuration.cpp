@@ -14,7 +14,7 @@ namespace Configuration
     bool m_allowDraw = true;
     guint m_separatorMargin = 12;
 
-    panel_locationType m_locatiom = panel_locationType::TOP; 
+    panel_locationType m_locatiom = panel_locationType::RIGHT; 
     Horizontal_alignment_type m_HorizontalAlignment =  Horizontal_alignment_type::CENTER;
     
     Horizontal_alignment_type get_HorizontalAlignment()

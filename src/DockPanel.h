@@ -136,6 +136,8 @@ private:
     Glib::Timer m_dragdropTimer;
     bool  m_DragDropBegin = false;
     Gdk::Point m_dragdropMousePoint;
+    guint m_DragDropSourceIndex = 0;
+    guint m_DragDropTargetIndex = 0;
 };
 #endif	/* DOCKPANEL_H */
 
