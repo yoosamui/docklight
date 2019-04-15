@@ -83,7 +83,9 @@ DockPanel::DockPanel(): m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
 int DockPanel::Init(Gtk::Window* window)
 {
    this->m_AppWindow = window; 
-    
+   this->m_AppUpdater = new AppUpdater(); 
+
+
     const char* filename = m_homeiconFilePath.c_str();
     DockItem* dockItem = new DockItem();
     try {
@@ -105,7 +107,7 @@ int DockPanel::Init(Gtk::Window* window)
     dockItem->m_realgroupname = _("Desktop");
     dockItem->m_dockitemtype = DockItemType::SingleDock;
     dockItem->m_index = 0;
-    this->m_appUpdater.m_dockitems.insert(this->m_appUpdater.m_dockitems.begin(), dockItem);
+    this->m_AppUpdater->m_dockitems.insert(this->m_AppUpdater->m_dockitems.begin(), dockItem);
 
     // Start the background thread for application start animation
     m_AppRunThreadLauncher = new std::thread(AppRunAnimation); 
@@ -113,15 +115,15 @@ int DockPanel::Init(Gtk::Window* window)
 
     // testt separator
         
-          dockItem = new DockItem(12, Configuration::get_CellHeight());
-          dockItem->m_dockitemtype = DockItemType::Separator;
-          dockItem->m_isAttached = true;
-          this->m_appUpdater.m_dockitems.push_back(dockItem);
+          //dockItem = new DockItem(12, Configuration::get_CellHeight());
+          //dockItem->m_dockitemtype = DockItemType::Separator;
+          //dockItem->m_isAttached = true;
+          //this->m_AppUpdater->m_dockitems.push_back(dockItem);
 
           //dockItem = new DockItem(24, Configuration::get_CellHeight());
           //dockItem->m_dockitemtype = DockItemType::Separator;
           //dockItem->m_isAttached = true;
-          //this->m_appUpdater.m_dockitems.push_back(dockItem);
+          //this->m_AppUpdater->m_dockitems.push_back(dockItem);
           
 
 
@@ -144,6 +146,10 @@ DockPanel::~DockPanel()
 
     // pointed dangling to ptr NULL
     m_AppRunThreadLauncher = NULL;
+
+    delete m_AppUpdater;
+    m_AppUpdater = NULL;
+
 
     g_print("DockPanel destroy.\n");
 }
@@ -270,12 +276,12 @@ void DockPanel::on_HideMenu_event()
  */
 void DockPanel::on_AttachMenu_event()
 {
-     this->m_appUpdater.AttachItem(this->m_currentMoveIndex);
+     this->m_AppUpdater->AttachItem(this->m_currentMoveIndex);
 }
 
 void DockPanel::on_DettachMenu_event()
 {
-    if (!this->m_appUpdater.RemoveItem(this->m_currentMoveIndex)){
+    if (!this->m_AppUpdater->RemoveItem(this->m_currentMoveIndex)){
         return;
     }
 
@@ -325,7 +331,7 @@ bool DockPanel::on_button_press_event(GdkEventButton *event)
             }
 
             // The event has been handled.
-            return true;
+          //  return true;
         }
 
 
@@ -385,10 +391,10 @@ bool DockPanel::on_button_press_event(GdkEventButton *event)
 
             // Items
             if (m_currentMoveIndex > 0) {
-                //DockItem *dockitem = m_appUpdater.m_dockitems[m_currentMoveIndex];
+                //DockItem *dockitem = m_AppUpdater->m_dockitems[m_currentMoveIndex];
                 //dockitem->m_isAttached = true;
                 //dockitem->m_attachedIndex = m_currentMoveIndex;
-                //this->m_appUpdater.Save();
+                //this->m_AppUpdater->Save();
             }
 
             return true;
@@ -414,11 +420,14 @@ bool DockPanel::on_button_release_event(GdkEventButton *event)
 
     //    if(this->m_mouseIn){
             this->m_DragDropTargetIndex = this->m_currentMoveIndex;
-            this->m_appUpdater.SwapItems(this->m_DragDropSourceIndex, this->m_DragDropTargetIndex);
+            this->m_AppUpdater->SwapItems(this->m_DragDropSourceIndex, this->m_DragDropTargetIndex);
       //  }
 
         this->m_DragDropSourceIndex = this->m_DragDropTargetIndex = 0;
       }
+
+
+
 
     // Taking Too Long To Release the mouse.
     // That is not a valid Click.
@@ -455,9 +464,20 @@ bool DockPanel::on_button_release_event(GdkEventButton *event)
         }
 
         DockItem* item = this->get_CurrentItem();
+
         if (item != nullptr){
+            g_print("....................rmouse %d \n", item->m_isAttached);
+            g_print("rmouse\n");
+            if( item->m_isAttached )
+                g_print("ATTACHED\n");
+            
             m_MenuItemAttach.set_sensitive(item->m_isAttached == false);
             m_MenuItemDetach.set_sensitive(item->m_isAttached /*&& item->m_items.size() == 0*/);
+        }
+        else
+        {
+
+            g_print("NULL\n");
         }
 
     }
@@ -551,7 +571,7 @@ bool DockPanel::on_scroll_event(GdkEventScroll* e)
     if (index == -1 || index == 0)
         return true;
 
-    DockItem * item = this->m_appUpdater.m_dockitems[index]->get_Next();
+    DockItem * item = this->m_AppUpdater->m_dockitems[index]->get_Next();
     if (item == nullptr)
         return true;
 
@@ -588,7 +608,7 @@ void DockPanel::ExecuteApp(GdkEventButton* event)
     if (m_currentMoveIndex < 1)
         return;
 
-    DockItem * item = this->m_appUpdater.m_dockitems[m_currentMoveIndex];
+    DockItem * item = this->m_AppUpdater->m_dockitems[m_currentMoveIndex];
     if (item->m_dockitemtype == DockItemType::Separator) {
         return;
     }
@@ -617,11 +637,11 @@ void DockPanel::ExecuteApp(GdkEventButton* event)
  */
 inline DockItem* DockPanel::get_CurrentItem()
 {
-    if (m_currentMoveIndex < 0 || m_currentMoveIndex > this->m_appUpdater.m_dockitems.size()) {
+    if (m_currentMoveIndex < 0 || m_currentMoveIndex > this->m_AppUpdater->m_dockitems.size()) {
         return nullptr;
     }
 
-    return this->m_appUpdater.m_dockitems[m_currentMoveIndex];
+    return this->m_AppUpdater->m_dockitems[m_currentMoveIndex];
 }
 
 
@@ -683,7 +703,7 @@ inline int DockPanel::get_Index(const int& mouseX, const int& mouseY)
 
     if (DockWindow::is_Horizontal())
     {
-        for (auto item : this->m_appUpdater.m_dockitems) 
+        for (auto item : this->m_AppUpdater->m_dockitems) 
         {
             if (mouse.get_x() >= x && mouse.get_x() <= x + item->get_Width())                 
             {
@@ -697,7 +717,7 @@ inline int DockPanel::get_Index(const int& mouseX, const int& mouseY)
     else 
     {   
         int height;
-        for (DockItem* item : this->m_appUpdater.m_dockitems) 
+        for (DockItem* item : this->m_AppUpdater->m_dockitems) 
         {
             height = item->m_dockitemtype == DockItemType::Separator ? item->get_Width() : item->get_Height();
 
@@ -746,7 +766,7 @@ void DockPanel::RoundedRectangle(const Cairo::RefPtr<Cairo::Context>& cr,
    {
    unsigned int size = 0;
    int count = 0;
-   for (DockItem* item:this->m_appUpdater.m_dockitems) {
+   for (DockItem* item:this->m_AppUpdater->m_dockitems) {
    if (count == idx) {
    break;
    }
@@ -764,7 +784,7 @@ void DockPanel::RoundedRectangle(const Cairo::RefPtr<Cairo::Context>& cr,
    {
    unsigned int size = 0;
    int count = 0;
-   for (DockItem* item:this->m_appUpdater.m_dockitems) {
+   for (DockItem* item:this->m_AppUpdater->m_dockitems) {
    if (count == idx) {
    break;
    }
@@ -911,7 +931,7 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
     int width = 0;
     int height = 0;
 
-    int itemsCount = this->m_appUpdater.m_dockitems.size();
+    int itemsCount = this->m_AppUpdater->m_dockitems.size();
 
     this->m_widthDecrement = 0;
     this->m_heightDecrement = 0;
@@ -938,7 +958,7 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
     // Draw all items with cairo
     for (idx = 0; idx < itemsCount; idx++) {
 
-        DockItem* item = this->m_appUpdater.m_dockitems[idx];
+        DockItem* item = this->m_AppUpdater->m_dockitems[idx];
         width = item->get_Width();
         height = item->get_Height();
 

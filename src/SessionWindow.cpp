@@ -314,8 +314,8 @@ bool SessionWindow::on_delete_event(GdkEventAny* event)
 {
     m_deleteSet = true;
 
-    this->m_panel->m_sessionWindow = nullptr;
-    delete(this);
+   // this->m_panel->m_sessionWindow = nullptr;
+   // delete(this);
 
     return false;
 }

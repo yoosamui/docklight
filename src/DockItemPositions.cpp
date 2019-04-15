@@ -19,6 +19,7 @@ namespace DockItemPositions
         }
 
         int diff = DockWindow::Monitor::get_geometry().height - get_inmutableItemsHeight();
+        g_print("Geo: %d diff %d %d\n",  DockWindow::Monitor::get_geometry().height, diff,  get_inmutableItemsHeight());
         if (diff < 0 ){
             return (guint) abs(diff) / AppUpdater::m_dockitems.size();
         }
@@ -28,11 +29,11 @@ namespace DockItemPositions
 
     guint get_ResizeWidthDecrement()
     {
-//        if (DockWindow::get_DockWindowWidth() + Configuration::get_CellWidth() <  DockWindow::Monitor::get_geometry().width ){
-//            return 0;
-//        }
+        if (DockWindow::get_DockWindowWidth() + Configuration::get_CellWidth() <  DockWindow::Monitor::get_geometry().width ){
+            return 0;
+        }
 
-        int diff = (DockWindow::Monitor::get_geometry().width/2) - get_inmutableItemsWidth();
+        int diff = DockWindow::Monitor::get_geometry().width - get_inmutableItemsWidth();
         if (diff < 0 ){
             return (guint) abs(diff) / AppUpdater::m_dockitems.size();
         }
@@ -73,6 +74,7 @@ namespace DockItemPositions
             size += item->get_InmutableHeight() + separatorMargin;
         }
 
+        g_print("get inmutable height %d\n", size - separatorMargin);
         return size - separatorMargin;
     }
     

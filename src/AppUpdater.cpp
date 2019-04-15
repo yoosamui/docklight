@@ -84,7 +84,7 @@ void AppUpdater::Load()
         dockItem->m_theme_iconname = st.themeiconname;
         dockItem->m_dockitemtype = (DockItemType)st.dockitemtype;
         dockItem->m_isDirty = true;
-        
+        dockItem->m_image = NULLPB;     
         dockItem->m_index  = index;
 
         /*
@@ -93,7 +93,7 @@ void AppUpdater::Load()
            dockItem->m_instancename.c_str(),theme_iconname);
            */
 
-        if (st.pixbuff) {
+        if (st.pixbuff[0] != 0) {
             try {
                 auto loader = Gdk::PixbufLoader::create();
                 loader->write(st.pixbuff, sizeof (st.pixbuff));
@@ -101,10 +101,10 @@ void AppUpdater::Load()
                 loader->close();
             }
             catch (Gdk::PixbufError pe) {
-                g_critical("SessionWindow::init: Gdk::PixbufError\n");
+                g_critical("AppUpdater Load: Gdk::PixbufError\n");
             }
             catch (Glib::FileError fe) {
-                g_critical("SessionWindow::init: Glib::FileError\n");
+                g_critical("AppUpdater Load: Glib::FileError\n");
             }
 
         }
@@ -112,8 +112,11 @@ void AppUpdater::Load()
 
         setIconByTheme(dockItem);
         m_dockitems.push_back(std::move(dockItem));
+        
         index++;
+
         if (get_IsLimitsReached()){
+            g_warning("Load: Decrement limimit reached.\n");
             break;
         }
     }
@@ -148,7 +151,8 @@ void AppUpdater::Save()
         if (!item->m_isAttached) {
             continue;
         }
-
+      
+        
         if (item->m_image != NULLPB) {
             try {
                 item->m_image->save_to_buffer(iconBuffer, buffer_size);
@@ -473,6 +477,7 @@ bool AppUpdater::get_IsLimitsReached()
     else {
 
         decrement = DockItemPositions::get_ResizeHeightDecrement();
+        g_print("decremeent %d\n", decrement);
         if (decrement > 0 && m_dockitems[0]->get_InmutableHeight() - decrement  <= 26){
             return true;
         }

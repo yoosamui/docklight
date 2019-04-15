@@ -24,13 +24,13 @@ public:
     int postInit();
     virtual ~AppWindow();
     
-    DockPanel m_dockpanel;
     static Screen m_screen;
     
     DockPanel* get_DockPanel()
     {
         return &m_dockpanel;
     }
+    DockPanel m_dockpanel;
 private:
     static void on_window_opened(WnckScreen* screen, WnckWindow* window, gpointer data);
     static void on_window_closed(WnckScreen* screen, WnckWindow* window, gpointer data);

@@ -134,6 +134,8 @@ int AppWindow::init()
     //std::cout << Arguments()[0];
 
     this->m_screen.init(this);
+//    g_print("..................%d",this->m_screen.get_PrimaryMonitor()->geometry.height);
+
     if (DockWindow::init(this) != 0) {
         return -1;
     }

@@ -16,7 +16,7 @@
 
 #include "Configuration.h"
 #include "DockItem.h"
-#include "SessionWindow.h"
+//#include "SessionWindow.h"
 #include "AppUpdater.h"
 #include "AppRunAnimation.h"
 #include "TitleWindow.h"
@@ -29,7 +29,7 @@ public:
     
     DockPanel();
     virtual ~DockPanel();
-    SessionWindow* m_sessionWindow;
+    //SessionWindow* m_sessionWindow;
     int Init(Gtk::Window* window);
     void update();
     bool get_AutohideAllow();
@@ -56,7 +56,7 @@ private:
     TitleWindow m_titlewindow;
     TitleWindow m_infowindow;
     
-    AppUpdater m_appUpdater;
+    AppUpdater*  m_AppUpdater = nullptr;
     std::string m_homeiconFilePath;
     static int m_currentMoveIndex;
     int get_Index(const int& mouseX, const int& mouseY);

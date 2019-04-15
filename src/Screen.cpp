@@ -81,6 +81,12 @@ void Screen::update()
 
 MonitorObject* Screen::get_PrimaryMonitor()
 {
+
+  //  if(this->window != nullptr){
+ // auto yy =  this->monitors[0]->geometry.height;
+//g_print(".....................GEOME %d\n",yy );
+//  }
+
     return this->primaryMonitor;
 }
 
