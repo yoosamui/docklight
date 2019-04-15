@@ -46,6 +46,7 @@ public:
     std::string getFilePath();
     bool RemoveItem(const int index);
     bool AttachItem(const int index);
+    bool DettachItem(const int index);
     bool SwapItems(guint sourceIdx, guint targetIdx);
 private:
     void Reindex();

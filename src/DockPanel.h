@@ -31,7 +31,7 @@ public:
     virtual ~DockPanel();
     //SessionWindow* m_sessionWindow;
     int Init(Gtk::Window* window);
-    void update();
+    static void update();
     bool get_AutohideAllow();
     int get_CurrentIndex() {
         return m_currentMoveIndex;

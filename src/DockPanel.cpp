@@ -194,7 +194,7 @@ void DockPanel::AppRunAnimation()
  */
 void DockPanel::on_window_opened(WnckScreen *screen, WnckWindow* window, gpointer data)
 {
-    m_forceDraw = true;
+    update();
 }
 
 /**
@@ -205,7 +205,7 @@ void DockPanel::on_window_opened(WnckScreen *screen, WnckWindow* window, gpointe
  */
 void DockPanel::on_window_closed(WnckScreen *screen, WnckWindow *window, gpointer data)
 {
-    m_forceDraw = true;
+    update();
 }
 /**
  * Emitted when the active window on screen has changed.
@@ -281,7 +281,7 @@ void DockPanel::on_AttachMenu_event()
 
 void DockPanel::on_DettachMenu_event()
 {
-    if (!this->m_AppUpdater->RemoveItem(this->m_currentMoveIndex)){
+    if (!this->m_AppUpdater->DettachItem(this->m_currentMoveIndex)){
         return;
     }
 
@@ -466,20 +466,9 @@ bool DockPanel::on_button_release_event(GdkEventButton *event)
         DockItem* item = this->get_CurrentItem();
 
         if (item != nullptr){
-            g_print("....................rmouse %d \n", item->m_isAttached);
-            g_print("rmouse\n");
-            if( item->m_isAttached )
-                g_print("ATTACHED\n");
-            
             m_MenuItemAttach.set_sensitive(item->m_isAttached == false);
             m_MenuItemDetach.set_sensitive(item->m_isAttached /*&& item->m_items.size() == 0*/);
         }
-        else
-        {
-
-            g_print("NULL\n");
-        }
-
     }
 // mouse right       
 

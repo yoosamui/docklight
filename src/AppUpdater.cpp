@@ -223,10 +223,27 @@ bool AppUpdater::AttachItem(const int index)
     item->m_isAttached = true;
 
     this->Save();
-g_print("ATTACHET %d \n",index);
-    return true;
 
+    return true;
 }
+
+
+bool AppUpdater::DettachItem(const int index)
+{
+    if (index < 0 || index > this->m_dockitems.size()){
+        return false;
+    }
+
+    DockItem* item =  this->m_dockitems[index];
+    item->m_isAttached = false;
+
+    if (item->m_items.size()==0){
+        this->RemoveItem(index);
+    }
+
+    return true;
+}
+
 /**
  * Remove an Item form vector by the give index.
  */
@@ -477,7 +494,6 @@ bool AppUpdater::get_IsLimitsReached()
     else {
 
         decrement = DockItemPositions::get_ResizeHeightDecrement();
-        g_print("decremeent %d\n", decrement);
         if (decrement > 0 && m_dockitems[0]->get_InmutableHeight() - decrement  <= 26){
             return true;
         }
