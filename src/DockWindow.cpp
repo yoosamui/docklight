@@ -226,6 +226,7 @@ namespace DockWindow
 
             // calculate window size and position
             int itemsSize = DockItemPositions::get_dockItemsHeight();
+            g_print("DockItemHeight %d\n", itemsSize);
             int startY = (geometry.height / 2) - (itemsSize / 2);
             areaSize += Configuration::get_WindowDockMonitorMargin_Right();
             int posx = (geometry.x + geometry.width) - areaSize;

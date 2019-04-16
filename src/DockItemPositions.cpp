@@ -111,7 +111,7 @@ namespace DockItemPositions
 
             size += item->get_Height() + separatorMargin;
         }
-
+        
         return size - separatorMargin;
     }
 

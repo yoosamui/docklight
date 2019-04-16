@@ -34,6 +34,7 @@ guint DockPanel::m_heightDecrement;
  */
 DockPanel::DockPanel(): m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
 {
+
     // Set event masks 
     add_events(Gdk::BUTTON_PRESS_MASK |
             Gdk::BUTTON_RELEASE_MASK |
@@ -83,8 +84,9 @@ DockPanel::DockPanel(): m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
 int DockPanel::Init(Gtk::Window* window)
 {
    this->m_AppWindow = window; 
-   this->m_AppUpdater = new AppUpdater(); 
 
+
+   this->m_AppUpdater = new AppUpdater();
 
     const char* filename = m_homeiconFilePath.c_str();
     DockItem* dockItem = new DockItem();
@@ -291,10 +293,6 @@ void DockPanel::on_DettachMenu_event()
     DockWindow::update();
 
 }
-
-guint32 m_dragdrop_currentEventTime = 0;
-guint32 m_dragdrop_previousEventTime = 0;
-
 
 /**
  * bool DockPanel::on_button_press_event(GdkEventButton *event)
@@ -944,6 +942,7 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
         }
     }
 
+    g_print("Draw\n");
     // Draw all items with cairo
     for (idx = 0; idx < itemsCount; idx++) {
 

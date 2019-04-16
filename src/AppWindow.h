@@ -28,10 +28,11 @@ public:
     
     DockPanel* get_DockPanel()
     {
-        return &m_dockpanel;
+        return m_dockpanel;
     }
-    DockPanel m_dockpanel;
 private:
+    DockPanel* m_dockpanel = nullptr;
+
     static void on_window_opened(WnckScreen* screen, WnckWindow* window, gpointer data);
     static void on_window_closed(WnckScreen* screen, WnckWindow* window, gpointer data);
     static void monitor_size_changed_callback(GdkScreen *screen, gpointer gtkwindow);

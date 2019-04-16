@@ -70,6 +70,11 @@ AppWindow::AppWindow()
 int AppWindow::init()
 {
 
+    // Initialize the monitor geometry.
+    //https://lazka.github.io/pgi-docs/Wnck-3.0/classes/Window.html
+    this->show();
+    this->m_screen.init(this);
+    g_print("Monitor ready..................%d",this->m_screen.get_PrimaryMonitor()->geometry.height);
     this->set_title(PACKAGE_NAME);
     //std::string iconFile = Utilities::getExecPath(DEF_LOGONAME);
     //this->set_icon_from_file(iconFile);
@@ -81,8 +86,6 @@ int AppWindow::init()
     this->set_skip_pager_hint(true);
     this->set_decorated(false);
     this->set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
-
-
 
 
     //https://developer.gnome.org/gtk-tutorial/stable/x2431.html
@@ -119,11 +122,9 @@ int AppWindow::init()
     Glib::signal_timeout().connect(sigc::mem_fun(*this, &AppWindow::autohideTimer), DEF_FRAMERATE);
 
 
-    // Initialize the monitor geometry.
-    //https://lazka.github.io/pgi-docs/Wnck-3.0/classes/Window.html
 
-
-    this->add(m_dockpanel);
+    m_dockpanel = new DockPanel();
+    this->add(*m_dockpanel);
     this->show_all();
 
     //    for(auto arg : Utilities::Arguments())
@@ -133,14 +134,12 @@ int AppWindow::init()
     // use arguments anywhere else:
     //std::cout << Arguments()[0];
 
-    this->m_screen.init(this);
-//    g_print("..................%d",this->m_screen.get_PrimaryMonitor()->geometry.height);
 
     if (DockWindow::init(this) != 0) {
         return -1;
     }
 
-   return  m_dockpanel.Init(this);
+       return  m_dockpanel->Init(this);
 }
 
 /**
@@ -167,7 +166,7 @@ bool AppWindow::autohideTimer()
         m_animate = false;
         m_visible = false;
     }
-    if (this->m_dockpanel.get_AutohideAllow() && !m_animate && m_visible && !m_mouseIn && abs(m_Timer.elapsed()) > 1.5f) {
+    if (this->m_dockpanel->get_AutohideAllow() && !m_animate && m_visible && !m_mouseIn && abs(m_Timer.elapsed()) > 1.5f) {
         m_Timer.reset();
         m_Timer.stop();
         m_timerStoped = true;

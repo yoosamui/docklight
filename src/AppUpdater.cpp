@@ -237,11 +237,11 @@ bool AppUpdater::DettachItem(const int index)
     DockItem* item =  this->m_dockitems[index];
     item->m_isAttached = false;
 
-    if (item->m_items.size()==0){
-        this->RemoveItem(index);
+    if (item->m_items.size() > 0){
+        return true;
     }
 
-    return true;
+    return this->RemoveItem(index);
 }
 
 /**
@@ -258,9 +258,10 @@ bool AppUpdater::RemoveItem(const int index)
 
     // Deletes the element by index;
     this->m_dockitems.erase(this->m_dockitems.begin() + index);
+    DockWindow::update();
 
     this->Save();
-
+    
     return true;
 }
 
@@ -297,6 +298,7 @@ void AppUpdater::on_window_closed(WnckScreen *screen, WnckWindow *window, gpoint
 {
     // updateSessioWindow(window);
     Update(window, Window_action::CLOSE);
+    DockWindow::update();
 }
 
 void AppUpdater::Update(WnckWindow* window, Window_action actiontype)
