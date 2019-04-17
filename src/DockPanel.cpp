@@ -23,7 +23,7 @@
 
 // static members
 int DockPanel::m_currentMoveIndex;
-bool DockPanel::m_forceDraw;    
+bool DockPanel::m_forceDraw;
 Glib::RefPtr<Gdk::Pixbuf> DockPanel::m_AppRunImage;
 bool DockPanel::m_AppThreadRunning;
 guint DockPanel::m_widthDecrement;
@@ -35,7 +35,7 @@ guint DockPanel::m_heightDecrement;
 DockPanel::DockPanel(): m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
 {
 
-    // Set event masks 
+    // Set event masks
     add_events(Gdk::BUTTON_PRESS_MASK |
             Gdk::BUTTON_RELEASE_MASK |
             Gdk::SCROLL_MASK |
@@ -83,7 +83,7 @@ DockPanel::DockPanel(): m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
  */
 int DockPanel::Init(Gtk::Window* window)
 {
-   this->m_AppWindow = window; 
+   this->m_AppWindow = window;
 
 
    this->m_AppUpdater = new AppUpdater();
@@ -112,11 +112,11 @@ int DockPanel::Init(Gtk::Window* window)
     this->m_AppUpdater->m_dockitems.insert(this->m_AppUpdater->m_dockitems.begin(), dockItem);
 
     // Start the background thread for application start animation
-    m_AppRunThreadLauncher = new std::thread(AppRunAnimation); 
+    m_AppRunThreadLauncher = new std::thread(AppRunAnimation);
 
 
     // testt separator
-        
+
           //dockItem = new DockItem(12, Configuration::get_CellHeight());
           //dockItem->m_dockitemtype = DockItemType::Separator;
           //dockItem->m_isAttached = true;
@@ -126,7 +126,7 @@ int DockPanel::Init(Gtk::Window* window)
           //dockItem->m_dockitemtype = DockItemType::Separator;
           //dockItem->m_isAttached = true;
           //this->m_AppUpdater->m_dockitems.push_back(dockItem);
-          
+
 
 
     return 0;
@@ -136,11 +136,11 @@ int DockPanel::Init(Gtk::Window* window)
  *  destructor
  */
 DockPanel::~DockPanel()
-{ 
+{
     // tell the background thread to terminate.
     m_AppThreadRunning = false;
 
-    // Detach 
+    // Detach
     m_AppRunThreadLauncher->detach();
 
     // free memory
@@ -158,7 +158,7 @@ DockPanel::~DockPanel()
 
 /**
  * This method will be call from the background tread to manage the application image animation.
- * The animation consists in invert the colors of the image. 
+ * The animation consists in invert the colors of the image.
  */
 void DockPanel::AppRunAnimation()
 {
@@ -270,7 +270,7 @@ void DockPanel::on_QuitMenu_event()
  */
 void DockPanel::on_HideMenu_event()
 {
-    this->m_popupMenuOn = false;    
+    this->m_popupMenuOn = false;
 }
 
 /**
@@ -287,9 +287,9 @@ void DockPanel::on_DettachMenu_event()
         return;
     }
 
-    this->update();       
+    this->update();
 
-    // force resize the dock window.   
+    // force resize the dock window.
     DockWindow::update();
 
 }
@@ -316,7 +316,7 @@ bool DockPanel::on_button_press_event(GdkEventButton *event)
 
                 //int x, y;
                 //Utilities::getMousePosition(x, y);
-                //// sets the relative item mouse coordinates         
+                //// sets the relative item mouse coordinates
                 //m_dragdropMousePoint.set_x((int) x);
                 //m_dragdropMousePoint.set_y((int) y);
                 //int x, y;
@@ -340,7 +340,7 @@ bool DockPanel::on_button_press_event(GdkEventButton *event)
         //// Set Drag and drop variables and Starts the timer
         //if (event->button == 1 &&  m_currentMoveIndex > 0) {
 
-            
+
         ////    if (currentMillis - previousMillis >= mouseDelay) {
 
 
@@ -353,9 +353,9 @@ bool DockPanel::on_button_press_event(GdkEventButton *event)
 
             //}
         //}
-        
-        
-        
+
+
+
         // g_print("MDOWN %d\n", m_currentMoveIndex);
         //      m_mouseRightClick = false;
         /*
@@ -468,7 +468,7 @@ bool DockPanel::on_button_release_event(GdkEventButton *event)
             m_MenuItemDetach.set_sensitive(item->m_isAttached /*&& item->m_items.size() == 0*/);
         }
     }
-// mouse right       
+// mouse right
 
 /*
 // Items
@@ -581,7 +581,7 @@ bool DockPanel::on_scroll_event(GdkEventScroll* e)
  */
 void DockPanel::on_popup_homemenu_position(int& x, int& y, bool& push_in)
 {
-    
+
     DockItemPositions::get_CenterPosition(m_currentMoveIndex, x, y, m_HomeMenu.get_width(), m_HomeMenu.get_height());
 }
 
@@ -639,7 +639,7 @@ bool DockPanel::get_AutohideAllow()
 }
 
 /**
- * Force redraw. 
+ * Force redraw.
  */
 void DockPanel::update()
 {
@@ -655,7 +655,7 @@ bool DockPanel::on_timeoutDraw()
         g_print("timer mouse down %f\n", m_dragdropTimer.elapsed());
         m_dragdropTimer.stop();
         m_dragdropTimer.reset();
-        
+
         DockItem* item =  this->get_CurrentItem();
         if (item != nullptr){
             m_DragDropBegin = true;
@@ -690,9 +690,9 @@ inline int DockPanel::get_Index(const int& mouseX, const int& mouseY)
 
     if (DockWindow::is_Horizontal())
     {
-        for (auto item : this->m_AppUpdater->m_dockitems) 
+        for (auto item : this->m_AppUpdater->m_dockitems)
         {
-            if (mouse.get_x() >= x && mouse.get_x() <= x + item->get_Width())                 
+            if (mouse.get_x() >= x && mouse.get_x() <= x + item->get_Width())
             {
                 return idx;
             }
@@ -701,14 +701,14 @@ inline int DockPanel::get_Index(const int& mouseX, const int& mouseY)
             idx++;
         }
     }
-    else 
-    {   
+    else
+    {
         int height;
-        for (DockItem* item : this->m_AppUpdater->m_dockitems) 
+        for (DockItem* item : this->m_AppUpdater->m_dockitems)
         {
             height = item->m_dockitemtype == DockItemType::Separator ? item->get_Width() : item->get_Height();
 
-            if (mouse.get_y() >= y && mouse.get_y() <= y + height) 
+            if (mouse.get_y() >= y && mouse.get_y() <= y + height)
             {
                 return idx;
             }
@@ -906,15 +906,15 @@ void DockPanel::draw_Panel(const Cairo::RefPtr<Cairo::Context>& cr)
 void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
 {
     static guint widthDecrement = 0;
-    static guint heightDecrement = 0; 
-    
+    static guint heightDecrement = 0;
+
     int idx = 0;
     int center = 0;
     int iconsizeWidth = 0;
     int iconsizeHeight = 0;
 
     int y = 0;
-    int x = 0; 
+    int x = 0;
     int width = 0;
     int height = 0;
 
@@ -942,7 +942,6 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
         }
     }
 
-    g_print("Draw\n");
     // Draw all items with cairo
     for (idx = 0; idx < itemsCount; idx++) {
 
@@ -951,7 +950,7 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
         height = item->get_Height();
 
         this->get_ItemPosition(item->m_dockitemtype, x, y, width, height);
-      
+
         item->m_posX = x;
         item->m_posY = y;
 
@@ -1042,10 +1041,10 @@ void DockPanel::show_Title()
     if (m_titleItemOldindex == m_currentMoveIndex) {
 
         if (m_titleElapsedSeconds > 0.3 && m_titleShow == false /* && !m_previewWindowActive*/) {
-            
+
             int x, y;
 
-            
+
             std::string title = item->get_Title();
            // if (item->m_items.size() > 1) {
                 char buff[NAME_MAX];

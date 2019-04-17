@@ -1,7 +1,7 @@
-/* 
+/*
  * File:   AppUpdater.cpp
  * Author: yoo
- * 
+ *
  * Created on February 16, 2019, 12:52 PM
  */
 
@@ -9,7 +9,7 @@
 #include "DockItem.h"
 #include "DockWindow.h"
 #include "Launcher.h"
-#include "DockItemPositions.h" 
+#include "DockItemPositions.h"
 #include <fstream>
 #include <iostream>
 
@@ -59,7 +59,7 @@ void AppUpdater::Load()
     size_t result;
     FILE* f;
     struct attachments_data st;
-    
+
     f = fopen(filePath.c_str(), "rb");
     if (!f) {
         g_critical("Load: can't open file.");
@@ -84,7 +84,7 @@ void AppUpdater::Load()
         dockItem->m_theme_iconname = st.themeiconname;
         dockItem->m_dockitemtype = (DockItemType)st.dockitemtype;
         dockItem->m_isDirty = true;
-        dockItem->m_image = NULLPB;     
+        dockItem->m_image = NULLPB;
         dockItem->m_index  = index;
 
         /*
@@ -112,7 +112,7 @@ void AppUpdater::Load()
 
         setIconByTheme(dockItem);
         m_dockitems.push_back(std::move(dockItem));
-        
+
         index++;
 
         if (get_IsLimitsReached()){
@@ -145,14 +145,14 @@ void AppUpdater::Save()
     struct attachments_data st;
 
     for (idx = 1; idx < this->m_dockitems.size(); idx++) {
-        
+
         DockItem* item = this->m_dockitems[idx];
-        
+
         if (!item->m_isAttached) {
             continue;
         }
-      
-        
+
+
         if (item->m_image != NULLPB) {
             try {
                 item->m_image->save_to_buffer(iconBuffer, buffer_size);
@@ -218,7 +218,7 @@ bool AppUpdater::AttachItem(const int index)
     if (item->m_isAttached){
         return false;
     }
-    
+
     item->m_index = index;
     item->m_isAttached = true;
 
@@ -238,6 +238,7 @@ bool AppUpdater::DettachItem(const int index)
     item->m_isAttached = false;
 
     if (item->m_items.size() > 0){
+        this->Save();
         return true;
     }
 
@@ -261,7 +262,7 @@ bool AppUpdater::RemoveItem(const int index)
     DockWindow::update();
 
     this->Save();
-    
+
     return true;
 }
 
@@ -535,11 +536,11 @@ bool AppUpdater::SwapItems(guint sourceIdx, guint targetIdx)
     if (sourceIdx == targetIdx || sourceIdx < 1 || targetIdx < 1 || sourceIdx > this->m_dockitems.size() || targetIdx > this->m_dockitems.size()){
         return false;
     }
-    
+
     // save source
     DockItem* tmp = this->m_dockitems[sourceIdx];
     tmp->m_isAttached = true;
-    
+
     // Deletes the element by index and insert the source element in the target;
     this->m_dockitems.erase(this->m_dockitems.begin() + sourceIdx);
     this->m_dockitems.insert(this->m_dockitems.begin() + targetIdx, tmp);

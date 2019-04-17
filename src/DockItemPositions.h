@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   DockItemPositions.h
  * Author: yoo
  *
@@ -20,7 +20,6 @@ namespace DockItemPositions
     guint get_ResizeWidthDecrement();
     bool get_CenterPosition(const int index, int& x, int& y, const guint width, const guint height);
 }
-
 
 #endif	/* DOCKITEMPOSITIONS_H */
 

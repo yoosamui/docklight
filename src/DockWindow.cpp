@@ -1,19 +1,19 @@
 //*****************************************************************
 //
 //  Copyright (C) Juan R. Gonzalez
-//  Created on November 20, 2018 
+//  Created on November 20, 2018
 //  j-gonzalez@email.de
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-// 
+//
 //  This program is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU General Public License for more details.
-// 
+//
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
@@ -62,7 +62,7 @@ namespace DockWindow
         }
     }
 
-    
+
     void set_Visibility(bool visible)
     {
         m_visible = visible;
@@ -118,7 +118,7 @@ namespace DockWindow
     }
 
     /**
-     * Resizes the dock window. 
+     * Resizes the dock window.
      */
     void update()
     {
@@ -141,14 +141,14 @@ namespace DockWindow
      * Resize the docck window.
      * @return: the size.
      */
-    int reSize() 
+    int reSize()
     {
         return reSize(false);
     }
 
     /**
      * Count the items and calculate the size of the window.
-     * Resizes the window and positioning it.      
+     * Resizes the window and positioning it.
      * @param forceMove
      * @return the ClietSize
      */
@@ -226,7 +226,6 @@ namespace DockWindow
 
             // calculate window size and position
             int itemsSize = DockItemPositions::get_dockItemsHeight();
-            g_print("DockItemHeight %d\n", itemsSize);
             int startY = (geometry.height / 2) - (itemsSize / 2);
             areaSize += Configuration::get_WindowDockMonitorMargin_Right();
             int posx = (geometry.x + geometry.width) - areaSize;
@@ -235,7 +234,7 @@ namespace DockWindow
             // resize the window
             m_window->resize(areaSize, itemsSize);
 
-            // avoid show window when apps add in. 
+            // avoid show window when apps add in.
             if (Configuration::is_autoHide() && !m_visible && !forceMove) {
                 int x, y;
                 m_window->get_position(x, y);
@@ -348,7 +347,7 @@ namespace DockWindow
         /**
          * removes the current strut
          */
-        void removeStrut() 
+        void removeStrut()
         {
             if (Configuration::is_activateStrut()) {
                 if (m_window != nullptr)

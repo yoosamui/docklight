@@ -1,7 +1,7 @@
-/* 
+/*
  * File:   Configuration.cpp
  * Author: yoo
- * 
+ *
  * Created on November 4, 2018, 1:32 PM
  */
 
@@ -14,14 +14,14 @@ namespace Configuration
     bool m_allowDraw = true;
     guint m_separatorMargin = 12;
 
-    panel_locationType m_locatiom = panel_locationType::RIGHT; 
+    panel_locationType m_locatiom = panel_locationType::BOTTOM;
     Horizontal_alignment_type m_HorizontalAlignment =  Horizontal_alignment_type::CENTER;
-    
+
     Horizontal_alignment_type get_HorizontalAlignment()
     {
         return m_HorizontalAlignment;
     }
-    
+
     panel_locationType get_dockWindowLocation()
     {
         return m_locatiom;
@@ -31,7 +31,7 @@ namespace Configuration
     {
         m_locatiom = location;
     }
-    
+
     bool is_panelMode()
     {
         return false; // Explicite set
@@ -46,18 +46,18 @@ namespace Configuration
     {
         return m_autohide;
     }
-    
+
     void set_autoHide(bool value)
     {
         m_autohide = value;
     }
-    
-    
+
+
     bool is_allowDraw()
     {
         return m_allowDraw;
     }
-    
+
     void set_allowDraw(bool value)
     {
         m_allowDraw = value;
@@ -73,7 +73,7 @@ namespace Configuration
         if(is_panelMode() || !is_autoHide()){
             return 0;
         }
-          
+
         return 27;
     }
     unsigned int get_WindowDockMonitorMargin_Right()
@@ -81,7 +81,7 @@ namespace Configuration
           if(is_panelMode() || !is_autoHide()){
             return 0;
         }
-          
+
         return 4;
     }
 
@@ -90,19 +90,19 @@ namespace Configuration
           if(is_panelMode() || !is_autoHide()){
             return 0;
         }
-          
+
         return 4;
     }
-    
+
     unsigned int get_WindowDockMonitorMargin_Bottom()
     {
        if(is_panelMode() || !is_autoHide()){
             return 0;
         }
-        
+
         return 4;
     }
-  /* 
+  /*
     void set_SeparatorMargin(unsigned int margin)
     {
         if( m_separatorMargin - margin < 1 ){
@@ -115,7 +115,7 @@ namespace Configuration
 
     unsigned int get_separatorMargin()
     {
-        int decrement = DockWindow::is_Horizontal() ?  
+        int decrement = DockWindow::is_Horizontal() ?
             DockPanel::get_WidthDecrement() :
             DockPanel::get_HeightDecrement();
 
@@ -135,7 +135,7 @@ namespace Configuration
     unsigned int get_CellHeight()
     {
         return Configuration::get_dockWindowSize() - (CELL_BOTTOM_MARGIN + CELL_TOP_MARGIN);
-        
+
     }
 
     unsigned int get_CellWidth()

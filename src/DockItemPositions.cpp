@@ -1,6 +1,6 @@
 /* File:   DockItemPositions.cpp
  * Author: yoo
- * 
+ *
  * Created on March 24, 2019, 12:59 PM
  */
 
@@ -10,15 +10,12 @@
 
 namespace DockItemPositions
 {
-   
-
+    /**
+     *  calculates the height size of all items. Returns the decrement value to resize the items.
+     */
     guint get_ResizeHeightDecrement()
     {
-        if (DockWindow::get_DockWindowHeight() + Configuration::get_CellHeight() <  DockWindow::Monitor::get_geometry().height ){
-            return 0;
-        }
-
-        int diff = DockWindow::Monitor::get_geometry().height - get_inmutableItemsHeight();
+        int diff = (DockWindow::Monitor::get_geometry().height/2) - get_inmutableItemsHeight();
         if (diff < 0 ){
             return (guint) abs(diff) / AppUpdater::m_dockitems.size();
         }
@@ -26,13 +23,12 @@ namespace DockItemPositions
         return 0;
     }
 
+    /**
+     *  calculates the width size of all items. Returns the decrement value to resize the items.
+     */
     guint get_ResizeWidthDecrement()
     {
-        if (DockWindow::get_DockWindowWidth() + Configuration::get_CellWidth() <  DockWindow::Monitor::get_geometry().width ){
-            return 0;
-        }
-
-        int diff = DockWindow::Monitor::get_geometry().width - get_inmutableItemsWidth();
+        int diff = (DockWindow::Monitor::get_geometry().width/2) - get_inmutableItemsWidth();
         if (diff < 0 ){
             return (guint) abs(diff) / AppUpdater::m_dockitems.size();
         }
@@ -75,7 +71,7 @@ namespace DockItemPositions
 
         return size - separatorMargin;
     }
-    
+
     /**
      * Compute the width of all items. The result width will resize the dockwindow width.
      * referenced by DockWindow.
@@ -111,62 +107,8 @@ namespace DockItemPositions
 
             size += item->get_Height() + separatorMargin;
         }
-        
+
         return size - separatorMargin;
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    int getItemsSizeUntilIndex(const int index)
-    {
-        unsigned int size = 0;
-        int count = 0;
-        for (DockItem* item:AppUpdater::m_dockitems) {
-            if (count == index) {
-                break;
-            }
-
-            if (Configuration::get_dockWindowLocation() == panel_locationType::LEFT ||
-                    Configuration::get_dockWindowLocation() == panel_locationType::RIGHT) {
-                if (item->m_dockitemtype == DockItemType::Separator) {
-                    size += item->get_Width();
-                    count++;
-                    continue;
-                }
-                size += item->get_Height();
-            }
-            else {
-
-                size += item->get_Width();
-                g_print("--------%d---%d\n", count, item->get_Width());
-            }
-
-            count++;
-        }
-
-        return size + (Configuration::get_separatorMargin() * index);
-    }
-
-    int getItemsWidth()
-    {
-        unsigned int size = 0;
-        for (DockItem* item:AppUpdater::m_dockitems) {
-            size += item->get_Width();
-        }
-
-        return size + (Configuration::get_separatorMargin() * AppUpdater::m_dockitems.size());
     }
 
     /*
@@ -185,6 +127,7 @@ namespace DockItemPositions
         DockWindow::get_DockWindowPosition(x, y);
 
         if (DockWindow::is_Horizontal()){
+
             x += DockWindow::get_dockWindowStartEndMargin() / 2;
             if (Configuration::get_dockWindowLocation() == panel_locationType::BOTTOM){
                 y -= height + 2;
@@ -203,6 +146,7 @@ namespace DockItemPositions
             }
         }
         else{
+
             y += DockWindow::get_dockWindowStartEndMargin() / 2;
             if (Configuration::get_dockWindowLocation() == panel_locationType::RIGHT){
                 x -= width + 2;
@@ -211,19 +155,19 @@ namespace DockItemPositions
                 x += DockWindow::get_DockWindowWidth() + 2;
             }
 
+            int variantItemHeight = 0;
             for (DockItem* citem : AppUpdater::m_dockitems){
+
+                variantItemHeight = citem->m_dockitemtype == DockItemType::Separator ? citem->get_Width() : citem->get_Height();
+
                 if( citem->m_index == item->m_index){
-                    g_print("index %d/%d\n", item->m_index, index);
-                    y -= (height / 2) - citem->get_Height()  / 2;
+                //    g_print("index %d/%d   center: %d \n", item->m_index, index, (height / 2) - citem->get_Height()  / 2);
+
+                    y -= (height / 2) - variantItemHeight / 2;
                     return true;
                 }
-                
-                if (citem->m_dockitemtype == DockItemType::Separator){
-                    y += citem->get_Width() + Configuration::get_separatorMargin();
-                }
-                else {
-                    y += citem->get_Height() + Configuration::get_separatorMargin();
-                }
+
+                y += variantItemHeight + Configuration::get_separatorMargin();
             }
         }
 
@@ -231,7 +175,7 @@ return true;
 
 // calculate center
 
-        
+
 
 /*
         int x, y;
@@ -251,7 +195,7 @@ return true;
         return position + center;
 */
 
-       
+
     }
 
     int getCenter(int count, int index, int width)

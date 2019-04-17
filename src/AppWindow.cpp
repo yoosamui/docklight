@@ -63,25 +63,22 @@ AppWindow::AppWindow()
     if (visual != NULL && gdk_screen_is_composited(screen)) {
         gtk_widget_set_visual(GTK_WIDGET(gobj()), visual);
     }
-
-    //m_dockpanel = (DockPanel*)NULL;
 }
 
 int AppWindow::init()
 {
 
+    this->set_title(PACKAGE_NAME);
+
     // Initialize the monitor geometry.
-    //https://lazka.github.io/pgi-docs/Wnck-3.0/classes/Window.html
     this->show();
     this->m_screen.init(this);
-    g_print("Monitor ready..................%d",this->m_screen.get_PrimaryMonitor()->geometry.height);
-    this->set_title(PACKAGE_NAME);
+    g_print("Monitor geometry ready. Monitor count = %d\n",this->m_screen.get_MonitorsCount());
+
     //std::string iconFile = Utilities::getExecPath(DEF_LOGONAME);
     //this->set_icon_from_file(iconFile);
 
-    // A window to implement a docking bar.
-    // Used for creating the dock panel.
-
+    // A window to implement a docking bar. Used for creating the dock panel.
     this->set_skip_taskbar_hint(true);
     this->set_skip_pager_hint(true);
     this->set_decorated(false);
@@ -90,13 +87,9 @@ int AppWindow::init()
 
     //https://developer.gnome.org/gtk-tutorial/stable/x2431.html
     this->add_events(
-                     Gdk::PROPERTY_CHANGE_MASK |
-                     //     Gdk::POINTER_MOTION_HINT_MASK |
-                     //       Gdk::ENTER_NOTIFY_MASK |
-                     //       Gdk::LEAVE_NOTIFY_MASK |
-                     //      Gdk::POINTER_MOTION_MASK |
-                     Gdk::STRUCTURE_MASK |
-                     Gdk::PROPERTY_CHANGE_MASK);
+            Gdk::PROPERTY_CHANGE_MASK |
+            Gdk::STRUCTURE_MASK |
+            Gdk::PROPERTY_CHANGE_MASK);
 
     GdkScreen *screen = gdk_screen_get_default();
     WnckScreen *wnckscreen = wnck_screen_get(0);
@@ -104,25 +97,29 @@ int AppWindow::init()
     // The monitors-changed signal is emitted when the number,
     // size or position of the monitors attached to the screen change.
     g_signal_connect(G_OBJECT(screen), "size-changed",
-                     G_CALLBACK(monitor_size_changed_callback),
-                     (gpointer) this);
+            G_CALLBACK(monitor_size_changed_callback),
+            (gpointer) this);
 
     g_signal_connect(G_OBJECT(screen), "monitors-changed",
-                     G_CALLBACK(monitor_changed_callback),
-                     (gpointer) this);
+            G_CALLBACK(monitor_changed_callback),
+            (gpointer) this);
 
     g_signal_connect(G_OBJECT(wnckscreen), "window-opened",
-                     G_CALLBACK(AppWindow::on_window_opened), NULL);
+            G_CALLBACK(AppWindow::on_window_opened), NULL);
 
     g_signal_connect(wnckscreen, "window_closed",
-                     G_CALLBACK(AppWindow::on_window_closed), NULL);
+            G_CALLBACK(AppWindow::on_window_closed), NULL);
 
     // Launch timer every second
     Glib::signal_timeout().connect(sigc::mem_fun(*this, &AppWindow::fullScreenTimer), 100);
     Glib::signal_timeout().connect(sigc::mem_fun(*this, &AppWindow::autohideTimer), DEF_FRAMERATE);
 
-
-
+    // Initialize the DockWindow namespace    
+    if (DockWindow::init(this) != 0) {
+        return -1;
+    }
+    
+    // Create the DockPanel instance.
     m_dockpanel = new DockPanel();
     this->add(*m_dockpanel);
     this->show_all();
@@ -134,12 +131,7 @@ int AppWindow::init()
     // use arguments anywhere else:
     //std::cout << Arguments()[0];
 
-
-    if (DockWindow::init(this) != 0) {
-        return -1;
-    }
-
-       return  m_dockpanel->Init(this);
+    return  m_dockpanel->Init(this);
 }
 
 /**
@@ -191,105 +183,105 @@ bool AppWindow::autohideTimer()
         switch (location)
         {
             case panel_locationType::TOP:
-            {
-                // avoid hidden if the mouse is in the margin area
-                int margin = Configuration::get_WindowDockMonitorMargin_Top();
-                if (m_visible && margin > 0 && !this->m_mouseIn) {
-                    Utilities::getMousePosition(mouseX, mouseY);
-                    if (mouseY <= margin &&
-                        mouseX > xpos && mouseX < xpos + this->get_width()) {
-                        m_timerStoped = true;
-                        return true;
+                {
+                    // avoid hidden if the mouse is in the margin area
+                    int margin = Configuration::get_WindowDockMonitorMargin_Top();
+                    if (m_visible && margin > 0 && !this->m_mouseIn) {
+                        Utilities::getMousePosition(mouseX, mouseY);
+                        if (mouseY <= margin &&
+                                mouseX > xpos && mouseX < xpos + this->get_width()) {
+                            m_timerStoped = true;
+                            return true;
+                        }
                     }
+                    // set start and end position for hide/show 
+                    if (m_visible) { // Hide
+                        startPosition = margin;
+                        endPosition -= this->get_height() - 1;
+                    }
+                    else { // Show
+                        startPosition -= this->get_height() - 1;
+                        endPosition = margin;
+                    }
+                    break;
                 }
-                // set start and end position for hide/show 
-                if (m_visible) { // Hide
-                    startPosition = margin;
-                    endPosition -= this->get_height() - 1;
-                }
-                else { // Show
-                    startPosition -= this->get_height() - 1;
-                    endPosition = margin;
-                }
-                break;
-            }
             case panel_locationType::BOTTOM:
-            {
-                // avoid hidden if the mouse is in the margin area
-                int margin = Configuration::get_WindowDockMonitorMargin_Bottom();
-                if (m_visible && margin > 0 && !this->m_mouseIn) {
-                    Utilities::getMousePosition(mouseX, mouseY);
-                    if (mouseY > DockWindow::Monitor::get_geometry().height - margin
-                        && mouseX > xpos && mouseX < xpos + this->get_width()) {
-                        m_timerStoped = true;
-                        return true;
+                {
+                    // avoid hidden if the mouse is in the margin area
+                    int margin = Configuration::get_WindowDockMonitorMargin_Bottom();
+                    if (m_visible && margin > 0 && !this->m_mouseIn) {
+                        Utilities::getMousePosition(mouseX, mouseY);
+                        if (mouseY > DockWindow::Monitor::get_geometry().height - margin
+                                && mouseX > xpos && mouseX < xpos + this->get_width()) {
+                            m_timerStoped = true;
+                            return true;
+                        }
                     }
+                    // set start and end position for hide/show 
+                    if (m_visible) { // Hide
+                        startPosition = DockWindow::Monitor::get_geometry().height - ( margin + this->get_height() );
+                        endPosition = startPosition + this->get_height() + margin - 1;
+                    }
+                    else { // Show
+                        startPosition =  DockWindow::Monitor::get_geometry().height  + this->get_height() + margin - 1;
+                        endPosition = DockWindow::Monitor::get_geometry().height - ( margin + this->get_height() );
+                    }
+                    break;
                 }
-                // set start and end position for hide/show 
-                if (m_visible) { // Hide
-                    startPosition = DockWindow::Monitor::get_geometry().height - ( margin + this->get_height() );
-                    endPosition = startPosition + this->get_height() + margin - 1;
-                }
-                else { // Show
-                    startPosition =  DockWindow::Monitor::get_geometry().height  + this->get_height() + margin - 1;
-                    endPosition = DockWindow::Monitor::get_geometry().height - ( margin + this->get_height() );
-                }
-                break;
-            }
             case panel_locationType::LEFT:
-            {
-                // avoid hidden if the mouse is in the margin area
-                int margin = Configuration::get_WindowDockMonitorMargin_Left();
-                if (m_visible && margin > 0 && !this->m_mouseIn) {
-                    Utilities::getMousePosition(mouseX, mouseY);
-                    if (mouseX <= margin &&
-                        mouseY > ypos && mouseY < ypos + this->get_height()) {
-                        m_timerStoped = true;
-                        return true;
+                {
+                    // avoid hidden if the mouse is in the margin area
+                    int margin = Configuration::get_WindowDockMonitorMargin_Left();
+                    if (m_visible && margin > 0 && !this->m_mouseIn) {
+                        Utilities::getMousePosition(mouseX, mouseY);
+                        if (mouseX <= margin &&
+                                mouseY > ypos && mouseY < ypos + this->get_height()) {
+                            m_timerStoped = true;
+                            return true;
+                        }
                     }
+                    // set start and end position for hide/show 
+                    if (m_visible) { // Hide
+                        startPosition = margin;
+                        endPosition -= this->get_width() - 1;
+                    }
+                    else { // Show
+                        startPosition -= this->get_width() - 1;
+                        endPosition = margin;
+                    }
+                    break;
                 }
-                // set start and end position for hide/show 
-                if (m_visible) { // Hide
-                    startPosition = margin;
-                    endPosition -= this->get_width() - 1;
-                }
-                else { // Show
-                    startPosition -= this->get_width() - 1;
-                    endPosition = margin;
-                }
-                break;
-            }
             case panel_locationType::RIGHT:
-            {
-                // avoid hidden if the mouse in the margin area
-                int margin = Configuration::get_WindowDockMonitorMargin_Right();
-                if (m_visible && margin > 0 && !this->m_mouseIn) {
-                    Utilities::getMousePosition(mouseX, mouseY);
-                    if (mouseX > DockWindow::Monitor::get_geometry().width - margin
-                        && mouseY > ypos && mouseY < ypos + this->get_height()) {
-                        m_timerStoped = true;
-                        return true;
+                {
+                    // avoid hidden if the mouse in the margin area
+                    int margin = Configuration::get_WindowDockMonitorMargin_Right();
+                    if (m_visible && margin > 0 && !this->m_mouseIn) {
+                        Utilities::getMousePosition(mouseX, mouseY);
+                        if (mouseX > DockWindow::Monitor::get_geometry().width - margin
+                                && mouseY > ypos && mouseY < ypos + this->get_height()) {
+                            m_timerStoped = true;
+                            return true;
+                        }
                     }
+                    // set start and end position for hide/show 
+                    if (m_visible) { // Hide
+                        startPosition = DockWindow::Monitor::get_geometry().width - ( margin + this->get_width() );
+                        endPosition = startPosition + this->get_width() + margin - 1;
+                    }
+                    else { // Show
+                        startPosition =  DockWindow::Monitor::get_geometry().width  + this->get_width() + margin - 1;
+                        endPosition = DockWindow::Monitor::get_geometry().width - ( margin + this->get_width() );
+                    }
+                    break;
                 }
-                 // set start and end position for hide/show 
-                if (m_visible) { // Hide
-                    startPosition = DockWindow::Monitor::get_geometry().width - ( margin + this->get_width() );
-                    endPosition = startPosition + this->get_width() + margin - 1;
-                }
-                else { // Show
-                    startPosition =  DockWindow::Monitor::get_geometry().width  + this->get_width() + margin - 1;
-                    endPosition = DockWindow::Monitor::get_geometry().width - ( margin + this->get_width() );
-                }
-                break;
-            }
         }
 
         float position = ofxeasing::map_clamp(now,
-                                              m_initTime,
-                                              endTime,
-                                              startPosition,
-                                              endPosition,
-                                              &ofxeasing::linear::easeIn);
+                m_initTime,
+                endTime,
+                startPosition,
+                endPosition,
+                &ofxeasing::linear::easeIn);
 
         switch (location)
         {
@@ -386,7 +378,7 @@ void AppWindow::on_window_closed(WnckScreen *screen, WnckWindow *window, gpointe
 void AppWindow::monitor_size_changed_callback(GdkScreen *screen, gpointer gtkwindow){ }
 
 void AppWindow::on_active_window_changed_callback(WnckScreen *screen,
-                                                  WnckWindow *previously_active_window, gpointer user_data){ }
+        WnckWindow *previously_active_window, gpointer user_data){ }
 
 void AppWindow::geometry_changed(WnckWindow *window){ }
 
@@ -400,7 +392,7 @@ void AppWindow::monitor_changed_callback(GdkScreen *screen, gpointer gtkwindow)
     auto start = std::chrono::high_resolution_clock::now();
     std::this_thread::sleep_for(2s);
 
-     */
+*/
     DockWindow::Monitor::removeStrut();
     DockWindow::Monitor::updateGeometry();
     DockWindow::reSize();
@@ -415,7 +407,6 @@ void AppWindow::monitor_changed_callback(GdkScreen *screen, gpointer gtkwindow)
 
 }
 
-WnckWindow *fullscreen_window = NULL;
 
 void AppWindow::window_geometry_changed_callback(WnckWindow *window, gpointer user_data){ }
 
@@ -433,6 +424,6 @@ bool AppWindow::on_leave_notify_event(GdkEventCrossing* crossing_event)
 
 AppWindow::~AppWindow()
 {
-g_print("AppWindow destroy\n");
+    g_print("AppWindow destroy\n");
 
 }
