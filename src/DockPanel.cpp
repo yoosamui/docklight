@@ -29,6 +29,9 @@ bool DockPanel::m_AppThreadRunning;
 guint DockPanel::m_widthDecrement;
 guint DockPanel::m_heightDecrement;
 
+
+guint DockPanel::m_ItemsWidth;
+guint DockPanel::m_ItemsHeight;
 /*
  * This class is the  main dock renderer.
  */
@@ -850,10 +853,10 @@ inline void DockPanel::get_ItemPosition(const DockItemType dockType, int& x, int
         // if the item is a separator the wisth is probably not equal.
         // in this case wie remeber the size for use it in the next item.
         if( dockType == DockItemType::Separator){
-            y +=  nextsize + Configuration::get_separatorMargin();
-            height = nextsize = width;
-            width = Configuration::get_CellWidth();
-            return;
+           y +=  nextsize + Configuration::get_separatorMargin();
+           height = nextsize = width;
+           width = Configuration::get_CellWidth();
+           return;
         }
 
         y +=  nextsize + Configuration::get_separatorMargin();
@@ -923,6 +926,9 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
     this->m_widthDecrement = 0;
     this->m_heightDecrement = 0;
 
+    this->m_ItemsWidth = 0;
+    this->m_ItemsHeight = 0;
+
     if (DockWindow::is_Horizontal()){
 
         this->m_widthDecrement = DockItemPositions::get_ResizeWidthDecrement();
@@ -942,6 +948,8 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
         }
     }
 
+
+
     // Draw all items with cairo
     for (idx = 0; idx < itemsCount; idx++) {
 
@@ -950,10 +958,16 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
         height = item->get_Height();
 
         this->get_ItemPosition(item->m_dockitemtype, x, y, width, height);
+       // y += height + Configuration::get_separatorMargin();
+        //g_print("idx: %d y:%d  h:%d  sepa: %d \n",idx,y, height, Configuration::get_separatorMargin());
+
+        item->m_index = idx;
 
         item->m_posX = x;
         item->m_posY = y;
 
+        this->m_ItemsWidth  += width;
+        this->m_ItemsHeight += height;
         // Draw cells
         cr->set_source_rgba(0.00, 0.50, 0.66, 1);
         RoundedRectangle(cr, x, y, width, height, 3);
@@ -979,6 +993,8 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
                 }
                 cr->fill();
             }
+
+
             // icons
             if (item->m_image != NULLPB) {
                 iconsizeWidth = width - CELL_MARGIN;
@@ -987,6 +1003,7 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
                 Gdk::Cairo::set_source_pixbuf(cr, icon, x + center - iconsizeWidth / 2, y + 1);
                 cr->paint();
             }
+
         }
 
         // Selector
@@ -1001,6 +1018,9 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
             cr->stroke();
         }
     }
+
+
+
 }
 
 /**
@@ -1049,7 +1069,7 @@ void DockPanel::show_Title()
            // if (item->m_items.size() > 1) {
                 char buff[NAME_MAX];
                 //sprintf(buff, "%s (%d)", title.c_str(), (int)item->m_items.size());
-                sprintf(buff, "%s idx: (%d)", title.c_str(), (int)item->m_index);
+                sprintf(buff, "%s idx: (%d) %d", title.c_str(), (int)item->m_index, item->get_Height());
                 title = buff;
           //  }
 

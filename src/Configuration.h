@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   Configuration.h
  * Author: yoo
  *
@@ -8,13 +8,9 @@
 #ifndef CONFIGURATION_H
 #define	CONFIGURATION_H
 
-#define DEF_FRAMERATE 1000/30
-#define DOCKLIGHT_INSTANCENAME  "docklight"
-#define DEF_ICONMAXSIZE 64
-
-#define DEF_DATADIRNAME         "data/" 
-#define DEF_ATTACHMENTDIR       "data/attachments" 
-#define DEF_IMAGESDIR           "data/images" 
+#define DEF_FRAMERATE 1000/12
+#define DEF_ATTACHMENTDIR       "data/attachments"
+#define DEF_IMAGESDIR           "data/images"
 #define DEF_ICONNAME            "data/images/docklight.home.ico"
 #define DEF_SEISSIONICONNAME    "data/images/docklight-session.png"
 #define DEF_LOGONAME            "data/images/docklight.logo.png"
@@ -68,10 +64,10 @@
 #define DEF_ICONTOPMARGIN 10                // Icon top Margin from panel
 
 // Icon top Margin from the cell
-#define DEF_ICONTOPCELLMARGIN DEF_ICONTOPMARGIN -DEF_CELLTOPMARGIN                
+#define DEF_ICONTOPCELLMARGIN DEF_ICONTOPMARGIN -DEF_CELLTOPMARGIN
 
 #define DEF_PANELHIGHT DEF_CELLHIGHT + 9
-#define DEF_PANELHIGHTHIDE  4          
+#define DEF_PANELHIGHTHIDE  4
 
 
 
@@ -138,7 +134,7 @@ namespace Configuration {
     unsigned int get_WindowDockMonitorMargin_Bottom();
     void set_dockWindowLocation(panel_locationType location);
     //void set_SeparatorMargin(unsigned int  margin);
-    
+
 }
 
 #endif	/* CONFIGURATION_H */

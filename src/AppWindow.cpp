@@ -7,12 +7,12 @@
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-// 
+//
 //  This program is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU General Public License for more details.
-// 
+//
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
@@ -112,13 +112,13 @@ int AppWindow::init()
 
     // Launch timer every second
     Glib::signal_timeout().connect(sigc::mem_fun(*this, &AppWindow::fullScreenTimer), 100);
-    Glib::signal_timeout().connect(sigc::mem_fun(*this, &AppWindow::autohideTimer), DEF_FRAMERATE);
+    Glib::signal_timeout().connect(sigc::mem_fun(*this, &AppWindow::autohideTimer), 1000/30);
 
-    // Initialize the DockWindow namespace    
+    // Initialize the DockWindow namespace
     if (DockWindow::init(this) != 0) {
         return -1;
     }
-    
+
     // Create the DockPanel instance.
     m_dockpanel = new DockPanel();
     this->add(*m_dockpanel);
@@ -194,7 +194,7 @@ bool AppWindow::autohideTimer()
                             return true;
                         }
                     }
-                    // set start and end position for hide/show 
+                    // set start and end position for hide/show
                     if (m_visible) { // Hide
                         startPosition = margin;
                         endPosition -= this->get_height() - 1;
@@ -217,7 +217,7 @@ bool AppWindow::autohideTimer()
                             return true;
                         }
                     }
-                    // set start and end position for hide/show 
+                    // set start and end position for hide/show
                     if (m_visible) { // Hide
                         startPosition = DockWindow::Monitor::get_geometry().height - ( margin + this->get_height() );
                         endPosition = startPosition + this->get_height() + margin - 1;
@@ -240,7 +240,7 @@ bool AppWindow::autohideTimer()
                             return true;
                         }
                     }
-                    // set start and end position for hide/show 
+                    // set start and end position for hide/show
                     if (m_visible) { // Hide
                         startPosition = margin;
                         endPosition -= this->get_width() - 1;
@@ -263,7 +263,7 @@ bool AppWindow::autohideTimer()
                             return true;
                         }
                     }
-                    // set start and end position for hide/show 
+                    // set start and end position for hide/show
                     if (m_visible) { // Hide
                         startPosition = DockWindow::Monitor::get_geometry().width - ( margin + this->get_width() );
                         endPosition = startPosition + this->get_width() + margin - 1;

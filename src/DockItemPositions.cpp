@@ -15,9 +15,11 @@ namespace DockItemPositions
      */
     guint get_ResizeHeightDecrement()
     {
-        int diff = (DockWindow::Monitor::get_geometry().height/2) - get_inmutableItemsHeight();
+        int  requiredSize = get_inmutableItemsHeight() +  Configuration::get_CellHeight();
+        int diff =  DockWindow::Monitor::get_geometry().height  - requiredSize;
+
         if (diff < 0 ){
-            return (guint) abs(diff) / AppUpdater::m_dockitems.size();
+            return abs(diff) / (AppUpdater::m_dockitems.size());
         }
 
         return 0;
@@ -28,27 +30,30 @@ namespace DockItemPositions
      */
     guint get_ResizeWidthDecrement()
     {
-        int diff = (DockWindow::Monitor::get_geometry().width/2) - get_inmutableItemsWidth();
+        int  requiredSize = get_inmutableItemsWidth() +  Configuration::get_CellWidth();
+        int diff =  DockWindow::Monitor::get_geometry().width  - requiredSize;
+
         if (diff < 0 ){
-            return (guint) abs(diff) / AppUpdater::m_dockitems.size();
+            return  abs(diff) / AppUpdater::m_dockitems.size();
         }
 
         return 0;
     }
+
     /**
      * Compute the original width of all items.
      * @return The width of all items.
      */
     guint get_inmutableItemsWidth()
     {
-        guint separatorMargin = Configuration::get_inmutableSeparatorMargin();
-        guint size = DockWindow::get_dockWindowStartEndMargin();
+        guint separatorMargin = Configuration::get_separatorMargin();
+        guint size = 0;
 
         for (auto item : AppUpdater::m_dockitems) {
             size += item->get_InmutableWidth() + separatorMargin;
         }
 
-        return size - separatorMargin;
+        return size - separatorMargin + Configuration::get_CellWidth() / 2;
     }
 
     /**
@@ -57,19 +62,19 @@ namespace DockItemPositions
      */
     guint get_inmutableItemsHeight()
     {
-        guint separatorMargin = Configuration::get_inmutableSeparatorMargin();
-        guint size = DockWindow::get_dockWindowStartEndMargin();
+        guint separatorMargin = Configuration::get_separatorMargin();
+        guint size = 0 ;
 
         for (auto item : AppUpdater::m_dockitems) {
-            if (item->m_dockitemtype == DockItemType::Separator){
+            if (item->m_dockitemtype == DockItemType::Separator) {
                 size += item->get_InmutableWidth() + separatorMargin;
                 continue;
             }
 
-            size += item->get_InmutableHeight() + separatorMargin;
+            size += (item->get_InmutableHeight() + separatorMargin);
         }
 
-        return size - separatorMargin;
+        return size - separatorMargin + Configuration::get_CellHeight() / 2;
     }
 
     /**
@@ -79,24 +84,30 @@ namespace DockItemPositions
      */
     guint get_dockItemsWidth()
     {
-        guint separatorMargin = Configuration::get_separatorMargin();
+        guint separatorMargin = Configuration::get_inmutableSeparatorMargin();
         guint size = DockWindow::get_dockWindowStartEndMargin();
 
         for (auto item : AppUpdater::m_dockitems) {
             size += item->get_Width() + separatorMargin;
         }
 
-        return size - separatorMargin;
+        guint result =  size - separatorMargin;
+
+        if (result > DockWindow::Monitor::get_geometry().width ) {
+            result = DockWindow::Monitor::get_geometry().width;
+        }
+
+        return result;
     }
 
     /**
      * Compute the height of all items. The result width will resize the dockwindow height.
      * referenced by DockWindow.
-     * @return the height of the dockwindow.
+     * @return the required height of the dockwindow.
      */
     guint get_dockItemsHeight()
-    {
-        guint separatorMargin = Configuration::get_separatorMargin();
+     {
+        guint separatorMargin = Configuration::get_inmutableSeparatorMargin();
         guint size = DockWindow::get_dockWindowStartEndMargin();
 
         for (auto item : AppUpdater::m_dockitems) {
@@ -108,8 +119,15 @@ namespace DockItemPositions
             size += item->get_Height() + separatorMargin;
         }
 
-        return size - separatorMargin;
+        guint result =  size - separatorMargin;
+
+        if (result > DockWindow::Monitor::get_geometry().height ) {
+            result = DockWindow::Monitor::get_geometry().height;
+        }
+
+        return result;
     }
+
 
     /*
      * returns the start position from the given item.
@@ -130,7 +148,9 @@ namespace DockItemPositions
 
             x += DockWindow::get_dockWindowStartEndMargin() / 2;
             if (Configuration::get_dockWindowLocation() == panel_locationType::BOTTOM){
-                y -= height + 2;
+                //y -= height + 2;
+                y = DockWindow::Monitor::get_geometry().height - DockWindow::get_DockWindowHeight() - height - 2 - Configuration::get_WindowDockMonitorMargin_Bottom();
+                g_print("Title %d %d %d\n", y,  DockWindow::Monitor::get_geometry().height, DockWindow::get_DockWindowHeight());
             }
             else{
                 y += DockWindow::get_DockWindowHeight() + 2;
@@ -139,6 +159,17 @@ namespace DockItemPositions
             for (DockItem* citem : AppUpdater::m_dockitems){
                 if( citem->m_index == item->m_index){
                     x -= (width / 2) - citem->get_Width()  / 2;
+
+                    // check the limit on the right
+                    if (x + width  > DockWindow::Monitor::get_geometry().width){
+                        x =  DockWindow::Monitor::get_geometry().width - width - 2;
+                    }
+
+                    // check the limit on the left
+                    if (x <  DockWindow::Monitor::get_geometry().x){
+                        x =  DockWindow::Monitor::get_geometry().x + 2;
+                    }
+
                     return true;
                 }
 

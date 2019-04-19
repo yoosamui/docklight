@@ -1,7 +1,7 @@
-/* 
+/*
  * File:   DockItem.cpp
  * Author: yoo
- * 
+ *
  * Created on November 11, 2018, 5:14 PM
  */
 
@@ -23,7 +23,7 @@ DockItem::DockItem(const guint width, const guint height)
 /**
  * Destructor
  */
-DockItem::~DockItem() 
+DockItem::~DockItem()
 {
     for (int i = this->m_items.size() - 1; i >= 0; i--){
         delete m_items[i];
@@ -36,12 +36,24 @@ DockItem::~DockItem()
 
 guint DockItem::get_Width()
 {
+    if (DockPanel::get_WidthDecrement() < 0 ){
+        return this->m_width;
+    }
+
     return this->m_width - DockPanel::get_WidthDecrement();
 }
+
+
 guint DockItem::get_Height()
 {
+    if (DockPanel::get_HeightDecrement() < 0 ){
+        return this->m_height;
+    }
+
     return this->m_height - DockPanel::get_HeightDecrement();
 }
+
+
 guint DockItem::get_InmutableWidth()
 {
     return this->m_width;
@@ -52,7 +64,7 @@ guint DockItem::get_InmutableHeight()
     return this->m_height;
 }
 
-/*    
+/*
       void DockItem::set_Width(guint value)
       {
       this->m_width = value;
@@ -118,7 +130,7 @@ std::string DockItem::get_Title()
 
 std::string DockItem::get_GroupName()
 {
-    std::replace(m_realgroupname.begin(), 
+    std::replace(m_realgroupname.begin(),
             m_realgroupname.end(), ' ', '-');
 
     return m_realgroupname;

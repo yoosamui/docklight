@@ -10,11 +10,11 @@
 
 namespace Configuration
 {
-    bool m_autohide = false;
+    bool m_autohide = true;
     bool m_allowDraw = true;
     guint m_separatorMargin = 12;
 
-    panel_locationType m_locatiom = panel_locationType::BOTTOM;
+    panel_locationType m_locatiom = panel_locationType::RIGHT;
     Horizontal_alignment_type m_HorizontalAlignment =  Horizontal_alignment_type::CENTER;
 
     Horizontal_alignment_type get_HorizontalAlignment()
@@ -102,28 +102,10 @@ namespace Configuration
 
         return 4;
     }
-  /*
-    void set_SeparatorMargin(unsigned int margin)
-    {
-        if( m_separatorMargin - margin < 1 ){
-            return;
-        }
-
-        m_separatorMargin -= margin;
-    }
-    */
 
     unsigned int get_separatorMargin()
     {
-        int decrement = DockWindow::is_Horizontal() ?
-            DockPanel::get_WidthDecrement() :
-            DockPanel::get_HeightDecrement();
-
-        if( m_separatorMargin - decrement < 1){
-            return 1;
-        }
-
-        return m_separatorMargin - decrement;
+        return m_separatorMargin;
     }
 
     unsigned int get_inmutableSeparatorMargin()

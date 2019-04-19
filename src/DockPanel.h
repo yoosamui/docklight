@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   DockPanel.h
  * Author: yoo
  *
@@ -12,7 +12,7 @@
 
 #include <libwnck/libwnck.h>
 #include <glibmm/timer.h>
-#include <gtkmm.h> 
+#include <gtkmm.h>
 
 #include "Configuration.h"
 #include "DockItem.h"
@@ -26,7 +26,10 @@
 class DockPanel : public Gtk::DrawingArea, DockMenu {
 
 public:
-    
+
+    static guint m_ItemsWidth;
+    static guint m_ItemsHeight;
+
     DockPanel();
     virtual ~DockPanel();
     //SessionWindow* m_sessionWindow;
@@ -51,11 +54,11 @@ private:
 
     Gtk::Window* m_AppWindow = nullptr;
     bool m_popupMenuOn = false;
-    static bool m_forceDraw;    
+    static bool m_forceDraw;
 
     TitleWindow m_titlewindow;
     TitleWindow m_infowindow;
-    
+
     AppUpdater*  m_AppUpdater = nullptr;
     std::string m_homeiconFilePath;
     static int m_currentMoveIndex;
@@ -65,12 +68,12 @@ private:
     bool m_mouseLeftButtonDown = false;
     bool m_mouseRightButtonDown = false;
     float m_mouseclickEventTime = 0.0f;
-    
+
     DockItem* get_CurrentItem();
-    
+
     // Timer for showing the title window
     Glib::Timer m_titleTimer;
-    
+
     gdouble m_titleElapsedSeconds;
     int m_titleItemOldindex = 0;
     bool m_titleShow = false;
@@ -83,7 +86,7 @@ private:
     static void on_active_window_changed_callback(WnckScreen* screen, WnckWindow* previously_active_window, gpointer user_data);
 
     // Mouse handlers
-    // http://www.horde3d.org/wiki/index.php5?title=Tutorial_-_Setup_Horde_with_Gtkmm  
+    // http://www.horde3d.org/wiki/index.php5?title=Tutorial_-_Setup_Horde_with_Gtkmm
     virtual bool on_button_press_event(GdkEventButton *event);
     virtual bool on_button_release_event(GdkEventButton *event);
     virtual bool on_motion_notify_event(GdkEventMotion* event);
