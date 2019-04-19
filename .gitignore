@@ -98,6 +98,8 @@ src/.deps/
 *.swp
 *.7z
 tags
+*.swn
+*.swo
 
 
 # Prerequisites
