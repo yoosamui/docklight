@@ -63,7 +63,9 @@ DockPanel::DockPanel(): m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
     g_signal_connect(G_OBJECT(wnckscreen), "window-opened", G_CALLBACK(DockPanel::on_window_opened), NULL);
     g_signal_connect(wnckscreen, "window_closed", G_CALLBACK(DockPanel::on_window_closed), NULL);
     g_signal_connect(wnckscreen, "active_window_changed", G_CALLBACK(DockPanel::on_active_window_changed_callback), NULL);
-    Glib::signal_timeout().connect(sigc::mem_fun(*this, &DockPanel::on_timeoutDraw), DEF_FRAMERATE);
+
+    Glib::signal_timeout().connect(sigc::mem_fun(*this, &DockPanel::on_timeoutDraw),1000/10);
+
 
     // Menus
     m_HomeMenu.attach_to_widget(*this);
@@ -328,7 +330,13 @@ bool DockPanel::on_button_press_event(GdkEventButton *event)
                 m_dragdropMousePoint.set_x((int) event->x);
                 m_dragdropMousePoint.set_y((int) event->y);
                 m_dragdropTimer.start();
+
+
                 g_print("Mose %d/%d \n", (int)event->x, (int)event->y);
+
+
+
+                //this->m_signalDragDrop = Glib::signal_timeout().connect(sigc::mem_fun(*this, &DockPanel::on_timerDragDrop), 1000/60);
             }
 
             // The event has been handled.
@@ -418,6 +426,7 @@ bool DockPanel::on_button_release_event(GdkEventButton *event)
         m_DragAndDropWindow = nullptr;
 
         m_DragDropBegin = false;
+ //       this->m_signalDragDrop.disconnect();
 
     //    if(this->m_mouseIn){
             this->m_DragDropTargetIndex = this->m_currentMoveIndex;
@@ -649,13 +658,59 @@ void DockPanel::update()
     m_forceDraw = true;
 }
 
+
+
+bool DockPanel::on_timerDragDrop()
+{
+
+   //if (!m_DragDropBegin && this->m_currentMoveIndex > 0 &&  m_mouseLeftButtonDown && m_dragdropTimer.elapsed() >= 0.25 ){
+        //m_dragdropTimer.stop();
+        //m_dragdropTimer.reset();
+
+        //DockItem* item =  this->get_CurrentItem();
+        //if (item != nullptr){
+            //m_DragDropBegin = true;
+            //this->m_DragDropSourceIndex = this->m_currentMoveIndex;
+
+            //this->m_DragAndDropWindow = new DragAndDropWindow();
+            //this->m_DragAndDropWindow->Show(item->m_image, item, m_dragdropMousePoint);
+        //}
+    //}
+    //else if (m_DragDropBegin && this->m_DragAndDropWindow != nullptr)
+    //{
+        //int mouseX;
+        //int mouseY;
+        //bool found = Utilities::getMousePosition(mouseX, mouseY);
+
+        //if (found){
+
+        //DockItem* item = this->m_AppUpdater->m_dockitems[this->m_DragDropSourceIndex];
+
+          ////  this->move(mouseX - x + m_item->m_posX + CELL_MARGIN / 2 ,  mouseY - y  +  m_item->m_posY + 1);
+          ////
+        //g_print("DARG %d %d\n",mouseX, mouseY);
+////    ..this->m_mousePoint.set_x(mousePoint.get_x());
+          ////this->m_DragAndDropWindow->move(
+                        ////mouseX +  m_dragdropMousePoint.get_x() + item->m_posX + CELL_MARGIN ,
+                        ////mouseY +  m_dragdropMousePoint.get_y() + item->m_posY - 1 );
+        //}
+
+    //}
+
+
+
+    return true;
+}
+
 /**
  * Run at defined FRAMERATE
  */
 bool DockPanel::on_timeoutDraw()
 {
-    if (!m_DragDropBegin && this->m_currentMoveIndex > 0 &&  m_mouseLeftButtonDown && m_dragdropTimer.elapsed() >= 0.20 ){
-        g_print("timer mouse down %f\n", m_dragdropTimer.elapsed());
+
+
+
+   if (!m_DragDropBegin && this->m_currentMoveIndex > 0 &&  m_mouseLeftButtonDown && m_dragdropTimer.elapsed() >= 0.25 ){
         m_dragdropTimer.stop();
         m_dragdropTimer.reset();
 
@@ -668,7 +723,6 @@ bool DockPanel::on_timeoutDraw()
             this->m_DragAndDropWindow->Show(item->m_image, item, m_dragdropMousePoint);
         }
     }
-
 
     if (m_mouseIn || m_forceDraw || m_AppRunImage) {
         Gtk::Widget::queue_draw();
@@ -1032,7 +1086,7 @@ void DockPanel::show_Title()
     if (Configuration::is_autoHide() && !DockWindow::is_Visible()){
         m_titlewindow.hide();
         m_infowindow.hide();
-        return;
+        m_titleShow = false;
     }
 
 
@@ -1040,7 +1094,7 @@ void DockPanel::show_Title()
     if (item == nullptr/* || item->m_dockitemtype == DockItemType::Separator*/){
         m_titlewindow.hide();
         m_infowindow.hide();
-        return;
+        m_titleShow = false;
     }
 
     // title window
@@ -1055,6 +1109,8 @@ void DockPanel::show_Title()
         m_infowindow.hide();
         //            if (m_previewWindowActive)
         //                m_preview.hideMe();
+        //
+        //
 
     }
 

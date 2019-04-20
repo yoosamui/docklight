@@ -93,6 +93,7 @@ private:
     virtual bool on_scroll_event(GdkEventScroll* e);
 
     bool on_timeoutDraw();
+    bool on_timerDragDrop();
 
     //Override default signal handler:
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
@@ -136,6 +137,8 @@ private:
 
 
     // Drag & Drop
+    sigc::connection m_signalDragDrop;
+
     Glib::Timer m_dragdropTimer;
     bool  m_DragDropBegin = false;
     Gdk::Point m_dragdropMousePoint;

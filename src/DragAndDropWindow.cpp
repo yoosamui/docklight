@@ -7,12 +7,12 @@
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-// 
+//
 //  This program is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU General Public License for more details.
-// 
+//
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
@@ -22,7 +22,7 @@
 #include "Utilities.h"
 #include "DragAndDropWindow.h"
 #include "DockWindow.h"
-#include <gtkmm.h>        
+#include <gtkmm.h>
 
 DragAndDropWindow::DragAndDropWindow():Gtk::Window(Gtk::WindowType::WINDOW_POPUP)
 {
@@ -38,7 +38,7 @@ DragAndDropWindow::DragAndDropWindow():Gtk::Window(Gtk::WindowType::WINDOW_POPUP
         gtk_widget_set_visual(GTK_WIDGET(gobj()), visual);
     }
 
-    Glib::signal_timeout().connect(sigc::mem_fun(*this, &DragAndDropWindow::on_timeoutDraw), DEF_FRAMERATE);
+    Glib::signal_timeout().connect(sigc::mem_fun(*this, &DragAndDropWindow::on_timeoutDraw), 1000/60);
 }
 
 void DragAndDropWindow::Show(const Glib::RefPtr<Gdk::Pixbuf>& icon, DockItem* item, Gdk::Point mousePoint)
@@ -48,12 +48,12 @@ void DragAndDropWindow::Show(const Glib::RefPtr<Gdk::Pixbuf>& icon, DockItem* it
     guint height = item->get_Height() - CELL_MARGIN;
 
     this->m_icon = icon->scale_simple(width, height, Gdk::INTERP_BILINEAR);
-    
+
     this->m_mousePoint.set_x(mousePoint.get_x());
     this->m_mousePoint.set_y(mousePoint.get_y());
 
     this->resize(width, height);
-  
+
     if (Move(m_mousePoint.get_x(),  m_mousePoint.get_y())) {
         Gtk::Widget::queue_draw();
         this->show_now();
