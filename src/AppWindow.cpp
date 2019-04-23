@@ -63,6 +63,28 @@ AppWindow::AppWindow()
     if (visual != NULL && gdk_screen_is_composited(screen)) {
         gtk_widget_set_visual(GTK_WIDGET(gobj()), visual);
     }
+
+/*
+This function returns the position you need to pass to move() to keep window in its current position.
+
+This means that the meaning of the returned value varies with window gravity. See move() for more details.
+
+The reliability of this function depends on the windowing system currently in use. Some windowing systems, such as Wayland, do not support a global coordinate system, and thus the position of the window will always be (0, 0). Others, like X11, do not have a reliable way to obtain the geometry of the decorations of a window if they are provided by the window manager. Additionally, on X11, window manager have been known to mismanage window gravity, which result in windows moving even if you use the coordinates of the current position as returned by this function.
+
+If you haven’t changed the window gravity, its gravity will be Gdk::GRAVITY_NORTH_WEST. This means that get_position() gets the position of the top-left corner of the window manager frame for the window. move() sets the position of this same top-left corner.
+
+If a window has gravity Gdk::GRAVITY_STATIC the window manager frame is not relevant, and thus get_position() will always produce accurate results. However you can’t use static gravity to do things like place a window in a corner of the screen, because static gravity ignores the window manager decorations.
+
+Ideally, this function should return appropriate values if the window has client side decorations, assuming that the windowing system supports global coordinates.
+
+In practice, saving the window position should not be left to applications, as they lack enough knowledge of the windowing system and the window manager state to effectively do so. The appropriate way to implement saving the window position is to use a platform-specific protocol, wherever that is available.
+
+Parameters
+root_x	Return location for X coordinate of gravity-determined reference point.
+root_y	Return location for Y coordinate of gravity-determined reference point.
+
+*/
+    this->set_gravity(Gdk::Gravity::GRAVITY_STATIC);
 }
 
 int AppWindow::init()
@@ -170,13 +192,15 @@ bool AppWindow::autohideTimer()
         auto endTime = m_initTime + m_easing_duration;
         auto now = atime;
         int currentPositionX = 0;
-        int currentPositionY = 01;
+        int currentPositionY = 0;
         float startPosition = 0.f;
         float endPosition = 0.f;
 
         panel_locationType location = Configuration::get_dockWindowLocation();
 
-        int xpos, ypos, mouseX, mouseY;
+        int xpos = 0;
+        int ypos = 0;
+        int mouseX, mouseY;
         this->get_position(xpos, ypos);
 
         // set start and  end position according to location

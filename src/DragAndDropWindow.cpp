@@ -27,6 +27,7 @@
 DragAndDropWindow::DragAndDropWindow():Gtk::Window(Gtk::WindowType::WINDOW_POPUP)
 {
     set_size_request(50, 50);
+    this->set_gravity(Gdk::Gravity::GRAVITY_STATIC);
     GdkScreen *screen;
     GdkVisual *visual;
 
