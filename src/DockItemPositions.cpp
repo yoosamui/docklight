@@ -148,9 +148,9 @@ namespace DockItemPositions
 
             x += DockWindow::get_dockWindowStartEndMargin() / 2;
             if (Configuration::get_dockWindowLocation() == panel_locationType::BOTTOM){
-                //y -= height + 2;
-                y = DockWindow::Monitor::get_geometry().height - DockWindow::get_DockWindowHeight() - height - 2 - Configuration::get_WindowDockMonitorMargin_Bottom();
-                g_print("Title %d %d %d\n", y,  DockWindow::Monitor::get_geometry().height, DockWindow::get_DockWindowHeight());
+                y -= height + 2;
+                //y = DockWindow::Monitor::get_geometry().height - DockWindow::get_DockWindowHeight() - height - 2 - Configuration::get_WindowDockMonitorMargin_Bottom();
+                //g_print("Title %d %d %d\n", y,  DockWindow::Monitor::get_geometry().height, DockWindow::get_DockWindowHeight());
             }
             else{
                 y += DockWindow::get_DockWindowHeight() + 2;
@@ -194,7 +194,7 @@ namespace DockItemPositions
                 if( citem->m_index == item->m_index){
                 //    g_print("index %d/%d   center: %d \n", item->m_index, index, (height / 2) - citem->get_Height()  / 2);
 
-                    y -= (height / 2) - variantItemHeight / 2;
+                   y -= (height / 2) - variantItemHeight / 2;
                     return true;
                 }
 

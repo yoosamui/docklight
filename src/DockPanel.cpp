@@ -186,7 +186,7 @@ void DockPanel::AppRunAnimation()
                         pixel[2] = 255 - pixel[2];
                     }
                 }
-                std::this_thread::sleep_for(std::chrono::milliseconds(80));
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
             m_AppRunImage = NULLPB;
         }
@@ -1114,23 +1114,31 @@ void DockPanel::show_Title()
 
     }
 
-    if (m_titleItemOldindex == m_currentMoveIndex) {
+    if (m_titleItemOldindex == m_currentMoveIndex && m_currentMoveIndex != -1 && DockWindow::is_Visible()) {
 
         if (m_titleElapsedSeconds > 0.3 && m_titleShow == false /* && !m_previewWindowActive*/) {
 
-            int x, y;
 
 
             std::string title = item->get_Title();
-           // if (item->m_items.size() > 1) {
+            if (item->m_items.size() > 1) {
                 char buff[NAME_MAX];
-                //sprintf(buff, "%s (%d)", title.c_str(), (int)item->m_items.size());
-                sprintf(buff, "%s idx: (%d) %d", title.c_str(), (int)item->m_index, item->get_Height());
+                sprintf(buff, "%s (%d)", title.c_str(), (int)item->m_items.size());
+          //      sprintf(buff, "%s idx: (%d) %d", title.c_str(), (int)item->m_index, item->get_Height());
                 title = buff;
-          //  }
+            }
+
 
             m_titlewindow.setText(title);
-            DockItemPositions::get_CenterPosition(m_currentMoveIndex, x, y, m_titlewindow.get_width(), m_titlewindow.get_height());
+
+
+            int x, y;
+            int height = m_titlewindow.get_height();
+            int width = m_titlewindow.get_width();
+
+            g_print("title height %d\n",height);
+
+            DockItemPositions::get_CenterPosition(m_currentMoveIndex, x, y, width, height);
             m_titlewindow.move(x, y);
             m_titleShow = true;
 

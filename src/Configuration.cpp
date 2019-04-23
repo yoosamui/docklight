@@ -10,11 +10,11 @@
 
 namespace Configuration
 {
-    bool m_autohide = false;
+    bool m_autohide = true;
     bool m_allowDraw = true;
     guint m_separatorMargin = 12;
 
-    panel_locationType m_locatiom = panel_locationType::RIGHT;
+    panel_locationType m_locatiom = panel_locationType::LEFT;
     Horizontal_alignment_type m_HorizontalAlignment =  Horizontal_alignment_type::CENTER;
 
     Horizontal_alignment_type get_HorizontalAlignment()

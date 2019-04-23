@@ -137,7 +137,7 @@ private:
 
 
     // Drag & Drop
-    sigc::connection m_signalDragDrop;
+    //sigc::connection m_signalDragDrop;
 
     Glib::Timer m_dragdropTimer;
     bool  m_DragDropBegin = false;
