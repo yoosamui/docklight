@@ -12,9 +12,9 @@ namespace Configuration
 {
     bool m_autohide = false;
     bool m_allowDraw = true;
-    guint m_separatorMargin = 12;
+    guint m_separatorMargin = 6;
 
-    panel_locationType m_locatiom = panel_locationType::BOTTOM;
+    panel_locationType m_locatiom = panel_locationType::LEFT;
     Horizontal_alignment_type m_HorizontalAlignment =  Horizontal_alignment_type::CENTER;
 
     Horizontal_alignment_type get_HorizontalAlignment()
@@ -34,7 +34,7 @@ namespace Configuration
 
     bool is_panelMode()
     {
-        return true; // Explicite set
+        return false; // Explicite set
     }
 
     bool is_activateStrut()

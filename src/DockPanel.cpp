@@ -35,7 +35,10 @@ guint DockPanel::m_ItemsHeight;
 /*
  * This class is the  main dock renderer.
  */
-DockPanel::DockPanel(): m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
+DockPanel::DockPanel():
+    m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME)),
+    m_separatorFilePath(Utilities::getExecPath(DEF_SEPARATOR))
+
 {
 
     // Set event masks
@@ -83,6 +86,7 @@ DockPanel::DockPanel(): m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME))
     m_homeSessionGrp.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_HomeAddSessionGrp_event));
     m_preferencesMenuItem.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_HomePreferences_event));
     m_QuitMenuItem.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_QuitMenu_event));
+    m_HomeAddSeparatotMenuItem.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_AddSeparator_event));
 
     m_ItemMenu.attach_to_widget(*this);
     m_ItemMenu.accelerate(*this);
@@ -139,10 +143,6 @@ int DockPanel::Init(Gtk::Window* window)
 
     // testt separator
 
-    //dockItem = new DockItem(12, Configuration::get_CellHeight());
-    //dockItem->m_dockitemtype = DockItemType::Separator;
-    //dockItem->m_isAttached = true;
-    //this->m_AppUpdater->m_dockitems.push_back(dockItem);
 
     //dockItem = new DockItem(24, Configuration::get_CellHeight());
     //dockItem->m_dockitemtype = DockItemType::Separator;
@@ -365,6 +365,36 @@ void DockPanel::on_HomePreferences_event()
 
     //   createPreferences();
 }
+
+/**
+ * Add a separator at the end of the list
+ */
+void DockPanel::on_AddSeparator_event()
+{
+    const char* filename = m_separatorFilePath.c_str();
+    DockItem* dockItem = new DockItem(12, Configuration::get_CellHeight());
+
+    try {
+        int iconsize = Configuration::get_CellWidth() - ICON_CELL_WIDTH_MARGIN;
+        dockItem->m_image = Gdk::Pixbuf::create_from_file(filename, iconsize, iconsize, true);
+    }
+    catch (Glib::FileError fex) {
+        g_critical("on_AddSeparator: file %s could not be found!\n", filename);
+        return;
+
+    }
+    catch (Gdk::PixbufError bex) {
+        g_critical("on_AddSeparator: file %s PixbufError!\n", filename);
+        return;
+    }
+
+    dockItem->m_dockitemtype = DockItemType::Separator;
+    dockItem->m_isAttached = true;
+
+    this->m_AppUpdater->m_dockitems.push_back(dockItem);
+    DockWindow::update();
+}
+
 void DockPanel::on_HomeAddSessionGrp_event()
 {
 

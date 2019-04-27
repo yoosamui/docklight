@@ -12,6 +12,7 @@
 #define DEF_ATTACHMENTDIR       "data/attachments"
 #define DEF_IMAGESDIR           "data/images"
 #define DEF_ICONNAME            "data/images/docklight.home.ico"
+#define DEF_SEPARATOR           "data/images/separator.png"
 #define DEF_SEISSIONICONNAME    "data/images/docklight-session.png"
 #define DEF_LOGONAME            "data/images/docklight.logo.png"
 #define DEF_INITNAME            "data/docklight.ini"

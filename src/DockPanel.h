@@ -61,6 +61,7 @@ class DockPanel : public Gtk::DrawingArea, DockMenu {
 
         AppUpdater*  m_AppUpdater = nullptr;
         std::string m_homeiconFilePath;
+        std::string m_separatorFilePath;
         static int m_currentMoveIndex;
         int get_Index(const int& mouseX, const int& mouseY);
         int m_previousCellwidth;
@@ -147,6 +148,7 @@ class DockPanel : public Gtk::DrawingArea, DockMenu {
         void on_MinimieAll_event();
         void on_MinimieAllExceptActive_event();
         void on_UnMinimieAll_event();
+        void on_AddSeparator_event();
 
             // Drag & Drop
             //sigc::connection m_signalDragDrop;
