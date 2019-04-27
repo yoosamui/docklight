@@ -309,7 +309,6 @@ bool DockPanel::on_button_press_event(GdkEventButton *event)
 {
 
     if ((event->type == GDK_BUTTON_PRESS)) {
-
         m_mouseclickEventTime = gtk_get_current_event_time();
 
         // Check if the event is a left button click.
@@ -317,30 +316,11 @@ bool DockPanel::on_button_press_event(GdkEventButton *event)
             m_mouseLeftButtonDown = true;
 
             // start drag & drop timer
-            if (this->m_currentMoveIndex > 0){
-
-                //int x, y;
-                //Utilities::getMousePosition(x, y);
-                //// sets the relative item mouse coordinates
-                //m_dragdropMousePoint.set_x((int) x);
-                //m_dragdropMousePoint.set_y((int) y);
-                //int x, y;
-                //DockWindow::get_DockWindowPosition(x, y);
-
+            if (this->m_currentMoveIndex > 0) {
                 m_dragdropMousePoint.set_x((int) event->x);
                 m_dragdropMousePoint.set_y((int) event->y);
                 m_dragdropTimer.start();
-
-
-                g_print("Mose %d/%d \n", (int)event->x, (int)event->y);
-
-
-
-                //this->m_signalDragDrop = Glib::signal_timeout().connect(sigc::mem_fun(*this, &DockPanel::on_timerDragDrop), 1000/60);
             }
-
-            // The event has been handled.
-          //  return true;
         }
 
 
@@ -422,19 +402,25 @@ bool DockPanel::on_button_release_event(GdkEventButton *event)
     // Check if a item was drop
     if (m_DragDropBegin){
 
+        // delete the drop window
         delete m_DragAndDropWindow;
         m_DragAndDropWindow = nullptr;
 
+
+        // reset the move item and reindex the items.
+        m_AppUpdater->MoveItem(0);
+        m_AppUpdater->Reindex();
+
+        // set as Attached and save
+        if (this->m_DragDropSourceIndex != this->m_currentMoveIndex){
+            m_dragDropItem->m_isAttached = true;
+            m_AppUpdater->Save();
+        }
+
+        // reset the pointer
+        m_dragDropItem = nullptr;
         m_DragDropBegin = false;
- //       this->m_signalDragDrop.disconnect();
-
-    //    if(this->m_mouseIn){
-            this->m_DragDropTargetIndex = this->m_currentMoveIndex;
-            this->m_AppUpdater->SwapItems(this->m_DragDropSourceIndex, this->m_DragDropTargetIndex);
-      //  }
-
-        this->m_DragDropSourceIndex = this->m_DragDropTargetIndex = 0;
-      }
+    }
 
 
 
@@ -660,67 +646,24 @@ void DockPanel::update()
 
 
 
-bool DockPanel::on_timerDragDrop()
-{
-
-   //if (!m_DragDropBegin && this->m_currentMoveIndex > 0 &&  m_mouseLeftButtonDown && m_dragdropTimer.elapsed() >= 0.25 ){
-        //m_dragdropTimer.stop();
-        //m_dragdropTimer.reset();
-
-        //DockItem* item =  this->get_CurrentItem();
-        //if (item != nullptr){
-            //m_DragDropBegin = true;
-            //this->m_DragDropSourceIndex = this->m_currentMoveIndex;
-
-            //this->m_DragAndDropWindow = new DragAndDropWindow();
-            //this->m_DragAndDropWindow->Show(item->m_image, item, m_dragdropMousePoint);
-        //}
-    //}
-    //else if (m_DragDropBegin && this->m_DragAndDropWindow != nullptr)
-    //{
-        //int mouseX;
-        //int mouseY;
-        //bool found = Utilities::getMousePosition(mouseX, mouseY);
-
-        //if (found){
-
-        //DockItem* item = this->m_AppUpdater->m_dockitems[this->m_DragDropSourceIndex];
-
-          ////  this->move(mouseX - x + m_item->m_posX + CELL_MARGIN / 2 ,  mouseY - y  +  m_item->m_posY + 1);
-          ////
-        //g_print("DARG %d %d\n",mouseX, mouseY);
-////    ..this->m_mousePoint.set_x(mousePoint.get_x());
-          ////this->m_DragAndDropWindow->move(
-                        ////mouseX +  m_dragdropMousePoint.get_x() + item->m_posX + CELL_MARGIN ,
-                        ////mouseY +  m_dragdropMousePoint.get_y() + item->m_posY - 1 );
-        //}
-
-    //}
-
-
-
-    return true;
-}
 
 /**
  * Run at defined FRAMERATE
  */
 bool DockPanel::on_timeoutDraw()
 {
-
-
-
-   if (!m_DragDropBegin && this->m_currentMoveIndex > 0 &&  m_mouseLeftButtonDown && m_dragdropTimer.elapsed() >= 0.25 ){
+    // initiate the drag
+    if (!m_DragDropBegin && this->m_currentMoveIndex > 0 &&  m_mouseLeftButtonDown && m_dragdropTimer.elapsed() >= 0.25 ){
         m_dragdropTimer.stop();
         m_dragdropTimer.reset();
 
-        DockItem* item =  this->get_CurrentItem();
-        if (item != nullptr){
+        m_dragDropItem =  this->get_CurrentItem();
+        if ( m_dragDropItem != nullptr){
             m_DragDropBegin = true;
             this->m_DragDropSourceIndex = this->m_currentMoveIndex;
 
             this->m_DragAndDropWindow = new DragAndDropWindow();
-            this->m_DragAndDropWindow->Show(item->m_image, item, m_dragdropMousePoint);
+            this->m_DragAndDropWindow->Show(m_dragDropItem, m_dragdropMousePoint);
         }
     }
 
@@ -788,6 +731,16 @@ inline int DockPanel::get_Index(const int& mouseX, const int& mouseY)
 bool DockPanel::on_motion_notify_event(GdkEventMotion * event)
 {
     m_currentMoveIndex = this->get_Index(event->x, event->y);
+
+    if(m_DragDropBegin){
+
+        this->m_AppUpdater->MoveItem(this->m_currentMoveIndex);
+        m_dragdropMousePoint.set_x((int) event->x);
+        m_dragdropMousePoint.set_y((int) event->y);
+
+        this->m_DragAndDropWindow->Show(m_dragDropItem, m_dragdropMousePoint);
+
+    }
     return false;
 }
 

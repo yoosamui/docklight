@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   AppUpdater.h
  * Author: yoo
  *
@@ -12,7 +12,7 @@
 
 #include <libwnck/libwnck.h>
 #include <glibmm/timer.h>
-#include <gtkmm.h> 
+#include <gtkmm.h>
 
 #include "Configuration.h"
 #include "DockItem.h"
@@ -29,7 +29,7 @@ struct attachments_data
     char instancename[DEF_FIELD_MAX] = {'\0'};
     char realgroupname[DEF_FIELD_MAX] = {'\0'};
     char themeiconname[DEF_FIELD_MAX] = {'\0'};
-                                         
+
     guint dockitemtype = 0;
     int index = -1;
     guint width = 0;
@@ -48,8 +48,9 @@ public:
     bool AttachItem(const int index);
     bool DettachItem(const int index);
     bool SwapItems(guint sourceIdx, guint targetIdx);
-private:
+    void MoveItem(const int next_position);
     void Reindex();
+private:
     static void Update(WnckWindow* window, Window_action actiontype);
     static void on_window_opened(WnckScreen* screen, WnckWindow* window, gpointer data);
     static void on_window_closed(WnckScreen* screen, WnckWindow* window, gpointer data);

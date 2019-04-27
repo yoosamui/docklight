@@ -26,7 +26,7 @@
 
 DragAndDropWindow::DragAndDropWindow():Gtk::Window(Gtk::WindowType::WINDOW_POPUP)
 {
-    set_size_request(50, 50);
+//    set_size_request(50, 50)
     this->set_gravity(Gdk::Gravity::GRAVITY_STATIC);
     GdkScreen *screen;
     GdkVisual *visual;
@@ -42,13 +42,13 @@ DragAndDropWindow::DragAndDropWindow():Gtk::Window(Gtk::WindowType::WINDOW_POPUP
     Glib::signal_timeout().connect(sigc::mem_fun(*this, &DragAndDropWindow::on_timeoutDraw), 1000/60);
 }
 
-void DragAndDropWindow::Show(const Glib::RefPtr<Gdk::Pixbuf>& icon, DockItem* item, Gdk::Point mousePoint)
+void DragAndDropWindow::Show(DockItem* item, Gdk::Point mousePoint)
 {
     this->m_item = item;
     guint width = item->get_Width() - CELL_MARGIN;
     guint height = item->get_Height() - CELL_MARGIN;
 
-    this->m_icon = icon->scale_simple(width, height, Gdk::INTERP_BILINEAR);
+    this->m_icon = item->m_image->scale_simple(width, height, Gdk::INTERP_BILINEAR);
 
     this->m_mousePoint.set_x(mousePoint.get_x());
     this->m_mousePoint.set_y(mousePoint.get_y());

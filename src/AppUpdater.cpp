@@ -266,6 +266,31 @@ bool AppUpdater::RemoveItem(const int index)
     return true;
 }
 
+
+void AppUpdater::MoveItem(const int next_position)
+{
+
+    static guint position = 0;
+
+    if (next_position < 0 || next_position > this->m_dockitems.size()){
+        return;
+    }
+
+    if(position == 0 || next_position == 0){
+        position = next_position;
+        return;
+    }
+
+    if(position == next_position ){
+        return;
+    }
+
+   iter_swap(this->m_dockitems.begin() + position, this->m_dockitems.begin() + next_position);
+   position = next_position;
+
+   DockPanel::update();
+}
+
 std::string AppUpdater::getFilePath()
 {
     std::string path = Utilities::getExecPath();
@@ -519,7 +544,7 @@ void AppUpdater::setIconByTheme(DockItem *item)
 }
 
 
-inline void AppUpdater::Reindex()
+void AppUpdater::Reindex()
 {
     guint idx = 0;
 
@@ -555,6 +580,5 @@ void AppUpdater::on_theme_changed(GtkSettings *settings, GParamSpec *pspec, GtkI
         setIconByTheme(item);
     }
 }
-
 
 

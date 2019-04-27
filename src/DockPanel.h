@@ -93,7 +93,6 @@ private:
     virtual bool on_scroll_event(GdkEventScroll* e);
 
     bool on_timeoutDraw();
-    bool on_timerDragDrop();
 
     //Override default signal handler:
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
@@ -139,11 +138,11 @@ private:
     // Drag & Drop
     //sigc::connection m_signalDragDrop;
 
+    DockItem* m_dragDropItem = nullptr;
     Glib::Timer m_dragdropTimer;
     bool  m_DragDropBegin = false;
     Gdk::Point m_dragdropMousePoint;
     guint m_DragDropSourceIndex = 0;
-    guint m_DragDropTargetIndex = 0;
 };
 #endif	/* DOCKPANEL_H */
 

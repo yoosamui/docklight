@@ -10,7 +10,7 @@
 
 namespace Configuration
 {
-    bool m_autohide = true;
+    bool m_autohide = false;
     bool m_allowDraw = true;
     guint m_separatorMargin = 12;
 
