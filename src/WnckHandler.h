@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   WckHandler.h
  * Author: yoo
  *
@@ -12,15 +12,19 @@
 
 #include <libwnck/libwnck.h>
 #include <glibmm/timer.h>
-#include <gtkmm/window.h> 
+#include <gtkmm/window.h>
 #include "DockItem.h"
 
 #include <X11/X.h>
 
 namespace WnckHandler
 {
-    void ActivateWindow(WnckWindow* window); 
+    void ActivateWindow(WnckWindow* window);
     WnckWindow* get_ActiveWindowIfAny(DockItem* item);
+    void HomeCloseAllWindows();
+    void HomeCloseAllExceptActive();
+    void HomeMinimizeAllExceptActive();
+    void HomeMinimizeAll();
 }
 
 #endif	/* WNCKHANDLER_H */

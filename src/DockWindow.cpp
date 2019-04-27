@@ -31,7 +31,7 @@
 namespace DockWindow
 {
     Gtk::Window* m_window = nullptr;
-    bool m_visible;
+    bool m_visible = true;
 
     /**
      * Update struts and resizes the window.

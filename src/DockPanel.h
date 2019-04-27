@@ -25,124 +25,137 @@
 
 class DockPanel : public Gtk::DrawingArea, DockMenu {
 
-public:
+    public:
 
-    static guint m_ItemsWidth;
-    static guint m_ItemsHeight;
+        static guint m_ItemsWidth;
+        static guint m_ItemsHeight;
 
-    DockPanel();
-    virtual ~DockPanel();
-    //SessionWindow* m_sessionWindow;
-    int Init(Gtk::Window* window);
-    static void update();
-    bool get_AutohideAllow();
-    int get_CurrentIndex() {
-        return m_currentMoveIndex;
-    };
+        DockPanel();
+        virtual ~DockPanel();
+        //SessionWindow* m_sessionWindow;
+        int Init(Gtk::Window* window);
+        static void update();
+        bool get_AutohideAllow();
+        int get_CurrentIndex() {
+            return m_currentMoveIndex;
+        };
 
-    static guint get_WidthDecrement(){
-        return m_widthDecrement;
-    }
+        static guint get_WidthDecrement(){
+            return m_widthDecrement;
+        }
 
-    static guint get_HeightDecrement(){
-        return m_heightDecrement;
-    }
-private:
-    DragAndDropWindow* m_DragAndDropWindow = nullptr;
-    static guint m_widthDecrement;
-    static guint m_heightDecrement;
+        static guint get_HeightDecrement(){
+            return m_heightDecrement;
+        }
+    private:
+        DragAndDropWindow* m_DragAndDropWindow = nullptr;
+        static guint m_widthDecrement;
+        static guint m_heightDecrement;
 
-    Gtk::Window* m_AppWindow = nullptr;
-    bool m_popupMenuOn = false;
-    static bool m_forceDraw;
+        Gtk::Window* m_AppWindow = nullptr;
+        bool m_popupMenuOn = false;
+        static bool m_forceDraw;
 
-    TitleWindow m_titlewindow;
-    TitleWindow m_infowindow;
+        TitleWindow m_titlewindow;
+        TitleWindow m_infowindow;
 
-    AppUpdater*  m_AppUpdater = nullptr;
-    std::string m_homeiconFilePath;
-    static int m_currentMoveIndex;
-    int get_Index(const int& mouseX, const int& mouseY);
-    int m_previousCellwidth;
-    int m_iconsize;
-    bool m_mouseLeftButtonDown = false;
-    bool m_mouseRightButtonDown = false;
-    float m_mouseclickEventTime = 0.0f;
+        AppUpdater*  m_AppUpdater = nullptr;
+        std::string m_homeiconFilePath;
+        static int m_currentMoveIndex;
+        int get_Index(const int& mouseX, const int& mouseY);
+        int m_previousCellwidth;
+        int m_iconsize;
+        bool m_mouseLeftButtonDown = false;
+        bool m_mouseRightButtonDown = false;
+        float m_mouseclickEventTime = 0.0f;
 
-    DockItem* get_CurrentItem();
+        DockItem* get_CurrentItem();
 
-    // Timer for showing the title window
-    Glib::Timer m_titleTimer;
+        // Timer for showing the title window
+        Glib::Timer m_titleTimer;
 
-    gdouble m_titleElapsedSeconds;
-    int m_titleItemOldindex = 0;
-    bool m_titleShow = false;
-    void get_ItemPosition(const DockItemType dockType, int& x, int& y, int& width, int& height);
+        gdouble m_titleElapsedSeconds;
+        int m_titleItemOldindex = 0;
+        bool m_titleShow = false;
+        void get_ItemPosition(const DockItemType dockType, int& x, int& y, int& width, int& height);
 
-    void ExecuteApp(GdkEventButton* event);
+        void ExecuteApp(GdkEventButton* event);
 
-    static void on_window_opened(WnckScreen* screen, WnckWindow* window, gpointer data);
-    static void on_window_closed(WnckScreen* screen, WnckWindow* window, gpointer data);
-    static void on_active_window_changed_callback(WnckScreen* screen, WnckWindow* previously_active_window, gpointer user_data);
+        static void on_window_opened(WnckScreen* screen, WnckWindow* window, gpointer data);
+        static void on_window_closed(WnckScreen* screen, WnckWindow* window, gpointer data);
+        static void on_active_window_changed_callback(WnckScreen* screen, WnckWindow* previously_active_window, gpointer user_data);
 
-    // Mouse handlers
-    // http://www.horde3d.org/wiki/index.php5?title=Tutorial_-_Setup_Horde_with_Gtkmm
-    virtual bool on_button_press_event(GdkEventButton *event);
-    virtual bool on_button_release_event(GdkEventButton *event);
-    virtual bool on_motion_notify_event(GdkEventMotion* event);
-    virtual bool on_scroll_event(GdkEventScroll* e);
+        // Mouse handlers
+        // http://www.horde3d.org/wiki/index.php5?title=Tutorial_-_Setup_Horde_with_Gtkmm
+        virtual bool on_button_press_event(GdkEventButton *event);
+        virtual bool on_button_release_event(GdkEventButton *event);
+        virtual bool on_motion_notify_event(GdkEventMotion* event);
+        virtual bool on_scroll_event(GdkEventScroll* e);
 
-    bool on_timeoutDraw();
+        bool on_timeoutDraw();
 
-    //Override default signal handler:
-    bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
+        //Override default signal handler:
+        bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
-    void RoundedRectangle(const Cairo::RefPtr<Cairo::Context>& cr, double x, double y, double width, double height, double radius);
+        void RoundedRectangle(const Cairo::RefPtr<Cairo::Context>& cr, double x, double y, double width, double height, double radius);
 
-    virtual bool on_enter_notify_event(GdkEventCrossing* crossing_event);
-    virtual bool on_leave_notify_event(GdkEventCrossing* crossing_event);
+        virtual bool on_enter_notify_event(GdkEventCrossing* crossing_event);
+        virtual bool on_leave_notify_event(GdkEventCrossing* crossing_event);
 
-    float m_time = 0;
-    float position = 0;
-    float initTime;
-    float endPosition;
-    bool m_mouseIn = false;
-    bool m_animate = false;
-    bool m_timerStoped = true;
-    bool m_visible = true;
-    float atime = 0.f;
-    Glib::Timer m_Timer;
+        float m_time = 0;
+        float position = 0;
+        float initTime;
+        float endPosition;
+        bool m_mouseIn = false;
+        bool m_animate = false;
+        bool m_timerStoped = true;
+        bool m_visible = true;
+        float atime = 0.f;
+        Glib::Timer m_Timer;
 
-    void draw_Panel(const Cairo::RefPtr<Cairo::Context>& cr);
-    void draw_Items(const Cairo::RefPtr<Cairo::Context>& cr);
-    void show_Title();
+        void draw_Panel(const Cairo::RefPtr<Cairo::Context>& cr);
+        void draw_Items(const Cairo::RefPtr<Cairo::Context>& cr);
+        void show_Title();
 
-    // Animation thread related
-    std::thread* m_AppRunThreadLauncher = nullptr;
-    static void AppRunAnimation();
-    static Glib::RefPtr<Gdk::Pixbuf> m_AppRunImage;
-    static bool m_AppThreadRunning;
+        // Animation thread related
+        std::thread* m_AppRunThreadLauncher = nullptr;
+        static void AppRunAnimation();
+        static Glib::RefPtr<Gdk::Pixbuf> m_AppRunImage;
+        static bool m_AppThreadRunning;
 
-    // Menu events
-    void on_popup_homemenu_position(int& x, int& y, bool& push_in);
-    void on_popup_itemmenu_position(int& x, int& y, bool& push_in);
+        // Menu events
+        void on_popup_homemenu_position(int& x, int& y, bool& push_in);
+        void on_popup_itemmenu_position(int& x, int& y, bool& push_in);
 
-    void on_QuitMenu_event();
-    void on_HideMenu_event();
-    void on_NewMenu_event();
-    void on_DettachMenu_event();
-    void on_AttachMenu_event();
+        void on_QuitMenu_event();
+        void on_HideMenu_event();
+        void on_NewMenu_event();
+        void on_DettachMenu_event();
+        void on_AttachMenu_event();
+        void on_AutohideToggled_event();
+        void on_HomeMinimizeAllWindowsExceptActive_event();
+        void on_HomeUnMinimizeAllWindows_event();
+        void on_AboutMenu_event();
+        void on_HomeMinimizeAllWindows_event();
+        void on_HelpMenu_event();
+        void on_HomeCloseAllWindowsExceptActive_event();
+        void on_HomeAddSessionGrp_event();
+        void on_HomePreferences_event();
+        void on_HomeCloseAllWindows_event();
+        void on_CloseAll_event();
+        void on_CloseAllExceptActive_event();
+        void on_MinimieAll_event();
+        void on_MinimieAllExceptActive_event();
+        void on_UnMinimieAll_event();
 
+            // Drag & Drop
+            //sigc::connection m_signalDragDrop;
 
-
-    // Drag & Drop
-    //sigc::connection m_signalDragDrop;
-
-    DockItem* m_dragDropItem = nullptr;
-    Glib::Timer m_dragdropTimer;
-    bool  m_DragDropBegin = false;
-    Gdk::Point m_dragdropMousePoint;
-    guint m_DragDropSourceIndex = 0;
+        DockItem* m_dragDropItem = nullptr;
+        Glib::Timer m_dragdropTimer;
+        bool  m_DragDropBegin = false;
+        Gdk::Point m_dragdropMousePoint;
+        guint m_DragDropSourceIndex = 0;
 };
 #endif	/* DOCKPANEL_H */
 
