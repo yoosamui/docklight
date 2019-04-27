@@ -246,7 +246,7 @@ bool AppUpdater::DettachItem(const int index)
 }
 
 /**
- * Remove an Item form vector by the give index.
+ * Remove an Item from vector by the given index.
  */
 bool AppUpdater::RemoveItem(const int index)
 {
@@ -259,10 +259,11 @@ bool AppUpdater::RemoveItem(const int index)
 
     // Deletes the element by index;
     this->m_dockitems.erase(this->m_dockitems.begin() + index);
+    this->Reindex();
+
     DockWindow::update();
 
     this->Save();
-
     return true;
 }
 

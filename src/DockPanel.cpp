@@ -385,7 +385,7 @@ void DockPanel::on_HomePreferences_event()
 void DockPanel::on_AddSeparator_event()
 {
     const char* filename = m_separatorFilePath.c_str();
-    DockItem* dockItem = new DockItem(12, Configuration::get_CellHeight());
+    DockItem* dockItem = new DockItem(8, Configuration::get_CellHeight());
 
     try {
         int iconsize = Configuration::get_CellWidth() - ICON_CELL_WIDTH_MARGIN;
@@ -773,18 +773,20 @@ bool DockPanel::on_button_press_event(GdkEventButton *event)
     */
         return TRUE;
 }
-
+/**
+ * The mouse scroll event. activate the next and or current window.
+ */
 bool DockPanel::on_scroll_event(GdkEventScroll* e)
 {
     int index = m_currentMoveIndex;
     if (index == -1 || index == 0)
         return true;
 
-    DockItem * item = this->m_AppUpdater->m_dockitems[index]->get_Next();
+    DockItem* item = this->m_AppUpdater->m_dockitems[index]->get_Next();
     if (item == nullptr)
         return true;
 
-    WnckWindow * window = item->m_window;
+    WnckWindow* window = item->m_window;
     if ((int)e->delta_y == (int)1) {
         WnckHandler::ActivateWindow(window);
     }
@@ -795,6 +797,7 @@ bool DockPanel::on_scroll_event(GdkEventScroll* e)
     // Event has been handled
     return true;
 }
+
 /**
  * Handle the home menu popup position.
  * @param x
@@ -1269,6 +1272,7 @@ void DockPanel::show_Title()
         m_titlewindow.hide();
         m_infowindow.hide();
         m_titleShow = false;
+        return;
     }
 
 
@@ -1277,6 +1281,7 @@ void DockPanel::show_Title()
         m_titlewindow.hide();
         m_infowindow.hide();
         m_titleShow = false;
+        return;
     }
 
     // title window
@@ -1293,8 +1298,9 @@ void DockPanel::show_Title()
         //                m_preview.hideMe();
         //
         //
-
+        return;
     }
+
 
     if (m_titleItemOldindex == m_currentMoveIndex && m_currentMoveIndex != -1 && DockWindow::is_Visible() && item->m_dockitemtype != DockItemType::Separator ){
         if (m_titleElapsedSeconds > 0.3 && m_titleShow == false /* && !m_previewWindowActive*/) {
