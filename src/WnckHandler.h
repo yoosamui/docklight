@@ -25,6 +25,25 @@ namespace WnckHandler
     void HomeCloseAllExceptActive();
     void HomeMinimizeAllExceptActive();
     void HomeMinimizeAll();
+    void HomeUnMinimizeAll();
+    bool isExistsUnMaximizedWindowsByDockItem(DockItem* dockitem);
+    bool isExistsMinimizedWindowsByDockItem(DockItem* dockitem);
+    void closeAllExceptActiveByDockItem(DockItem* dockitem);
+    void closeAllByDockItem(DockItem* dockitem);
+    void minimizeAllExceptActiveByDockItem(DockItem* dockitem);
+    void minimizeAllByDockItem(DockItem* dockitem);
+    void unMinimizeAllByDockItem(DockItem* dockitem);
+    bool isExitsActivetWindowByDockItem(DockItem* dockitem);
+    int isExitstWindowsByDockItem(DockItem* dockitem);
+    int windowscount();
+//   int getWindowsByName(const std::string& appname, std::vector<windowData>& data);
+//    WnckWindow* getWindowByName(const std::string& appname, std::string& tittle);
+    WnckWindow* getActive();
+    bool isWindowExists(XID xid);
+    bool isExistsMinimizedWindows();
+    void hideWindow(Gtk::Window* instance);
+    int minimizedWindowscount();
+    int unMinimizedWindowsCount();
 }
 
 #endif	/* WNCKHANDLER_H */

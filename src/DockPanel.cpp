@@ -321,11 +321,16 @@ void DockPanel::on_AutohideToggled_event()
     bool autohide = m_AutohideMenuItem.get_active();
     Configuration::set_autoHide(autohide);
 }
+
+/**
+ * Unminimize all
+ */
 void DockPanel::on_HomeUnMinimizeAllWindows_event()
 {
-
-    //    WindowControl::HomeUnMinimizeAll();
+    WnckHandler::HomeUnMinimizeAll();
 }
+
+
 void DockPanel::on_HomeMinimizeAllWindowsExceptActive_event()
 {
 
@@ -365,68 +370,81 @@ void DockPanel::on_HomeAddSessionGrp_event()
 
     //   CreateSessionDockItemGrp();
 }
+/**
+ * show the github web page
+ */
 void DockPanel::on_HelpMenu_event()
 {
     Utilities::system("xdg-open https://github.com/yoosamui/DockLight/wiki");
-
-
-
-
-    //   if (system("xdg-open https://github.com/yoosamui/DockLight/wiki") != 0) {
-    // }
 }
 void DockPanel::on_AboutMenu_event()
 {
 
     //   m_about.show(m_AppWindow);
 }
+
+/**
+ * Unminimize all
+ */
 void DockPanel::on_UnMinimieAll_event()
 {
-    //    if (m_currentMoveIndex < 0)
+    DockItem * dockitem = this->get_CurrentItem();
+    if(dockitem == nullptr){
+        return;
+    }
 
-    //      return;
-
-    // DockItem * dockitem = m_dockitems.at(m_currentMoveIndex);
-    // WindowControl::unMinimizeAllByDockItem(dockitem);
+    WnckHandler::unMinimizeAllByDockItem(dockitem);
 }
+
+/**
+ * Minimize all except active
+ */
 void DockPanel::on_MinimieAllExceptActive_event()
 {
-    //if (m_currentMoveIndex < 0)
+    DockItem * dockitem = this->get_CurrentItem();
+    if(dockitem == nullptr){
+        return;
+    }
 
-    //return;
-
-    //DockItem * dockitem = m_dockitems.at(m_currentMoveIndex);
-    //WindowControl::minimizeAllExceptActiveByDockItem(dockitem);
+    WnckHandler::minimizeAllExceptActiveByDockItem(dockitem);
 }
 
+/**
+ * Minimize all
+ */
 void DockPanel::on_MinimieAll_event()
 {
-    //if (m_currentMoveIndex < 0)
-
-    //return;
-
-    //DockItem * dockitem = m_dockitems.at(m_currentMoveIndex);
-    //WindowControl::minimizeAllByDockItem(dockitem);
-
+    DockItem * dockitem = this->get_CurrentItem();
+    if(dockitem == nullptr){
+        return;
+    }
+    WnckHandler::minimizeAllByDockItem(dockitem);
 }
 
+/**
+ * Closse all except active
+ */
 void DockPanel::on_CloseAllExceptActive_event()
 {
-    //if (m_currentMoveIndex < 0)
+    DockItem * dockitem = this->get_CurrentItem();
+    if(dockitem == nullptr){
+        return;
+    }
 
-    //return;
-
-    //DockItem * dockitem = m_dockitems.at(m_currentMoveIndex);
-    //WindowControl::closeAllExceptActiveByDockItem(dockitem);
+    WnckHandler::closeAllExceptActiveByDockItem(dockitem);
 }
+
+/**
+ * Close all
+ */
 void DockPanel::on_CloseAll_event()
 {
-    //if (m_currentMoveIndex < 0)
+    DockItem * dockitem = this->get_CurrentItem();
+    if(dockitem == nullptr){
+        return;
+    }
 
-    //return;
-
-    //DockItem * dockitem = m_dockitems.at(m_currentMoveIndex);
-    //WindowControl::closeAllByDockItem(dockitem);
+    WnckHandler::closeAllByDockItem(dockitem);
 }
 
 
@@ -606,8 +624,30 @@ bool DockPanel::on_button_press_event(GdkEventButton *event)
                 m_MenuItemAttach.set_sensitive(item->m_isAttached == false);
                 m_MenuItemDetach.set_sensitive(item->m_isAttached /*&& item->m_items.size() == 0*/);
             }
-        }
-        // mouse right
+
+            if (m_currentMoveIndex > 0) {
+                DockItem *dockitem = this->get_CurrentItem();
+                if(dockitem != nullptr ){
+                    bool maximizedexistst = WnckHandler::isExistsUnMaximizedWindowsByDockItem(dockitem);
+                    bool isExitstActiveWindow = WnckHandler::isExitsActivetWindowByDockItem(dockitem);
+                    int isExitstWindows =  WnckHandler::isExitstWindowsByDockItem(dockitem);
+
+
+                }
+            }
+
+
+        //Home
+            if (m_currentMoveIndex == 0) {
+
+                int wincount = WnckHandler::windowscount();
+                int minimizedexitst = WnckHandler::isExistsMinimizedWindows();
+            }
+
+            }
+
+
+                    // mouse right
 
         /*
         // Items
