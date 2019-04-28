@@ -8,6 +8,9 @@
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
 //
+//  The above copyright notice and this permission notice shall be included in
+//  all copies or substantial portions of the Software.
+//
 //  This program is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -32,7 +35,6 @@
 #include <iostream>
 #include <thread>
 
-//#include <glibmm/i18n.h>
 
 // static members
 int DockPanel::m_currentMoveIndex;
@@ -42,11 +44,11 @@ bool DockPanel::m_AppThreadRunning;
 guint DockPanel::m_widthDecrement;
 guint DockPanel::m_heightDecrement;
 
-
 guint DockPanel::m_ItemsWidth;
 guint DockPanel::m_ItemsHeight;
-/*
- * This class is the  main dock renderer.
+
+/**
+ * This class is the main dock renderer.
  */
 DockPanel::DockPanel():
     m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME)),
@@ -153,17 +155,6 @@ int DockPanel::Init(Gtk::Window* window)
     // Start the background thread for application start animation
     m_AppRunThreadLauncher = new std::thread(AppRunAnimation);
 
-
-    // testt separator
-
-
-    //dockItem = new DockItem(24, Configuration::get_CellHeight());
-    //dockItem->m_dockitemtype = DockItemType::Separator;
-    //dockItem->m_isAttached = true;
-    //this->m_AppUpdater->m_dockitems.push_back(dockItem);
-
-
-
     return 0;
 }
 
@@ -186,7 +177,6 @@ DockPanel::~DockPanel()
 
     delete m_AppUpdater;
     m_AppUpdater = NULL;
-
 
     g_print("DockPanel destroy.\n");
 }
@@ -223,6 +213,7 @@ void DockPanel::AppRunAnimation()
         std::this_thread::sleep_for(std::chrono::milliseconds(5));
     }
 }
+
 /**
  * Emitted when a new Wnck.Window is opened on screen.
  * @param screen
@@ -244,6 +235,7 @@ void DockPanel::on_window_closed(WnckScreen *screen, WnckWindow *window, gpointe
 {
     update();
 }
+
 /**
  * Emitted when the active window on screen has changed.
  * @param screen
@@ -252,18 +244,6 @@ void DockPanel::on_window_closed(WnckScreen *screen, WnckWindow *window, gpointe
  */
 void DockPanel::on_active_window_changed_callback(WnckScreen *screen, WnckWindow *previously_active_window, gpointer user_data)
 {
-    /*
-       m_currentMoveIndex = -1;
-
-       if (m_previewWindowActive || DockPanel::m_dragdropsStarts)
-       return;
-
-       WnckWindow * window = wnck_screen_get_active_window(screen);
-       if (window == NULL)
-
-       return;
-       DockPanel::setItemImdexFromActiveWindow();
-       */
 }
 
 /**
@@ -349,6 +329,7 @@ void DockPanel::on_HomeMinimizeAllWindowsExceptActive_event()
 
 //    WindowControl::HomeMinimizeAllExceptActive();
 }
+
 /**
 * Minimize all windows
 */
@@ -413,6 +394,7 @@ void DockPanel::on_HomeAddSessionGrp_event()
 
     //   CreateSessionDockItemGrp();
 }
+
 /**
  * show the github web page
  */
@@ -489,17 +471,6 @@ void DockPanel::on_CloseAll_event()
 
     WnckHandler::closeAllByDockItem(dockitem);
 }
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * bool DockPanel::on_button_press_event(GdkEventButton *event)
@@ -871,9 +842,6 @@ void DockPanel::update()
     m_forceDraw = true;
 }
 
-
-
-
 /**
  * Run at defined FRAMERATE
  */
@@ -986,53 +954,11 @@ void DockPanel::RoundedRectangle(const Cairo::RefPtr<Cairo::Context>& cr,
 
 
 
-//obsolete use DockItemPosition instead
-/*
-   unsigned int DockPanel::get_dockItemsWidthUntilIndex(int idx)
-   {
-   unsigned int size = 0;
-   int count = 0;
-   for (DockItem* item:this->m_AppUpdater->m_dockitems) {
-   if (count == idx) {
-   break;
-   }
-   size += item->get_Width();
-
-   count++;
-   }
-
-   return size;
-   }
-   */
-//obsolete use DockItemPosition instead
-/*
-   unsigned int DockPanel::get_dockItemsHeightUntilIndex(int idx)
-   {
-   unsigned int size = 0;
-   int count = 0;
-   for (DockItem* item:this->m_AppUpdater->m_dockitems) {
-   if (count == idx) {
-   break;
-   }
-   if (item->m_dockitemtype == DockItemType::Separator) {
-   size += item->get_Width();
-   count++;
-   continue;
-   }
-   size += item->get_Height();
-
-   count++;
-   }
-
-   return size;
-   }
-   */
-
-
 bool DockPanel::on_enter_notify_event(GdkEventCrossing * crossing_event)
 {
     //  g_print("Mp_IN\n");
     m_mouseIn = true;
+
     m_HomeMenu.hide();
     m_ItemMenu.hide();
     //    Gtk::Menu::signal_hide(
