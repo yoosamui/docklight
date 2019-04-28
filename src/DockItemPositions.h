@@ -19,6 +19,7 @@ namespace DockItemPositions
     guint get_ResizeHeightDecrement();
     guint get_ResizeWidthDecrement();
     bool get_CenterPosition(const int index, int& x, int& y, const guint width, const guint height);
+    void get_CenterScreenPos(int targetwidth, int targetheight, int &posx, int &posy);
 }
 
 #endif	/* DOCKITEMPOSITIONS_H */

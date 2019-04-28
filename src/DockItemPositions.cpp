@@ -228,6 +228,19 @@ return true;
 
 
     }
+void get_CenterScreenPos(int targetwidth, int targetheight, int &posx, int &posy)
+    {
+        int monitorWidth = DockWindow::Monitor::get_geometry().width;
+        int monitorHeight = DockWindow::Monitor::get_geometry().height;
+
+        int monitorcenterWidth = monitorWidth / 2;
+        int monitorcenterHeight = monitorHeight / 2;
+
+
+        posx = monitorcenterWidth - (targetwidth / 2);
+        posy = monitorcenterHeight - (targetheight / 2);
+
+    }
 
     int getCenter(int count, int index, int width)
     {
