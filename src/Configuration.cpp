@@ -9,15 +9,102 @@
 
 #include "Configuration.h"
 #include "DockWindow.h"
+#include "tinyxml2.h"
+
+using namespace tinyxml2;
+
+#ifndef XMLCheckResult
+	#define XMLCheckResult(a_eResult) if (a_eResult != XML_SUCCESS) { g_critical("Error: %i\n", a_eResult); return; }
+#endif
 
 namespace Configuration
 {
     bool m_autohide = false;
     bool m_allowDraw = true;
+    bool m_panelmode = false;
     guint m_separatorMargin = 8;
 
-    panel_locationType m_locatiom = panel_locationType::BOTTOM;
+    panel_locationType m_location = panel_locationType::BOTTOM;
     Horizontal_alignment_type m_HorizontalAlignment =  Horizontal_alignment_type::CENTER;
+
+    // https://shilohjames.wordpress.com/2014/04/27/tinyxml2-tutorial/
+    void Load()
+    {
+        XMLDocument doc;
+        std::string configFile(Utilities::getExecPath(DEF_CONFIG_FILE));
+        XMLError result = doc.LoadFile(configFile.c_str());
+        XMLCheckResult(result);
+
+        XMLNode* root = doc.FirstChild();
+        if (root == nullptr){
+            g_critical("Configuration Load : XML_ERROR_FILE_READ_ERROR file %s\n", configFile.c_str());
+            return;
+        }
+
+        XMLElement* element = root->FirstChildElement("AutoHide");
+        XMLCheckResult(element->QueryBoolText(&m_autohide));
+
+        element = root->FirstChildElement("PanelMode");
+        XMLCheckResult(element->QueryBoolText(&m_panelmode));
+
+        element = root->FirstChildElement("Location");
+        const char* location = element->GetText();
+        if (location != NULL) {
+
+            if (strcmp(location, "TOP") == 0) {
+                m_location =  panel_locationType::TOP;
+            }
+            else if (strcmp(location, "RIGHT") == 0) {
+                m_location =  panel_locationType::RIGHT;
+            }
+            else if (strcmp(location, "BOTTOM") == 0) {
+                m_location =  panel_locationType::BOTTOM;
+            }
+            else if (strcmp(location, "LEFT") == 0) {
+                m_location =  panel_locationType::LEFT;
+            }
+        }
+
+        // Styles
+        element = root->FirstChildElement("Styles");
+        if (element == nullptr){
+            g_critical("Configuration Load : Styles ERROR file %s\n", configFile.c_str());
+            return;
+        }
+
+
+                g_print(".START LIST CONF\n");
+        XMLElement* listElement = element->FirstChildElement("Style");
+        while (listElement != nullptr){
+
+
+            const char* name = listElement->GetText();
+            if (name != nullptr){
+                g_print("............Stylename:%s\n",name);
+            }
+
+            const char* panel = listElement->Attribute("panel");
+            if (panel != nullptr){
+                g_print(".............Panel%s\n",panel);
+            }
+
+            const char* cell = listElement->Attribute("cell");
+            if (cell != nullptr){
+                g_print(".............Cell%s\n",cell);
+            }
+
+            const char* selector = listElement->Attribute("selector");
+            if (selector != nullptr){
+                g_print(".............selector%s\n",selector);
+            }
+
+
+            listElement =listElement->NextSiblingElement("Style");
+
+        }
+
+
+    }
 
     Horizontal_alignment_type get_HorizontalAlignment()
     {
@@ -26,17 +113,18 @@ namespace Configuration
 
     panel_locationType get_dockWindowLocation()
     {
-        return m_locatiom;
+
+        return m_location;
     }
 
     void set_dockWindowLocation(panel_locationType location)
     {
-        m_locatiom = location;
+        m_location = location;
     }
 
     bool is_panelMode()
     {
-        return true; // Explicite set
+        return m_panelmode; // Explicite set
     }
 
     bool is_activateStrut()

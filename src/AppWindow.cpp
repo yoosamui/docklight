@@ -109,6 +109,8 @@ int AppWindow::init()
     //std::string iconFile = Utilities::getExecPath(DEF_LOGONAME);
     //this->set_icon_from_file(iconFile);
 
+    Configuration::Load();
+
     // A window to implement a docking bar. Used for creating the dock panel.
     this->set_skip_taskbar_hint(true);
     this->set_skip_pager_hint(true);

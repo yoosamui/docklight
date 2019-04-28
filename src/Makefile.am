@@ -77,6 +77,8 @@ DockMenu.cpp \
 DockMenu.h \
 About.cpp \
 About.h \
+tinyxml2.cpp \
+tinyxml2.h \
 $(NULL)
 
 # this works - it deletes testSubDir in src

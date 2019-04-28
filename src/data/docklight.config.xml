@@ -1,0 +1,30 @@
+<Root>
+    <AutoHide>false</AutoHide>
+    <PanelMode>false</PanelMode>
+    <Location>RIGHT</Location>
+    <FloatValue>0.5</FloatValue>
+    <Date day="26" month="April" year="2014" dateFormat="26/04/2014"/>
+    <List itemCount="8">
+        <Item>1</Item>
+        <Item>1</Item>
+        <Item>2</Item>
+        <Item>3</Item>
+        <Item>5</Item>
+        <Item>8</Item>
+        <Item>13</Item>
+        <Item>21</Item>
+    </List>
+    <Styles itemCount="1">
+        <Style  panel="1.0,0.0,0.0,0.0,  0.0,0.0,0.0,0.0"
+                 cell="0.0,0.0,0.0,0.0,  0.0,0.0,0.0,0.0"
+             selector="0.0,0.0,0.0,0.0,  0.0,0.0,0.0,0.0">
+            1
+        </Style>
+        <Style  panel="2.0,0.0,0.0,0.0,  0.0,0.0,0.0,0.0"
+                 cell="0.0,0.0,0.0,0.0,  0.0,0.0,0.0,0.0"
+             selector="0.0,0.0,0.0,0.0,  0.0,0.0,0.0,0.0">
+            2
+        </Style>
+    </Styles>
+</Root>
+

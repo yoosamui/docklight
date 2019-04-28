@@ -36,6 +36,7 @@
 #define DEF_LAUCHERTEMPLATEPATH "data/docklight.template.desktop"
 #define DEF_LAUCHERSCRIPT       "docklight.launcher.sh"
 #define DEF_LAUCHERSCRIPTPATH   "data/docklight.launcher.sh"
+#define DEF_CONFIG_FILE         "data/docklight.config.xml"
 #define DEF_MAXSESIONIMAGES     12
 #define DEF_LOCALEPATH          "/usr/share/locale"
 #define DEF_LOCALEPACKPATH      "/usr/share/locale-langpack"
@@ -151,6 +152,9 @@ namespace Configuration {
     unsigned int get_WindowDockMonitorMargin_Bottom();
     void set_dockWindowLocation(panel_locationType location);
     //void set_SeparatorMargin(unsigned int  margin);
+    //
+    //
+    void Load();
 
 }
 

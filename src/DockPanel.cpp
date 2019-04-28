@@ -263,14 +263,13 @@ void DockPanel::on_NewMenu_event()
 
     }
 
-    // start application launcher
+    // start the animation and launch the application
+    m_AppRunImage = item->m_image;
     if (!Launcher::Launch(item->m_realgroupname)) {
 
         //   createLauncher(item);
     }
 
-    // start the animation
-    m_AppRunImage = item->m_image;
 
 }
 
@@ -733,9 +732,10 @@ bool DockPanel::on_timeoutDraw()
 
         m_dragDropItem =  this->get_CurrentItem();
         if ( m_dragDropItem != nullptr){
+
+            m_AppRunImage = m_dragDropItem->m_image;
             m_DragDropBegin = true;
             this->m_DragDropSourceIndex = this->m_currentMoveIndex;
-
         }
     }
 
@@ -760,12 +760,9 @@ inline int DockPanel::get_Index(const int& mouseX, const int& mouseY)
     int x = DockWindow::get_dockWindowStartEndMargin() / 2;
     int y = x;
 
-    if (DockWindow::is_Horizontal())
-    {
-        for (auto item : this->m_AppUpdater->m_dockitems)
-        {
-            if (mouse.get_x() >= x && mouse.get_x() <= x + item->get_Width())
-            {
+    if (DockWindow::is_Horizontal()) {
+        for (auto item : this->m_AppUpdater->m_dockitems) {
+            if (mouse.get_x() >= x && mouse.get_x() <= x + item->get_Width()) {
                 return idx;
             }
 
@@ -776,12 +773,10 @@ inline int DockPanel::get_Index(const int& mouseX, const int& mouseY)
     else
     {
         int height;
-        for (DockItem* item : this->m_AppUpdater->m_dockitems)
-        {
+        for (DockItem* item : this->m_AppUpdater->m_dockitems) {
             height = item->m_dockitemtype == DockItemType::Separator ? item->get_Width() : item->get_Height();
 
-            if (mouse.get_y() >= y && mouse.get_y() <= y + height)
-            {
+            if (mouse.get_y() >= y && mouse.get_y() <= y + height) {
                 return idx;
             }
 
