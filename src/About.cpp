@@ -35,7 +35,7 @@ void About::signal_about_dlg_response(int response_id)
 {
 
     if (Gtk::RESPONSE_CLOSE)
-        this->close();
+        this->hide();
 }
 
 void About::show(Gtk::Window* gtkwindow)

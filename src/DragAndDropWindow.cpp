@@ -44,10 +44,13 @@ DragAndDropWindow::DragAndDropWindow():Gtk::Window(Gtk::WindowType::WINDOW_POPUP
 
 void DragAndDropWindow::Show(DockItem* item, Gdk::Point mousePoint)
 {
+
     this->m_item = item;
     guint width = item->get_Width() - CELL_MARGIN;
     guint height = item->get_Height() - CELL_MARGIN;
+return;
 
+/*
     this->m_icon = item->m_image->scale_simple(width, height, Gdk::INTERP_BILINEAR);
 
     this->m_mousePoint.set_x(mousePoint.get_x());
@@ -59,10 +62,12 @@ void DragAndDropWindow::Show(DockItem* item, Gdk::Point mousePoint)
         Gtk::Widget::queue_draw();
         this->show_now();
     }
+    */
 }
 
 bool DragAndDropWindow::Move(int x, int y)
 {
+/*
     int mouseX;
     int mouseY;
     bool found = Utilities::getMousePosition(mouseX, mouseY);
@@ -72,6 +77,8 @@ bool DragAndDropWindow::Move(int x, int y)
     }
 
     return found;
+    */
+return true;
 }
 
 bool DragAndDropWindow::on_timeoutDraw()
@@ -82,10 +89,13 @@ bool DragAndDropWindow::on_timeoutDraw()
 
 bool DragAndDropWindow::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
+
+/*
     if (this->m_icon != NULLPB){
         Gdk::Cairo::set_source_pixbuf(cr, this->m_icon, 0, 0);
         cr->paint();
     }
+    */
     return true;
 }
 

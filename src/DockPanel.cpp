@@ -527,16 +527,10 @@ void DockPanel::DragDropEnds()
 {
     // Check if a item was drop
     if (m_DragDropBegin){
-
-        // delete the drop window
-        delete m_DragAndDropWindow;
-        m_DragAndDropWindow = nullptr;
-
-        // reset the move item and reindex the items.
         m_AppUpdater->MoveItem(0);
         m_AppUpdater->Reindex();
 
-        // set as Attached and save
+        // set as attached and save it
         if (this->m_DragDropSourceIndex != this->m_currentMoveIndex){
             m_dragDropItem->m_isAttached = true;
             m_AppUpdater->Save();
@@ -548,166 +542,86 @@ void DockPanel::DragDropEnds()
     }
 }
 
-    /**
-     * Returning TRUE means we handled the event, so the signal emission should be stopped (don’t call any further callbacks
-     * that may be connected). Return FALSE to continue invoking callbacks. handles Mouse button released : process mouse button event
-     * true to stop other handlers from being invoked for the event. false to propagate the event further.
-     */
-    bool DockPanel::on_button_release_event(GdkEventButton *event)
-    {
+/**
+ * Returning TRUE means we handled the event, so the signal emission should be stopped (don’t call any further callbacks
+ * that may be connected). Return FALSE to continue invoking callbacks. handles Mouse button released : process mouse button event
+ * true to stop other handlers from being invoked for the event. false to propagate the event further.
+ */
+bool DockPanel::on_button_release_event(GdkEventButton *event)
+{
 
-        this->DragDropEnds();
+    this->DragDropEnds();
 
-        // Taking Too Long To Release the mouse.  // That is not a valid Click.
-        if ((gtk_get_current_event_time() - m_mouseclickEventTime) > 200) {
-            m_mouseLeftButtonDown = false;
-            m_mouseRightButtonDown = false;
-            return true;
-        }
-
-        if (!m_mouseIn)
-            return true;
-
-        if (m_mouseLeftButtonDown) {
-            m_mouseLeftButtonDown = false;
-            this->ExecuteApp(event);
-            //  SelectWindow(m_currentMoveIndex, event);
-            return TRUE;
-        }
-
-        // Right mouse click
-        if (m_mouseRightButtonDown) {
-            // m_preview.hideMe();
-            //  m_mouseRightClick = true;
-            m_mouseRightButtonDown = false;
-
-            // Menus
-            if (m_currentMoveIndex == 0) {
-                m_HomeMenu.popup(sigc::mem_fun(*this, &DockPanel::on_popup_homemenu_position), 1, event->time);
-                this->m_popupMenuOn = true;
-            }
-            else  if (m_currentMoveIndex > 0) {
-                m_ItemMenu.popup(sigc::mem_fun(*this,&DockPanel::on_popup_itemmenu_position), 1, event->time);
-                this->m_popupMenuOn = true;
-            }
-
-            // items
-            if (m_currentMoveIndex > 0) {
-                DockItem *item = this->get_CurrentItem();
-                if(item != nullptr ){
-                    bool maximizedexistst = WnckHandler::isExistsUnMaximizedWindowsByDockItem(item);
-                    bool isExitstActiveWindow = WnckHandler::isExitsActivetWindowByDockItem(item);
-                    int isExitstWindows =  WnckHandler::isExitstWindowsByDockItem(item);
-
-                    m_MenuItemAttach.set_sensitive(item->m_isAttached == false);
-                    m_MenuItemDetach.set_sensitive(item->m_isAttached /*&& item->m_items.size() == 0*/);
-                    m_MenuItemMinimizedAll.set_sensitive(isExitstWindows > 0 && maximizedexistst);
-                    m_MenuItemMinimizedAllExceptActive.set_sensitive(isExitstWindows > 1  && maximizedexistst && isExitstActiveWindow);
-                    m_MenuItemUnMinimizedAll.set_sensitive(isExitstWindows);
-                    m_MenuItemCloseAllExceptActive.set_sensitive(isExitstWindows > 1 && isExitstActiveWindow);
-                    m_MenuItemCloseAll.set_sensitive(isExitstWindows);
-
-                }
-            }
-
-            //Home
-            if (m_currentMoveIndex == 0) {
-
-                int wincount = WnckHandler::windowscount();
-                int minimizedexitst = WnckHandler::isExistsMinimizedWindows();
-                int unminimized = WnckHandler::unMinimizedWindowsCount();
-
-                m_HomeCloseAllWindowsMenuItem.set_sensitive(wincount > 0);
-                m_HomeCloseAllWindowsExceptActiveMenuItem.set_sensitive(wincount > 1);
-                m_HomeMinimizeAllWindowsMenuItem.set_sensitive(unminimized > 0);
-                m_HomeUnMinimizeAllWindowsMenuItem.set_sensitive(wincount > 0);
-                m_HomeMinimizeAllWindowsExceptActiveMenuItem.set_sensitive(unminimized > 1);
-            }
-        }
-
-
-        // mouse right
-
-        /*
-        // Items
-        if (m_currentMoveIndex > 0) {
-        DockItem *dockitem = m_dockitems.at(m_currentMoveIndex);
-        int isExitstWindows =
-        WindowControl::isExitstWindowsByDockItem(dockitem);
-        bool isExitstActiveWindow =
-        WindowControl::isExitsActivetWindowByDockItem(dockitem);
-        bool maximizedexistst =
-        WindowControl::isExistsUnMaximizedWindowsByDockItem(dockitem);
-
-
-        m_MenuItemNewApp.set_label(_("Open new"));
-        m_MenuItemNewApp.set_sensitive(true);
-        if (dockitem->m_dockitemSesssionGrpId > 0) {
-
-        m_MenuItemNewApp.set_label(_("Configure"));
-        m_MenuItemNewApp.set_sensitive(true);
-
-        }
-
-
-        m_MenuItemMinimizedAll.set_sensitive(isExitstWindows > 0 && maximizedexistst);
-
-        m_MenuItemMinimizedAllExceptActive.set_sensitive(isExitstWindows > 1
-        && maximizedexistst && isExitstActiveWindow);
-        m_MenuItemUnMinimizedAll.set_sensitive(isExitstWindows);
-
-
-        m_MenuItemCloseAllExceptActive.set_sensitive(isExitstWindows > 1 && isExitstActiveWindow);
-        m_MenuItemCloseAll.set_sensitive(isExitstWindows);
-
-        m_MenuItemAttach.set_sensitive(dockitem->m_isAttached == false);
-        m_MenuItemDetach.set_sensitive(dockitem->m_isAttached && dockitem->m_items.size() == 0);
-
-
-        if (!m_Menu_Popup.get_attach_widget())
-        m_Menu_Popup.attach_to_widget(*this);
-
-
-        //m_HomeMenu_Popup.resize_children();
-        m_Menu_Popup.set_halign(Gtk::Align::ALIGN_CENTER);
-        m_Menu_Popup.popup(sigc::mem_fun(*this,
-        &DockPanel::on_popup_menu_position), 1, event->time);
-
-        m_popupMenuOn = true;
+    // Taking Too Long To Release the mouse.  // That is not a valid Click.
+    if ((gtk_get_current_event_time() - m_mouseclickEventTime) > 200) {
+        m_mouseLeftButtonDown = false;
+        m_mouseRightButtonDown = false;
         return true;
+    }
+
+    if (!m_mouseIn)
+        return true;
+
+    if (m_mouseLeftButtonDown) {
+        m_mouseLeftButtonDown = false;
+        this->ExecuteApp(event);
+        //  SelectWindow(m_currentMoveIndex, event);
+        return TRUE;
+    }
+
+    // Right mouse click
+    if (m_mouseRightButtonDown) {
+        // m_preview.hideMe();
+        //  m_mouseRightClick = true;
+        m_mouseRightButtonDown = false;
+
+        // Menus
+        if (m_currentMoveIndex == 0) {
+            m_HomeMenu.popup(sigc::mem_fun(*this, &DockPanel::on_popup_homemenu_position), 1, event->time);
+            this->m_popupMenuOn = true;
+        }
+        else  if (m_currentMoveIndex > 0) {
+            m_ItemMenu.popup(sigc::mem_fun(*this,&DockPanel::on_popup_itemmenu_position), 1, event->time);
+            this->m_popupMenuOn = true;
         }
 
         //Home
         if (m_currentMoveIndex == 0) {
 
-        int wincount = WindowControl::windowscount();
-        //int minimizedexitst = WindowControl::isExistsMinimizedWindows();
-        int unminimized = WindowControl::unMinimizedWindowsCount();
+            int wincount = WnckHandler::windowscount();
+            int minimizedexitst = WnckHandler::isExistsMinimizedWindows();
+            int unminimized = WnckHandler::unMinimizedWindowsCount();
 
-        m_HomeCloseAllWindowsMenuItem.set_sensitive(wincount > 0);
-        m_HomeCloseAllWindowsExceptActiveMenuItem.set_sensitive(wincount > 1);
-        m_HomeMinimizeAllWindowsMenuItem.set_sensitive(unminimized > 0);
-        m_HomeUnMinimizeAllWindowsMenuItem.set_sensitive(wincount > 0);
+            m_HomeCloseAllWindowsMenuItem.set_sensitive(wincount > 0);
+            m_HomeCloseAllWindowsExceptActiveMenuItem.set_sensitive(wincount > 1);
+            m_HomeMinimizeAllWindowsMenuItem.set_sensitive(unminimized > 0);
+            m_HomeUnMinimizeAllWindowsMenuItem.set_sensitive(wincount > 0);
+            m_HomeMinimizeAllWindowsExceptActiveMenuItem.set_sensitive(unminimized > 1);
 
-        m_HomeMinimizeAllWindowsExceptActiveMenuItem.set_sensitive(unminimized > 1);
+            return true;
+        }
 
-        if (!m_HomeMenu_Popup.get_attach_widget())
-        m_HomeMenu_Popup.attach_to_widget(*this);
+        // items
+        if (m_currentMoveIndex > 0) {
+            DockItem *item = this->get_CurrentItem();
+            if(item != nullptr ){
+                bool maximizedexistst = WnckHandler::isExistsUnMaximizedWindowsByDockItem(item);
+                bool isExitstActiveWindow = WnckHandler::isExitsActivetWindowByDockItem(item);
+                int isExitstWindows =  WnckHandler::isExitstWindowsByDockItem(item);
 
-        //m_HomeMenu_Popup.resize_children();
-        m_HomeMenu_Popup.set_halign(Gtk::Align::ALIGN_CENTER);
-        m_HomeMenu_Popup.popup(sigc::mem_fun(*this,
-        &DockPanel::on_popup_homemenu_position), 1, event->time);
+                m_MenuItemAttach.set_sensitive(item->m_isAttached == false);
+                m_MenuItemDetach.set_sensitive(item->m_isAttached /*&& item->m_items.size() == 0*/);
+                m_MenuItemMinimizedAll.set_sensitive(isExitstWindows > 0 && maximizedexistst);
+                m_MenuItemMinimizedAllExceptActive.set_sensitive(isExitstWindows > 1  && maximizedexistst && isExitstActiveWindow);
+                m_MenuItemUnMinimizedAll.set_sensitive(isExitstWindows);
+                m_MenuItemCloseAllExceptActive.set_sensitive(isExitstWindows > 1 && isExitstActiveWindow);
+                m_MenuItemCloseAll.set_sensitive(isExitstWindows);
 
-        m_popupMenuOn = true;
-
-        return true;
+            }
+        }
     }
 
     return TRUE;
-    }
-    */
-        return TRUE;
 }
 /**
  * The mouse scroll event. activate the next and or current window.
@@ -822,8 +736,6 @@ bool DockPanel::on_timeoutDraw()
             m_DragDropBegin = true;
             this->m_DragDropSourceIndex = this->m_currentMoveIndex;
 
-            this->m_DragAndDropWindow = new DragAndDropWindow();
-            this->m_DragAndDropWindow->Show(m_dragDropItem, m_dragdropMousePoint);
         }
     }
 
@@ -898,7 +810,6 @@ bool DockPanel::on_motion_notify_event(GdkEventMotion * event)
         m_dragdropMousePoint.set_x((int) event->x);
         m_dragdropMousePoint.set_y((int) event->y);
 
-        this->m_DragAndDropWindow->Show(m_dragDropItem, m_dragdropMousePoint);
 
     }
     return false;
@@ -1137,7 +1048,8 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
         }
 
         // Selector
-        if (idx == m_currentMoveIndex) {
+        if (idx == m_currentMoveIndex && (item->m_dockitemtype != DockItemType::Separator || m_DragDropBegin )) {
+
             cr->set_source_rgba(255.0, 255.0, 255.0, 0.4);
             RoundedRectangle(cr, x, y, width, height, 3);
             cr->fill();
@@ -1146,6 +1058,7 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
             cr->set_source_rgba(255.0, 255.0, 255.0, 1);
             RoundedRectangle(cr, x, y, width, height, 3);
             cr->stroke();
+
         }
     }
 }

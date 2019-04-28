@@ -1,9 +1,25 @@
-/*
- * File:   DockPanel.h
- * Author: yoo
- *
- * Created on November 6, 2018, 7:31 PM
- */
+//*****************************************************************
+//
+//  Copyright © 2018 Juan R. González
+//  j-gonzalez@email.de
+//
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  The above copyright notice and this permission notice shall be included in
+//  all copies or substantial portions of the Software.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+//*****************************************************************
 
 #ifndef DOCKPANEL_H
 #define	DOCKPANEL_H
@@ -21,7 +37,6 @@
 #include "AppRunAnimation.h"
 #include "TitleWindow.h"
 #include "DockMenu.h"
-#include "DragAndDropWindow.h"
 #include "About.h"
 
 class DockPanel : public Gtk::DrawingArea, DockMenu {
@@ -50,7 +65,6 @@ class DockPanel : public Gtk::DrawingArea, DockMenu {
         }
     private:
         About m_about;
-        DragAndDropWindow* m_DragAndDropWindow = nullptr;
         static guint m_widthDecrement;
         static guint m_heightDecrement;
 

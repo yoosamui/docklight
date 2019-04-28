@@ -1,8 +1,26 @@
-/* File:   DockItemPositions.cpp
- * Author: yoo
- *
- * Created on March 24, 2019, 12:59 PM
- */
+//*****************************************************************
+//
+//  Copyright © 2018 Juan R. González
+//  j-gonzalez@email.de
+//
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  The above copyright notice and this permission notice shall be included in
+//  all copies or substantial portions of the Software.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+//*****************************************************************
+
 
 #include "DockItemPositions.h"
 #include "DockWindow.h"
@@ -106,7 +124,7 @@ namespace DockItemPositions
      * @return the required height of the dockwindow.
      */
     guint get_dockItemsHeight()
-     {
+    {
         guint separatorMargin = Configuration::get_inmutableSeparatorMargin();
         guint size = DockWindow::get_dockWindowStartEndMargin();
 
@@ -192,9 +210,9 @@ namespace DockItemPositions
                 variantItemHeight = citem->m_dockitemtype == DockItemType::Separator ? citem->get_Width() : citem->get_Height();
 
                 if( citem->m_index == item->m_index){
-                //    g_print("index %d/%d   center: %d \n", item->m_index, index, (height / 2) - citem->get_Height()  / 2);
+                    //    g_print("index %d/%d   center: %d \n", item->m_index, index, (height / 2) - citem->get_Height()  / 2);
 
-                   y -= (height / 2) - variantItemHeight / 2;
+                    y -= (height / 2) - variantItemHeight / 2;
                     return true;
                 }
 
@@ -202,33 +220,14 @@ namespace DockItemPositions
             }
         }
 
-return true;
-
-// calculate center
-
-
-
-/*
-        int x, y;
-        int center = 0;
-        DockWindow::get_DockWindowPosition(x, y);
-
-        if (Configuration::is_panelMode() && Configuration::get_HorizontalAlignment() == Horizontal_alignment_type::CENTER) {
-            center = (DockWindow::get_DockWindowWidth() / 2) - (getItemsWidth() / 2) - item.m_width / 2;
-        }
-
-        int size = getItemsSizeUntilIndex(index);
-        int position = x + DockWindow::get_dockWindowStartEndMargin() / 2 +
-            Configuration::get_separatorMargin() / 2 + size -
-            (width / 2 - item.m_width / 2);
-
-        // g_print("width %d\n", width);
-        return position + center;
-*/
-
+        return true;
 
     }
-void get_CenterScreenPos(int targetwidth, int targetheight, int &posx, int &posy)
+
+    /**
+     * Returns the center of the screen in x, y coordinates. used to center windows.
+     */
+    void get_CenterScreenPos(int targetwidth, int targetheight, int &posx, int &posy)
     {
         int monitorWidth = DockWindow::Monitor::get_geometry().width;
         int monitorHeight = DockWindow::Monitor::get_geometry().height;

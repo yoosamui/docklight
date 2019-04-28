@@ -26,12 +26,14 @@ AM_CPPFLAGS = -g -Wall   -Wno-reorder -std=c++11
 #-pedantic  -lpthread
 
 # list of source files needed to generate target (docklight)
+
+#AppWindowBase.cpp
+#AppWindowBase.h
+#DragAndDropWindow.cpp
+#DragAndDropWindow.h
+
 docklight_SOURCES =  \
 main.cpp \
-AppWindowBase.cpp \
-AppWindowBase.h \
-DragAndDropWindow.cpp \
-DragAndDropWindow.h \
 DockWindow.cpp \
 DockWindow.h \
 AppUpdater.cpp \

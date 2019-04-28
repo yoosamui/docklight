@@ -1,12 +1,15 @@
 //*****************************************************************
 //
-//  Copyright (C) 2018 Juan R. Gonzalez
-//  Created on November 3, 2018, 2:45 PM
+//  Copyright © 2018 Juan R. González
+//  j-gonzalez@email.de
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
+//
+//  The above copyright notice and this permission notice shall be included in
+//  all copies or substantial portions of the Software.
 //
 //  This program is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -17,6 +20,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 //*****************************************************************
+
 #include <cairo/cairo.h>
 #include <glibmm-2.4/glibmm/timer.h>
 #include "AppWindow.h"
@@ -64,25 +68,30 @@ AppWindow::AppWindow()
         gtk_widget_set_visual(GTK_WIDGET(gobj()), visual);
     }
 
-/*
-This function returns the position you need to pass to move() to keep window in its current position.
+    /*
+     This function returns the position you need to pass to move() to keep window in its current position.
+     This means that the meaning of the returned value varies with window gravity. See move() for more details.
 
-This means that the meaning of the returned value varies with window gravity. See move() for more details.
+     The reliability of this function depends on the windowing system currently in use. Some windowing systems, such as Wayland,
+     do not support a global coordinate system, and thus the position of the window will always be (0, 0). Others, like X11,
+     do not have a reliable way to obtain the geometry of the decorations of a window if they are provided by the window manager.
+     Additionally, on X11, window manager have been known to mismanage window gravity, which result in windows moving even if
+     you use the coordinates of the current position as returned by this function.
 
-The reliability of this function depends on the windowing system currently in use. Some windowing systems, such as Wayland, do not support a global coordinate system, and thus the position of the window will always be (0, 0). Others, like X11, do not have a reliable way to obtain the geometry of the decorations of a window if they are provided by the window manager. Additionally, on X11, window manager have been known to mismanage window gravity, which result in windows moving even if you use the coordinates of the current position as returned by this function.
+    If you haven’t changed the window gravity, its gravity will be Gdk::GRAVITY_NORTH_WEST. This means that get_position()
+    gets the position of the top-left corner of the window manager frame for the window. move() sets the position of this same top-left corner.
 
-If you haven’t changed the window gravity, its gravity will be Gdk::GRAVITY_NORTH_WEST. This means that get_position() gets the position of the top-left corner of the window manager frame for the window. move() sets the position of this same top-left corner.
+    If a window has gravity Gdk::GRAVITY_STATIC the window manager frame is not relevant, and thus get_position() will always produce accurate results.
+    However you can’t use static gravity to do things like place a window in a corner of the screen, because static gravity ignores the window manager decorations.
 
-If a window has gravity Gdk::GRAVITY_STATIC the window manager frame is not relevant, and thus get_position() will always produce accurate results. However you can’t use static gravity to do things like place a window in a corner of the screen, because static gravity ignores the window manager decorations.
+    Ideally, this function should return appropriate values if the window has client side decorations, assuming that the windowing system supports global coordinates.
 
-Ideally, this function should return appropriate values if the window has client side decorations, assuming that the windowing system supports global coordinates.
+    In practice, saving the window position should not be left to applications, as they lack enough knowledge of the windowing system and the
+    window manager state to effectively do so. The appropriate way to implement saving the window position is to use a platform-specific protocol, wherever that is available.
 
-In practice, saving the window position should not be left to applications, as they lack enough knowledge of the windowing system and the window manager state to effectively do so. The appropriate way to implement saving the window position is to use a platform-specific protocol, wherever that is available.
-
-Parameters
-root_x	Return location for X coordinate of gravity-determined reference point.
-root_y	Return location for Y coordinate of gravity-determined reference point.
-
+    Parameters
+    root_x	Return location for X coordinate of gravity-determined reference point.
+    root_y	Return location for Y coordinate of gravity-determined reference point.
 */
     this->set_gravity(Gdk::Gravity::GRAVITY_STATIC);
 }
