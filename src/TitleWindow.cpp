@@ -88,61 +88,37 @@ void TitleWindow::setText(const Glib::ustring text)
 bool TitleWindow::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
 
-   // Configuration::Theme theme = Configuration::getTheme();
-
-    //if (theme.forPanelTitle().enabled())
-    {
-
-
-//        cr->set_source_rgba(
-//                theme.forPanelTitle().background().red,
-//                theme.forPanelTitle().background().green,
-//                theme.forPanelTitle().background().blue,
-//                theme.forPanelTitle().background().alpha);
+    cr->set_source_rgba(
+    this->m_Theme.PanelTitle().Fill().Color::red,
+    this->m_Theme.PanelTitle().Fill().Color::green,
+    this->m_Theme.PanelTitle().Fill().Color::blue,
+    this->m_Theme.PanelTitle().Fill().Color::alpha);
+    Utilities::RoundedRectangle(cr, 0, 0, this->get_width(), this->get_height(),this->m_Theme.PanelTitle().Ratio());
+    cr->fill();
 
 
-        //Utilities::RoundedRectangle(cr, 0, 0, this->get_width(), this->get_height(),
-        //        theme.forPanelTitle().roundedRatious());
+    cr->set_source_rgba(
+    this->m_Theme.PanelTitle().Stroke().Color::red,
+    this->m_Theme.PanelTitle().Stroke().Color::green,
+    this->m_Theme.PanelTitle().Stroke().Color::blue,
+    this->m_Theme.PanelTitle().Stroke().Color::alpha);
 
-        Utilities::RoundedRectangle(cr, 0, 0, this->get_width(), this->get_height(),4);
+    cr->set_line_width(this->m_Theme.PanelTitle().LineWidth());
+    Utilities::RoundedRectangle(cr, 0, 0, this->get_width(), this->get_height(),this->m_Theme.PanelTitle().Ratio());
+    cr->stroke();
 
+    Glib::RefPtr<Pango::Layout> layout = create_pango_layout(m_Label.get_text());
+    pango_layout_set_alignment(layout->gobj(),PANGO_ALIGN_CENTER );
 
-        cr->fill();
+    cr->set_source_rgba(
+    this->m_Theme.PanelTitleText().Stroke().Color::red,
+    this->m_Theme.PanelTitleText().Stroke().Color::green,
+    this->m_Theme.PanelTitleText().Stroke().Color::blue,
+    this->m_Theme.PanelTitleText().Stroke().Color::alpha);
 
-
-
-        // draw title the clipping rectangle
-//        cr->set_source_rgba(
-//                theme.forPanelTitle().foreground().red,
-//                theme.forPanelTitle().foreground().green,
-//                theme.forPanelTitle().foreground().blue,
-//                theme.forPanelTitle().foreground().alpha);
-
-     //    cr->set_line_width(theme.forPanelTitle().lineWith());
-
-//        Utilities::RoundedRectangle(cr, 0, 0, this->get_width(), this->get_height(),
-//                theme.forPanelTitle().roundedRatious());
-
-        Utilities::RoundedRectangle(cr, 0, 0, this->get_width(), this->get_height(),3);
-
+    cr->move_to(6, 6);
+    layout->show_in_cairo_context(cr);
+    cr->reset_clip(); // Reset the clipping
 
 
-        cr->stroke();
-
-        Glib::RefPtr<Pango::Layout> layout = create_pango_layout(m_Label.get_text());
-        pango_layout_set_alignment(layout->gobj(),PANGO_ALIGN_CENTER );
-
-//        cr->set_source_rgba(
-//                theme.forPanelTitleText().foreground().red,
-//                theme.forPanelTitleText().foreground().green,
-//                theme.forPanelTitleText().foreground().blue,
-//                theme.forPanelTitleText().foreground().alpha);
-
-        cr->set_source_rgba(1.0,1.0,1.0,1.0);
-        cr->move_to(6, 6);
-        //layout->set_alignment("center");
-        layout->show_in_cairo_context(cr);
-        cr->reset_clip(); // Reset the clipping
-
-    }
 }

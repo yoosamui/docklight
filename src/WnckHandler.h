@@ -44,6 +44,8 @@ namespace WnckHandler
     void hideWindow(Gtk::Window* instance);
     int minimizedWindowscount();
     int unMinimizedWindowsCount();
+    bool FullscreenActive();
+    WnckWindow* get_ExistingWindowDock();
 }
 
 #endif	/* WNCKHANDLER_H */

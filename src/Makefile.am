@@ -31,6 +31,8 @@ AM_CPPFLAGS = -g -Wall   -Wno-reorder -std=c++11
 #AppWindowBase.h
 #DragAndDropWindow.cpp
 #DragAndDropWindow.h
+#WindowControl.cpp
+#WindowControl.h
 
 docklight_SOURCES =  \
 main.cpp \
@@ -49,8 +51,6 @@ DockPanel.cpp \
 DockPanel.h \
 DockItem.cpp \
 DockItem.h \
-WindowControl.cpp \
-WindowControl.h \
 IconLoader.cpp \
 IconLoader.h \
 Launcher.cpp \

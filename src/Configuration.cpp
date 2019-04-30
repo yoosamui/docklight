@@ -19,6 +19,9 @@ using namespace tinyxml2;
 
 namespace Configuration
 {
+    using namespace Style;
+
+    Theme m_theme;
     bool m_autohide = false;
     bool m_allowDraw = true;
     bool m_panelmode = false;
@@ -27,11 +30,81 @@ namespace Configuration
     panel_locationType m_location = panel_locationType::BOTTOM;
     Horizontal_alignment_type m_HorizontalAlignment =  Horizontal_alignment_type::CENTER;
 
+    void getColorFromString(const std::string& s, Color& fill, Color& stroke, double& lineWidth, double& ratio, int& mask) {
+
+        if (!Utilities::isNumeric(s)) {
+            g_critical("The color string is not numeric: [%s]\n", s.c_str());
+        }
+
+        std::string currentLocale = setlocale(LC_NUMERIC,NULL);
+        setlocale(LC_NUMERIC,"C");
+
+        const int MAXBUFF = 50;
+        int maxlength = s.size();
+        std::string token = "";
+        double values[MAXBUFF] = {0};
+        int index = 0;
+        for (int i = 0; i < maxlength; i++) {
+
+            if (index < MAXBUFF) {
+                char c = s[i];
+                if (c != ',' && c != ' ') {
+                    token += c;
+                }
+
+                if ((c == ',') || i + 1 == maxlength) {
+
+                    double value = 0.0;
+                    try {
+                        value = std::stod(token);
+                        values[ index ] = value;
+                        //g_print(" %d........:%f (%s)\n", index, value,token.c_str());
+
+                    } catch (std::invalid_argument) {
+                        g_critical("getColorFromString: can't convert the token: %s\n", s.c_str());
+                    }
+
+
+                    token = "";
+                    index++;
+                }
+            }
+        }
+
+        fill.red = values[0];
+        fill.green = values[1];
+        fill.blue = values[2];
+        fill.alpha = values[3];
+
+        stroke.red = values[4];
+        stroke.green = values[5];
+        stroke.blue = values[6];
+        stroke.alpha = values[7];
+
+        lineWidth = values[8];
+        ratio = values[9];
+        mask = (int)values[10];
+
+        setlocale(LC_NUMERIC,currentLocale.c_str());
+    }
+
+    void set_DefaultStyle()
+    {
+        m_theme.set_Panel(new ColorWindow());
+        m_theme.set_PanelCell(new ColorWindow(Color(0,0.50,0.66,1), Color(1,1,1,1), 1.5, 3, 0));
+        m_theme.set_PanelTitle(new ColorWindow(Color(0, 0, 0, 1 ), Color(0,0,0,1), 1, 6, 0));
+        m_theme.set_PanelTitleText(new ColorWindow(Color(), Color(1,1,1,1), 1, 0, 0));
+    }
+
     // https://shilohjames.wordpress.com/2014/04/27/tinyxml2-tutorial/
     void Load()
     {
+        set_DefaultStyle();
+
         XMLDocument doc;
         std::string configFile(Utilities::getExecPath(DEF_CONFIG_FILE));
+        g_print("Config File: %s\n", configFile.c_str());
+
         XMLError result = doc.LoadFile(configFile.c_str());
         XMLCheckResult(result);
 
@@ -65,17 +138,26 @@ namespace Configuration
             }
         }
 
-        // Styles
+        // Style Themes
+        int useStyle = 0;
+
+        element = root->FirstChildElement("UseStyle");
+        XMLCheckResult(element->QueryIntText(&useStyle));
+
+        g_print(".START LOAD STYLE %d\n", useStyle);
         element = root->FirstChildElement("Styles");
         if (element == nullptr){
             g_critical("Configuration Load : Styles ERROR file %s\n", configFile.c_str());
             return;
         }
 
-
-                g_print(".START LIST CONF\n");
+       // m_theme.
+        int id = 0;
         XMLElement* listElement = element->FirstChildElement("Style");
         while (listElement != nullptr){
+
+
+           //element = listElement->FirstChildElement("UseStyle");
 
 
             const char* name = listElement->GetText();
@@ -88,15 +170,35 @@ namespace Configuration
                 g_print(".............Panel%s\n",panel);
             }
 
-            const char* cell = listElement->Attribute("cell");
+            const char* cell = listElement->Attribute("paneCell");
             if (cell != nullptr){
                 g_print(".............Cell%s\n",cell);
             }
 
-            const char* selector = listElement->Attribute("selector");
-            if (selector != nullptr){
-                g_print(".............selector%s\n",selector);
+            const char* panelTitle = listElement->Attribute("PanelTitle");
+            if (panelTitle != nullptr){
+                g_print(".............panelTitler%s\n",panelTitle);
             }
+
+
+
+            XMLCheckResult(listElement->QueryIntText(&id));
+            if(id == useStyle ){
+                Color fill;
+                Color stroke;
+                double lineWidth;
+                double ratio;
+                int mask;
+
+                getColorFromString(panel, fill, stroke, lineWidth, ratio,  mask);
+
+                g_print("...FOUND..Style %d Fill:%f %f %f %f Stroke\n",id, fill.red, fill.green, fill.blue, fill.alpha);
+
+
+                m_theme.set_Panel(new ColorWindow(fill,stroke,lineWidth,ratio,mask));
+                break;
+            }
+
 
 
             listElement =listElement->NextSiblingElement("Style");
@@ -104,6 +206,10 @@ namespace Configuration
         }
 
 
+    }
+
+    Style::Theme get_Theme(){
+        return m_theme;
     }
 
     Horizontal_alignment_type get_HorizontalAlignment()
@@ -214,6 +320,46 @@ namespace Configuration
     {
         return get_CellHeight() - 2; //CELL_WIDTH_MARGIN;
 
+    }
+
+    namespace Style
+    {
+
+        /**
+         * Constructs the default theme
+         */
+        //Theme::Theme() {
+
+            // Default theme
+             //this->m_Panel = new ColorWindow();
+             //this->m_PanelTitle = new ColorWindow(Color(0, 0, 0, 1 ), Color(0,0,0,1), 1, 6, 0);
+             //this->m_PanelTitleText = new ColorWindow(Color(), Color(1,1,1,1), 1, 0, 0);
+             //this->m_PanelCell = new ColorWindow(Color(0,0.50,0.66,1), Color(1,1,1,1), 1.5, 3, 0);
+
+
+
+//            cr->set_source_rgba(0.00, 0.50, 0.66, 1);
+
+
+
+/*
+               Color foreColor(1.0, 1.0, 1.0, 1.0);
+
+               Color backSelector(1.9, 1.0, 1.0, 0.3);
+               Color foreSelector(1.1, 1.1, 1.0, 1.0);
+
+               this->m_window = new ColorWindow();
+               this->m_panel = new ColorWindow(true, backColor, foreColor, 0.7, 4.0);
+               this->m_panelSelector = new ColorWindow(true, backSelector, foreSelector, 1.5, 4.0);
+               this->m_panelTitle = new ColorWindow(true, backColor, foreColor, 0.0, 4.0);
+               this->m_panelTitleText = new ColorWindow(true, Color(), Color(1.0, 1.0, 1.0, 1.0), 0.0, 0.0);
+               this->m_preview = new ColorWindow(true, backColor, foreColor, 0.7, 4.0);
+               this->m_previewTitle = new ColorWindow(true, Color(0.0, 0.0, 1.0, 0.0), Color(1.0, 1.0, 1.0, 0.0), 1.0, 0.0);
+               this->m_previewTitleText = new ColorWindow(true, Color(), Color(), 0.0, 0.0);
+               this->m_previewSelector = new ColorWindow(true, backSelector, foreSelector, 2.0, 4.0);
+               this->m_previewSelectorClose = new ColorWindow(true, Color(0.0, 0.50, 0.0, 1.0), foreColor, 4.0, 4.0);
+               */
+       // }
     }
 }
 

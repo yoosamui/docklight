@@ -146,7 +146,7 @@ namespace WnckHandler
 
 
 
-void HomeUnMinimizeAll()
+    void HomeUnMinimizeAll()
     {
         WnckScreen *screen;
         GList *window_l;
@@ -181,7 +181,7 @@ void HomeUnMinimizeAll()
     }
 
 
- bool isExistsUnMaximizedWindowsByDockItem(DockItem* dockitem)
+    bool isExistsUnMaximizedWindowsByDockItem(DockItem* dockitem)
     {
         bool result = false;
         for (auto item : dockitem->m_items) {
@@ -201,7 +201,7 @@ void HomeUnMinimizeAll()
     }
 
 
- bool isExistsMinimizedWindowsByDockItem(DockItem* dockitem)
+    bool isExistsMinimizedWindowsByDockItem(DockItem* dockitem)
     {
         bool result = false;
         for (auto item : dockitem->m_items) {
@@ -222,7 +222,7 @@ void HomeUnMinimizeAll()
 
 
 
-void closeAllExceptActiveByDockItem(DockItem* dockitem)
+    void closeAllExceptActiveByDockItem(DockItem* dockitem)
     {
         for (auto item : dockitem->m_items) {
             if (item->m_window == NULL)
@@ -235,7 +235,7 @@ void closeAllExceptActiveByDockItem(DockItem* dockitem)
     }
 
 
-void closeAllByDockItem(DockItem* dockitem)
+    void closeAllByDockItem(DockItem* dockitem)
     {
         for (auto item : dockitem->m_items) {
             if (item->m_window == NULL)
@@ -246,7 +246,7 @@ void closeAllByDockItem(DockItem* dockitem)
     }
 
 
-void minimizeAllExceptActiveByDockItem(DockItem* dockitem)
+    void minimizeAllExceptActiveByDockItem(DockItem* dockitem)
     {
         for (auto item : dockitem->m_items) {
 
@@ -263,7 +263,7 @@ void minimizeAllExceptActiveByDockItem(DockItem* dockitem)
     }
 
 
-void minimizeAllByDockItem(DockItem* dockitem)
+    void minimizeAllByDockItem(DockItem* dockitem)
     {
         for (auto item : dockitem->m_items) {
 
@@ -277,7 +277,7 @@ void minimizeAllByDockItem(DockItem* dockitem)
     }
 
 
- void unMinimizeAllByDockItem(DockItem* dockitem)
+    void unMinimizeAllByDockItem(DockItem* dockitem)
     {
         for (auto item : dockitem->m_items) {
 
@@ -298,7 +298,7 @@ void minimizeAllByDockItem(DockItem* dockitem)
 
 
 
- bool isExitsActivetWindowByDockItem(DockItem* dockitem)
+    bool isExitsActivetWindowByDockItem(DockItem* dockitem)
     {
         for (auto item : dockitem->m_items) {
             WnckWindow *window = item->m_window;
@@ -315,7 +315,7 @@ void minimizeAllByDockItem(DockItem* dockitem)
 
 
 
-int isExitstWindowsByDockItem(DockItem* dockitem)
+    int isExitstWindowsByDockItem(DockItem* dockitem)
     {
         int count = 0;
         for (auto item : dockitem->m_items) {
@@ -340,7 +340,75 @@ int isExitstWindowsByDockItem(DockItem* dockitem)
     }
 
 
-int windowscount()
+    WnckWindow* get_ExistingWindowDock()
+    {
+        WnckScreen *screen;
+        GList *window_l;
+
+        screen = wnck_screen_get_default();
+        wnck_screen_force_update(screen);
+        for (window_l = wnck_screen_get_windows(screen);
+                window_l != NULL; window_l = window_l->next) {
+
+            WnckWindow *window = WNCK_WINDOW(window_l->data);
+            if (window == NULL)
+                continue;
+
+            auto instance = wnck_window_get_class_instance_name(window);
+            auto wname = wnck_window_get_name(window);
+
+            //   g_print("%s %s\n", instance, wname);
+            //
+            //            WnckWindowType wt = wnck_window_get_window_type(window);
+            //
+            //            if (wt != WNCK_WINDOW_DOCK )
+            //            {
+            //
+            //                continue;
+            //            }
+
+            const char* instancename = wnck_window_get_class_instance_name(window);
+            if (instancename != NULL && strcmp(instancename, DOCKLIGHT_INSTANCENAME) == 0) {
+                continue;
+            }
+            //  return window;
+        }
+        return NULL;
+
+    }
+
+    /**
+     * Gets the active WnckWindow on screen . May return NULL sometimes, since
+     * not all window managers guarantee that a window is always active.
+     * @return true if any window is in fullscreen otherwise false;
+     */
+    bool FullscreenActive()
+    {
+        WnckWindow *wckwindow = wnck_screen_get_active_window(wnck_screen_get_default());
+        if (wckwindow != NULL && wnck_window_is_fullscreen(wckwindow)) {
+            return true;
+        }
+
+        WnckScreen *screen;
+        GList *window_l;
+
+        screen = wnck_screen_get_default();
+        wnck_screen_force_update(screen);
+
+        for (window_l = wnck_screen_get_windows(screen);
+                window_l != NULL; window_l = window_l->next) {
+
+            wckwindow = WNCK_WINDOW(window_l->data);
+            if (wckwindow == NULL)
+                continue;
+
+            if (wnck_window_is_fullscreen(wckwindow)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    int windowscount()
     {
         int count = 0;
         WnckScreen *screen;
@@ -351,7 +419,7 @@ int windowscount()
 
         for (window_l = wnck_screen_get_windows(screen);
                 window_l != NULL; window_l = window_l->next) {
-
+            //
             WnckWindow *window = WNCK_WINDOW(window_l->data);
             if (window == NULL)
                 continue;
@@ -379,113 +447,113 @@ int windowscount()
 
 
 
-//int getWindowsByName(const std::string& appname, std::vector<windowData>& data)
+    //int getWindowsByName(const std::string& appname, std::vector<windowData>& data)
     //{
-        //WnckScreen *screen;
-        //GList *window_l;
-        //struct windowData st;
-        //screen = wnck_screen_get_default();
-        //wnck_screen_force_update(screen);
+    //WnckScreen *screen;
+    //GList *window_l;
+    //struct windowData st;
+    //screen = wnck_screen_get_default();
+    //wnck_screen_force_update(screen);
 
-        //for (window_l = wnck_screen_get_windows(screen);
-                //window_l != NULL; window_l = window_l->next) {
+    //for (window_l = wnck_screen_get_windows(screen);
+    //window_l != NULL; window_l = window_l->next) {
 
-            //WnckWindow *window = WNCK_WINDOW(window_l->data);
-            //if (window == NULL)
-                //continue;
+    //WnckWindow *window = WNCK_WINDOW(window_l->data);
+    //if (window == NULL)
+    //continue;
 
-            //WnckWindowType wt = wnck_window_get_window_type(window);
+    //WnckWindowType wt = wnck_window_get_window_type(window);
 
-            //if (wt == WNCK_WINDOW_DESKTOP ||
-                    //wt == WNCK_WINDOW_DOCK ||
-                    //wt == WNCK_WINDOW_TOOLBAR ||
-                    //wt == WNCK_WINDOW_MENU) {
+    //if (wt == WNCK_WINDOW_DESKTOP ||
+    //wt == WNCK_WINDOW_DOCK ||
+    //wt == WNCK_WINDOW_TOOLBAR ||
+    //wt == WNCK_WINDOW_MENU) {
 
-                //continue;
-            //}
+    //continue;
+    //}
 
-            //std::string the_appname;
-            //std::string the_instancename;
-            //std::string the_groupname;
-            //std::string the_titlename;
+    //std::string the_appname;
+    //std::string the_instancename;
+    //std::string the_groupname;
+    //std::string the_titlename;
 
-            //if (Launcher::getAppNameByWindow(window,
-                    //the_appname,
-                    //the_instancename,
-                    //the_groupname,
-                    //the_titlename) == FALSE) {
-                //continue;
-            //}
+    //if (Launcher::getAppNameByWindow(window,
+    //the_appname,
+    //the_instancename,
+    //the_groupname,
+    //the_titlename) == FALSE) {
+    //continue;
+    //}
 
 
-            //if (the_groupname == appname) {
-                //st.window = window;
-                //strcpy(st.appname,the_groupname.c_str());
-                //strcpy(st.titlename,the_appname.c_str());
+    //if (the_groupname == appname) {
+    //st.window = window;
+    //strcpy(st.appname,the_groupname.c_str());
+    //strcpy(st.titlename,the_appname.c_str());
 
-                //data.push_back(st);
-            //}
+    //data.push_back(st);
+    //}
 
-        //}
+    //}
 
-        //return data.size();
+    //return data.size();
     //}
 
 
 
 
-//WnckWindow* getWindowByName(const std::string& appname, std::string& tittle)
+    //WnckWindow* getWindowByName(const std::string& appname, std::string& tittle)
     //{
-        //WnckScreen *screen;
-        //GList *window_l;
+    //WnckScreen *screen;
+    //GList *window_l;
 
-        //screen = wnck_screen_get_default();
-        //wnck_screen_force_update(screen);
+    //screen = wnck_screen_get_default();
+    //wnck_screen_force_update(screen);
 
-        //for (window_l = wnck_screen_get_windows(screen);
-                //window_l != NULL; window_l = window_l->next) {
+    //for (window_l = wnck_screen_get_windows(screen);
+    //window_l != NULL; window_l = window_l->next) {
 
-            //WnckWindow *window = WNCK_WINDOW(window_l->data);
-            //if (window == NULL)
-                //continue;
+    //WnckWindow *window = WNCK_WINDOW(window_l->data);
+    //if (window == NULL)
+    //continue;
 
-            //WnckWindowType wt = wnck_window_get_window_type(window);
+    //WnckWindowType wt = wnck_window_get_window_type(window);
 
-            //if (wt == WNCK_WINDOW_DESKTOP ||
-                    //wt == WNCK_WINDOW_DOCK ||
-                    //wt == WNCK_WINDOW_TOOLBAR ||
-                    //wt == WNCK_WINDOW_MENU) {
+    //if (wt == WNCK_WINDOW_DESKTOP ||
+    //wt == WNCK_WINDOW_DOCK ||
+    //wt == WNCK_WINDOW_TOOLBAR ||
+    //wt == WNCK_WINDOW_MENU) {
 
-                //continue;
-            //}
+    //continue;
+    //}
 
-            //std::string the_appname;
-            //std::string the_instancename;
-            //std::string the_groupname;
-            //std::string the_titlename;
+    //std::string the_appname;
+    //std::string the_instancename;
+    //std::string the_groupname;
+    //std::string the_titlename;
 
-            //if (Launcher::getAppNameByWindow(window,
-                    //the_appname,
-                    //the_instancename,
-                    //the_groupname,
-                    //the_titlename) == FALSE) {
-                //return nullptr;
-            //}
+    //if (Launcher::getAppNameByWindow(window,
+    //the_appname,
+    //the_instancename,
+    //the_groupname,
+    //the_titlename) == FALSE) {
+    //return nullptr;
+    //}
 
-            //if (the_groupname == appname) {
-                //tittle = the_appname;
-                //return window;
-            //}
+    //if (the_groupname == appname) {
+    //tittle = the_appname;
+    //return window;
+    //}
 
-        //}
+    //}
 
-        //return nullptr;
+    //return nullptr;
     //}
 
 
 
 
-WnckWindow* getActive()
+    WnckWindow* getActive()
     {
         WnckScreen *screen;
         GList *window_l;
@@ -518,7 +586,7 @@ WnckWindow* getActive()
         return nullptr;
     }
 
- bool isWindowExists(XID xid)
+    bool isWindowExists(XID xid)
     {
         WnckScreen *screen;
         GList *window_l;
@@ -542,7 +610,7 @@ WnckWindow* getActive()
     }
 
 
-bool isExistsMinimizedWindows()
+    bool isExistsMinimizedWindows()
     {
 
         WnckScreen *screen;
@@ -585,7 +653,7 @@ bool isExistsMinimizedWindows()
 
 
 
-int minimizedWindowscount()
+    int minimizedWindowscount()
     {
         int count = 0;
         WnckScreen *screen;

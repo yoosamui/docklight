@@ -270,7 +270,7 @@ void DockPanel::on_NewMenu_event()
         //   createLauncher(item);
     }
 
-
+    this->update();
 }
 
 /**
@@ -921,18 +921,32 @@ bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
  */
 void DockPanel::draw_Panel(const Cairo::RefPtr<Cairo::Context>& cr)
 {
-    if (Configuration::is_panelMode()) {
+        cr->set_source_rgba(
+            this->m_Theme.Panel().Fill().Color::red,
+            this->m_Theme.Panel().Fill().Color::green,
+            this->m_Theme.Panel().Fill().Color::blue,
+            this->m_Theme.Panel().Fill().Color::alpha);
 
-        cr->set_source_rgba(0.0, 0.0, 0.0, 0.8);
+    if (Configuration::is_panelMode()) {
         cr->paint();
-        //RoundedRectangle(cr, x, y, DockWindow::get_DockWindowWidth(), DockWindow::get_DockWindowHeight(), 6);
     }
     else {
-        cr->set_source_rgba(0.0, 0.0, 175.8, 0.4);
-        RoundedRectangle(cr, 0, 0, DockWindow::get_DockWindowWidth(), DockWindow::get_DockWindowHeight(), 6);
+
+
+//        0.0, 175.8, 0.4,8.0);
+        RoundedRectangle(cr, 0, 0, DockWindow::get_DockWindowWidth(), DockWindow::get_DockWindowHeight(), this->m_Theme.Panel().Ratio());
         cr->fill();
+
+        cr->set_source_rgba(
+            this->m_Theme.Panel().Stroke().Color::red,
+            this->m_Theme.Panel().Stroke().Color::green,
+            this->m_Theme.Panel().Stroke().Color::blue,
+            this->m_Theme.Panel().Stroke().Color::alpha);
+        RoundedRectangle(cr, 0, 0, DockWindow::get_DockWindowWidth(), DockWindow::get_DockWindowHeight(), this->m_Theme.Panel().Ratio());
+        cr->stroke();
     }
 
+        //0.0, 175.8, 0.4);
 }
 
 /**
@@ -1004,13 +1018,26 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
 
         // Draw cells
         if (item->m_dockitemtype != DockItemType::Separator ){
-            cr->set_source_rgba(0.00, 0.50, 0.66, 1);
-            RoundedRectangle(cr, x, y, width, height, 3);
+
+            cr->set_source_rgba(
+            this->m_Theme.PanelCell().Fill().Color::red,
+            this->m_Theme.PanelCell().Fill().Color::green,
+            this->m_Theme.PanelCell().Fill().Color::blue,
+            this->m_Theme.PanelCell().Fill().Color::alpha);
+
+            RoundedRectangle(cr, x, y, width, height, this->m_Theme.PanelCell().Ratio());
             cr->fill();
 
-            cr->set_line_width(1.5);
-            RoundedRectangle(cr, x, y, width, height, 3);
-            cr->set_source_rgba(255.0, 255.0, 255.0, 1);
+            cr->set_source_rgba(
+            this->m_Theme.PanelCell().Stroke().Color::red,
+            this->m_Theme.PanelCell().Stroke().Color::green,
+            this->m_Theme.PanelCell().Stroke().Color::blue,
+            this->m_Theme.PanelCell().Stroke().Color::alpha);
+
+            cr->set_line_width(this->m_Theme.PanelCell().LineWidth());
+            RoundedRectangle(cr, x, y, width, height, this->m_Theme.PanelCell().Ratio());
+
+          //  cr->set_source_rgba(255.0, 255.0, 255.0, 1);
             cr->stroke();
         }
 

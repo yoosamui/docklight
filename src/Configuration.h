@@ -156,6 +156,129 @@ namespace Configuration {
     //
     void Load();
 
+
+
+    namespace Style
+    {
+        struct Color
+        {
+            Color(){}
+            Color(const double red, const double green, const double blue, const double alpha){
+
+                this->red = red;
+                this->green = green;
+                this->blue = blue;
+                this->alpha = alpha;
+            }
+
+            double red = 0.0;
+            double green = 0.0;
+            double blue = 0.0;
+            double alpha = 1.0;
+        };
+
+        class ColorWindow
+        {
+            public:
+                ColorWindow(){};
+                ColorWindow(const Color fill, const Color stroke, const double lineWith, const double ratio, const int mask)
+                {
+                    this->m_Fill = fill;
+                    this->m_Stroke = stroke;
+                    this->m_LineWidth = lineWith;
+                    this->m_Ratio = ratio;
+                    this->m_Mask = mask;
+                }
+
+                Color Fill() const  { return m_Fill; }
+                Color Stroke() const  { return m_Stroke; }
+                double LineWidth() const  { return m_LineWidth;}
+                double Ratio() const  {return m_Ratio; }
+            private:
+                // defaults
+                Color m_Fill = Color(0.0, 0.50, 0.66, 1.8);
+                Color m_Stroke = Color(0, 0, 0 ,0);
+                double m_LineWidth = 1.0;
+                double m_Ratio = 6.0;
+                int m_Mask = 0;
+        };
+
+        class Theme
+        {
+            public:
+                Theme(){};
+                ColorWindow& Panel() const { return *m_Panel; }
+                ColorWindow& PanelTitle() const { return *m_PanelTitle; }
+                ColorWindow& PanelTitleText() const { return *m_PanelTitleText; }
+                ColorWindow& PanelCell() const { return *m_PanelCell; }
+
+                void set_Panel(ColorWindow* cw) {
+
+                   if (cw == nullptr){
+                        return;
+                   }
+
+                   if(this->m_Panel != nullptr){
+                        delete this->m_Panel;
+                        this->m_Panel = nullptr;
+                   }
+
+                    this->m_Panel = cw;
+                }
+
+                void set_PanelTitle(ColorWindow* cw) {
+
+                   if (cw == nullptr){
+                        return;
+                   }
+
+                   if(this->m_PanelTitle != nullptr){
+                        delete this->m_PanelTitle;
+                        this->m_PanelTitle = nullptr;
+                   }
+
+                    this->m_PanelTitle = cw;
+                }
+
+                void set_PanelTitleText(ColorWindow* cw) {
+
+                   if (cw == nullptr){
+                        return;
+                   }
+
+                   if(this->m_PanelTitleText != nullptr){
+                        delete this->m_PanelTitleText;
+                        this->m_PanelTitleText = nullptr;
+                   }
+
+                    this->m_PanelTitleText = cw;
+                }
+
+                void set_PanelCell(ColorWindow* cw) {
+
+                   if (cw == nullptr){
+                        return;
+                   }
+
+                   if(this->m_PanelCell != nullptr){
+                        delete this->m_PanelCell;
+                        this->m_PanelCell = nullptr;
+                   }
+
+                    this->m_PanelCell = cw;
+                }
+
+            private:
+                ColorWindow* m_Panel = new ColorWindow();
+                ColorWindow* m_PanelTitle = new ColorWindow();
+                ColorWindow* m_PanelTitleText = new ColorWindow();
+                ColorWindow* m_PanelCell = new ColorWindow();
+        };
+    }
+
+
+
+    Style::Theme get_Theme();
 }
 
 #endif	/* CONFIGURATION_H */

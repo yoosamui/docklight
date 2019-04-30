@@ -64,6 +64,8 @@ class DockPanel : public Gtk::DrawingArea, DockMenu {
             return m_heightDecrement;
         }
     private:
+        Configuration::Style::Theme m_Theme = Configuration::get_Theme();
+
         About m_about;
         static guint m_widthDecrement;
         static guint m_heightDecrement;

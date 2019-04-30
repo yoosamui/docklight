@@ -21,39 +21,42 @@
 //
 //*****************************************************************
 
-#include <cairo/cairo.h>
+//#include <cairo/cairo.h>
 #include <glibmm-2.4/glibmm/timer.h>
 #include "AppWindow.h"
 #include "../config.h"
 #include "DockWindow.h"
-#include "WindowControl.h"
+//#include "WindowControl.h"
 #include "Animations.h"
 #include "Utilities.h"
+#include "WnckHandler.h"
+//#include <unistd.h>
+//#include <iostream>
+//#include <chrono>
+//#include <thread>
 
-#include <unistd.h>
-#include <iostream>
-#include <chrono>
-#include <thread>
-
+// static members
 bool AppWindow::m_isfullscreenSet;
 bool AppWindow::m_isfullscreen;
 Screen AppWindow::m_screen;
 
-static const gchar* type_name(WnckWindowType type)
-{
-    switch (type)
-    {
-        case WNCK_WINDOW_NORMAL: return "normal";
-        case WNCK_WINDOW_DESKTOP: return "desktop";
-        case WNCK_WINDOW_DOCK: return "dock";
-        case WNCK_WINDOW_DIALOG: return "dialog";
-        case WNCK_WINDOW_TOOLBAR: return "toolbar";
-        case WNCK_WINDOW_MENU: return "menu";
-        case WNCK_WINDOW_UTILITY: return "utility";
-        case WNCK_WINDOW_SPLASHSCREEN: return "splashscreen";
-        default: return "UNKNOWN";
-    }
-}
+/*
+   static const gchar* type_name(WnckWindowType type)
+   {
+   switch (type)
+   {
+   case WNCK_WINDOW_NORMAL: return "normal";
+   case WNCK_WINDOW_DESKTOP: return "desktop";
+   case WNCK_WINDOW_DOCK: return "dock";
+   case WNCK_WINDOW_DIALOG: return "dialog";
+   case WNCK_WINDOW_TOOLBAR: return "toolbar";
+   case WNCK_WINDOW_MENU: return "menu";
+   case WNCK_WINDOW_UTILITY: return "utility";
+   case WNCK_WINDOW_SPLASHSCREEN: return "splashscreen";
+   default: return "UNKNOWN";
+   }
+   }
+   */
 
 AppWindow::AppWindow()
 {
@@ -69,33 +72,36 @@ AppWindow::AppWindow()
     }
 
     /*
-     This function returns the position you need to pass to move() to keep window in its current position.
-     This means that the meaning of the returned value varies with window gravity. See move() for more details.
+       This function returns the position you need to pass to move() to keep window in its current position.
+       This means that the meaning of the returned value varies with window gravity. See move() for more details.
 
-     The reliability of this function depends on the windowing system currently in use. Some windowing systems, such as Wayland,
-     do not support a global coordinate system, and thus the position of the window will always be (0, 0). Others, like X11,
-     do not have a reliable way to obtain the geometry of the decorations of a window if they are provided by the window manager.
-     Additionally, on X11, window manager have been known to mismanage window gravity, which result in windows moving even if
-     you use the coordinates of the current position as returned by this function.
+       The reliability of this function depends on the windowing system currently in use. Some windowing systems, such as Wayland,
+       do not support a global coordinate system, and thus the position of the window will always be (0, 0). Others, like X11,
+       do not have a reliable way to obtain the geometry of the decorations of a window if they are provided by the window manager.
+       Additionally, on X11, window manager have been known to mismanage window gravity, which result in windows moving even if
+       you use the coordinates of the current position as returned by this function.
 
-    If you haven’t changed the window gravity, its gravity will be Gdk::GRAVITY_NORTH_WEST. This means that get_position()
-    gets the position of the top-left corner of the window manager frame for the window. move() sets the position of this same top-left corner.
+       If you haven’t changed the window gravity, its gravity will be Gdk::GRAVITY_NORTH_WEST. This means that get_position()
+       gets the position of the top-left corner of the window manager frame for the window. move() sets the position of this same top-left corner.
 
-    If a window has gravity Gdk::GRAVITY_STATIC the window manager frame is not relevant, and thus get_position() will always produce accurate results.
-    However you can’t use static gravity to do things like place a window in a corner of the screen, because static gravity ignores the window manager decorations.
+       If a window has gravity Gdk::GRAVITY_STATIC the window manager frame is not relevant, and thus get_position() will always produce accurate results.
+       However you can’t use static gravity to do things like place a window in a corner of the screen, because static gravity ignores the window manager decorations.
 
-    Ideally, this function should return appropriate values if the window has client side decorations, assuming that the windowing system supports global coordinates.
+       Ideally, this function should return appropriate values if the window has client side decorations, assuming that the windowing system supports global coordinates.
 
-    In practice, saving the window position should not be left to applications, as they lack enough knowledge of the windowing system and the
-    window manager state to effectively do so. The appropriate way to implement saving the window position is to use a platform-specific protocol, wherever that is available.
+       In practice, saving the window position should not be left to applications, as they lack enough knowledge of the windowing system and the
+       window manager state to effectively do so. The appropriate way to implement saving the window position is to use a platform-specific protocol, wherever that is available.
 
-    Parameters
-    root_x	Return location for X coordinate of gravity-determined reference point.
-    root_y	Return location for Y coordinate of gravity-determined reference point.
-*/
+       Parameters
+       root_x	Return location for X coordinate of gravity-determined reference point.
+       root_y	Return location for Y coordinate of gravity-determined reference point.
+       */
     this->set_gravity(Gdk::Gravity::GRAVITY_STATIC);
 }
 
+/**
+ * Initialize
+ */
 int AppWindow::init()
 {
 
@@ -106,17 +112,19 @@ int AppWindow::init()
     this->m_screen.init(this);
     g_print("Monitor geometry ready. Monitor count = %d\n",this->m_screen.get_MonitorsCount());
 
-    //std::string iconFile = Utilities::getExecPath(DEF_LOGONAME);
-    //this->set_icon_from_file(iconFile);
-
+    // Load the configuration file
     Configuration::Load();
+    g_print("Configuration load done.");
+
+    // Seting the docklight logo
+    std::string iconFile = Utilities::getExecPath(DEF_LOGONAME);
+    this->set_icon_from_file(iconFile);
 
     // A window to implement a docking bar. Used for creating the dock panel.
     this->set_skip_taskbar_hint(true);
     this->set_skip_pager_hint(true);
     this->set_decorated(false);
     this->set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
-
 
     //https://developer.gnome.org/gtk-tutorial/stable/x2431.html
     this->add_events(
@@ -129,23 +137,14 @@ int AppWindow::init()
 
     // The monitors-changed signal is emitted when the number,
     // size or position of the monitors attached to the screen change.
-    g_signal_connect(G_OBJECT(screen), "size-changed",
-            G_CALLBACK(monitor_size_changed_callback),
-            (gpointer) this);
+    g_signal_connect(G_OBJECT(screen), "size-changed", G_CALLBACK(monitor_size_changed_callback), (gpointer) this);
+    g_signal_connect(G_OBJECT(screen), "monitors-changed", G_CALLBACK(monitor_changed_callback),  (gpointer) this);
+    g_signal_connect(G_OBJECT(wnckscreen), "window-opened", G_CALLBACK(AppWindow::on_window_opened), NULL);
+    g_signal_connect(wnckscreen, "window_closed", G_CALLBACK(AppWindow::on_window_closed), NULL);
 
-    g_signal_connect(G_OBJECT(screen), "monitors-changed",
-            G_CALLBACK(monitor_changed_callback),
-            (gpointer) this);
-
-    g_signal_connect(G_OBJECT(wnckscreen), "window-opened",
-            G_CALLBACK(AppWindow::on_window_opened), NULL);
-
-    g_signal_connect(wnckscreen, "window_closed",
-            G_CALLBACK(AppWindow::on_window_closed), NULL);
-
-    // Launch timer every second
+    // Set timer handlers
     Glib::signal_timeout().connect(sigc::mem_fun(*this, &AppWindow::fullScreenTimer), 100);
-    Glib::signal_timeout().connect(sigc::mem_fun(*this, &AppWindow::autohideTimer), 1000/30);
+    Glib::signal_timeout().connect(sigc::mem_fun(*this, &AppWindow::autohideTimer), 1000 / 30);
 
     // Initialize the DockWindow namespace
     if (DockWindow::init(this) != 0) {
@@ -360,7 +359,7 @@ bool AppWindow::autohideTimer()
  */
 bool AppWindow::fullScreenTimer()
 {
-    m_isfullscreen = WindowControl::FullscreenActive();
+    m_isfullscreen = WnckHandler::FullscreenActive();
     if (m_isfullscreen && !m_isfullscreenSet) {
         if (!Configuration::is_autoHide()) {
             Configuration::set_allowDraw(false);
