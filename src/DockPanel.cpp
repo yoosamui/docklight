@@ -1027,17 +1027,22 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
 
             RoundedRectangle(cr, x, y, width, height, this->m_Theme.PanelCell().Ratio());
             cr->fill();
-
             cr->set_source_rgba(
             this->m_Theme.PanelCell().Stroke().Color::red,
             this->m_Theme.PanelCell().Stroke().Color::green,
             this->m_Theme.PanelCell().Stroke().Color::blue,
             this->m_Theme.PanelCell().Stroke().Color::alpha);
-
             cr->set_line_width(this->m_Theme.PanelCell().LineWidth());
-            RoundedRectangle(cr, x, y, width, height, this->m_Theme.PanelCell().Ratio());
 
-          //  cr->set_source_rgba(255.0, 255.0, 255.0, 1);
+            if (this->m_Theme.PanelCell().Mask() == 0){
+                RoundedRectangle(cr, x, y, width, height, this->m_Theme.PanelCell().Ratio());
+            }
+            else{
+                // bottom
+                cr->move_to(x, y + height);
+                cr->line_to(x, y + height);
+                cr->line_to(x + width, y + height);
+            }
             cr->stroke();
         }
 
@@ -1072,13 +1077,22 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
         // Selector
         if (idx == m_currentMoveIndex && (item->m_dockitemtype != DockItemType::Separator || m_DragDropBegin )) {
 
-            cr->set_source_rgba(255.0, 255.0, 255.0, 0.4);
-            RoundedRectangle(cr, x, y, width, height, 3);
+            //cr->set_source_rgba(255.0, 255.0, 255.0, 0.4);
+            cr->set_source_rgba(
+            this->m_Theme.Selector().Fill().Color::red,
+            this->m_Theme.Selector().Fill().Color::green,
+            this->m_Theme.Selector().Fill().Color::blue,
+            this->m_Theme.Selector().Fill().Color::alpha);
+            RoundedRectangle(cr, x, y, width, height, this->m_Theme.Selector().Ratio());
             cr->fill();
 
-            cr->set_line_width(2.5);
-            cr->set_source_rgba(255.0, 255.0, 255.0, 1);
-            RoundedRectangle(cr, x, y, width, height, 3);
+            cr->set_source_rgba(
+            this->m_Theme.Selector().Stroke().Color::red,
+            this->m_Theme.Selector().Stroke().Color::green,
+            this->m_Theme.Selector().Stroke().Color::blue,
+            this->m_Theme.Selector().Stroke().Color::alpha);
+            cr->set_line_width(this->m_Theme.Selector().LineWidth());
+            RoundedRectangle(cr, x, y, width, height, this->m_Theme.Selector().Ratio());
             cr->stroke();
 
         }
@@ -1150,4 +1164,5 @@ void DockPanel::show_Title()
         m_titleElapsedSeconds = m_titleTimer.elapsed();
     }
 }
+
 

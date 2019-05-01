@@ -25,7 +25,7 @@ namespace Configuration
     bool m_autohide = false;
     bool m_allowDraw = true;
     bool m_panelmode = false;
-    guint m_separatorMargin = 8;
+    guint m_separatorMargin = 6;
 
     panel_locationType m_location = panel_locationType::BOTTOM;
     Horizontal_alignment_type m_HorizontalAlignment =  Horizontal_alignment_type::CENTER;
@@ -92,6 +92,7 @@ namespace Configuration
     {
         m_theme.set_Panel(new ColorWindow());
         m_theme.set_PanelCell(new ColorWindow(Color(0,0.50,0.66,1), Color(1,1,1,1), 1.5, 3, 0));
+        m_theme.set_Selector(new ColorWindow(Color(255,255,255,0.5), Color(1,1,1,1), 1.5, 3, 0));
         m_theme.set_PanelTitle(new ColorWindow(Color(0, 0, 0, 1 ), Color(0,0,0,1), 1, 6, 0));
         m_theme.set_PanelTitleText(new ColorWindow(Color(), Color(1,1,1,1), 1, 0, 0));
     }
@@ -155,32 +156,11 @@ namespace Configuration
         int id = 0;
         XMLElement* listElement = element->FirstChildElement("Style");
         while (listElement != nullptr){
-
-
-           //element = listElement->FirstChildElement("UseStyle");
-
-
             const char* name = listElement->GetText();
-            if (name != nullptr){
-                g_print("............Stylename:%s\n",name);
-            }
-
             const char* panel = listElement->Attribute("panel");
-            if (panel != nullptr){
-                g_print(".............Panel%s\n",panel);
-            }
-
-            const char* cell = listElement->Attribute("paneCell");
-            if (cell != nullptr){
-                g_print(".............Cell%s\n",cell);
-            }
-
-            const char* panelTitle = listElement->Attribute("PanelTitle");
-            if (panelTitle != nullptr){
-                g_print(".............panelTitler%s\n",panelTitle);
-            }
-
-
+            const char* cell = listElement->Attribute("panelCell");
+            const char* panelTitle = listElement->Attribute("panelTitle");
+            const char* selector = listElement->Attribute("selector");
 
             XMLCheckResult(listElement->QueryIntText(&id));
             if(id == useStyle ){
@@ -190,22 +170,36 @@ namespace Configuration
                 double ratio;
                 int mask;
 
-                getColorFromString(panel, fill, stroke, lineWidth, ratio,  mask);
+                if (panel != nullptr){
+                    getColorFromString(panel, fill, stroke, lineWidth, ratio,  mask);
+                    m_theme.set_Panel(new ColorWindow(fill,stroke,lineWidth,ratio,mask));
+                g_print("Style %d %s PANEL  Fill:%f %f %f %f Stroke %f %f %f %f  MASK %d\n",id, panel, fill.red, fill.green, fill.blue, fill.alpha, stroke.red, stroke.green, stroke.blue, stroke.alpha, mask);
+                }
 
-                g_print("...FOUND..Style %d Fill:%f %f %f %f Stroke\n",id, fill.red, fill.green, fill.blue, fill.alpha);
+               if (selector != nullptr){
+                    getColorFromString(selector, fill, stroke, lineWidth, ratio,  mask);
+                    m_theme.set_Selector(new ColorWindow(fill,stroke,lineWidth,ratio,mask));
+                }
+
+                if (cell != nullptr){
+                    getColorFromString(cell, fill, stroke, lineWidth, ratio,  mask);
+                    m_theme.set_PanelCell(new ColorWindow(fill,stroke,lineWidth,ratio,mask));
+                g_print("Style %d %s CELL   Fill:%f %f %f %f Stroke %f %f %f %f \n",id, cell, fill.red, fill.green, fill.blue, fill.alpha, stroke.red, stroke.green, stroke.blue, stroke.alpha);
+
+                }
+
+                if (panelTitle != nullptr){
+                    getColorFromString(panelTitle, fill, stroke, lineWidth, ratio,  mask);
+                    m_theme.set_PanelTitle(new ColorWindow(fill,stroke,lineWidth,ratio,mask));
+
+                }
 
 
-                m_theme.set_Panel(new ColorWindow(fill,stroke,lineWidth,ratio,mask));
                 break;
             }
 
-
-
             listElement =listElement->NextSiblingElement("Style");
-
         }
-
-
     }
 
     Style::Theme get_Theme(){

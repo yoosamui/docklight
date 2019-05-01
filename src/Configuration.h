@@ -194,6 +194,7 @@ namespace Configuration {
                 Color Stroke() const  { return m_Stroke; }
                 double LineWidth() const  { return m_LineWidth;}
                 double Ratio() const  {return m_Ratio; }
+                int Mask() const  {return m_Mask; }
             private:
                 // defaults
                 Color m_Fill = Color(0.0, 0.50, 0.66, 1.8);
@@ -211,6 +212,7 @@ namespace Configuration {
                 ColorWindow& PanelTitle() const { return *m_PanelTitle; }
                 ColorWindow& PanelTitleText() const { return *m_PanelTitleText; }
                 ColorWindow& PanelCell() const { return *m_PanelCell; }
+                ColorWindow& Selector() const { return *m_Selector; }
 
                 void set_Panel(ColorWindow* cw) {
 
@@ -268,18 +270,34 @@ namespace Configuration {
                     this->m_PanelCell = cw;
                 }
 
+                void set_Selector(ColorWindow* cw) {
+
+                   if (cw == nullptr){
+                        return;
+                   }
+
+                   if(this->m_Selector != nullptr){
+                        delete this->m_Selector;
+                        this->m_Selector = nullptr;
+                   }
+
+                    this->m_Selector = cw;
+                }
             private:
                 ColorWindow* m_Panel = new ColorWindow();
                 ColorWindow* m_PanelTitle = new ColorWindow();
                 ColorWindow* m_PanelTitleText = new ColorWindow();
                 ColorWindow* m_PanelCell = new ColorWindow();
+                ColorWindow* m_Selector = new ColorWindow();
         };
     }
 
 
 
     Style::Theme get_Theme();
+
 }
 
 #endif	/* CONFIGURATION_H */
+
 
