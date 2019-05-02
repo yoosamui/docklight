@@ -22,7 +22,6 @@
 
 #include "Configuration.h"
 #include "DockWindow.h"
-#include "WindowControl.h"
 #include "AppWindow.h"
 #include "Screen.h"
 #include "Struts.h"

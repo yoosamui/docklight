@@ -1,18 +1,18 @@
 //*****************************************************************
 //
 //  Copyright (C) 2015-2017 Juan R. Gonzalez
-//  Created on February 21, 2017 
+//  Created on February 21, 2017
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-// 
+//
 //  This program is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU General Public License for more details.
-// 
+//
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
@@ -20,7 +20,6 @@
 
 #include "SessionWindow.h"
 #include "DockPanel.h"
-#include "WindowControl.h"
 #include "Launcher.h"
 #include "DockWindow.h"
 #include <glibmm/i18n.h>
@@ -175,11 +174,11 @@ m_ListBox()
 
     m_grid.attach(m_labelAddActive, 0, 0, 1, 1);
     m_grid.attach(m_EntryAppName, 1, 0, 1, 1);
-    
+
     m_grid.attach(m_labelSessionName, 0, 1, 1, 1);
     m_SessionName.set_max_length(60);
     m_grid.attach(m_SessionName, 1, 1, 1, 1);
-    
+
 
     m_HBoxBottom.pack_start(m_OkButton, true, true, Gtk::PACK_EXPAND_WIDGET);
     m_HBoxBottom.pack_start(m_CancelButton, true, true, Gtk::PACK_EXPAND_WIDGET);
@@ -219,7 +218,7 @@ void SessionWindow::init(DockPanel& panel, DockItem* dockitem, const int id)
 {
     this->m_panel = &panel;
     this->m_dockitem = dockitem;
-    
+
     char buff[100];
     sprintf(buff, _("Session group %d"), id);
     this->set_title(buff);
@@ -271,8 +270,8 @@ void SessionWindow::init(DockPanel& panel, DockItem* dockitem, const int id)
     }
 
     fclose(f);
-    
-   
+
+
     std::ifstream file(getTitleFilePath());
     std::string title;
     if(file.is_open())
@@ -281,7 +280,7 @@ void SessionWindow::init(DockPanel& panel, DockItem* dockitem, const int id)
         m_SessionName.set_text( title );
         file.close();
     }
-   
+
 
     // Sort by appname
     int size = (int) rows.size();
@@ -303,10 +302,10 @@ void SessionWindow::init(DockPanel& panel, DockItem* dockitem, const int id)
         }
         std::swap(rows.at(i), rows.at(m));
     }
-    
+
     for(auto row : rows)
         m_ListBox.append(*row);
-    
+
     m_ListBox.show_all();
 }
 
@@ -335,10 +334,10 @@ void SessionWindow::on_button_clicked(guint buttonId)
 
 void SessionWindow::addToList()
 {
-    
+
     if( !WNCK_IS_WINDOW(m_window))
         return;
-            
+
     Glib::RefPtr<Gdk::Pixbuf> appIcon = NULLPB;
 
     std::string the_appname;
@@ -395,7 +394,7 @@ void SessionWindow::save()
 
         m_dockitem->m_titlename = m_SessionName.get_text();
     }
-    
+
     size_t result;
     FILE* f;
     f = fopen(getFilePath().c_str(), "wb");
