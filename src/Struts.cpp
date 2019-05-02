@@ -1,7 +1,7 @@
-/* 
+/*
  * File:   Struts.cpp
  * Author: yoo
- * 
+ *
  * Created on January 5, 2019, 4:43 PM
  */
 
@@ -36,18 +36,17 @@ void Struts::update(bool reset)
         g_critical("update: gdk_window is null.");
         return;
     }
-
     if (!reset) {
         this->screen->update();
         guint areaSize = DockWindow::reSize();//DockWindow::getClientSize(); //Configuration::get_dockWindowSize();
         auto primary = this->screen->get_PrimaryMonitor();
         auto next = this->screen->get_NextMonitor();
-        
+
         if(next == NULL)
         {
             next = primary;
         }
-        
+
         switch (Configuration::get_dockWindowLocation())
         {
             case panel_locationType::TOP:
@@ -55,22 +54,23 @@ void Struts::update(bool reset)
               if (this->screen->get_MonitorsCount() > 1) {
                     //0,0,410,0,0,0,0,0,2560,4479,0,0
                     if (primary->geometry.x > 0) {
-                        insets[strutsPosition::Top] = primary->geometry.y + areaSize + 
+                        insets[strutsPosition::Top] = primary->geometry.y + areaSize +
                                 Configuration::get_WindowDockMonitorMargin_Top();
                         insets[strutsPosition::TopStart] = next->geometry.width;
                         insets[strutsPosition::TopEnd] = (primary->geometry.width + next->geometry.width) - 1;
                         break;
                     }
                 }
-                 
-                insets[strutsPosition::Top] = areaSize + primary->geometry.y +
-                        Configuration::get_WindowDockMonitorMargin_Top();
-                insets[strutsPosition::TopStart] = 0;
-                insets[strutsPosition::TopEnd] =primary->geometry.height -1;
-                        //primary->geometry.height + primary->workarea.y;
+
+                // ONE MONITOR xprop -name "Desktop" -f _NET_WM_STRUT_PARTIAL 32c -set _NET_WM_STRUT_PARTIAL 0,0,56,0,0,0,0,0,0,1920,0,0 OK!
+                insets[strutsPosition::Top] = 56;//areaSize;
+                insets[strutsPosition::TopStart] =  0;
+                insets[strutsPosition::TopEnd] = 1920;//primary->geometry.width;
+
+
                 break;
             }
-               
+
 
             case panel_locationType::BOTTOM:
             {
@@ -85,12 +85,21 @@ void Struts::update(bool reset)
                     }
                 }
 
-                
-                //0,0,0,60,0,0,0,0,0,0,0,1440
-                insets[strutsPosition::Bottom] = areaSize;// + primary->workarea.y ;
-                insets[strutsPosition::BottomStart] = 0;
-                insets[strutsPosition::BottomEnd] = primary->geometry.height - 1;
-                break;
+
+                // ONE MONITOR xprop -name "Desktop" -f _NET_WM_STRUT_PARTIAL 32c -set _NET_WM_STRUT_PARTIAL 0,0,0,56,0,0,0,0,0,0,0,1920 OK!
+                insets[strutsPosition::Bottom] = areaSize;                           // strut size;
+                insets[strutsPosition::BottomStart] = 0;                             // dock start pos
+                insets[strutsPosition::BottomEnd] = primary->geometry.width;         // dock end pos
+
+//0 1919 65
+
+
+                g_print("UPDATE STRUTS BOTTOM %d %d %d\n",areaSize, 0, primary->geometry.width);
+
+              //  insets[strutsPosition::Bottom] = (height + (Gdk::screen_height() -(geometry.y + geometry.height)));
+              //  insets[strutsPosition::BottomStart] = geometry.x;
+              //  insets[strutsPosition::BottomEnd] = geometry.x + geometry.width - 1;
+                                break;
             }
 
             case panel_locationType::LEFT:
@@ -106,11 +115,11 @@ void Struts::update(bool reset)
                         break;
                     }
                 }
-                
+
                 insets[strutsPosition::Left] = areaSize;
                 insets[strutsPosition::LeftStart] = primary->geometry.x - 1;
-                insets[strutsPosition::LeftEnd] = primary->geometry.x + primary->geometry.height; 
-                        
+                insets[strutsPosition::LeftEnd] = primary->geometry.x + primary->geometry.height;
+
 
                 break;
 
@@ -118,7 +127,7 @@ void Struts::update(bool reset)
 
             case panel_locationType::RIGHT:
             {
-                
+
                 areaSize += Configuration::get_WindowDockMonitorMargin_Right();
                 if (this->screen->get_MonitorsCount() > 1) {
                     // 0,60,0,0,0,0,0,1080,0,0,0,0

@@ -127,9 +127,8 @@ DockPanel::DockPanel():
 int DockPanel::Init(Gtk::Window* window)
 {
     this->m_AppWindow = window;
-
-
     this->m_AppUpdater = new AppUpdater();
+
 
     const char* filename = m_homeiconFilePath.c_str();
     DockItem* dockItem = new DockItem();
@@ -902,6 +901,8 @@ inline void DockPanel::get_ItemPosition(const DockItemType dockType, int& x, int
  */
 bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
+
+
     if (Configuration::is_allowDraw() == false) {
         return true;
     }
@@ -932,8 +933,6 @@ void DockPanel::draw_Panel(const Cairo::RefPtr<Cairo::Context>& cr)
     }
     else {
 
-
-//        0.0, 175.8, 0.4,8.0);
         RoundedRectangle(cr, 0, 0, DockWindow::get_DockWindowWidth(), DockWindow::get_DockWindowHeight(), this->m_Theme.Panel().Ratio());
         cr->fill();
 
@@ -945,8 +944,6 @@ void DockPanel::draw_Panel(const Cairo::RefPtr<Cairo::Context>& cr)
         RoundedRectangle(cr, 0, 0, DockWindow::get_DockWindowWidth(), DockWindow::get_DockWindowHeight(), this->m_Theme.Panel().Ratio());
         cr->stroke();
     }
-
-        //0.0, 175.8, 0.4);
 }
 
 /**

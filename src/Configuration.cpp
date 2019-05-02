@@ -10,6 +10,7 @@
 #include "Configuration.h"
 #include "DockWindow.h"
 #include "tinyxml2.h"
+#include "Utilities.h"
 
 using namespace tinyxml2;
 

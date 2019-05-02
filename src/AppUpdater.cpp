@@ -37,14 +37,14 @@ AppUpdater::AppUpdater()
     // load attachments
     this->Load();
 
-    // Gets the default WnckScreen on the default display.
+   //  Gets the default WnckScreen on the default display.
     WnckScreen *wnckscreen = wnck_screen_get_default();
 
     g_signal_connect(G_OBJECT(wnckscreen), "window-opened", G_CALLBACK(AppUpdater::on_window_opened), NULL);
     g_signal_connect(wnckscreen, "window_closed", G_CALLBACK(AppUpdater::on_window_closed), NULL);
 
 
-    // signal for icon themes changes
+    //  signal for icon themes changes
     GdkScreen *screen = gdk_screen_get_default();
     auto icon_theme = g_object_get_data(G_OBJECT(screen), "gtk-icon-theme");
     auto settings = gtk_settings_get_for_screen(screen);

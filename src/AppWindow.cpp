@@ -60,6 +60,10 @@ Screen AppWindow::m_screen;
 
 AppWindow::AppWindow()
 {
+
+    add_events(Gdk::BUTTON_PRESS_MASK);
+    set_app_paintable(true);
+
     GdkScreen *screen;
     GdkVisual *visual;
 
@@ -97,6 +101,11 @@ AppWindow::AppWindow()
        root_y	Return location for Y coordinate of gravity-determined reference point.
        */
     this->set_gravity(Gdk::Gravity::GRAVITY_STATIC);
+
+    // A window to implement a docking bar used for creating the dock panel.
+    this->set_skip_taskbar_hint(true);
+    this->set_skip_pager_hint(true);
+    this->set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
 }
 
 /**
@@ -105,16 +114,15 @@ AppWindow::AppWindow()
 int AppWindow::init()
 {
 
-    this->set_title(PACKAGE_NAME);
-
     // Initialize the monitor geometry.
-    this->show();
+    this->show_all();
     this->m_screen.init(this);
     g_print("Monitor geometry ready. Monitor count = %d\n",this->m_screen.get_MonitorsCount());
 
     // Load the configuration file
     Configuration::Load();
-    g_print("Configuration load done.");
+    g_print("Configuration load done.\n");
+    this->set_title(PACKAGE_NAME);
 
     // Seting the docklight logo
     std::string iconFile = Utilities::getExecPath(DEF_LOGONAME);
@@ -129,8 +137,8 @@ int AppWindow::init()
     //https://developer.gnome.org/gtk-tutorial/stable/x2431.html
     this->add_events(
             Gdk::PROPERTY_CHANGE_MASK |
-            Gdk::STRUCTURE_MASK |
-            Gdk::PROPERTY_CHANGE_MASK);
+            Gdk::STRUCTURE_MASK );
+//            Gdk::PROPERTY_CHANGE_MASK);
 
     GdkScreen *screen = gdk_screen_get_default();
     WnckScreen *wnckscreen = wnck_screen_get(0);
@@ -146,15 +154,19 @@ int AppWindow::init()
     Glib::signal_timeout().connect(sigc::mem_fun(*this, &AppWindow::fullScreenTimer), 100);
     Glib::signal_timeout().connect(sigc::mem_fun(*this, &AppWindow::autohideTimer), 1000 / 30);
 
+
+
     // Initialize the DockWindow namespace
     if (DockWindow::init(this) != 0) {
         return -1;
     }
 
+
     // Create the DockPanel instance.
     m_dockpanel = new DockPanel();
     this->add(*m_dockpanel);
     this->show_all();
+
 
     //    for(auto arg : Utilities::Arguments())
     //    {
@@ -442,7 +454,9 @@ void AppWindow::monitor_changed_callback(GdkScreen *screen, gpointer gtkwindow)
 }
 
 
-void AppWindow::window_geometry_changed_callback(WnckWindow *window, gpointer user_data){ }
+void AppWindow::window_geometry_changed_callback(WnckWindow *window, gpointer user_data){
+    g_print("GEO CHANGE\n");
+}
 
 bool AppWindow::on_enter_notify_event(GdkEventCrossing* crossing_event)
 {

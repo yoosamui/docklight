@@ -1385,12 +1385,8 @@ docklight-Configuration.o: Configuration.cpp /usr/include/stdc-predef.h \
  /usr/include/gtkmm-3.0/gtkmm/uimanager.h \
  /usr/include/gtkmm-3.0/gtkmm/viewport.h \
  /usr/include/gtkmm-3.0/gtkmm/volumebutton.h AppWindow.h DockPanel.h \
- DockItem.h AppUpdater.h SessionWindow.h Utilities.h \
- /usr/include/c++/6/math.h IconLoader.h AppRunAnimation.h \
- /usr/include/c++/6/thread TitleWindow.h DockMenu.h \
- /usr/include/glibmm-2.4/glibmm/i18n.h /usr/include/glib-2.0/glib/gi18n.h \
- /usr/include/libintl.h About.h Screen.h Struts.h tinyxml2.h \
- /usr/include/c++/6/climits /usr/include/c++/6/cstring
+ DockItem.h Screen.h Struts.h tinyxml2.h /usr/include/c++/6/climits \
+ /usr/include/c++/6/cstring Utilities.h /usr/include/c++/6/math.h
 
 /usr/include/stdc-predef.h:
 
@@ -4392,32 +4388,6 @@ DockPanel.h:
 
 DockItem.h:
 
-AppUpdater.h:
-
-SessionWindow.h:
-
-Utilities.h:
-
-/usr/include/c++/6/math.h:
-
-IconLoader.h:
-
-AppRunAnimation.h:
-
-/usr/include/c++/6/thread:
-
-TitleWindow.h:
-
-DockMenu.h:
-
-/usr/include/glibmm-2.4/glibmm/i18n.h:
-
-/usr/include/glib-2.0/glib/gi18n.h:
-
-/usr/include/libintl.h:
-
-About.h:
-
 Screen.h:
 
 Struts.h:
@@ -4427,3 +4397,7 @@ tinyxml2.h:
 /usr/include/c++/6/climits:
 
 /usr/include/c++/6/cstring:
+
+Utilities.h:
+
+/usr/include/c++/6/math.h:

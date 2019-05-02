@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   AppWindow.h
  * Author: yoo
  *
@@ -23,9 +23,9 @@ public:
     int init();
     int postInit();
     virtual ~AppWindow();
-    
+
     static Screen m_screen;
-    
+
     DockPanel* get_DockPanel()
     {
         return m_dockpanel;
@@ -44,8 +44,8 @@ private:
     static void LeaveFunc(GtkWidget *widget, GdkEvent *event, gpointer callback_data);
     static void on_active_window_changed_callback(WnckScreen* screen,
             WnckWindow* previously_active_window, gpointer user_data);
-    
-   
+
+
     // autohide members
     float m_easing_duration;
     float m_time = 0;
@@ -55,19 +55,19 @@ private:
     //float m_endPosition;
 
 
-    
+
     bool m_animate = false;
     bool m_timerStoped = true;
     bool m_visible = true;
     float atime = 0.f;
 
     Glib::Timer m_Timer;
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
     bool fullscreenActive();
     bool fullScreenTimer();
     bool autohideTimer();

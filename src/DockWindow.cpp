@@ -358,6 +358,7 @@ namespace DockWindow
             if (Configuration::is_activateStrut()) {
                 if (m_window != nullptr)
                     ((AppWindow*)m_window)->m_screen.struts->remove();
+
             }
         }
     }
