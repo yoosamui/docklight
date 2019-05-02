@@ -29,7 +29,6 @@
 DockItem::DockItem():
     DockItem(Configuration::get_CellWidth(), Configuration::get_CellHeight())
 {
-
 }
 
 DockItem::DockItem(const guint width, const guint height)
@@ -81,40 +80,6 @@ guint DockItem::get_InmutableHeight()
     return this->m_height;
 }
 
-/*
-      void DockItem::set_Width(guint value)
-      {
-      this->m_width = value;
-      }
-
-      void DockItem::set_Height(guint value)
-      {
-      this->m_height = value;
-
-      }
-      */
-
-
-/**
- * get the current item from the items vector
- * @return DockItem*
- */
-//piece of shit is obsolete
-/*
-   DockItem* DockItem::get_Current()
-   {
-   if (m_items.size() == 0)
-   return nullptr;
-
-   if (m_index >= (int) m_items.size())
-   m_index = 0;
-
-   DockItem* result = m_items[m_index];
-
-   return result;
-
-   }
-   */
 
 /**
  * get the next item from the items vector

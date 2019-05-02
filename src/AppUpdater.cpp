@@ -208,21 +208,6 @@ void AppUpdater::Save()
     fclose(f);
 }
 /**
- * gets the next available index.
- */
-//guint AppUpdater::get_NextIndex()
-//{
-    //guint index = 0;
-
-    //for (auto item : m_dockitems){
-        //if (index > item->m_index){
-            //index = item->m_index;
-        //}
-    //}
-    //g_print("NextIndex %d\n",index);
-    //return index;
-//}
-/**
  * Attacht the item by the given index.
  */
 bool AppUpdater::AttachItem(const int index)

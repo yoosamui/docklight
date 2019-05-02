@@ -129,15 +129,14 @@ int AppWindow::init()
     this->add_events(
             Gdk::PROPERTY_CHANGE_MASK |
             Gdk::STRUCTURE_MASK );
-//            Gdk::PROPERTY_CHANGE_MASK);
 
     GdkScreen *screen = gdk_screen_get_default();
     WnckScreen *wnckscreen = wnck_screen_get(0);
 
     // The monitors-changed signal is emitted when the number,
     // size or position of the monitors attached to the screen change.
-    g_signal_connect(G_OBJECT(screen), "size-changed", G_CALLBACK(monitor_size_changed_callback), (gpointer) this);
     g_signal_connect(G_OBJECT(screen), "monitors-changed", G_CALLBACK(monitor_changed_callback),  (gpointer) this);
+    g_signal_connect(G_OBJECT(screen), "size-changed", G_CALLBACK(monitor_size_changed_callback), (gpointer) this);
     g_signal_connect(G_OBJECT(wnckscreen), "window-opened", G_CALLBACK(AppWindow::on_window_opened), NULL);
     g_signal_connect(wnckscreen, "window_closed", G_CALLBACK(AppWindow::on_window_closed), NULL);
 
@@ -145,26 +144,15 @@ int AppWindow::init()
     Glib::signal_timeout().connect(sigc::mem_fun(*this, &AppWindow::fullScreenTimer), 100);
     Glib::signal_timeout().connect(sigc::mem_fun(*this, &AppWindow::autohideTimer), 1000 / 30);
 
-
-
     // Initialize the DockWindow namespace
     if (DockWindow::init(this) != 0) {
         return -1;
     }
 
-
     // Create the DockPanel instance.
     m_dockpanel = new DockPanel();
     this->add(*m_dockpanel);
     this->show_all();
-
-
-    //    for(auto arg : Utilities::Arguments())
-    //    {
-    //        g_print("%s\n",arg);
-    //    }
-    // use arguments anywhere else:
-    //std::cout << Arguments()[0];
 
     return  m_dockpanel->Init(this);
 }
@@ -271,8 +259,7 @@ bool AppWindow::autohideTimer()
                     int margin = Configuration::get_WindowDockMonitorMargin_Left();
                     if (m_visible && margin > 0 && !this->m_mouseIn) {
                         Utilities::getMousePosition(mouseX, mouseY);
-                        if (mouseX <= margin &&
-                                mouseY > ypos && mouseY < ypos + this->get_height()) {
+                        if (mouseX <= margin &&  mouseY > ypos && mouseY < ypos + this->get_height()) {
                             m_timerStoped = true;
                             return true;
                         }
@@ -295,7 +282,7 @@ bool AppWindow::autohideTimer()
                     if (m_visible && margin > 0 && !this->m_mouseIn) {
                         Utilities::getMousePosition(mouseX, mouseY);
                         if (mouseX > DockWindow::Monitor::get_geometry().width - margin
-                                && mouseY > ypos && mouseY < ypos + this->get_height()) {
+                            && mouseY > ypos && mouseY < ypos + this->get_height()) {
                             m_timerStoped = true;
                             return true;
                         }
@@ -353,6 +340,7 @@ bool AppWindow::autohideTimer()
             DockWindow::set_Visibility(this->m_visible);
         }
     }
+
     return true;
 }
 
@@ -438,15 +426,10 @@ void AppWindow::monitor_changed_callback(GdkScreen *screen, gpointer gtkwindow)
 
         DockWindow::Monitor::updateStrut();
     }
-
-
-
-
 }
 
 
 void AppWindow::window_geometry_changed_callback(WnckWindow *window, gpointer user_data){
-    g_print("GEO CHANGE\n");
 }
 
 bool AppWindow::on_enter_notify_event(GdkEventCrossing* crossing_event)
