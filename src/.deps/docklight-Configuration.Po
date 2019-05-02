@@ -1390,11 +1390,11 @@ docklight-Configuration.o: Configuration.cpp /usr/include/stdc-predef.h \
  /usr/include/gtkmm-3.0/gtkmm/viewport.h \
  /usr/include/gtkmm-3.0/gtkmm/volumebutton.h AppWindow.h DockPanel.h \
  DockItem.h AppUpdater.h SessionWindow.h Utilities.h \
- /usr/include/c++/7/math.h IconLoader.h AppRunAnimation.h \
- /usr/include/c++/7/thread TitleWindow.h DockMenu.h \
+ /usr/include/c++/7/math.h IconLoader.h TitleWindow.h DockMenu.h \
  /usr/include/glibmm-2.4/glibmm/i18n.h /usr/include/glib-2.0/glib/gi18n.h \
- /usr/include/libintl.h About.h Screen.h Struts.h tinyxml2.h \
- /usr/include/c++/7/climits /usr/include/c++/7/cstring
+ /usr/include/libintl.h About.h /usr/include/c++/7/thread Screen.h \
+ Struts.h tinyxml2.h /usr/include/c++/7/climits \
+ /usr/include/c++/7/cstring
 
 /usr/include/stdc-predef.h:
 
@@ -4418,10 +4418,6 @@ Utilities.h:
 
 IconLoader.h:
 
-AppRunAnimation.h:
-
-/usr/include/c++/7/thread:
-
 TitleWindow.h:
 
 DockMenu.h:
@@ -4433,6 +4429,8 @@ DockMenu.h:
 /usr/include/libintl.h:
 
 About.h:
+
+/usr/include/c++/7/thread:
 
 Screen.h:
 

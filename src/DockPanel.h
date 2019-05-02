@@ -34,11 +34,11 @@
 #include "DockItem.h"
 //#include "SessionWindow.h"
 #include "AppUpdater.h"
-#include "AppRunAnimation.h"
+//#include "AppRunAnimation.h"
 #include "TitleWindow.h"
 #include "DockMenu.h"
 #include "About.h"
-
+#include <thread>
 class DockPanel : public Gtk::DrawingArea, DockMenu {
 
     public:

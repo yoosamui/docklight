@@ -59,10 +59,6 @@ Configuration.cpp \
 Configuration.h \
 WnckHandler.cpp \
 WnckHandler.h \
-AppRunAnimation.cpp \
-AppRunAnimation.h \
-IconWindow.cpp \
-IconWindow.h \
 TitleWindow.cpp \
 TitleWindow.h \
 DockItemPositions.cpp \

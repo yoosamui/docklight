@@ -63,9 +63,9 @@ void Struts::update(bool reset)
                 }
 
                 // ONE MONITOR xprop -name "Desktop" -f _NET_WM_STRUT_PARTIAL 32c -set _NET_WM_STRUT_PARTIAL 0,0,56,0,0,0,0,0,0,1920,0,0 OK!
-                insets[strutsPosition::Top] = 56;//areaSize;
+                insets[strutsPosition::Top] = areaSize;
                 insets[strutsPosition::TopStart] =  0;
-                insets[strutsPosition::TopEnd] = 1920;//primary->geometry.width;
+                insets[strutsPosition::TopEnd] = primary->geometry.width;
 
 
                 break;
@@ -74,7 +74,7 @@ void Struts::update(bool reset)
 
             case panel_locationType::BOTTOM:
             {
-                areaSize;// += Configuration::get_WindowDockMonitorMargin_Bottom();
+                //areaSize;// += Configuration::get_WindowDockMonitorMargin_Bottom();
                 if (this->screen->get_MonitorsCount() > 1) {
                     //0,0,0,50,0,0,0,0,0,0,2560,4479
                     if (primary->geometry.x > 0) {
@@ -91,20 +91,12 @@ void Struts::update(bool reset)
                 insets[strutsPosition::BottomStart] = 0;                             // dock start pos
                 insets[strutsPosition::BottomEnd] = primary->geometry.width;         // dock end pos
 
-//0 1919 65
-
-
-                g_print("UPDATE STRUTS BOTTOM %d %d %d\n",areaSize, 0, primary->geometry.width);
-
-              //  insets[strutsPosition::Bottom] = (height + (Gdk::screen_height() -(geometry.y + geometry.height)));
-              //  insets[strutsPosition::BottomStart] = geometry.x;
-              //  insets[strutsPosition::BottomEnd] = geometry.x + geometry.width - 1;
-                                break;
+                break;
             }
 
             case panel_locationType::LEFT:
             {
-                areaSize += Configuration::get_WindowDockMonitorMargin_Left();
+               // areaSize += Configuration::get_WindowDockMonitorMargin_Left();
                 if (this->screen->get_MonitorsCount() > 1) {
 
                     //0,0,2560,0,0,0,0,0,2560,2600,0,0
@@ -128,7 +120,7 @@ void Struts::update(bool reset)
             case panel_locationType::RIGHT:
             {
 
-                areaSize += Configuration::get_WindowDockMonitorMargin_Right();
+                //areaSize += Configuration::get_WindowDockMonitorMargin_Right();
                 if (this->screen->get_MonitorsCount() > 1) {
                     // 0,60,0,0,0,0,0,1080,0,0,0,0
                     if (primary->geometry.x > 0) {
