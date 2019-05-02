@@ -6,7 +6,7 @@ docklight-Launcher.o: Launcher.cpp /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/long-double.h \
  /usr/include/x86_64-linux-gnu/gnu/stubs.h \
  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
- /usr/lib/gcc/x86_64-linux-gnu/6/include/stddef.h \
+ /usr/lib/gcc/x86_64-linux-gnu/7/include/stddef.h \
  /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
  /usr/include/strings.h \
@@ -18,15 +18,15 @@ docklight-Launcher.o: Launcher.cpp /usr/include/stdc-predef.h \
  /usr/include/glib-2.0/glib/gtypes.h \
  /usr/lib/x86_64-linux-gnu/glib-2.0/include/glibconfig.h \
  /usr/include/glib-2.0/glib/gmacros.h \
- /usr/lib/gcc/x86_64-linux-gnu/6/include-fixed/limits.h \
- /usr/lib/gcc/x86_64-linux-gnu/6/include-fixed/syslimits.h \
+ /usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/limits.h \
+ /usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/syslimits.h \
  /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
  /usr/include/x86_64-linux-gnu/bits/local_lim.h \
  /usr/include/linux/limits.h \
  /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
  /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
  /usr/include/x86_64-linux-gnu/bits/uio_lim.h \
- /usr/lib/gcc/x86_64-linux-gnu/6/include/float.h \
+ /usr/lib/gcc/x86_64-linux-gnu/7/include/float.h \
  /usr/include/glib-2.0/glib/gversionmacros.h /usr/include/time.h \
  /usr/include/x86_64-linux-gnu/bits/time.h \
  /usr/include/x86_64-linux-gnu/bits/types.h \
@@ -44,12 +44,12 @@ docklight-Launcher.o: Launcher.cpp /usr/include/stdc-predef.h \
  /usr/include/glib-2.0/glib/gasyncqueue.h \
  /usr/include/glib-2.0/glib/gthread.h \
  /usr/include/glib-2.0/glib/gatomic.h /usr/include/glib-2.0/glib/gerror.h \
- /usr/lib/gcc/x86_64-linux-gnu/6/include/stdarg.h \
+ /usr/lib/gcc/x86_64-linux-gnu/7/include/stdarg.h \
  /usr/include/glib-2.0/glib/gquark.h /usr/include/glib-2.0/glib/gutils.h \
- /usr/include/c++/6/stdlib.h /usr/include/c++/6/cstdlib \
- /usr/include/x86_64-linux-gnu/c++/6/bits/c++config.h \
- /usr/include/x86_64-linux-gnu/c++/6/bits/os_defines.h \
- /usr/include/x86_64-linux-gnu/c++/6/bits/cpu_defines.h \
+ /usr/include/c++/7/stdlib.h /usr/include/c++/7/cstdlib \
+ /usr/include/x86_64-linux-gnu/c++/7/bits/c++config.h \
+ /usr/include/x86_64-linux-gnu/c++/7/bits/os_defines.h \
+ /usr/include/x86_64-linux-gnu/c++/7/bits/cpu_defines.h \
  /usr/include/stdlib.h /usr/include/x86_64-linux-gnu/bits/waitflags.h \
  /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
  /usr/include/x86_64-linux-gnu/bits/floatn.h \
@@ -74,6 +74,7 @@ docklight-Launcher.o: Launcher.cpp /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib.h \
+ /usr/include/c++/7/bits/std_abs.h \
  /usr/include/glib-2.0/glib/gbacktrace.h /usr/include/signal.h \
  /usr/include/x86_64-linux-gnu/bits/signum.h \
  /usr/include/x86_64-linux-gnu/bits/signum-generic.h \
@@ -686,89 +687,90 @@ docklight-Launcher.o: Launcher.cpp /usr/include/stdc-predef.h \
  /usr/include/glibmm-2.4/glibmm/error.h \
  /usr/include/glibmm-2.4/glibmm/exception.h \
  /usr/include/glibmm-2.4/glibmm/ustring.h \
- /usr/include/glibmm-2.4/glibmm/unicode.h /usr/include/c++/6/cctype \
- /usr/include/ctype.h /usr/include/c++/6/iosfwd \
- /usr/include/c++/6/bits/stringfwd.h /usr/include/c++/6/bits/memoryfwd.h \
- /usr/include/c++/6/bits/postypes.h /usr/include/c++/6/cwchar \
+ /usr/include/glibmm-2.4/glibmm/unicode.h /usr/include/c++/7/cctype \
+ /usr/include/ctype.h /usr/include/c++/7/iosfwd \
+ /usr/include/c++/7/bits/stringfwd.h /usr/include/c++/7/bits/memoryfwd.h \
+ /usr/include/c++/7/bits/postypes.h /usr/include/c++/7/cwchar \
  /usr/include/wchar.h /usr/include/x86_64-linux-gnu/bits/wchar.h \
  /usr/include/x86_64-linux-gnu/bits/types/wint_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h \
- /usr/include/x86_64-linux-gnu/bits/wchar2.h /usr/include/c++/6/iterator \
- /usr/include/c++/6/bits/stl_iterator_base_types.h \
- /usr/include/c++/6/type_traits \
- /usr/include/c++/6/bits/stl_iterator_base_funcs.h \
- /usr/include/c++/6/bits/concept_check.h \
- /usr/include/c++/6/debug/assertions.h \
- /usr/include/c++/6/bits/stl_iterator.h \
- /usr/include/c++/6/bits/cpp_type_traits.h \
- /usr/include/c++/6/ext/type_traits.h /usr/include/c++/6/bits/move.h \
- /usr/include/c++/6/bits/ptr_traits.h /usr/include/c++/6/ostream \
- /usr/include/c++/6/ios /usr/include/c++/6/exception \
- /usr/include/c++/6/bits/atomic_lockfree_defines.h \
- /usr/include/c++/6/bits/exception_ptr.h \
- /usr/include/c++/6/bits/exception_defines.h \
- /usr/include/c++/6/bits/nested_exception.h \
- /usr/include/c++/6/bits/char_traits.h \
- /usr/include/c++/6/bits/stl_algobase.h \
- /usr/include/c++/6/bits/functexcept.h \
- /usr/include/c++/6/ext/numeric_traits.h \
- /usr/include/c++/6/bits/stl_pair.h /usr/include/c++/6/debug/debug.h \
- /usr/include/c++/6/bits/predefined_ops.h /usr/include/c++/6/cstdint \
- /usr/lib/gcc/x86_64-linux-gnu/6/include/stdint.h /usr/include/stdint.h \
+ /usr/include/x86_64-linux-gnu/bits/wchar2.h /usr/include/c++/7/iterator \
+ /usr/include/c++/7/bits/stl_iterator_base_types.h \
+ /usr/include/c++/7/type_traits \
+ /usr/include/c++/7/bits/stl_iterator_base_funcs.h \
+ /usr/include/c++/7/bits/concept_check.h \
+ /usr/include/c++/7/debug/assertions.h \
+ /usr/include/c++/7/bits/stl_iterator.h \
+ /usr/include/c++/7/bits/cpp_type_traits.h \
+ /usr/include/c++/7/ext/type_traits.h /usr/include/c++/7/bits/move.h \
+ /usr/include/c++/7/bits/ptr_traits.h /usr/include/c++/7/ostream \
+ /usr/include/c++/7/ios /usr/include/c++/7/exception \
+ /usr/include/c++/7/bits/exception.h \
+ /usr/include/c++/7/bits/exception_ptr.h \
+ /usr/include/c++/7/bits/exception_defines.h \
+ /usr/include/c++/7/bits/cxxabi_init_exception.h \
+ /usr/include/c++/7/typeinfo /usr/include/c++/7/bits/hash_bytes.h \
+ /usr/include/c++/7/new /usr/include/c++/7/bits/nested_exception.h \
+ /usr/include/c++/7/bits/char_traits.h \
+ /usr/include/c++/7/bits/stl_algobase.h \
+ /usr/include/c++/7/bits/functexcept.h \
+ /usr/include/c++/7/ext/numeric_traits.h \
+ /usr/include/c++/7/bits/stl_pair.h /usr/include/c++/7/debug/debug.h \
+ /usr/include/c++/7/bits/predefined_ops.h /usr/include/c++/7/cstdint \
+ /usr/lib/gcc/x86_64-linux-gnu/7/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
- /usr/include/c++/6/bits/localefwd.h \
- /usr/include/x86_64-linux-gnu/c++/6/bits/c++locale.h \
- /usr/include/c++/6/clocale /usr/include/locale.h \
+ /usr/include/c++/7/bits/localefwd.h \
+ /usr/include/x86_64-linux-gnu/c++/7/bits/c++locale.h \
+ /usr/include/c++/7/clocale /usr/include/locale.h \
  /usr/include/x86_64-linux-gnu/bits/locale.h \
- /usr/include/c++/6/bits/ios_base.h /usr/include/c++/6/ext/atomicity.h \
- /usr/include/x86_64-linux-gnu/c++/6/bits/gthr.h \
- /usr/include/x86_64-linux-gnu/c++/6/bits/gthr-default.h \
- /usr/include/x86_64-linux-gnu/c++/6/bits/atomic_word.h \
- /usr/include/c++/6/bits/locale_classes.h /usr/include/c++/6/string \
- /usr/include/c++/6/bits/allocator.h \
- /usr/include/x86_64-linux-gnu/c++/6/bits/c++allocator.h \
- /usr/include/c++/6/ext/new_allocator.h /usr/include/c++/6/new \
- /usr/include/c++/6/bits/ostream_insert.h \
- /usr/include/c++/6/bits/cxxabi_forced.h \
- /usr/include/c++/6/bits/stl_function.h \
- /usr/include/c++/6/backward/binders.h \
- /usr/include/c++/6/bits/range_access.h \
- /usr/include/c++/6/initializer_list \
- /usr/include/c++/6/bits/basic_string.h \
- /usr/include/c++/6/ext/alloc_traits.h \
- /usr/include/c++/6/bits/alloc_traits.h \
- /usr/include/c++/6/ext/string_conversions.h /usr/include/c++/6/cstdio \
- /usr/include/c++/6/cerrno /usr/include/errno.h \
+ /usr/include/c++/7/bits/ios_base.h /usr/include/c++/7/ext/atomicity.h \
+ /usr/include/x86_64-linux-gnu/c++/7/bits/gthr.h \
+ /usr/include/x86_64-linux-gnu/c++/7/bits/gthr-default.h \
+ /usr/include/x86_64-linux-gnu/c++/7/bits/atomic_word.h \
+ /usr/include/c++/7/bits/locale_classes.h /usr/include/c++/7/string \
+ /usr/include/c++/7/bits/allocator.h \
+ /usr/include/x86_64-linux-gnu/c++/7/bits/c++allocator.h \
+ /usr/include/c++/7/ext/new_allocator.h \
+ /usr/include/c++/7/bits/ostream_insert.h \
+ /usr/include/c++/7/bits/cxxabi_forced.h \
+ /usr/include/c++/7/bits/stl_function.h \
+ /usr/include/c++/7/backward/binders.h \
+ /usr/include/c++/7/bits/range_access.h \
+ /usr/include/c++/7/initializer_list \
+ /usr/include/c++/7/bits/basic_string.h \
+ /usr/include/c++/7/ext/alloc_traits.h \
+ /usr/include/c++/7/bits/alloc_traits.h \
+ /usr/include/c++/7/ext/string_conversions.h /usr/include/c++/7/cstdio \
+ /usr/include/c++/7/cerrno /usr/include/errno.h \
  /usr/include/x86_64-linux-gnu/bits/errno.h /usr/include/linux/errno.h \
  /usr/include/x86_64-linux-gnu/asm/errno.h \
  /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
- /usr/include/c++/6/bits/functional_hash.h \
- /usr/include/c++/6/bits/hash_bytes.h \
- /usr/include/c++/6/bits/basic_string.tcc \
- /usr/include/c++/6/bits/locale_classes.tcc \
- /usr/include/c++/6/system_error \
- /usr/include/x86_64-linux-gnu/c++/6/bits/error_constants.h \
- /usr/include/c++/6/stdexcept /usr/include/c++/6/streambuf \
- /usr/include/c++/6/bits/streambuf.tcc \
- /usr/include/c++/6/bits/basic_ios.h \
- /usr/include/c++/6/bits/locale_facets.h /usr/include/c++/6/cwctype \
+ /usr/include/c++/7/bits/functional_hash.h \
+ /usr/include/c++/7/bits/basic_string.tcc \
+ /usr/include/c++/7/bits/locale_classes.tcc \
+ /usr/include/c++/7/system_error \
+ /usr/include/x86_64-linux-gnu/c++/7/bits/error_constants.h \
+ /usr/include/c++/7/stdexcept /usr/include/c++/7/streambuf \
+ /usr/include/c++/7/bits/streambuf.tcc \
+ /usr/include/c++/7/bits/basic_ios.h \
+ /usr/include/c++/7/bits/locale_facets.h /usr/include/c++/7/cwctype \
  /usr/include/wctype.h /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
- /usr/include/x86_64-linux-gnu/c++/6/bits/ctype_base.h \
- /usr/include/c++/6/bits/streambuf_iterator.h \
- /usr/include/x86_64-linux-gnu/c++/6/bits/ctype_inline.h \
- /usr/include/c++/6/bits/locale_facets.tcc \
- /usr/include/c++/6/bits/basic_ios.tcc \
- /usr/include/c++/6/bits/ostream.tcc /usr/include/c++/6/istream \
- /usr/include/c++/6/bits/istream.tcc \
- /usr/include/c++/6/bits/stream_iterator.h /usr/include/c++/6/sstream \
- /usr/include/c++/6/bits/sstream.tcc \
+ /usr/include/x86_64-linux-gnu/c++/7/bits/ctype_base.h \
+ /usr/include/c++/7/bits/streambuf_iterator.h \
+ /usr/include/x86_64-linux-gnu/c++/7/bits/ctype_inline.h \
+ /usr/include/c++/7/bits/locale_facets.tcc \
+ /usr/include/c++/7/bits/basic_ios.tcc \
+ /usr/include/c++/7/bits/ostream.tcc /usr/include/c++/7/istream \
+ /usr/include/c++/7/bits/istream.tcc \
+ /usr/include/c++/7/bits/stream_iterator.h /usr/include/c++/7/sstream \
+ /usr/include/c++/7/bits/sstream.tcc \
  /usr/include/glibmm-2.4/glibmm/timeval.h \
  /usr/include/sigc++-2.0/sigc++/sigc++.h \
- /usr/include/sigc++-2.0/sigc++/signal.h /usr/include/c++/6/list \
- /usr/include/c++/6/bits/stl_list.h \
- /usr/include/c++/6/bits/allocated_ptr.h \
- /usr/include/c++/6/ext/aligned_buffer.h /usr/include/c++/6/bits/list.tcc \
- /usr/include/sigc++-2.0/sigc++/signal_base.h /usr/include/c++/6/cstddef \
+ /usr/include/sigc++-2.0/sigc++/signal.h /usr/include/c++/7/list \
+ /usr/include/c++/7/bits/stl_list.h \
+ /usr/include/c++/7/bits/allocated_ptr.h \
+ /usr/include/c++/7/ext/aligned_buffer.h /usr/include/c++/7/bits/list.tcc \
+ /usr/include/sigc++-2.0/sigc++/signal_base.h /usr/include/c++/7/cstddef \
  /usr/lib/x86_64-linux-gnu/sigc++-2.0/include/sigc++config.h \
  /usr/include/sigc++-2.0/sigc++/type_traits.h \
  /usr/include/sigc++-2.0/sigc++/trackable.h \
@@ -786,10 +788,11 @@ docklight-Launcher.o: Launcher.cpp /usr/include/stdc-predef.h \
  /usr/include/sigc++-2.0/sigc++/adaptors/bind.h \
  /usr/include/sigc++-2.0/sigc++/adaptors/bound_argument.h \
  /usr/include/sigc++-2.0/sigc++/reference_wrapper.h \
- /usr/include/c++/6/functional /usr/include/c++/6/typeinfo \
- /usr/include/c++/6/tuple /usr/include/c++/6/utility \
- /usr/include/c++/6/bits/stl_relops.h /usr/include/c++/6/array \
- /usr/include/c++/6/bits/uses_allocator.h \
+ /usr/include/c++/7/functional /usr/include/c++/7/tuple \
+ /usr/include/c++/7/utility /usr/include/c++/7/bits/stl_relops.h \
+ /usr/include/c++/7/array /usr/include/c++/7/bits/uses_allocator.h \
+ /usr/include/c++/7/bits/invoke.h /usr/include/c++/7/bits/std_function.h \
+ /usr/include/c++/7/bits/refwrap.h \
  /usr/include/sigc++-2.0/sigc++/adaptors/bind_return.h \
  /usr/include/sigc++-2.0/sigc++/adaptors/hide.h \
  /usr/include/sigc++-2.0/sigc++/adaptors/retype_return.h \
@@ -803,15 +806,15 @@ docklight-Launcher.o: Launcher.cpp /usr/include/stdc-predef.h \
  /usr/include/glibmm-2.4/glibmm/containerhandle_shared.h \
  /usr/include/glibmm-2.4/glibmm/refptr.h \
  /usr/include/glibmm-2.4/glibmm/variant.h \
- /usr/include/glibmm-2.4/glibmm/varianttype.h /usr/include/c++/6/vector \
- /usr/include/c++/6/bits/stl_construct.h \
- /usr/include/c++/6/bits/stl_uninitialized.h \
- /usr/include/c++/6/bits/stl_vector.h \
- /usr/include/c++/6/bits/stl_bvector.h /usr/include/c++/6/bits/vector.tcc \
+ /usr/include/glibmm-2.4/glibmm/varianttype.h /usr/include/c++/7/vector \
+ /usr/include/c++/7/bits/stl_construct.h \
+ /usr/include/c++/7/bits/stl_uninitialized.h \
+ /usr/include/c++/7/bits/stl_vector.h \
+ /usr/include/c++/7/bits/stl_bvector.h /usr/include/c++/7/bits/vector.tcc \
  /usr/include/glibmm-2.4/glibmm/variantiter.h \
  /usr/include/glibmm-2.4/glibmm/variantdbusstring.h \
- /usr/include/c++/6/map /usr/include/c++/6/bits/stl_tree.h \
- /usr/include/c++/6/bits/stl_map.h /usr/include/c++/6/bits/stl_multimap.h \
+ /usr/include/c++/7/map /usr/include/c++/7/bits/stl_tree.h \
+ /usr/include/c++/7/bits/stl_map.h /usr/include/c++/7/bits/stl_multimap.h \
  /usr/include/glibmm-2.4/glibmm/variant_basictypes.h \
  /usr/include/glibmm-2.4/glibmm/wrap.h \
  /usr/include/glibmm-2.4/glibmm/objectbase.h \
@@ -825,25 +828,26 @@ docklight-Launcher.o: Launcher.cpp /usr/include/stdc-predef.h \
  /usr/include/glibmm-2.4/glibmm/value_custom.h \
  /usr/include/glibmm-2.4/glibmm/value_basictypes.h \
  /usr/include/glibmm-2.4/glibmm/quark.h \
- /usr/include/glibmm-2.4/glibmm/debug.h /usr/include/c++/6/memory \
- /usr/include/c++/6/bits/stl_tempbuf.h \
- /usr/include/c++/6/bits/stl_raw_storage_iter.h \
- /usr/include/c++/6/ext/concurrence.h \
- /usr/include/c++/6/bits/unique_ptr.h \
- /usr/include/c++/6/bits/shared_ptr.h \
- /usr/include/c++/6/bits/shared_ptr_base.h \
- /usr/include/c++/6/bits/shared_ptr_atomic.h \
- /usr/include/c++/6/bits/atomic_base.h \
- /usr/include/c++/6/backward/auto_ptr.h /usr/include/c++/6/mutex \
- /usr/include/c++/6/chrono /usr/include/c++/6/ratio \
- /usr/include/c++/6/limits /usr/include/c++/6/ctime \
- /usr/include/c++/6/bits/parse_numbers.h \
- /usr/include/c++/6/bits/std_mutex.h /usr/include/c++/6/algorithm \
- /usr/include/c++/6/bits/stl_algo.h \
- /usr/include/c++/6/bits/algorithmfwd.h \
- /usr/include/c++/6/bits/stl_heap.h \
- /usr/include/c++/6/bits/uniform_int_dist.h /usr/include/c++/6/deque \
- /usr/include/c++/6/bits/stl_deque.h /usr/include/c++/6/bits/deque.tcc \
+ /usr/include/glibmm-2.4/glibmm/debug.h /usr/include/c++/7/memory \
+ /usr/include/c++/7/bits/stl_tempbuf.h \
+ /usr/include/c++/7/bits/stl_raw_storage_iter.h \
+ /usr/include/c++/7/ext/concurrence.h \
+ /usr/include/c++/7/bits/unique_ptr.h \
+ /usr/include/c++/7/bits/shared_ptr.h \
+ /usr/include/c++/7/bits/shared_ptr_base.h \
+ /usr/include/c++/7/bits/shared_ptr_atomic.h \
+ /usr/include/c++/7/bits/atomic_base.h \
+ /usr/include/c++/7/bits/atomic_lockfree_defines.h \
+ /usr/include/c++/7/backward/auto_ptr.h /usr/include/c++/7/mutex \
+ /usr/include/c++/7/chrono /usr/include/c++/7/ratio \
+ /usr/include/c++/7/limits /usr/include/c++/7/ctime \
+ /usr/include/c++/7/bits/parse_numbers.h \
+ /usr/include/c++/7/bits/std_mutex.h /usr/include/c++/7/algorithm \
+ /usr/include/c++/7/bits/stl_algo.h \
+ /usr/include/c++/7/bits/algorithmfwd.h \
+ /usr/include/c++/7/bits/stl_heap.h \
+ /usr/include/c++/7/bits/uniform_int_dist.h /usr/include/c++/7/deque \
+ /usr/include/c++/7/bits/stl_deque.h /usr/include/c++/7/bits/deque.tcc \
  /usr/include/glibmm-2.4/glibmm/balancedtree.h \
  /usr/include/glibmm-2.4/glibmm/base64.h \
  /usr/include/glibmm-2.4/glibmm/binding.h \
@@ -873,8 +877,8 @@ docklight-Launcher.o: Launcher.cpp /usr/include/stdc-predef.h \
  /usr/include/glibmm-2.4/glibmm/markup.h \
  /usr/include/glibmm-2.4/glibmm/miscutils.h \
  /usr/include/glibmm-2.4/glibmm/module.h \
- /usr/include/glibmm-2.4/glibmm/nodetree.h /usr/include/c++/6/stack \
- /usr/include/c++/6/bits/stl_stack.h \
+ /usr/include/glibmm-2.4/glibmm/nodetree.h /usr/include/c++/7/stack \
+ /usr/include/c++/7/bits/stl_stack.h \
  /usr/include/glibmm-2.4/glibmm/optioncontext.h \
  /usr/include/glibmm-2.4/glibmm/optionentry.h \
  /usr/include/glibmm-2.4/glibmm/optiongroup.h \
@@ -1077,7 +1081,7 @@ docklight-Launcher.o: Launcher.cpp /usr/include/stdc-predef.h \
  /usr/include/cairomm-1.0/cairomm/matrix.h \
  /usr/include/cairomm-1.0/cairomm/path.h \
  /usr/include/cairomm-1.0/cairomm/scaledfont.h \
- /usr/include/c++/6/valarray /usr/include/c++/6/cmath /usr/include/math.h \
+ /usr/include/c++/7/valarray /usr/include/c++/7/cmath /usr/include/math.h \
  /usr/include/x86_64-linux-gnu/bits/math-vector.h \
  /usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h \
  /usr/include/x86_64-linux-gnu/bits/flt-eval-method.h \
@@ -1087,14 +1091,14 @@ docklight-Launcher.o: Launcher.cpp /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
  /usr/include/x86_64-linux-gnu/bits/iscanonical.h \
  /usr/include/x86_64-linux-gnu/bits/mathinline.h \
- /usr/include/c++/6/bits/valarray_array.h \
- /usr/include/c++/6/bits/valarray_array.tcc \
- /usr/include/c++/6/bits/valarray_before.h \
- /usr/include/c++/6/bits/slice_array.h \
- /usr/include/c++/6/bits/valarray_after.h \
- /usr/include/c++/6/bits/gslice.h /usr/include/c++/6/bits/gslice_array.h \
- /usr/include/c++/6/bits/mask_array.h \
- /usr/include/c++/6/bits/indirect_array.h \
+ /usr/include/c++/7/bits/valarray_array.h \
+ /usr/include/c++/7/bits/valarray_array.tcc \
+ /usr/include/c++/7/bits/valarray_before.h \
+ /usr/include/c++/7/bits/slice_array.h \
+ /usr/include/c++/7/bits/valarray_after.h \
+ /usr/include/c++/7/bits/gslice.h /usr/include/c++/7/bits/gslice_array.h \
+ /usr/include/c++/7/bits/mask_array.h \
+ /usr/include/c++/7/bits/indirect_array.h \
  /usr/include/gdkmm-3.0/gdkmm/pixbufanimation.h \
  /usr/include/gdkmm-3.0/gdkmm/pixbufanimationiter.h \
  /usr/include/gdkmm-3.0/gdkmm/pixbufloader.h \
@@ -1373,7 +1377,7 @@ docklight-Launcher.o: Launcher.cpp /usr/include/stdc-predef.h \
  /usr/include/gtkmm-3.0/gtkmm/treestore.h \
  /usr/include/gtkmm-3.0/gtkmm/uimanager.h \
  /usr/include/gtkmm-3.0/gtkmm/viewport.h \
- /usr/include/gtkmm-3.0/gtkmm/volumebutton.h /usr/include/c++/6/math.h \
+ /usr/include/gtkmm-3.0/gtkmm/volumebutton.h /usr/include/c++/7/math.h \
  /usr/include/libwnck-3.0/libwnck/libwnck.h \
  /usr/include/libwnck-3.0/libwnck/window.h \
  /usr/include/libwnck-3.0/libwnck/screen.h \
@@ -1387,7 +1391,7 @@ docklight-Launcher.o: Launcher.cpp /usr/include/stdc-predef.h \
  /usr/include/libwnck-3.0/libwnck/util.h \
  /usr/include/libwnck-3.0/libwnck/version.h \
  /usr/include/libwnck-3.0/libwnck/wnck-enum-types.h SessionWindow.h \
- IconLoader.h /usr/include/c++/6/thread DockItem.h Configuration.h \
+ IconLoader.h /usr/include/c++/7/thread DockItem.h Configuration.h \
  /usr/include/gio-unix-2.0/gio/gdesktopappinfo.h \
  /usr/include/glibmm-2.4/glibmm/i18n.h /usr/include/glib-2.0/glib/gi18n.h \
  /usr/include/libintl.h MoReader.h /usr/include/assert.h
@@ -1410,7 +1414,7 @@ docklight-Launcher.o: Launcher.cpp /usr/include/stdc-predef.h \
 
 /usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/6/include/stddef.h:
+/usr/lib/gcc/x86_64-linux-gnu/7/include/stddef.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/locale_t.h:
 
@@ -1442,9 +1446,9 @@ Utilities.h:
 
 /usr/include/glib-2.0/glib/gmacros.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed/limits.h:
+/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/limits.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed/syslimits.h:
+/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/syslimits.h:
 
 /usr/include/limits.h:
 
@@ -1460,7 +1464,7 @@ Utilities.h:
 
 /usr/include/x86_64-linux-gnu/bits/uio_lim.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/6/include/float.h:
+/usr/lib/gcc/x86_64-linux-gnu/7/include/float.h:
 
 /usr/include/glib-2.0/glib/gversionmacros.h:
 
@@ -1500,21 +1504,21 @@ Utilities.h:
 
 /usr/include/glib-2.0/glib/gerror.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/6/include/stdarg.h:
+/usr/lib/gcc/x86_64-linux-gnu/7/include/stdarg.h:
 
 /usr/include/glib-2.0/glib/gquark.h:
 
 /usr/include/glib-2.0/glib/gutils.h:
 
-/usr/include/c++/6/stdlib.h:
+/usr/include/c++/7/stdlib.h:
 
-/usr/include/c++/6/cstdlib:
+/usr/include/c++/7/cstdlib:
 
-/usr/include/x86_64-linux-gnu/c++/6/bits/c++config.h:
+/usr/include/x86_64-linux-gnu/c++/7/bits/c++config.h:
 
-/usr/include/x86_64-linux-gnu/c++/6/bits/os_defines.h:
+/usr/include/x86_64-linux-gnu/c++/7/bits/os_defines.h:
 
-/usr/include/x86_64-linux-gnu/c++/6/bits/cpu_defines.h:
+/usr/include/x86_64-linux-gnu/c++/7/bits/cpu_defines.h:
 
 /usr/include/stdlib.h:
 
@@ -1567,6 +1571,8 @@ Utilities.h:
 /usr/include/x86_64-linux-gnu/bits/stdlib-float.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdlib.h:
+
+/usr/include/c++/7/bits/std_abs.h:
 
 /usr/include/glib-2.0/glib/gbacktrace.h:
 
@@ -2876,19 +2882,19 @@ Utilities.h:
 
 /usr/include/glibmm-2.4/glibmm/unicode.h:
 
-/usr/include/c++/6/cctype:
+/usr/include/c++/7/cctype:
 
 /usr/include/ctype.h:
 
-/usr/include/c++/6/iosfwd:
+/usr/include/c++/7/iosfwd:
 
-/usr/include/c++/6/bits/stringfwd.h:
+/usr/include/c++/7/bits/stringfwd.h:
 
-/usr/include/c++/6/bits/memoryfwd.h:
+/usr/include/c++/7/bits/memoryfwd.h:
 
-/usr/include/c++/6/bits/postypes.h:
+/usr/include/c++/7/bits/postypes.h:
 
-/usr/include/c++/6/cwchar:
+/usr/include/c++/7/cwchar:
 
 /usr/include/wchar.h:
 
@@ -2900,119 +2906,125 @@ Utilities.h:
 
 /usr/include/x86_64-linux-gnu/bits/wchar2.h:
 
-/usr/include/c++/6/iterator:
+/usr/include/c++/7/iterator:
 
-/usr/include/c++/6/bits/stl_iterator_base_types.h:
+/usr/include/c++/7/bits/stl_iterator_base_types.h:
 
-/usr/include/c++/6/type_traits:
+/usr/include/c++/7/type_traits:
 
-/usr/include/c++/6/bits/stl_iterator_base_funcs.h:
+/usr/include/c++/7/bits/stl_iterator_base_funcs.h:
 
-/usr/include/c++/6/bits/concept_check.h:
+/usr/include/c++/7/bits/concept_check.h:
 
-/usr/include/c++/6/debug/assertions.h:
+/usr/include/c++/7/debug/assertions.h:
 
-/usr/include/c++/6/bits/stl_iterator.h:
+/usr/include/c++/7/bits/stl_iterator.h:
 
-/usr/include/c++/6/bits/cpp_type_traits.h:
+/usr/include/c++/7/bits/cpp_type_traits.h:
 
-/usr/include/c++/6/ext/type_traits.h:
+/usr/include/c++/7/ext/type_traits.h:
 
-/usr/include/c++/6/bits/move.h:
+/usr/include/c++/7/bits/move.h:
 
-/usr/include/c++/6/bits/ptr_traits.h:
+/usr/include/c++/7/bits/ptr_traits.h:
 
-/usr/include/c++/6/ostream:
+/usr/include/c++/7/ostream:
 
-/usr/include/c++/6/ios:
+/usr/include/c++/7/ios:
 
-/usr/include/c++/6/exception:
+/usr/include/c++/7/exception:
 
-/usr/include/c++/6/bits/atomic_lockfree_defines.h:
+/usr/include/c++/7/bits/exception.h:
 
-/usr/include/c++/6/bits/exception_ptr.h:
+/usr/include/c++/7/bits/exception_ptr.h:
 
-/usr/include/c++/6/bits/exception_defines.h:
+/usr/include/c++/7/bits/exception_defines.h:
 
-/usr/include/c++/6/bits/nested_exception.h:
+/usr/include/c++/7/bits/cxxabi_init_exception.h:
 
-/usr/include/c++/6/bits/char_traits.h:
+/usr/include/c++/7/typeinfo:
 
-/usr/include/c++/6/bits/stl_algobase.h:
+/usr/include/c++/7/bits/hash_bytes.h:
 
-/usr/include/c++/6/bits/functexcept.h:
+/usr/include/c++/7/new:
 
-/usr/include/c++/6/ext/numeric_traits.h:
+/usr/include/c++/7/bits/nested_exception.h:
 
-/usr/include/c++/6/bits/stl_pair.h:
+/usr/include/c++/7/bits/char_traits.h:
 
-/usr/include/c++/6/debug/debug.h:
+/usr/include/c++/7/bits/stl_algobase.h:
 
-/usr/include/c++/6/bits/predefined_ops.h:
+/usr/include/c++/7/bits/functexcept.h:
 
-/usr/include/c++/6/cstdint:
+/usr/include/c++/7/ext/numeric_traits.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/6/include/stdint.h:
+/usr/include/c++/7/bits/stl_pair.h:
+
+/usr/include/c++/7/debug/debug.h:
+
+/usr/include/c++/7/bits/predefined_ops.h:
+
+/usr/include/c++/7/cstdint:
+
+/usr/lib/gcc/x86_64-linux-gnu/7/include/stdint.h:
 
 /usr/include/stdint.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h:
 
-/usr/include/c++/6/bits/localefwd.h:
+/usr/include/c++/7/bits/localefwd.h:
 
-/usr/include/x86_64-linux-gnu/c++/6/bits/c++locale.h:
+/usr/include/x86_64-linux-gnu/c++/7/bits/c++locale.h:
 
-/usr/include/c++/6/clocale:
+/usr/include/c++/7/clocale:
 
 /usr/include/locale.h:
 
 /usr/include/x86_64-linux-gnu/bits/locale.h:
 
-/usr/include/c++/6/bits/ios_base.h:
+/usr/include/c++/7/bits/ios_base.h:
 
-/usr/include/c++/6/ext/atomicity.h:
+/usr/include/c++/7/ext/atomicity.h:
 
-/usr/include/x86_64-linux-gnu/c++/6/bits/gthr.h:
+/usr/include/x86_64-linux-gnu/c++/7/bits/gthr.h:
 
-/usr/include/x86_64-linux-gnu/c++/6/bits/gthr-default.h:
+/usr/include/x86_64-linux-gnu/c++/7/bits/gthr-default.h:
 
-/usr/include/x86_64-linux-gnu/c++/6/bits/atomic_word.h:
+/usr/include/x86_64-linux-gnu/c++/7/bits/atomic_word.h:
 
-/usr/include/c++/6/bits/locale_classes.h:
+/usr/include/c++/7/bits/locale_classes.h:
 
-/usr/include/c++/6/string:
+/usr/include/c++/7/string:
 
-/usr/include/c++/6/bits/allocator.h:
+/usr/include/c++/7/bits/allocator.h:
 
-/usr/include/x86_64-linux-gnu/c++/6/bits/c++allocator.h:
+/usr/include/x86_64-linux-gnu/c++/7/bits/c++allocator.h:
 
-/usr/include/c++/6/ext/new_allocator.h:
+/usr/include/c++/7/ext/new_allocator.h:
 
-/usr/include/c++/6/new:
+/usr/include/c++/7/bits/ostream_insert.h:
 
-/usr/include/c++/6/bits/ostream_insert.h:
+/usr/include/c++/7/bits/cxxabi_forced.h:
 
-/usr/include/c++/6/bits/cxxabi_forced.h:
+/usr/include/c++/7/bits/stl_function.h:
 
-/usr/include/c++/6/bits/stl_function.h:
+/usr/include/c++/7/backward/binders.h:
 
-/usr/include/c++/6/backward/binders.h:
+/usr/include/c++/7/bits/range_access.h:
 
-/usr/include/c++/6/bits/range_access.h:
+/usr/include/c++/7/initializer_list:
 
-/usr/include/c++/6/initializer_list:
+/usr/include/c++/7/bits/basic_string.h:
 
-/usr/include/c++/6/bits/basic_string.h:
+/usr/include/c++/7/ext/alloc_traits.h:
 
-/usr/include/c++/6/ext/alloc_traits.h:
+/usr/include/c++/7/bits/alloc_traits.h:
 
-/usr/include/c++/6/bits/alloc_traits.h:
+/usr/include/c++/7/ext/string_conversions.h:
 
-/usr/include/c++/6/ext/string_conversions.h:
+/usr/include/c++/7/cstdio:
 
-/usr/include/c++/6/cstdio:
-
-/usr/include/c++/6/cerrno:
+/usr/include/c++/7/cerrno:
 
 /usr/include/errno.h:
 
@@ -3026,55 +3038,53 @@ Utilities.h:
 
 /usr/include/asm-generic/errno-base.h:
 
-/usr/include/c++/6/bits/functional_hash.h:
+/usr/include/c++/7/bits/functional_hash.h:
 
-/usr/include/c++/6/bits/hash_bytes.h:
+/usr/include/c++/7/bits/basic_string.tcc:
 
-/usr/include/c++/6/bits/basic_string.tcc:
+/usr/include/c++/7/bits/locale_classes.tcc:
 
-/usr/include/c++/6/bits/locale_classes.tcc:
+/usr/include/c++/7/system_error:
 
-/usr/include/c++/6/system_error:
+/usr/include/x86_64-linux-gnu/c++/7/bits/error_constants.h:
 
-/usr/include/x86_64-linux-gnu/c++/6/bits/error_constants.h:
+/usr/include/c++/7/stdexcept:
 
-/usr/include/c++/6/stdexcept:
+/usr/include/c++/7/streambuf:
 
-/usr/include/c++/6/streambuf:
+/usr/include/c++/7/bits/streambuf.tcc:
 
-/usr/include/c++/6/bits/streambuf.tcc:
+/usr/include/c++/7/bits/basic_ios.h:
 
-/usr/include/c++/6/bits/basic_ios.h:
+/usr/include/c++/7/bits/locale_facets.h:
 
-/usr/include/c++/6/bits/locale_facets.h:
-
-/usr/include/c++/6/cwctype:
+/usr/include/c++/7/cwctype:
 
 /usr/include/wctype.h:
 
 /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h:
 
-/usr/include/x86_64-linux-gnu/c++/6/bits/ctype_base.h:
+/usr/include/x86_64-linux-gnu/c++/7/bits/ctype_base.h:
 
-/usr/include/c++/6/bits/streambuf_iterator.h:
+/usr/include/c++/7/bits/streambuf_iterator.h:
 
-/usr/include/x86_64-linux-gnu/c++/6/bits/ctype_inline.h:
+/usr/include/x86_64-linux-gnu/c++/7/bits/ctype_inline.h:
 
-/usr/include/c++/6/bits/locale_facets.tcc:
+/usr/include/c++/7/bits/locale_facets.tcc:
 
-/usr/include/c++/6/bits/basic_ios.tcc:
+/usr/include/c++/7/bits/basic_ios.tcc:
 
-/usr/include/c++/6/bits/ostream.tcc:
+/usr/include/c++/7/bits/ostream.tcc:
 
-/usr/include/c++/6/istream:
+/usr/include/c++/7/istream:
 
-/usr/include/c++/6/bits/istream.tcc:
+/usr/include/c++/7/bits/istream.tcc:
 
-/usr/include/c++/6/bits/stream_iterator.h:
+/usr/include/c++/7/bits/stream_iterator.h:
 
-/usr/include/c++/6/sstream:
+/usr/include/c++/7/sstream:
 
-/usr/include/c++/6/bits/sstream.tcc:
+/usr/include/c++/7/bits/sstream.tcc:
 
 /usr/include/glibmm-2.4/glibmm/timeval.h:
 
@@ -3082,19 +3092,19 @@ Utilities.h:
 
 /usr/include/sigc++-2.0/sigc++/signal.h:
 
-/usr/include/c++/6/list:
+/usr/include/c++/7/list:
 
-/usr/include/c++/6/bits/stl_list.h:
+/usr/include/c++/7/bits/stl_list.h:
 
-/usr/include/c++/6/bits/allocated_ptr.h:
+/usr/include/c++/7/bits/allocated_ptr.h:
 
-/usr/include/c++/6/ext/aligned_buffer.h:
+/usr/include/c++/7/ext/aligned_buffer.h:
 
-/usr/include/c++/6/bits/list.tcc:
+/usr/include/c++/7/bits/list.tcc:
 
 /usr/include/sigc++-2.0/sigc++/signal_base.h:
 
-/usr/include/c++/6/cstddef:
+/usr/include/c++/7/cstddef:
 
 /usr/lib/x86_64-linux-gnu/sigc++-2.0/include/sigc++config.h:
 
@@ -3130,19 +3140,23 @@ Utilities.h:
 
 /usr/include/sigc++-2.0/sigc++/reference_wrapper.h:
 
-/usr/include/c++/6/functional:
+/usr/include/c++/7/functional:
 
-/usr/include/c++/6/typeinfo:
+/usr/include/c++/7/tuple:
 
-/usr/include/c++/6/tuple:
+/usr/include/c++/7/utility:
 
-/usr/include/c++/6/utility:
+/usr/include/c++/7/bits/stl_relops.h:
 
-/usr/include/c++/6/bits/stl_relops.h:
+/usr/include/c++/7/array:
 
-/usr/include/c++/6/array:
+/usr/include/c++/7/bits/uses_allocator.h:
 
-/usr/include/c++/6/bits/uses_allocator.h:
+/usr/include/c++/7/bits/invoke.h:
+
+/usr/include/c++/7/bits/std_function.h:
+
+/usr/include/c++/7/bits/refwrap.h:
 
 /usr/include/sigc++-2.0/sigc++/adaptors/bind_return.h:
 
@@ -3172,29 +3186,29 @@ Utilities.h:
 
 /usr/include/glibmm-2.4/glibmm/varianttype.h:
 
-/usr/include/c++/6/vector:
+/usr/include/c++/7/vector:
 
-/usr/include/c++/6/bits/stl_construct.h:
+/usr/include/c++/7/bits/stl_construct.h:
 
-/usr/include/c++/6/bits/stl_uninitialized.h:
+/usr/include/c++/7/bits/stl_uninitialized.h:
 
-/usr/include/c++/6/bits/stl_vector.h:
+/usr/include/c++/7/bits/stl_vector.h:
 
-/usr/include/c++/6/bits/stl_bvector.h:
+/usr/include/c++/7/bits/stl_bvector.h:
 
-/usr/include/c++/6/bits/vector.tcc:
+/usr/include/c++/7/bits/vector.tcc:
 
 /usr/include/glibmm-2.4/glibmm/variantiter.h:
 
 /usr/include/glibmm-2.4/glibmm/variantdbusstring.h:
 
-/usr/include/c++/6/map:
+/usr/include/c++/7/map:
 
-/usr/include/c++/6/bits/stl_tree.h:
+/usr/include/c++/7/bits/stl_tree.h:
 
-/usr/include/c++/6/bits/stl_map.h:
+/usr/include/c++/7/bits/stl_map.h:
 
-/usr/include/c++/6/bits/stl_multimap.h:
+/usr/include/c++/7/bits/stl_multimap.h:
 
 /usr/include/glibmm-2.4/glibmm/variant_basictypes.h:
 
@@ -3224,55 +3238,57 @@ Utilities.h:
 
 /usr/include/glibmm-2.4/glibmm/debug.h:
 
-/usr/include/c++/6/memory:
+/usr/include/c++/7/memory:
 
-/usr/include/c++/6/bits/stl_tempbuf.h:
+/usr/include/c++/7/bits/stl_tempbuf.h:
 
-/usr/include/c++/6/bits/stl_raw_storage_iter.h:
+/usr/include/c++/7/bits/stl_raw_storage_iter.h:
 
-/usr/include/c++/6/ext/concurrence.h:
+/usr/include/c++/7/ext/concurrence.h:
 
-/usr/include/c++/6/bits/unique_ptr.h:
+/usr/include/c++/7/bits/unique_ptr.h:
 
-/usr/include/c++/6/bits/shared_ptr.h:
+/usr/include/c++/7/bits/shared_ptr.h:
 
-/usr/include/c++/6/bits/shared_ptr_base.h:
+/usr/include/c++/7/bits/shared_ptr_base.h:
 
-/usr/include/c++/6/bits/shared_ptr_atomic.h:
+/usr/include/c++/7/bits/shared_ptr_atomic.h:
 
-/usr/include/c++/6/bits/atomic_base.h:
+/usr/include/c++/7/bits/atomic_base.h:
 
-/usr/include/c++/6/backward/auto_ptr.h:
+/usr/include/c++/7/bits/atomic_lockfree_defines.h:
 
-/usr/include/c++/6/mutex:
+/usr/include/c++/7/backward/auto_ptr.h:
 
-/usr/include/c++/6/chrono:
+/usr/include/c++/7/mutex:
 
-/usr/include/c++/6/ratio:
+/usr/include/c++/7/chrono:
 
-/usr/include/c++/6/limits:
+/usr/include/c++/7/ratio:
 
-/usr/include/c++/6/ctime:
+/usr/include/c++/7/limits:
 
-/usr/include/c++/6/bits/parse_numbers.h:
+/usr/include/c++/7/ctime:
 
-/usr/include/c++/6/bits/std_mutex.h:
+/usr/include/c++/7/bits/parse_numbers.h:
 
-/usr/include/c++/6/algorithm:
+/usr/include/c++/7/bits/std_mutex.h:
 
-/usr/include/c++/6/bits/stl_algo.h:
+/usr/include/c++/7/algorithm:
 
-/usr/include/c++/6/bits/algorithmfwd.h:
+/usr/include/c++/7/bits/stl_algo.h:
 
-/usr/include/c++/6/bits/stl_heap.h:
+/usr/include/c++/7/bits/algorithmfwd.h:
 
-/usr/include/c++/6/bits/uniform_int_dist.h:
+/usr/include/c++/7/bits/stl_heap.h:
 
-/usr/include/c++/6/deque:
+/usr/include/c++/7/bits/uniform_int_dist.h:
 
-/usr/include/c++/6/bits/stl_deque.h:
+/usr/include/c++/7/deque:
 
-/usr/include/c++/6/bits/deque.tcc:
+/usr/include/c++/7/bits/stl_deque.h:
+
+/usr/include/c++/7/bits/deque.tcc:
 
 /usr/include/glibmm-2.4/glibmm/balancedtree.h:
 
@@ -3334,9 +3350,9 @@ Utilities.h:
 
 /usr/include/glibmm-2.4/glibmm/nodetree.h:
 
-/usr/include/c++/6/stack:
+/usr/include/c++/7/stack:
 
-/usr/include/c++/6/bits/stl_stack.h:
+/usr/include/c++/7/bits/stl_stack.h:
 
 /usr/include/glibmm-2.4/glibmm/optioncontext.h:
 
@@ -3756,9 +3772,9 @@ Utilities.h:
 
 /usr/include/cairomm-1.0/cairomm/scaledfont.h:
 
-/usr/include/c++/6/valarray:
+/usr/include/c++/7/valarray:
 
-/usr/include/c++/6/cmath:
+/usr/include/c++/7/cmath:
 
 /usr/include/math.h:
 
@@ -3780,23 +3796,23 @@ Utilities.h:
 
 /usr/include/x86_64-linux-gnu/bits/mathinline.h:
 
-/usr/include/c++/6/bits/valarray_array.h:
+/usr/include/c++/7/bits/valarray_array.h:
 
-/usr/include/c++/6/bits/valarray_array.tcc:
+/usr/include/c++/7/bits/valarray_array.tcc:
 
-/usr/include/c++/6/bits/valarray_before.h:
+/usr/include/c++/7/bits/valarray_before.h:
 
-/usr/include/c++/6/bits/slice_array.h:
+/usr/include/c++/7/bits/slice_array.h:
 
-/usr/include/c++/6/bits/valarray_after.h:
+/usr/include/c++/7/bits/valarray_after.h:
 
-/usr/include/c++/6/bits/gslice.h:
+/usr/include/c++/7/bits/gslice.h:
 
-/usr/include/c++/6/bits/gslice_array.h:
+/usr/include/c++/7/bits/gslice_array.h:
 
-/usr/include/c++/6/bits/mask_array.h:
+/usr/include/c++/7/bits/mask_array.h:
 
-/usr/include/c++/6/bits/indirect_array.h:
+/usr/include/c++/7/bits/indirect_array.h:
 
 /usr/include/gdkmm-3.0/gdkmm/pixbufanimation.h:
 
@@ -4360,7 +4376,7 @@ Utilities.h:
 
 /usr/include/gtkmm-3.0/gtkmm/volumebutton.h:
 
-/usr/include/c++/6/math.h:
+/usr/include/c++/7/math.h:
 
 /usr/include/libwnck-3.0/libwnck/libwnck.h:
 
@@ -4392,7 +4408,7 @@ SessionWindow.h:
 
 IconLoader.h:
 
-/usr/include/c++/6/thread:
+/usr/include/c++/7/thread:
 
 DockItem.h:
 

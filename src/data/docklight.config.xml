@@ -2,8 +2,8 @@
 <Root>
     <AutoHide>true</AutoHide>
     <PanelMode>false</PanelMode>
-    <Location>RIGHT</Location>
-    <UseStyle>7</UseStyle>
+    <Location>BOTTOM</Location>
+    <UseStyle>8</UseStyle>
     <Styles>
           <Style  panel="0,0,0,0.6,  0,0,0,0 ,1, 0, 0"
                   panelCell="0,0,0,0, 0,0,0,0, 0, 0, 0"
@@ -47,6 +47,12 @@
                   selector="1,1,1,0.4,  255,1,1,0, 3, 6, 0"
                   panelTitle="0,0,0,1,  1,1,1,1 ,0 ,0 ,0">
             7
+        </Style>
+        <Style    panel="0.02, 0.17, 0.26,0.2 ,0,0,0,0, 0, 6, 0"
+                  panelCell="0,0,0,0, 1,1,1,1.1, 1.5, 6, 1"
+                  selector="1,1,1,0.4,  255,1,1,0, 3, 6, 0"
+                  panelTitle="0,0,0,1,  1,1,1,1 ,0 ,0 ,0">
+            8
         </Style>
     </Styles>
 </Root>

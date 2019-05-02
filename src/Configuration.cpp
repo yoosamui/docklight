@@ -241,6 +241,13 @@ namespace Configuration
     void set_autoHide(bool value)
     {
         m_autohide = value;
+        if(m_autohide){
+            DockWindow::Monitor::removeStrut();
+        }
+        else
+        {
+            DockWindow::Monitor::updateStrut();
+        }
     }
 
 
@@ -315,46 +322,6 @@ namespace Configuration
     {
         return get_CellHeight() - 2; //CELL_WIDTH_MARGIN;
 
-    }
-
-    namespace Style
-    {
-
-        /**
-         * Constructs the default theme
-         */
-        //Theme::Theme() {
-
-            // Default theme
-             //this->m_Panel = new ColorWindow();
-             //this->m_PanelTitle = new ColorWindow(Color(0, 0, 0, 1 ), Color(0,0,0,1), 1, 6, 0);
-             //this->m_PanelTitleText = new ColorWindow(Color(), Color(1,1,1,1), 1, 0, 0);
-             //this->m_PanelCell = new ColorWindow(Color(0,0.50,0.66,1), Color(1,1,1,1), 1.5, 3, 0);
-
-
-
-//            cr->set_source_rgba(0.00, 0.50, 0.66, 1);
-
-
-
-/*
-               Color foreColor(1.0, 1.0, 1.0, 1.0);
-
-               Color backSelector(1.9, 1.0, 1.0, 0.3);
-               Color foreSelector(1.1, 1.1, 1.0, 1.0);
-
-               this->m_window = new ColorWindow();
-               this->m_panel = new ColorWindow(true, backColor, foreColor, 0.7, 4.0);
-               this->m_panelSelector = new ColorWindow(true, backSelector, foreSelector, 1.5, 4.0);
-               this->m_panelTitle = new ColorWindow(true, backColor, foreColor, 0.0, 4.0);
-               this->m_panelTitleText = new ColorWindow(true, Color(), Color(1.0, 1.0, 1.0, 1.0), 0.0, 0.0);
-               this->m_preview = new ColorWindow(true, backColor, foreColor, 0.7, 4.0);
-               this->m_previewTitle = new ColorWindow(true, Color(0.0, 0.0, 1.0, 0.0), Color(1.0, 1.0, 1.0, 0.0), 1.0, 0.0);
-               this->m_previewTitleText = new ColorWindow(true, Color(), Color(), 0.0, 0.0);
-               this->m_previewSelector = new ColorWindow(true, backSelector, foreSelector, 2.0, 4.0);
-               this->m_previewSelectorClose = new ColorWindow(true, Color(0.0, 0.50, 0.0, 1.0), foreColor, 4.0, 4.0);
-               */
-       // }
     }
 }
 

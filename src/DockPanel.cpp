@@ -308,9 +308,12 @@ void DockPanel::on_DettachMenu_event()
     DockWindow::update();
 
 }
+/**
+ * tonggle utohide state
+ */
 void DockPanel::on_AutohideToggled_event()
 {
-    //discover the new state.
+    // discover the new state.
     bool autohide = m_AutohideMenuItem.get_active();
     Configuration::set_autoHide(autohide);
 }
@@ -1102,7 +1105,7 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
 void DockPanel::show_Title()
 {
 
-    if (Configuration::is_autoHide() && !DockWindow::is_Visible()){
+    if (Configuration::is_autoHide() && !DockWindow::is_Visible() || !m_mouseIn ){
         m_titlewindow.hide();
         m_infowindow.hide();
         m_titleShow = false;

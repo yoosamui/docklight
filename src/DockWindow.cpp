@@ -18,7 +18,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 //****************************************************************
-#include <gdk/gdk.h>
+//#include <gdk/gdk.h>
 
 #include "Configuration.h"
 #include "DockWindow.h"
@@ -131,7 +131,6 @@ namespace DockWindow
      */
     void update(bool move)
     {
-        //g_print("Update from dockpanel\n");
         if (m_window != nullptr) {
             reSize(move);
         }
@@ -207,19 +206,19 @@ namespace DockWindow
                 if (location == panel_locationType::LEFT) {
                     m_window->resize(areaSize, Monitor::get_geometry().height);
                     if (Configuration::is_autoHide() && !m_visible && !forceMove) {
-                 g_print("GEO ..........%d %d\n", Monitor::get_geometry().height, geometry.height);
+                        g_print("GEO ..........%d %d\n", Monitor::get_geometry().height, geometry.height);
                         return areaSize;
                     }
 
                     m_window->move(geometry.x + Configuration::get_WindowDockMonitorMargin_Left(), geometry.y);
 
-                 g_print("GEO ..........%d %d\n", Monitor::get_geometry().height, geometry.height);
+                    g_print("GEO ..........%d %d\n", Monitor::get_geometry().height, geometry.height);
                     return areaSize;
                 }
 
                 m_window->resize(areaSize, geometry.height);
 
-                 g_print("GEO ..........%d %d\n", Monitor::get_geometry().height, geometry.height);
+                g_print("GEO ..........%d %d\n", Monitor::get_geometry().height, geometry.height);
                 if (Configuration::is_autoHide() && !m_visible && !forceMove) {
                     return areaSize;
                 }
@@ -316,7 +315,7 @@ namespace DockWindow
         GdkRectangle get_geometry()
         {
             if (m_window != nullptr) {
-                return ((AppWindow*)m_window)->m_screen.get_PrimaryMonitor()->geometry;
+                return static_cast<AppWindow*>(m_window)->m_screen.get_PrimaryMonitor()->geometry;
             }
         }
 
@@ -326,7 +325,7 @@ namespace DockWindow
         GdkRectangle get_workarea()
         {
             if (m_window != nullptr) {
-                return ((AppWindow*)m_window)->m_screen.get_PrimaryMonitor()->workarea;
+                return static_cast<AppWindow*>(m_window)->m_screen.get_PrimaryMonitor()->workarea;
             }
         }
 
@@ -336,7 +335,7 @@ namespace DockWindow
         void updateGeometry()
         {
             if (m_window != nullptr)
-                ((AppWindow*)m_window)->m_screen.update();
+                static_cast<AppWindow*>(m_window)->m_screen.update();
         }
 
         /**
@@ -346,7 +345,7 @@ namespace DockWindow
         {
             if (Configuration::is_activateStrut()) {
                 if (m_window != nullptr)
-                    ((AppWindow*)m_window)->m_screen.struts->update();
+                    static_cast<AppWindow*>(m_window)->m_screen.struts->update();
             }
         }
 
@@ -355,11 +354,9 @@ namespace DockWindow
          */
         void removeStrut()
         {
-            if (Configuration::is_activateStrut()) {
-                if (m_window != nullptr)
-                    ((AppWindow*)m_window)->m_screen.struts->remove();
+            if (m_window != nullptr)
+                static_cast<AppWindow*>(m_window)->m_screen.struts->remove();
 
-            }
         }
     }
 }

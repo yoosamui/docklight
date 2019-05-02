@@ -597,6 +597,8 @@ void AppUpdater::on_theme_changed(GtkSettings *settings, GParamSpec *pspec, GtkI
     for (DockItem* item:m_dockitems) {
         setIconByTheme(item);
     }
+
+    DockPanel::update();
 }
 
 
