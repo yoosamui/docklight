@@ -21,19 +21,13 @@
 //
 //*****************************************************************
 
-//#include <cairo/cairo.h>
 #include <glibmm-2.4/glibmm/timer.h>
 #include "AppWindow.h"
 #include "../config.h"
 #include "DockWindow.h"
-//#include "WindowControl.h"
 #include "Animations.h"
 #include "Utilities.h"
 #include "WnckHandler.h"
-//#include <unistd.h>
-//#include <iostream>
-//#include <chrono>
-//#include <thread>
 
 // static members
 bool AppWindow::m_isfullscreenSet;
@@ -60,10 +54,6 @@ Screen AppWindow::m_screen;
 
 AppWindow::AppWindow()
 {
-
-    add_events(Gdk::BUTTON_PRESS_MASK);
-    set_app_paintable(true);
-
     GdkScreen *screen;
     GdkVisual *visual;
 
@@ -99,7 +89,8 @@ AppWindow::AppWindow()
        Parameters
        root_x	Return location for X coordinate of gravity-determined reference point.
        root_y	Return location for Y coordinate of gravity-determined reference point.
-       */
+
+     */
     this->set_gravity(Gdk::Gravity::GRAVITY_STATIC);
 
     // A window to implement a docking bar used for creating the dock panel.
