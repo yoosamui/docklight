@@ -1,0 +1,241 @@
+//*****************************************************************
+//
+//  Copyright © 2018 Juan R. González
+//  j-gonzalez@email.de
+//
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  The above copyright notice and this permission notice shall be included in
+//  all copies or substantial portions of the Software.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+//*****************************************************************
+
+#include "DockPreview.h"
+#include "DockPanel.h"
+#include "DockItemPositions.h"
+#include "DockWindow.h"
+//#include <gdk/gdkx.h>
+
+std::vector<DockItem*> DockPreview::m_previewItems;
+DockPreview::DockPreview():Gtk::Window(Gtk::WindowType::WINDOW_POPUP){
+
+    // Set up the top-level window.
+    set_title("DockPreview");
+    set_decorated(false);
+    set_app_paintable(true);
+
+    // Set masks for mouse events
+    add_events(Gdk::BUTTON_PRESS_MASK |
+            Gdk::BUTTON_RELEASE_MASK |
+            Gdk::BUTTON_PRESS_MASK |
+            Gdk::SCROLL_MASK |
+            Gdk::SMOOTH_SCROLL_MASK |
+            Gdk::POINTER_MOTION_HINT_MASK |
+            Gdk::FOCUS_CHANGE_MASK |
+            Gdk::ENTER_NOTIFY_MASK |
+            Gdk::LEAVE_NOTIFY_MASK |
+            Gdk::POINTER_MOTION_MASK);
+
+
+    GdkScreen *screen;
+    GdkVisual *visual;
+
+    gtk_widget_set_app_paintable(GTK_WIDGET(gobj()), TRUE);
+    screen = gdk_screen_get_default();
+    visual = gdk_screen_get_rgba_visual(screen);
+
+    if (visual != NULL && gdk_screen_is_composited(screen)) {
+        gtk_widget_set_visual(GTK_WIDGET(gobj()), visual);
+    }
+
+
+    m_font.set_family("System");
+    m_font.set_size(8 * PANGO_SCALE);
+    m_font.set_weight(Pango::WEIGHT_NORMAL);
+
+    WnckScreen *wnckscreen = wnck_screen_get_default();
+
+    Glib::signal_timeout().connect(sigc::mem_fun(*this, &DockPreview::on_timeoutDraw), 1000 / 30);
+
+    g_signal_connect(G_OBJECT(wnckscreen), "window-opened", G_CALLBACK(DockPreview::on_window_opened), NULL);
+    g_signal_connect(wnckscreen, "window_closed", G_CALLBACK(DockPreview::on_window_closed), NULL);
+
+    //m_timer.start();
+}
+
+DockPreview::~DockPreview()
+{
+    // g_object_unref static items
+    for (DockItem* item : m_previewItems) {
+        if (item->m_scaledPixbuf) {
+            g_object_unref(item->m_scaledPixbuf);
+        }
+    }
+
+    g_print("Preview destroy.\n");
+}
+
+void DockPreview::init(const std::vector<DockItem*>& items, const guint index)
+{
+    // Using assignment operator to copy the items vector
+    DockPreview::m_previewItems = items;
+
+    int size = (DEF_PREVIEW_WIDTH + Configuration::get_separatorMargin()) * 2;// * items.size();
+
+    int x, y;
+    if (DockWindow::is_Horizontal()){
+
+         //width = (DEF_PREVIEW_WIDTH + Configuration::get_separatorMargin()) * 2;// * items.size();
+        //this->set_size_request( width, DEF_PREVIEW_HEIGHT);
+        //DockItemPositions::get_CenterPosition(index, x, y, width, DEF_PREVIEW_HEIGHT);
+    }
+    else
+    {
+
+        int height = ((DEF_PREVIEW_HEIGHT + Configuration::get_separatorMargin()) *  items.size()) + DockWindow::get_dockWindowStartEndMargin();
+        height -= Configuration::get_separatorMargin();
+        this->set_size_request(DEF_PREVIEW_WIDTH, height);
+        DockItemPositions::get_CenterPosition(index, x, y, DEF_PREVIEW_WIDTH,  height);
+    }
+
+    this->move(x, y);
+}
+/**
+ * handles on_enter_notify_event
+ * Event triggered by pointer enter widget area.
+ * The signal will be emitted when the pointer enters the widget's window.
+ * This signal will be sent to the grab widget if there is one.
+ *
+ * true to stop other handlers from being invoked for the event.
+ * false to propagate the event further.
+ * @param crossing_event
+ * @return true to stop other handlers from being invoked for the event. false to propagate the event further
+ */
+bool DockPreview::on_enter_notify_event(GdkEventCrossing* crossing_event)
+{
+    m_canLeave = true;
+    m_mouseIn = true;
+//    m_dockpanelReference->m_previewWindowActive = true;
+    return true;
+}
+
+/**
+ * handles on_leave_notify_event
+ * Event triggered by pointer leaving widget area.
+ * The signal_leave_notify_event() will be emitted when the pointer leaves the widget's window.
+ * To receive this signal, the Gdk::Window associated to the widget needs to enable the Gdk::LEAVE_NOTIFY_MASK mask.
+ * This signal will be sent to the grab widget if there is one.
+ *
+ * @param crossing_event
+ * @return true to stop other handlers from being invoked for the event. false to propagate the event further
+ */
+bool DockPreview::on_leave_notify_event(GdkEventCrossing* crossing_event)
+{
+    if (!m_canLeave) {
+        return true;
+    }
+
+    this->hideMe();
+
+    // tell the caller that we are leaving...
+  //  m_dockpanelReference->previewWindowClosed();
+    return true;
+}
+
+/**
+ * Hide the window and reset values;
+ */
+void DockPreview::hideMe()
+{
+  //  hide();
+
+    m_canLeave = true;
+  //  m_isActive = false;
+  //  m_isVisible = false;
+//    m_mouseIn = false;
+    //m_dockpanelReference->m_previewWindowActive = false;
+
+
+
+    //this->m_previewItems.clear();
+    DockPanel::PreviewClose();
+}
+
+bool DockPreview::on_timeoutDraw(){
+
+        Gtk::Widget::queue_draw();
+        return true;
+}
+void DockPreview::on_window_opened(WnckScreen *screen, WnckWindow *window, gpointer data){
+
+}
+void DockPreview::on_window_closed(WnckScreen *screen, WnckWindow *window, gpointer data){
+
+}
+bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
+{
+
+       int  width = (DEF_PREVIEW_HEIGHT + Configuration::get_separatorMargin() ) * this->m_previewItems.size();
+       int  height = (DEF_PREVIEW_HEIGHT + Configuration::get_separatorMargin() ) *  this->m_previewItems.size();
+
+
+      height += DockWindow::get_dockWindowStartEndMargin() - Configuration::get_separatorMargin();
+
+       cr->set_source_rgba(
+       this->m_Theme.Panel().Fill().Color::red,
+       this->m_Theme.Panel().Fill().Color::green,
+       this->m_Theme.Panel().Fill().Color::blue,
+       this->m_Theme.Panel().Fill().Color::alpha);
+
+       Utilities::RoundedRectangle(cr, 0, 0, DEF_PREVIEW_WIDTH, height,6);
+       cr->fill();
+
+
+        int x = 8; //margin
+        int y = DockWindow::get_dockWindowStartEndMargin() / 2 ;
+
+
+//        g_print("Items %d\n",(int)this->m_previewItems.size());
+            int idx = 0;
+        for (DockItem* item : this->m_previewItems)
+        {
+
+            cr->set_source_rgba(
+                    this->m_Theme.PanelCell().Stroke().Color::red,
+                    this->m_Theme.PanelCell().Stroke().Color::green,
+                    this->m_Theme.PanelCell().Stroke().Color::blue,
+                    this->m_Theme.PanelCell().Stroke().Color::alpha);
+
+            if (DockWindow::is_Horizontal()){
+
+                //width = (DEF_PREVIEW_WIDTH + Configuration::get_separatorMargin()) * 2;// * items.size();
+                //this->set_size_request( width, DEF_PREVIEW_HEIGHT);
+                //DockItemPositions::get_CenterPosition(index, x, y, width, DEF_PREVIEW_HEIGHT);
+            }
+            else
+            {
+
+                Utilities::RoundedRectangle(cr, x, y, DEF_PREVIEW_WIDTH  - 16  , DEF_PREVIEW_HEIGHT  ,6);
+                cr->stroke();
+
+
+                //    width = (DEF_PREVIEW_HEIGHT + Configuration::get_separatorMargin()) *  items.size();
+                //    this->set_size_request(DEF_PREVIEW_HEIGHT, width);
+                //    DockItemPositions::get_CenterPosition(index, x, y,  DEF_PREVIEW_HEIGHT, width);
+            }
+            y +=  DEF_PREVIEW_HEIGHT + Configuration::get_separatorMargin();// + DockWindow::get_dockWindowStartEndMargin() /2 ;
+        }
+        return true;
+
+}

@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   DockItem.h
  * Author: yoo
  *
@@ -13,7 +13,7 @@
 
 #include <libwnck/libwnck.h>
 
-#include <gtkmm/window.h> 
+#include <gtkmm/window.h>
 #include <glibmm/timer.h>
 #include "Configuration.h"
 
@@ -32,7 +32,7 @@ public:
     DockItemType m_dockitemtype = DockItemType::SingleDock;
     Glib::RefPtr<Gdk::Pixbuf> m_image = NULLPB;
     guchar m_pixelsbuf[DEF_PREVIEW_WIDTH * DEF_PREVIEW_HEIGHT * 3] = {0};
-    GdkPixbuf *m_scaledPixbuf;
+    GdkPixbuf *m_scaledPixbuf = nullptr;
     bool m_imageLoadedRequired;
     bool m_isDynamic;
 //    DockItem* get_Current();
@@ -66,7 +66,7 @@ public:
 
 private:
     bool m_pixbufPreviousPass;
-    
+
     guint m_width = 0;
     guint m_height = 0;
 

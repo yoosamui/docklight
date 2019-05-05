@@ -45,6 +45,8 @@ DockPanel.cpp \
 DockPanel.h \
 DockItem.cpp \
 DockItem.h \
+DockPreview.cpp \
+DockPreview.h \
 IconLoader.cpp \
 IconLoader.h \
 Launcher.cpp \
@@ -63,7 +65,6 @@ TitleWindow.cpp \
 TitleWindow.h \
 DockItemPositions.cpp \
 DockItemPositions.h \
-DockMenu.cpp \
 DockMenu.h \
 About.cpp \
 About.h \

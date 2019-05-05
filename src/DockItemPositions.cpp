@@ -194,8 +194,8 @@ namespace DockItemPositions
                 x += citem->get_Width() + Configuration::get_separatorMargin();
             }
         }
-        else{
-
+        else
+        {
             y += DockWindow::get_dockWindowStartEndMargin() / 2;
             if (Configuration::get_dockWindowLocation() == panel_locationType::RIGHT){
                 x -= width + 2;
@@ -209,11 +209,30 @@ namespace DockItemPositions
 
                 variantItemHeight = citem->m_dockitemtype == DockItemType::Separator ? citem->get_Width() : citem->get_Height();
 
-                if( citem->m_index == item->m_index){
-                    //    g_print("index %d/%d   center: %d \n", item->m_index, index, (height / 2) - citem->get_Height()  / 2);
+                if ( citem->m_index == item->m_index){
 
                     y -= (height / 2) - variantItemHeight / 2;
-                    return true;
+
+                    // check limit to center
+                    if (  DockWindow::Monitor::get_workarea().height  - height < width / 2 ){
+                        y =  DockWindow::Monitor::get_workarea().height / 2 - (height / 2);
+                        return true;
+                    }
+
+                    // check top limit
+                    if (y < DockWindow::Monitor::get_workarea().y) {
+                        y -= y;
+                        return true;
+                    }
+
+                    // check bottom limit
+                    int diff = DockWindow::Monitor::get_workarea().height - ( height + y);
+                    if( diff < 0 ){
+                        y+= diff;
+                        return true;
+                    }
+
+                    return false;
                 }
 
                 y += variantItemHeight + Configuration::get_separatorMargin();
@@ -221,7 +240,6 @@ namespace DockItemPositions
         }
 
         return true;
-
     }
 
     /**

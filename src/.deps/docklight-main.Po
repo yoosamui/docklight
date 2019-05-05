@@ -1390,8 +1390,8 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
  AppUpdater.h SessionWindow.h Utilities.h /usr/include/c++/7/math.h \
  IconLoader.h TitleWindow.h DockMenu.h \
  /usr/include/glibmm-2.4/glibmm/i18n.h /usr/include/glib-2.0/glib/gi18n.h \
- /usr/include/libintl.h About.h /usr/include/c++/7/thread Screen.h \
- Struts.h ../config.h /usr/include/gtk-3.0/gtk/gtk.h \
+ /usr/include/libintl.h DockPreview.h About.h /usr/include/c++/7/thread \
+ Screen.h Struts.h ../config.h /usr/include/gtk-3.0/gtk/gtk.h \
  /usr/include/c++/7/iostream
 
 /usr/include/stdc-predef.h:
@@ -4423,6 +4423,8 @@ DockMenu.h:
 /usr/include/glib-2.0/glib/gi18n.h:
 
 /usr/include/libintl.h:
+
+DockPreview.h:
 
 About.h:
 

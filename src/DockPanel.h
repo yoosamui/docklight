@@ -34,9 +34,9 @@
 #include "DockItem.h"
 //#include "SessionWindow.h"
 #include "AppUpdater.h"
-//#include "AppRunAnimation.h"
 #include "TitleWindow.h"
 #include "DockMenu.h"
+#include "DockPreview.h"
 #include "About.h"
 #include <thread>
 class DockPanel : public Gtk::DrawingArea, DockMenu {
@@ -63,14 +63,26 @@ class DockPanel : public Gtk::DrawingArea, DockMenu {
         static guint get_HeightDecrement(){
             return m_heightDecrement;
         }
+
+      static void PreviewClose(){
+            if(m_dockPreview != nullptr){
+                m_dockPreview->close();
+
+                delete m_dockPreview;
+                m_dockPreview = nullptr;
+                m_previewIndex = -1;
+            }
+        }
     private:
         Configuration::Style::Theme m_Theme = Configuration::get_Theme();
+        static int m_previewIndex ;
 
         About m_about;
         static guint m_widthDecrement;
         static guint m_heightDecrement;
 
         Gtk::Window* m_AppWindow = nullptr;
+        static DockPreview* m_dockPreview;
         bool m_popupMenuOn = false;
         static bool m_forceDraw;
 

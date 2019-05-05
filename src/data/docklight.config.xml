@@ -3,7 +3,7 @@
     <AutoHide>true</AutoHide>
     <PanelMode>false</PanelMode>
     <Location>RIGHT</Location>
-    <UseStyle>8</UseStyle>
+    <UseStyle>0</UseStyle>
     <Styles>
           <Style  panel="0,0,0,0.6,  0,0,0,0 ,1, 0, 0"
                   panelCell="0,0,0,0, 0,0,0,0, 0, 0, 0"

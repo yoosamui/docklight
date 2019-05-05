@@ -47,6 +47,10 @@ guint DockPanel::m_heightDecrement;
 guint DockPanel::m_ItemsWidth;
 guint DockPanel::m_ItemsHeight;
 
+
+DockPreview* DockPanel::m_dockPreview;
+int DockPanel::m_previewIndex;
+
 /**
  * This class is the main dock renderer.
  */
@@ -55,6 +59,9 @@ DockPanel::DockPanel():
     m_separatorFilePath(Utilities::getExecPath(DEF_SEPARATOR))
 
 {
+
+    DockPanel::m_dockPreview = nullptr;
+    DockPanel::m_previewIndex = -1;
 
     // Set event masks
     add_events(Gdk::BUTTON_PRESS_MASK |
@@ -668,10 +675,11 @@ void DockPanel::on_popup_itemmenu_position(int& x, int& y, bool& push_in)
 
 void DockPanel::ExecuteApp(GdkEventButton* event)
 {
-    if (m_currentMoveIndex < 1)
+    DockItem* item = this->get_CurrentItem();
+    if (item == nullptr){
         return;
+    }
 
-    DockItem * item = this->m_AppUpdater->m_dockitems[m_currentMoveIndex];
     if (item->m_dockitemtype == DockItemType::Separator) {
         return;
     }
@@ -681,9 +689,7 @@ void DockPanel::ExecuteApp(GdkEventButton* event)
         return;
     }
 
-    // TEST must be item->m_items.size() == 1
-    // must be item->m_items.size() >1 // open preview
-    if (item->m_items.size() >= 1) {
+    if (item->m_items.size() == 1) {
         WnckWindow *window = nullptr;
         window = WnckHandler::get_ActiveWindowIfAny(item);
         if (window == nullptr) {
@@ -692,7 +698,21 @@ void DockPanel::ExecuteApp(GdkEventButton* event)
         }
 
         WnckHandler::ActivateWindow(window);
+        return;
     }
+
+    // check if preview already open.
+    if( m_previewIndex == this->m_currentMoveIndex && this->m_dockPreview){
+        return;
+    }
+
+    this->PreviewClose();
+
+    this->m_dockPreview = new DockPreview();
+    this->m_previewIndex = this->m_currentMoveIndex;
+    this->m_dockPreview->init(item->m_items, this->m_currentMoveIndex);
+    this->m_dockPreview->show();
+
 }
 
 /**
@@ -711,7 +731,7 @@ inline DockItem* DockPanel::get_CurrentItem()
 
 bool DockPanel::get_AutohideAllow()
 {
-    return this->m_popupMenuOn == false;
+    return this->m_popupMenuOn == false && this->m_dockPreview == nullptr;
 }
 
 /**
@@ -809,6 +829,11 @@ bool DockPanel::on_motion_notify_event(GdkEventMotion * event)
 
 
     }
+
+    if(DockPanel::m_previewIndex != this->m_currentMoveIndex && DockPanel::m_dockPreview != nullptr){
+        DockPanel::PreviewClose();
+    }
+
     return false;
 }
 
@@ -1105,7 +1130,8 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
 void DockPanel::show_Title()
 {
 
-    if (Configuration::is_autoHide() && !DockWindow::is_Visible() || !m_mouseIn ){
+    if (Configuration::is_autoHide() && !DockWindow::is_Visible() || !m_mouseIn || this->m_dockPreview != nullptr){
+
         m_titlewindow.hide();
         m_infowindow.hide();
         m_titleShow = false;
