@@ -205,23 +205,18 @@ namespace DockWindow
                 if (location == panel_locationType::LEFT) {
                     m_window->resize(areaSize, Monitor::get_geometry().height);
                     if (Configuration::is_autoHide() && !m_visible && !forceMove) {
-                        g_print("GEO ..........%d %d\n", Monitor::get_geometry().height, geometry.height);
                         return areaSize;
                     }
 
                     m_window->move(geometry.x + Configuration::get_WindowDockMonitorMargin_Left(), geometry.y);
-
-                    g_print("GEO ..........%d %d\n", Monitor::get_geometry().height, geometry.height);
                     return areaSize;
                 }
 
                 m_window->resize(areaSize, geometry.height);
 
-                g_print("GEO ..........%d %d\n", Monitor::get_geometry().height, geometry.height);
                 if (Configuration::is_autoHide() && !m_visible && !forceMove) {
                     return areaSize;
                 }
-                //m_window->move((geometry.x + geometry.width) - (areaSize + Configuration::get_WindowDockMonitorMargin_Right()), geometry.y);
                 areaSize += Configuration::get_WindowDockMonitorMargin_Right();
                 m_window->move((geometry.x + geometry.width) - areaSize, geometry.y);
                 m_visible = true;

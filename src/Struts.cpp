@@ -51,6 +51,9 @@ void Struts::update(bool reset)
         {
             case panel_locationType::TOP:
             {
+                //if (!Configuration::is_panelMode()) {
+                    //areaSize += Configuration::get_WindowDockMonitorMargin_Top();
+                //}
               if (this->screen->get_MonitorsCount() > 1) {
                     //0,0,410,0,0,0,0,0,2560,4479,0,0
                     if (primary->geometry.x > 0) {
@@ -74,7 +77,10 @@ void Struts::update(bool reset)
 
             case panel_locationType::BOTTOM:
             {
-                //areaSize;// += Configuration::get_WindowDockMonitorMargin_Bottom();
+                //if (!Configuration::is_panelMode()) {
+                    //areaSize += Configuration::get_WindowDockMonitorMargin_Bottom();
+                //}
+
                 if (this->screen->get_MonitorsCount() > 1) {
                     //0,0,0,50,0,0,0,0,0,0,2560,4479
                     if (primary->geometry.x > 0) {
@@ -96,7 +102,10 @@ void Struts::update(bool reset)
 
             case panel_locationType::LEFT:
             {
-               // areaSize += Configuration::get_WindowDockMonitorMargin_Left();
+                //if (!Configuration::is_panelMode()) {
+                 //areaSize += Configuration::get_WindowDockMonitorMargin_Left();
+                 //}
+
                 if (this->screen->get_MonitorsCount() > 1) {
 
                     //0,0,2560,0,0,0,0,0,2560,2600,0,0
@@ -120,7 +129,9 @@ void Struts::update(bool reset)
             case panel_locationType::RIGHT:
             {
 
+                //if (!Configuration::is_panelMode()) {
                 //areaSize += Configuration::get_WindowDockMonitorMargin_Right();
+                //}
                 if (this->screen->get_MonitorsCount() > 1) {
                     // 0,60,0,0,0,0,0,1080,0,0,0,0
                     if (primary->geometry.x > 0) {

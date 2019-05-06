@@ -96,9 +96,10 @@ void DockPreview::init(const std::vector<DockItem*>& items, const guint index)
     int x, y;
     if (DockWindow::is_Horizontal()){
 
-         //width = (DEF_PREVIEW_WIDTH + Configuration::get_separatorMargin()) * 2;// * items.size();
-        //this->set_size_request( width, DEF_PREVIEW_HEIGHT);
-        //DockItemPositions::get_CenterPosition(index, x, y, width, DEF_PREVIEW_HEIGHT);
+        int width = ((DEF_PREVIEW_WIDTH + Configuration::get_separatorMargin()) *  items.size()) + DockWindow::get_dockWindowStartEndMargin();
+        width -= Configuration::get_separatorMargin();
+        this->set_size_request( width, DEF_PREVIEW_HEIGHT);
+        DockItemPositions::get_CenterPosition(index, x, y, width, DEF_PREVIEW_HEIGHT);
     }
     else
     {
@@ -126,6 +127,7 @@ bool DockPreview::on_enter_notify_event(GdkEventCrossing* crossing_event)
 {
     m_canLeave = true;
     m_mouseIn = true;
+//    A
 //    m_dockpanelReference->m_previewWindowActive = true;
     return true;
 }
@@ -186,11 +188,9 @@ void DockPreview::on_window_closed(WnckScreen *screen, WnckWindow *window, gpoin
 bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
 
-       int  width = (DEF_PREVIEW_HEIGHT + Configuration::get_separatorMargin() ) * this->m_previewItems.size();
-       int  height = (DEF_PREVIEW_HEIGHT + Configuration::get_separatorMargin() ) *  this->m_previewItems.size();
+       int  width = this->get_width();
+       int  height = this->get_height();
 
-
-      height += DockWindow::get_dockWindowStartEndMargin() - Configuration::get_separatorMargin();
 
        cr->set_source_rgba(
        this->m_Theme.Panel().Fill().Color::red,
@@ -198,12 +198,25 @@ bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
        this->m_Theme.Panel().Fill().Color::blue,
        this->m_Theme.Panel().Fill().Color::alpha);
 
+       int x,y;
+
+            if (DockWindow::is_Horizontal()){
+
+      Utilities::RoundedRectangle(cr, 0, 0, width, DEF_PREVIEW_HEIGHT,6);
+       cr->fill();
+     //  cr->paint();
+         y = 8; //margin
+         x =  DockWindow::get_dockWindowStartEndMargin() / 2 ;
+        }
+        else
+        {
+
        Utilities::RoundedRectangle(cr, 0, 0, DEF_PREVIEW_WIDTH, height,6);
        cr->fill();
+         x = 8; //margin
+         y = DockWindow::get_dockWindowStartEndMargin() / 2 ;
 
-
-        int x = 8; //margin
-        int y = DockWindow::get_dockWindowStartEndMargin() / 2 ;
+        }
 
 
 //        g_print("Items %d\n",(int)this->m_previewItems.size());
@@ -222,6 +235,9 @@ bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
                 //width = (DEF_PREVIEW_WIDTH + Configuration::get_separatorMargin()) * 2;// * items.size();
                 //this->set_size_request( width, DEF_PREVIEW_HEIGHT);
                 //DockItemPositions::get_CenterPosition(index, x, y, width, DEF_PREVIEW_HEIGHT);
+                Utilities::RoundedRectangle(cr, x, y, DEF_PREVIEW_WIDTH   , DEF_PREVIEW_HEIGHT  - 16 ,6);
+                cr->stroke();
+            x +=  DEF_PREVIEW_WIDTH + Configuration::get_separatorMargin();// + DockWindow::get_dockWindowStartEndMargin() /2 ;
             }
             else
             {
@@ -230,11 +246,11 @@ bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
                 cr->stroke();
 
 
+            y +=  DEF_PREVIEW_HEIGHT + Configuration::get_separatorMargin();// + DockWindow::get_dockWindowStartEndMargin() /2 ;
                 //    width = (DEF_PREVIEW_HEIGHT + Configuration::get_separatorMargin()) *  items.size();
                 //    this->set_size_request(DEF_PREVIEW_HEIGHT, width);
                 //    DockItemPositions::get_CenterPosition(index, x, y,  DEF_PREVIEW_HEIGHT, width);
             }
-            y +=  DEF_PREVIEW_HEIGHT + Configuration::get_separatorMargin();// + DockWindow::get_dockWindowStartEndMargin() /2 ;
         }
         return true;
 

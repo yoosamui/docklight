@@ -1129,7 +1129,6 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
  */
 void DockPanel::show_Title()
 {
-
     if (Configuration::is_autoHide() && !DockWindow::is_Visible() || !m_mouseIn || this->m_dockPreview != nullptr){
 
         m_titlewindow.hide();

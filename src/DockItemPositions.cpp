@@ -166,29 +166,29 @@ namespace DockItemPositions
 
             x += DockWindow::get_dockWindowStartEndMargin() / 2;
             if (Configuration::get_dockWindowLocation() == panel_locationType::BOTTOM){
-                y -= height + 2;
-                //y = DockWindow::Monitor::get_geometry().height - DockWindow::get_DockWindowHeight() - height - 2 - Configuration::get_WindowDockMonitorMargin_Bottom();
-                //g_print("Title %d %d %d\n", y,  DockWindow::Monitor::get_geometry().height, DockWindow::get_DockWindowHeight());
+                y -= height;
             }
             else{
-                y += DockWindow::get_DockWindowHeight() + 2;
+                y += DockWindow::get_DockWindowHeight() ;
             }
 
-            for (DockItem* citem : AppUpdater::m_dockitems){
+            for (DockItem* citem : AppUpdater::m_dockitems) {
                 if( citem->m_index == item->m_index){
                     x -= (width / 2) - citem->get_Width()  / 2;
 
-                    // check the limit on the right
-                    if (x + width  > DockWindow::Monitor::get_geometry().width){
-                        x =  DockWindow::Monitor::get_geometry().width - width - 2;
-                    }
-
                     // check the limit on the left
-                    if (x <  DockWindow::Monitor::get_geometry().x){
-                        x =  DockWindow::Monitor::get_geometry().x + 2;
+                    if (x <  DockWindow::Monitor::get_geometry().x) {
+                        x =  DockWindow::Monitor::get_geometry().x;
+                        return true;
                     }
 
-                    return true;
+                    // check the limit on the right
+                    if (x + width  > DockWindow::Monitor::get_geometry().width) {
+                        x =  DockWindow::Monitor::get_geometry().width - width;
+                        return true;
+                    }
+
+                    return false;
                 }
 
                 x += citem->get_Width() + Configuration::get_separatorMargin();
@@ -198,10 +198,10 @@ namespace DockItemPositions
         {
             y += DockWindow::get_dockWindowStartEndMargin() / 2;
             if (Configuration::get_dockWindowLocation() == panel_locationType::RIGHT){
-                x -= width + 2;
+                x -= width;
             }
             else{
-                x += DockWindow::get_DockWindowWidth() + 2;
+                x += DockWindow::get_DockWindowWidth();
             }
 
             int variantItemHeight = 0;
@@ -213,22 +213,15 @@ namespace DockItemPositions
 
                     y -= (height / 2) - variantItemHeight / 2;
 
-                    // check limit to center
-                    if (  DockWindow::Monitor::get_workarea().height  - height < width / 2 ){
-                        y =  DockWindow::Monitor::get_workarea().height / 2 - (height / 2);
+                    // check the limit on the top
+                    if (y <  DockWindow::Monitor::get_geometry().y){
+                        y =  DockWindow::Monitor::get_geometry().y;
                         return true;
                     }
 
-                    // check top limit
-                    if (y < DockWindow::Monitor::get_workarea().y) {
-                        y -= y;
-                        return true;
-                    }
-
-                    // check bottom limit
-                    int diff = DockWindow::Monitor::get_workarea().height - ( height + y);
-                    if( diff < 0 ){
-                        y+= diff;
+                    // check the limit on the bottom
+                    if (y + height  > DockWindow::Monitor::get_geometry().height){
+                        y =  DockWindow::Monitor::get_geometry().height - height;
                         return true;
                     }
 
@@ -243,7 +236,7 @@ namespace DockItemPositions
     }
 
     /**
-     * Returns the center of the screen in x, y coordinates. used to center windows.
+     * Returns the center of the current monitor in x, y coordinates.
      */
     void get_CenterScreenPos(int targetwidth, int targetheight, int &posx, int &posy)
     {

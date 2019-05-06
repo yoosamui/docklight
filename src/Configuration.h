@@ -90,7 +90,7 @@
 
 
 #define DEF_PREVIEW_WIDTH 220               // the preview popup window width
-#define DEF_PREVIEW_HEIGHT 200              // the preview popup window height
+#define DEF_PREVIEW_HEIGHT 180              // the preview popup window height
 
 typedef enum Horizontal_alignment_t
 {
