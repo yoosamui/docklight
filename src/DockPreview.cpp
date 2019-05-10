@@ -120,6 +120,7 @@ void DockPreview::init(const std::vector<DockItem*>& items, const guint index)
         if (height  > DockWindow::Monitor::get_geometry().height){
             height = DockWindow::Monitor::get_geometry().height;
             this->cellHeight =   (DockWindow::Monitor::get_geometry().height - DockWindow::get_dockWindowStartEndMargin() - separatorsSize ) / items.size();
+            this->cellWidth = this->cellHeight + hv_diff;
         }
 
         this->set_size_request(this->cellWidth, height);
@@ -203,10 +204,10 @@ void DockPreview::on_window_closed(WnckScreen *screen, WnckWindow *window, gpoin
 }
 bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
-
-    int  width = this->get_width();
-    int  height = this->get_height();
-
+    guint idx = 0;
+    guint x,y;
+    guint  width = this->get_width();
+    guint  height = this->get_height();
 
     cr->set_source_rgba(
             this->m_Theme.Panel().Fill().Color::red,
@@ -214,31 +215,23 @@ bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
             this->m_Theme.Panel().Fill().Color::blue,
             this->m_Theme.Panel().Fill().Color::alpha);
 
-    int x,y;
-
     if (DockWindow::is_Horizontal()){
 
         Utilities::RoundedRectangle(cr, 0, 0, width, this->cellHeight ,6);
         cr->fill();
-        y = 8; //margin
+        y = 8;
         x =  DockWindow::get_dockWindowStartEndMargin() / 2 ;
     }
-    else
-    {
+    else {
 
         Utilities::RoundedRectangle(cr, 0, 0, this->cellWidth, height, 6);
         cr->fill();
-        x = 8; //margin
+        x = 8;
         y = DockWindow::get_dockWindowStartEndMargin() / 2 ;
-
     }
 
-
-    //        g_print("Items %d\n",(int)this->m_previewItems.size());
-    int idx = 0;
     for (DockItem* item : this->m_previewItems)
     {
-
         cr->set_source_rgba(
                 this->m_Theme.PanelCell().Stroke().Color::red,
                 this->m_Theme.PanelCell().Stroke().Color::green,
@@ -249,16 +242,17 @@ bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
             Utilities::RoundedRectangle(cr, x, y, this->cellWidth  , this->cellHeight - 16  ,6);
             cr->stroke();
+
             x +=  this->cellWidth + Configuration::get_separatorMargin();
         }
-        else
-        {
+        else {
+
             Utilities::RoundedRectangle(cr, x, y, this->cellWidth - 16  , this->cellHeight  ,6);
             cr->stroke();
 
             y +=  this->cellHeight + Configuration::get_separatorMargin();
         }
     }
-    return true;
 
+    return true;
 }
