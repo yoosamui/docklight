@@ -91,23 +91,39 @@ void DockPreview::init(const std::vector<DockItem*>& items, const guint index)
     // Using assignment operator to copy the items vector
     DockPreview::m_previewItems = items;
 
-    int size = (DEF_PREVIEW_WIDTH + Configuration::get_separatorMargin()) * 2;// * items.size();
+    int x = 0;
+    int y = 0;
+    guint hv_diff = 20;
+    this->cellWidth = 200;
+    this->cellHeight= this->cellWidth - hv_diff;
+    guint separatorsSize = Configuration::get_separatorMargin() * (items.size() - 1);
 
-    int x, y;
     if (DockWindow::is_Horizontal()){
 
-        int width = ((DEF_PREVIEW_WIDTH + Configuration::get_separatorMargin()) *  items.size()) + DockWindow::get_dockWindowStartEndMargin();
-        width -= Configuration::get_separatorMargin();
-        this->set_size_request( width, DEF_PREVIEW_HEIGHT);
-        DockItemPositions::get_CenterPosition(index, x, y, width, DEF_PREVIEW_HEIGHT);
-    }
-    else
-    {
+        int width = this->cellWidth  *  items.size() + DockWindow::get_dockWindowStartEndMargin() + separatorsSize;
 
-        int height = ((DEF_PREVIEW_HEIGHT + Configuration::get_separatorMargin()) *  items.size()) + DockWindow::get_dockWindowStartEndMargin();
-        height -= Configuration::get_separatorMargin();
-        this->set_size_request(DEF_PREVIEW_WIDTH, height);
-        DockItemPositions::get_CenterPosition(index, x, y, DEF_PREVIEW_WIDTH,  height);
+        if (width  > DockWindow::Monitor::get_geometry().width){
+            width = DockWindow::Monitor::get_geometry().width;
+            this->cellWidth = (DockWindow::Monitor::get_geometry().width - DockWindow::get_dockWindowStartEndMargin() - separatorsSize ) / items.size();
+            this->cellHeight = this->cellWidth - hv_diff;
+        }
+
+        this->set_size_request(width, this->cellHeight);
+        DockItemPositions::get_CenterPosition(index, x, y, width, this->cellHeight );
+
+    } else {
+
+        // make the cell height smaller looks better
+        this->cellHeight -= hv_diff;
+        int height = this->cellHeight  *  items.size() + DockWindow::get_dockWindowStartEndMargin() + separatorsSize;
+
+        if (height  > DockWindow::Monitor::get_geometry().height){
+            height = DockWindow::Monitor::get_geometry().height;
+            this->cellHeight =   (DockWindow::Monitor::get_geometry().height - DockWindow::get_dockWindowStartEndMargin() - separatorsSize ) / items.size();
+        }
+
+        this->set_size_request(this->cellWidth, height);
+        DockItemPositions::get_CenterPosition(index, x, y, this->cellWidth,  height);
     }
 
     this->move(x, y);
@@ -127,8 +143,8 @@ bool DockPreview::on_enter_notify_event(GdkEventCrossing* crossing_event)
 {
     m_canLeave = true;
     m_mouseIn = true;
-//    A
-//    m_dockpanelReference->m_previewWindowActive = true;
+    //    A
+    //    m_dockpanelReference->m_previewWindowActive = true;
     return true;
 }
 
@@ -151,7 +167,7 @@ bool DockPreview::on_leave_notify_event(GdkEventCrossing* crossing_event)
     this->hideMe();
 
     // tell the caller that we are leaving...
-  //  m_dockpanelReference->previewWindowClosed();
+    //  m_dockpanelReference->previewWindowClosed();
     return true;
 }
 
@@ -160,12 +176,12 @@ bool DockPreview::on_leave_notify_event(GdkEventCrossing* crossing_event)
  */
 void DockPreview::hideMe()
 {
-  //  hide();
+    //  hide();
 
     m_canLeave = true;
-  //  m_isActive = false;
-  //  m_isVisible = false;
-//    m_mouseIn = false;
+    //  m_isActive = false;
+    //  m_isVisible = false;
+    //    m_mouseIn = false;
     //m_dockpanelReference->m_previewWindowActive = false;
 
 
@@ -176,8 +192,8 @@ void DockPreview::hideMe()
 
 bool DockPreview::on_timeoutDraw(){
 
-        Gtk::Widget::queue_draw();
-        return true;
+    Gtk::Widget::queue_draw();
+    return true;
 }
 void DockPreview::on_window_opened(WnckScreen *screen, WnckWindow *window, gpointer data){
 
@@ -188,70 +204,61 @@ void DockPreview::on_window_closed(WnckScreen *screen, WnckWindow *window, gpoin
 bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
 
-       int  width = this->get_width();
-       int  height = this->get_height();
+    int  width = this->get_width();
+    int  height = this->get_height();
 
 
-       cr->set_source_rgba(
-       this->m_Theme.Panel().Fill().Color::red,
-       this->m_Theme.Panel().Fill().Color::green,
-       this->m_Theme.Panel().Fill().Color::blue,
-       this->m_Theme.Panel().Fill().Color::alpha);
+    cr->set_source_rgba(
+            this->m_Theme.Panel().Fill().Color::red,
+            this->m_Theme.Panel().Fill().Color::green,
+            this->m_Theme.Panel().Fill().Color::blue,
+            this->m_Theme.Panel().Fill().Color::alpha);
 
-       int x,y;
+    int x,y;
 
-            if (DockWindow::is_Horizontal()){
+    if (DockWindow::is_Horizontal()){
 
-      Utilities::RoundedRectangle(cr, 0, 0, width, DEF_PREVIEW_HEIGHT,6);
-       cr->fill();
-     //  cr->paint();
-         y = 8; //margin
-         x =  DockWindow::get_dockWindowStartEndMargin() / 2 ;
+        Utilities::RoundedRectangle(cr, 0, 0, width, this->cellHeight ,6);
+        cr->fill();
+        y = 8; //margin
+        x =  DockWindow::get_dockWindowStartEndMargin() / 2 ;
+    }
+    else
+    {
+
+        Utilities::RoundedRectangle(cr, 0, 0, this->cellWidth, height, 6);
+        cr->fill();
+        x = 8; //margin
+        y = DockWindow::get_dockWindowStartEndMargin() / 2 ;
+
+    }
+
+
+    //        g_print("Items %d\n",(int)this->m_previewItems.size());
+    int idx = 0;
+    for (DockItem* item : this->m_previewItems)
+    {
+
+        cr->set_source_rgba(
+                this->m_Theme.PanelCell().Stroke().Color::red,
+                this->m_Theme.PanelCell().Stroke().Color::green,
+                this->m_Theme.PanelCell().Stroke().Color::blue,
+                this->m_Theme.PanelCell().Stroke().Color::alpha);
+
+        if (DockWindow::is_Horizontal()){
+
+            Utilities::RoundedRectangle(cr, x, y, this->cellWidth  , this->cellHeight - 16  ,6);
+            cr->stroke();
+            x +=  this->cellWidth + Configuration::get_separatorMargin();
         }
         else
         {
+            Utilities::RoundedRectangle(cr, x, y, this->cellWidth - 16  , this->cellHeight  ,6);
+            cr->stroke();
 
-       Utilities::RoundedRectangle(cr, 0, 0, DEF_PREVIEW_WIDTH, height,6);
-       cr->fill();
-         x = 8; //margin
-         y = DockWindow::get_dockWindowStartEndMargin() / 2 ;
-
+            y +=  this->cellHeight + Configuration::get_separatorMargin();
         }
-
-
-//        g_print("Items %d\n",(int)this->m_previewItems.size());
-            int idx = 0;
-        for (DockItem* item : this->m_previewItems)
-        {
-
-            cr->set_source_rgba(
-                    this->m_Theme.PanelCell().Stroke().Color::red,
-                    this->m_Theme.PanelCell().Stroke().Color::green,
-                    this->m_Theme.PanelCell().Stroke().Color::blue,
-                    this->m_Theme.PanelCell().Stroke().Color::alpha);
-
-            if (DockWindow::is_Horizontal()){
-
-                //width = (DEF_PREVIEW_WIDTH + Configuration::get_separatorMargin()) * 2;// * items.size();
-                //this->set_size_request( width, DEF_PREVIEW_HEIGHT);
-                //DockItemPositions::get_CenterPosition(index, x, y, width, DEF_PREVIEW_HEIGHT);
-                Utilities::RoundedRectangle(cr, x, y, DEF_PREVIEW_WIDTH   , DEF_PREVIEW_HEIGHT  - 16 ,6);
-                cr->stroke();
-            x +=  DEF_PREVIEW_WIDTH + Configuration::get_separatorMargin();// + DockWindow::get_dockWindowStartEndMargin() /2 ;
-            }
-            else
-            {
-
-                Utilities::RoundedRectangle(cr, x, y, DEF_PREVIEW_WIDTH  - 16  , DEF_PREVIEW_HEIGHT  ,6);
-                cr->stroke();
-
-
-            y +=  DEF_PREVIEW_HEIGHT + Configuration::get_separatorMargin();// + DockWindow::get_dockWindowStartEndMargin() /2 ;
-                //    width = (DEF_PREVIEW_HEIGHT + Configuration::get_separatorMargin()) *  items.size();
-                //    this->set_size_request(DEF_PREVIEW_HEIGHT, width);
-                //    DockItemPositions::get_CenterPosition(index, x, y,  DEF_PREVIEW_HEIGHT, width);
-            }
-        }
-        return true;
+    }
+    return true;
 
 }

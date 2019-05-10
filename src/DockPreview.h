@@ -39,6 +39,9 @@ class DockPreview : public Gtk::Window
         bool m_canLeave = false;
         bool m_mouseIn = false;
 
+        guint cellWidth;
+        guint cellHeight;
+
         void hideMe();
         bool on_leave_notify_event(GdkEventCrossing* crossing_event);
         bool on_enter_notify_event(GdkEventCrossing* crossing_event);

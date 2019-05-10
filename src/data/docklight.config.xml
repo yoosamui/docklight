@@ -54,6 +54,14 @@
                   panelTitle="0,0,0,1,  1,1,1,1 ,0 ,0 ,0">
             8
         </Style>
+
+         <Style    
+                  panel="1.02, 1.17, 1.26,0.4 ,0,0,0,0, 0, 0, 0"
+                  panelCell="0,0,0,0, 1,1,1,1.0, 0, 0, 0"
+                  selector="1,1,1,0.4,  255,1,1,0, 3, 0, 0"
+                  panelTitle="0,0,0,1,  1,1,1,1 ,0 ,0 ,0">
+            9
+        </Style>
     </Styles>
 </Root>
 <!-- http://doc.instantreality.org/tools/color_calculator/ -->
