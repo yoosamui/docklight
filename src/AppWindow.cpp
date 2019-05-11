@@ -32,7 +32,7 @@
 // static members
 bool AppWindow::m_isfullscreenSet;
 bool AppWindow::m_isfullscreen;
-Screen AppWindow::m_screen;
+RootScreen AppWindow::m_screen;
 
 /*
    static const gchar* type_name(WnckWindowType type)

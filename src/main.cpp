@@ -1,19 +1,19 @@
 //*****************************************************************
 //
 //  Copyright (C) 2015 Juan R. Gonzalez
-//  Created on November 20, 2015, 12:17 PM 
+//  Created on November 20, 2015, 12:17 PM
 //  j-gonzalez@email.de
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-// 
+//
 //  This program is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU General Public License for more details.
-// 
+//
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
@@ -32,6 +32,7 @@
 #include "Utilities.h"
 #include <iostream>
 #include <cstdlib>
+#include <gdk/gdkx.h>
 namespace
 {
 
@@ -76,6 +77,12 @@ namespace
  */
 int main(int argc, char *argv[])
 {
+    // The XInitThreads function initializes Xlib support for concurrent threads. This function must be the first Xlib function a multi-threaded program calls,
+    // and it must complete before any other Xlib call is made. This function returns a nonzero status if initialization was successful; otherwise, it returns zero.
+    // On systems that do not support threads, this function always returns zero.
+    // https://www.x.org/releases/X11R7.5/doc/man/man3/XInitThreads.3.html
+    XInitThreads();
+
     g_print("INIT GETTEXT\n");
     char* domain = bindtextdomain(GETTEXT_PACKAGE, PROGRAMNAME_LOCALEDIR);
     g_print("bindtextdomain: %s %s %s\n", domain, GETTEXT_PACKAGE, PROGRAMNAME_LOCALEDIR);

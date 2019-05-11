@@ -28,6 +28,7 @@
 #include <gtkmm.h>
 #include "Configuration.h"
 #include "DockItem.h"
+#include <thread>
 
 class DockPreview : public Gtk::Window
 {
@@ -42,10 +43,22 @@ class DockPreview : public Gtk::Window
         guint cellWidth;
         guint cellHeight;
 
+        std::thread* m_thread = nullptr;
+        static bool threadRunning;
+        static void MovementDetector();
+//        static DockItem* m_itemToDetectMovement;
+
         void hideMe();
         bool on_leave_notify_event(GdkEventCrossing* crossing_event);
         bool on_enter_notify_event(GdkEventCrossing* crossing_event);
 
+        bool scanSet = false;
+        bool m_firstDrawDone = false;
+
+        bool on_button_press_event(GdkEventButton *event);
+
+        GdkPixbuf* GetPreviewImage(DockItem* item);
+        GdkPixbuf* GetImage(DockItem* item);
         Configuration::Style::Theme m_Theme = Configuration::get_Theme();
         Pango::FontDescription m_font;
         bool on_timeoutDraw();

@@ -1393,7 +1393,7 @@ docklight-DockItem.o: DockItem.cpp /usr/include/stdc-predef.h DockItem.h \
  Utilities.h /usr/include/c++/7/math.h IconLoader.h TitleWindow.h \
  DockMenu.h /usr/include/glibmm-2.4/glibmm/i18n.h \
  /usr/include/glib-2.0/glib/gi18n.h /usr/include/libintl.h DockPreview.h \
- About.h /usr/include/c++/7/thread
+ /usr/include/c++/7/thread About.h
 
 /usr/include/stdc-predef.h:
 
@@ -4425,6 +4425,6 @@ DockMenu.h:
 
 DockPreview.h:
 
-About.h:
-
 /usr/include/c++/7/thread:
+
+About.h:

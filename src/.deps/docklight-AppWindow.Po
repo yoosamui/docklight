@@ -1393,7 +1393,7 @@ docklight-AppWindow.o: AppWindow.cpp /usr/include/stdc-predef.h \
  AppUpdater.h SessionWindow.h Utilities.h /usr/include/c++/7/math.h \
  IconLoader.h TitleWindow.h DockMenu.h \
  /usr/include/glibmm-2.4/glibmm/i18n.h /usr/include/glib-2.0/glib/gi18n.h \
- /usr/include/libintl.h DockPreview.h About.h /usr/include/c++/7/thread \
+ /usr/include/libintl.h DockPreview.h /usr/include/c++/7/thread About.h \
  Screen.h Struts.h ../config.h DockWindow.h Animations.h WnckHandler.h \
  /usr/include/X11/X.h
 
@@ -4431,9 +4431,9 @@ DockMenu.h:
 
 DockPreview.h:
 
-About.h:
-
 /usr/include/c++/7/thread:
+
+About.h:
 
 Screen.h:
 

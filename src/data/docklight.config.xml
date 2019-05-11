@@ -1,6 +1,6 @@
 
 <Root>
-    <AutoHide>true</AutoHide>
+    <AutoHide>false</AutoHide>
     <PanelMode>false</PanelMode>
     <Location>RIGHT</Location>
     <UseStyle>0</UseStyle>
