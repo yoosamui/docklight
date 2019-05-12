@@ -1,18 +1,18 @@
 //*****************************************************************
 //
 //  Copyright (C) 2016 Juan R. Gonzalez
-//  Created on December, 2016 
+//  Created on December, 2016
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-// 
+//
 //  This program is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU General Public License for more details.
-// 
+//
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
@@ -36,11 +36,11 @@ namespace IconLoader
     // needs to keep the icon around.
     GdkPixbuf *referenceIcon = nullptr;
 
-    // the desired icon size. 
+    // the desired icon size.
     // The resulting icon may not be exactly this size.
     gint size = DEF_ICONMAXSIZE;
 
-    
+
     Glib::RefPtr<Gdk::Pixbuf> GetIconByAppName(const char* appname,std::string &theme_iconname)
     {
         Glib::RefPtr<Gdk::Pixbuf> m_image;
@@ -51,11 +51,11 @@ namespace IconLoader
             g_key_file_free(key_file);
             return NULLPB;
         }
-        
+
          // check if the Icon Desktop Entry name exists
         gchar* iconname = g_key_file_get_string(key_file,
                 "Desktop Entry", "Icon", &error);
-        
+
         if (iconname == NULL) {
             if (error) {
                 g_warning("Icon Desktop Entry not found: %s %s", iconname, error->message);
@@ -66,10 +66,10 @@ namespace IconLoader
             g_key_file_free(key_file);
             return NULLPB;
         }
-        
+
         g_key_file_free(key_file);
-        
-        
+
+
          GtkIconTheme *icon_theme = gtk_icon_theme_get_default();
          auto pixbuf = gtk_icon_theme_load_icon (icon_theme,
                                    iconname, // icon name
@@ -81,18 +81,18 @@ namespace IconLoader
             error = NULL;
            return NULLPB;
         }
-        
-        theme_iconname = iconname; 
+
+        theme_iconname = iconname;
         m_image = IconLoader::PixbufConvert(pixbuf);
-        
+
         return m_image;
-        
+
     }
-    
+
     /**
      * Get the window icons as Gdk::Pixbuf.
-     * Icons and themes are looked for in a set of directories. 
-     * By default, apps should look in $HOME/.icons (for backwards compatibility), 
+     * Icons and themes are looked for in a set of directories.
+     * By default, apps should look in $HOME/.icons (for backwards compatibility),
      * in $XDG_DATA_DIRS/icons and in /usr/share/pixmaps,/usr/share/icons (in that order).
      * https://specifications.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html
 
@@ -103,7 +103,7 @@ namespace IconLoader
     {
         std::string theme_iconname;
         return GetWindowIcon(window, referenceIcon,theme_iconname);
-    
+
     }
     Glib::RefPtr<Gdk::Pixbuf> GetWindowIcon(WnckWindow* window,std::string &theme_iconname)
     {
@@ -112,8 +112,8 @@ namespace IconLoader
 
     /**
      * Get the window icons as Gdk::Pixbuf.
-     * Icons and themes are looked for in a set of directories. 
-     * By default, apps should look in $HOME/.icons (for backwards compatibility), 
+     * Icons and themes are looked for in a set of directories.
+     * By default, apps should look in $HOME/.icons (for backwards compatibility),
      * in $XDG_DATA_DIRS/icons and in /usr/share/pixmaps,/usr/share/icons (in that order).
      * https://specifications.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html
 
@@ -151,7 +151,7 @@ namespace IconLoader
         // check if the Icon Desktop Entry name exists
         gchar* iconname = g_key_file_get_string(key_file,
                 "Desktop Entry", "Icon", &error);
-       
+
         if (iconname == NULL) {
             if (error) {
                 g_warning("Icon Desktop Entry not found: %s %s", iconname, error->message);
@@ -165,9 +165,9 @@ namespace IconLoader
 
         g_key_file_free(key_file);
         theme_iconname = iconname;
-        
+
         if (strstr(iconname, "/") != NULL) {
-            
+
             if (g_file_test(iconname, GFileTest::G_FILE_TEST_EXISTS)) {
                 try {
                     Glib::RefPtr<Gdk::Pixbuf> fromfile;
@@ -184,7 +184,7 @@ namespace IconLoader
             }
 
         }
-        
+
 
         GtkIconTheme *icon_theme = gtk_icon_theme_get_default();
         if (icon_theme != NULL && gtk_icon_theme_has_icon(icon_theme, iconname)) {
@@ -204,20 +204,20 @@ namespace IconLoader
             icon = icon = wnck_window_get_icon(window);
             g_print("Load Icon from window %s\n", iconname);
         }
-            
+
         result = PixbufConvert(icon);
         if( G_IS_OBJECT (icon))
             g_object_unref(icon);
         return result;
     }
 
-   
+
     /**
      * Converts a GdkPixbuf to a Glib::RefPtr<Gdk::Pixbuf>.
      * @param icon
-     * @return 
+     * @return
      */
-    Glib::RefPtr<Gdk::Pixbuf> PixbufConvert(GdkPixbuf * icon)
+    Glib::RefPtr<Gdk::Pixbuf> PixbufConvert(GdkPixbuf* icon)
     {
         Glib::RefPtr<Gdk::Pixbuf> result = NULLPB;
 

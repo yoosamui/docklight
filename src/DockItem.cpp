@@ -123,52 +123,6 @@ std::string DockItem::get_DesktopFileName()
     return get_GroupName() + ".desktop";
 }
 
-/**
- * This function will not work for pixbufs with images that are other than 8 bits
- * per sample or channel, but it will work for most of the pixbufs that GTK+ uses.
- * @param GdkPixbuf* pixbuf
- * @return true is a movement detected or false is none.
- */
-gboolean DockItem::isMovementDetected(GdkPixbuf* pixbuf)
-{
-    gint x, y;
-    int w = gdk_pixbuf_get_width(pixbuf);
-    int h = gdk_pixbuf_get_height(pixbuf);
-    int channels = gdk_pixbuf_get_n_channels(pixbuf);
-    gint rowstride = gdk_pixbuf_get_rowstride(pixbuf);
-    gint pixel_offset;
-
-    // Returns a read-only pointer to the raw pixel data;
-    // must not be modified. This function allows skipping the
-    // implicit copy that must be made if gdk_pixbuf_get_pixels()
-    // is called on a read-only pixbuf.
-    const guint8* pixels = gdk_pixbuf_read_pixels(pixbuf);
-
-    if (!m_pixbufPreviousPass) {
-        for (y = 0; y < h; y++) {
-            for (x = 0; x < w; x++) {
-                pixel_offset = y * rowstride + x * channels;
-                this->m_pixelsbuf[pixel_offset] = pixels[ pixel_offset];
-            }
-        }
-        m_pixbufPreviousPass = true;
-        return FALSE;
-    }
-
-    for (y = 0; y < h; y++) {
-        for (x = 0; x < w; x++) {
-            pixel_offset = y * rowstride + x * channels;
-            if (this->m_pixelsbuf[pixel_offset] != pixels[pixel_offset]) {
-                m_pixbufPreviousPass = FALSE;
-                return TRUE;
-            }
-        }
-    }
-
-    m_pixbufPreviousPass = FALSE;
-    return FALSE;
-}
-
 
 
 

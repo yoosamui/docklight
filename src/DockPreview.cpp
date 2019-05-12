@@ -29,16 +29,15 @@
 #include "DockWindow.h"
 #include "DockItem.h"
 #include <gdk/gdkx.h>
-
+#include <gdk-pixbuf/gdk-pixbuf.h>
 #include <chrono>
 #include <thread>
 
 using namespace std::chrono_literals;
 
 bool DockPreview::threadRunning;
-//DockItem* DockPreview::m_itemToDetectMovement;
-
 std::vector<DockItem*> DockPreview::m_previewItems;
+
 DockPreview::DockPreview():Gtk::Window(Gtk::WindowType::WINDOW_POPUP){
 
     DockPreview::threadRunning = true;
@@ -90,19 +89,22 @@ DockPreview::DockPreview():Gtk::Window(Gtk::WindowType::WINDOW_POPUP){
 
 DockPreview::~DockPreview()
 {
-    // tell the background thread to terminate.
-    this->threadRunning = false;
+    if(m_thread != nullptr){
 
-    // Detach
-    m_thread->detach();
+        // tell the background thread to terminate.
+        this->threadRunning = false;
 
-    // free memory
-    delete m_thread;
+        // Detach
+        m_thread->detach();
 
-    // pointed dangling to ptr NULL
-    m_thread = NULL;
+        // free memory
+        delete m_thread;
 
-    // g_object_unref static items
+        // pointed dangling to ptr NULL
+        m_thread = NULL;
+    }
+
+   // g_object_unref static items
     for (DockItem* item : m_previewItems) {
         if (item->m_scaledPixbuf) {
             g_object_unref(item->m_scaledPixbuf);
@@ -121,6 +123,7 @@ void DockPreview::init(const std::vector<DockItem*>& items, const guint index)
     for (DockItem* item : DockPreview::m_previewItems){
         item->m_isDynamic = false;
         item->m_image = NULLPB;
+        item->m_scaledPixbuf = nullptr;
     }
 
 
@@ -243,122 +246,119 @@ bool DockPreview::on_button_press_event(GdkEventButton *event)
 
 
 }
+
 /**
- * This method will be call from the background tread to manage the application image animation.
- * The animation consists in invert the colors of the image.
+ * Compares the given pixbuf data.
+ * @params  const GdkPixbuf* pixbuf
+ * @params  const guint8* pixels_first
+ * @params  const guint8* pixels_current
+ *
+ * @return true if the pixbuf data contains diferent data, otherwise false.
+ */
+inline bool ComparePixels (const GdkPixbuf* pixbuf, const guint8* pixels_first, const guint8* pixels_current)
+{
+    if (gdk_pixbuf_get_bits_per_sample(pixbuf) != 8 || gdk_pixbuf_get_colorspace(pixbuf) != GDK_COLORSPACE_RGB) {
+
+        return false;
+    }
+
+    int  x, y;
+    int  w = gdk_pixbuf_get_width(pixbuf);
+    int h = gdk_pixbuf_get_height(pixbuf);
+    int channels = gdk_pixbuf_get_n_channels(pixbuf);
+    gint rowstride = gdk_pixbuf_get_rowstride(pixbuf);
+    gint pixel_offset = 0;
+
+    for (y = 0; y < h; y++) {
+        for (x = 0; x < w; x++) {
+            pixel_offset = y * rowstride + x * channels;
+
+            if (pixels_first[pixel_offset] != pixels_current[pixel_offset]) {
+            g_print("TRUE\n");
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Detects movement by comparing the image pixels. This method runs in a thread.
  */
 void DockPreview::MovementDetector()
 {
-
     guint w,h, x, y, i;
     GdkRectangle boundingbox;
+    bool found = false;
+    gint pixel_offset = 0;
+    GdkPixbuf* pixbuf = nullptr;
+    GdkPixbuf* pixbuf_first = nullptr;
+
     while(threadRunning)
     {
         for(DockItem* item : DockPreview::m_previewItems){
-
-            bool found = false;
+            found = false;
             GdkWindow *wm_window = gdk_x11_window_foreign_new_for_display(gdk_display_get_default(), item->m_xid);
             if(wm_window == nullptr){
-                continue;
+                g_warning("Movedetection failed. wm_window is NULL\n");
+                return;
             }
 
             gdk_window_get_frame_extents(wm_window, &boundingbox);
-          //  guchar* buff = (guchar*) std::malloc(((boundingbox.width * boundingbox.height)*3) * sizeof(guchar));
-
-//            GdkPixbuf* base = nullptr;
-            gint pixel_offset = 0;
-//Returns a read-only pointer to the raw pixel data; must not be modified. This function allows skipping the implicit copy that must be made if gdk_pixbuf_get_pixels() is called on a read-only pixbuf.
             const guint8* pixels_first = nullptr;
             const guint8* pixels_current = nullptr;
-            GdkPixbuf* pixbuf = nullptr;
-            g_print("Start Scann for %d\n",item->m_xid );
+            pixbuf = nullptr;
+            pixbuf_first = nullptr;
 
-            for (i = 0 ; i < 4 ; i++){
-                pixbuf = gdk_pixbuf_get_from_window(wm_window, 0, 0, boundingbox.width, boundingbox.height);
-                pixels_current = gdk_pixbuf_read_pixels(pixbuf);
+            for (i = 0 ; i < 10 ; i++){
+                if (i == 0) {
+                    // This function will create an RGB pixbuf with 8 bits per channel with the size specified by the
+                    // width and height arguments scaled by the scale factor of window . The pixbuf will contain
+                    // an alpha channel if the window contains one.
+                    pixbuf_first = gdk_pixbuf_get_from_window(wm_window, 0, 0, boundingbox.width, boundingbox.height);
 
-                if(i == 0 && pixbuf != nullptr) {
-//                    base = gdk_pixbuf_copy(current);
-                    pixels_first = gdk_pixbuf_read_pixels(pixbuf);
-                    g_print("SET\n");
+                    // Returns a read-only pointer to the raw pixel data; must not be modified.
+                    // This function allows skipping the implicit copy that must be made if
+                    // gdk_pixbuf_get_pixels() is called on a read-only pixbuf.
+                    pixels_first = gdk_pixbuf_read_pixels(pixbuf_first);
                     continue;
                 }
 
-
-                int w = gdk_pixbuf_get_width(pixbuf);
-                int h = gdk_pixbuf_get_height(pixbuf);
-                int channels = gdk_pixbuf_get_n_channels(pixbuf);
-                gint rowstride = gdk_pixbuf_get_rowstride(pixbuf);
-                found = false;
-                for (y = 0; y < h; y++) {
-                    for (x = 0; x < w; x++) {
-                        pixel_offset = y * rowstride + x * channels;
-
-
-                        auto pixel_first = pixels_first[pixel_offset];
-                        auto pixel_current = pixels_current[pixel_offset];
-
-                        if (pixel_first !=  pixel_current )
-                        {
-                            found = true;
-//                        g_print(" %d %d\n", pixel_first, pixel_current);
-                        break;
-
-                        }
-
- //                       this->m_pixelsbuf[pixel_offset] = pixels[ pixel_offset];
-                        //guchar* pixel = &m_AppRunImage->get_pixels()[pixel_offset];
-                        //
-                    }
-
-                    if(found)
-                    break;
+                // This function will create an RGB pixbuf with 8 bits per channel with the size specified by the
+                // width and height arguments scaled by the scale factor of window . The pixbuf will contain
+                // an alpha channel if the window contains one.
+                pixbuf = gdk_pixbuf_get_from_window(wm_window, 0, 0, boundingbox.width, boundingbox.height);
+                if(pixbuf == nullptr){
+                    g_warning("Movedetection gdk_pixbuf_get_from_window failed. NULL\n");
+                    continue;
                 }
 
-            //    delete[] pixels_first;
-            //    delete pixels_current;
+                // Returns a read-only pointer to the raw pixel data; must not be modified.
+                // This function allows skipping the implicit copy that must be made if
+                // gdk_pixbuf_get_pixels() is called on a read-only pixbuf.
+                pixels_current = gdk_pixbuf_read_pixels(pixbuf);
+
+                // if is true then a movement has been detected
+                if (ComparePixels(pixbuf, pixels_first, pixels_current)){
+                    item->m_isDynamic = true;
+                    found = true;
+                }
+
+                // release ref
                 g_object_unref(pixbuf);
 
-//                if (item->isMovementDetected(pb)){
-//                     g_print("Movement detected %d\n", item->m_xid);
-//                }
-
-
-                    if(found){
-                        break;
-                    }
+                if(found){
+                    break;
+                }
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
 
-
-                    if(found){
-            ;
-            g_print("Found  %s\n",item->m_titlename.c_str());
-            item->m_isDynamic = true;
-                    }
-
-          // std::free(buff);
+               // release ref of first buff
+               g_object_unref(pixbuf_first);
         }
 
-
-//                    GdkPixbuf* scaledpb = GetPreviewImage(DockPreview::m_itemToDetectMovement);
- //                   if (scaledpb == nullptr){
-
-   //                 }
-
-        g_print("Finish Thread\n");
         break;
-
-    //GdkRectangle boundingbox;
-    //gdk_window_get_frame_extents(wm_window, &boundingbox);
-
-    //GdkPixbuf *pb = gdk_pixbuf_get_from_window(wm_window, 0, 0, boundingbox.width, boundingbox.height);
-    //if (pb == nullptr) {
-        //return nullptr;
-    //}
-
-    //return pb;
-
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
        }
 
@@ -387,6 +387,7 @@ void DockPreview::MovementDetector()
 
 
 }
+
 
 bool DockPreview::on_timeoutDraw(){
 
@@ -466,14 +467,23 @@ bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
                 Utilities::RoundedRectangle(cr, x, y, this->cellWidth - 16  , this->cellHeight  ,6);
                 cr->stroke();
 
-            //if(!m_firstDrawDone )
-            {
-
                 if( item->m_image == NULLPB || item->m_isDynamic ) {
-                    GdkPixbuf* scaledpb = GetPreviewImage(item);
-                    if (scaledpb !=  nullptr){
-                        //Glib::RefPtr<Gdk::Pixbuf> preview = IconLoader::PixbufConvert(scaledpb);
-                        item->m_image = IconLoader::PixbufConvert(scaledpb);
+                    item->m_scaledPixbuf = GetPreviewImage(item);
+                    if (item->m_scaledPixbuf !=  nullptr){
+                        item->m_image = IconLoader::PixbufConvert(item->m_scaledPixbuf);
+
+ //                   item->m_image->wrap(item->m_scaledPixbuf, true);
+
+//               Gdk::Pixbuf::wrap(item->m_scaledPixbuf, true);
+             //  Gdk::Pixbuf::create_source_image create_source_image(item->m_scaledPixbuf);
+
+               // Glib::RefPtr<Gdk::Pixbuf>wrap(item->m_scaledPixbuf, true);
+
+// 	A Glib::wrap() method for this object. More...
+
+
+                    //    g_object_unref(item->m_scaledPixbuf);
+                   //     item->m_scaledPixbuf = nullptr;
 
                     }
                 }
@@ -485,18 +495,13 @@ bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
                 }
 
-            }
+
 
             y +=  this->cellHeight + Configuration::get_separatorMargin();
 
         }
 
     }
-
-       m_firstDrawDone = true;
-
-    if(m_firstDrawDone )
-        g_print("HAS DRAW\n");
 
        return true;
 }
