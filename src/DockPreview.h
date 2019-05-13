@@ -46,7 +46,9 @@ class DockPreview : public Gtk::Window
         std::thread* m_thread = nullptr;
         static bool threadRunning;
         static void MovementDetector();
-//        static DockItem* m_itemToDetectMovement;
+        static bool m_detectMovement;
+
+        Glib::Timer m_detectMovementTimer;
 
         void hideMe();
         bool on_leave_notify_event(GdkEventCrossing* crossing_event);

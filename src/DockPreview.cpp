@@ -37,11 +37,12 @@ using namespace std::chrono_literals;
 
 bool DockPreview::threadRunning;
 std::vector<DockItem*> DockPreview::m_previewItems;
+bool DockPreview::m_detectMovement;
 
 DockPreview::DockPreview():Gtk::Window(Gtk::WindowType::WINDOW_POPUP){
 
     DockPreview::threadRunning = true;
-  //  DockPreview::m_itemToDetectMovement = nullptr;
+    DockPreview::m_detectMovement = true;
 
     // Set up the top-level window.
     set_title("DockPreview");
@@ -165,10 +166,11 @@ void DockPreview::init(const std::vector<DockItem*>& items, const guint index)
 
     this->move(x, y);
 
-
-
     // Start the background thread
     m_thread = new std::thread(this->MovementDetector);
+
+   // start the timer for post movement detections
+    m_detectMovementTimer.start();
 }
 /**
  * handles on_enter_notify_event
@@ -297,108 +299,99 @@ void DockPreview::MovementDetector()
 
     while(threadRunning)
     {
-        for(DockItem* item : DockPreview::m_previewItems){
-            found = false;
-            GdkWindow *wm_window = gdk_x11_window_foreign_new_for_display(gdk_display_get_default(), item->m_xid);
-            if(wm_window == nullptr){
-                g_warning("Movedetection failed. wm_window is NULL\n");
-                return;
-            }
+        if (DockPreview::m_detectMovement) {
+            for(DockItem* item : DockPreview::m_previewItems){
+                found = false;
 
-            gdk_window_get_frame_extents(wm_window, &boundingbox);
-            const guint8* pixels_first = nullptr;
-            const guint8* pixels_current = nullptr;
-            pixbuf = nullptr;
-            pixbuf_first = nullptr;
+                if (item->m_isDynamic){
+                    continue;
+                }
 
-            for (i = 0 ; i < 10 ; i++){
-                if (i == 0) {
+                GdkWindow *wm_window = gdk_x11_window_foreign_new_for_display(gdk_display_get_default(), item->m_xid);
+                if(wm_window == nullptr){
+                    g_warning("Movedetection failed. wm_window is NULL\n");
+                    return;
+                }
+
+                gdk_window_get_frame_extents(wm_window, &boundingbox);
+                const guint8* pixels_first = nullptr;
+                const guint8* pixels_current = nullptr;
+                pixbuf = nullptr;
+                pixbuf_first = nullptr;
+
+                for (i = 0 ; i < 10 ; i++){
+                    if (i == 0) {
+                        // This function will create an RGB pixbuf with 8 bits per channel with the size specified by the
+                        // width and height arguments scaled by the scale factor of window . The pixbuf will contain
+                        // an alpha channel if the window contains one.
+                        pixbuf_first = gdk_pixbuf_get_from_window(wm_window, 0, 0, boundingbox.width, boundingbox.height);
+
+                        // Returns a read-only pointer to the raw pixel data; must not be modified.
+                        // This function allows skipping the implicit copy that must be made if
+                        // gdk_pixbuf_get_pixels() is called on a read-only pixbuf.
+                        pixels_first = gdk_pixbuf_read_pixels(pixbuf_first);
+                        continue;
+                    }
+
                     // This function will create an RGB pixbuf with 8 bits per channel with the size specified by the
                     // width and height arguments scaled by the scale factor of window . The pixbuf will contain
                     // an alpha channel if the window contains one.
-                    pixbuf_first = gdk_pixbuf_get_from_window(wm_window, 0, 0, boundingbox.width, boundingbox.height);
+                    pixbuf = gdk_pixbuf_get_from_window(wm_window, 0, 0, boundingbox.width, boundingbox.height);
+                    if(pixbuf == nullptr){
+                        g_warning("Movedetection gdk_pixbuf_get_from_window failed. NULL\n");
+                        continue;
+                    }
 
                     // Returns a read-only pointer to the raw pixel data; must not be modified.
                     // This function allows skipping the implicit copy that must be made if
                     // gdk_pixbuf_get_pixels() is called on a read-only pixbuf.
-                    pixels_first = gdk_pixbuf_read_pixels(pixbuf_first);
-                    continue;
-                }
+                    pixels_current = gdk_pixbuf_read_pixels(pixbuf);
 
-                // This function will create an RGB pixbuf with 8 bits per channel with the size specified by the
-                // width and height arguments scaled by the scale factor of window . The pixbuf will contain
-                // an alpha channel if the window contains one.
-                pixbuf = gdk_pixbuf_get_from_window(wm_window, 0, 0, boundingbox.width, boundingbox.height);
-                if(pixbuf == nullptr){
-                    g_warning("Movedetection gdk_pixbuf_get_from_window failed. NULL\n");
-                    continue;
-                }
-
-                // Returns a read-only pointer to the raw pixel data; must not be modified.
-                // This function allows skipping the implicit copy that must be made if
-                // gdk_pixbuf_get_pixels() is called on a read-only pixbuf.
-                pixels_current = gdk_pixbuf_read_pixels(pixbuf);
-
-                // if is true then a movement has been detected
-                if (ComparePixels(pixbuf, pixels_first, pixels_current)){
-                    item->m_isDynamic = true;
-                    found = true;
-                }
-
-                // release ref
-                g_object_unref(pixbuf);
-
-                if(found){
-                    break;
-                }
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            }
-
-               // release ref of first buff
-               g_object_unref(pixbuf_first);
-        }
-
-        break;
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
-       }
-
-        /*if (m_AppRunImage && m_AppRunImage->get_colorspace() == Gdk::COLORSPACE_RGB && m_AppRunImage->get_bits_per_sample() == 8){
-            int w = m_AppRunImage->get_width();
-            int h = m_AppRunImage->get_height();
-            int channels = m_AppRunImage->get_n_channels();
-            gint rowstride = m_AppRunImage->get_rowstride();
-            gint pixel_offset;
-            for (i = 0; i < 6; i++) {
-                for (y = 0; y < h; y++) {
-                    for (x = 0; x < w; x++) {
-                        pixel_offset = y * rowstride + x * channels;
-                        guchar* pixel = &m_AppRunImage->get_pixels()[pixel_offset];
-
-                        pixel[0] = 255 - pixel[0];
-                        pixel[1] = 255 - pixel[1];
-                        pixel[2] = 255 - pixel[2];
+                    // if is true then a movement has been detected
+                    if (ComparePixels(pixbuf, pixels_first, pixels_current)){
+                        item->m_isDynamic = true;
+                        found = true;
                     }
+
+                    // release ref
+                    g_object_unref(pixbuf);
+
+                    if(found){
+                        break;
+                    }
+
+                    item->m_isDynamic = false;
+                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
                 }
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+                // release ref of first buff
+                g_object_unref(pixbuf_first);
             }
-            m_AppRunImage = NULLPB;
+
+            DockPreview::m_detectMovement = false;
         }
-        */
 
-
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    }
 }
 
 
-bool DockPreview::on_timeoutDraw(){
+bool DockPreview::on_timeoutDraw()
+{
+    if (!m_detectMovement && m_detectMovementTimer.elapsed() > 3.5){
+        m_detectMovementTimer.stop();
+        m_detectMovementTimer.reset();
 
-if(!m_firstDrawDone){
+    //    m_detectMovement = true;
+        m_detectMovementTimer.start();
+        return true;
+    }
 
-
-     //  m_firstDrawDone = true;
-}
-        Gtk::Widget::queue_draw();
+    Gtk::Widget::queue_draw();
     return true;
 }
+
+
 void DockPreview::on_window_opened(WnckScreen *screen, WnckWindow *window, gpointer data){
 
 }
@@ -464,38 +457,24 @@ bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
         }
         else {
 
-                Utilities::RoundedRectangle(cr, x, y, this->cellWidth - 16  , this->cellHeight  ,6);
-                cr->stroke();
+            Utilities::RoundedRectangle(cr, x, y, this->cellWidth - 16  , this->cellHeight  ,6);
+            cr->stroke();
 
-                if( item->m_image == NULLPB || item->m_isDynamic ) {
-                    item->m_scaledPixbuf = GetPreviewImage(item);
-                    if (item->m_scaledPixbuf !=  nullptr){
-                        item->m_image = IconLoader::PixbufConvert(item->m_scaledPixbuf);
-
- //                   item->m_image->wrap(item->m_scaledPixbuf, true);
-
-//               Gdk::Pixbuf::wrap(item->m_scaledPixbuf, true);
-             //  Gdk::Pixbuf::create_source_image create_source_image(item->m_scaledPixbuf);
-
-               // Glib::RefPtr<Gdk::Pixbuf>wrap(item->m_scaledPixbuf, true);
-
-// 	A Glib::wrap() method for this object. More...
-
-
-                    //    g_object_unref(item->m_scaledPixbuf);
-                   //     item->m_scaledPixbuf = nullptr;
-
-                    }
+            if(!item->m_image || item->m_isDynamic ) {
+                if(item->m_scaledPixbuf){
+                    g_object_unref(item->m_scaledPixbuf);
                 }
 
-                if (item->m_image != NULLPB){
-
-                        Gdk::Cairo::set_source_pixbuf(cr,item->m_image, x + 2 , y + 32 );
-                        cr->paint();
-
+                item->m_scaledPixbuf = GetPreviewImage(item);
+                if (item->m_scaledPixbuf !=  nullptr){
+                    item->m_image = Glib::wrap(item->m_scaledPixbuf, true);
                 }
+            }
 
-
+            if (item->m_image){
+                Gdk::Cairo::set_source_pixbuf(cr,item->m_image, x + 2 , y + 32 );
+                cr->paint();
+            }
 
             y +=  this->cellHeight + Configuration::get_separatorMargin();
 
