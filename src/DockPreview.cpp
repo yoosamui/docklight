@@ -21,8 +21,6 @@
 //
 //*****************************************************************
 
-
-
 #include "DockPreview.h"
 #include "DockPanel.h"
 #include "DockItemPositions.h"
@@ -32,17 +30,23 @@
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <chrono>
 #include <thread>
+#include <algorithm>
+
+#define PREVIEW_TITLE_OFFSET 32
+#define PREVIEW_HV_OFFSET 20
 
 using namespace std::chrono_literals;
 
 bool DockPreview::threadRunning;
 std::vector<DockItem*> DockPreview::m_previewItems;
 bool DockPreview::m_detectMovement;
+bool DockPreview::m_allowDraw;
 
 DockPreview::DockPreview():Gtk::Window(Gtk::WindowType::WINDOW_POPUP){
 
     DockPreview::threadRunning = true;
     DockPreview::m_detectMovement = true;
+    DockPreview::m_allowDraw = true;
 
     // Set up the top-level window.
     set_title("DockPreview");
@@ -130,7 +134,7 @@ void DockPreview::init(const std::vector<DockItem*>& items, const guint index)
 
     int x = 0;
     int y = 0;
-    guint hv_diff = 20;
+    guint hv_diff = PREVIEW_HV_OFFSET;
     this->cellWidth = 240;
     this->cellHeight= this->cellWidth - hv_diff;
     guint separatorsSize = Configuration::get_separatorMargin() * (items.size() - 1);
@@ -187,7 +191,6 @@ bool DockPreview::on_enter_notify_event(GdkEventCrossing* crossing_event)
 {
     m_canLeave = true;
     m_mouseIn = true;
-    //    A
     //    m_dockpanelReference->m_previewWindowActive = true;
     return true;
 }
@@ -319,6 +322,10 @@ void DockPreview::MovementDetector()
                 pixbuf = nullptr;
                 pixbuf_first = nullptr;
 
+                if (!DockPreview::threadRunning){
+                    return;
+                }
+
                 for (i = 0 ; i < 10 ; i++){
                     if (i == 0) {
                         // This function will create an RGB pixbuf with 8 bits per channel with the size specified by the
@@ -356,6 +363,10 @@ void DockPreview::MovementDetector()
                     // release ref
                     g_object_unref(pixbuf);
 
+                    if (!DockPreview::threadRunning){
+                        return;
+                    }
+
                     if(found){
                         break;
                     }
@@ -378,11 +389,12 @@ void DockPreview::MovementDetector()
 
 bool DockPreview::on_timeoutDraw()
 {
-    if (!m_detectMovement && m_detectMovementTimer.elapsed() > 3.5){
+    if (m_allowDraw && !m_detectMovement && m_detectMovementTimer.elapsed() > 3.5){
+    //    m_detectMovement = true;
+
         m_detectMovementTimer.stop();
         m_detectMovementTimer.reset();
 
-    //    m_detectMovement = true;
         m_detectMovementTimer.start();
         return true;
     }
@@ -395,14 +407,21 @@ bool DockPreview::on_timeoutDraw()
 void DockPreview::on_window_opened(WnckScreen *screen, WnckWindow *window, gpointer data){
 
 }
-void DockPreview::on_window_closed(WnckScreen *screen, WnckWindow *window, gpointer data){
+void DockPreview::on_window_closed(WnckScreen *screen, WnckWindow *window, gpointer data)
+{
 
+    m_detectMovement = true;
+    DockPreview::m_allowDraw = false;
 }
 
 
 
 bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
+
+    if (!DockPreview::m_allowDraw) {
+        return true;
+    }
 
     guint idx = 0;
     guint x,y;
@@ -465,14 +484,16 @@ bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
                     g_object_unref(item->m_scaledPixbuf);
                 }
 
-                item->m_scaledPixbuf = GetPreviewImage(item);
+                item->m_scaledPixbuf = GetPreviewImage(item, item->m_scaleWidth, item->m_scaleHeight);
                 if (item->m_scaledPixbuf !=  nullptr){
                     item->m_image = Glib::wrap(item->m_scaledPixbuf, true);
                 }
             }
 
             if (item->m_image){
-                Gdk::Cairo::set_source_pixbuf(cr,item->m_image, x + 2 , y + 32 );
+                guint centerX = (this->cellWidth / 2) -  item->m_scaleWidth / 2;
+                guint centerY = ((this->cellHeight - PREVIEW_TITLE_OFFSET) / 2) -  item->m_scaleHeight / 2;
+                Gdk::Cairo::set_source_pixbuf(cr,item->m_image, x + centerX - 8,  y + PREVIEW_TITLE_OFFSET + centerY - 1);
                 cr->paint();
             }
 
@@ -502,79 +523,81 @@ bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
  */
 
 
-GdkPixbuf* DockPreview::GetImage(DockItem* item)
+/**
+ * Converts the X11 window to a GdkWindow. The result will procesed to a pixbuf and scaled.
+ * Return a GdkPixbuf pointer and the scale values.
+ */
+GdkPixbuf* DockPreview::GetPreviewImage(DockItem* item, guint& scaleWidth, guint& scaleHeight)
 {
-
+    // Wraps a native window in a GdkWindow. The function will try to look up the window using gdk_x11_window_lookup_for_display() first.
+    // If it does not find it there, it will create a new window.
+    // This may fail if the window has been destroyed. If the window was already known to GDK, a new reference to the existing GdkWindow is returned.
+    // Returns a GdkWindow wrapper for the native window, or NULL if the window has been destroyed. The wrapper will be newly created, if one doesn’t exist already.
     GdkWindow *wm_window = gdk_x11_window_foreign_new_for_display(gdk_display_get_default(), item->m_xid);
     if(wm_window == nullptr){
         return nullptr;
     }
 
-    GdkRectangle boundingbox;
-    gdk_window_get_frame_extents(wm_window, &boundingbox);
+    // Get the window size
+    guint winWidth = gdk_window_get_width(wm_window);
+    guint winHeight = gdk_window_get_height(wm_window);
 
-    GdkPixbuf *pb = gdk_pixbuf_get_from_window(wm_window, 0, 0, boundingbox.width, boundingbox.height);
-    if (pb == nullptr) {
+    // This function will create an RGB pixbuf with 8 bits per channel with the size specified by the width and height
+    // arguments scaled by the scale factor of window . The pixbuf will contain an alpha channel if the window contains one.
+    // If the window is off the screen, then there is no image data in the obscured/offscreen regions to be placed in the pixbuf.
+    // The contents of portions of the pixbuf corresponding to the offscreen region are undefined.
+    // If the window you’re obtaining data from is partially obscured by other windows, then the contents of the pixbuf areas
+    // corresponding to the obscured regions are undefined.
+    // If the window is not mapped (typically because it’s iconified/minimized or not on the current workspace), then NULL will be returned.
+    // If memory can’t be allocated for the return value, NULL will be returned instead.
+    // (In short, there are several ways this function can fail, and if it fails it returns NULL; so check the return value.)
+    // creates a newly pixbuf with a reference count of 1, or NULL on error.
+    GdkPixbuf *winPixbuf = gdk_pixbuf_get_from_window(wm_window, 0, 0, winWidth, winHeight);
+    if (winPixbuf == nullptr) {
         return nullptr;
     }
 
-    return pb;
-}
+    int width = this->cellWidth;
+    int height = this->cellHeight - PREVIEW_TITLE_OFFSET - 2;
 
-GdkPixbuf* DockPreview::GetPreviewImage(DockItem* item)
-{
-    GdkWindow *wm_window = gdk_x11_window_foreign_new_for_display(gdk_display_get_default(), item->m_xid);
-    if(wm_window == nullptr){
-        return nullptr;
+    double minSize = std::min(width, height);
+    double maxSize = std::max(winWidth, winHeight);
+    double aspectRatio = minSize / maxSize;
+
+    scaleWidth = winWidth * aspectRatio ;
+    scaleHeight = winHeight * aspectRatio;
+
+    // ajust width size to make looks better
+    if(winWidth >= DockWindow::Monitor::get_geometry().width / 2 ) {
+        scaleWidth = width - PREVIEW_HV_OFFSET;
     }
 
-    GdkRectangle boundingbox;
-    gdk_window_get_frame_extents(wm_window, &boundingbox);
-
-    GdkPixbuf *pb = gdk_pixbuf_get_from_window(wm_window, 0, 0, boundingbox.width - 10, boundingbox.height - 30);
-    //GdkPixbuf *pb = gdk_pixbuf_get_from_window(wm_window, 0, 0, boundingbox.width - 1, boundingbox.height - 1);
-    if (pb == nullptr) {
-        return nullptr;
+    // ajust height size to make looks better
+    if(winHeight >= DockWindow::Monitor::get_geometry().height / 2 ) {
+       scaleHeight = height;
     }
-   int height = this->cellHeight; //m_previewHeight - DEF_PREVIEW_SCALE_HEIGHT_OFFSET;
-    int width = this->cellWidth;//m_previewWidth - DEF_PREVIEW_SCALE_WIDTH_OFFSET;
-    int scale_heght = height;
 
-    int windowheight = gdk_window_get_height(wm_window);
-
-    int heightHalf = (height / 2);
-
-    if (windowheight < 300)
-        scale_heght = heightHalf;
-    if (windowheight < 200)
-        scale_heght = heightHalf - 20;
-    if (windowheight < 100)
-        scale_heght = heightHalf - 40;
-    if (windowheight < 50)
-        scale_heght = heightHalf - 60;
-
-    if (scale_heght < 10)
-        scale_heght = height;
-
-
-
-
-
-    // offers reasonable quality and speed.
-    GdkPixbuf* scaledpb = gdk_pixbuf_scale_simple(pb,this->cellWidth-20, this->cellHeight-34, GDK_INTERP_BILINEAR);
-    //GdkPixbuf* scaledpb = gdk_pixbuf_scale_simple(pb,width, scale_heght, GDK_INTERP_BILINEAR);
+    // Scale with reasonable quality and speed.
+    GdkPixbuf* scaledpb = gdk_pixbuf_scale_simple(winPixbuf, scaleWidth  , scaleHeight, GDK_INTERP_BILINEAR);
     if (scaledpb == nullptr) {
-        g_object_unref(pb);
+        g_object_unref(winPixbuf);
         return nullptr;
     }
 
+    // unref
+    g_object_unref(winPixbuf);
 
-    g_object_unref(pb);
+    // the caller should unref this pointer
     return scaledpb;
-
 }
 
-
-
+/*
+ REFS:
+    https://developer.gnome.org/gdk3/stable/gdk3-Pixbufs.html#gdk-pixbuf-get-from-window
+    https://developer.gnome.org/gdk3/stable/gdk3-X-Window-System-Interaction.html#gdk-x11-window-foreign-new-for-display
+    https://developer.gnome.org/gdk3/stable/gdk3-X-Window-System-Interaction.html   https://source.puri.sm/dorota.czaplejewicz/gtk/commit/1f076257059f15f37c2c93853c3eff2ec2be2aa1?w=1
+    https://github.com/nobled/gtk/blob/master/gdk/gdkpixbuf-drawable.c
+    https://developer.gnome.org/gdk3/stable/gdk3-Pixbufs.html#gdk-pixbuf-get-from-window
+*/
 
 

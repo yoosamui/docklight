@@ -32,6 +32,8 @@ public:
     DockItemType m_dockitemtype = DockItemType::SingleDock;
     Glib::RefPtr<Gdk::Pixbuf> m_image = NULLPB;
     GdkPixbuf *m_scaledPixbuf = nullptr;
+    guint m_scaleWidth = 0;
+    guint m_scaleHeight = 0;
     bool m_isDynamic = false;
     DockItem* get_Next();
     WnckWindow *m_window;

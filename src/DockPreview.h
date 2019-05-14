@@ -47,6 +47,7 @@ class DockPreview : public Gtk::Window
         static bool threadRunning;
         static void MovementDetector();
         static bool m_detectMovement;
+        static bool m_allowDraw;
 
         Glib::Timer m_detectMovementTimer;
 
@@ -59,8 +60,7 @@ class DockPreview : public Gtk::Window
 
         bool on_button_press_event(GdkEventButton *event);
 
-        GdkPixbuf* GetPreviewImage(DockItem* item);
-        GdkPixbuf* GetImage(DockItem* item);
+        GdkPixbuf* GetPreviewImage(DockItem* item, guint& scaleWidth, guint& scaleHeight);
         Configuration::Style::Theme m_Theme = Configuration::get_Theme();
         Pango::FontDescription m_font;
         bool on_timeoutDraw();
