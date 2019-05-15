@@ -88,9 +88,7 @@ DockPanel::DockPanel():
     g_signal_connect(G_OBJECT(wnckscreen), "window-opened", G_CALLBACK(DockPanel::on_window_opened), NULL);
     g_signal_connect(wnckscreen, "window_closed", G_CALLBACK(DockPanel::on_window_closed), NULL);
     g_signal_connect(wnckscreen, "active_window_changed", G_CALLBACK(DockPanel::on_active_window_changed_callback), NULL);
-
-    Glib::signal_timeout().connect(sigc::mem_fun(*this, &DockPanel::on_timeoutDraw),1000/10);
-
+    Glib::signal_timeout().connect(sigc::mem_fun(*this, &DockPanel::on_timeoutDraw),1000 / 8);
 
     // Menus
     m_HomeMenu.attach_to_widget(*this);
@@ -203,7 +201,7 @@ void DockPanel::AppRunAnimation()
             int channels = m_AppRunImage->get_n_channels();
             gint rowstride = m_AppRunImage->get_rowstride();
             gint pixel_offset;
-            for (i = 0; i < 6; i++) {
+            for (i = 0; i < 4; i++) {
                 for (y = 0; y < h; y++) {
                     for (x = 0; x < w; x++) {
                         pixel_offset = y * rowstride + x * channels;
@@ -706,13 +704,19 @@ void DockPanel::ExecuteApp(GdkEventButton* event)
         return;
     }
 
+    // skeep home
+    if (m_previewIndex == 0){
+        return;
+    }
+
     this->PreviewClose();
 
     this->m_dockPreview = new DockPreview();
     this->m_previewIndex = this->m_currentMoveIndex;
-    this->m_dockPreview->init(item->m_items, this->m_currentMoveIndex);
-    this->m_dockPreview->show();
+    guint cellSize = DockWindow::is_Horizontal() ? AppUpdater::m_dockitems[0]->get_Width() :  AppUpdater::m_dockitems[0]->get_Height();
+    this->m_dockPreview->Show(item->m_items, this->m_currentMoveIndex, cellSize);
 
+    m_dockPreview->show();
 }
 
 /**

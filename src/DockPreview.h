@@ -35,13 +35,13 @@ class DockPreview : public Gtk::Window
     public:
         DockPreview();
         ~DockPreview();
-        void init(const std::vector<DockItem*>& items, const guint index);
+        void Show(const std::vector<DockItem*>& items, const guint index, const guint cellSize);
     private:
         bool m_canLeave = false;
         bool m_mouseIn = false;
 
-        guint cellWidth;
-        guint cellHeight;
+        guint m_cellWidth;
+        guint m_cellHeight;
 
         std::thread* m_thread = nullptr;
         static bool threadRunning;
