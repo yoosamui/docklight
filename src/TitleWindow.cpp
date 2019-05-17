@@ -89,36 +89,35 @@ bool TitleWindow::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
 
     cr->set_source_rgba(
-    this->m_Theme.PanelTitle().Fill().Color::red,
-    this->m_Theme.PanelTitle().Fill().Color::green,
-    this->m_Theme.PanelTitle().Fill().Color::blue,
-    this->m_Theme.PanelTitle().Fill().Color::alpha);
-    Utilities::RoundedRectangle(cr, 0, 0, this->get_width(), this->get_height(),this->m_Theme.PanelTitle().Ratio());
+            m_Theme.PanelTitle().Fill().Color::red,
+            m_Theme.PanelTitle().Fill().Color::green,
+            m_Theme.PanelTitle().Fill().Color::blue,
+            m_Theme.PanelTitle().Fill().Color::alpha);
+    Utilities::RoundedRectangle(cr, 0, 0, this->get_width(), this->get_height(),m_Theme.PanelTitle().Ratio());
     cr->fill();
 
 
     cr->set_source_rgba(
-    this->m_Theme.PanelTitle().Stroke().Color::red,
-    this->m_Theme.PanelTitle().Stroke().Color::green,
-    this->m_Theme.PanelTitle().Stroke().Color::blue,
-    this->m_Theme.PanelTitle().Stroke().Color::alpha);
+            m_Theme.PanelTitle().Stroke().Color::red,
+            m_Theme.PanelTitle().Stroke().Color::green,
+            m_Theme.PanelTitle().Stroke().Color::blue,
+            m_Theme.PanelTitle().Stroke().Color::alpha);
 
-    cr->set_line_width(this->m_Theme.PanelTitle().LineWidth());
-    Utilities::RoundedRectangle(cr, 0, 0, this->get_width(), this->get_height(),this->m_Theme.PanelTitle().Ratio());
+    cr->set_line_width(m_Theme.PanelTitle().LineWidth());
+    Utilities::RoundedRectangle(cr, 0, 0, this->get_width(), this->get_height(),m_Theme.PanelTitle().Ratio());
     cr->stroke();
 
     Glib::RefPtr<Pango::Layout> layout = create_pango_layout(m_Label.get_text());
     pango_layout_set_alignment(layout->gobj(),PANGO_ALIGN_CENTER );
 
     cr->set_source_rgba(
-    this->m_Theme.PanelTitleText().Stroke().Color::red,
-    this->m_Theme.PanelTitleText().Stroke().Color::green,
-    this->m_Theme.PanelTitleText().Stroke().Color::blue,
-    this->m_Theme.PanelTitleText().Stroke().Color::alpha);
-
+            m_Theme.PanelTitleText().Stroke().Color::red,
+            m_Theme.PanelTitleText().Stroke().Color::green,
+            m_Theme.PanelTitleText().Stroke().Color::blue,
+            m_Theme.PanelTitleText().Stroke().Color::alpha)
+            ;
     cr->move_to(6, 6);
     layout->show_in_cairo_context(cr);
     cr->reset_clip(); // Reset the clipping
-
 
 }

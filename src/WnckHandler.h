@@ -21,6 +21,7 @@ namespace WnckHandler
 {
     void ActivateWindow(WnckWindow* window);
     WnckWindow* get_ActiveWindowIfAny(DockItem* item);
+    void SelectWindow(WnckWindow* window);
     void HomeCloseAllWindows();
     void HomeCloseAllExceptActive();
     void HomeMinimizeAllExceptActive();

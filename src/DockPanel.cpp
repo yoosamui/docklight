@@ -131,8 +131,8 @@ DockPanel::DockPanel():
  */
 int DockPanel::Init(Gtk::Window* window)
 {
-    this->m_AppWindow = window;
-    this->m_AppUpdater = new AppUpdater();
+    m_AppWindow = window;
+    m_AppUpdater = new AppUpdater();
 
 
     const char* filename = m_homeiconFilePath.c_str();
@@ -156,7 +156,7 @@ int DockPanel::Init(Gtk::Window* window)
     dockItem->m_realgroupname = _("Desktop");
     dockItem->m_dockitemtype = DockItemType::SingleDock;
     dockItem->m_index = 0;
-    this->m_AppUpdater->m_dockitems.insert(this->m_AppUpdater->m_dockitems.begin(), dockItem);
+    m_AppUpdater->m_dockitems.insert(this->m_AppUpdater->m_dockitems.begin(), dockItem);
 
     // Start the background thread for application start animation
     m_AppRunThreadLauncher = new std::thread(AppRunAnimation);
@@ -267,13 +267,13 @@ void DockPanel::on_NewMenu_event()
 
     }
 
-    // start the animation and launch the application
-    m_AppRunImage = item->m_image;
     if (!Launcher::Launch(item->m_realgroupname)) {
 
         //   createLauncher(item);
     }
 
+    // start the animation and launch the application
+    m_AppRunImage = item->m_image;
     this->update();
 }
 
@@ -290,7 +290,7 @@ void DockPanel::on_QuitMenu_event()
  */
 void DockPanel::on_HideMenu_event()
 {
-    this->m_popupMenuOn = false;
+    m_popupMenuOn = false;
 }
 
 /**
@@ -298,12 +298,12 @@ void DockPanel::on_HideMenu_event()
  */
 void DockPanel::on_AttachMenu_event()
 {
-    this->m_AppUpdater->AttachItem(this->m_currentMoveIndex);
+    m_AppUpdater->AttachItem(this->m_currentMoveIndex);
 }
 
 void DockPanel::on_DettachMenu_event()
 {
-    if (!this->m_AppUpdater->DettachItem(this->m_currentMoveIndex)){
+    if (!m_AppUpdater->DettachItem(this->m_currentMoveIndex)){
         return;
     }
 
@@ -396,7 +396,7 @@ void DockPanel::on_AddSeparator_event()
     dockItem->m_dockitemtype = DockItemType::Separator;
     dockItem->m_isAttached = true;
 
-    this->m_AppUpdater->m_dockitems.push_back(dockItem);
+    m_AppUpdater->m_dockitems.push_back(dockItem);
     DockWindow::update();
 }
 
@@ -500,7 +500,7 @@ bool DockPanel::on_button_press_event(GdkEventButton *event)
             m_mouseLeftButtonDown = true;
 
             // start drag & drop timer
-            if (this->m_currentMoveIndex > 0) {
+            if (m_currentMoveIndex > 0) {
                 m_dragdropMousePoint.set_x((int) event->x);
                 m_dragdropMousePoint.set_y((int) event->y);
                 m_dragdropTimer.start();
@@ -517,7 +517,7 @@ bool DockPanel::on_button_press_event(GdkEventButton *event)
                 //DockItem *dockitem = m_AppUpdater->m_dockitems[m_currentMoveIndex];
                 //dockitem->m_isAttached = true;
                 //dockitem->m_attachedIndex = m_currentMoveIndex;
-                //this->m_AppUpdater->Save();
+                //m_AppUpdater->Save();
             }
 
             return true;
@@ -537,7 +537,7 @@ void DockPanel::DragDropEnds()
         m_AppUpdater->Reindex();
 
         // set as attached and save it
-        if (this->m_DragDropSourceIndex != this->m_currentMoveIndex){
+        if (m_DragDropSourceIndex != this->m_currentMoveIndex){
             m_dragDropItem->m_isAttached = true;
             m_AppUpdater->Save();
         }
@@ -584,11 +584,11 @@ bool DockPanel::on_button_release_event(GdkEventButton *event)
         // Menus
         if (m_currentMoveIndex == 0) {
             m_HomeMenu.popup(sigc::mem_fun(*this, &DockPanel::on_popup_homemenu_position), 1, event->time);
-            this->m_popupMenuOn = true;
+            m_popupMenuOn = true;
         }
         else  if (m_currentMoveIndex > 0) {
             m_ItemMenu.popup(sigc::mem_fun(*this,&DockPanel::on_popup_itemmenu_position), 1, event->time);
-            this->m_popupMenuOn = true;
+            m_popupMenuOn = true;
         }
 
         //Home
@@ -638,7 +638,7 @@ bool DockPanel::on_scroll_event(GdkEventScroll* e)
     if (index == -1 || index == 0)
         return true;
 
-    DockItem* item = this->m_AppUpdater->m_dockitems[index]->get_Next();
+    DockItem* item = m_AppUpdater->m_dockitems[index]->get_Next();
     if (item == nullptr)
         return true;
 
@@ -700,7 +700,7 @@ void DockPanel::ExecuteApp(GdkEventButton* event)
     }
 
     // check if preview already open.
-    if( m_previewIndex == this->m_currentMoveIndex && this->m_dockPreview){
+    if( m_previewIndex == m_currentMoveIndex && this->m_dockPreview){
         return;
     }
 
@@ -711,10 +711,9 @@ void DockPanel::ExecuteApp(GdkEventButton* event)
 
     this->PreviewClose();
 
-    this->m_dockPreview = new DockPreview();
-    this->m_previewIndex = this->m_currentMoveIndex;
-    guint cellSize = DockWindow::is_Horizontal() ? AppUpdater::m_dockitems[0]->get_Width() :  AppUpdater::m_dockitems[0]->get_Height();
-    this->m_dockPreview->Show(item->m_items, this->m_currentMoveIndex, cellSize);
+    m_dockPreview = new DockPreview();
+    m_previewIndex = this->m_currentMoveIndex;
+    m_dockPreview->Show(item->m_items, this->m_currentMoveIndex, AppUpdater::m_dockitems[0]->get_Height());
 
     m_dockPreview->show();
 }
@@ -724,18 +723,18 @@ void DockPanel::ExecuteApp(GdkEventButton* event)
  */
 inline DockItem* DockPanel::get_CurrentItem()
 {
-    if (m_currentMoveIndex < 0 || m_currentMoveIndex > this->m_AppUpdater->m_dockitems.size()) {
+    if (m_currentMoveIndex < 0 || m_currentMoveIndex > m_AppUpdater->m_dockitems.size()) {
         return nullptr;
     }
 
-    return this->m_AppUpdater->m_dockitems[m_currentMoveIndex];
+    return m_AppUpdater->m_dockitems[m_currentMoveIndex];
 }
 
 
 
 bool DockPanel::get_AutohideAllow()
 {
-    return this->m_popupMenuOn == false && this->m_dockPreview == nullptr;
+    return m_popupMenuOn == false && this->m_dockPreview == nullptr;
 }
 
 /**
@@ -752,7 +751,7 @@ void DockPanel::update()
 bool DockPanel::on_timeoutDraw()
 {
     // initiate the drag
-    if (!m_DragDropBegin && this->m_currentMoveIndex > 0 &&  m_mouseLeftButtonDown && m_dragdropTimer.elapsed() >= 0.25 ){
+    if (!m_DragDropBegin && m_currentMoveIndex > 0 &&  m_mouseLeftButtonDown && m_dragdropTimer.elapsed() >= 0.25 ){
         m_dragdropTimer.stop();
         m_dragdropTimer.reset();
 
@@ -761,7 +760,7 @@ bool DockPanel::on_timeoutDraw()
 
             m_AppRunImage = m_dragDropItem->m_image;
             m_DragDropBegin = true;
-            this->m_DragDropSourceIndex = this->m_currentMoveIndex;
+            m_DragDropSourceIndex = this->m_currentMoveIndex;
         }
     }
 
@@ -787,7 +786,7 @@ inline int DockPanel::get_Index(const int& mouseX, const int& mouseY)
     int y = x;
 
     if (DockWindow::is_Horizontal()) {
-        for (auto item : this->m_AppUpdater->m_dockitems) {
+        for (auto item : m_AppUpdater->m_dockitems) {
             if (mouse.get_x() >= x && mouse.get_x() <= x + item->get_Width()) {
                 return idx;
             }
@@ -799,7 +798,7 @@ inline int DockPanel::get_Index(const int& mouseX, const int& mouseY)
     else
     {
         int height;
-        for (DockItem* item : this->m_AppUpdater->m_dockitems) {
+        for (DockItem* item : m_AppUpdater->m_dockitems) {
             height = item->m_dockitemtype == DockItemType::Separator ? item->get_Width() : item->get_Height();
 
             if (mouse.get_y() >= y && mouse.get_y() <= y + height) {
@@ -827,14 +826,14 @@ bool DockPanel::on_motion_notify_event(GdkEventMotion * event)
 
     if(m_DragDropBegin){
 
-        this->m_AppUpdater->MoveItem(this->m_currentMoveIndex);
+        m_AppUpdater->MoveItem(this->m_currentMoveIndex);
         m_dragdropMousePoint.set_x((int) event->x);
         m_dragdropMousePoint.set_y((int) event->y);
 
 
     }
 
-    if(DockPanel::m_previewIndex != this->m_currentMoveIndex && DockPanel::m_dockPreview != nullptr){
+    if(DockPanel::m_previewIndex != m_currentMoveIndex && DockPanel::m_dockPreview != nullptr){
         DockPanel::PreviewClose();
     }
 
@@ -955,25 +954,25 @@ bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 void DockPanel::draw_Panel(const Cairo::RefPtr<Cairo::Context>& cr)
 {
         cr->set_source_rgba(
-            this->m_Theme.Panel().Fill().Color::red,
-            this->m_Theme.Panel().Fill().Color::green,
-            this->m_Theme.Panel().Fill().Color::blue,
-            this->m_Theme.Panel().Fill().Color::alpha);
+            m_Theme.Panel().Fill().Color::red,
+            m_Theme.Panel().Fill().Color::green,
+            m_Theme.Panel().Fill().Color::blue,
+            m_Theme.Panel().Fill().Color::alpha);
 
     if (Configuration::is_panelMode()) {
         cr->paint();
     }
     else {
 
-        RoundedRectangle(cr, 0, 0, DockWindow::get_DockWindowWidth(), DockWindow::get_DockWindowHeight(), this->m_Theme.Panel().Ratio());
+        RoundedRectangle(cr, 0, 0, DockWindow::get_DockWindowWidth(), DockWindow::get_DockWindowHeight(), m_Theme.Panel().Ratio());
         cr->fill();
 
         cr->set_source_rgba(
-            this->m_Theme.Panel().Stroke().Color::red,
-            this->m_Theme.Panel().Stroke().Color::green,
-            this->m_Theme.Panel().Stroke().Color::blue,
-            this->m_Theme.Panel().Stroke().Color::alpha);
-        RoundedRectangle(cr, 0, 0, DockWindow::get_DockWindowWidth(), DockWindow::get_DockWindowHeight(), this->m_Theme.Panel().Ratio());
+            m_Theme.Panel().Stroke().Color::red,
+            m_Theme.Panel().Stroke().Color::green,
+            m_Theme.Panel().Stroke().Color::blue,
+            m_Theme.Panel().Stroke().Color::alpha);
+        RoundedRectangle(cr, 0, 0, DockWindow::get_DockWindowWidth(), DockWindow::get_DockWindowHeight(), m_Theme.Panel().Ratio());
         cr->stroke();
     }
 }
@@ -997,29 +996,29 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
     int width = 0;
     int height = 0;
 
-    int itemsCount = this->m_AppUpdater->m_dockitems.size();
+    int itemsCount = m_AppUpdater->m_dockitems.size();
 
-    this->m_widthDecrement = 0;
-    this->m_heightDecrement = 0;
+    m_widthDecrement = 0;
+    m_heightDecrement = 0;
 
-    this->m_ItemsWidth = 0;
-    this->m_ItemsHeight = 0;
+    m_ItemsWidth = 0;
+    m_ItemsHeight = 0;
 
     if (DockWindow::is_Horizontal()){
 
-        this->m_widthDecrement = DockItemPositions::get_ResizeWidthDecrement();
-        if (widthDecrement != this->m_widthDecrement){
+        m_widthDecrement = DockItemPositions::get_ResizeWidthDecrement();
+        if (widthDecrement != m_widthDecrement){
 
-            widthDecrement = this->m_widthDecrement;
+            widthDecrement = m_widthDecrement;
             DockWindow::update();
         }
 
     }else{
 
-        this->m_heightDecrement = DockItemPositions::get_ResizeHeightDecrement();
-        if (heightDecrement != this->m_heightDecrement){
+        m_heightDecrement = DockItemPositions::get_ResizeHeightDecrement();
+        if (heightDecrement != m_heightDecrement){
 
-            heightDecrement = this->m_heightDecrement;
+            heightDecrement = m_heightDecrement;
             DockWindow::update();
         }
     }
@@ -1029,7 +1028,7 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
     // Draw all items with cairo
     for (idx = 0; idx < itemsCount; idx++) {
 
-        DockItem* item = this->m_AppUpdater->m_dockitems[idx];
+        DockItem* item = m_AppUpdater->m_dockitems[idx];
         width = item->get_Width();
         height = item->get_Height();
 
@@ -1042,29 +1041,29 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
         item->m_posX = x;
         item->m_posY = y;
 
-        this->m_ItemsWidth  += width;
-        this->m_ItemsHeight += height;
+        m_ItemsWidth  += width;
+        m_ItemsHeight += height;
 
         // Draw cells
         if (item->m_dockitemtype != DockItemType::Separator ){
 
             cr->set_source_rgba(
-            this->m_Theme.PanelCell().Fill().Color::red,
-            this->m_Theme.PanelCell().Fill().Color::green,
-            this->m_Theme.PanelCell().Fill().Color::blue,
-            this->m_Theme.PanelCell().Fill().Color::alpha);
+            m_Theme.PanelCell().Fill().Color::red,
+            m_Theme.PanelCell().Fill().Color::green,
+            m_Theme.PanelCell().Fill().Color::blue,
+            m_Theme.PanelCell().Fill().Color::alpha);
 
-            RoundedRectangle(cr, x, y, width, height, this->m_Theme.PanelCell().Ratio());
+            RoundedRectangle(cr, x, y, width, height, m_Theme.PanelCell().Ratio());
             cr->fill();
             cr->set_source_rgba(
-            this->m_Theme.PanelCell().Stroke().Color::red,
-            this->m_Theme.PanelCell().Stroke().Color::green,
-            this->m_Theme.PanelCell().Stroke().Color::blue,
-            this->m_Theme.PanelCell().Stroke().Color::alpha);
-            cr->set_line_width(this->m_Theme.PanelCell().LineWidth());
+            m_Theme.PanelCell().Stroke().Color::red,
+            m_Theme.PanelCell().Stroke().Color::green,
+            m_Theme.PanelCell().Stroke().Color::blue,
+            m_Theme.PanelCell().Stroke().Color::alpha);
+            cr->set_line_width(m_Theme.PanelCell().LineWidth());
 
-            if (this->m_Theme.PanelCell().Mask() == 0){
-                RoundedRectangle(cr, x, y, width, height, this->m_Theme.PanelCell().Ratio());
+            if (m_Theme.PanelCell().Mask() == 0){
+                RoundedRectangle(cr, x, y, width, height, m_Theme.PanelCell().Ratio());
             }
             else{
                 // bottom
@@ -1082,11 +1081,11 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
             if (item->m_items.size() > 0) {
                 cr->set_source_rgb(1.0, 1.0, 1.0);
                 if (item->m_items.size() == 1) {
-                    cr->arc(x + center, y + height - 5, 2.0, 0, 2 * M_PI);
+                    cr->arc(x + center, y + height - 3, 2.0, 0, 2 * M_PI);
                 }
                 else if (item->m_items.size() > 1) {
-                    cr->arc(x + center - 4, y + height - 5, 2.0, 0, 2 * M_PI);
-                    cr->arc(x + center + 4, y + height - 5, 2.0, 0, 2 * M_PI);
+                    cr->arc(x + center - 4, y + height - 3, 2.0, 0, 2 * M_PI);
+                    cr->arc(x + center + 4, y + height - 3, 2.0, 0, 2 * M_PI);
                 }
                 cr->fill();
             }
@@ -1106,22 +1105,22 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
         // Selector
         if (idx == m_currentMoveIndex && (item->m_dockitemtype != DockItemType::Separator || m_DragDropBegin )) {
 
-            //cr->set_source_rgba(255.0, 255.0, 255.0, 0.4);
             cr->set_source_rgba(
-            this->m_Theme.Selector().Fill().Color::red,
-            this->m_Theme.Selector().Fill().Color::green,
-            this->m_Theme.Selector().Fill().Color::blue,
-            this->m_Theme.Selector().Fill().Color::alpha);
-            RoundedRectangle(cr, x, y, width, height, this->m_Theme.Selector().Ratio());
+            m_Theme.Selector().Fill().Color::red,
+            m_Theme.Selector().Fill().Color::green,
+            m_Theme.Selector().Fill().Color::blue,
+            m_Theme.Selector().Fill().Color::alpha);
+
+            RoundedRectangle(cr, x, y, width, height, m_Theme.Selector().Ratio());
             cr->fill();
 
             cr->set_source_rgba(
-            this->m_Theme.Selector().Stroke().Color::red,
-            this->m_Theme.Selector().Stroke().Color::green,
-            this->m_Theme.Selector().Stroke().Color::blue,
-            this->m_Theme.Selector().Stroke().Color::alpha);
-            cr->set_line_width(this->m_Theme.Selector().LineWidth());
-            RoundedRectangle(cr, x, y, width, height, this->m_Theme.Selector().Ratio());
+            m_Theme.Selector().Stroke().Color::red,
+            m_Theme.Selector().Stroke().Color::green,
+            m_Theme.Selector().Stroke().Color::blue,
+            m_Theme.Selector().Stroke().Color::alpha);
+            cr->set_line_width(m_Theme.Selector().LineWidth());
+            RoundedRectangle(cr, x, y, width, height, m_Theme.Selector().Ratio());
             cr->stroke();
 
         }
@@ -1133,7 +1132,7 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
  */
 void DockPanel::show_Title()
 {
-    if (Configuration::is_autoHide() && !DockWindow::is_Visible() || !m_mouseIn || this->m_dockPreview != nullptr){
+    if (Configuration::is_autoHide() && !DockWindow::is_Visible() || !m_mouseIn || m_dockPreview != nullptr){
 
         m_titlewindow.hide();
         m_infowindow.hide();

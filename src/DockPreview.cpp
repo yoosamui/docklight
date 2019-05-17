@@ -25,6 +25,7 @@
 #include "DockPanel.h"
 #include "DockItemPositions.h"
 #include "DockWindow.h"
+#include "WnckHandler.h"
 #include "DockItem.h"
 #include <gdk/gdkx.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
@@ -44,7 +45,9 @@ bool DockPreview::m_allowDraw;
 
 DockPreview::DockPreview():Gtk::Window(Gtk::WindowType::WINDOW_POPUP){
 
-    DockPreview::threadRunning = true;
+//(docklight:31507): Gdk-WARNING **: 20:23:48.099: XID collision, trouble ahead
+//Preview destroy.
+    DockPreview::threadRunning = false; //////////////////////////////////// find the buf
     DockPreview::m_detectMovement = true;
     DockPreview::m_allowDraw = true;
 
@@ -132,40 +135,54 @@ void DockPreview::Show(const std::vector<DockItem*>& items, const guint index, c
 
     int x = 0;
     int y = 0;
-    m_cellWidth = cellSize * 6;
-    m_cellHeight= m_cellWidth - PREVIEW_HV_OFFSET;
+
+    guint windowWidth = cellSize * 6;
+    guint windowHeight = windowWidth -  (PREVIEW_HV_OFFSET * 2);
+
+    m_cellWidth = windowWidth - 20;
+    m_cellHeight =windowHeight - 20 ;  m_cellWidth - (PREVIEW_HV_OFFSET * 2);
+
     guint separatorsSize = Configuration::get_separatorMargin() * (items.size() - 1);
 
     if (DockWindow::is_Horizontal()){
-        int width = m_cellWidth  *  items.size() + DockWindow::get_dockWindowStartEndMargin() + separatorsSize;
+        windowWidth = m_cellWidth  *  items.size() + DockWindow::get_dockWindowStartEndMargin() + separatorsSize;
 
-        if (width  > DockWindow::Monitor::get_geometry().width){
-            width = DockWindow::Monitor::get_geometry().width;
-            m_cellWidth = (DockWindow::Monitor::get_geometry().width - DockWindow::get_dockWindowStartEndMargin() - separatorsSize ) / items.size();
-            m_cellHeight = m_cellWidth - PREVIEW_HV_OFFSET;
+        if (windowWidth > DockWindow::Monitor::get_geometry().width){
+
+            m_cellWidth = (DockWindow::Monitor::get_geometry().width - DockWindow::get_dockWindowStartEndMargin() -  separatorsSize ) / items.size();
+
+            windowWidth =m_cellWidth * items.size()+ separatorsSize + PREVIEW_HV_OFFSET;
+            windowHeight = m_cellWidth -  (PREVIEW_HV_OFFSET * 2);
+
+            m_cellHeight = windowHeight - PREVIEW_HV_OFFSET ;
+
         }
 
-        this->set_size_request(width, m_cellHeight);
-        DockItemPositions::get_CenterPosition(index, x, y, width, m_cellHeight );
+        this->set_size_request(windowWidth, windowHeight);
+        DockItemPositions::get_CenterPosition(index, x, y, windowWidth, windowHeight);
+
+
 
     } else {
 
-        // make the cell height smaller. make it looks better
-        m_cellHeight -= PREVIEW_HV_OFFSET;
-        int height = m_cellHeight  *  items.size() + DockWindow::get_dockWindowStartEndMargin() + separatorsSize;
+        windowHeight = m_cellHeight * items.size() + DockWindow::get_dockWindowStartEndMargin() + separatorsSize;
 
-        if (height  > DockWindow::Monitor::get_geometry().height){
-            height = DockWindow::Monitor::get_geometry().height;
+        if (windowHeight  > DockWindow::Monitor::get_geometry().height){
+
             m_cellHeight =   (DockWindow::Monitor::get_geometry().height - DockWindow::get_dockWindowStartEndMargin() - separatorsSize ) / items.size();
-            m_cellWidth = m_cellHeight + PREVIEW_HV_OFFSET;
+
+            windowHeight =m_cellHeight * items.size() + separatorsSize + PREVIEW_HV_OFFSET;
+            windowWidth = m_cellWidth;
+
+            m_cellWidth = windowWidth - PREVIEW_HV_OFFSET;
         }
 
-        this->set_size_request(m_cellWidth, height);
-        DockItemPositions::get_CenterPosition(index, x, y, m_cellWidth,  height);
+        this->set_size_request(windowWidth  , windowHeight);
+        DockItemPositions::get_CenterPosition(index, x, y, windowWidth,  windowHeight);
     }
 
     this->move(x, y);
-
+    this->show_all();
     // Start the background thread
     m_thread = new std::thread(this->MovementDetector);
 
@@ -229,22 +246,10 @@ void DockPreview::hideMe()
 
 
 
-    //this->m_previewItems.clear();
+    //m_previewItems.clear();
     DockPanel::PreviewClose();
 }
 
-/**
- * handles Mouse button press : process mouse button event
- * true to stop other handlers from being invoked for the event.
- * false to propagate the event further.
- * @param event
- * @return true to stop other handlers,false to propagate the event further.
- * here we acivate the window and also close the window.
- */
-bool DockPreview::on_button_press_event(GdkEventButton *event)
-{
-
-}
 
 /**
  * Compares the given pixbuf data.
@@ -316,11 +321,17 @@ void DockPreview::MovementDetector()
                         // width and height arguments scaled by the scale factor of window . The pixbuf will contain
                         // an alpha channel if the window contains one.
                         pixbuf_first = gdk_pixbuf_get_from_window(wm_window, 0, 0, boundingbox.width, boundingbox.height);
+                        if (pixbuf_first == nullptr){
+                            break;
+                        }
 
                         // Returns a read-only pointer to the raw pixel data; must not be modified.
                         // This function allows skipping the implicit copy that must be made if
                         // gdk_pixbuf_get_pixels() is called on a read-only pixbuf.
                         pixels_first = gdk_pixbuf_read_pixels(pixbuf_first);
+                        if (pixbuf_first == nullptr){
+                            break;
+                        }
                         continue;
                     }
 
@@ -416,6 +427,124 @@ void DockPreview::on_window_closed(WnckScreen *screen, WnckWindow *window, gpoin
 }
 
 
+/**
+ * handles Mouse button press : process mouse button event. true to stop other handlers from being invoked for the event.
+ * false to propagate the event further.
+ *
+ * @param event
+ * @return true to stop other handlers,false to propagate the event further.
+ * here we acivate the window and also close the window.
+ */
+bool DockPreview::on_button_press_event(GdkEventButton *event)
+{
+
+    if ((event->type == GDK_BUTTON_PRESS)) {
+        // Check if the event is a left button click.
+        if (event->button == 1) {
+            if (m_currentIndex < 0  ||  m_currentIndex > DockPreview::m_previewItems.size()){
+
+
+                return true;
+            }
+
+            DockItem *item = DockPreview::m_previewItems[m_currentIndex];
+
+            // Handle close preview window
+            /*int pos_x = (m_previewWidth - 5) + (m_previewWidth * m_currentIndex);
+            if (event->x >= pos_x && event->x <= pos_x + DEF_PREVIEW_LEFT_MARGING && // FIXTHIS: use rectangle instead.
+                    event->y >= 19 && event->y <= 19 + DEF_PREVIEW_LEFT_MARGING) {
+
+                wnck_window_close(item->m_window, gtk_get_current_event_time());
+                m_isActive = false;
+
+                return true;
+            }*/
+
+            // Activate and/or minimize the window
+            WnckHandler::ActivateWindow(item->m_window);
+
+            // reload the image and checks if its have movement.
+            // In this case it will change from static to Dynamic.
+            // This can happen when a browser play a video and gets minimized and
+            // stops playing. When it gets unminimized should play again in the preview.
+            //if (!item->m_isDynamic) {
+
+                //item->m_imageLoadedRequired = true;
+            //}
+
+            // The event has been handled.
+            return true;
+        }
+    }
+    return true;
+}
+
+
+/**
+ * handles on_motion_notify_event. true to stop other handlers from being invoked for the event.
+ * false to propagate the event further.
+ *
+ * @param event GdkEventMotion
+ * @return true/false
+ */
+bool DockPreview::on_motion_notify_event(GdkEventMotion*event)
+{
+    m_currentIndex = this->get_Index(event->x, event->y);
+
+    if (m_currentIndex < 0  ||  m_currentIndex > DockPreview::m_previewItems.size()){
+        return true;
+    }
+
+    if (!m_allowDraw){
+        return true;
+    }
+
+    DockItem *item = DockPreview::m_previewItems[m_currentIndex];
+
+    // Activate and/or minimize the window
+    WnckHandler::SelectWindow(item->m_window);
+    return true;
+}
+
+/**
+ * calculate the item index from mouse coordinates.
+ * @param x
+ * @param y
+ * @return the item index or -1 if the item could not be found.
+ */
+inline int DockPreview::get_Index(const int& mouseX, const int& mouseY)
+{
+    Gdk::Point mouse(mouseX, mouseY);
+    int idx = 0;
+    int x = DockWindow::get_dockWindowStartEndMargin() / 2;
+    int y = x;
+
+    if (DockWindow::is_Horizontal()) {
+        for (auto item : DockPreview::m_previewItems) {
+            if (mouse.get_x() >= x && mouse.get_x() <= x + m_cellWidth) {
+                return idx;
+            }
+
+            x += m_cellWidth + Configuration::get_separatorMargin();
+            idx++;
+        }
+    }
+    else
+    {
+        int height;
+        for (auto item : DockPreview::m_previewItems) {
+            if (mouse.get_y() >= y && mouse.get_y() <= y + m_cellHeight) {
+                g_print(" idx:%d\n", idx);
+                return idx;
+            }
+
+            y += m_cellHeight + Configuration::get_separatorMargin();
+            idx++;
+        }
+    }
+
+    return -1;
+}
 
 bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
@@ -429,79 +558,161 @@ bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     guint  width = this->get_width();
     guint  height = this->get_height();
 
+    guint centerX = 0;
+    guint centerY = 0;
 
-   // if (!m_firstDrawDone)
-    {
+
+    if (m_Theme.Preview().Fill().Color::alpha > 0.f) {
         cr->set_source_rgba(
-                this->m_Theme.Panel().Fill().Color::red,
-                this->m_Theme.Panel().Fill().Color::green,
-                this->m_Theme.Panel().Fill().Color::blue,
-                this->m_Theme.Panel().Fill().Color::alpha);
+            m_Theme.Preview().Fill().Color::red,
+            m_Theme.Preview().Fill().Color::green,
+            m_Theme.Preview().Fill().Color::blue,
+            m_Theme.Preview().Fill().Color::alpha);
 
-        if (DockWindow::is_Horizontal()){
-
-            Utilities::RoundedRectangle(cr, 0, 0, width, m_cellHeight ,6);
-            cr->fill();
-            y = 8;
-            x =  DockWindow::get_dockWindowStartEndMargin() / 2 ;
-        }
-        else {
-
-            Utilities::RoundedRectangle(cr, 0, 0, m_cellWidth, height, 6);
-            cr->fill();
-            x = 8;
-            y = DockWindow::get_dockWindowStartEndMargin() / 2 ;
-        }
-
+        Utilities::RoundedRectangle(cr, 0, 0, this->get_width(), height, m_Theme.Preview().Ratio());
+        cr->fill();
     }
 
-    for (DockItem* item : this->m_previewItems)
+    if (DockWindow::is_Horizontal()){
+        y = 0;
+        x =  DockWindow::get_dockWindowStartEndMargin() / 2 ;
+    }
+    else {
+        x = 0;
+        y = DockWindow::get_dockWindowStartEndMargin() / 2 ;
+}
+    for (DockItem* item : m_previewItems)
     {
-  //      if(!m_firstDrawDone)
-        {
-            cr->set_source_rgba(
-                    this->m_Theme.PanelCell().Stroke().Color::red,
-                    this->m_Theme.PanelCell().Stroke().Color::green,
-                    this->m_Theme.PanelCell().Stroke().Color::blue,
-                    this->m_Theme.PanelCell().Stroke().Color::alpha);
+
+        if(!item->m_image || item->m_isDynamic ) {
+            if(item->m_scaledPixbuf){
+                g_object_unref(item->m_scaledPixbuf);
+            }
+
+            item->m_scaledPixbuf = GetPreviewImage(item, item->m_scaleWidth, item->m_scaleHeight);
+            if (item->m_scaledPixbuf !=  nullptr){
+                item->m_image = Glib::wrap(item->m_scaledPixbuf, true);
+            }
         }
 
-        if (DockWindow::is_Horizontal()){
+        if (DockWindow::is_Horizontal()) {
 
-//            if( !m_firstDrawDone)
-            {
-                Utilities::RoundedRectangle(cr, x, y, m_cellWidth  , m_cellHeight - 16  ,6);
+            centerY = this->get_height() / 2 - (m_cellHeight / 2);
+
+            if( m_Theme.PreviewCell().Fill().Color::alpha > 0.f ) {
+                cr->set_source_rgba(m_Theme.PreviewCell().Fill().Color::red, m_Theme.PreviewCell().Fill().Color::green,
+                        m_Theme.PreviewCell().Fill().Color::blue, m_Theme.PreviewCell().Fill().Color::alpha);
+
+                Utilities::RoundedRectangle(cr, x, y + centerY, m_cellWidth, m_cellHeight, m_Theme.PreviewCell().Ratio());
+                cr->fill();
+            }
+
+            if( m_Theme.PreviewCell().Stroke().Color::alpha > 0.f ){
+                 cr->set_source_rgba(
+                         m_Theme.PreviewCell().Stroke().Color::red,
+                         m_Theme.PreviewCell().Stroke().Color::green,
+                         m_Theme.PreviewCell().Stroke().Color::blue,
+                         m_Theme.PreviewCell().Stroke().Color::alpha);
+                 Utilities::RoundedRectangle(cr, x, y + centerY, m_cellWidth, m_cellHeight, m_Theme.PreviewCell().Ratio());
                 cr->stroke();
             }
+             // Selector
+             if (idx == m_currentIndex) {
+
+                 cr->set_source_rgba(
+                         m_Theme.Selector().Fill().Color::red,
+                         m_Theme.Selector().Fill().Color::green,
+                         m_Theme.Selector().Fill().Color::blue,
+                         m_Theme.Selector().Fill().Color::alpha);
+                 Utilities::RoundedRectangle(cr, x, y + centerY, m_cellWidth, m_cellHeight, m_Theme.PreviewCell().Ratio());
+
+                 cr->fill();
+
+                 cr->set_source_rgba(
+                         m_Theme.Selector().Stroke().Color::red,
+                         m_Theme.Selector().Stroke().Color::green,
+                         m_Theme.Selector().Stroke().Color::blue,
+                         m_Theme.Selector().Stroke().Color::alpha);
+                 cr->set_line_width(m_Theme.Selector().LineWidth());
+                 Utilities::RoundedRectangle(cr, x, y + centerY, m_cellWidth, m_cellHeight, m_Theme.PreviewCell().Ratio());
+
+                 cr->stroke();
+
+             }
+
+
+            if (item->m_image){
+                centerX = m_cellWidth / 2 -  item->m_scaleWidth / 2;
+                centerY = (m_cellHeight - 12) / 2 - item->m_scaleHeight / 2;
+
+                Gdk::Cairo::set_source_pixbuf(cr,item->m_image, x + centerX ,  y + PREVIEW_TITLE_OFFSET + centerY - 1);
+                cr->paint();
+            }
+
             x +=  m_cellWidth + Configuration::get_separatorMargin();
         }
         else {
 
-            Utilities::RoundedRectangle(cr, x, y, m_cellWidth - 16  , m_cellHeight  ,6);
-            cr->stroke();
+             centerX =this->get_width() / 2 - m_cellWidth / 2;
 
-            if(!item->m_image || item->m_isDynamic ) {
-                if(item->m_scaledPixbuf){
-                    g_object_unref(item->m_scaledPixbuf);
-                }
+             if( m_Theme.PreviewCell().Fill().Color::alpha > 0.f ){
+                 cr->set_source_rgba(
+                         m_Theme.PreviewCell().Fill().Color::red,
+                         m_Theme.PreviewCell().Fill().Color::green,
+                         m_Theme.PreviewCell().Fill().Color::blue,
+                         m_Theme.PreviewCell().Fill().Color::alpha);
 
-                item->m_scaledPixbuf = GetPreviewImage(item, item->m_scaleWidth, item->m_scaleHeight);
-                if (item->m_scaledPixbuf !=  nullptr){
-                    item->m_image = Glib::wrap(item->m_scaledPixbuf, true);
-                }
-            }
+                 Utilities::RoundedRectangle(cr, x + centerX, y, m_cellWidth, m_cellHeight, m_Theme.PreviewCell().Ratio());
+                 cr->fill();
+             }
+             if( m_Theme.PreviewCell().Stroke().Color::alpha > 0.f ){
+                 cr->set_source_rgba(
+                         m_Theme.PreviewCell().Stroke().Color::red,
+                         m_Theme.PreviewCell().Stroke().Color::green,
+                         m_Theme.PreviewCell().Stroke().Color::blue,
+                         m_Theme.PreviewCell().Stroke().Color::alpha);
 
-            if (item->m_image){
-                guint centerX = (m_cellWidth / 2) -  item->m_scaleWidth / 2;
-                guint centerY = ((m_cellHeight - PREVIEW_TITLE_OFFSET) / 2) -  item->m_scaleHeight / 2;
-                Gdk::Cairo::set_source_pixbuf(cr,item->m_image, x + centerX - 8,  y + PREVIEW_TITLE_OFFSET + centerY - 1);
-                cr->paint();
-            }
+                 Utilities::RoundedRectangle(cr, x + centerX, y, m_cellWidth, m_cellHeight, m_Theme.PreviewCell().Ratio());
+                 cr->stroke();
+             }
+
+             // Selector
+             if (idx == m_currentIndex) {
+
+                 cr->set_source_rgba(
+                         m_Theme.Selector().Fill().Color::red,
+                         m_Theme.Selector().Fill().Color::green,
+                         m_Theme.Selector().Fill().Color::blue,
+                         m_Theme.Selector().Fill().Color::alpha);
+
+                 Utilities::RoundedRectangle(cr, x + centerX, y, m_cellWidth, m_cellHeight, m_Theme.Selector().Ratio());
+                 cr->fill();
+
+                 cr->set_source_rgba(
+                         m_Theme.Selector().Stroke().Color::red,
+                         m_Theme.Selector().Stroke().Color::green,
+                         m_Theme.Selector().Stroke().Color::blue,
+                         m_Theme.Selector().Stroke().Color::alpha);
+                 cr->set_line_width(m_Theme.Selector().LineWidth());
+
+                 Utilities::RoundedRectangle(cr, x + centerX, y, m_cellWidth, m_cellHeight, m_Theme.Selector().Ratio());
+                 cr->stroke();
+
+             }
+
+             if (item->m_image){
+                 centerX = m_cellWidth / 2 -  item->m_scaleWidth / 2;
+                 centerY = (m_cellHeight -32) / 2 - item->m_scaleHeight / 2;
+                 centerX += 10;
+                 Gdk::Cairo::set_source_pixbuf(cr,item->m_image, x + centerX  ,  y + PREVIEW_TITLE_OFFSET + centerY - 1);
+                 cr->paint();
+             }
 
             y +=  m_cellHeight + Configuration::get_separatorMargin();
 
         }
 
+        idx++;
     }
 
        return true;
@@ -558,8 +769,8 @@ GdkPixbuf* DockPreview::GetPreviewImage(DockItem* item, guint& scaleWidth, guint
         return nullptr;
     }
 
-    int width = m_cellWidth;
-    int height = m_cellHeight - PREVIEW_TITLE_OFFSET - 2;
+    int width = m_cellWidth ;
+    int height = m_cellHeight - PREVIEW_TITLE_OFFSET;
 
     double minSize = std::min(width, height);
     double maxSize = std::max(winWidth, winHeight);
@@ -569,13 +780,13 @@ GdkPixbuf* DockPreview::GetPreviewImage(DockItem* item, guint& scaleWidth, guint
     scaleHeight = winHeight * aspectRatio;
 
     // ajust width size to make looks better
-    if(winWidth >= DockWindow::Monitor::get_geometry().width / 2 ) {
-        scaleWidth = width - PREVIEW_HV_OFFSET;
+    if(winWidth - 100 > DockWindow::Monitor::get_geometry().width / 2 ) {
+        scaleWidth = width  - 4;
     }
 
     // ajust height size to make looks better
-    if(winHeight >= DockWindow::Monitor::get_geometry().height / 2 ) {
-       scaleHeight = height;
+    if(winHeight - 100 > DockWindow::Monitor::get_geometry().height / 2 ) {
+       scaleHeight = height - 2;
     }
 
     // Scale with reasonable quality and speed.

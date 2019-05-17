@@ -37,6 +37,7 @@ class DockPreview : public Gtk::Window
         ~DockPreview();
         void Show(const std::vector<DockItem*>& items, const guint index, const guint cellSize);
     private:
+        int m_currentIndex = -1;
         bool m_canLeave = false;
         bool m_mouseIn = false;
 
@@ -58,7 +59,9 @@ class DockPreview : public Gtk::Window
         bool scanSet = false;
         bool m_firstDrawDone = false;
 
+        int get_Index(const int& mouseX, const int& mouseY);
         bool on_button_press_event(GdkEventButton *event);
+        bool on_motion_notify_event(GdkEventMotion*event);
 
         GdkPixbuf* GetPreviewImage(DockItem* item, guint& scaleWidth, guint& scaleHeight);
         Configuration::Style::Theme m_Theme = Configuration::get_Theme();

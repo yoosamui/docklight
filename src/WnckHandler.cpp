@@ -708,6 +708,20 @@ namespace WnckHandler
 
     /////////////////////////
 
+
+    void SelectWindow(WnckWindow* window)
+    {
+        if (window == NULL)
+            return;
+
+
+        int ct = gtk_get_current_event_time();
+        wnck_window_activate(window, ct);
+
+        if (wnck_window_is_minimized(window))
+            wnck_window_unminimize(window, ct);
+    }
+
     /**
      * Active the current Active window
      * @param window

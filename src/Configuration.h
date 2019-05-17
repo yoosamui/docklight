@@ -183,11 +183,11 @@ namespace Configuration {
                 ColorWindow(){};
                 ColorWindow(const Color fill, const Color stroke, const double lineWith, const double ratio, const int mask)
                 {
-                    this->m_Fill = fill;
-                    this->m_Stroke = stroke;
-                    this->m_LineWidth = lineWith;
-                    this->m_Ratio = ratio;
-                    this->m_Mask = mask;
+                    m_Fill = fill;
+                    m_Stroke = stroke;
+                    m_LineWidth = lineWith;
+                    m_Ratio = ratio;
+                    m_Mask = mask;
                 }
 
                 Color Fill() const  { return m_Fill; }
@@ -213,6 +213,8 @@ namespace Configuration {
                 ColorWindow& PanelTitleText() const { return *m_PanelTitleText; }
                 ColorWindow& PanelCell() const { return *m_PanelCell; }
                 ColorWindow& Selector() const { return *m_Selector; }
+                ColorWindow& Preview() const { return *m_Preview; }
+                ColorWindow& PreviewCell() const { return *m_PreviewCell; }
 
                 void set_Panel(ColorWindow* cw) {
 
@@ -220,12 +222,12 @@ namespace Configuration {
                         return;
                    }
 
-                   if(this->m_Panel != nullptr){
-                        delete this->m_Panel;
-                        this->m_Panel = nullptr;
+                   if(m_Panel != nullptr){
+                        delete m_Panel;
+                        m_Panel = nullptr;
                    }
 
-                    this->m_Panel = cw;
+                    m_Panel = cw;
                 }
 
                 void set_PanelTitle(ColorWindow* cw) {
@@ -234,12 +236,12 @@ namespace Configuration {
                         return;
                    }
 
-                   if(this->m_PanelTitle != nullptr){
-                        delete this->m_PanelTitle;
-                        this->m_PanelTitle = nullptr;
+                   if(m_PanelTitle != nullptr){
+                        delete m_PanelTitle;
+                        m_PanelTitle = nullptr;
                    }
 
-                    this->m_PanelTitle = cw;
+                    m_PanelTitle = cw;
                 }
 
                 void set_PanelTitleText(ColorWindow* cw) {
@@ -248,12 +250,12 @@ namespace Configuration {
                         return;
                    }
 
-                   if(this->m_PanelTitleText != nullptr){
-                        delete this->m_PanelTitleText;
-                        this->m_PanelTitleText = nullptr;
+                   if(m_PanelTitleText != nullptr){
+                        delete m_PanelTitleText;
+                        m_PanelTitleText = nullptr;
                    }
 
-                    this->m_PanelTitleText = cw;
+                    m_PanelTitleText = cw;
                 }
 
                 void set_PanelCell(ColorWindow* cw) {
@@ -262,12 +264,12 @@ namespace Configuration {
                         return;
                    }
 
-                   if(this->m_PanelCell != nullptr){
-                        delete this->m_PanelCell;
-                        this->m_PanelCell = nullptr;
+                   if(m_PanelCell != nullptr){
+                        delete m_PanelCell;
+                        m_PanelCell = nullptr;
                    }
 
-                    this->m_PanelCell = cw;
+                    m_PanelCell = cw;
                 }
 
                 void set_Selector(ColorWindow* cw) {
@@ -276,12 +278,40 @@ namespace Configuration {
                         return;
                    }
 
-                   if(this->m_Selector != nullptr){
-                        delete this->m_Selector;
-                        this->m_Selector = nullptr;
+                   if(m_Selector != nullptr){
+                        delete m_Selector;
+                        m_Selector = nullptr;
                    }
 
-                    this->m_Selector = cw;
+                    m_Selector = cw;
+                }
+
+                void set_Preview(ColorWindow* cw) {
+
+                   if (cw == nullptr){
+                        return;
+                   }
+
+                   if(m_Preview != nullptr){
+                        delete m_Preview;
+                        m_Preview = nullptr;
+                   }
+
+                    m_Preview = cw;
+                }
+
+                void set_PreviewCell(ColorWindow* cw) {
+
+                   if (cw == nullptr){
+                        return;
+                   }
+
+                   if(m_PreviewCell != nullptr){
+                        delete m_PreviewCell;
+                       m_PreviewCell = nullptr;
+                   }
+
+                    m_PreviewCell = cw;
                 }
             private:
                 ColorWindow* m_Panel = new ColorWindow();
@@ -289,6 +319,8 @@ namespace Configuration {
                 ColorWindow* m_PanelTitleText = new ColorWindow();
                 ColorWindow* m_PanelCell = new ColorWindow();
                 ColorWindow* m_Selector = new ColorWindow();
+                ColorWindow* m_Preview = new ColorWindow();
+                ColorWindow* m_PreviewCell = new ColorWindow();
         };
     }
 

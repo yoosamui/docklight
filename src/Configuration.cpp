@@ -15,7 +15,7 @@
 using namespace tinyxml2;
 
 #ifndef XMLCheckResult
-	#define XMLCheckResult(a_eResult) if (a_eResult != XML_SUCCESS) { g_critical("Error: %i\n", a_eResult); return; }
+#define XMLCheckResult(a_eResult) if (a_eResult != XML_SUCCESS) { g_critical("Error: %i\n", a_eResult); return; }
 #endif
 
 namespace Configuration
@@ -26,7 +26,7 @@ namespace Configuration
     bool m_autohide = false;
     bool m_allowDraw = true;
     bool m_panelmode = false;
-    guint m_separatorMargin = 6;
+    guint m_separatorMargin = 10;
 
     panel_locationType m_location = panel_locationType::BOTTOM;
     Horizontal_alignment_type m_HorizontalAlignment =  Horizontal_alignment_type::CENTER;
@@ -91,11 +91,21 @@ namespace Configuration
 
     void set_DefaultStyle()
     {
-        m_theme.set_Panel(new ColorWindow());
-        m_theme.set_PanelCell(new ColorWindow(Color(0,0.50,0.66,1), Color(1,1,1,1), 1.5, 3, 0));
-        m_theme.set_Selector(new ColorWindow(Color(255,255,255,0.5), Color(1,1,1,1), 1.5, 3, 0));
-        m_theme.set_PanelTitle(new ColorWindow(Color(0, 0, 0, 1 ), Color(0,0,0,1), 1, 6, 0));
-        m_theme.set_PanelTitleText(new ColorWindow(Color(), Color(1,1,1,1), 1, 0, 0));
+
+        m_theme.set_Panel(new ColorWindow(Color(0.45, 0.06, 0.33,1), Color(1,1,1,0), 0, 0, 0));
+        m_theme.set_PanelCell(new ColorWindow(Color(0.37, 0.02, 0.02, 1.0), Color(1,1,1,0), 0, 0, 0));
+
+        m_theme.set_Selector(new ColorWindow(Color(1.0, 1.0, 1.0, 0.6), Color(1,1,1,0), 0, 0, 0));
+
+        //g_print(" C Config = %f\n", m_theme.Selector().Fill().Color::red);
+
+
+        //m_theme.set_Selector(new ColorWindow(Color(1,1,1,0.5), Color(1,1,1,0), 0, 0, 0));
+        m_theme.set_PanelTitle(new ColorWindow(Color(1, 1, 1, 1 ), Color(0,0,0,1), 0, 0, 0));
+        m_theme.set_PanelTitleText(new ColorWindow(Color(), Color(0,0,0,1), 0, 0, 0));
+
+        m_theme.set_Preview(new ColorWindow(Color(0.45, 0.06, 0.33,1), Color(1,1,1,0), 0, 0, 0));
+        m_theme.set_PreviewCell(new ColorWindow(Color(), Color(0,0,0,1), 1, 0, 0));
     }
 
     // https://shilohjames.wordpress.com/2014/04/27/tinyxml2-tutorial/
@@ -153,7 +163,7 @@ namespace Configuration
             return;
         }
 
-       // m_theme.
+        // m_theme.
         int id = 0;
         XMLElement* listElement = element->FirstChildElement("Style");
         while (listElement != nullptr){
@@ -174,10 +184,10 @@ namespace Configuration
                 if (panel != nullptr){
                     getColorFromString(panel, fill, stroke, lineWidth, ratio,  mask);
                     m_theme.set_Panel(new ColorWindow(fill,stroke,lineWidth,ratio,mask));
-                g_print("Style %d %s PANEL  Fill:%f %f %f %f Stroke %f %f %f %f  MASK %d\n",id, panel, fill.red, fill.green, fill.blue, fill.alpha, stroke.red, stroke.green, stroke.blue, stroke.alpha, mask);
+                    g_print("Style %d %s PANEL  Fill:%f %f %f %f Stroke %f %f %f %f  MASK %d\n",id, panel, fill.red, fill.green, fill.blue, fill.alpha, stroke.red, stroke.green, stroke.blue, stroke.alpha, mask);
                 }
 
-               if (selector != nullptr){
+                if (selector != nullptr){
                     getColorFromString(selector, fill, stroke, lineWidth, ratio,  mask);
                     m_theme.set_Selector(new ColorWindow(fill,stroke,lineWidth,ratio,mask));
                 }
@@ -185,7 +195,7 @@ namespace Configuration
                 if (cell != nullptr){
                     getColorFromString(cell, fill, stroke, lineWidth, ratio,  mask);
                     m_theme.set_PanelCell(new ColorWindow(fill,stroke,lineWidth,ratio,mask));
-                g_print("Style %d %s CELL   Fill:%f %f %f %f Stroke %f %f %f %f \n",id, cell, fill.red, fill.green, fill.blue, fill.alpha, stroke.red, stroke.green, stroke.blue, stroke.alpha);
+                    g_print("Style %d %s CELL   Fill:%f %f %f %f Stroke %f %f %f %f \n",id, cell, fill.red, fill.green, fill.blue, fill.alpha, stroke.red, stroke.green, stroke.blue, stroke.alpha);
 
                 }
 
@@ -276,7 +286,7 @@ namespace Configuration
     }
     unsigned int get_WindowDockMonitorMargin_Right()
     {
-          if(is_panelMode() || !is_autoHide()){
+        if(is_panelMode() || !is_autoHide()){
             return 0;
         }
 
@@ -285,7 +295,7 @@ namespace Configuration
 
     unsigned int get_WindowDockMonitorMargin_Left()
     {
-          if(is_panelMode() || !is_autoHide()){
+        if(is_panelMode() || !is_autoHide()){
             return 0;
         }
 
@@ -294,7 +304,7 @@ namespace Configuration
 
     unsigned int get_WindowDockMonitorMargin_Bottom()
     {
-       if(is_panelMode() || !is_autoHide()){
+        if(is_panelMode() || !is_autoHide()){
             return 0;
         }
 
