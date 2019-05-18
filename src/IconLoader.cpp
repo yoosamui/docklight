@@ -38,7 +38,7 @@ namespace IconLoader
 
     // the desired icon size.
     // The resulting icon may not be exactly this size.
-    gint size = DEF_ICONMAXSIZE;
+    gint size = Configuration::get_CellHeight();
 
 
     Glib::RefPtr<Gdk::Pixbuf> GetIconByAppName(const char* appname,std::string &theme_iconname)

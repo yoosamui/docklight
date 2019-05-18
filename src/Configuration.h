@@ -70,7 +70,7 @@
 
 
 ////////////////////////////////////////
-#define DEF_ICONMAXSIZE 64
+//#define DEF_ICONMAXSIZE 64
 //#define DEF_CELLHIGHT  58                    // Cell Height
 //#define DEF_CELLWIDTH 56 //-3//58                    // Cell Width
 
@@ -144,8 +144,8 @@ namespace Configuration {
     bool is_panelMode();
     bool is_allowDraw();
     void set_allowDraw(bool value);
-    unsigned int get_CellHeight();
-    unsigned int get_CellWidth();
+    int get_CellHeight();
+    int get_CellWidth();
     unsigned int get_WindowDockMonitorMargin_Top();
     unsigned int get_WindowDockMonitorMargin_Right();
     unsigned int get_WindowDockMonitorMargin_Left();

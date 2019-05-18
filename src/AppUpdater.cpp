@@ -133,7 +133,7 @@ void AppUpdater::Load()
         index++;
 
         if (get_IsLimitsReached()){
-            g_warning("Load: Decrement limimit reached.\n");
+            g_warning("AppUpdaterLoad: decrement limit reached.\n");
             break;
         }
     }
@@ -152,7 +152,7 @@ void AppUpdater::Save()
     FILE* f;
     f = fopen(filePath.c_str(), "wb");
     if (!f) {
-        g_critical("SessionWindow::save: can't create file.");
+        g_critical("AppUpdater::save: can't create file.");
         return;
     }
 
@@ -415,8 +415,7 @@ void AppUpdater::Update(WnckWindow* window, Window_action actiontype)
 
         std::string theme_iconname = "";
         appIcon = IconLoader::GetWindowIcon(window, theme_iconname);
-        appIcon = appIcon->scale_simple(DEF_ICONMAXSIZE,
-                DEF_ICONMAXSIZE, Gdk::INTERP_BILINEAR);
+        appIcon = appIcon->scale_simple(Configuration::get_CellWidth(), Configuration::get_CellHeight(), Gdk::INTERP_BILINEAR);
 
         // Create a new Item
         DockItem* dockItem = new DockItem();

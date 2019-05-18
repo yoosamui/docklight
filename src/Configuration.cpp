@@ -91,8 +91,6 @@ namespace Configuration
 
     void set_DefaultStyle()
     {
-
-
         m_theme.set_Panel(new ColorWindow());
         m_theme.set_PanelCell(new ColorWindow(Color(0,0.50,0.66,1), Color(1,1,1,1), 1.5, 3, 0));
         m_theme.set_Selector(new ColorWindow(Color(255,255,255,0.5), Color(1,1,1,1), 1.5, 3, 0));
@@ -101,22 +99,6 @@ namespace Configuration
 
         m_theme.set_Preview(new ColorWindow());
         m_theme.set_PreviewCell(new ColorWindow(Color(0,0.50,0.66,1), Color(1,1,1,1), 1.5, 3, 0));
-/*
-        m_theme.set_Panel(new ColorWindow(Color(0.45, 0.06, 0.33,1), Color(1,1,1,0), 0, 0, 0));
-        m_theme.set_PanelCell(new ColorWindow(Color(0.37, 0.02, 0.02, 1.0), Color(1,1,1,0), 0, 0, 0));
-
-        m_theme.set_Selector(new ColorWindow(Color(1.0, 1.0, 1.0, 0.6), Color(1,1,1,0), 0, 0, 0));
-
-        //g_print(" C Config = %f\n", m_theme.Selector().Fill().Color::red);
-
-
-        //m_theme.set_Selector(new ColorWindow(Color(1,1,1,0.5), Color(1,1,1,0), 0, 0, 0));
-        m_theme.set_PanelTitle(new ColorWindow(Color(1, 1, 1, 1 ), Color(0,0,0,1), 0, 0, 0));
-        m_theme.set_PanelTitleText(new ColorWindow(Color(), Color(0,0,0,1), 0, 0, 0));
-
-        m_theme.set_Preview(new ColorWindow(Color(0.45, 0.06, 0.33,1), Color(1,1,1,0), 0, 0, 0));
-        m_theme.set_PreviewCell(new ColorWindow(Color(), Color(0,0,0,1), 1, 0, 0));
-        */
     }
 
     // https://shilohjames.wordpress.com/2014/04/27/tinyxml2-tutorial/
@@ -333,13 +315,13 @@ namespace Configuration
     }
 
 
-    unsigned int get_CellHeight()
+    int get_CellHeight()
     {
         return Configuration::get_dockWindowSize() - (CELL_BOTTOM_MARGIN + CELL_TOP_MARGIN);
 
     }
 
-    unsigned int get_CellWidth()
+    int get_CellWidth()
     {
         return get_CellHeight() - 2; //CELL_WIDTH_MARGIN;
 

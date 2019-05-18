@@ -33,7 +33,7 @@
 #include <thread>
 #include <algorithm>
 
-#define PREVIEW_TITLE_OFFSET 32
+#define PREVIEW_TITLE_OFFSET 28//32
 #define PREVIEW_HV_OFFSET 20
 
 using namespace std::chrono_literals;
@@ -562,7 +562,11 @@ bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
     guint centerX = 0;
     guint centerY = 0;
-
+    guint imgcenterX = 0;
+    guint imgcenterY = 0;
+    guint titleofsetX = 0;
+    guint titleofsetY = 0;
+    guint titlecliping = 0;
 
     if (m_Theme.Preview().Fill().Color::alpha > 0.f) {
         cr->set_source_rgba(
@@ -582,9 +586,9 @@ bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     else {
         x = 0;
         y = DockWindow::get_dockWindowStartEndMargin() / 2 ;
-}
-    for (DockItem* item : m_previewItems)
-    {
+    }
+
+    for (DockItem* item : m_previewItems) {
 
         if(!item->m_image || item->m_isDynamic ) {
             if(item->m_scaledPixbuf){
@@ -598,120 +602,115 @@ bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
         }
 
         if (DockWindow::is_Horizontal()) {
-
             centerY = this->get_height() / 2 - (m_cellHeight / 2);
+            centerX = 0;
 
-            if( m_Theme.PreviewCell().Fill().Color::alpha > 0.f ) {
-                cr->set_source_rgba(m_Theme.PreviewCell().Fill().Color::red, m_Theme.PreviewCell().Fill().Color::green,
-                        m_Theme.PreviewCell().Fill().Color::blue, m_Theme.PreviewCell().Fill().Color::alpha);
+            titleofsetX = 5;
+            titleofsetY = 16;
+        }
+        else {
+            centerX = this->get_width() / 2 - m_cellWidth / 2;
+            centerY = 0;
 
-                Utilities::RoundedRectangle(cr, x, y + centerY, m_cellWidth, m_cellHeight, m_Theme.PreviewCell().Ratio());
-                cr->fill();
-            }
+            titleofsetX = 16;
+            titleofsetY = 5;
+        }
 
-            if( m_Theme.PreviewCell().Stroke().Color::alpha > 0.f ){
-                 cr->set_source_rgba(
-                         m_Theme.PreviewCell().Stroke().Color::red,
-                         m_Theme.PreviewCell().Stroke().Color::green,
-                         m_Theme.PreviewCell().Stroke().Color::blue,
-                         m_Theme.PreviewCell().Stroke().Color::alpha);
-                 Utilities::RoundedRectangle(cr, x, y + centerY, m_cellWidth, m_cellHeight, m_Theme.PreviewCell().Ratio());
-                cr->stroke();
-            }
-             // Selector
-             if (idx == m_currentIndex) {
+        // Fill cell
+        if( m_Theme.PreviewCell().Fill().Color::alpha > 0.f ) {
 
-                 cr->set_source_rgba(
-                         m_Theme.Selector().Fill().Color::red,
-                         m_Theme.Selector().Fill().Color::green,
-                         m_Theme.Selector().Fill().Color::blue,
-                         m_Theme.Selector().Fill().Color::alpha);
-                 Utilities::RoundedRectangle(cr, x, y + centerY, m_cellWidth, m_cellHeight, m_Theme.PreviewCell().Ratio());
+            cr->set_source_rgba(
+                    m_Theme.PreviewCell().Fill().Color::red,
+                    m_Theme.PreviewCell().Fill().Color::green,
+                    m_Theme.PreviewCell().Fill().Color::blue,
+                    m_Theme.PreviewCell().Fill().Color::alpha);
 
-                 cr->fill();
+            Utilities::RoundedRectangle(cr, x + centerX, y + centerY, m_cellWidth, m_cellHeight, m_Theme.PreviewCell().Ratio());
+            cr->fill();
+        }
 
-                 cr->set_source_rgba(
-                         m_Theme.Selector().Stroke().Color::red,
-                         m_Theme.Selector().Stroke().Color::green,
-                         m_Theme.Selector().Stroke().Color::blue,
-                         m_Theme.Selector().Stroke().Color::alpha);
-                 cr->set_line_width(m_Theme.Selector().LineWidth());
-                 Utilities::RoundedRectangle(cr, x, y + centerY, m_cellWidth, m_cellHeight, m_Theme.PreviewCell().Ratio());
+        // Selector
+        if (idx == m_currentIndex) {
 
-                 cr->stroke();
+            cr->set_source_rgba(
+                    m_Theme.Selector().Fill().Color::red,
+                    m_Theme.Selector().Fill().Color::green,
+                    m_Theme.Selector().Fill().Color::blue,
+                    m_Theme.Selector().Fill().Color::alpha);
 
-             }
+            Utilities::RoundedRectangle(cr, x + centerX, y + centerY, m_cellWidth, m_cellHeight, m_Theme.Selector().Ratio());
+            cr->fill();
+
+            cr->set_source_rgba(
+                    m_Theme.Selector().Stroke().Color::red,
+                    m_Theme.Selector().Stroke().Color::green,
+                    m_Theme.Selector().Stroke().Color::blue,
+                    m_Theme.Selector().Stroke().Color::alpha);
+            cr->set_line_width(m_Theme.Selector().LineWidth());
+
+            Utilities::RoundedRectangle(cr, x + centerX, y + centerY, m_cellWidth, m_cellHeight, m_Theme.Selector().Ratio());
+            cr->stroke();
+
+        }
 
 
-            if (item->m_image){
-                centerX = m_cellWidth / 2 -  item->m_scaleWidth / 2;
-                centerY = (m_cellHeight - 12) / 2 - item->m_scaleHeight / 2;
+        // draw title the clipping rectangle
+        //       cr->set_source_rgba(1.0, 1.0, 1.0, 0.0);
+        if (idx == m_currentIndex) {
 
-                Gdk::Cairo::set_source_pixbuf(cr,item->m_image, x + centerX ,  y + PREVIEW_TITLE_OFFSET + centerY - 1);
-                cr->paint();
-            }
-
-            x +=  m_cellWidth + Configuration::get_separatorMargin();
+            cr->rectangle(x + titleofsetX, y + titleofsetY, m_cellWidth  - 30, PREVIEW_TITLE_OFFSET - 10);
         }
         else {
 
-             centerX =this->get_width() / 2 - m_cellWidth / 2;
+            cr->rectangle(x + titleofsetX, y + titleofsetY, m_cellWidth - 12, PREVIEW_TITLE_OFFSET - 10);
+        }
 
-             if( m_Theme.PreviewCell().Fill().Color::alpha > 0.f ){
-                 cr->set_source_rgba(
-                         m_Theme.PreviewCell().Fill().Color::red,
-                         m_Theme.PreviewCell().Fill().Color::green,
-                         m_Theme.PreviewCell().Fill().Color::blue,
-                         m_Theme.PreviewCell().Fill().Color::alpha);
+        cr->clip_preserve();
+        cr->stroke();
+        cr->set_source_rgba(1,1,1,1);
+        auto layout = create_pango_layout(item->m_appname);
+        layout->set_font_description(m_font);
 
-                 Utilities::RoundedRectangle(cr, x + centerX, y, m_cellWidth, m_cellHeight, m_Theme.PreviewCell().Ratio());
-                 cr->fill();
-             }
-             if( m_Theme.PreviewCell().Stroke().Color::alpha > 0.f ){
-                 cr->set_source_rgba(
-                         m_Theme.PreviewCell().Stroke().Color::red,
-                         m_Theme.PreviewCell().Stroke().Color::green,
-                         m_Theme.PreviewCell().Stroke().Color::blue,
-                         m_Theme.PreviewCell().Stroke().Color::alpha);
+        cr->set_source_rgba(1.0, 1.0, 1.0, 1.0); // white text
+        cr->move_to(x + titleofsetX, y + titleofsetY);
+        layout->show_in_cairo_context(cr);
+        cr->reset_clip(); // Reset the clipping
 
-                 Utilities::RoundedRectangle(cr, x + centerX, y, m_cellWidth, m_cellHeight, m_Theme.PreviewCell().Ratio());
-                 cr->stroke();
-             }
 
-             // Selector
-             if (idx == m_currentIndex) {
+        // Draw image
+        if (DockWindow::is_Horizontal()) {
+                imgcenterX = m_cellWidth / 2 -  item->m_scaleWidth / 2;
+                imgcenterY = (m_cellHeight - 12) / 2 - item->m_scaleHeight / 2;
+        }
+        else {
+                 imgcenterX = (m_cellWidth / 2 -  item->m_scaleWidth / 2) + 10;
+                 imgcenterY = (m_cellHeight - PREVIEW_TITLE_OFFSET) / 2 - item->m_scaleHeight / 2;
+        }
 
-                 cr->set_source_rgba(
-                         m_Theme.Selector().Fill().Color::red,
-                         m_Theme.Selector().Fill().Color::green,
-                         m_Theme.Selector().Fill().Color::blue,
-                         m_Theme.Selector().Fill().Color::alpha);
+        // draw image
+        if (item->m_image){
+            Gdk::Cairo::set_source_pixbuf(cr,item->m_image, x + imgcenterX  ,  y + PREVIEW_TITLE_OFFSET + imgcenterY - 1);
+            cr->paint();
+        }
 
-                 Utilities::RoundedRectangle(cr, x + centerX, y, m_cellWidth, m_cellHeight, m_Theme.Selector().Ratio());
-                 cr->fill();
+        // Stroke
+        if( m_Theme.PreviewCell().Stroke().Color::alpha > 0.f ){
+            cr->set_source_rgba(
+                    m_Theme.PreviewCell().Stroke().Color::red,
+                    m_Theme.PreviewCell().Stroke().Color::green,
+                    m_Theme.PreviewCell().Stroke().Color::blue,
+                    m_Theme.PreviewCell().Stroke().Color::alpha);
 
-                 cr->set_source_rgba(
-                         m_Theme.Selector().Stroke().Color::red,
-                         m_Theme.Selector().Stroke().Color::green,
-                         m_Theme.Selector().Stroke().Color::blue,
-                         m_Theme.Selector().Stroke().Color::alpha);
-                 cr->set_line_width(m_Theme.Selector().LineWidth());
+            Utilities::RoundedRectangle(cr, x + centerX, y + centerY, m_cellWidth, m_cellHeight, m_Theme.PreviewCell().Ratio());
+            cr->stroke();
+        }
 
-                 Utilities::RoundedRectangle(cr, x + centerX, y, m_cellWidth, m_cellHeight, m_Theme.Selector().Ratio());
-                 cr->stroke();
 
-             }
-
-             if (item->m_image){
-                 centerX = m_cellWidth / 2 -  item->m_scaleWidth / 2;
-                 centerY = (m_cellHeight -32) / 2 - item->m_scaleHeight / 2;
-                 centerX += 10;
-                 Gdk::Cairo::set_source_pixbuf(cr,item->m_image, x + centerX  ,  y + PREVIEW_TITLE_OFFSET + centerY - 1);
-                 cr->paint();
-             }
-
+        if (DockWindow::is_Horizontal()) {
+            x +=  m_cellWidth + Configuration::get_separatorMargin();
+        }
+        else {
             y +=  m_cellHeight + Configuration::get_separatorMargin();
-
         }
 
         idx++;
@@ -782,12 +781,12 @@ GdkPixbuf* DockPreview::GetPreviewImage(DockItem* item, guint& scaleWidth, guint
     scaleHeight = winHeight * aspectRatio;
 
     // ajust width size to make looks better
-    if(winWidth - 100 > DockWindow::Monitor::get_geometry().width / 2 ) {
+    if(winWidth - 50 > DockWindow::Monitor::get_geometry().width / 2 ) {
         scaleWidth = width  - 4;
     }
 
     // ajust height size to make looks better
-    if(winHeight - 100 > DockWindow::Monitor::get_geometry().height / 2 ) {
+    if(winHeight - 50 > DockWindow::Monitor::get_geometry().height / 2 ) {
        scaleHeight = height - 2;
     }
 

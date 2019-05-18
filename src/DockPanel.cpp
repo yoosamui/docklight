@@ -1096,6 +1096,7 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
                 iconsizeWidth = width - CELL_MARGIN;
                 iconsizeHeight = height - CELL_MARGIN;
                 auto icon = item->m_image->scale_simple(iconsizeWidth, iconsizeHeight, Gdk::INTERP_BILINEAR);
+                //auto icon = item->m_image;//->scale_simple(iconsizeWidth, iconsizeHeight, Gdk::INTERP_BILINEAR);
                 Gdk::Cairo::set_source_pixbuf(cr, icon, x + center - iconsizeWidth / 2, y + 1);
                 cr->paint();
             }

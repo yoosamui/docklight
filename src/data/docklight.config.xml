@@ -2,7 +2,7 @@
 <Root>
     <AutoHide>false</AutoHide>
     <PanelMode>false</PanelMode>
-    <Location>BOTTOM</Location>
+    <Location>RIGHT</Location>
     <UseStyle>0</UseStyle>
     <Styles>
           <Style  panel="0,0,0,0.6,  0,0,0,0 ,1, 0, 0"
