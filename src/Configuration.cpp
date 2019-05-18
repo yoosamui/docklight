@@ -92,6 +92,16 @@ namespace Configuration
     void set_DefaultStyle()
     {
 
+
+        m_theme.set_Panel(new ColorWindow());
+        m_theme.set_PanelCell(new ColorWindow(Color(0,0.50,0.66,1), Color(1,1,1,1), 1.5, 3, 0));
+        m_theme.set_Selector(new ColorWindow(Color(255,255,255,0.5), Color(1,1,1,1), 1.5, 3, 0));
+        m_theme.set_PanelTitle(new ColorWindow(Color(0, 0, 0, 1 ), Color(0,0,0,1), 1, 6, 0));
+        m_theme.set_PanelTitleText(new ColorWindow(Color(), Color(1,1,1,1), 1, 0, 0));
+
+        m_theme.set_Preview(new ColorWindow());
+        m_theme.set_PreviewCell(new ColorWindow(Color(0,0.50,0.66,1), Color(1,1,1,1), 1.5, 3, 0));
+/*
         m_theme.set_Panel(new ColorWindow(Color(0.45, 0.06, 0.33,1), Color(1,1,1,0), 0, 0, 0));
         m_theme.set_PanelCell(new ColorWindow(Color(0.37, 0.02, 0.02, 1.0), Color(1,1,1,0), 0, 0, 0));
 
@@ -106,6 +116,7 @@ namespace Configuration
 
         m_theme.set_Preview(new ColorWindow(Color(0.45, 0.06, 0.33,1), Color(1,1,1,0), 0, 0, 0));
         m_theme.set_PreviewCell(new ColorWindow(Color(), Color(0,0,0,1), 1, 0, 0));
+        */
     }
 
     // https://shilohjames.wordpress.com/2014/04/27/tinyxml2-tutorial/

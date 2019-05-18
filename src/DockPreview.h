@@ -37,6 +37,8 @@ class DockPreview : public Gtk::Window
         ~DockPreview();
         void Show(const std::vector<DockItem*>& items, const guint index, const guint cellSize);
     private:
+
+
         int m_currentIndex = -1;
         bool m_canLeave = false;
         bool m_mouseIn = false;

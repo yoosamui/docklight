@@ -68,7 +68,6 @@ DockPreview::DockPreview():Gtk::Window(Gtk::WindowType::WINDOW_POPUP){
             Gdk::LEAVE_NOTIFY_MASK |
             Gdk::POINTER_MOTION_MASK);
 
-
     GdkScreen *screen;
     GdkVisual *visual;
 
@@ -83,6 +82,7 @@ DockPreview::DockPreview():Gtk::Window(Gtk::WindowType::WINDOW_POPUP){
     m_font.set_family("System");
     m_font.set_size(8 * PANGO_SCALE);
     m_font.set_weight(Pango::WEIGHT_NORMAL);
+
 
     WnckScreen *wnckscreen = wnck_screen_get_default();
 
@@ -437,6 +437,8 @@ void DockPreview::on_window_closed(WnckScreen *screen, WnckWindow *window, gpoin
  */
 bool DockPreview::on_button_press_event(GdkEventButton *event)
 {
+g_print("MousePress\n");
+
 
     if ((event->type == GDK_BUTTON_PRESS)) {
         // Check if the event is a left button click.
@@ -490,7 +492,7 @@ bool DockPreview::on_button_press_event(GdkEventButton *event)
 bool DockPreview::on_motion_notify_event(GdkEventMotion*event)
 {
     m_currentIndex = this->get_Index(event->x, event->y);
-
+/*
     if (m_currentIndex < 0  ||  m_currentIndex > DockPreview::m_previewItems.size()){
         return true;
     }
@@ -502,7 +504,7 @@ bool DockPreview::on_motion_notify_event(GdkEventMotion*event)
     DockItem *item = DockPreview::m_previewItems[m_currentIndex];
 
     // Activate and/or minimize the window
-    WnckHandler::SelectWindow(item->m_window);
+    WnckHandler::SelectWindow(item->m_window);*/
     return true;
 }
 
