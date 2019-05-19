@@ -45,9 +45,7 @@ bool DockPreview::m_allowDraw;
 
 DockPreview::DockPreview():Gtk::Window(Gtk::WindowType::WINDOW_POPUP){
 
-//(docklight:31507): Gdk-WARNING **: 20:23:48.099: XID collision, trouble ahead
-//Preview destroy.
-    DockPreview::threadRunning = false; //////////////////////////////////// find the buf
+    DockPreview::threadRunning = false;
     DockPreview::m_detectMovement = true;
     DockPreview::m_allowDraw = true;
 
@@ -59,7 +57,6 @@ DockPreview::DockPreview():Gtk::Window(Gtk::WindowType::WINDOW_POPUP){
     // Set masks for mouse events
     add_events(Gdk::BUTTON_PRESS_MASK |
             Gdk::BUTTON_RELEASE_MASK |
-            Gdk::BUTTON_PRESS_MASK |
             Gdk::SCROLL_MASK |
             Gdk::SMOOTH_SCROLL_MASK |
             Gdk::POINTER_MOTION_HINT_MASK |
@@ -133,15 +130,38 @@ void DockPreview::Show(const std::vector<DockItem*>& items, const guint index, c
         item->m_scaledPixbuf = nullptr;
     }
 
+    // Buble sort by appname name
+    int size = (int) m_previewItems.size();
+    int i, m, j;
+
+    for (i = 0; i < size - 1; i = i + 1) {
+        m = i;
+        for (j = i + 1; j < size; j = j + 1) {
+
+            std::string s1 = m_previewItems.at(j)->m_appname.c_str();
+            std::string s2 = m_previewItems.at(m)->m_appname.c_str();
+
+            s1 = s1.substr(0, 40);
+            s2 = s2.substr(0, 40);
+
+            std::string a = Utilities::stringToLower(s1.c_str());
+            std::string b = Utilities::stringToLower(s2.c_str());
+
+            if (a < b) {
+                m = j;
+            }
+        }
+        std::swap(m_previewItems[i], m_previewItems[m]);
+    }
+
     int x = 0;
     int y = 0;
 
-    guint windowWidth = cellSize * 6;
+    guint windowWidth = (cellSize * 6) - 10;
     guint windowHeight = windowWidth -  (PREVIEW_HV_OFFSET * 2);
 
     m_cellWidth = windowWidth - 20;
     m_cellHeight =windowHeight - 20 ;  m_cellWidth - (PREVIEW_HV_OFFSET * 2);
-
     guint separatorsSize = Configuration::get_separatorMargin() * (items.size() - 1);
 
     if (DockWindow::is_Horizontal()){
@@ -184,8 +204,8 @@ void DockPreview::Show(const std::vector<DockItem*>& items, const guint index, c
     this->move(x, y);
     this->show_all();
     // Start the background thread
-    m_thread = new std::thread(this->MovementDetector);
-
+    //m_thread = new std::thread(this->MovementDetector);
+m_thread = nullptr;
    // start the timer for post movement detections
    // m_detectMovementTimer.start();
 }
@@ -536,7 +556,6 @@ inline int DockPreview::get_Index(const int& mouseX, const int& mouseY)
         int height;
         for (auto item : DockPreview::m_previewItems) {
             if (mouse.get_y() >= y && mouse.get_y() <= y + m_cellHeight) {
-                g_print(" idx:%d\n", idx);
                 return idx;
             }
 
@@ -567,6 +586,7 @@ bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     guint titleofsetX = 0;
     guint titleofsetY = 0;
     guint titlecliping = 0;
+    guint closeSymbolOffsetX = 0;
 
     if (m_Theme.Preview().Fill().Color::alpha > 0.f) {
         cr->set_source_rgba(
@@ -590,13 +610,13 @@ bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
     for (DockItem* item : m_previewItems) {
 
-        if(!item->m_image || item->m_isDynamic ) {
-            if(item->m_scaledPixbuf){
+        if (!item->m_image || item->m_isDynamic ) {
+            if (item->m_scaledPixbuf){
                 g_object_unref(item->m_scaledPixbuf);
             }
 
-            item->m_scaledPixbuf = GetPreviewImage(item, item->m_scaleWidth, item->m_scaleHeight);
-            if (item->m_scaledPixbuf !=  nullptr){
+            item->m_scaledPixbuf = this->GetPreviewImage(item, item->m_scaleWidth, item->m_scaleHeight);
+            if (item->m_scaledPixbuf != nullptr){
                 item->m_image = Glib::wrap(item->m_scaledPixbuf, true);
             }
         }
@@ -617,7 +637,7 @@ bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
         }
 
         // Fill cell
-        if( m_Theme.PreviewCell().Fill().Color::alpha > 0.f ) {
+        if ( m_Theme.PreviewCell().Fill().Color::alpha > 0.f ) {
 
             cr->set_source_rgba(
                     m_Theme.PreviewCell().Fill().Color::red,
@@ -651,33 +671,58 @@ bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
             Utilities::RoundedRectangle(cr, x + centerX, y + centerY, m_cellWidth, m_cellHeight, m_Theme.Selector().Ratio());
             cr->stroke();
 
-        }
+            // close symbol section
+            closeSymbolOffsetX = DockWindow::is_Horizontal() ? 10 : 0;    // Close X offset
 
+            // select if mouse over
+            if ( 1 == 2) {
+                cr->set_source_rgba(1.0, 0.0, 0.0, 1.0);
+                cr->set_line_width(2.5);
+            }
+            else {
+                cr->set_source_rgba(1.0, 1.0, 1.0, 1.0);
+                cr->set_line_width(1.5);
+            }
 
-        // draw title the clipping rectangle
-        //       cr->set_source_rgba(1.0, 1.0, 1.0, 0.0);
-        if (idx == m_currentIndex) {
+            cr->move_to(x - closeSymbolOffsetX +  m_cellWidth - 6, y + titleofsetY);
+            cr->line_to(x - closeSymbolOffsetX +  m_cellWidth - 6, y + titleofsetY);
+            cr->line_to(x - closeSymbolOffsetX +  m_cellWidth + 6, y + titleofsetY + PREVIEW_TITLE_OFFSET - 16 );
 
+            cr->move_to(x - closeSymbolOffsetX +  m_cellWidth - 6 , y + titleofsetY + PREVIEW_TITLE_OFFSET - 16 );
+            cr->line_to(x - closeSymbolOffsetX +  m_cellWidth - 6 , y + titleofsetY + PREVIEW_TITLE_OFFSET - 16 );
+            cr->line_to(x - closeSymbolOffsetX +  m_cellWidth + 6 , y + titleofsetY);
+
+            cr->stroke();
+
+            // reduce text clipping rectangle width to make space for the close symbol
             cr->rectangle(x + titleofsetX, y + titleofsetY, m_cellWidth  - 30, PREVIEW_TITLE_OFFSET - 10);
+
         }
         else {
-
+            // Text clipping rectangle
             cr->rectangle(x + titleofsetX, y + titleofsetY, m_cellWidth - 12, PREVIEW_TITLE_OFFSET - 10);
+
         }
 
+        // draws the clipping rectangle invisible
+        cr->set_source_rgba(1,1,1, 0.f); // for debuging set alpha to 1.f
         cr->clip_preserve();
         cr->stroke();
-        cr->set_source_rgba(1,1,1,1);
-        auto layout = create_pango_layout(item->m_appname);
-        layout->set_font_description(m_font);
 
+        // set the text color using themes
         cr->set_source_rgba(1.0, 1.0, 1.0, 1.0); // white text
+
+        //Create and set up a Pango layout for the clipping rectangle area
+        m_refLayout = create_pango_layout(item->m_appname);
+        m_refLayout->set_font_description(m_font);
+
         cr->move_to(x + titleofsetX, y + titleofsetY);
-        layout->show_in_cairo_context(cr);
+
+        m_refLayout->show_in_cairo_context(cr);
         cr->reset_clip(); // Reset the clipping
 
 
-        // Draw image
+        // set the image center
         if (DockWindow::is_Horizontal()) {
                 imgcenterX = m_cellWidth / 2 -  item->m_scaleWidth / 2;
                 imgcenterY = (m_cellHeight - 12) / 2 - item->m_scaleHeight / 2;
@@ -718,23 +763,6 @@ bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
        return true;
 }
-
-/**
- * Transfers image data from a GdkWindow and converts it to an RGB(A)
- * representation inside a GdkPixbuf. In other words, copies image data
- * from a server-side drawable to a client-side RGB(A) buffer.
- * This allows to efficiently read individual pixels on the client side.
- *
- * Create a new GdkPixbuf containing a copy of src scaled to dest_width x dest_height .
- * Leaves src unaffected. interp_type should be GDK_INTERP_NEAREST
- * if you want maximum speed (but when scaling down GDK_INTERP_NEAREST is usually unusably ugly).
- * The default interp_type should be GDK_INTERP_BILINEAR which offers reasonable quality and speed.
- *
- * @param DockItem*  item
- * @return GdkPixbuf*
- *
- */
-
 
 /**
  * Converts the X11 window to a GdkWindow. The result will procesed to a pixbuf and scaled.
@@ -780,12 +808,12 @@ GdkPixbuf* DockPreview::GetPreviewImage(DockItem* item, guint& scaleWidth, guint
     scaleWidth = winWidth * aspectRatio ;
     scaleHeight = winHeight * aspectRatio;
 
-    // ajust width size to make looks better
+    // ajust width size to make it looks better
     if(winWidth - 50 > DockWindow::Monitor::get_geometry().width / 2 ) {
         scaleWidth = width  - 4;
     }
 
-    // ajust height size to make looks better
+    // ajust height size to make it looks better
     if(winHeight - 50 > DockWindow::Monitor::get_geometry().height / 2 ) {
        scaleHeight = height - 2;
     }

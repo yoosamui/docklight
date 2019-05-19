@@ -98,7 +98,7 @@ namespace Configuration
         m_theme.set_PanelTitleText(new ColorWindow(Color(), Color(1,1,1,1), 1, 0, 0));
 
         m_theme.set_Preview(new ColorWindow());
-        m_theme.set_PreviewCell(new ColorWindow(Color(0,0.50,0.66,1), Color(1,1,1,1), 1.5, 3, 0));
+        m_theme.set_PreviewCell(new ColorWindow(Color(1,1,1,0.2), Color(1,1,1,0), 1.5, 3, 0));
     }
 
     // https://shilohjames.wordpress.com/2014/04/27/tinyxml2-tutorial/
@@ -266,7 +266,7 @@ namespace Configuration
 
     unsigned int get_dockWindowSize()
     {
-        return 56; //DOCK_WINDOW_AREA;
+        return 58; //DOCK_WINDOW_AREA width;
     }
 
     unsigned int get_WindowDockMonitorMargin_Top()

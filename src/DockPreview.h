@@ -52,6 +52,9 @@ class DockPreview : public Gtk::Window
         static bool m_detectMovement;
         static bool m_allowDraw;
 
+        Glib::RefPtr<Pango::Layout> m_refLayout;
+        Pango::FontDescription m_font;
+
         Glib::Timer m_detectMovementTimer;
 
         void hideMe();
@@ -67,7 +70,7 @@ class DockPreview : public Gtk::Window
 
         GdkPixbuf* GetPreviewImage(DockItem* item, guint& scaleWidth, guint& scaleHeight);
         Configuration::Style::Theme m_Theme = Configuration::get_Theme();
-        Pango::FontDescription m_font;
+
         bool on_timeoutDraw();
         static std::vector<DockItem*> m_previewItems;
         static void on_window_opened(WnckScreen *screen, WnckWindow *window, gpointer data);

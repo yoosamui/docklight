@@ -50,7 +50,7 @@ DockItem::~DockItem()
     g_print("DockItem destroy.\n");
 }
 
-guint DockItem::get_Width()
+int DockItem::get_Width()
 {
     if (DockPanel::get_WidthDecrement() < 0 ){
         return this->m_width;
@@ -60,7 +60,7 @@ guint DockItem::get_Width()
 }
 
 
-guint DockItem::get_Height()
+int DockItem::get_Height()
 {
     if (DockPanel::get_HeightDecrement() < 0 ){
         return this->m_height;
@@ -70,12 +70,12 @@ guint DockItem::get_Height()
 }
 
 
-guint DockItem::get_InmutableWidth()
+gint DockItem::get_InmutableWidth()
 {
     return this->m_width;
 }
 
-guint DockItem::get_InmutableHeight()
+gint DockItem::get_InmutableHeight()
 {
     return this->m_height;
 }

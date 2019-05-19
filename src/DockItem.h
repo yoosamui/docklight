@@ -1,9 +1,26 @@
-/*
- * File:   DockItem.h
- * Author: yoo
- *
- * Created on November 11, 2018, 5:14 PM
- */
+//*****************************************************************
+//
+//  Copyright © 2018 Juan R. González
+//  j-gonzalez@email.de
+//
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  The above copyright notice and this permission notice shall be included in
+//  all copies or substantial portions of the Software.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+//*****************************************************************
+
 
 #ifndef DOCKITEM_H
 #define	DOCKITEM_H
@@ -45,8 +62,8 @@ public:
     std::vector<DockItem*> m_items;
     int m_xid;
     int m_index = 0;
-    guint m_posX = 0;
-    guint m_posY = 0;
+    gint m_posX = 0;
+    gint m_posY = 0;
     bool m_isAttached = false;
     bool m_isDirty = false;
     bool visible = true;
@@ -55,16 +72,16 @@ public:
     std::string get_GroupName();
     std::string get_DesktopFileName();
     int m_dockitemSesssionGrpId = 0;
-    guint get_Width();
-    guint get_Height();
-    guint get_InmutableWidth();
-    guint get_InmutableHeight();
+    int get_Width();
+    int get_Height();
+    gint get_InmutableWidth();
+    gint get_InmutableHeight();
 
 private:
     bool m_pixbufPreviousPass;
 
-    guint m_width = 0;
-    guint m_height = 0;
+    gint m_width = 0;
+    gint m_height = 0;
 
 };
 

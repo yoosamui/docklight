@@ -153,7 +153,7 @@ namespace DockItemPositions
      * @param: DockItem, x , y and the  width of the source window.
      * @references: the start position. x and y. Depending of the DockWindow location.
      */
-    bool get_CenterPosition(const int index, int& x, int& y, const guint width, const guint height)
+    bool get_CenterPosition(const gint index, gint& x, gint& y, const gint width, const gint height)
     {
         if (index < 0 || index > AppUpdater::m_dockitems.size()){
             return false;
@@ -174,7 +174,7 @@ namespace DockItemPositions
 
             for (DockItem* citem : AppUpdater::m_dockitems) {
                 if( citem->m_index == item->m_index){
-                    x -= (width / 2) - citem->get_Width()  / 2;
+                    x -= std::abs(width / 2 - citem->get_Width()  / 2);
 
                     // check the limit on the left
                     if (x <  DockWindow::Monitor::get_geometry().x) {
@@ -211,7 +211,7 @@ namespace DockItemPositions
 
                 if ( citem->m_index == item->m_index){
 
-                    y -= (height / 2) - variantItemHeight / 2;
+                    y -= height / 2 - variantItemHeight / 2;
 
                     // check the limit on the top
                     if (y <  DockWindow::Monitor::get_geometry().y){
