@@ -18,9 +18,6 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 //****************************************************************
-
-
-
 #include <gtkmm/application.h>
 #include "AppWindow.h"
 #include <sstream>
@@ -29,40 +26,40 @@
 #include <libintl.h>
 #include <config.h>
 #include <gtk-3.0/gtk/gtk.h>
-#include "Utilities.h"
 #include <iostream>
 #include <cstdlib>
 #include <gdk/gdkx.h>
+
 namespace
 {
-
     int on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine>& command_line,
-                        Glib::RefPtr<Gtk::Application>& app)
+            Glib::RefPtr<Gtk::Application>& app)
     {
         int argc = 0;
         char** argv = command_line->get_arguments(argc);
 
         for (int i = 0; i < argc; ++i) {
 
-            if (strcmp(argv[i], "top") == 0) {
+            if (strcmp(argv[i], "TOP") == 0) {
                 Configuration::set_dockWindowLocation(panel_locationType::TOP);
                 continue;
             }
 
-            if (strcmp(argv[i], "botom") == 0) {
+            if (strcmp(argv[i], "BOTTOM") == 0) {
                 Configuration::set_dockWindowLocation(panel_locationType::BOTTOM);
                 continue;
             }
 
-            if (strcmp(argv[i], "left") == 0) {
+            if (strcmp(argv[i], "LEFT") == 0) {
                 Configuration::set_dockWindowLocation(panel_locationType::LEFT);
                 continue;
             }
-            if (strcmp(argv[i], "right") == 0) {
+            if (strcmp(argv[i], "RIGHT") == 0) {
                 Configuration::set_dockWindowLocation(panel_locationType::RIGHT);
                 continue;
             }
         }
+
 
         app->activate(); // Without activate() the window won't be shown.
         return EXIT_SUCCESS;
@@ -95,16 +92,10 @@ int main(int argc, char *argv[])
     char* txtdomain = textdomain(GETTEXT_PACKAGE);
     g_print("textdomain: %s\n\n", txtdomain);
 
-    g_print("CREATE GTK APP\n");
-    //  Glib::RefPtr<Gtk::Application> app =
-    //  Gtk::Application::create(argc, argv, "org.gtkmm.docklight");
-
-    //auto app = Gtk::Application::create(argc, argv, "org.gtkmm.example");
-    auto app = Gtk::Application::create(argc, argv,
-                                        "org.gtkmm.example", Gio::APPLICATION_HANDLES_COMMAND_LINE | Gio::APPLICATION_NON_UNIQUE);
+    auto app = Gtk::Application::create(argc, argv,"org.gtkmm.example", Gio::APPLICATION_HANDLES_COMMAND_LINE | Gio::APPLICATION_NON_UNIQUE);
     app->signal_command_line().connect(sigc::bind(sigc::ptr_fun(&on_command_line), app), false);
 
-    g_print("CREATE AppWindow\n");
+    g_print("Create AppWindow\n");
     AppWindow win;
 
     int r = win.init();

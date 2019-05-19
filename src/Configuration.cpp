@@ -1,11 +1,26 @@
-/*
-//# The above copyright notice and this permission notice shall be included in
-//# all copies or substantial portions of the Software.
- * File:   Configuration.cpp
- * Author: yoo
- *
- * Created on November 4, 2018, 1:32 PM
- */
+//*****************************************************************
+//
+//  Copyright © 2018 Juan R. González
+//  j-gonzalez@email.de
+//
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  The above copyright notice and this permission notice shall be included in
+//  all copies or substantial portions of the Software.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
+//*****************************************************************
+
 
 #include "Configuration.h"
 #include "DockWindow.h"
@@ -59,7 +74,6 @@ namespace Configuration
                     try {
                         value = std::stod(token);
                         values[ index ] = value;
-                        //g_print(" %d........:%f (%s)\n", index, value,token.c_str());
 
                     } catch (std::invalid_argument) {
                         g_critical("getColorFromString: can't convert the token: %s\n", s.c_str());
@@ -93,12 +107,13 @@ namespace Configuration
     {
         m_theme.set_Panel(new ColorWindow());
         m_theme.set_PanelCell(new ColorWindow(Color(0,0.50,0.66,1), Color(1,1,1,1), 1.5, 3, 0));
-        m_theme.set_Selector(new ColorWindow(Color(255,255,255,0.5), Color(1,1,1,1), 1.5, 3, 0));
+        m_theme.set_Selector(new ColorWindow(Color(255,255,255,0.3), Color(1,1,1,1), 1.5, 3, 0));
         m_theme.set_PanelTitle(new ColorWindow(Color(0, 0, 0, 1 ), Color(0,0,0,1), 1, 6, 0));
         m_theme.set_PanelTitleText(new ColorWindow(Color(), Color(1,1,1,1), 1, 0, 0));
-
         m_theme.set_Preview(new ColorWindow());
         m_theme.set_PreviewCell(new ColorWindow(Color(1,1,1,0.2), Color(1,1,1,0), 1.5, 3, 0));
+        m_theme.set_PreviewTitleText(new ColorWindow(Color(), Color(1,1,1,1), 0, 0, 0));
+
     }
 
     // https://shilohjames.wordpress.com/2014/04/27/tinyxml2-tutorial/
@@ -165,6 +180,9 @@ namespace Configuration
             const char* cell = listElement->Attribute("panelCell");
             const char* panelTitle = listElement->Attribute("panelTitle");
             const char* selector = listElement->Attribute("selector");
+            const char* preview = listElement->Attribute("preview");
+            const char* previewCell = listElement->Attribute("previewCell");
+            const char* previewTitleText = listElement->Attribute("previewTitleText");
 
             XMLCheckResult(listElement->QueryIntText(&id));
             if(id == useStyle ){
@@ -177,7 +195,7 @@ namespace Configuration
                 if (panel != nullptr){
                     getColorFromString(panel, fill, stroke, lineWidth, ratio,  mask);
                     m_theme.set_Panel(new ColorWindow(fill,stroke,lineWidth,ratio,mask));
-                    g_print("Style %d %s PANEL  Fill:%f %f %f %f Stroke %f %f %f %f  MASK %d\n",id, panel, fill.red, fill.green, fill.blue, fill.alpha, stroke.red, stroke.green, stroke.blue, stroke.alpha, mask);
+                   // g_print("Style %d %s PANEL  Fill:%f %f %f %f Stroke %f %f %f %f  MASK %d\n",id, panel, fill.red, fill.green, fill.blue, fill.alpha, stroke.red, stroke.green, stroke.blue, stroke.alpha, mask);
                 }
 
                 if (selector != nullptr){
@@ -188,7 +206,7 @@ namespace Configuration
                 if (cell != nullptr){
                     getColorFromString(cell, fill, stroke, lineWidth, ratio,  mask);
                     m_theme.set_PanelCell(new ColorWindow(fill,stroke,lineWidth,ratio,mask));
-                    g_print("Style %d %s CELL   Fill:%f %f %f %f Stroke %f %f %f %f \n",id, cell, fill.red, fill.green, fill.blue, fill.alpha, stroke.red, stroke.green, stroke.blue, stroke.alpha);
+                  //  g_print("Style %d %s CELL   Fill:%f %f %f %f Stroke %f %f %f %f \n",id, cell, fill.red, fill.green, fill.blue, fill.alpha, stroke.red, stroke.green, stroke.blue, stroke.alpha);
 
                 }
 
@@ -198,7 +216,20 @@ namespace Configuration
 
                 }
 
+                if (preview != nullptr){
+                    getColorFromString(preview, fill, stroke, lineWidth, ratio,  mask);
+                    m_theme.set_Preview(new ColorWindow(fill,stroke,lineWidth,ratio,mask));
+                }
 
+                if (previewCell != nullptr){
+                    getColorFromString(previewCell, fill, stroke, lineWidth, ratio,  mask);
+                    m_theme.set_PreviewCell(new ColorWindow(fill,stroke,lineWidth,ratio,mask));
+                }
+
+                if (previewTitleText != nullptr){
+                    getColorFromString(previewTitleText, fill, stroke, lineWidth, ratio,  mask);
+                    m_theme.set_PreviewTitleText(new ColorWindow(fill,stroke,lineWidth,ratio,mask));
+                }
                 break;
             }
 

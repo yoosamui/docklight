@@ -647,6 +647,15 @@ bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
             Utilities::RoundedRectangle(cr, x + centerX, y + centerY, m_cellWidth, m_cellHeight, m_Theme.PreviewCell().Ratio());
             cr->fill();
+
+            cr->set_source_rgba(
+                    m_Theme.PreviewCell().Stroke().Color::red,
+                    m_Theme.PreviewCell().Stroke().Color::green,
+                    m_Theme.PreviewCell().Stroke().Color::blue,
+                    m_Theme.PreviewCell().Stroke().Color::alpha);
+
+            Utilities::RoundedRectangle(cr, x + centerX, y + centerY, m_cellWidth, m_cellHeight, m_Theme.PreviewCell().Ratio());
+            cr->stroke();
         }
 
         // Selector
@@ -710,7 +719,12 @@ bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
         cr->stroke();
 
         // set the text color using themes
-        cr->set_source_rgba(1.0, 1.0, 1.0, 1.0); // white text
+       // cr->set_source_rgba(1.0, 1.0, 1.0, 1.0); // white text
+            cr->set_source_rgba(
+                    m_Theme.PreviewTitleText().Stroke().Color::red,
+                    m_Theme.PreviewTitleText().Stroke().Color::green,
+                    m_Theme.PreviewTitleText().Stroke().Color::blue,
+                    m_Theme.PreviewTitleText().Stroke().Color::alpha);
 
         //Create and set up a Pango layout for the clipping rectangle area
         m_refLayout = create_pango_layout(item->m_appname);

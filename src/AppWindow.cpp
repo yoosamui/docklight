@@ -104,16 +104,15 @@ AppWindow::AppWindow()
  */
 int AppWindow::init()
 {
+    this->set_title(PACKAGE_NAME);
 
     // Initialize the monitor geometry.
     this->show_all();
     this->m_screen.init(this);
     g_print("Monitor geometry ready. Monitor count = %d\n",this->m_screen.get_MonitorsCount());
 
-    // Load the configuration file
+    // Load  configuration file
     Configuration::Load();
-    g_print("Configuration load done.\n");
-    this->set_title(PACKAGE_NAME);
 
     // Seting the docklight logo
     std::string iconFile = Utilities::getExecPath(DEF_LOGONAME);

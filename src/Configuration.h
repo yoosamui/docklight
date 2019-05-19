@@ -51,7 +51,7 @@
 #define DOCK_WINDOW_HEIGHT 46
 #define CELL_TOP_MARGIN 8                // Cell Top Position
 
-#define CELL_MARGIN 12
+#define CELL_MARGIN 8
 
 #define CELL_BOTTOM_MARGIN 8
 #define CELL_WIDTH_MARGIN  8
@@ -215,6 +215,7 @@ namespace Configuration {
                 ColorWindow& Selector() const { return *m_Selector; }
                 ColorWindow& Preview() const { return *m_Preview; }
                 ColorWindow& PreviewCell() const { return *m_PreviewCell; }
+                ColorWindow& PreviewTitleText() const { return *m_PreviewTitleText; }
 
                 void set_Panel(ColorWindow* cw) {
 
@@ -313,6 +314,20 @@ namespace Configuration {
 
                     m_PreviewCell = cw;
                 }
+
+                void set_PreviewTitleText(ColorWindow* cw) {
+
+                   if (cw == nullptr){
+                        return;
+                   }
+
+                   if(m_PreviewTitleText != nullptr){
+                        delete m_PreviewTitleText;
+                       m_PreviewTitleText = nullptr;
+                   }
+
+                    m_PreviewTitleText = cw;
+                }
             private:
                 ColorWindow* m_Panel = new ColorWindow();
                 ColorWindow* m_PanelTitle = new ColorWindow();
@@ -321,6 +336,7 @@ namespace Configuration {
                 ColorWindow* m_Selector = new ColorWindow();
                 ColorWindow* m_Preview = new ColorWindow();
                 ColorWindow* m_PreviewCell = new ColorWindow();
+                ColorWindow* m_PreviewTitleText = new ColorWindow();
         };
     }
 

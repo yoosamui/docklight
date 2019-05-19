@@ -2,13 +2,16 @@
 <Root>
     <AutoHide>false</AutoHide>
     <PanelMode>false</PanelMode>
-    <Location>RIGHT</Location>
-    <UseStyle>0</UseStyle>
+    <Location>BOTTOM</Location>
+    <UseStyle>1</UseStyle>
     <Styles>
-          <Style  panel="0,0,0,0.6,  0,0,0,0 ,1, 0, 0"
-                  panelCell="0,0,0,0, 0,0,0,0, 0, 0, 0"
-                  selector="1,1,1,0.6,  1,1,1,1, 1, 0, 0"
-                  panelTitle="0,0,0,0.6,  1,1,1,1 ,0 ,0 ,0">
+          <Style  panel="0.07, 0, 0, 0.8,  0,0,0,0 ,1, 0, 0"
+                  panelCell="0,0,0,0, 1,1,1,1, 1.4, 0, 1"
+                  selector="1,1,1,0.4,  1,1,1,1, 1, 0, 0"
+                  panelTitle="0,0,0,0.6,  1,1,1,1 ,0 ,0 ,0"
+                  preview="0.447, 0.411, 0.411, 1.0,  0,0,0,0 ,1, 0, 0"  
+                  previewCell="0.3, 0.043, 0.2, 1.0,  1,1,1,0 ,2.5, 0, 1"  
+                  >
             1
         </Style>
         <Style    panel="255,0,0,1,  255,255,0,1, 1 ,0 ,0"
@@ -17,7 +20,7 @@
                   panelTitle="0,0,0,1.0,  1,1,1,1 ,0 ,0 ,0">
             2
         </Style>
-        <Style    panel="0.23, 0.34, 0.59, 1.0"
+        <Style    panel="0.301, 0, 0, 0.9"
                   panelCell="0.38,0.54,0.87,1.0,  0.53,0.87,0.38,1, 2, 0, 1"
                   selector="1,1,1,0.6,  255,1,1,0, 3, 0, 0"
                   panelTitle="0,0,0,1.0,  1,1,1,1 ,0 ,0 ,0">

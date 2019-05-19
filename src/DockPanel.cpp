@@ -1081,11 +1081,11 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
             if (item->m_items.size() > 0) {
                 cr->set_source_rgb(1.0, 1.0, 1.0);
                 if (item->m_items.size() == 1) {
-                    cr->arc(x + center, y + height - 5, 2.0, 0, 2 * M_PI);
+                    cr->arc(x + center, y + height - 4, 1.7, 0, 2 * M_PI);
                 }
                 else if (item->m_items.size() > 1) {
-                    cr->arc(x + center - 4, y + height - 5, 2.0, 0, 2 * M_PI);
-                    cr->arc(x + center + 4, y + height - 5, 2.0, 0, 2 * M_PI);
+                    cr->arc(x + center - 4, y + height - 4, 1.7, 0, 2 * M_PI);
+                    cr->arc(x + center + 4, y + height - 4, 1.7, 0, 2 * M_PI);
                 }
                 cr->fill();
             }
@@ -1194,3 +1194,5 @@ void DockPanel::show_Title()
 }
 
 
+// REFERENCES
+// https://developer.gnome.org/gtkmm-tutorial/stable/index.html.en
