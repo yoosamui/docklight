@@ -38,6 +38,12 @@ class DockPreview : public Gtk::Window
         void Show(const std::vector<DockItem*>& items, const guint index, const guint cellSize);
     private:
 
+        guint m_dockItemIndex = 0;
+        guint m_dockItemCellSize = 0;
+
+        guint m_closeSymbolX = 0;
+        guint m_closeSymbolY = 0;
+        bool m_closeSymbolMouseOver = false;
 
         int m_currentIndex = -1;
         bool m_canLeave = false;
@@ -46,29 +52,38 @@ class DockPreview : public Gtk::Window
         guint m_cellWidth;
         guint m_cellHeight;
 
-        std::thread* m_thread = nullptr;
-        static bool threadRunning;
-        static void MovementDetector();
-        static bool m_detectMovement;
+        //std::thread* m_thread = nullptr;
+       // static bool threadRunning;
+       // static void MovementDetector();
+       // static bool m_detectMovement;
         static bool m_allowDraw;
 
         Glib::RefPtr<Pango::Layout> m_refLayout;
         Pango::FontDescription m_font;
 
-        Glib::Timer m_detectMovementTimer;
+        //Glib::Timer m_detectMovementTimer;
+        guint get_CountItems();
+        bool RemoveCurrentPreviewItem();
+        void Update();
 
-        void hideMe();
+        static void hideMe();
         bool on_leave_notify_event(GdkEventCrossing* crossing_event);
         bool on_enter_notify_event(GdkEventCrossing* crossing_event);
 
-        bool scanSet = false;
-        bool m_firstDrawDone = false;
+       // bool scanSet = false;
+      //  bool m_firstDrawDone = false;
 
         int get_Index(const int& mouseX, const int& mouseY);
         bool on_button_press_event(GdkEventButton *event);
         bool on_motion_notify_event(GdkEventMotion*event);
 
+        //bool RemoveItemByIndex(const guint index);
+
         GdkPixbuf* GetPreviewImage(DockItem* item, guint& scaleWidth, guint& scaleHeight);
+        bool ComparePixels (const Glib::RefPtr<Gdk::Pixbuf>& first_pixbuf, const Glib::RefPtr<Gdk::Pixbuf>& current_pixbuf);
+        bool ComparePixels(const guint8* pixels, const GdkPixbuf* current_pixbuf);
+      //  bool ComparePixels (const guint8* pixels, const GdkPixbuf* current_pixbuf)
+        bool ComparePixels (const GdkPixbuf* pixbuf, const guint8* pixels_first, const guint8* pixels_current);
         Configuration::Style::Theme m_Theme = Configuration::get_Theme();
 
         bool on_timeoutDraw();

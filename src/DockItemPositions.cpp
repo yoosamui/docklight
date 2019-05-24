@@ -106,7 +106,7 @@ namespace DockItemPositions
         guint size = DockWindow::get_dockWindowStartEndMargin();
 
         for (auto item : AppUpdater::m_dockitems) {
-            size += item->get_Width() + separatorMargin;
+            size += item->get_width() + separatorMargin;
         }
 
         guint result =  size - separatorMargin;
@@ -130,11 +130,11 @@ namespace DockItemPositions
 
         for (auto item : AppUpdater::m_dockitems) {
             if (item->m_dockitemtype == DockItemType::Separator){
-                size += item->get_Width() + separatorMargin;
+                size += item->get_width() + separatorMargin;
                 continue;
             }
 
-            size += item->get_Height() + separatorMargin;
+            size += item->get_height() + separatorMargin;
         }
 
         guint result =  size - separatorMargin;
@@ -174,7 +174,7 @@ namespace DockItemPositions
 
             for (DockItem* citem : AppUpdater::m_dockitems) {
                 if( citem->m_index == item->m_index){
-                    x -= std::abs(width / 2 - citem->get_Width()  / 2);
+                    x -= std::abs(width / 2 - citem->get_width()  / 2);
 
                     // check the limit on the left
                     if (x <  DockWindow::Monitor::get_geometry().x) {
@@ -191,7 +191,7 @@ namespace DockItemPositions
                     return false;
                 }
 
-                x += citem->get_Width() + Configuration::get_separatorMargin();
+                x += citem->get_width() + Configuration::get_separatorMargin();
             }
         }
         else
@@ -207,7 +207,7 @@ namespace DockItemPositions
             int variantItemHeight = 0;
             for (DockItem* citem : AppUpdater::m_dockitems){
 
-                variantItemHeight = citem->m_dockitemtype == DockItemType::Separator ? citem->get_Width() : citem->get_Height();
+                variantItemHeight = citem->m_dockitemtype == DockItemType::Separator ? citem->get_width() : citem->get_height();
 
                 if ( citem->m_index == item->m_index){
 

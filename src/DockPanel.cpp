@@ -49,6 +49,7 @@ guint DockPanel::m_ItemsHeight;
 
 
 DockPreview* DockPanel::m_dockPreview;
+AppUpdater*  DockPanel::m_AppUpdater;
 int DockPanel::m_previewIndex;
 
 /**
@@ -59,7 +60,7 @@ DockPanel::DockPanel():
     m_separatorFilePath(Utilities::getExecPath(DEF_SEPARATOR))
 
 {
-
+    DockPanel::m_AppUpdater = nullptr;
     DockPanel::m_dockPreview = nullptr;
     DockPanel::m_previewIndex = -1;
 
@@ -442,7 +443,12 @@ void DockPanel::on_MinimieAllExceptActive_event()
         return;
     }
 
-    WnckHandler::minimizeAllExceptActiveByDockItem(dockitem);
+
+        auto window = dockitem->m_items[0]->m_window;
+        wnck_window_close(window, gtk_get_current_event_time());
+
+
+//    WnckHandler::minimizeAllExceptActiveByDockItem(dockitem);
 }
 
 /**
@@ -638,7 +644,7 @@ bool DockPanel::on_scroll_event(GdkEventScroll* e)
     if (index == -1 || index == 0)
         return true;
 
-    DockItem* item = m_AppUpdater->m_dockitems[index]->get_Next();
+    DockItem* item = m_AppUpdater->m_dockitems[index]->get_next();
     if (item == nullptr)
         return true;
 
@@ -713,7 +719,7 @@ void DockPanel::ExecuteApp(GdkEventButton* event)
 
     m_dockPreview = new DockPreview();
     m_previewIndex = this->m_currentMoveIndex;
-    m_dockPreview->Show(item->m_items, this->m_currentMoveIndex, AppUpdater::m_dockitems[0]->get_Height());
+    m_dockPreview->Show(item->m_items, this->m_currentMoveIndex, AppUpdater::m_dockitems[0]->get_height());
 
     m_dockPreview->show();
 }
@@ -787,11 +793,11 @@ inline int DockPanel::get_Index(const int& mouseX, const int& mouseY)
 
     if (DockWindow::is_Horizontal()) {
         for (auto item : m_AppUpdater->m_dockitems) {
-            if (mouse.get_x() >= x && mouse.get_x() <= x + item->get_Width()) {
+            if (mouse.get_x() >= x && mouse.get_x() <= x + item->get_width()) {
                 return idx;
             }
 
-            x += item->get_Width() + Configuration::get_separatorMargin();
+            x += item->get_width() + Configuration::get_separatorMargin();
             idx++;
         }
     }
@@ -799,7 +805,7 @@ inline int DockPanel::get_Index(const int& mouseX, const int& mouseY)
     {
         int height;
         for (DockItem* item : m_AppUpdater->m_dockitems) {
-            height = item->m_dockitemtype == DockItemType::Separator ? item->get_Width() : item->get_Height();
+            height = item->m_dockitemtype == DockItemType::Separator ? item->get_width() : item->get_height();
 
             if (mouse.get_y() >= y && mouse.get_y() <= y + height) {
                 return idx;
@@ -1029,8 +1035,8 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
     for (idx = 0; idx < itemsCount; idx++) {
 
         DockItem* item = m_AppUpdater->m_dockitems[idx];
-        width = item->get_Width();
-        height = item->get_Height();
+        width = item->get_width();
+        height = item->get_height();
 
         this->get_ItemPosition(item->m_dockitemtype, x, y, width, height);
         // y += height + Configuration::get_separatorMargin();
@@ -1171,7 +1177,7 @@ void DockPanel::show_Title()
             DockWindow::is_Visible() && item->m_dockitemtype != DockItemType::Separator ) {
         if (m_titleElapsedSeconds > 0.3 && m_titleShow == false /* && !m_previewWindowActive*/) {
 
-            std::string title = item->get_Title();
+            std::string title = item->get_title();
             if (item->m_items.size() > 1) {
                 char buff[NAME_MAX];
                 sprintf(buff, "%s (%d)", title.c_str(), (int)item->m_items.size());

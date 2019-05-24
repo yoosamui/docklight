@@ -247,6 +247,7 @@ bool AppUpdater::DettachItem(const int index)
     return this->RemoveItem(index);
 }
 
+
 /**
  * Remove an Item from vector by the given index.
  */
@@ -446,6 +447,7 @@ void AppUpdater::Update(WnckWindow* window, Window_action actiontype)
 
     }
     else {
+
         // find the item to remove;
         int xid = wnck_window_get_xid(window);
         int i = 1;

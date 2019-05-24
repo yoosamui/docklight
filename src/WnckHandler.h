@@ -47,6 +47,7 @@ namespace WnckHandler
     int unMinimizedWindowsCount();
     bool FullscreenActive();
     WnckWindow* get_ExistingWindowDock();
+    std::string get_windowName(WnckWindow* window);
 }
 
 #endif	/* WNCKHANDLER_H */

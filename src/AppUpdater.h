@@ -61,6 +61,7 @@ public:
     void Load();
     void Save();
     std::string getFilePath();
+
     bool RemoveItem(const int index);
     bool AttachItem(const int index);
     bool DettachItem(const int index);

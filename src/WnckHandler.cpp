@@ -10,6 +10,11 @@
 namespace WnckHandler
 {
 
+    std::string get_windowName(WnckWindow* window)
+    {
+        return std::string(wnck_window_get_name(window));
+    }
+
     void HomeCloseAllWindows()
     {
         WnckScreen *screen;

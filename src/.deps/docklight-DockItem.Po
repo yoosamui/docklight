@@ -1036,9 +1036,9 @@ docklight-DockItem.o: DockItem.cpp /usr/include/stdc-predef.h DockItem.h \
  /usr/include/giomm-2.4/giomm/menu.h \
  /usr/include/giomm-2.4/giomm/menuitem.h \
  /usr/include/gtkmm-3.0/gtkmm/windowgroup.h \
- /usr/include/glibmm-2.4/glibmm/timer.h Configuration.h DockPanel.h \
- /usr/include/gtkmm-3.0/gtkmm.h /usr/include/glibmm-2.4/glibmm.h \
- /usr/include/glibmm-2.4/glibmm/thread.h \
+ /usr/include/glibmm-2.4/glibmm/timer.h Configuration.h WnckHandler.h \
+ /usr/include/X11/X.h DockPanel.h /usr/include/gtkmm-3.0/gtkmm.h \
+ /usr/include/glibmm-2.4/glibmm.h /usr/include/glibmm-2.4/glibmm/thread.h \
  /usr/include/glibmm-2.4/glibmm/threads.h \
  /usr/include/glibmm-2.4/glibmm/balancedtree.h \
  /usr/include/glibmm-2.4/glibmm/base64.h \
@@ -3684,6 +3684,10 @@ DockItem.h:
 /usr/include/glibmm-2.4/glibmm/timer.h:
 
 Configuration.h:
+
+WnckHandler.h:
+
+/usr/include/X11/X.h:
 
 DockPanel.h:
 

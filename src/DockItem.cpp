@@ -24,6 +24,7 @@
 
 #include "DockItem.h"
 #include "Configuration.h"
+#include "WnckHandler.h"
 #include "DockPanel.h"
 
 DockItem::DockItem():
@@ -50,7 +51,7 @@ DockItem::~DockItem()
     g_print("DockItem destroy.\n");
 }
 
-int DockItem::get_Width()
+int DockItem::get_width()
 {
     if (DockPanel::get_WidthDecrement() < 0 ){
         return this->m_width;
@@ -60,7 +61,7 @@ int DockItem::get_Width()
 }
 
 
-int DockItem::get_Height()
+int DockItem::get_height()
 {
     if (DockPanel::get_HeightDecrement() < 0 ){
         return this->m_height;
@@ -85,7 +86,7 @@ gint DockItem::get_InmutableHeight()
  * get the next item from the items vector
  * @return DockItem*
  */
-DockItem* DockItem::get_Next()
+DockItem* DockItem::get_next()
 {
     static int index = 0;
 
@@ -102,7 +103,7 @@ DockItem* DockItem::get_Next()
 
 }
 
-std::string DockItem::get_Title()
+std::string DockItem::get_title()
 {
     if (!m_titlename.empty())
         return m_titlename;
@@ -110,17 +111,25 @@ std::string DockItem::get_Title()
     return m_realgroupname;
 }
 
-std::string DockItem::get_GroupName()
+std::string DockItem::get_windowName()
 {
-    std::replace(m_realgroupname.begin(),
-            m_realgroupname.end(), ' ', '-');
+    if (!m_window){
+        return m_appname;
+    }
+
+    return WnckHandler::get_windowName(m_window);
+}
+
+std::string DockItem::get_groupName()
+{
+    std::replace(m_realgroupname.begin(), m_realgroupname.end(), ' ', '-');
 
     return m_realgroupname;
 }
 
-std::string DockItem::get_DesktopFileName()
+std::string DockItem::get_desktopFileName()
 {
-    return get_GroupName() + ".desktop";
+    return get_groupName() + ".desktop";
 }
 
 

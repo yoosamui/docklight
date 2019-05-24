@@ -52,7 +52,7 @@ class DockPanel : public Gtk::DrawingArea, DockMenu {
         int Init(Gtk::Window* window);
         static void update();
         bool get_AutohideAllow();
-        int get_CurrentIndex() {
+        static int get_CurrentIndex() {
             return m_currentMoveIndex;
         };
 
@@ -66,12 +66,16 @@ class DockPanel : public Gtk::DrawingArea, DockMenu {
 
       static void PreviewClose(){
             if(m_dockPreview != nullptr){
+                m_dockPreview->hide();
                 m_dockPreview->close();
 
                 delete m_dockPreview;
                 m_dockPreview = nullptr;
                 m_previewIndex = -1;
             }
+        }
+        static AppUpdater& get_AppUpdater()  {
+            return *m_AppUpdater;
         }
     private:
         Configuration::Style::Theme m_Theme = Configuration::get_Theme();
@@ -89,7 +93,7 @@ class DockPanel : public Gtk::DrawingArea, DockMenu {
         TitleWindow m_titlewindow;
         TitleWindow m_infowindow;
 
-        AppUpdater*  m_AppUpdater = nullptr;
+        static AppUpdater*  m_AppUpdater;
         std::string m_homeiconFilePath;
         std::string m_separatorFilePath;
         static int m_currentMoveIndex;
