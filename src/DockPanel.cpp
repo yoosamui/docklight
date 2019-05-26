@@ -491,6 +491,29 @@ void DockPanel::on_CloseAll_event()
     WnckHandler::closeAllByDockItem(dockitem);
 }
 
+
+/**
+ * Check if a drop has been made.
+ */
+void DockPanel::DragDropEnds()
+{
+    // Check if a item was drop
+    if (m_DragDropBegin){
+        m_AppUpdater->MoveItem(0);
+        m_AppUpdater->Reindex();
+
+        // set as attached and save it
+        if (m_DragDropSourceIndex != this->m_currentMoveIndex){
+            m_dragDropItem->m_isAttached = true;
+            m_AppUpdater->Save();
+        }
+
+        // reset the pointer
+        m_dragDropItem = nullptr;
+        m_DragDropBegin = false;
+    }
+}
+
 /**
  * bool DockPanel::on_button_press_event(GdkEventButton *event)
  *
@@ -527,46 +550,14 @@ bool DockPanel::on_button_press_event(GdkEventButton *event)
         }
 
         // Check if the event is a right button click.
-        if (event->button == 3 && !m_mouseRightButtonDown) {
+        if (event->button == 3 /*&& !m_mouseRightButtonDown*/) {
             m_mouseRightButtonDown = true;
-            // The event has been handled.
-
-            // Items
-            if (m_currentMoveIndex > 0) {
-                //DockItem *dockitem = m_AppUpdater->m_dockitems[m_currentMoveIndex];
-                //dockitem->m_isAttached = true;
-                //dockitem->m_attachedIndex = m_currentMoveIndex;
-                //m_AppUpdater->Save();
-            }
 
             return true;
         }
     }
     return false;
 }
-
-/**
- * Check if a drop has been made.
- */
-void DockPanel::DragDropEnds()
-{
-    // Check if a item was drop
-    if (m_DragDropBegin){
-        m_AppUpdater->MoveItem(0);
-        m_AppUpdater->Reindex();
-
-        // set as attached and save it
-        if (m_DragDropSourceIndex != this->m_currentMoveIndex){
-            m_dragDropItem->m_isAttached = true;
-            m_AppUpdater->Save();
-        }
-
-        // reset the pointer
-        m_dragDropItem = nullptr;
-        m_DragDropBegin = false;
-    }
-}
-
 /**
  * Returning TRUE means we handled the event, so the signal emission should be stopped (don’t call any further callbacks
  * that may be connected). Return FALSE to continue invoking callbacks. handles Mouse button released : process mouse button event
@@ -594,14 +585,16 @@ bool DockPanel::on_button_release_event(GdkEventButton *event)
             this->ExecuteApp(event);
         }
 
-        return TRUE;
+    //    return TRUE;
     }
 
     // Right mouse click
     if (m_mouseRightButtonDown) {
-        // m_preview.hideMe();
-        //  m_mouseRightClick = true;
+
         m_mouseRightButtonDown = false;
+
+        // Close if open
+        DockPanel::PreviewClose();
 
         // Menus
         if (m_currentMoveIndex == 0) {
