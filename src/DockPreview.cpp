@@ -45,14 +45,12 @@ using namespace std::chrono_literals;
 std::vector<DockItem*> DockPreview::m_previewItems;
 bool DockPreview::m_allowDraw;
 bool DockPreview::m_updateRequired;
-bool DockPreview::m_canLeave;
 
 DockPreview::DockPreview():Gtk::Window(Gtk::WindowType::WINDOW_POPUP)
 {
 
     DockPreview::m_allowDraw = true;
     DockPreview::m_updateRequired = false;
-    DockPreview::m_canLeave = true;
 
     // Set up the top-level window.
     set_title("DockPreview");
@@ -104,27 +102,12 @@ DockPreview::DockPreview():Gtk::Window(Gtk::WindowType::WINDOW_POPUP)
  */
 DockPreview::~DockPreview()
 {
-    /*if(m_thread != nullptr){
-
-        // tell the background thread to terminate.
-        this->threadRunning = false;
-
-        // Detach
-        m_thread->detach();
-
-        // free memory
-        delete m_thread;
-
-        // pointed dangling to ptr NULL
-        m_thread = NULL;
-    }
-*/
    // g_object_unref static items
-    /*for (DockItem* item : m_previewItems) {
+    for (DockItem* item : m_previewItems) {
         if (item->m_scaledPixbuf) {
             g_object_unref(item->m_scaledPixbuf);
         }
-    }*/
+    }
 
     DockPreview::m_previewItems.clear();
     g_print("Preview destroy.\n");
@@ -170,7 +153,7 @@ copy(items.begin(), items.end(), back_inserter(DockPreview::m_previewItems));
 
 
 
-/*
+
     for (DockItem* item : DockPreview::m_previewItems){
         item->m_isDynamic = true;
         item->m_image = NULLPB;
@@ -181,7 +164,7 @@ copy(items.begin(), items.end(), back_inserter(DockPreview::m_previewItems));
         item->m_tmpxid = 0;
         item->m_isAlive = true;
     }
-*/
+
     // Buble sort by appname name
     int size = (int) m_previewItems.size();
     int i, m, j;
@@ -338,7 +321,6 @@ void DockPreview::set_CurrentItemDynamic()
  */
 bool DockPreview::on_enter_notify_event(GdkEventCrossing* crossing_event)
 {
-    m_canLeave = true;
     m_mouseIn = true;
     return true;
 }
@@ -355,34 +337,7 @@ bool DockPreview::on_enter_notify_event(GdkEventCrossing* crossing_event)
  */
 bool DockPreview::on_leave_notify_event(GdkEventCrossing* crossing_event)
 {
-
-    if(!m_canLeave) {
-        return true;
-    }
-
-    int mouseX, mouseY;
-    if (Utilities::getMousePosition(mouseX, mouseY)) {
-
-        int px, py;
-        this->get_position(px,py);
-
-        if (DockWindow::is_Horizontal) {
-            //TODO:: TOP
-            if( mouseY >  py) {
-                return true;
-            }
-        }
-        else{
-            //TODO:: LEFT
-            if( mouseX >  px) {
-                return true;
-            }
-        }
-    }
-
     m_mouseIn = false;
-
-    DockPreview::Close();
     return true;
 }
 
@@ -641,17 +596,34 @@ return false;
 
 bool DockPreview::on_timeoutDraw()
 {
-    /*
-    if (!m_canLeave) {
-
-        int mouseX;
-        int mouseY;
-
+    if (!m_mouseIn) {
+        int mouseX, mouseY;
         if (Utilities::getMousePosition(mouseX, mouseY)) {
-            if (mouseY < (MonitorGeometry::getAppWindowTopPosition() - m_previewHeight))
-                this->Close();
+
+            int px, py;
+            this->get_position(px, py);
+            bool close = false;
+
+            if (DockWindow::is_Horizontal()) {
+                close = mouseY <  py;
+                if (Configuration::get_dockWindowLocation() == panel_locationType::TOP) {
+                    close = mouseY > this->get_height() + py;
+                }
+            }
+            else{
+                close = mouseX < px;
+                if (Configuration::get_dockWindowLocation() == panel_locationType::LEFT) {
+                    close = mouseX > this->get_width() + px;
+                }
+            }
+
+            if (close) {
+                DockPreview::Close();
+                return true;
+            }
         }
-    }*/
+    }
+
 
     if (DockPreview::m_updateRequired){
 
@@ -660,31 +632,18 @@ bool DockPreview::on_timeoutDraw()
             return true;
         }
 
-        if(!m_canLeave) {
-            g_print("can't leave\n");
-        }
-
         m_currentIndex = m_currentIndex > 1 ? m_currentIndex - 1 : 0;
         this->Update();
 
         DockPreview::m_updateRequired = false;
 
     }
-    /*if (m_allowDraw && !m_detectMovement && m_detectMovementTimer.elapsed() > 3.5){
-    //    m_detectMovement = true;
-
-        m_detectMovementTimer.stop();
-        m_detectMovementTimer.reset();
-
-        m_detectMovementTimer.start();
-        return true;
-    }*/
 
     if (m_allowDraw){
         Gtk::Widget::queue_draw();
     }
 
-                return true;
+    return true;
 }
 
 
@@ -693,56 +652,34 @@ void DockPreview::on_window_opened(WnckScreen *screen, WnckWindow *window, gpoin
 }
 void DockPreview::on_window_closed(WnckScreen *screen, WnckWindow *window, gpointer data)
 {
-
-if ((int) m_previewItems.size() == 0) {
-
-    //   Close();
-       return;
+    if ((int) m_previewItems.size() == 0) {
+        return;
     }
-    m_canLeave = false;
-    DockPreview::m_allowDraw = false;
 
+    DockPreview::m_allowDraw = false;
     guint index = 0;
 
     for (DockItem* item : m_previewItems){
         if (wnck_window_get_xid(window) == item->m_xid){
-          //  if (item->m_scaledPixbuf != nullptr)
-          //      g_object_unref(item->m_scaledPixbuf);
+            if (item->m_scaledPixbuf != nullptr)
+                g_object_unref(item->m_scaledPixbuf);
 
             item->m_isAlive = false;
 
             // Deletes the element by index;
             m_previewItems.erase(m_previewItems.begin() + index);
+            DockPreview::m_updateRequired = true;
+
             break;
-            //          m_previewItems[index]->m_isAlive = false;
-        //    delete item;
         }
 
         index++;
     }
 
-    DockPreview::m_updateRequired = true        ;
     DockPreview::m_allowDraw = true;
-        g_print("DELETE iItem\n");
 }
 
 
-/*bool DockPreview::RemoveCurrentPreviewItem()
-{
-    const guint index = m_currentIndex;
-
-    if (index < 0 || index > DockPreview::m_previewItems.size()){
-        return false;
-    }
-
-    DockPreview::m_previewItems[index]->m_isAlive = false;;
-    [>delete DockPreview::m_previewItems[index];
-    DockPreview::m_previewItems[index] = nullptr;
-
-    DockPreview::m_previewItems.erase(DockPreview::m_previewItems.begin() + index);<]
-
-    return true;
-}*/
 /**
  * handles Mouse button press : process mouse button event. true to stop other handlers from being invoked for the event.
  * false to propagate the event further.
@@ -954,7 +891,7 @@ bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
                 item->m_image = Glib::wrap(item->m_scaledPixbuf, true);
             }
 
-            /*if (!item->m_firstImage && item->m_elapsedFrames == 0) {
+            if (!item->m_firstImage && item->m_elapsedFrames == 0) {
                 item->m_firstImage = Glib::wrap(item->m_scaledPixbuf, true);
                 item->m_tmpxid = item->m_xid;
             }
@@ -966,7 +903,7 @@ bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
                 }
             }
 
-            item->m_elapsedFrames++;*/
+            item->m_elapsedFrames++;
         }
 
         if (DockWindow::is_Horizontal()) {

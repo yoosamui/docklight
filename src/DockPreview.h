@@ -55,7 +55,6 @@ class DockPreview : public Gtk::Window
         bool m_closeSymbolMouseOver = false;
 
         int m_currentIndex = -1;
-        static bool m_canLeave;
         bool m_mouseIn = false;
 
 

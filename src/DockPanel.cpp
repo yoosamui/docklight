@@ -499,24 +499,31 @@ void DockPanel::on_CloseAll_event()
  */
 bool DockPanel::on_button_press_event(GdkEventButton *event)
 {
-
-    if(DockPanel::m_previewIndex != m_currentMoveIndex && DockPanel::m_dockPreview != nullptr){
-        DockPanel::PreviewClose();
-    }
-
     if ((event->type == GDK_BUTTON_PRESS)) {
         m_mouseclickEventTime = gtk_get_current_event_time();
+        bool mousestate = m_mouseLeftButtonDown;
+        m_mouseLeftButtonDown = true;
 
         // Check if the event is a left button click.
-        if (event->button == 1 && !m_mouseLeftButtonDown) {
-            m_mouseLeftButtonDown = true;
-
+        if (event->button == 1 && !mousestate) {
             // start drag & drop timer
             if (m_currentMoveIndex > 0) {
                 m_dragdropMousePoint.set_x((int) event->x);
                 m_dragdropMousePoint.set_y((int) event->y);
                 m_dragdropTimer.start();
             }
+        }
+
+        // check if can close the preview
+        if(DockPanel::m_previewIndex != m_currentMoveIndex && DockPanel::m_dockPreview != nullptr){
+
+            auto item = this->get_CurrentItem();
+            if(item != nullptr && m_currentMoveIndex > 0 && item->m_items.size() > 1 ){
+                return true;
+            }
+
+
+            DockPanel::PreviewClose();
         }
 
         // Check if the event is a right button click.
@@ -567,13 +574,13 @@ void DockPanel::DragDropEnds()
  */
 bool DockPanel::on_button_release_event(GdkEventButton *event)
 {
-
     this->DragDropEnds();
 
     // Taking Too Long To Release the mouse.  // That is not a valid Click.
     if ((gtk_get_current_event_time() - m_mouseclickEventTime) > 200) {
         m_mouseLeftButtonDown = false;
         m_mouseRightButtonDown = false;
+
         return true;
     }
 
@@ -582,8 +589,11 @@ bool DockPanel::on_button_release_event(GdkEventButton *event)
 
     if (m_mouseLeftButtonDown) {
         m_mouseLeftButtonDown = false;
-        this->ExecuteApp(event);
-        //  SelectWindow(m_currentMoveIndex, event);
+
+        if (m_currentMoveIndex > 0) {
+            this->ExecuteApp(event);
+        }
+
         return TRUE;
     }
 
@@ -711,21 +721,23 @@ void DockPanel::ExecuteApp(GdkEventButton* event)
         return;
     }
 
-    // check if preview already open.
-    if( m_previewIndex == m_currentMoveIndex && this->m_dockPreview){
-        return;
-    }
-
     // skeep home
     if (m_previewIndex == 0){
         return;
     }
+    // check if preview already open.
+    if( m_previewIndex == m_currentMoveIndex && m_dockPreview){
+        return;
+    }
 
-    this->PreviewClose();
+    if(m_dockPreview == nullptr ){
+        m_dockPreview = new DockPreview();
+    }
 
-    m_dockPreview = new DockPreview();
     m_previewIndex = this->m_currentMoveIndex;
-    m_dockPreview->Show(item->m_items, this->m_currentMoveIndex, AppUpdater::m_dockitems[0]->get_height());
+
+    guint size = DockWindow::is_Horizontal() ? item->get_width() : item->get_height();
+    m_dockPreview->Show(item->m_items, m_currentMoveIndex, size);
 
     m_dockPreview->show();
 }
@@ -746,7 +758,7 @@ inline DockItem* DockPanel::get_CurrentItem()
 
 bool DockPanel::get_AutohideAllow()
 {
-    return m_popupMenuOn == false && this->m_dockPreview == nullptr;
+    return m_popupMenuOn == false && m_dockPreview == nullptr;
 }
 
 /**

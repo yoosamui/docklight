@@ -51,10 +51,11 @@ namespace DockWindow
      */
     bool is_Horizontal()
     {
-        switch (Configuration::get_dockWindowLocation()){
+        switch (Configuration::get_dockWindowLocation()) {
             case panel_locationType::TOP:
             case panel_locationType::BOTTOM:
                 return true;
+
             case panel_locationType::LEFT:
             case panel_locationType::RIGHT:
                 return false;
