@@ -71,7 +71,7 @@ public:
     bool m_isDirty = false;
     bool m_isAlive = true;
    // bool visible = true;
-    int m_frames;
+    //int m_frames;
     std::string get_title();
     std::string get_groupName();
     std::string get_desktopFileName();

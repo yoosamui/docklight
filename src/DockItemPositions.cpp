@@ -162,6 +162,8 @@ namespace DockItemPositions
         DockItem* item = AppUpdater::m_dockitems[index];
         DockWindow::get_DockWindowPosition(x, y);
 
+        DockWindow::Monitor::updateGeometry();
+
         if (DockWindow::is_Horizontal()){
 
             x += DockWindow::get_dockWindowStartEndMargin() / 2;
@@ -174,17 +176,17 @@ namespace DockItemPositions
 
             for (DockItem* citem : AppUpdater::m_dockitems) {
                 if( citem->m_index == item->m_index){
-                    x -= std::abs(width / 2 - citem->get_width()  / 2);
+                    x -= width / 2 - citem->get_width()  / 2;
 
                     // check the limit on the left
-                    if (x <  DockWindow::Monitor::get_geometry().x) {
-                        x =  DockWindow::Monitor::get_geometry().x;
+                    if (x <  DockWindow::Monitor::get_workarea().x) {
+                        x =  DockWindow::Monitor::get_workarea().x;
                         return true;
                     }
 
                     // check the limit on the right
-                    if (x + width  > DockWindow::Monitor::get_geometry().width) {
-                        x =  DockWindow::Monitor::get_geometry().width - width;
+                    if (x + width  > DockWindow::Monitor::get_workarea().width) {
+                        x =  DockWindow::Monitor::get_workarea().width - width + DockWindow::Monitor::get_workarea().x;
                         return true;
                     }
 
@@ -214,14 +216,16 @@ namespace DockItemPositions
                     y -= height / 2 - variantItemHeight / 2;
 
                     // check the limit on the top
-                    if (y <  DockWindow::Monitor::get_geometry().y){
-                        y =  DockWindow::Monitor::get_geometry().y;
+                    if (y <  DockWindow::Monitor::get_workarea().y){
+                        y =  DockWindow::Monitor::get_workarea().y;
+
                         return true;
                     }
 
                     // check the limit on the bottom
-                    if (y + height  > DockWindow::Monitor::get_geometry().height){
-                        y =  DockWindow::Monitor::get_geometry().height - height;
+                    if (y + height  > DockWindow::Monitor::get_workarea().height){
+                        y =  DockWindow::Monitor::get_workarea().height - height + DockWindow::Monitor::get_workarea().y;
+
                         return true;
                     }
 

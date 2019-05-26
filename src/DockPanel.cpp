@@ -75,6 +75,8 @@ DockPanel::DockPanel():
             Gdk::LEAVE_NOTIFY_MASK |
             Gdk::POINTER_MOTION_MASK);
 
+
+
     // set the static member to the default values
     DockPanel::m_currentMoveIndex = -1;
     DockPanel::m_forceDraw = false;
@@ -498,6 +500,10 @@ void DockPanel::on_CloseAll_event()
 bool DockPanel::on_button_press_event(GdkEventButton *event)
 {
 
+    if(DockPanel::m_previewIndex != m_currentMoveIndex && DockPanel::m_dockPreview != nullptr){
+        DockPanel::PreviewClose();
+    }
+
     if ((event->type == GDK_BUTTON_PRESS)) {
         m_mouseclickEventTime = gtk_get_current_event_time();
 
@@ -839,9 +845,9 @@ bool DockPanel::on_motion_notify_event(GdkEventMotion * event)
 
     }
 
-    if(DockPanel::m_previewIndex != m_currentMoveIndex && DockPanel::m_dockPreview != nullptr){
-        DockPanel::PreviewClose();
-    }
+ //   if(DockPanel::m_previewIndex != m_currentMoveIndex && DockPanel::m_dockPreview != nullptr){
+ //       DockPanel::PreviewClose();
+ //   }
 
     return false;
 }

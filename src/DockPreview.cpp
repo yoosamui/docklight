@@ -25,6 +25,7 @@
 #include "DockPanel.h"
 #include "DockItemPositions.h"
 #include "DockWindow.h"
+#include "Utilities.h"
 #include "WnckHandler.h"
 #include "DockItem.h"
 #include <gdk/gdkx.h>
@@ -43,10 +44,15 @@ using namespace std::chrono_literals;
 
 std::vector<DockItem*> DockPreview::m_previewItems;
 bool DockPreview::m_allowDraw;
+bool DockPreview::m_updateRequired;
+bool DockPreview::m_canLeave;
 
-DockPreview::DockPreview():Gtk::Window(Gtk::WindowType::WINDOW_POPUP){
+DockPreview::DockPreview():Gtk::Window(Gtk::WindowType::WINDOW_POPUP)
+{
 
     DockPreview::m_allowDraw = true;
+    DockPreview::m_updateRequired = false;
+    DockPreview::m_canLeave = true;
 
     // Set up the top-level window.
     set_title("DockPreview");
@@ -54,12 +60,13 @@ DockPreview::DockPreview():Gtk::Window(Gtk::WindowType::WINDOW_POPUP){
     set_app_paintable(true);
 
     // Set masks for mouse events
-    add_events(Gdk::BUTTON_PRESS_MASK |
+    add_events(
+            Gdk::BUTTON_PRESS_MASK |
             Gdk::BUTTON_RELEASE_MASK |
             Gdk::SCROLL_MASK |
             Gdk::SMOOTH_SCROLL_MASK |
             Gdk::POINTER_MOTION_HINT_MASK |
-            Gdk::FOCUS_CHANGE_MASK |
+    //        Gdk::FOCUS_CHANGE_MASK |
             Gdk::ENTER_NOTIFY_MASK |
             Gdk::LEAVE_NOTIFY_MASK |
             Gdk::POINTER_MOTION_MASK);
@@ -74,6 +81,11 @@ DockPreview::DockPreview():Gtk::Window(Gtk::WindowType::WINDOW_POPUP){
     if (visual != NULL && gdk_screen_is_composited(screen)) {
         gtk_widget_set_visual(GTK_WIDGET(gobj()), visual);
     }
+
+    //Add an event box that can catch button_press events:
+ //   add(m_Box);
+//    m_Box.pack_start(m_EventBox);
+    // signal_button_press_event().connect(sigc::mem_fun(*this, &DockPreview::on_button_press_event) );
 
     m_font.set_family("System");
     m_font.set_size(8 * PANGO_SCALE);
@@ -108,11 +120,11 @@ DockPreview::~DockPreview()
     }
 */
    // g_object_unref static items
-    for (DockItem* item : m_previewItems) {
+    /*for (DockItem* item : m_previewItems) {
         if (item->m_scaledPixbuf) {
             g_object_unref(item->m_scaledPixbuf);
         }
-    }
+    }*/
 
     DockPreview::m_previewItems.clear();
     g_print("Preview destroy.\n");
@@ -127,7 +139,20 @@ void DockPreview::Show(const std::vector<DockItem*>& items, const guint index, c
     /*for (DockItem* item : items){
         DockPreview::m_previewItems.push_back(item);
     }*/
+ /*for (DockItem* child : items) {
 
+        if (child->m_window == NULL || child->m_xid == 0)
+            continue;
+
+        DockItem* newchild = new DockItem();
+
+        //the name of window , or a fallback name if no name is available.
+        newchild->m_titlename = wnck_window_get_name(child->m_window);
+        newchild->m_window = child->m_window;
+        newchild->m_xid = child->m_xid;
+
+        m_previewItems.push_back(newchild);
+    }*/
     m_dockItemIndex = index;
     m_dockItemCellSize = cellSize;
 /*
@@ -145,7 +170,7 @@ copy(items.begin(), items.end(), back_inserter(DockPreview::m_previewItems));
 
 
 
-
+/*
     for (DockItem* item : DockPreview::m_previewItems){
         item->m_isDynamic = true;
         item->m_image = NULLPB;
@@ -156,7 +181,7 @@ copy(items.begin(), items.end(), back_inserter(DockPreview::m_previewItems));
         item->m_tmpxid = 0;
         item->m_isAlive = true;
     }
-
+*/
     // Buble sort by appname name
     int size = (int) m_previewItems.size();
     int i, m, j;
@@ -202,70 +227,103 @@ inline guint DockPreview::get_CountItems()
 
 void DockPreview::Update()
 {
-
-if ((int) m_previewItems.size() == 0) {
-this->hideMe();
-return;
+    if ((int) m_previewItems.size() == 0) {
+        return;
     }
+
     int x = 0;
     int y = 0;
 
-    guint windowWidth = (m_dockItemCellSize * 6) - 10;
+    guint windowWidth = (m_dockItemCellSize * 6) - 40;
     guint windowHeight = windowWidth -  (PREVIEW_HV_OFFSET * 2);
 
     m_cellWidth = windowWidth - 20;
     m_cellHeight =windowHeight - 20 ;  m_cellWidth - (PREVIEW_HV_OFFSET * 2);
 
-    guint itemsSize = this->get_CountItems();
+    guint itemsSize = get_CountItems();
     guint separatorsSize = Configuration::get_separatorMargin() * (itemsSize - 1);
 
     if (DockWindow::is_Horizontal()){
         windowWidth = m_cellWidth  *  itemsSize + DockWindow::get_dockWindowStartEndMargin() + separatorsSize;
 
-        if (windowWidth > DockWindow::Monitor::get_geometry().width){
-
-            m_cellWidth = (DockWindow::Monitor::get_geometry().width - DockWindow::get_dockWindowStartEndMargin() -  separatorsSize ) / itemsSize;
+        if (windowWidth > DockWindow::Monitor::get_workarea().width){
+            m_cellWidth = (DockWindow::Monitor::get_workarea().width - DockWindow::get_dockWindowStartEndMargin() -  separatorsSize ) / itemsSize;
 
             windowWidth =m_cellWidth * itemsSize + separatorsSize + PREVIEW_HV_OFFSET;
-            windowHeight = m_cellWidth -  (PREVIEW_HV_OFFSET * 2);
+            windowHeight = m_cellWidth -  (PREVIEW_HV_OFFSET * 2) - DockWindow::Monitor::get_workarea().x;
 
             m_cellHeight = windowHeight - PREVIEW_HV_OFFSET ;
-
         }
-
-        g_print("Dupdate %d  w:%d\n", itemsSize, windowWidth);
-        this->resize(windowWidth, windowHeight);
-//        this->set_size_request(windowWidth, windowHeight);
-        DockItemPositions::get_CenterPosition(m_dockItemIndex, x, y, windowWidth, windowHeight);
-
-
 
     } else {
 
         windowHeight = m_cellHeight * itemsSize + DockWindow::get_dockWindowStartEndMargin() + separatorsSize;
 
-        if (windowHeight  > DockWindow::Monitor::get_geometry().height){
-
-            m_cellHeight =   (DockWindow::Monitor::get_geometry().height - DockWindow::get_dockWindowStartEndMargin() - separatorsSize ) / itemsSize;
+        if (windowHeight  > DockWindow::Monitor::get_workarea().height){
+            m_cellHeight =   (DockWindow::Monitor::get_workarea().height - DockWindow::get_dockWindowStartEndMargin() - separatorsSize ) / itemsSize;
 
             windowHeight =m_cellHeight *  itemsSize + separatorsSize + PREVIEW_HV_OFFSET;
             windowWidth = m_cellWidth;
 
             m_cellWidth = windowWidth - PREVIEW_HV_OFFSET;
         }
-
-        this->set_size_request(windowWidth  , windowHeight);
-        DockItemPositions::get_CenterPosition(m_dockItemIndex, x, y, windowWidth,  windowHeight);
     }
 
+    resize(windowWidth  , windowHeight);
+    DockItemPositions::get_CenterPosition(m_dockItemIndex, x, y, windowWidth,  windowHeight);
     this->move(x, y);
+
+    this->set_ItemsDynamic();
+
+
+
+
     // Start the background thread
-//    m_thread = new std::thread(this->MovementDetector);
+    //      m_thread = new std::thread(this->MovementDetector);
 //m_thread = nullptr;
    // start the timer for post movement detections
    // m_detectMovementTimer.start();
 
 }
+
+
+/*Server::type_signal_something Server::signal_something()
+{
+  return m_signal_something;
+}
+
+void DockPreview::do_something()
+{
+  m_signal_something.emit(false, 5);
+}*/
+
+void DockPreview::Resize(const guint index, const guint x, const guint y, const guint windowWidth, const guint windowHeight)
+{
+
+ // m_signal_update.emit(false, 5);
+//    resize(windowWidth  , windowHeight);
+  //c:  Gtk::Window::resize(0,0);
+
+}
+void DockPreview::set_ItemsDynamic()
+{
+    for (DockItem* item : m_previewItems) {
+        item->m_isDynamic = true;
+        item->m_elapsedFrames = 0;
+    }
+}
+
+
+void DockPreview::set_CurrentItemDynamic()
+{
+    if (m_currentIndex < 0 || m_currentIndex > m_previewItems.size() ) {
+        return;
+    }
+
+    m_previewItems[m_currentIndex]->m_isDynamic = true;
+    m_previewItems[m_currentIndex]->m_elapsedFrames = 0;
+}
+
 
 /**
  * handles on_enter_notify_event
@@ -280,9 +338,8 @@ return;
  */
 bool DockPreview::on_enter_notify_event(GdkEventCrossing* crossing_event)
 {
-    m_canLeave = false;
+    m_canLeave = true;
     m_mouseIn = true;
-    //    m_dockpanelReference->m_previewWindowActive = true;
     return true;
 }
 
@@ -298,33 +355,43 @@ bool DockPreview::on_enter_notify_event(GdkEventCrossing* crossing_event)
  */
 bool DockPreview::on_leave_notify_event(GdkEventCrossing* crossing_event)
 {
-    if (!m_canLeave) {
+
+    if(!m_canLeave) {
         return true;
     }
 
-  //  this->hideMe();
+    int mouseX, mouseY;
+    if (Utilities::getMousePosition(mouseX, mouseY)) {
 
-    // tell the caller that we are leaving...
-    //  m_dockpanelReference->previewWindowClosed();
+        int px, py;
+        this->get_position(px,py);
+
+        if (DockWindow::is_Horizontal) {
+            //TODO:: TOP
+            if( mouseY >  py) {
+                return true;
+            }
+        }
+        else{
+            //TODO:: LEFT
+            if( mouseX >  px) {
+                return true;
+            }
+        }
+    }
+
+    m_mouseIn = false;
+
+    DockPreview::Close();
     return true;
 }
 
 /**
  * Hide the window and reset values;
  */
-void DockPreview::hideMe()
+void DockPreview::Close()
+
 {
-    //  hide();
-
-   // m_canLeave = true;
-    //  m_isActive = false;
-    //  m_isVisible = false;
-    //    m_mouseIn = false;
-    //m_dockpanelReference->m_previewWindowActive = false;
-
-
-
-    //m_previewItems.clear();
     DockPanel::PreviewClose();
 }
 
@@ -574,8 +641,35 @@ return false;
 
 bool DockPreview::on_timeoutDraw()
 {
+    /*
+    if (!m_canLeave) {
 
+        int mouseX;
+        int mouseY;
 
+        if (Utilities::getMousePosition(mouseX, mouseY)) {
+            if (mouseY < (MonitorGeometry::getAppWindowTopPosition() - m_previewHeight))
+                this->Close();
+        }
+    }*/
+
+    if (DockPreview::m_updateRequired){
+
+        if ((guint)DockPreview::m_previewItems.size() == 0) {
+            DockPreview::Close();
+            return true;
+        }
+
+        if(!m_canLeave) {
+            g_print("can't leave\n");
+        }
+
+        m_currentIndex = m_currentIndex > 1 ? m_currentIndex - 1 : 0;
+        this->Update();
+
+        DockPreview::m_updateRequired = false;
+
+    }
     /*if (m_allowDraw && !m_detectMovement && m_detectMovementTimer.elapsed() > 3.5){
     //    m_detectMovement = true;
 
@@ -602,31 +696,38 @@ void DockPreview::on_window_closed(WnckScreen *screen, WnckWindow *window, gpoin
 
 if ((int) m_previewItems.size() == 0) {
 
-       hideMe();
+    //   Close();
        return;
     }
-
+    m_canLeave = false;
     DockPreview::m_allowDraw = false;
 
     guint index = 0;
+
     for (DockItem* item : m_previewItems){
         if (wnck_window_get_xid(window) == item->m_xid){
- if (item->m_scaledPixbuf != nullptr)
-                g_object_unref(item->m_scaledPixbuf);
+          //  if (item->m_scaledPixbuf != nullptr)
+          //      g_object_unref(item->m_scaledPixbuf);
+
+            item->m_isAlive = false;
+
             // Deletes the element by index;
-          m_previewItems.erase(m_previewItems.begin() + index);
-//          m_previewItems[index]->m_isAlive = false;
+            m_previewItems.erase(m_previewItems.begin() + index);
+            break;
+            //          m_previewItems[index]->m_isAlive = false;
+        //    delete item;
         }
 
         index++;
     }
 
+    DockPreview::m_updateRequired = true        ;
     DockPreview::m_allowDraw = true;
         g_print("DELETE iItem\n");
 }
 
 
-bool DockPreview::RemoveCurrentPreviewItem()
+/*bool DockPreview::RemoveCurrentPreviewItem()
 {
     const guint index = m_currentIndex;
 
@@ -635,13 +736,13 @@ bool DockPreview::RemoveCurrentPreviewItem()
     }
 
     DockPreview::m_previewItems[index]->m_isAlive = false;;
-    /*delete DockPreview::m_previewItems[index];
+    [>delete DockPreview::m_previewItems[index];
     DockPreview::m_previewItems[index] = nullptr;
 
-    DockPreview::m_previewItems.erase(DockPreview::m_previewItems.begin() + index);*/
+    DockPreview::m_previewItems.erase(DockPreview::m_previewItems.begin() + index);<]
 
     return true;
-}
+}*/
 /**
  * handles Mouse button press : process mouse button event. true to stop other handlers from being invoked for the event.
  * false to propagate the event further.
@@ -652,9 +753,25 @@ bool DockPreview::RemoveCurrentPreviewItem()
  */
 bool DockPreview::on_button_press_event(GdkEventButton *event)
 {
-
-    //TODO: onClick
+    m_mouseDown = true;
     if ((event->type == GDK_BUTTON_PRESS)) {
+        this->set_CurrentItemDynamic();
+    }
+    return true;
+}
+
+bool DockPreview::on_button_release_event(GdkEventButton *event)
+{
+
+    if ((event->type != GDK_BUTTON_RELEASE)) {
+        m_mouseDown = false;
+        return true;
+    }
+
+    // Mouse click
+    if (m_mouseDown){
+
+        m_mouseDown = false;
         // Check if the event is a left button click.
         if (event->button == 1) {
             if (m_currentIndex < 0  ||  m_currentIndex > DockPreview::m_previewItems.size()){
@@ -663,23 +780,27 @@ bool DockPreview::on_button_press_event(GdkEventButton *event)
 
             DockItem *item = DockPreview::m_previewItems[m_currentIndex];
 
-            // Handle close preview windoiw
+            // Handle close window
             if (m_closeSymbolMouseOver)  {
                 auto window = item->m_window;
-                if (!window || item->m_xid == 0){
+                if (window == nullptr|| item->m_xid == 0){
                     return true;
                 }
 
-                m_allowDraw = false;
-                item->m_isAlive = false;
+// https://developer.gnome.org/libwnck/stable/WnckWindow.html#wnck-window-close
 
-                WNCK_IS_WINDOW(window);
+
+
+                m_allowDraw = false;
+
+                if( WNCK_IS_WINDOW(window) == false ){
+                    g_print("ERROR......%d..\n", item->m_xid );
+                    return true;
+                }
+
                 wnck_window_close(window, gtk_get_current_event_time());
 
-
-
-                m_currentIndex = m_currentIndex > 1 ? m_currentIndex - 1 : 0;
-                this->Update();
+                item->m_isAlive = false;
 
                 m_closeSymbolMouseOver = false;
                 m_allowDraw = true;
@@ -692,6 +813,7 @@ bool DockPreview::on_button_press_event(GdkEventButton *event)
 
             return true;
         }
+
     }
     return true;
 }
@@ -821,16 +943,18 @@ bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
         }
 
         if (!item->m_image || item->m_isDynamic ) {
-            if (item->m_scaledPixbuf){
-                g_object_unref(item->m_scaledPixbuf);
+
+            // deref pointer
+            if (item->m_scaledPixbuf != nullptr &&  GDK_IS_PIXBUF(item->m_scaledPixbuf)){
+                    g_object_unref(item->m_scaledPixbuf);
             }
 
             item->m_scaledPixbuf = this->GetPreviewImage(item, item->m_scaleWidth, item->m_scaleHeight);
-            if (item->m_scaledPixbuf != nullptr){
+            if (item->m_scaledPixbuf != nullptr &&  GDK_IS_PIXBUF(item->m_scaledPixbuf)){
                 item->m_image = Glib::wrap(item->m_scaledPixbuf, true);
             }
 
-            if (!item->m_firstImage && item->m_elapsedFrames == 0) {
+            /*if (!item->m_firstImage && item->m_elapsedFrames == 0) {
                 item->m_firstImage = Glib::wrap(item->m_scaledPixbuf, true);
                 item->m_tmpxid = item->m_xid;
             }
@@ -842,7 +966,7 @@ bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
                 }
             }
 
-            item->m_elapsedFrames++;
+            item->m_elapsedFrames++;*/
         }
 
         if (DockWindow::is_Horizontal()) {
@@ -1019,6 +1143,9 @@ bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
  */
 GdkPixbuf* DockPreview::GetPreviewImage(DockItem* item, guint& scaleWidth, guint& scaleHeight)
 {
+    scaleWidth = 0;
+    scaleHeight = 0;
+
     // Wraps a native window in a GdkWindow. The function will try to look up the window using gdk_x11_window_lookup_for_display() first.
     // If it does not find it there, it will create a new window.
     // This may fail if the window has been destroyed. If the window was already known to GDK, a new reference to the existing GdkWindow is returned.
@@ -1026,6 +1153,10 @@ GdkPixbuf* DockPreview::GetPreviewImage(DockItem* item, guint& scaleWidth, guint
     GdkWindow *wm_window = gdk_x11_window_foreign_new_for_display(gdk_display_get_default(), item->m_xid);
     if(wm_window == nullptr){
         return nullptr;
+    }
+
+    if( GDK_IS_WINDOW(wm_window) == false) {
+       return nullptr;
     }
 
     // Get the window size
@@ -1036,14 +1167,22 @@ GdkPixbuf* DockPreview::GetPreviewImage(DockItem* item, guint& scaleWidth, guint
     // arguments scaled by the scale factor of window . The pixbuf will contain an alpha channel if the window contains one.
     // If the window is off the screen, then there is no image data in the obscured/offscreen regions to be placed in the pixbuf.
     // The contents of portions of the pixbuf corresponding to the offscreen region are undefined.
+    // ---------------------------------------------------------------------------------------------------------------------------
     // If the window you’re obtaining data from is partially obscured by other windows, then the contents of the pixbuf areas
     // corresponding to the obscured regions are undefined.
+    // ---------------------------------------------------------------------------------------------------------------------------
     // If the window is not mapped (typically because it’s iconified/minimized or not on the current workspace), then NULL will be returned.
     // If memory can’t be allocated for the return value, NULL will be returned instead.
     // (In short, there are several ways this function can fail, and if it fails it returns NULL; so check the return value.)
+    // ---------------------------------------------------------------------------------------------------------------------------
     // creates a newly pixbuf with a reference count of 1, or NULL on error.
+
     GdkPixbuf *winPixbuf = gdk_pixbuf_get_from_window(wm_window, 0, 0, winWidth, winHeight);
     if (winPixbuf == nullptr) {
+        return nullptr;
+    }
+
+    if (GDK_IS_PIXBUF(winPixbuf) == false){
         return nullptr;
     }
 
@@ -1067,9 +1206,8 @@ GdkPixbuf* DockPreview::GetPreviewImage(DockItem* item, guint& scaleWidth, guint
        scaleHeight = height - 2;
     }
 
-    // Scale with reasonable quality and speed.
     GdkPixbuf* scaledpb = gdk_pixbuf_scale_simple(winPixbuf, scaleWidth  , scaleHeight, GDK_INTERP_BILINEAR);
-    if (scaledpb == nullptr) {
+    if (scaledpb == NULL) {
         g_object_unref(winPixbuf);
         return nullptr;
     }

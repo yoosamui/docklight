@@ -36,18 +36,28 @@ class DockPreview : public Gtk::Window
         DockPreview();
         ~DockPreview();
         void Show(const std::vector<DockItem*>& items, const guint index, const guint cellSize);
+        // https://developer.gnome.org/gtkmm-tutorial/stable/chapter-custom-signals-example.html.en
+        // signal accessor:
+        //typedef sigc::signal<void, WnckWindow*, int> type_signal_update;
+        //type_signal_update signal_update();
+
+
     private:
 
-        guint m_dockItemIndex = 0;
-        guint m_dockItemCellSize = 0;
+    //    static type_signal_update m_signal_update;
+
+        static bool m_updateRequired;
+        guint m_dockItemIndex;
+        guint m_dockItemCellSize;
 
         guint m_closeSymbolX = 0;
         guint m_closeSymbolY = 0;
         bool m_closeSymbolMouseOver = false;
 
         int m_currentIndex = -1;
-        bool m_canLeave = false;
+        static bool m_canLeave;
         bool m_mouseIn = false;
+
 
         guint m_cellWidth;
         guint m_cellHeight;
@@ -62,27 +72,28 @@ class DockPreview : public Gtk::Window
         Pango::FontDescription m_font;
 
         //Glib::Timer m_detectMovementTimer;
-        guint get_CountItems();
-        bool RemoveCurrentPreviewItem();
+        static guint get_CountItems();
+        //bool RemoveCurrentPreviewItem();
+        void set_ItemsDynamic();
+        void set_CurrentItemDynamic();
         void Update();
 
-        static void hideMe();
+        static void Resize(const guint index, const guint x, const guint y, const guint windowWidth, const guint windowHeight);
+        static void Close();
         bool on_leave_notify_event(GdkEventCrossing* crossing_event);
         bool on_enter_notify_event(GdkEventCrossing* crossing_event);
 
        // bool scanSet = false;
-      //  bool m_firstDrawDone = false;
+        bool m_mouseDown = false;
 
         int get_Index(const int& mouseX, const int& mouseY);
         bool on_button_press_event(GdkEventButton *event);
+        bool on_button_release_event(GdkEventButton *event);
         bool on_motion_notify_event(GdkEventMotion*event);
-
-        //bool RemoveItemByIndex(const guint index);
 
         GdkPixbuf* GetPreviewImage(DockItem* item, guint& scaleWidth, guint& scaleHeight);
         bool ComparePixels (const Glib::RefPtr<Gdk::Pixbuf>& first_pixbuf, const Glib::RefPtr<Gdk::Pixbuf>& current_pixbuf);
         bool ComparePixels(const guint8* pixels, const GdkPixbuf* current_pixbuf);
-      //  bool ComparePixels (const guint8* pixels, const GdkPixbuf* current_pixbuf)
         bool ComparePixels (const GdkPixbuf* pixbuf, const guint8* pixels_first, const guint8* pixels_current);
         Configuration::Style::Theme m_Theme = Configuration::get_Theme();
 
