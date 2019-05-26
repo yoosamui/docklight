@@ -48,6 +48,7 @@ guint DockPanel::m_ItemsWidth;
 guint DockPanel::m_ItemsHeight;
 
 
+bool DockPanel::m_mouseIn;
 DockPreview* DockPanel::m_dockPreview;
 AppUpdater*  DockPanel::m_AppUpdater;
 int DockPanel::m_previewIndex;
@@ -63,6 +64,7 @@ DockPanel::DockPanel():
     DockPanel::m_AppUpdater = nullptr;
     DockPanel::m_dockPreview = nullptr;
     DockPanel::m_previewIndex = -1;
+    DockPanel::m_mouseIn = false;
 
     // Set event masks
     add_events(Gdk::BUTTON_PRESS_MASK |
@@ -575,7 +577,7 @@ bool DockPanel::on_button_release_event(GdkEventButton *event)
         return true;
     }
 
-    if (!m_mouseIn)
+    if (!DockPanel::m_mouseIn)
         return true;
 
     if (m_mouseLeftButtonDown) {
@@ -781,7 +783,7 @@ bool DockPanel::on_timeoutDraw()
         }
     }
 
-    if (m_mouseIn || m_forceDraw || m_AppRunImage) {
+    if (DockPanel::m_mouseIn || m_forceDraw || m_AppRunImage) {
         Gtk::Widget::queue_draw();
         m_forceDraw = false;
     }
@@ -874,19 +876,17 @@ void DockPanel::RoundedRectangle(const Cairo::RefPtr<Cairo::Context>& cr,
 
 bool DockPanel::on_enter_notify_event(GdkEventCrossing * crossing_event)
 {
-    //  g_print("Mp_IN\n");
-    m_mouseIn = true;
+    DockPanel::m_mouseIn = true;
 
     m_HomeMenu.hide();
     m_ItemMenu.hide();
-    //    Gtk::Menu::signal_hide(
+
     return true;
 }
 
 bool DockPanel::on_leave_notify_event(GdkEventCrossing * crossing_event)
 {
-    // g_print("Mp_OUT\n");
-    m_mouseIn = false;
+    DockPanel::m_mouseIn = false;
 
     m_titlewindow.hide();
     m_infowindow.hide();
@@ -1149,7 +1149,7 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
  */
 void DockPanel::show_Title()
 {
-    if (Configuration::is_autoHide() && !DockWindow::is_Visible() || !m_mouseIn || m_dockPreview != nullptr){
+    if (Configuration::is_autoHide() && !DockWindow::is_Visible() || !DockPanel::m_mouseIn || m_dockPreview != nullptr){
 
         m_titlewindow.hide();
         m_infowindow.hide();

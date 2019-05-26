@@ -77,6 +77,10 @@ class DockPanel : public Gtk::DrawingArea, DockMenu {
         static AppUpdater& get_AppUpdater()  {
             return *m_AppUpdater;
         }
+
+        static bool is_mouseIn(){
+            return m_mouseIn;
+        }
     private:
         Configuration::Style::Theme m_Theme = Configuration::get_Theme();
         static int m_previewIndex ;
@@ -141,7 +145,7 @@ class DockPanel : public Gtk::DrawingArea, DockMenu {
         float position = 0;
         float initTime;
         float endPosition;
-        bool m_mouseIn = false;
+        static bool m_mouseIn;
         bool m_animate = false;
         bool m_timerStoped = true;
         bool m_visible = true;
