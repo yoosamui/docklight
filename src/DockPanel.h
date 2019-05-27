@@ -32,7 +32,7 @@
 
 #include "Configuration.h"
 #include "DockItem.h"
-//#include "SessionWindow.h"
+#include "LauncherWindow.h"
 #include "AppUpdater.h"
 #include "TitleWindow.h"
 #include "DockMenu.h"
@@ -76,7 +76,7 @@ class DockPanel : public Gtk::DrawingArea, DockMenu {
     private:
         Configuration::Style::Theme m_Theme = Configuration::get_Theme();
         static int m_previewIndex ;
-
+        LauncherWindow* m_launcherWindow = nullptr;
         About m_about;
         static guint m_widthDecrement;
         static guint m_heightDecrement;

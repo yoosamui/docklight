@@ -51,6 +51,8 @@ IconLoader.cpp \
 IconLoader.h \
 Launcher.cpp \
 Launcher.h \
+LauncherWindow.h \
+LauncherWindow.cpp \
 SessionWindow.cpp \
 SessionWindow.h \
 MoReader.cpp \

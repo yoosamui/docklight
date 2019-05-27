@@ -1389,7 +1389,7 @@ docklight-Configuration.o: Configuration.cpp /usr/include/stdc-predef.h \
  /usr/include/gtkmm-3.0/gtkmm/uimanager.h \
  /usr/include/gtkmm-3.0/gtkmm/viewport.h \
  /usr/include/gtkmm-3.0/gtkmm/volumebutton.h AppWindow.h DockPanel.h \
- DockItem.h AppUpdater.h SessionWindow.h Utilities.h \
+ DockItem.h LauncherWindow.h AppUpdater.h SessionWindow.h Utilities.h \
  /usr/include/c++/7/math.h IconLoader.h TitleWindow.h DockMenu.h \
  /usr/include/glibmm-2.4/glibmm/i18n.h /usr/include/glib-2.0/glib/gi18n.h \
  /usr/include/libintl.h DockPreview.h /usr/include/c++/7/thread About.h \
@@ -4407,6 +4407,8 @@ AppWindow.h:
 DockPanel.h:
 
 DockItem.h:
+
+LauncherWindow.h:
 
 AppUpdater.h:
 

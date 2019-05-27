@@ -1389,13 +1389,14 @@ docklight-DockPanel.o: DockPanel.cpp /usr/include/stdc-predef.h \
  /usr/include/gtkmm-3.0/gtkmm/treestore.h \
  /usr/include/gtkmm-3.0/gtkmm/uimanager.h \
  /usr/include/gtkmm-3.0/gtkmm/viewport.h \
- /usr/include/gtkmm-3.0/gtkmm/volumebutton.h AppUpdater.h SessionWindow.h \
- Utilities.h /usr/include/c++/7/math.h IconLoader.h TitleWindow.h \
- DockMenu.h /usr/include/glibmm-2.4/glibmm/i18n.h \
- /usr/include/glib-2.0/glib/gi18n.h /usr/include/libintl.h DockPreview.h \
- /usr/include/c++/7/thread About.h DockWindow.h AppWindow.h Screen.h \
- Struts.h DockItemPositions.h Launcher.h Animations.h WnckHandler.h \
- /usr/include/X11/X.h /usr/include/c++/7/iostream
+ /usr/include/gtkmm-3.0/gtkmm/volumebutton.h LauncherWindow.h \
+ AppUpdater.h SessionWindow.h Utilities.h /usr/include/c++/7/math.h \
+ IconLoader.h TitleWindow.h DockMenu.h \
+ /usr/include/glibmm-2.4/glibmm/i18n.h /usr/include/glib-2.0/glib/gi18n.h \
+ /usr/include/libintl.h DockPreview.h /usr/include/c++/7/thread About.h \
+ DockWindow.h AppWindow.h Screen.h Struts.h DockItemPositions.h \
+ Launcher.h Animations.h WnckHandler.h /usr/include/X11/X.h \
+ /usr/include/c++/7/iostream
 
 /usr/include/stdc-predef.h:
 
@@ -4404,6 +4405,8 @@ DockPanel.h:
 /usr/include/gtkmm-3.0/gtkmm/viewport.h:
 
 /usr/include/gtkmm-3.0/gtkmm/volumebutton.h:
+
+LauncherWindow.h:
 
 AppUpdater.h:
 

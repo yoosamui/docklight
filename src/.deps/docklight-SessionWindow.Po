@@ -1391,8 +1391,8 @@ docklight-SessionWindow.o: SessionWindow.cpp /usr/include/stdc-predef.h \
  /usr/include/libwnck-3.0/libwnck/util.h \
  /usr/include/libwnck-3.0/libwnck/version.h \
  /usr/include/libwnck-3.0/libwnck/wnck-enum-types.h IconLoader.h \
- DockPanel.h Configuration.h DockItem.h AppUpdater.h TitleWindow.h \
- DockMenu.h /usr/include/glibmm-2.4/glibmm/i18n.h \
+ DockPanel.h Configuration.h DockItem.h LauncherWindow.h AppUpdater.h \
+ TitleWindow.h DockMenu.h /usr/include/glibmm-2.4/glibmm/i18n.h \
  /usr/include/glib-2.0/glib/gi18n.h /usr/include/libintl.h DockPreview.h \
  /usr/include/c++/7/thread About.h Launcher.h DockWindow.h AppWindow.h \
  Screen.h Struts.h /usr/include/c++/7/fstream \
@@ -4416,6 +4416,8 @@ DockPanel.h:
 Configuration.h:
 
 DockItem.h:
+
+LauncherWindow.h:
 
 AppUpdater.h:
 

@@ -25,6 +25,7 @@
 #ifndef CONFIGURATION_H
 #define	CONFIGURATION_H
 
+#define DEF_DATADIRNAME         "data/"
 #define DEF_ATTACHMENTDIR       "data/attachments"
 #define DEF_IMAGESDIR           "data/images"
 #define DEF_ICONNAME            "data/images/docklight.home.ico"

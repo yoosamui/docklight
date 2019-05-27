@@ -284,8 +284,18 @@ void DockPanel::on_NewMenu_event()
     }
 
     if (!Launcher::Launch(item->m_realgroupname)) {
+        /*if (m_launcherWindow) {
+            m_launcherWindow->close();
+            delete m_launcherWindow
+            m_launcherWindow = nullptr;
+        }*/
 
-        //   createLauncher(item);
+
+        if (m_launcherWindow == nullptr) {
+            m_launcherWindow = new LauncherWindow();
+            m_launcherWindow->init(*this, item);
+            m_launcherWindow->show_all();
+        }
     }
 
     // start the animation and launch the application
