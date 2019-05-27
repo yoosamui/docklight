@@ -64,7 +64,6 @@ DockPreview::DockPreview():Gtk::Window(Gtk::WindowType::WINDOW_POPUP)
             Gdk::SCROLL_MASK |
             Gdk::SMOOTH_SCROLL_MASK |
             Gdk::POINTER_MOTION_HINT_MASK |
-    //        Gdk::FOCUS_CHANGE_MASK |
             Gdk::ENTER_NOTIFY_MASK |
             Gdk::LEAVE_NOTIFY_MASK |
             Gdk::POINTER_MOTION_MASK);
@@ -80,19 +79,13 @@ DockPreview::DockPreview():Gtk::Window(Gtk::WindowType::WINDOW_POPUP)
         gtk_widget_set_visual(GTK_WIDGET(gobj()), visual);
     }
 
-    //Add an event box that can catch button_press events:
- //   add(m_Box);
-//    m_Box.pack_start(m_EventBox);
-    // signal_button_press_event().connect(sigc::mem_fun(*this, &DockPreview::on_button_press_event) );
-
     m_font.set_family("System");
     m_font.set_size(8 * PANGO_SCALE);
     m_font.set_weight(Pango::WEIGHT_NORMAL);
 
-
     WnckScreen *wnckscreen = wnck_screen_get_default();
 
-    Glib::signal_timeout().connect(sigc::mem_fun(*this, &DockPreview::on_timeoutDraw), 1000 / 8);
+    Glib::signal_timeout().connect(sigc::mem_fun(*this, &DockPreview::on_timeoutDraw), 1000 / PREVIEW_FRAMES_PERSECOND);
     g_signal_connect(G_OBJECT(wnckscreen), "window-opened", G_CALLBACK(DockPreview::on_window_opened), NULL);
     g_signal_connect(wnckscreen, "window_closed", G_CALLBACK(DockPreview::on_window_closed), NULL);
 
@@ -228,7 +221,6 @@ void DockPreview::Update()
 
     if (DockWindow::is_Horizontal()){
         windowWidth = m_cellWidth  *  itemsSize + DockWindow::get_dockWindowStartEndMargin() + separatorsSize;
-
         if (windowWidth > DockWindow::Monitor::get_workarea().width){
             m_cellWidth = (DockWindow::Monitor::get_workarea().width - DockWindow::get_dockWindowStartEndMargin() -  separatorsSize ) / itemsSize;
 
@@ -239,9 +231,7 @@ void DockPreview::Update()
         }
 
     } else {
-
         windowHeight = m_cellHeight * itemsSize + DockWindow::get_dockWindowStartEndMargin() + separatorsSize;
-
         if (windowHeight  > DockWindow::Monitor::get_workarea().height){
             m_cellHeight =   (DockWindow::Monitor::get_workarea().height - DockWindow::get_dockWindowStartEndMargin() - separatorsSize ) / itemsSize;
 
@@ -597,7 +587,6 @@ bool DockPreview::on_button_release_event(GdkEventButton *event)
                 m_allowDraw = false;
 
                 if( WNCK_IS_WINDOW(window) == false ){
-                    g_print("ERROR......%d..\n", item->m_xid );
                     return true;
                 }
 

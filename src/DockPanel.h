@@ -64,16 +64,8 @@ class DockPanel : public Gtk::DrawingArea, DockMenu {
             return m_heightDecrement;
         }
 
-      static void PreviewClose(){
-            if(m_dockPreview != nullptr){
-                m_dockPreview->hide();
-                m_dockPreview->close();
+        static void PreviewClose();
 
-                delete m_dockPreview;
-                m_dockPreview = nullptr;
-                m_previewIndex = -1;
-            }
-        }
         static AppUpdater& get_AppUpdater()  {
             return *m_AppUpdater;
         }

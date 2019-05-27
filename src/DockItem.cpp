@@ -42,9 +42,9 @@ DockItem::DockItem(const guint width, const guint height)
  */
 DockItem::~DockItem()
 {
-    for (int i = this->m_items.size() - 1; i >= 0; i--){
+    for (int i = m_items.size() - 1; i >= 0; i--){
         delete m_items[i];
-        m_items[i] = NULL;
+        m_items[i] = nullptr;
         m_items.erase(m_items.begin() + i);
     }
 

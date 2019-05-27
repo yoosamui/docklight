@@ -192,6 +192,17 @@ DockPanel::~DockPanel()
     g_print("DockPanel destroy.\n");
 }
 
+void DockPanel::PreviewClose()
+{
+    if(m_dockPreview != nullptr){
+        m_dockPreview->hide();
+        m_dockPreview->close();
+
+        delete m_dockPreview;
+        m_dockPreview = nullptr;
+        m_previewIndex = -1;
+    }
+}
 /**
  * This method will be call from the background tread to manage the application image animation.
  * The animation consists in invert the colors of the image.
@@ -529,6 +540,11 @@ bool DockPanel::on_button_press_event(GdkEventButton *event)
         bool mousestate = m_mouseLeftButtonDown;
         m_mouseLeftButtonDown = true;
 
+        // Check if the event is a right button click.
+        if (event->button == 3 /*&& !m_mouseRightButtonDown*/) {
+            m_mouseRightButtonDown = true;
+        }
+
         // Check if the event is a left button click.
         if (event->button == 1 && !mousestate) {
             // start drag & drop timer
@@ -551,12 +567,6 @@ bool DockPanel::on_button_press_event(GdkEventButton *event)
             DockPanel::PreviewClose();
         }
 
-        // Check if the event is a right button click.
-        if (event->button == 3 /*&& !m_mouseRightButtonDown*/) {
-            m_mouseRightButtonDown = true;
-
-            return true;
-        }
     }
     return false;
 }
@@ -569,34 +579,33 @@ bool DockPanel::on_button_release_event(GdkEventButton *event)
 {
     this->DragDropEnds();
 
+    m_mouseRightButtonDown = false;
+    m_mouseLeftButtonDown = false;
+
     // Taking Too Long To Release the mouse.  // That is not a valid Click.
     if ((gtk_get_current_event_time() - m_mouseclickEventTime) > 200) {
-        m_mouseLeftButtonDown = false;
-        m_mouseRightButtonDown = false;
 
         return true;
     }
 
-    if (!DockPanel::m_mouseIn)
-        return true;
+    if (event->button == 1 ) {          // mouse left
 
-    if (m_mouseLeftButtonDown) {
-        m_mouseLeftButtonDown = false;
+        m_popupMenuOn = false;
+
+        if (m_dockPreview && m_currentMoveIndex == m_previewIndex) {
+            DockPanel::PreviewClose();
+            return true;
+        }
+
 
         if (m_currentMoveIndex > 0) {
             this->ExecuteApp(event);
         }
 
-    //    return TRUE;
     }
+    else  if (event->button == 3) {     // mouse right
 
-    // Right mouse click
-    if (m_mouseRightButtonDown) {
-
-        m_mouseRightButtonDown = false;
-
-        // Close if open
-        DockPanel::PreviewClose();
+           DockPanel::PreviewClose();
 
         // Menus
         if (m_currentMoveIndex == 0) {
@@ -723,6 +732,10 @@ void DockPanel::ExecuteApp(GdkEventButton* event)
     // check if preview already open.
     if( m_previewIndex == m_currentMoveIndex && m_dockPreview){
         return;
+    }
+
+    if(m_dockPreview != nullptr ){
+        DockPanel::PreviewClose();
     }
 
     if(m_dockPreview == nullptr ){
@@ -949,8 +962,6 @@ inline void DockPanel::get_ItemPosition(const DockItemType dockType, int& x, int
  */
 bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
-
-
     if (Configuration::is_allowDraw() == false) {
         return true;
     }
@@ -1120,7 +1131,8 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
         }
 
         // Selector
-        if (idx == m_currentMoveIndex && (item->m_dockitemtype != DockItemType::Separator || m_DragDropBegin )) {
+        if ((idx == m_currentMoveIndex && (item->m_dockitemtype != DockItemType::Separator || m_DragDropBegin )) ||
+            (m_popupMenuOn && idx == m_previewIndex && m_dockPreview) ) {
 
             cr->set_source_rgba(
             m_Theme.Selector().Fill().Color::red,
