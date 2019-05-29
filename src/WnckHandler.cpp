@@ -558,7 +558,7 @@ namespace WnckHandler
 
 
 
-    WnckWindow* getActive()
+    WnckWindow* get_Active()
     {
         WnckScreen *screen;
         GList *window_l;

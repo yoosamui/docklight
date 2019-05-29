@@ -74,16 +74,20 @@ class DockPanel : public Gtk::DrawingArea, DockMenu {
             return m_mouseIn;
         }
     private:
-        Configuration::Style::Theme m_Theme = Configuration::get_Theme();
+    guint m_animationCounter = 0;
+    bool m_animationStart = false;
+    guint m_animationEndValue = 1;
+    Configuration::Style::Theme m_Theme = Configuration::get_Theme();
         static int m_previewIndex ;
         LauncherWindow* m_launcherWindow = nullptr;
         About m_about;
         static guint m_widthDecrement;
         static guint m_heightDecrement;
 
+        static void set_SelectorForActiveWindow(WnckScreen* screen);
         Gtk::Window* m_AppWindow = nullptr;
         static DockPreview* m_dockPreview;
-        bool m_popupMenuOn = false;
+        static bool m_popupMenuOn;
         static bool m_forceDraw;
 
         TitleWindow m_titlewindow;
@@ -93,6 +97,7 @@ class DockPanel : public Gtk::DrawingArea, DockMenu {
         std::string m_homeiconFilePath;
         std::string m_separatorFilePath;
         static int m_currentMoveIndex;
+        static int m_popupMenuIndex;
         int get_Index(const int& mouseX, const int& mouseY);
         int m_previousCellwidth;
         int m_iconsize;
@@ -111,6 +116,7 @@ class DockPanel : public Gtk::DrawingArea, DockMenu {
         void get_ItemPosition(const DockItemType dockType, int& x, int& y, int& width, int& height);
 
         void ExecuteApp(GdkEventButton* event);
+        void AnimateItem(Glib::RefPtr<Gdk::Pixbuf> image);
 
         static void on_window_opened(WnckScreen* screen, WnckWindow* window, gpointer data);
         static void on_window_closed(WnckScreen* screen, WnckWindow* window, gpointer data);
@@ -128,7 +134,7 @@ class DockPanel : public Gtk::DrawingArea, DockMenu {
         //Override default signal handler:
         bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
-        void RoundedRectangle(const Cairo::RefPtr<Cairo::Context>& cr, double x, double y, double width, double height, double radius);
+//        void RoundedRectangle(const Cairo::RefPtr<Cairo::Context>& cr, double x, double y, double width, double height, double radius);
 
         virtual bool on_enter_notify_event(GdkEventCrossing* crossing_event);
         virtual bool on_leave_notify_event(GdkEventCrossing* crossing_event);
@@ -151,7 +157,6 @@ class DockPanel : public Gtk::DrawingArea, DockMenu {
         // Animation thread related
         std::thread* m_AppRunThreadLauncher = nullptr;
         static void AppRunAnimation();
-        static Glib::RefPtr<Gdk::Pixbuf> m_AppRunImage;
         static bool m_AppThreadRunning;
 
         // Menu events

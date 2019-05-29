@@ -39,7 +39,6 @@
 // static members
 int DockPanel::m_currentMoveIndex;
 bool DockPanel::m_forceDraw;
-Glib::RefPtr<Gdk::Pixbuf> DockPanel::m_AppRunImage;
 bool DockPanel::m_AppThreadRunning;
 guint DockPanel::m_widthDecrement;
 guint DockPanel::m_heightDecrement;
@@ -52,220 +51,298 @@ bool DockPanel::m_mouseIn;
 DockPreview* DockPanel::m_dockPreview;
 AppUpdater*  DockPanel::m_AppUpdater;
 int DockPanel::m_previewIndex;
+int DockPanel::m_popupMenuIndex;
+bool DockPanel::m_popupMenuOn;
 
 /**
- * This class is the main dock renderer.
- */
+* This class is the main dock renderer.
+*/
 DockPanel::DockPanel():
-    m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME)),
-    m_separatorFilePath(Utilities::getExecPath(DEF_SEPARATOR))
+m_homeiconFilePath(Utilities::getExecPath(DEF_ICONNAME)),
+m_separatorFilePath(Utilities::getExecPath(DEF_SEPARATOR))
 
 {
-    DockPanel::m_AppUpdater = nullptr;
-    DockPanel::m_dockPreview = nullptr;
-    DockPanel::m_previewIndex = -1;
-    DockPanel::m_mouseIn = false;
+DockPanel::m_AppUpdater = nullptr;
+DockPanel::m_dockPreview = nullptr;
+DockPanel::m_previewIndex = -1;
+DockPanel::m_mouseIn = false;
 
-    // Set event masks
-    add_events(Gdk::BUTTON_PRESS_MASK |
-            Gdk::BUTTON_RELEASE_MASK |
-            Gdk::SCROLL_MASK |
-            Gdk::SMOOTH_SCROLL_MASK |
-            Gdk::POINTER_MOTION_HINT_MASK |
-            Gdk::FOCUS_CHANGE_MASK |
-            Gdk::ENTER_NOTIFY_MASK |
-            Gdk::LEAVE_NOTIFY_MASK |
-            Gdk::POINTER_MOTION_MASK);
-
-
-
-    // set the static member to the default values
-    DockPanel::m_currentMoveIndex = -1;
-    DockPanel::m_forceDraw = false;
-    DockPanel::m_AppThreadRunning = true;
-    DockPanel::m_widthDecrement = 0;
-    DockPanel::m_heightDecrement = 0;
-
-    // Gets the default WnckScreen on the default display.
-    WnckScreen *wnckscreen = wnck_screen_get_default();
-
-    // set the required signals handlers
-    g_signal_connect(G_OBJECT(wnckscreen), "window-opened", G_CALLBACK(DockPanel::on_window_opened), NULL);
-    g_signal_connect(wnckscreen, "window_closed", G_CALLBACK(DockPanel::on_window_closed), NULL);
-    g_signal_connect(wnckscreen, "active_window_changed", G_CALLBACK(DockPanel::on_active_window_changed_callback), NULL);
-    Glib::signal_timeout().connect(sigc::mem_fun(*this, &DockPanel::on_timeoutDraw),1000 / 8);
-
-    // Menus
-    m_HomeMenu.attach_to_widget(*this);
-    m_HomeMenu.accelerate(*this);
-    m_HomeMenu.signal_hide().connect(sigc::mem_fun(*this, &DockPanel::on_HideMenu_event));
-
-    m_AutohideMenuItem.set_active(Configuration::is_autoHide());
-    m_AutohideMenuItem.signal_toggled().connect(sigc::mem_fun(*this, &DockPanel::on_AutohideToggled_event));
-    m_HomeUnMinimizeAllWindowsMenuItem.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_HomeUnMinimizeAllWindows_event));
-    m_HomeMinimizeAllWindowsExceptActiveMenuItem.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_HomeMinimizeAllWindowsExceptActive_event));
-    m_HomeMinimizeAllWindowsMenuItem.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_HomeMinimizeAllWindows_event));
-    m_HomeCloseAllWindowsExceptActiveMenuItem.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_HomeCloseAllWindowsExceptActive_event));
-    m_HomeCloseAllWindowsMenuItem.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_HomeCloseAllWindows_event));
-    m_HelpMenuItem.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_HelpMenu_event));
-    m_homeSessionGrp.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_HomeAddSessionGrp_event));
-    m_preferencesMenuItem.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_HomePreferences_event));
-    m_QuitMenuItem.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_QuitMenu_event));
-    m_HomeAddSeparatotMenuItem.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_AddSeparator_event));
-    m_AboutMenuItem.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_AboutMenu_event));
+// Set event masks
+add_events(Gdk::BUTTON_PRESS_MASK |
+        Gdk::BUTTON_RELEASE_MASK |
+        Gdk::SCROLL_MASK |
+        Gdk::SMOOTH_SCROLL_MASK |
+        Gdk::POINTER_MOTION_HINT_MASK |
+        Gdk::FOCUS_CHANGE_MASK |
+        Gdk::ENTER_NOTIFY_MASK |
+        Gdk::LEAVE_NOTIFY_MASK |
+        Gdk::POINTER_MOTION_HINT_MASK |
+        Gdk::POINTER_MOTION_MASK);
 
 
-    m_ItemMenu.attach_to_widget(*this);
-    m_ItemMenu.accelerate(*this);
-    m_ItemMenu.signal_hide().connect(sigc::mem_fun(*this, &DockPanel::on_HideMenu_event));
-    m_MenuItemNewApp.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_NewMenu_event));
-    m_MenuItemAttach.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_AttachMenu_event));
-    m_MenuItemDetach.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_DettachMenu_event));
-    m_MenuItemCloseAll.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_CloseAll_event));
-    m_MenuItemCloseAllExceptActive.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_CloseAllExceptActive_event));
-    m_MenuItemMinimizedAll.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_MinimieAll_event));
-    m_MenuItemMinimizedAllExceptActive.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_MinimieAllExceptActive_event));
-    m_MenuItemUnMinimizedAll.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_UnMinimieAll_event));
+
+// set the static member to the default values
+DockPanel::m_currentMoveIndex = -1;
+DockPanel::m_forceDraw = false;
+DockPanel::m_AppThreadRunning = true;
+DockPanel::m_widthDecrement = 0;
+DockPanel::m_heightDecrement = 0;
+DockPanel::m_popupMenuIndex - 1;
+DockPanel::m_popupMenuOn = false;
+
+// Gets the default WnckScreen on the default display.
+WnckScreen *wnckscreen = wnck_screen_get_default();
+
+// set the required signals handlers
+g_signal_connect(G_OBJECT(wnckscreen), "window-opened", G_CALLBACK(DockPanel::on_window_opened), NULL);
+g_signal_connect(wnckscreen, "window_closed", G_CALLBACK(DockPanel::on_window_closed), NULL);
+g_signal_connect(wnckscreen, "active_window_changed", G_CALLBACK(DockPanel::on_active_window_changed_callback), NULL);
+Glib::signal_timeout().connect(sigc::mem_fun(*this, &DockPanel::on_timeoutDraw),1000 / 8);
+
+// Menus
+m_HomeMenu.attach_to_widget(*this);
+m_HomeMenu.accelerate(*this);
+m_HomeMenu.signal_hide().connect(sigc::mem_fun(*this, &DockPanel::on_HideMenu_event));
+
+m_AutohideMenuItem.set_active(Configuration::is_autoHide());
+m_AutohideMenuItem.signal_toggled().connect(sigc::mem_fun(*this, &DockPanel::on_AutohideToggled_event));
+m_HomeUnMinimizeAllWindowsMenuItem.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_HomeUnMinimizeAllWindows_event));
+m_HomeMinimizeAllWindowsExceptActiveMenuItem.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_HomeMinimizeAllWindowsExceptActive_event));
+m_HomeMinimizeAllWindowsMenuItem.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_HomeMinimizeAllWindows_event));
+m_HomeCloseAllWindowsExceptActiveMenuItem.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_HomeCloseAllWindowsExceptActive_event));
+m_HomeCloseAllWindowsMenuItem.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_HomeCloseAllWindows_event));
+m_HelpMenuItem.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_HelpMenu_event));
+m_homeSessionGrp.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_HomeAddSessionGrp_event));
+m_preferencesMenuItem.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_HomePreferences_event));
+m_QuitMenuItem.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_QuitMenu_event));
+m_HomeAddSeparatotMenuItem.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_AddSeparator_event));
+m_AboutMenuItem.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_AboutMenu_event));
+
+
+m_ItemMenu.attach_to_widget(*this);
+m_ItemMenu.accelerate(*this);
+m_ItemMenu.signal_hide().connect(sigc::mem_fun(*this, &DockPanel::on_HideMenu_event));
+m_MenuItemNewApp.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_NewMenu_event));
+m_MenuItemAttach.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_AttachMenu_event));
+m_MenuItemDetach.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_DettachMenu_event));
+m_MenuItemCloseAll.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_CloseAll_event));
+m_MenuItemCloseAllExceptActive.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_CloseAllExceptActive_event));
+m_MenuItemMinimizedAll.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_MinimieAll_event));
+m_MenuItemMinimizedAllExceptActive.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_MinimieAllExceptActive_event));
+m_MenuItemUnMinimizedAll.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_UnMinimieAll_event));
 
 }
 
 /**
- * preInit load the attached icons and initializes variables.
- * @param Gtk::Window*  window
- * @return return 0 is success or -1 is an error found
- */
+* preInit load the attached icons and initializes variables.
+* @param Gtk::Window*  window
+* @return return 0 is success or -1 is an error found
+*/
 int DockPanel::Init(Gtk::Window* window)
 {
-    m_AppWindow = window;
-    m_AppUpdater = new AppUpdater();
+m_AppWindow = window;
+m_AppUpdater = new AppUpdater();
 
 
-    const char* filename = m_homeiconFilePath.c_str();
-    DockItem* dockItem = new DockItem();
-    try {
-        int iconsize = Configuration::get_CellWidth() - ICON_CELL_WIDTH_MARGIN;
-        dockItem->m_image = Gdk::Pixbuf::create_from_file(filename, iconsize, iconsize, true);
-    }
-    catch (Glib::FileError fex) {
-        g_critical("preInit: file %s could not be found!\n", filename);
-        return -1;
+const char* filename = m_homeiconFilePath.c_str();
+DockItem* dockItem = new DockItem();
+try {
+    int iconsize = Configuration::get_CellWidth() - ICON_CELL_WIDTH_MARGIN;
+    dockItem->m_image = Gdk::Pixbuf::create_from_file(filename, iconsize, iconsize, true);
+}
+catch (Glib::FileError fex) {
+    g_critical("preInit: file %s could not be found!\n", filename);
+    return -1;
 
-    }
-    catch (Gdk::PixbufError bex) {
-        g_critical("preInit: file %s PixbufError!\n", filename);
-        return -1;
-    }
+}
+catch (Gdk::PixbufError bex) {
+    g_critical("preInit: file %s PixbufError!\n", filename);
+    return -1;
+}
 
-    // add the home icon
-    dockItem->m_appname = _("Desktop");
-    dockItem->m_realgroupname = _("Desktop");
-    dockItem->m_dockitemtype = DockItemType::SingleDock;
-    dockItem->m_index = 0;
-    m_AppUpdater->m_dockitems.insert(this->m_AppUpdater->m_dockitems.begin(), dockItem);
+// add the home icon
+dockItem->m_appname = _("Desktop");
+dockItem->m_realgroupname = _("Desktop");
+dockItem->m_dockitemtype = DockItemType::SingleDock;
+dockItem->m_index = 0;
+m_AppUpdater->m_dockitems.insert(this->m_AppUpdater->m_dockitems.begin(), dockItem);
 
-    // Start the background thread for application start animation
-    m_AppRunThreadLauncher = new std::thread(AppRunAnimation);
+// Start the background thread for application start animation
+//m_AppRunThreadLauncher = new std::thread(AppRunAnimation);
 
-    return 0;
+return 0;
 }
 
 /*
- *  destructor
- */
+*  destructor
+*/
 DockPanel::~DockPanel()
 {
-    // tell the background thread to terminate.
-    m_AppThreadRunning = false;
+// tell the background thread to terminate.
+m_AppThreadRunning = false;
 
-    // Detach
-    m_AppRunThreadLauncher->detach();
+// Detach
+m_AppRunThreadLauncher->detach();
 
-    // free memory
-    delete m_AppRunThreadLauncher;
+// free memory
+delete m_AppRunThreadLauncher;
 
-    // pointed dangling to ptr NULL
-    m_AppRunThreadLauncher = NULL;
+// pointed dangling to ptr NULL
+m_AppRunThreadLauncher = NULL;
 
-    delete m_AppUpdater;
-    m_AppUpdater = NULL;
+delete m_AppUpdater;
+m_AppUpdater = NULL;
 
-    g_print("DockPanel destroy.\n");
+g_print("DockPanel destroy.\n");
 }
 
 void DockPanel::PreviewClose()
 {
-    if(m_dockPreview != nullptr){
-        m_dockPreview->hide();
-        m_dockPreview->close();
+if(m_dockPreview != nullptr){
+    m_dockPreview->hide();
+    m_dockPreview->close();
 
-        delete m_dockPreview;
-        m_dockPreview = nullptr;
-        m_previewIndex = -1;
-    }
+    delete m_dockPreview;
+    m_dockPreview = nullptr;
+    m_previewIndex = -1;
+
+    DockPanel::update();
+}
 }
 /**
- * This method will be call from the background tread to manage the application image animation.
- * The animation consists in invert the colors of the image.
- */
+* This method will be call from the background tread to manage the application image animation.
+* The animation consists in invert the colors of the image.
+*/
+
+void DockPanel::AnimateItem(Glib::RefPtr<Gdk::Pixbuf> image)
+{
+
+gint x, y, i;
+   // if (image:tabnew
+   // && image->get_colorspace() == Gdk::COLORSPACE_RGB && image->get_bits_per_sample() == 8){
+        int w = image->get_width();
+        int h = image->get_height();
+        int channels = image->get_n_channels();
+        gint rowstride = image->get_rowstride();
+        gint pixel_offset;
+       // for (i = 0; i < 4; i++) {
+            for (y = 0; y < h; y++) {
+                for (x = 0; x < w; x++) {
+                    pixel_offset = y * rowstride + x * channels;
+                    guchar* pixel = &image->get_pixels()[pixel_offset];
+
+                    pixel[0] = 255 - pixel[0];
+                    pixel[1] = 255 - pixel[1];
+                    pixel[2] = 255 - pixel[2];
+                }
+            }
+
+        //    DockPanel::update();
+         //   std::this_thread::sleep_for(std::chrono::milliseconds(100));
+       // }
+
+
+
+}
 void DockPanel::AppRunAnimation()
 {
-    gint x, y, i;
-    while(m_AppThreadRunning){
-        if (m_AppRunImage && m_AppRunImage->get_colorspace() == Gdk::COLORSPACE_RGB && m_AppRunImage->get_bits_per_sample() == 8){
-            int w = m_AppRunImage->get_width();
-            int h = m_AppRunImage->get_height();
-            int channels = m_AppRunImage->get_n_channels();
-            gint rowstride = m_AppRunImage->get_rowstride();
-            gint pixel_offset;
-            for (i = 0; i < 4; i++) {
-                for (y = 0; y < h; y++) {
-                    for (x = 0; x < w; x++) {
-                        pixel_offset = y * rowstride + x * channels;
-                        guchar* pixel = &m_AppRunImage->get_pixels()[pixel_offset];
+/*gint x, y, i;
+while(m_AppThreadRunning){
+    if (m_AppRunImage && m_AppRunImage->get_colorspace() == Gdk::COLORSPACE_RGB && m_AppRunImage->get_bits_per_sample() == 8){
+        int w = m_AppRunImage->get_width();
+        int h = m_AppRunImage->get_height();
+        int channels = m_AppRunImage->get_n_channels();
+        gint rowstride = m_AppRunImage->get_rowstride();
+        gint pixel_offset;
+        for (i = 0; i < 4; i++) {
+            for (y = 0; y < h; y++) {
+                for (x = 0; x < w; x++) {
+                    pixel_offset = y * rowstride + x * channels;
+                    guchar* pixel = &m_AppRunImage->get_pixels()[pixel_offset];
 
-                        pixel[0] = 255 - pixel[0];
-                        pixel[1] = 255 - pixel[1];
-                        pixel[2] = 255 - pixel[2];
-                    }
+                    pixel[0] = 255 - pixel[0];
+                    pixel[1] = 255 - pixel[1];
+                    pixel[2] = 255 - pixel[2];
                 }
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
-            m_AppRunImage = NULLPB;
+
+        //    DockPanel::update();
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        m_AppRunImage = NULLPB;
     }
+    std::this_thread::sleep_for(std::chrono::milliseconds(5));
+}*/
 }
 
 /**
- * Emitted when a new Wnck.Window is opened on screen.
- * @param screen
- * @param window
- * @param data
- */
+* Emitted when a new Wnck.Window is opened on screen.
+* @param screen
+* @param window
+* @param data
+*/
 void DockPanel::on_window_opened(WnckScreen *screen, WnckWindow* window, gpointer data)
 {
     update();
 }
 
 /**
- * Emitted when a Wnck.Window is closed on screen.
- * @param screen
- * @param window
- * @param data
- */
+* Emitted when a Wnck.Window is closed on screen.
+* @param screen
+* @param window
+* @param data
+*/
 void DockPanel::on_window_closed(WnckScreen *screen, WnckWindow *window, gpointer data)
 {
-    update();
+update();
 }
 
 /**
- * Emitted when the active window on screen has changed.
- * @param screen
- * @param previously_active_window
- * @param user_data
- */
+* Emitted when the active window on screen has changed.
+* @param screen
+* @param previously_active_window
+* @param user_data
+*/
 void DockPanel::on_active_window_changed_callback(WnckScreen *screen, WnckWindow *previously_active_window, gpointer user_data)
 {
+    DockPanel::set_SelectorForActiveWindow(screen);
+}
+
+void DockPanel::set_SelectorForActiveWindow(WnckScreen* screen)
+{
+
+    if (m_mouseIn || m_popupMenuOn ) {
+
+        return;
+    }
+
+    if (screen == nullptr) {
+        screen = wnck_screen_get_default();
+    }
+
+    WnckWindow * window =  wnck_screen_get_active_window(screen);
+    if (window == nullptr) {
+        return;
+    }
+
+    int idx = 0;
+    bool found = false;
+    for (auto item : AppUpdater::m_dockitems) {
+        for (auto chiditem : item->m_items) {
+            if (window == chiditem->m_window) {
+                found = true;
+                break;
+            }
+        }
+        if (found)
+            break;
+
+        idx++;
+    }
+
+    m_currentMoveIndex = idx;
+    DockPanel::update();
+
 }
 
 /**
@@ -282,7 +359,9 @@ void DockPanel::on_NewMenu_event()
         return;
 
     }
-
+m_animationStart = true;
+m_animationEndValue = 1;
+   // m_AppRunImage = item->m_image;
     if (!Launcher::Launch(item->m_realgroupname)) {
         /*if (m_launcherWindow) {
             m_launcherWindow->close();
@@ -291,16 +370,16 @@ void DockPanel::on_NewMenu_event()
         }*/
 
 
+    // start the animation and launch the application
         if (m_launcherWindow == nullptr) {
             m_launcherWindow = new LauncherWindow();
             m_launcherWindow->init(*this, item);
             m_launcherWindow->show_all();
         }
+
+    //this->update();
     }
 
-    // start the animation and launch the application
-    m_AppRunImage = item->m_image;
-    this->update();
 }
 
 /**
@@ -317,6 +396,7 @@ void DockPanel::on_QuitMenu_event()
 void DockPanel::on_HideMenu_event()
 {
     m_popupMenuOn = false;
+    m_popupMenuIndex = -1;
 }
 
 /**
@@ -546,6 +626,10 @@ void DockPanel::DragDropEnds()
 bool DockPanel::on_button_press_event(GdkEventButton *event)
 {
     if ((event->type == GDK_BUTTON_PRESS)) {
+
+        DockPanel::m_currentMoveIndex = this->get_Index(event->x, event->y);
+        DockPanel::update();
+
         m_mouseclickEventTime = gtk_get_current_event_time();
         bool mousestate = m_mouseLeftButtonDown;
         m_mouseLeftButtonDown = true;
@@ -617,14 +701,14 @@ bool DockPanel::on_button_release_event(GdkEventButton *event)
 
            DockPanel::PreviewClose();
 
+            m_popupMenuOn = true;
+            m_popupMenuIndex = m_currentMoveIndex;
         // Menus
         if (m_currentMoveIndex == 0) {
             m_HomeMenu.popup(sigc::mem_fun(*this, &DockPanel::on_popup_homemenu_position), 1, event->time);
-            m_popupMenuOn = true;
         }
         else  if (m_currentMoveIndex > 0) {
             m_ItemMenu.popup(sigc::mem_fun(*this,&DockPanel::on_popup_itemmenu_position), 1, event->time);
-            m_popupMenuOn = true;
         }
 
         //Home
@@ -800,13 +884,12 @@ bool DockPanel::on_timeoutDraw()
         m_dragDropItem =  this->get_CurrentItem();
         if ( m_dragDropItem != nullptr){
 
-            m_AppRunImage = m_dragDropItem->m_image;
             m_DragDropBegin = true;
             m_DragDropSourceIndex = this->m_currentMoveIndex;
         }
     }
 
-    if (DockPanel::m_mouseIn || m_forceDraw || m_AppRunImage) {
+    if (DockPanel::m_mouseIn || m_forceDraw ) {
         Gtk::Widget::queue_draw();
         m_forceDraw = false;
     }
@@ -865,7 +948,6 @@ inline int DockPanel::get_Index(const int& mouseX, const int& mouseY)
 bool DockPanel::on_motion_notify_event(GdkEventMotion * event)
 {
     m_currentMoveIndex = this->get_Index(event->x, event->y);
-
     if(m_DragDropBegin){
 
         m_AppUpdater->MoveItem(this->m_currentMoveIndex);
@@ -882,20 +964,6 @@ bool DockPanel::on_motion_notify_event(GdkEventMotion * event)
     return false;
 }
 
-void DockPanel::RoundedRectangle(const Cairo::RefPtr<Cairo::Context>& cr,
-        double x, double y, double width, double height, double radius)
-{
-    // radius can be no larger than half our height or width
-    radius = std::min(radius, std::min(width / 2, height / 2));
-    cr->move_to(x + radius, y);
-    cr->arc(x + width - radius, y + radius, radius, M_PI * 1.5, M_PI * 2);
-    cr->arc(x + width - radius, y + height - radius, radius, 0, M_PI * .5);
-    cr->arc(x + radius, y + height - radius, radius, M_PI * .5, M_PI);
-    cr->arc(x + radius, y + radius, radius, M_PI, M_PI * 1.5);
-
-}
-
-
 
 bool DockPanel::on_enter_notify_event(GdkEventCrossing * crossing_event)
 {
@@ -910,10 +978,14 @@ bool DockPanel::on_enter_notify_event(GdkEventCrossing * crossing_event)
 bool DockPanel::on_leave_notify_event(GdkEventCrossing * crossing_event)
 {
     DockPanel::m_mouseIn = false;
-
     m_titlewindow.hide();
     m_infowindow.hide();
 
+    if (m_popupMenuOn || m_dragDropItem) {
+        return true;
+    }
+
+    DockPanel::set_SelectorForActiveWindow(nullptr);
     return true;
 }
 
@@ -1002,7 +1074,7 @@ void DockPanel::draw_Panel(const Cairo::RefPtr<Cairo::Context>& cr)
     }
     else {
 
-        RoundedRectangle(cr, 0, 0, DockWindow::get_DockWindowWidth(), DockWindow::get_DockWindowHeight(), m_Theme.Panel().Ratio());
+        Utilities::RoundedRectangle(cr, 0, 0, DockWindow::get_DockWindowWidth(), DockWindow::get_DockWindowHeight(), m_Theme.Panel().Ratio());
         cr->fill();
 
         cr->set_source_rgba(
@@ -1010,7 +1082,7 @@ void DockPanel::draw_Panel(const Cairo::RefPtr<Cairo::Context>& cr)
             m_Theme.Panel().Stroke().Color::green,
             m_Theme.Panel().Stroke().Color::blue,
             m_Theme.Panel().Stroke().Color::alpha);
-        RoundedRectangle(cr, 0, 0, DockWindow::get_DockWindowWidth(), DockWindow::get_DockWindowHeight(), m_Theme.Panel().Ratio());
+        Utilities::RoundedRectangle(cr, 0, 0, DockWindow::get_DockWindowWidth(), DockWindow::get_DockWindowHeight(), m_Theme.Panel().Ratio());
         cr->stroke();
     }
 }
@@ -1061,7 +1133,8 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
         }
     }
 
-
+if( m_animationStart )
+m_animationCounter++;
 
     // Draw all items with cairo
     for (idx = 0; idx < itemsCount; idx++) {
@@ -1071,11 +1144,8 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
         height = item->get_height();
 
         this->get_ItemPosition(item->m_dockitemtype, x, y, width, height);
-        // y += height + Configuration::get_separatorMargin();
-        //g_print("idx: %d y:%d  h:%d  sepa: %d \n",idx,y, height, Configuration::get_separatorMargin());
 
         item->m_index = idx;
-
         item->m_posX = x;
         item->m_posY = y;
 
@@ -1091,7 +1161,7 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
             m_Theme.PanelCell().Fill().Color::blue,
             m_Theme.PanelCell().Fill().Color::alpha);
 
-            RoundedRectangle(cr, x, y, width, height, m_Theme.PanelCell().Ratio());
+            Utilities::RoundedRectangle(cr, x, y, width, height, m_Theme.PanelCell().Ratio());
             cr->fill();
             cr->set_source_rgba(
             m_Theme.PanelCell().Stroke().Color::red,
@@ -1101,7 +1171,7 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
             cr->set_line_width(m_Theme.PanelCell().LineWidth());
 
             if (m_Theme.PanelCell().Mask() == 0){
-                RoundedRectangle(cr, x, y, width, height, m_Theme.PanelCell().Ratio());
+                Utilities::RoundedRectangle(cr, x, y, width, height, m_Theme.PanelCell().Ratio());
             }
             else{
                 // bottom
@@ -1140,17 +1210,27 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
 
         }
 
+                if(idx == m_currentMoveIndex && m_animationStart) {
+                    this->AnimateItem(item->m_image);
+                }
         // Selector
         //
         if (item->m_dockitemtype != DockItemType::Separator && !m_DragDropBegin) {
             if (idx == m_currentMoveIndex) {
+
+
+                if (m_animationCounter > m_animationEndValue) {
+                    m_animationStart = false;
+                    m_animationCounter = 0;
+                }
+
                 cr->set_source_rgba(
                         m_Theme.Selector().Fill().Color::red,
                         m_Theme.Selector().Fill().Color::green,
                         m_Theme.Selector().Fill().Color::blue,
                         m_Theme.Selector().Fill().Color::alpha);
 
-                RoundedRectangle(cr, x, y, width, height, m_Theme.Selector().Ratio());
+                Utilities::RoundedRectangle(cr, x, y, width, height, m_Theme.Selector().Ratio());
                 cr->fill();
 
                 cr->set_source_rgba(
@@ -1160,11 +1240,13 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
                         m_Theme.Selector().Stroke().Color::alpha);
                 cr->set_line_width(m_Theme.Selector().LineWidth());
 
-                RoundedRectangle(cr, x, y, width, height, m_Theme.Selector().Ratio());
+                Utilities::RoundedRectangle(cr, x, y, width, height, m_Theme.Selector().Ratio());
                 cr->stroke();
+
+
             }
 
-            /*if (idx == m_previewIndex) {
+            if (idx == m_previewIndex ) {
             // get from themes
                 cr->set_source_rgba(
                         m_Theme.Selector().Fill().Color::red,
@@ -1172,7 +1254,7 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
                         m_Theme.Selector().Fill().Color::blue,
                         m_Theme.Selector().Fill().Color::alpha);
 
-                RoundedRectangle(cr, x, y, width, height, m_Theme.Selector().Ratio());
+                Utilities::RoundedRectangle(cr, x, y, width, height, m_Theme.Selector().Ratio());
                 cr->fill();
 
                 cr->set_source_rgba(
@@ -1182,10 +1264,10 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
                         m_Theme.Selector().Stroke().Color::alpha);
                 cr->set_line_width(m_Theme.Selector().LineWidth());
 
-                RoundedRectangle(cr, x, y, width, height, m_Theme.Selector().Ratio());
+                Utilities::RoundedRectangle(cr, x, y, width, height, m_Theme.Selector().Ratio());
                 cr->stroke();
 
-            }*/
+            }
         }
     }
 }

@@ -39,7 +39,7 @@ namespace WnckHandler
     int windowscount();
 //   int getWindowsByName(const std::string& appname, std::vector<windowData>& data);
 //    WnckWindow* getWindowByName(const std::string& appname, std::string& tittle);
-    WnckWindow* getActive();
+    WnckWindow* get_Active();
     bool isWindowExists(XID xid);
     bool isExistsMinimizedWindows();
     void hideWindow(Gtk::Window* instance);
