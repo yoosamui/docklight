@@ -953,7 +953,7 @@ inline void DockPanel::get_ItemPosition(const DockItemType dockType, int& x, int
             return;
         }
 
-        // if the item is a separator the wisth is probably not equal.
+        // if the item is a separator the wdth is probably not equal.
         // in this case wie remeber the size for use it in the next item.
         if( dockType == DockItemType::Separator){
             y +=  nextsize + Configuration::get_separatorMargin();
@@ -1141,27 +1141,51 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
         }
 
         // Selector
-        if ((idx == m_currentMoveIndex && (item->m_dockitemtype != DockItemType::Separator || m_DragDropBegin )) ||
-            (m_popupMenuOn && idx == m_previewIndex && m_dockPreview) ) {
+        //
+        if (item->m_dockitemtype != DockItemType::Separator && !m_DragDropBegin) {
+            if (idx == m_currentMoveIndex) {
+                cr->set_source_rgba(
+                        m_Theme.Selector().Fill().Color::red,
+                        m_Theme.Selector().Fill().Color::green,
+                        m_Theme.Selector().Fill().Color::blue,
+                        m_Theme.Selector().Fill().Color::alpha);
 
-            cr->set_source_rgba(
-            m_Theme.Selector().Fill().Color::red,
-            m_Theme.Selector().Fill().Color::green,
-            m_Theme.Selector().Fill().Color::blue,
-            m_Theme.Selector().Fill().Color::alpha);
+                RoundedRectangle(cr, x, y, width, height, m_Theme.Selector().Ratio());
+                cr->fill();
 
-            RoundedRectangle(cr, x, y, width, height, m_Theme.Selector().Ratio());
-            cr->fill();
+                cr->set_source_rgba(
+                        m_Theme.Selector().Stroke().Color::red,
+                        m_Theme.Selector().Stroke().Color::green,
+                        m_Theme.Selector().Stroke().Color::blue,
+                        m_Theme.Selector().Stroke().Color::alpha);
+                cr->set_line_width(m_Theme.Selector().LineWidth());
 
-            cr->set_source_rgba(
-            m_Theme.Selector().Stroke().Color::red,
-            m_Theme.Selector().Stroke().Color::green,
-            m_Theme.Selector().Stroke().Color::blue,
-            m_Theme.Selector().Stroke().Color::alpha);
-            cr->set_line_width(m_Theme.Selector().LineWidth());
-            RoundedRectangle(cr, x, y, width, height, m_Theme.Selector().Ratio());
-            cr->stroke();
+                RoundedRectangle(cr, x, y, width, height, m_Theme.Selector().Ratio());
+                cr->stroke();
+            }
 
+            /*if (idx == m_previewIndex) {
+            // get from themes
+                cr->set_source_rgba(
+                        m_Theme.Selector().Fill().Color::red,
+                        m_Theme.Selector().Fill().Color::green,
+                        m_Theme.Selector().Fill().Color::blue,
+                        m_Theme.Selector().Fill().Color::alpha);
+
+                RoundedRectangle(cr, x, y, width, height, m_Theme.Selector().Ratio());
+                cr->fill();
+
+                cr->set_source_rgba(
+                        m_Theme.Selector().Stroke().Color::red,
+                        m_Theme.Selector().Stroke().Color::green,
+                        m_Theme.Selector().Stroke().Color::blue,
+                        m_Theme.Selector().Stroke().Color::alpha);
+                cr->set_line_width(m_Theme.Selector().LineWidth());
+
+                RoundedRectangle(cr, x, y, width, height, m_Theme.Selector().Ratio());
+                cr->stroke();
+
+            }*/
         }
     }
 }
