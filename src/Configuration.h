@@ -152,6 +152,7 @@ namespace Configuration {
     unsigned int get_WindowDockMonitorMargin_Left();
     unsigned int get_WindowDockMonitorMargin_Bottom();
     void set_dockWindowLocation(panel_locationType location);
+    unsigned int get_dockWindowSize();
     //void set_SeparatorMargin(unsigned int  margin);
     //
     //
@@ -217,6 +218,8 @@ namespace Configuration {
                 ColorWindow& Preview() const { return *m_Preview; }
                 ColorWindow& PreviewCell() const { return *m_PreviewCell; }
                 ColorWindow& PreviewTitleText() const { return *m_PreviewTitleText; }
+                ColorWindow& PreviewClose() const { return *m_PreviewClose; }
+                ColorWindow& Separator() const { return *m_Separator; }
 
                 void set_Panel(ColorWindow* cw) {
 
@@ -329,6 +332,34 @@ namespace Configuration {
 
                     m_PreviewTitleText = cw;
                 }
+
+                void set_PreviewClose(ColorWindow* cw) {
+
+                   if (cw == nullptr){
+                        return;
+                   }
+
+                   if(m_PreviewClose != nullptr){
+                        delete m_PreviewClose;
+                       m_PreviewClose = nullptr;
+                   }
+
+                    m_PreviewClose = cw;
+                }
+
+                void set_Separator(ColorWindow* cw) {
+
+                   if (cw == nullptr){
+                        return;
+                   }
+
+                   if(m_Separator != nullptr){
+                        delete m_Separator;
+                       m_Separator = nullptr;
+                   }
+
+                    m_Separator = cw;
+                }
             private:
                 ColorWindow* m_Panel = new ColorWindow();
                 ColorWindow* m_PanelTitle = new ColorWindow();
@@ -338,6 +369,8 @@ namespace Configuration {
                 ColorWindow* m_Preview = new ColorWindow();
                 ColorWindow* m_PreviewCell = new ColorWindow();
                 ColorWindow* m_PreviewTitleText = new ColorWindow();
+                ColorWindow* m_PreviewClose = new ColorWindow();
+                ColorWindow* m_Separator = new ColorWindow();
         };
     }
 

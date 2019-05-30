@@ -156,6 +156,13 @@ copy(items.begin(), items.end(), back_inserter(DockPreview::m_previewItems));
         item->m_elapsedFrames = 0;
         item->m_tmpxid = 0;
         item->m_isAlive = true;
+
+        /*if(item->m_window &&  wnck_window_is_minimized (item->m_window)) {
+                   auto timestamp = gtk_get_current_event_time();
+                   wnck_window_unminimize (item->m_window, timestamp);
+                   //wnck_window_minimize (item->m_window);
+
+        }*/
     }
 
     // Buble sort by appname name
@@ -210,7 +217,7 @@ void DockPreview::Update()
     int x = 0;
     int y = 0;
 
-    guint windowWidth = (m_dockItemCellSize * 6) - 40;
+    guint windowWidth = (m_dockItemCellSize * 4) - 20;
     guint windowHeight = windowWidth -  (PREVIEW_HV_OFFSET * 2);
 
     m_cellWidth = windowWidth - 20;
@@ -453,7 +460,6 @@ bool DockPreview::on_timeoutDraw()
 {
     if (!m_mouseIn && !DockPanel::is_mouseIn()) {
         int mouseX, mouseY;
-        g_print("check mouse\n");
         if (Utilities::getMousePosition(mouseX, mouseY)) {
 
             int px, py;
@@ -628,8 +634,8 @@ bool DockPreview::on_motion_notify_event(GdkEventMotion* event)
 
 
     m_closeSymbolMouseOver = false;
-    if ((int)event->x >= m_closeSymbolX && (int)event->x <= m_closeSymbolX + 14 &&
-            (int)event->y >= m_closeSymbolY && (int)event->y <= m_closeSymbolY + 14) {
+    if ((int)event->x >= m_closeSymbolX && (int)event->x <= m_closeSymbolX + 24 &&
+            (int)event->y >= m_closeSymbolY && (int)event->y <= m_closeSymbolY + 24) {
 
         m_closeSymbolMouseOver = true;
     }
@@ -823,25 +829,43 @@ bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
             // close symbol section
             closeSymbolOffsetX = DockWindow::is_Horizontal() ? 12 : 0;    // Close X offset
 
-            // select if mouse over
-            if (m_closeSymbolMouseOver) {
-                cr->set_source_rgba(1.0, 0.0, 0.0, 1.0);
-                cr->set_line_width(2.5);
-            }
-            else {
-                cr->set_source_rgba(1.0, 1.0, 1.0, 1.0);
-                cr->set_line_width(1.5);
-            }
-
             m_closeSymbolX = x - closeSymbolOffsetX +  m_cellWidth - 8;
             m_closeSymbolY = y + titleofsetY - 2;
 
 
-           cr->save();
-           // cr->set_source_rgba(1.0, 0.0, 0.0, 1.0);
-           // cr->rectangle(m_closeSymbolX, m_closeSymbolY, 14, 14);
-           //cr->fill();
-           cr->restore();
+
+            if (m_closeSymbolMouseOver) {
+                cr->save();
+
+                cr->set_source_rgba(
+                        m_Theme.PreviewClose().Fill().Color::red,
+                        m_Theme.PreviewClose().Fill().Color::green,
+                        m_Theme.PreviewClose().Fill().Color::blue,
+                        m_Theme.PreviewClose().Fill().Color::alpha);
+
+                cr->rectangle(m_closeSymbolX - 4, m_closeSymbolY - 4, 22, 24);
+                cr->fill();
+
+                cr->set_source_rgba(
+                        m_Theme.PreviewClose().Stroke().Color::red,
+                        m_Theme.PreviewClose().Stroke().Color::green,
+                        m_Theme.PreviewClose().Stroke().Color::blue,
+                        m_Theme.PreviewClose().Stroke().Color::alpha);
+
+                cr->set_line_width(m_Theme.PreviewClose().LineWidth());
+                cr->rectangle(m_closeSymbolX - 4, m_closeSymbolY - 4, 22, 24);
+                cr->stroke();
+
+
+                cr->restore();
+            }
+
+            cr->set_source_rgba(
+                    m_Theme.PreviewClose().Stroke().Color::red,
+                    m_Theme.PreviewClose().Stroke().Color::green,
+                    m_Theme.PreviewClose().Stroke().Color::blue,
+                    m_Theme.PreviewClose().Stroke().Color::alpha);
+            cr->set_line_width(m_Theme.PreviewClose().LineWidth());
 
             cr->move_to(x - closeSymbolOffsetX +  m_cellWidth - 6, y + titleofsetY);
             cr->line_to(x - closeSymbolOffsetX +  m_cellWidth - 6, y + titleofsetY);

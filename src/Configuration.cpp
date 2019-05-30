@@ -113,7 +113,8 @@ namespace Configuration
         m_theme.set_Preview(new ColorWindow());
         m_theme.set_PreviewCell(new ColorWindow(Color(1,1,1,0.2), Color(1,1,1,0), 1.5, 3, 0));
         m_theme.set_PreviewTitleText(new ColorWindow(Color(), Color(1,1,1,1), 0, 0, 0));
-
+        m_theme.set_PreviewClose(new ColorWindow(Color(1,0,0,1), Color(1,1,1,1), 1.5, 0, 0));
+        m_theme.set_Separator(new ColorWindow(Color(), Color(1,1,1,1), 1, 0, 0));
     }
 
     // https://shilohjames.wordpress.com/2014/04/27/tinyxml2-tutorial/
@@ -159,12 +160,13 @@ namespace Configuration
         }
 
         // Style Themes
-        int useStyle = 0;
-
         element = root->FirstChildElement("UseStyle");
-        XMLCheckResult(element->QueryIntText(&useStyle));
+        if (element == nullptr){
+            g_critical("Configuration Load : UseSyle ERROR file %s\n", configFile.c_str());
+            return;
+        }
+        const char* useStyle =  element->GetText();
 
-        g_print(".START LOAD STYLE %d\n", useStyle);
         element = root->FirstChildElement("Styles");
         if (element == nullptr){
             g_critical("Configuration Load : Styles ERROR file %s\n", configFile.c_str());
@@ -172,7 +174,7 @@ namespace Configuration
         }
 
         // m_theme.
-        int id = 0;
+        const char* current = nullptr;
         XMLElement* listElement = element->FirstChildElement("Style");
         while (listElement != nullptr){
             const char* name = listElement->GetText();
@@ -183,9 +185,14 @@ namespace Configuration
             const char* preview = listElement->Attribute("preview");
             const char* previewCell = listElement->Attribute("previewCell");
             const char* previewTitleText = listElement->Attribute("previewTitleText");
+            const char* previewClose = listElement->Attribute("previewClose");
+            const char* separator = listElement->Attribute("separator");
 
-            XMLCheckResult(listElement->QueryIntText(&id));
-            if(id == useStyle ){
+            current = listElement->GetText();
+            std::string current_str = std::string(current);
+            current_str.erase(current_str.find_last_not_of(" \n\r\t") + 1);
+
+            if(current != nullptr && useStyle != nullptr && strcmp(current_str.c_str(), useStyle) == 0 ){
                 Color fill;
                 Color stroke;
                 double lineWidth;
@@ -229,6 +236,15 @@ namespace Configuration
                 if (previewTitleText != nullptr){
                     getColorFromString(previewTitleText, fill, stroke, lineWidth, ratio,  mask);
                     m_theme.set_PreviewTitleText(new ColorWindow(fill,stroke,lineWidth,ratio,mask));
+                }
+
+                if (previewClose != nullptr){
+                    getColorFromString(previewClose, fill, stroke, lineWidth, ratio,  mask);
+                    m_theme.set_PreviewClose(new ColorWindow(fill,stroke,lineWidth,ratio,mask));
+                }
+                if (separator != nullptr){
+                    getColorFromString(separator, fill, stroke, lineWidth, ratio,  mask);
+                    m_theme.set_Separator(new ColorWindow(fill,stroke,lineWidth,ratio,mask));
                 }
                 break;
             }
@@ -297,7 +313,7 @@ namespace Configuration
 
     unsigned int get_dockWindowSize()
     {
-        return 58; //DOCK_WINDOW_AREA width;
+        return 56; //DOCK_WINDOW_AREA width;
     }
 
     unsigned int get_WindowDockMonitorMargin_Top()

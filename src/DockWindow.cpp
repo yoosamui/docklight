@@ -159,6 +159,7 @@ namespace DockWindow
 
         g_print("Resize\n");
         auto geometry = ((AppWindow*)m_window)->m_screen.get_PrimaryMonitor()->geometry;
+
         auto areaSize = Configuration::get_dockWindowSize();
         auto location = Configuration::get_dockWindowLocation();
 
@@ -204,7 +205,7 @@ namespace DockWindow
         {
             if (Configuration::is_panelMode()) {
                 if (location == panel_locationType::LEFT) {
-                    m_window->resize(areaSize, Monitor::get_geometry().height);
+                    m_window->resize(areaSize, geometry.height);
                     if (Configuration::is_autoHide() && !m_visible && !forceMove) {
                         return areaSize;
                     }
@@ -268,7 +269,7 @@ namespace DockWindow
         }
 
         g_print("Hide\n");
-        auto geometry = ((AppWindow*)m_window)->m_screen.get_PrimaryMonitor()->geometry;
+        auto geometry = ((AppWindow*)m_window)->m_screen.get_PrimaryMonitor()->workarea;
         auto areaSize = Configuration::get_dockWindowSize();
         auto location = Configuration::get_dockWindowLocation();
 

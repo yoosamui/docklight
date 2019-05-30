@@ -34,7 +34,7 @@ namespace DockItemPositions
     guint get_ResizeHeightDecrement()
     {
         int  requiredSize = get_inmutableItemsHeight() +  Configuration::get_CellHeight();
-        int diff =  DockWindow::Monitor::get_geometry().height  - requiredSize;
+        int diff =  DockWindow::Monitor::get_geometry().height - requiredSize;
 
         if (diff < 0 ){
             return abs(diff) / (AppUpdater::m_dockitems.size());
@@ -49,7 +49,7 @@ namespace DockItemPositions
     guint get_ResizeWidthDecrement()
     {
         int  requiredSize = get_inmutableItemsWidth() +  Configuration::get_CellWidth();
-        int diff =  DockWindow::Monitor::get_geometry().width  - requiredSize;
+        int diff =  DockWindow::Monitor::get_workarea().width  - requiredSize;
 
         if (diff < 0 ){
             return  abs(diff) / AppUpdater::m_dockitems.size();
@@ -111,8 +111,8 @@ namespace DockItemPositions
 
         guint result =  size - separatorMargin;
 
-        if (result > DockWindow::Monitor::get_geometry().width ) {
-            result = DockWindow::Monitor::get_geometry().width;
+        if (result > DockWindow::Monitor::get_workarea().width ) {
+            result = DockWindow::Monitor::get_workarea().width;
         }
 
         return result;
@@ -140,7 +140,7 @@ namespace DockItemPositions
         guint result =  size - separatorMargin;
 
         if (result > DockWindow::Monitor::get_geometry().height ) {
-            result = DockWindow::Monitor::get_geometry().height;
+            result = DockWindow::Monitor::get_geometry().height; // - DockWindow::Monitor::get_workarea().y;
         }
 
         return result;
@@ -244,8 +244,8 @@ namespace DockItemPositions
      */
     void get_CenterScreenPos(int targetwidth, int targetheight, int &posx, int &posy)
     {
-        int monitorWidth = DockWindow::Monitor::get_geometry().width;
-        int monitorHeight = DockWindow::Monitor::get_geometry().height;
+        int monitorWidth = DockWindow::Monitor::get_workarea().width;
+        int monitorHeight = DockWindow::Monitor::get_workarea().height;
 
         int monitorcenterWidth = monitorWidth / 2;
         int monitorcenterHeight = monitorHeight / 2;
@@ -258,7 +258,7 @@ namespace DockItemPositions
 
     int getCenter(int count, int index, int width)
     {
-        int monitorWidth = DockWindow::Monitor::get_geometry().width;
+        int monitorWidth = DockWindow::Monitor::get_workarea().width;
         int monitorX = DockWindow::Monitor::get_geometry().x;
         int monitorcenter = monitorWidth / 2;
         int intemcenter = (count * Configuration::get_CellWidth()) / 2;

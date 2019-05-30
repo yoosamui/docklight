@@ -838,8 +838,8 @@ void DockPanel::ExecuteApp(GdkEventButton* event)
 
     m_previewIndex = this->m_currentMoveIndex;
 
-    guint size = DockWindow::is_Horizontal() ? item->get_width() : item->get_height();
-    m_dockPreview->Show(item->m_items, m_currentMoveIndex, size);
+//    guint size = DockWindow::is_Horizontal() ? DockWindow::getitem->get_width() : item->get_height();
+    m_dockPreview->Show(item->m_items, m_currentMoveIndex, Configuration::get_dockWindowSize());
 
     m_dockPreview->show();
 }
@@ -1181,6 +1181,37 @@ m_animationCounter++;
             }
             cr->stroke();
         }
+        else
+        {
+            // Separator
+            cr->set_source_rgba(
+            m_Theme.Separator().Stroke().Color::red,
+            m_Theme.Separator().Stroke().Color::green,
+            m_Theme.Separator().Stroke().Color::blue,
+            m_Theme.Separator().Stroke().Color::alpha);
+            cr->set_line_width(m_Theme.Separator().LineWidth());
+
+
+                if (DockWindow::is_Horizontal()){
+
+                    guint half = width / 2 ;
+
+                    cr->move_to(x + half, y );
+                    cr->line_to(x + half, y );
+                    cr->line_to(x + half, y + height);
+                }
+                else
+                {
+                    guint half = height / 2 ;
+
+                    cr->move_to(x, y + half);
+                    cr->line_to(x, y + half);
+                    cr->line_to(x + width, y + half);
+                }
+
+
+                cr->stroke();
+        }
 
         // Draw dots and icons if the item is not a user separator
         if (item->m_dockitemtype != DockItemType::Separator) {
@@ -1215,7 +1246,7 @@ m_animationCounter++;
                 }
         // Selector
         //
-        if (item->m_dockitemtype != DockItemType::Separator && !m_DragDropBegin) {
+        if (item->m_dockitemtype != DockItemType::Separator || m_DragDropBegin) {
             if (idx == m_currentMoveIndex) {
 
 
