@@ -386,6 +386,7 @@ bool AppWindow::fullScreenTimer()
 void AppWindow::on_window_opened(WnckScreen *screen, WnckWindow* window, gpointer data)
 {
     DockWindow::update();
+    DockPanel::update();
 }
 
 /**
@@ -397,6 +398,7 @@ void AppWindow::on_window_opened(WnckScreen *screen, WnckWindow* window, gpointe
 void AppWindow::on_window_closed(WnckScreen *screen, WnckWindow *window, gpointer data)
 {
     DockWindow::update();
+    DockPanel::update();
 }
 
 void AppWindow::monitor_size_changed_callback(GdkScreen *screen, gpointer gtkwindow){ }

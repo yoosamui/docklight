@@ -33,8 +33,8 @@ namespace DockItemPositions
      */
     guint get_ResizeHeightDecrement()
     {
-        int  requiredSize = get_inmutableItemsHeight() +  Configuration::get_CellHeight();
-        int diff =  DockWindow::Monitor::get_geometry().height - requiredSize;
+        int  requiredSize = get_inmutableItemsHeight() +  Configuration::get_CellHeight() ;
+        int diff =  DockWindow::Monitor::get_workarea().height - requiredSize;
 
         if (diff < 0 ){
             return abs(diff) / (AppUpdater::m_dockitems.size());

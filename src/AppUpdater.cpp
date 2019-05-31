@@ -316,6 +316,7 @@ void AppUpdater::on_window_opened(WnckScreen *screen, WnckWindow* window, gpoint
 {
 
     Update(window, Window_action::OPEN);
+   // g_print("APPUPDATER  update open\n");
 }
 
 /**
@@ -329,6 +330,9 @@ void AppUpdater::on_window_closed(WnckScreen *screen, WnckWindow *window, gpoint
     // updateSessioWindow(window);
     Update(window, Window_action::CLOSE);
     DockWindow::update();
+
+
+    //g_print("APPUPDATER  update close\n");
 }
 
 void AppUpdater::Update(WnckWindow* window, Window_action actiontype)

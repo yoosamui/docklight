@@ -118,8 +118,8 @@ class DockPanel : public Gtk::DrawingArea, DockMenu {
         void ExecuteApp(GdkEventButton* event);
         void AnimateItem(Glib::RefPtr<Gdk::Pixbuf> image);
 
-        static void on_window_opened(WnckScreen* screen, WnckWindow* window, gpointer data);
-        static void on_window_closed(WnckScreen* screen, WnckWindow* window, gpointer data);
+        //static void on_window_opened(WnckScreen* screen, WnckWindow* window, gpointer data);
+        //static void on_window_closed(WnckScreen* screen, WnckWindow* window, gpointer data);
         static void on_active_window_changed_callback(WnckScreen* screen, WnckWindow* previously_active_window, gpointer user_data);
 
         // Mouse handlers

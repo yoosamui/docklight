@@ -3,7 +3,7 @@
     <AutoHide>false</AutoHide>
     <PanelMode>false</PanelMode>
     <Location>RIGHT</Location>
-    <UseStyle>medium_simple</UseStyle>
+    <UseStyle>medium_simple_round</UseStyle>
     <Styles>
           <Style  panel="0.07, 0, 0, 0.8,  0,0,0,0 ,1, 0, 0"
                   panelCell="0,0,0,0, 1,1,1,1, 1.4, 0, 1"

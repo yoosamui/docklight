@@ -157,8 +157,17 @@ namespace DockWindow
             return 0;
         }
 
-        g_print("Resize\n");
-        auto geometry = ((AppWindow*)m_window)->m_screen.get_PrimaryMonitor()->geometry;
+//        g_print("Resize %d %d\n", static_cast<AppWindow*>(m_window)->m_screen.get_PrimaryMonitor()->geometry.height, static_cast<AppWindow*>(m_window)->m_screen.get_PrimaryMonitor()->workarea.height);
+
+        //Monitor::updateGeometry();
+
+
+        auto window =  static_cast<AppWindow*>(m_window);
+
+       // window->m_screen.update();
+
+        auto geometry = window->m_screen.get_PrimaryMonitor()->geometry;
+        auto workarea = window->m_screen.get_PrimaryMonitor()->workarea;
 
         auto areaSize = Configuration::get_dockWindowSize();
         auto location = Configuration::get_dockWindowLocation();
@@ -182,10 +191,12 @@ namespace DockWindow
 
 
             int itemsSize = DockItemPositions::get_dockItemsWidth();
-            int startX = ((geometry.x + geometry.width) / 2) - (itemsSize / 2);
+            //int startX = ((geometry.x + geometry.width) / 2) - (itemsSize / 2);
+            int startX = geometry.width / 2 - itemsSize / 2;
 
             // resize the window
             m_window->resize(itemsSize, areaSize);
+
             if (Configuration::is_autoHide() && !m_visible && !forceMove) {
                 return areaSize;
             }
@@ -197,7 +208,9 @@ namespace DockWindow
             }
 
             areaSize += Configuration::get_WindowDockMonitorMargin_Bottom();
+
             m_window->move(geometry.x + startX, (geometry.y + geometry.height) - areaSize);
+
             m_visible = true;
             return areaSize;
         }
@@ -227,10 +240,16 @@ namespace DockWindow
 
             // calculate window size and position
             int itemsSize = DockItemPositions::get_dockItemsHeight();
-            int startY = (geometry.height / 2) - (itemsSize / 2);
+
+            int startY = (workarea.height / 2) - (itemsSize / 2);
+
+
             areaSize += Configuration::get_WindowDockMonitorMargin_Right();
-            int posx = (geometry.x + geometry.width) - areaSize;
-            int posy = geometry.y + startY;
+            //int posx = (geometry.x + geometry.width) - areaSize;
+           // int posy = geometry.y + startY;
+
+            int posx = geometry.width - areaSize;
+            int posy = workarea.y + startY;
 
             // resize the window
             m_window->resize(areaSize, itemsSize);
@@ -249,6 +268,7 @@ namespace DockWindow
                 return areaSize;
             }
 
+            g_print("MOVE %d %d %d \n", posx,geometry.width,  workarea.width);
             m_window->move(posx - Configuration::get_WindowDockMonitorMargin_Right(), posy);
             m_visible = true;
 

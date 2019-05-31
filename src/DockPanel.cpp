@@ -94,8 +94,8 @@ DockPanel::m_popupMenuOn = false;
 WnckScreen *wnckscreen = wnck_screen_get_default();
 
 // set the required signals handlers
-g_signal_connect(G_OBJECT(wnckscreen), "window-opened", G_CALLBACK(DockPanel::on_window_opened), NULL);
-g_signal_connect(wnckscreen, "window_closed", G_CALLBACK(DockPanel::on_window_closed), NULL);
+//g_signal_connect(G_OBJECT(wnckscreen), "window-opened", G_CALLBACK(DockPanel::on_window_opened), NULL);
+//g_signal_connect(wnckscreen, "window_closed", G_CALLBACK(DockPanel::on_window_closed), NULL);
 g_signal_connect(wnckscreen, "active_window_changed", G_CALLBACK(DockPanel::on_active_window_changed_callback), NULL);
 Glib::signal_timeout().connect(sigc::mem_fun(*this, &DockPanel::on_timeoutDraw),1000 / 8);
 
@@ -281,10 +281,10 @@ while(m_AppThreadRunning){
 * @param window
 * @param data
 */
-void DockPanel::on_window_opened(WnckScreen *screen, WnckWindow* window, gpointer data)
+/*void DockPanel::on_window_opened(WnckScreen *screen, WnckWindow* window, gpointer data)
 {
-    update();
-}
+//    update();
+}*/
 
 /**
 * Emitted when a Wnck.Window is closed on screen.
@@ -292,10 +292,10 @@ void DockPanel::on_window_opened(WnckScreen *screen, WnckWindow* window, gpointe
 * @param window
 * @param data
 */
-void DockPanel::on_window_closed(WnckScreen *screen, WnckWindow *window, gpointer data)
+/*void DockPanel::on_window_closed(WnckScreen *screen, WnckWindow *window, gpointer data)
 {
-update();
-}
+  //  update();
+}*/
 
 /**
 * Emitted when the active window on screen has changed.
@@ -868,6 +868,7 @@ bool DockPanel::get_AutohideAllow()
  */
 void DockPanel::update()
 {
+    g_print("Draw\n");
     m_forceDraw = true;
 }
 
@@ -999,7 +1000,8 @@ inline void DockPanel::get_ItemPosition(const DockItemType dockType, int& x, int
     if (DockWindow::is_Horizontal())
     {
         if (x == 0 ) {
-            y = (DockWindow::get_DockWindowHeight() / 2) - Configuration::get_CellHeight() / 2;
+            //y = (DockWindow::get_DockWindowHeight() / 2) - Configuration::get_CellHeight() / 2;
+            y = DockWindow::get_DockWindowHeight() / 2 - height /2;
             x = DockWindow::get_dockWindowStartEndMargin() / 2;
             nextsize = width;
             return;
@@ -1019,7 +1021,8 @@ inline void DockPanel::get_ItemPosition(const DockItemType dockType, int& x, int
     else
     {
         if (y == 0 ){
-            x = (DockWindow::get_DockWindowWidth() / 2) - Configuration::get_CellWidth() / 2;
+            //x = (DockWindow::get_DockWindowWidth() / 2) - Configuration::get_CellWidth() / 2;
+            x = DockWindow::get_DockWindowWidth() / 2 - width / 2;
             y = DockWindow::get_dockWindowStartEndMargin() / 2;
             nextsize = height;
             return;
@@ -1087,6 +1090,9 @@ void DockPanel::draw_Panel(const Cairo::RefPtr<Cairo::Context>& cr)
     }
 }
 
+
+//ivoid  DockPanel::
+
 /**
  * Render all dock items
  * @param cr cairo context
@@ -1117,6 +1123,7 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
     if (DockWindow::is_Horizontal()){
 
         m_widthDecrement = DockItemPositions::get_ResizeWidthDecrement();
+        m_heightDecrement = m_widthDecrement;
         if (widthDecrement != m_widthDecrement){
 
             widthDecrement = m_widthDecrement;
@@ -1126,6 +1133,7 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
     }else{
 
         m_heightDecrement = DockItemPositions::get_ResizeHeightDecrement();
+        m_widthDecrement = m_heightDecrement;
         if (heightDecrement != m_heightDecrement){
 
             heightDecrement = m_heightDecrement;
@@ -1133,8 +1141,9 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
         }
     }
 
-if( m_animationStart )
-m_animationCounter++;
+    if( m_animationStart ) {
+        m_animationCounter++;
+    }
 
     // Draw all items with cairo
     for (idx = 0; idx < itemsCount; idx++) {
@@ -1206,7 +1215,7 @@ m_animationCounter++;
 
                     cr->move_to(x, y + half);
                     cr->line_to(x, y + half);
-                    cr->line_to(x + width, y + half);
+                    cr->line_to(x + width - m_widthDecrement, y + half );
                 }
 
 
