@@ -413,6 +413,8 @@ void AppUpdater::Update(WnckWindow* window, Window_action actiontype)
         }
 
         if (get_IsLimitsReached()){
+
+            Utilities::Messages::LimitReachedMessage();
             return;
         }
 

@@ -249,20 +249,16 @@ void DockPreview::Update()
         }
     }
 
+    if ( m_cellHeight < 80) {
+            Utilities::Messages::LimitReachedMessage();
+    }
+
+
     resize(windowWidth  , windowHeight);
     DockItemPositions::get_CenterPosition(m_dockItemIndex, x, y, windowWidth,  windowHeight);
     this->move(x, y);
 
     this->set_ItemsDynamic();
-
-
-
-
-    // Start the background thread
-    //      m_thread = new std::thread(this->MovementDetector);
-//m_thread = nullptr;
-   // start the timer for post movement detections
-   // m_detectMovementTimer.start();
 
 }
 

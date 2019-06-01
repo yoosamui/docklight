@@ -2,18 +2,18 @@
 //*****************************************************************
 //
 //  Copyright (C) 2015 Juan R. Gonzalez
-//  Created on November 20, 2015, 12:17 PM 
+//  Created on November 20, 2015, 12:17 PM
 //
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
-// 
+//
 //  This program is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU General Public License for more details.
-// 
+//
 //  You should have received a copy of the GNU General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
@@ -34,6 +34,7 @@
 #include <string>
 #include <sys/stat.h>
 
+#include  <glibmm/i18n.h>
 
 namespace Utilities
 {
@@ -82,16 +83,16 @@ namespace Utilities
 
         //        ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
         //        if (count == -1) {
-        //            g_critical("getExecPath Fail!\n"); 
+        //            g_critical("getExecPath Fail!\n");
         //            return "";
-        //        }      
-        //        
+        //        }
+        //
         //        std::string path = result;
         //        std::size_t found = path.find_last_of("/\\");
-        //        
+        //
         //        if(  found )
         //            path = path.substr(0, found);
-        //       
+        //
         //        return std::string(path);
     }
 
@@ -111,7 +112,7 @@ namespace Utilities
     }
 
     /*
-     * std::vector<std::string> 
+     * std::vector<std::string>
      * split(const std::string &text, char sep)
      *
      * return the tokens by delimeter separator parameter.
@@ -178,9 +179,9 @@ namespace Utilities
     }
 
     /*
-     * 
+     *
      * stringToLower helper.
-     * 
+     *
      */
     std::string stringToLower(const char* strp)
     {
@@ -266,7 +267,7 @@ namespace Utilities
         return bExists;
     }
 
-    
+
     bool CreateDirectory(const char* dirNamePath)
     {
         const int dir_err = mkdir(dirNamePath, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
@@ -274,15 +275,43 @@ namespace Utilities
             printf("Error creating directory!n");
             return false;
         }
-        
+
         return true;
     }
-    
+
     bool CreateDirectoryIfNotExitst(const char* dirNamePath)
     {
         if(!DirectoryExists(dirNamePath)){
-         return CreateDirectory(dirNamePath);   
+         return CreateDirectory(dirNamePath);
         }
         return false;
+    }
+
+    namespace Messages
+    {
+        // https://unix.stackexchange.com/questions/144924/how-to-create-a-message-box-from-the-command-line
+        void NotifySend(const std::string& title, const std::string& message) {
+            std::stringstream command;
+            command << "notify-send '" << title << "' '" << message <<"' ";
+
+            Utilities::exec(command.str().c_str());
+        }
+
+
+        void Zenity(const std::string& title, const std::string& message) {
+            std::stringstream command;
+            command << "zenity --error --text='"<< message  << "' --title='Warning!'";
+
+            Utilities::exec(command.str().c_str());
+        }
+
+
+        void LimitReachedMessage()
+        {
+            char message[PATH_MAX];
+            sprintf(message, _("There are to many windows open for display them correctly. Please close some windows and try again."));
+            Utilities::Messages::NotifySend(_("Warning"), message);
+
+        }
     }
 }
