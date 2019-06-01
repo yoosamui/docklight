@@ -64,6 +64,7 @@
             // The work area should be considered when positioning menus and similar popups, to avoid placing them below panels,
             // docks or other desktop components.
             // Note that not all backends may have a concept of workarea.
+            // -----------------------------------------------------------------------------------------------------------------
             // This function will return the monitor geometry if a workarea is not available, or does not apply.
             gdk_monitor_get_workarea(m->monitor, &m->workarea);
 

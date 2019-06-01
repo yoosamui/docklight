@@ -42,6 +42,8 @@ namespace Configuration
     bool m_allowDraw = true;
     bool m_panelmode = false;
     guint m_separatorMargin = 10;
+    int m_windowSize = 48;
+    int m_previewSize = 24;
 
     panel_locationType m_location = panel_locationType::BOTTOM;
     Horizontal_alignment_type m_HorizontalAlignment =  Horizontal_alignment_type::CENTER;
@@ -140,6 +142,12 @@ namespace Configuration
 
         element = root->FirstChildElement("PanelMode");
         XMLCheckResult(element->QueryBoolText(&m_panelmode));
+
+        element = root->FirstChildElement("panelSize");
+        XMLCheckResult(element->QueryIntText(&m_windowSize));
+
+        element = root->FirstChildElement("previewSize");
+        XMLCheckResult(element->QueryIntText(&m_previewSize));
 
         element = root->FirstChildElement("Location");
         const char* location = element->GetText();
@@ -311,9 +319,26 @@ namespace Configuration
         m_allowDraw = value;
     }
 
+    unsigned int get_previewSize()
+    {
+        return m_previewSize;
+    }
+
+
+
+    void set_previewSize(int size)
+    {
+         m_previewSize = size;;
+    }
+
     unsigned int get_dockWindowSize()
     {
-        return 56; //DOCK_WINDOW_AREA width;
+        return m_windowSize; //DOCK_WINDOW_AREA width;
+    }
+
+    void set_dockWindowSize(int size)
+    {
+         m_windowSize = size; //DOCK_WINDOW_AREA width;
     }
 
     unsigned int get_WindowDockMonitorMargin_Top()

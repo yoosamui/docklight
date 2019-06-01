@@ -139,8 +139,8 @@ namespace DockItemPositions
 
         guint result =  size - separatorMargin;
 
-        if (result > DockWindow::Monitor::get_geometry().height ) {
-            result = DockWindow::Monitor::get_geometry().height; // - DockWindow::Monitor::get_workarea().y;
+        if (result > DockWindow::Monitor::get_workarea().height ) {
+            result = DockWindow::Monitor::get_workarea().height; // - DockWindow::Monitor::get_workarea().y;
         }
 
         return result;

@@ -246,10 +246,15 @@ namespace WnckHandler
             if (item->m_window == NULL)
                 continue;
 
-            wnck_window_close(item->m_window, gtk_get_current_event_time());
+            closeByWindow(item->m_window);
         }
     }
 
+    void closeByWindow(WnckWindow* window)
+    {
+            wnck_window_minimize(window);
+            wnck_window_close(window, gtk_get_current_event_time());
+    }
 
     void minimizeAllExceptActiveByDockItem(DockItem* dockitem)
     {

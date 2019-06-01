@@ -37,6 +37,7 @@
 
 
 // static members
+ Glib::RefPtr<Gdk::Pixbuf> DockPanel::m_AnimationImage;
 int DockPanel::m_currentMoveIndex;
 bool DockPanel::m_forceDraw;
 bool DockPanel::m_AppThreadRunning;
@@ -89,6 +90,7 @@ DockPanel::m_widthDecrement = 0;
 DockPanel::m_heightDecrement = 0;
 DockPanel::m_popupMenuIndex - 1;
 DockPanel::m_popupMenuOn = false;
+DockPanel::m_AnimationImage = NULLPB;
 
 // Gets the default WnckScreen on the default display.
 WnckScreen *wnckscreen = wnck_screen_get_default();
@@ -168,7 +170,7 @@ dockItem->m_index = 0;
 m_AppUpdater->m_dockitems.insert(this->m_AppUpdater->m_dockitems.begin(), dockItem);
 
 // Start the background thread for application start animation
-//m_AppRunThreadLauncher = new std::thread(AppRunAnimation);
+m_AppRunThreadLauncher = new std::thread(AppRunAnimation);
 
 return 0;
 }
@@ -217,6 +219,7 @@ if(m_dockPreview != nullptr){
 void DockPanel::AnimateItem(Glib::RefPtr<Gdk::Pixbuf> image)
 {
 
+
 gint x, y, i;
    // if (image:tabnew
    // && image->get_colorspace() == Gdk::COLORSPACE_RGB && image->get_bits_per_sample() == 8){
@@ -246,33 +249,33 @@ gint x, y, i;
 }
 void DockPanel::AppRunAnimation()
 {
-/*gint x, y, i;
-while(m_AppThreadRunning){
-    if (m_AppRunImage && m_AppRunImage->get_colorspace() == Gdk::COLORSPACE_RGB && m_AppRunImage->get_bits_per_sample() == 8){
-        int w = m_AppRunImage->get_width();
-        int h = m_AppRunImage->get_height();
-        int channels = m_AppRunImage->get_n_channels();
-        gint rowstride = m_AppRunImage->get_rowstride();
-        gint pixel_offset;
-        for (i = 0; i < 4; i++) {
-            for (y = 0; y < h; y++) {
-                for (x = 0; x < w; x++) {
-                    pixel_offset = y * rowstride + x * channels;
-                    guchar* pixel = &m_AppRunImage->get_pixels()[pixel_offset];
+    gint x, y, i;
+    while(m_AppThreadRunning){
+        if (m_AnimationImage && m_AnimationImage->get_colorspace() == Gdk::COLORSPACE_RGB && m_AnimationImage->get_bits_per_sample() == 8){
+            int w = m_AnimationImage->get_width();
+            int h = m_AnimationImage->get_height();
+            int channels = m_AnimationImage->get_n_channels();
+            gint rowstride = m_AnimationImage->get_rowstride();
+            gint pixel_offset;
+            for (i = 0; i < 6; i++) {
+                for (y = 0; y < h; y++) {
+                    for (x = 0; x < w; x++) {
+                        pixel_offset = y * rowstride + x * channels;
+                        guchar* pixel = &m_AnimationImage->get_pixels()[pixel_offset];
 
-                    pixel[0] = 255 - pixel[0];
-                    pixel[1] = 255 - pixel[1];
-                    pixel[2] = 255 - pixel[2];
+                        pixel[0] = 255 - pixel[0];
+                        pixel[1] = 255 - pixel[1];
+                        pixel[2] = 255 - pixel[2];
+                    }
                 }
-            }
 
-        //    DockPanel::update();
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            }
+            m_AnimationImage = NULLPB;
+            DockPanel::update();
         }
-        m_AppRunImage = NULLPB;
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(5));
-}*/
 }
 
 /**
@@ -359,15 +362,15 @@ void DockPanel::on_NewMenu_event()
         return;
 
     }
-m_animationStart = true;
-m_animationEndValue = 1;
+
+    m_AnimationImage = item->m_image;
    // m_AppRunImage = item->m_image;
     if (!Launcher::Launch(item->m_realgroupname)) {
-        /*if (m_launcherWindow) {
+        if (m_launcherWindow) {
             m_launcherWindow->close();
-            delete m_launcherWindow
+            delete m_launcherWindow;
             m_launcherWindow = nullptr;
-        }*/
+        }
 
 
     // start the animation and launch the application
@@ -377,7 +380,8 @@ m_animationEndValue = 1;
             m_launcherWindow->show_all();
         }
 
-    //this->update();
+
+
     }
 
 }
@@ -807,7 +811,7 @@ void DockPanel::ExecuteApp(GdkEventButton* event)
         return;
     }
 
-    if (item->m_items.size() == 1) {
+    /*if (item->m_items.size() == 1) {
         WnckWindow *window = nullptr;
         window = WnckHandler::get_ActiveWindowIfAny(item);
         if (window == nullptr) {
@@ -817,7 +821,7 @@ void DockPanel::ExecuteApp(GdkEventButton* event)
 
         WnckHandler::ActivateWindow(window);
         return;
-    }
+    }*/
 
     // skeep home
     if (m_previewIndex == 0){
@@ -868,7 +872,6 @@ bool DockPanel::get_AutohideAllow()
  */
 void DockPanel::update()
 {
-    g_print("Draw\n");
     m_forceDraw = true;
 }
 
@@ -884,7 +887,7 @@ bool DockPanel::on_timeoutDraw()
 
         m_dragDropItem =  this->get_CurrentItem();
         if ( m_dragDropItem != nullptr){
-
+            m_AnimationImage = m_dragDropItem->m_image;
             m_DragDropBegin = true;
             m_DragDropSourceIndex = this->m_currentMoveIndex;
         }
@@ -1021,8 +1024,7 @@ inline void DockPanel::get_ItemPosition(const DockItemType dockType, int& x, int
     else
     {
         if (y == 0 ){
-            //x = (DockWindow::get_DockWindowWidth() / 2) - Configuration::get_CellWidth() / 2;
-            x = DockWindow::get_DockWindowWidth() / 2 - width / 2;
+            x = Configuration::get_dockWindowSize()  / 2 - width / 2;
             y = DockWindow::get_dockWindowStartEndMargin() / 2;
             nextsize = height;
             return;
@@ -1141,10 +1143,6 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
         }
     }
 
-    if( m_animationStart ) {
-        m_animationCounter++;
-    }
-
     // Draw all items with cairo
     for (idx = 0; idx < itemsCount; idx++) {
 
@@ -1250,19 +1248,11 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
 
         }
 
-                if(idx == m_currentMoveIndex && m_animationStart) {
-                    this->AnimateItem(item->m_image);
-                }
+
         // Selector
         //
         if (item->m_dockitemtype != DockItemType::Separator || m_DragDropBegin) {
             if (idx == m_currentMoveIndex) {
-
-
-                if (m_animationCounter > m_animationEndValue) {
-                    m_animationStart = false;
-                    m_animationCounter = 0;
-                }
 
                 cr->set_source_rgba(
                         m_Theme.Selector().Fill().Color::red,

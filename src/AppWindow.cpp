@@ -151,6 +151,7 @@ int AppWindow::init()
     // Create the DockPanel instance.
     m_dockpanel = new DockPanel();
     this->add(*m_dockpanel);
+
     this->show_all();
 
     return  m_dockpanel->Init(this);

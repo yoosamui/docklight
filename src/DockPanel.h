@@ -74,6 +74,7 @@ class DockPanel : public Gtk::DrawingArea, DockMenu {
             return m_mouseIn;
         }
     private:
+    static Glib::RefPtr<Gdk::Pixbuf> m_AnimationImage;
     guint m_animationCounter = 0;
     bool m_animationStart = false;
     guint m_animationEndValue = 1;

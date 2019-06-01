@@ -77,7 +77,6 @@ class DockPreview : public Gtk::Window
         void set_CurrentItemDynamic();
         void Update();
 
-        static void Resize(const guint index, const guint x, const guint y, const guint windowWidth, const guint windowHeight);
         static void Close();
         bool on_leave_notify_event(GdkEventCrossing* crossing_event);
         bool on_enter_notify_event(GdkEventCrossing* crossing_event);

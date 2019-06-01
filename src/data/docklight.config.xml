@@ -3,7 +3,9 @@
     <AutoHide>false</AutoHide>
     <PanelMode>false</PanelMode>
     <Location>RIGHT</Location>
-    <UseStyle>medium_simple_round</UseStyle>
+    <panelSize>48</panelSize>
+    <previewSize>16</previewSize>
+    <UseStyle>teal</UseStyle>
     <Styles>
           <Style  panel="0.07, 0, 0, 0.8,  0,0,0,0 ,1, 0, 0"
                   panelCell="0,0,0,0, 1,1,1,1, 1.4, 0, 1"
@@ -49,12 +51,12 @@
         </Style>
 
          <Style    
-                  panel="1.02, 1.17, 1.26,0.4 ,0,0,0,0, 0, 0, 0"
+                  panel="0.250, 0.352, 0.407 ,0.8 ,0,0,0,0, 0, 0, 0"
                   panelCell="0,0,0,0, 1,1,1,1.0, 0, 0, 0"
                   preview="0.250, 0.352, 0.407 ,1.0"  
                   selector="1,1,1,0.4,  255,1,1,0, 3, 0, 0"
                   panelTitle="0,0,0,1,  1,1,1,1 ,0 ,0 ,0"
-                  >transparent_simple
+                  >teal
         </Style>
         <Style    
                   panel="0.219, 0.419, 0.549,1 ,0,0,0,0, 0, 0, 0"

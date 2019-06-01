@@ -31,14 +31,13 @@ namespace WnckHandler
     bool isExistsMinimizedWindowsByDockItem(DockItem* dockitem);
     void closeAllExceptActiveByDockItem(DockItem* dockitem);
     void closeAllByDockItem(DockItem* dockitem);
+    void closeByWindow(WnckWindow *window);
     void minimizeAllExceptActiveByDockItem(DockItem* dockitem);
     void minimizeAllByDockItem(DockItem* dockitem);
     void unMinimizeAllByDockItem(DockItem* dockitem);
     bool isExitsActivetWindowByDockItem(DockItem* dockitem);
     int isExitstWindowsByDockItem(DockItem* dockitem);
     int windowscount();
-//   int getWindowsByName(const std::string& appname, std::vector<windowData>& data);
-//    WnckWindow* getWindowByName(const std::string& appname, std::string& tittle);
     WnckWindow* get_Active();
     bool isWindowExists(XID xid);
     bool isExistsMinimizedWindows();

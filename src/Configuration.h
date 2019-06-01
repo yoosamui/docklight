@@ -50,11 +50,12 @@
 
 
 #define DOCK_WINDOW_HEIGHT 46
-#define CELL_TOP_MARGIN 8                // Cell Top Position
+
+#define CELL_TOP_MARGIN 5                // Cell Top Position
+#define CELL_BOTTOM_MARGIN 5
 
 #define CELL_MARGIN 8
 
-#define CELL_BOTTOM_MARGIN 8
 #define CELL_WIDTH_MARGIN  8
 
 
@@ -153,9 +154,9 @@ namespace Configuration {
     unsigned int get_WindowDockMonitorMargin_Bottom();
     void set_dockWindowLocation(panel_locationType location);
     unsigned int get_dockWindowSize();
-    //void set_SeparatorMargin(unsigned int  margin);
-    //
-    //
+    void set_previewSize(int size);
+    unsigned int get_previewSize();
+    void set_dockWindowSize(int size);
     void Load();
 
 

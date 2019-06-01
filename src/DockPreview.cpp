@@ -217,7 +217,7 @@ void DockPreview::Update()
     int x = 0;
     int y = 0;
 
-    guint windowWidth = (m_dockItemCellSize * 4) - 20;
+    guint windowWidth = (m_dockItemCellSize * 4) + Configuration::get_previewSize();
     guint windowHeight = windowWidth -  (PREVIEW_HV_OFFSET * 2);
 
     m_cellWidth = windowWidth - 20;
@@ -277,14 +277,6 @@ void DockPreview::do_something()
   m_signal_something.emit(false, 5);
 }*/
 
-void DockPreview::Resize(const guint index, const guint x, const guint y, const guint windowWidth, const guint windowHeight)
-{
-
- // m_signal_update.emit(false, 5);
-//    resize(windowWidth  , windowHeight);
-  //c:  Gtk::Window::resize(0,0);
-
-}
 void DockPreview::set_ItemsDynamic()
 {
     for (DockItem* item : m_previewItems) {
@@ -596,7 +588,8 @@ bool DockPreview::on_button_release_event(GdkEventButton *event)
                     return true;
                 }
 
-                wnck_window_close(window, gtk_get_current_event_time());
+                WnckHandler::closeByWindow(window);
+//                wnck_window_close(window, gtk_get_current_event_time());
 
                 item->m_isAlive = false;
 
@@ -1012,14 +1005,19 @@ GdkPixbuf* DockPreview::GetPreviewImage(DockItem* item, guint& scaleWidth, guint
     scaleWidth = winWidth * aspectRatio ;
     scaleHeight = winHeight * aspectRatio;
 
+    guint half_WindowWidth =  DockWindow::Monitor::get_workarea().width / 2 ;
+    guint half_WindowHeight =  DockWindow::Monitor::get_workarea().height / 2 ;
+
     // ajust width size to make it looks better
-    if(winWidth - 50 > DockWindow::Monitor::get_geometry().width / 2 ) {
-        scaleWidth = width  - 4;
+    if(winWidth - 20 > half_WindowWidth ) {
+        if(winHeight - 20 > half_WindowHeight )
+            scaleWidth = width  - 4;
     }
 
     // ajust height size to make it looks better
-    if(winHeight - 50 > DockWindow::Monitor::get_geometry().height / 2 ) {
-       scaleHeight = height - 2;
+    if(winHeight - 20 > half_WindowHeight ) {
+        if(winWidth - 20 > half_WindowWidth )
+           scaleHeight = height - 2;
     }
 
     GdkPixbuf* scaledpb = gdk_pixbuf_scale_simple(winPixbuf, scaleWidth  , scaleHeight, GDK_INTERP_BILINEAR);
