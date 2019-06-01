@@ -31,10 +31,10 @@ LaucherButtonBox::LaucherButtonBox(bool horizontal,
         const Glib::ustring& title,
         gint spacing,
         Gtk::ButtonBoxStyle layout)
-: Gtk::Frame(title),
-m_Button_createLauncher(_("Create Launcher")),
-m_Button_testLauncher(_("Test Launcher")),
-m_Button_Cancel(_("Cancel"))
+    : Gtk::Frame(title),
+    m_Button_createLauncher(_("Create Launcher")),
+    m_Button_testLauncher(_("Test Launcher")),
+    m_Button_Cancel(_("Cancel"))
 {
     Gtk::ButtonBox* bbox = nullptr;
 
@@ -60,24 +60,24 @@ m_Button_Cancel(_("Cancel"))
 }
 
 LauncherWindow::LauncherWindow()
-: //Gtk::Window(Gtk::WindowType::WINDOW_POPUP),
-Gtk::Window(Gtk::WindowType::WINDOW_TOPLEVEL),
-m_VBox(Gtk::ORIENTATION_VERTICAL),
-m_VPaned(Gtk::ORIENTATION_VERTICAL),
-m_VBoxCenter(Gtk::ORIENTATION_VERTICAL),
-m_ButtonBox(Gtk::ORIENTATION_VERTICAL),
-m_labelFile(_("Command: ")),
-m_Button_File(_("Choose command")),
-m_Button_Icon(_("Choose Icon")),
-m_Button_create(_("Create Launcher")),
-m_Button_test("_(Test Launcher"),
-m_Button_CategoriesLink(_("Available")),
-m_labeInfo("_(Create Launcher."),
-m_labelName(_("Name: ")),
-m_labelComment(_("Comment: ")),
-m_labelIcon(_("Icon: ")),
-m_labelCategories(_("Categories: ")),
-m_Button_close(_("Close"))
+    : //Gtk::Window(Gtk::WindowType::WINDOW_POPUP),
+        Gtk::Window(Gtk::WindowType::WINDOW_TOPLEVEL),
+        m_VBox(Gtk::ORIENTATION_VERTICAL),
+        m_VPaned(Gtk::ORIENTATION_VERTICAL),
+        m_VBoxCenter(Gtk::ORIENTATION_VERTICAL),
+        m_ButtonBox(Gtk::ORIENTATION_VERTICAL),
+        m_labelFile(_("Command: ")),
+        m_Button_File(_("Choose command")),
+        m_Button_Icon(_("Choose Icon")),
+        m_Button_create(_("Create Launcher")),
+        m_Button_test("_(Test Launcher"),
+        m_Button_CategoriesLink(_("Available")),
+        m_labeInfo("_(Create Launcher."),
+        m_labelName(_("Name: ")),
+        m_labelComment(_("Comment: ")),
+        m_labelIcon(_("Icon: ")),
+        m_labelCategories(_("Categories: ")),
+        m_Button_close(_("Close"))
 {
 
     set_title(_("Docklight Launcher"));
@@ -121,10 +121,10 @@ m_Button_close(_("Close"))
             Gtk::BUTTONBOX_SPREAD);
 
     m_HBox.pack_start(*Gtk::manage(
-            //new LaucherButtonBox(true, "", 5,
-            //Gtk::BUTTONBOX_SPREAD)
-            lb
-            ),
+                //new LaucherButtonBox(true, "", 5,
+                //Gtk::BUTTONBOX_SPREAD)
+                lb
+                ),
             Gtk::PACK_EXPAND_WIDGET);
 
 
@@ -173,17 +173,17 @@ m_Button_close(_("Close"))
 
 
     m_Button_File.signal_clicked().connect(sigc::mem_fun(*this,
-            &LauncherWindow::on_button_file_clicked));
+                &LauncherWindow::on_button_file_clicked));
 
     m_Button_Icon.signal_clicked().connect(sigc::mem_fun(*this,
-            &LauncherWindow::on_button_icon_clicked));
+                &LauncherWindow::on_button_icon_clicked));
 
     m_Button_CategoriesLink.signal_clicked().connect(sigc::mem_fun(*this,
-            &LauncherWindow::on_button_CategoriesLink_clicked));
+                &LauncherWindow::on_button_CategoriesLink_clicked));
 
 
     this->signal_delete_event().
-            connect(sigc::mem_fun(*this, &LauncherWindow::on_delete_event));
+        connect(sigc::mem_fun(*this, &LauncherWindow::on_delete_event));
 
     int x, y;
     DockItemPositions::get_CenterScreenPos(440, 300, x, y);
@@ -197,7 +197,7 @@ m_Button_close(_("Close"))
 
 bool LauncherWindow::on_delete_event(GdkEventAny* event)
 {
-   // m_dockpanel->m_launcherWindow = nullptr;
+    m_dockpanel->m_launcherWindow = nullptr;
     delete(this);
     return false;
 }
@@ -241,15 +241,15 @@ void LauncherWindow::on_button_testLauncher_clicked()
     Gtk::MessageDialog dialog(*this, _("Launcher test Failed!"), false, Gtk::MESSAGE_INFO);
     //dialog.set_icon_name()
     dialog.set_secondary_text(_("The command you enter is invalid.\n\n"
-            "Some Applications are scripts files and others requires Administrator privileges:\n"
-            "for scrips files you need to add the bash on the beginning:\n\n"
-            "/bin/sh \"/usr/local/scriptfile.sh\"\n"
-            "/usr/bin/bash \"/home/yoo/Develop/scriptfile\"\n\n"
-            "for Applications that requires Administrator privileges:\n"
-            "pkexec Application\n\n"
-            "Please make sure that the Application starts from the command line.\n"
-            "Open a terminal and navigate to the directory where the application is locate\n"
-            "and trying the command from there..."));
+                "Some Applications are scripts files and others requires Administrator privileges:\n"
+                "for scrips files you need to add the bash on the beginning:\n\n"
+                "/bin/sh \"/usr/local/scriptfile.sh\"\n"
+                "/usr/bin/bash \"/home/yoo/Develop/scriptfile\"\n\n"
+                "for Applications that requires Administrator privileges:\n"
+                "pkexec Application\n\n"
+                "Please make sure that the Application starts from the command line.\n"
+                "Open a terminal and navigate to the directory where the application is locate\n"
+                "and trying the command from there..."));
 
     dialog.run();
 
@@ -282,8 +282,8 @@ void LauncherWindow::on_button_createLauncher_clicked()
     GError *error = NULL;
     GKeyFile *key_file = g_key_file_new();
     if (FALSE == g_key_file_load_from_file(key_file,
-            desktopfileLocal.c_str(),
-            GKeyFileFlags::G_KEY_FILE_NONE, &error)) {
+                desktopfileLocal.c_str(),
+                GKeyFileFlags::G_KEY_FILE_NONE, &error)) {
 
         if (error) {
             g_error_free(error);

@@ -73,6 +73,7 @@ class DockPanel : public Gtk::DrawingArea, DockMenu {
         static bool is_mouseIn(){
             return m_mouseIn;
         }
+        static LauncherWindow* m_launcherWindow;
     private:
     static Glib::RefPtr<Gdk::Pixbuf> m_AnimationImage;
     guint m_animationCounter = 0;
@@ -80,7 +81,6 @@ class DockPanel : public Gtk::DrawingArea, DockMenu {
     guint m_animationEndValue = 1;
     Configuration::Style::Theme m_Theme = Configuration::get_Theme();
         static int m_previewIndex ;
-        LauncherWindow* m_launcherWindow = nullptr;
         About m_about;
         static guint m_widthDecrement;
         static guint m_heightDecrement;
