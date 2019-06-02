@@ -70,6 +70,7 @@ DockPanel::DockPanel():
     DockPanel::m_mouseIn = false;
     DockPanel::m_launcherWindow = nullptr;
 
+
     // Set event masks
     add_events(Gdk::BUTTON_PRESS_MASK |
             Gdk::BUTTON_RELEASE_MASK |
@@ -521,7 +522,142 @@ void DockPanel::on_HomeAddSessionGrp_event()
  */
 void DockPanel::on_HelpMenu_event()
 {
-    Utilities::system("xdg-open https://github.com/yoosamui/DockLight/wiki");
+ //   gtk_recent_manager_set_limit (m_recentManager, 24);
+
+     g_print("Check Recent \n");
+ GList *items, *l;
+ guint i;
+ GError *error = NULL;
+
+/*http://www.ccp4.ac.uk/dist/checkout/glib-2.34.3/gio/tests/desktop-app-info.c  +++
+https://developer.mozilla.org/es/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Lista_completa_de_tipos_MIME
+
+https://developer.gnome.org/gio//2.52/GAppInfo.html#g-app-info-get-supported-types
+https://developer.gnome.org/gio//2.52/GAppInfoMonitor.html
+https://developer.gnome.org/gio//2.52/GFile.html#g-file-new-for-uri
+https://developer.gnome.org/gio//2.52/GAppInfo.html#GAppLaunchContext-struct
+https://developer.gnome.org/gio//2.52/GFile.html#g-file-get-path
+https://developer.gnome.org/programming-guidelines/stable/glist.html.en
+https://developer.gnome.org/glib/stable/glib-Doubly-Linked-Lists.html#g-list-free
+https://developer.gnome.org/gtk3/stable/GtkRecentManager.html
+https://source.puri.sm/dorota.czaplejewicz/gtk/commit/9b2656f7937ea00ad1bdbd3f53f73399a49e832b
+https://developer.gnome.org/gtk2/stable/GtkRecentManager.html#gtk-recent-manager-add-full
+https://developer.gnome.org/gtk3/stable/GtkRecentManager.html
+http://www.mit.edu/afs.new/athena/system/i386_deb50/os-ubuntu-9.04/usr/athena/share/gtk-doc/html/gtk/gtk-migrating-GtkRecentChooser.html
+https://developer.gnome.org/pygtk/stable/class-gtkrecentinfo.html
+https://www.bassi.io/articles/2006/08/01/boogie-woogie-bugle-boy/
+
+// sort
+https://www.geany.org/manual/gtk/gtk/gtkrecent-advanced.html
+
+*/
+//contnt application/pdf
+items = gtk_recent_manager_get_items (m_recentManager);
+
+/*
+gboolean g_app_info_set_as_default_for_extension
+                               (GAppInfo *appinfo,
+                                const char *extension,
+                                GError **error);*/
+
+ if (items){
+     GList* app_by_conentType =  g_app_info_get_all_for_type ("application/pdf");
+
+     for (l = app_by_conentType; l != NULL; l = l->next)
+     {
+         GAppInfo* appinfo = static_cast<GAppInfo*>(l->data);
+
+        const char* app_displayName = g_app_info_get_display_name (appinfo);
+        g_print("%s\n",app_displayName);
+
+
+        gboolean result = g_app_info_set_as_default_for_type (appinfo,"application/pdf", &error);
+        if (result) {
+            g_print("%s set\n", app_displayName);
+        }
+        break;
+     }
+
+    g_list_free (app_by_conentType);
+//    return;
+
+
+
+//https://developer.gnome.org/gio//2.52/GFile.html#g-file-get-path
+//https://developer.gnome.org/gio//2.52/GAppInfo.html#GAppLaunchContext-struct
+        GAppLaunchContext* lctx = g_app_launch_context_new ();
+
+
+
+     g_print("Items found \n");
+     for (i = 0, l = items; l != NULL;    i += 1, l = l->next){
+        GtkRecentInfo* info = static_cast<GtkRecentInfo*>(l->data);
+
+       const gchar* display_name =  gtk_recent_info_get_display_name (info);
+       const gchar* uri =  gtk_recent_info_get_uri (info);
+
+       const gchar* app_name;
+       GAppInfo* appInfo = gtk_recent_info_create_app_info(info, app_name, &error);
+       if(appInfo == nullptr){
+        continue;
+       }
+
+
+      // https://developer.gnome.org/gio//2.52/GAppInfo.html#g-app-info-get-name
+        const char* app_displayName = g_app_info_get_display_name (appInfo);
+        const char* appname = g_app_info_get_name (appInfo);
+        const char* cmd = g_app_info_get_commandline (appInfo);
+
+       // gchar* display_name = (gchar*)info->display_name; // 	a UTF-8 encoded string, containing the name of the recently used resource to be displayed, or NULL;
+
+//        gchar *name = g_strdup_printf ("recent-info-%d-%lu", i, (gulong) time (NULL));
+//        gchar *action_name = g_strdup (name);
+    //    g_print("%s\n",display_name);
+        g_print("%s, %s, %s\n",app_displayName,cmd, uri);
+    //    g_print("%s\n",app_displayName);
+    //    g_print("%s\n",appname);
+
+        GList* uri_list = NULL; //, *number_list = NULL;
+        GFile* uri_file = g_file_new_for_uri (uri);
+        uri_list = g_list_append (uri_list, uri_file);
+
+       gboolean launched =  g_app_info_launch (appInfo, uri_list, lctx, &error);
+    g_list_free (uri_list);
+     //  break;
+     }
+
+
+ }
+/* free everything and the list */
+	g_list_foreach (items, (GFunc) gtk_recent_info_unref, NULL);
+	g_list_free (items);
+
+//	g_object_unref (m_recentManager);  //TODO ; in destructor
+
+/*
+g_free (recent_data->app_exec);
+	g_free (recent_data);
+*/
+
+
+/*GFile *f;
+char *uri;
+
+file = g_file_new_for_commandline_arg (uri_from_commandline);
+
+uri = g_file_get_uri (file);
+strcmp (uri, uri_from_commandline) == 0;
+g_free (uri);
+
+if (g_file_has_uri_scheme (file, "cdda"))
+  {
+    // do something special with uri
+  }
+g_object_unref (file);
+*/
+
+
+    //Utilities::system("xdg-open https://github.com/yoosamui/DockLight/wiki");
 }
 
 void DockPanel::on_AboutMenu_event()
@@ -811,17 +947,17 @@ void DockPanel::ExecuteApp(GdkEventButton* event)
         return;
     }
 
-    /*if (item->m_items.size() == 1) {
-      WnckWindow *window = nullptr;
-      window = WnckHandler::get_ActiveWindowIfAny(item);
-      if (window == nullptr) {
-      DockItem* firstChild = item->m_items[0];
-      window = firstChild->m_window;
-      }
+    if (item->m_items.size() == 1) {
+        WnckWindow *window = nullptr;
+        window = WnckHandler::get_ActiveWindowIfAny(item);
+        if (window == nullptr) {
+            DockItem* firstChild = item->m_items[0];
+            window = firstChild->m_window;
+        }
 
-      WnckHandler::ActivateWindow(window);
-      return;
-      }*/
+        WnckHandler::ActivateWindow(window);
+        return;
+    }
 
     // skeep home
     if (m_previewIndex == 0){

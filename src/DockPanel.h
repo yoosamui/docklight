@@ -75,6 +75,9 @@ class DockPanel : public Gtk::DrawingArea, DockMenu {
         }
         static LauncherWindow* m_launcherWindow;
     private:
+
+    GtkRecentManager* m_recentManager =  gtk_recent_manager_get_default();
+
     static Glib::RefPtr<Gdk::Pixbuf> m_AnimationImage;
     guint m_animationCounter = 0;
     bool m_animationStart = false;
