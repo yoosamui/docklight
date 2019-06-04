@@ -108,44 +108,11 @@ DockPreview::~DockPreview()
 
 void DockPreview::Show(const std::vector<DockItem*>& items, const guint index, const guint cellSize)
 {
-//    this->scanSet = false;
 
     // Using assignment operator to copy the items vector
     DockPreview::m_previewItems = items;
-    /*for (DockItem* item : items){
-        DockPreview::m_previewItems.push_back(item);
-    }*/
- /*for (DockItem* child : items) {
-
-        if (child->m_window == NULL || child->m_xid == 0)
-            continue;
-
-        DockItem* newchild = new DockItem();
-
-        //the name of window , or a fallback name if no name is available.
-        newchild->m_titlename = wnck_window_get_name(child->m_window);
-        newchild->m_window = child->m_window;
-        newchild->m_xid = child->m_xid;
-
-        m_previewItems.push_back(newchild);
-    }*/
     m_dockItemIndex = index;
     m_dockItemCellSize = cellSize;
-/*
-vector<int> newVec;
-  newVec.reserve(original.size());
-  copy(original.begin(),original.end(),back_inserter(newVec));
-
-  vector<int> newVec;
-  newVec.reserve(original.size());
-  copy(original.begin(),original.end(),back_inserter(newVec));
-
-DockPreview::m_previewItems.reserve(items.size());
-copy(items.begin(), items.end(), back_inserter(DockPreview::m_previewItems));
-*/
-
-
-
 
     for (DockItem* item : DockPreview::m_previewItems){
         item->m_isDynamic = true;
@@ -189,8 +156,8 @@ copy(items.begin(), items.end(), back_inserter(DockPreview::m_previewItems));
         std::swap(m_previewItems[i], m_previewItems[m]);
     }
 
-    this->Update();
-    this->show();
+//    this->Update();
+//    this->show();
 };
 
 
@@ -208,10 +175,10 @@ inline guint DockPreview::get_CountItems()
 }
 
 
-void DockPreview::Update()
+bool DockPreview::Update()
 {
     if ((int) m_previewItems.size() == 0) {
-        return;
+        return false;
     }
 
     int x = 0;
@@ -249,8 +216,9 @@ void DockPreview::Update()
         }
     }
 
-    if ( m_cellHeight < 80) {
+    if ( m_cellHeight < 40 || m_cellHeight < 40) {
             Utilities::Messages::LimitReachedMessage();
+            return false;
     }
 
 
@@ -259,6 +227,8 @@ void DockPreview::Update()
     this->move(x, y);
 
     this->set_ItemsDynamic();
+
+    return true;
 
 }
 

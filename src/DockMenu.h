@@ -14,7 +14,7 @@
 
 class DockMenu
 {
-    public:
+    protected:
         DockMenu()
         {
             // Home Menu
@@ -76,9 +76,9 @@ class DockMenu
             m_ItemMenu.show_all();
 
 
-        }
+            m_previewLimitMenu.set_halign(Gtk::Align::ALIGN_CENTER);
 
-    protected:
+        }
 
         // Home menu
         Gtk::Menu m_HomeMenu;
@@ -116,6 +116,11 @@ class DockMenu
         Gtk::SeparatorMenuItem m_separatorMenuItem7;
         Gtk::SeparatorMenuItem m_separatorMenuItem8;
         Gtk::SeparatorMenuItem m_separatorMenuItem9;
+
+
+        Gtk::Menu m_previewLimitMenu;
+       // Gtk::MenuItem m_previewLimitMenuItem;
+
 };
 
 #endif	/* DOCKMENU_H */

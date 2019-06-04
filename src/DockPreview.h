@@ -36,6 +36,7 @@ class DockPreview : public Gtk::Window
         DockPreview();
         ~DockPreview();
         void Show(const std::vector<DockItem*>& items, const guint index, const guint cellSize);
+        bool Update();
         // https://developer.gnome.org/gtkmm-tutorial/stable/chapter-custom-signals-example.html.en
         // signal accessor:
         //typedef sigc::signal<void, WnckWindow*, int> type_signal_update;
@@ -75,7 +76,6 @@ class DockPreview : public Gtk::Window
         //bool RemoveCurrentPreviewItem();
         void set_ItemsDynamic();
         void set_CurrentItemDynamic();
-        void Update();
 
         static void Close();
         bool on_leave_notify_event(GdkEventCrossing* crossing_event);

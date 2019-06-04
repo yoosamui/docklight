@@ -119,7 +119,7 @@ class DockPanel : public Gtk::DrawingArea, DockMenu {
         bool m_titleShow = false;
         void get_ItemPosition(const DockItemType dockType, int& x, int& y, int& width, int& height);
 
-        void ExecuteApp(GdkEventButton* event);
+       // void ExecuteApp(GdkEventButton* event);
         void AnimateItem(Glib::RefPtr<Gdk::Pixbuf> image);
 
         //static void on_window_opened(WnckScreen* screen, WnckWindow* window, gpointer data);
@@ -166,6 +166,7 @@ class DockPanel : public Gtk::DrawingArea, DockMenu {
         // Menu events
         void on_popup_homemenu_position(int& x, int& y, bool& push_in);
         void on_popup_itemmenu_position(int& x, int& y, bool& push_in);
+        void on_popup_previewLimitsMenu_position(int& x, int& y, bool& push_in);
 
         void on_QuitMenu_event();
         void on_HideMenu_event();

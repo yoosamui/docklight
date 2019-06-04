@@ -136,6 +136,9 @@ DockPanel::DockPanel():
     m_MenuItemMinimizedAllExceptActive.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_MinimieAllExceptActive_event));
     m_MenuItemUnMinimizedAll.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_UnMinimieAll_event));
 
+
+    m_previewLimitMenu.signal_hide().connect(sigc::mem_fun(*this, &DockPanel::on_HideMenu_event));
+
 }
 
 /**
@@ -364,12 +367,6 @@ void DockPanel::on_NewMenu_event()
     if (item == nullptr)
         return;
 
-    if (item->m_dockitemSesssionGrpId > 0) {
-        //  createSessionWindow();
-        return;
-
-    }
-
     // start the animation and launch the application
     m_AnimationImage = item->m_image;
     if (!Launcher::Launch(item->m_realgroupname)) {
@@ -380,8 +377,6 @@ void DockPanel::on_NewMenu_event()
             m_launcherWindow->init(*this, item);
             m_launcherWindow->show_all();
         }
-
-
 
     }
 
@@ -550,9 +545,11 @@ https://www.bassi.io/articles/2006/08/01/boogie-woogie-bugle-boy/
 // sort
 https://www.geany.org/manual/gtk/gtk/gtkrecent-advanced.html
 
+GtkRecentManager
+https://developer.gnome.org/gtk3/stable/GtkRecentManager.html#gtk-recent-info-get-icon
 */
 //contnt application/pdf
-items = gtk_recent_manager_get_items (m_recentManager);
+//items = gtk_recent_manager_get_items (m_recentManager);
 
 /*
 gboolean g_app_info_set_as_default_for_extension
@@ -560,7 +557,7 @@ gboolean g_app_info_set_as_default_for_extension
                                 const char *extension,
                                 GError **error);*/
 
- if (items){
+ /*if (items){
      GList* app_by_conentType =  g_app_info_get_all_for_type ("application/pdf");
 
      for (l = app_by_conentType; l != NULL; l = l->next)
@@ -627,10 +624,10 @@ gboolean g_app_info_set_as_default_for_extension
      }
 
 
- }
+ }*/
 /* free everything and the list */
-	g_list_foreach (items, (GFunc) gtk_recent_info_unref, NULL);
-	g_list_free (items);
+//	g_list_foreach (items, (GFunc) gtk_recent_info_unref, NULL);
+//	g_list_free (items);
 
 //	g_object_unref (m_recentManager);  //TODO ; in destructor
 
@@ -831,9 +828,83 @@ bool DockPanel::on_button_release_event(GdkEventButton *event)
             return true;
         }
 
-
+        // Execute new or Activate window or show the preview
         if (m_currentMoveIndex > 0) {
-            this->ExecuteApp(event);
+
+            DockItem* item = this->get_CurrentItem();
+            if (item == nullptr || item->m_dockitemtype == DockItemType::Separator) {
+                return true;
+            }
+
+            // open new app
+            if (item->m_items.size() == 0) {
+                on_NewMenu_event();
+                return true;
+            }
+
+            // if only one window active it
+            if (item->m_items.size() == 1) {
+                WnckWindow *window = nullptr;
+                window = WnckHandler::get_ActiveWindowIfAny(item);
+                if (window == nullptr) {
+                    DockItem* firstChild = item->m_items[0];
+                    window = firstChild->m_window;
+                }
+
+                WnckHandler::ActivateWindow(window);
+                return true;
+            }
+
+
+            // check if preview already open.
+            if( m_previewIndex == m_currentMoveIndex && m_dockPreview){
+                return true;
+            }
+
+            if(m_dockPreview != nullptr ){
+                DockPanel::PreviewClose();
+            }
+
+            if(m_dockPreview == nullptr ){
+                m_dockPreview = new DockPreview();
+            }
+
+            m_previewIndex = this->m_currentMoveIndex;
+
+            m_dockPreview->Show(item->m_items, m_currentMoveIndex, Configuration::get_dockWindowSize());
+            if (!m_dockPreview->Update()){
+                g_print("FULL\n");
+                DockPanel::PreviewClose();
+
+                // generate menu
+                for ( auto itemMenu : m_previewLimitMenu.get_children() ){
+//                        itemMenu->Remove(1)
+                      m_previewLimitMenu.remove(*itemMenu);
+//                        itemMenu->delete();
+                }
+              //  gtk_widget_destroy(m_previewLimitMenu);
+
+                for (DockItem* childItem : item->m_items) {
+
+                    Gtk::MenuItem* menuItem = Gtk::manage(new Gtk::MenuItem(childItem->get_windowName()));
+                    m_previewLimitMenu.append(*menuItem);
+                   // m_MenuItemNewApp.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_NewMenu_event));
+                }
+
+                m_previewLimitMenu.show_all();
+                m_previewLimitMenu.popup(sigc::mem_fun(*this,&DockPanel::on_popup_previewLimitsMenu_position), 1, event->time);
+                m_popupMenuOn = true;
+
+
+
+                return true;
+            }
+
+            m_dockPreview->show();
+            return true;
+
+
+            //this->ExecuteApp(event);
         }
 
     }
@@ -931,11 +1002,17 @@ void DockPanel::on_popup_itemmenu_position(int& x, int& y, bool& push_in)
     DockItemPositions::get_CenterPosition(m_currentMoveIndex, x, y, m_ItemMenu.get_width(), m_ItemMenu.get_height());
 }
 
-void DockPanel::ExecuteApp(GdkEventButton* event)
+
+void DockPanel::on_popup_previewLimitsMenu_position(int& x, int& y, bool& push_in)
+{
+    DockItemPositions::get_CenterPosition(m_currentMoveIndex, x, y, m_previewLimitMenu.get_width(), m_previewLimitMenu.get_height());
+}
+
+/*bool DockPanel::ExecuteApp(GdkEventButton* event)
 {
     DockItem* item = this->get_CurrentItem();
     if (item == nullptr){
-        return;
+        return false;
     }
 
     if (item->m_dockitemtype == DockItemType::Separator) {
@@ -944,7 +1021,7 @@ void DockPanel::ExecuteApp(GdkEventButton* event)
 
     if (item->m_items.size() == 0) {
         on_NewMenu_event();
-        return;
+        return false;
     }
 
     if (item->m_items.size() == 1) {
@@ -956,16 +1033,16 @@ void DockPanel::ExecuteApp(GdkEventButton* event)
         }
 
         WnckHandler::ActivateWindow(window);
-        return;
+        return false;
     }
 
     // skeep home
     if (m_previewIndex == 0){
-        return;
+        return false;
     }
     // check if preview already open.
     if( m_previewIndex == m_currentMoveIndex && m_dockPreview){
-        return;
+        return false;
     }
 
     if(m_dockPreview != nullptr ){
@@ -979,11 +1056,16 @@ void DockPanel::ExecuteApp(GdkEventButton* event)
     m_previewIndex = this->m_currentMoveIndex;
 
     //    guint size = DockWindow::is_Horizontal() ? DockWindow::getitem->get_width() : item->get_height();
-    m_dockPreview->Show(item->m_items, m_currentMoveIndex, Configuration::get_dockWindowSize());
+   m_dockPreview->Show(item->m_items, m_currentMoveIndex, Configuration::get_dockWindowSize());
+   if (!m_dockPreview->Update()){
+        g_print("FULL\n");
+        DockPanel::PreviewClose();
+        return;
+   }
 
     m_dockPreview->show();
 }
-
+*/
 /**
  * Gets the current dock Item.
  */
