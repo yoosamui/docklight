@@ -216,10 +216,12 @@ bool DockPreview::Update()
         }
     }
 
-    if ( m_cellHeight < 40 || m_cellHeight < 40) {
-            Utilities::Messages::LimitReachedMessage();
+    if ( m_cellHeight < 100 || m_cellHeight < 100) {
+   //         Utilities::Messages::LimitReachedMessage();
             return false;
     }
+
+
 
 
     resize(windowWidth  , windowHeight);

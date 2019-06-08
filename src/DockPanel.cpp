@@ -137,8 +137,8 @@ DockPanel::DockPanel():
     m_MenuItemUnMinimizedAll.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_UnMinimieAll_event));
 
 
-    m_previewLimitMenu.signal_hide().connect(sigc::mem_fun(*this, &DockPanel::on_HideMenu_event));
-
+   // m_previewLimitMenu.signal_hide().connect(sigc::mem_fun(*this, &DockPanel::on_HideMenu_event));
+   // m_previewLimitMenuItem
 }
 
 /**
@@ -324,6 +324,7 @@ void DockPanel::on_active_window_changed_callback(WnckScreen *screen, WnckWindow
 void DockPanel::set_SelectorForActiveWindow(WnckScreen* screen)
 {
 
+    g_print("Active %d %d\n", m_mouseIn, m_popupMenuOn);
     if (m_mouseIn || m_popupMenuOn ) {
 
         return;
@@ -356,6 +357,11 @@ void DockPanel::set_SelectorForActiveWindow(WnckScreen* screen)
     m_currentMoveIndex = idx;
     DockPanel::update();
 
+}
+void DockPanel::on_PreviewMenuItem_event(WnckWindow* window)
+{
+
+                WnckHandler::ActivateWindow(window);
 }
 
 /**
@@ -873,6 +879,7 @@ bool DockPanel::on_button_release_event(GdkEventButton *event)
 
             m_dockPreview->Show(item->m_items, m_currentMoveIndex, Configuration::get_dockWindowSize());
             if (!m_dockPreview->Update()){
+                m_popupMenuOn = true;
                 g_print("FULL\n");
                 DockPanel::PreviewClose();
 
@@ -888,12 +895,22 @@ bool DockPanel::on_button_release_event(GdkEventButton *event)
 
                     Gtk::MenuItem* menuItem = Gtk::manage(new Gtk::MenuItem(childItem->get_windowName()));
                     m_previewLimitMenu.append(*menuItem);
-                   // m_MenuItemNewApp.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_NewMenu_event));
+
+                   //  menuItem->signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_PreviewMenuItem_event),NULL);
+                     menuItem->signal_activate().connect( sigc::bind<WnckWindow*>( sigc::mem_fun(*this, &DockPanel::on_PreviewMenuItem_event),childItem->m_window));
+
+//void DockPanel::on_button_clicked(Glib::ustring data)
+                   // _button1.signal_clicked().connect( sigc::bind<Glib::ustring>( sigc::mem_fun(*this, &HelloWorld::on_button_clicked), "button 1") )
+//igc::signal<void,int>::iterator signal<void,int>::connect( const sigc::slot<void,int>& );
+
+                   // --||  //// : \\\  ||--
+
+
+
                 }
 
                 m_previewLimitMenu.show_all();
                 m_previewLimitMenu.popup(sigc::mem_fun(*this,&DockPanel::on_popup_previewLimitsMenu_position), 1, event->time);
-                m_popupMenuOn = true;
 
 
 
@@ -960,6 +977,9 @@ bool DockPanel::on_button_release_event(GdkEventButton *event)
 
     return TRUE;
 }
+
+
+
 /**
  * The mouse scroll event. activate the next and or current window.
  */

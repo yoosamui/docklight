@@ -190,6 +190,8 @@ class DockPanel : public Gtk::DrawingArea, DockMenu {
         void on_UnMinimieAll_event();
         void on_AddSeparator_event();
 
+        void on_PreviewMenuItem_event(WnckWindow*);
+
             // Drag & Drop
             //sigc::connection m_signalDragDrop;
 
