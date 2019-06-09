@@ -266,7 +266,7 @@ void DockPanel::AppRunAnimation()
             int channels = m_AnimationImage->get_n_channels();
             gint rowstride = m_AnimationImage->get_rowstride();
             gint pixel_offset;
-            for (i = 0; i < 6; i++) {
+            for (i = 0; i < 4; i++) {
                 for (y = 0; y < h; y++) {
                     for (x = 0; x < w; x++) {
                         pixel_offset = y * rowstride + x * channels;
@@ -278,10 +278,11 @@ void DockPanel::AppRunAnimation()
                     }
                 }
 
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            DockPanel::update();
+                std::this_thread::sleep_for(std::chrono::milliseconds(150));
             }
             m_AnimationImage = NULLPB;
-            DockPanel::update();
+            //DockPanel::update();
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
@@ -879,7 +880,6 @@ bool DockPanel::on_button_release_event(GdkEventButton *event)
             m_dockPreview->Show(item->m_items, m_currentMoveIndex, Configuration::get_dockWindowSize());
             if (!m_dockPreview->Update()){
                 m_popupMenuOn = true;
-                g_print("FULL\n");
                 DockPanel::PreviewClose();
 
                 // remove menu items
