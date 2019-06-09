@@ -389,7 +389,7 @@ namespace Configuration
 
     int get_CellHeight()
     {
-        return Configuration::get_dockWindowSize() - (CELL_BOTTOM_MARGIN + CELL_TOP_MARGIN) + 4;
+        return Configuration::get_dockWindowSize() - (CELL_BOTTOM_MARGIN + CELL_TOP_MARGIN) ;
 
     }
 
