@@ -323,7 +323,7 @@ void DockPanel::on_active_window_changed_callback(WnckScreen *screen, WnckWindow
 void DockPanel::set_SelectorForActiveWindow(WnckScreen* screen)
 {
 
-    if (m_mouseIn || m_popupMenuOn || m_AnimationImage != NULLPB ) {
+    if (m_mouseIn || m_popupMenuOn || m_AnimationImage != NULLPB || m_dockPreview ) {
 
         return;
     }
