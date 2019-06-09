@@ -47,10 +47,11 @@ struct attachments_data
     char realgroupname[DEF_FIELD_MAX] = {'\0'};
     char themeiconname[DEF_FIELD_MAX] = {'\0'};
 
-    guint dockitemtype = 0;
-    int index = -1;
     guint width = 0;
     guint height = 0;
+
+    guint dockitemtype = 0;
+    int index = -1;
 };
 
 class AppUpdater {

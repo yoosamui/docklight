@@ -136,9 +136,7 @@ DockPanel::DockPanel():
     m_MenuItemMinimizedAllExceptActive.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_MinimieAllExceptActive_event));
     m_MenuItemUnMinimizedAll.signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_UnMinimieAll_event));
 
-
-   // m_previewLimitMenu.signal_hide().connect(sigc::mem_fun(*this, &DockPanel::on_HideMenu_event));
-   // m_previewLimitMenuItem
+    m_previewLimitMenu.signal_hide().connect(sigc::mem_fun(*this, &DockPanel::on_HideMenu_event));
 }
 
 /**
@@ -149,13 +147,12 @@ DockPanel::DockPanel():
 int DockPanel::Init(Gtk::Window* window)
 {
     m_AppWindow = window;
-    m_AppUpdater = new AppUpdater();
 
 
     const char* filename = m_homeiconFilePath.c_str();
     DockItem* dockItem = new DockItem();
     try {
-        int iconsize = Configuration::get_CellWidth() - ICON_CELL_WIDTH_MARGIN;
+        int iconsize = DEF_ICONMAXSIZE;
         dockItem->m_image = Gdk::Pixbuf::create_from_file(filename, iconsize, iconsize, true);
     }
     catch (Glib::FileError fex) {
@@ -174,6 +171,8 @@ int DockPanel::Init(Gtk::Window* window)
     dockItem->m_dockitemtype = DockItemType::SingleDock;
     dockItem->m_index = 0;
     m_AppUpdater->m_dockitems.insert(this->m_AppUpdater->m_dockitems.begin(), dockItem);
+
+    m_AppUpdater = new AppUpdater();
 
     // Start the background thread for application start animation
     m_AppRunThreadLauncher = new std::thread(AppRunAnimation);
@@ -324,8 +323,7 @@ void DockPanel::on_active_window_changed_callback(WnckScreen *screen, WnckWindow
 void DockPanel::set_SelectorForActiveWindow(WnckScreen* screen)
 {
 
-    g_print("Active %d %d\n", m_mouseIn, m_popupMenuOn);
-    if (m_mouseIn || m_popupMenuOn ) {
+    if (m_mouseIn || m_popupMenuOn || m_AnimationImage != NULLPB ) {
 
         return;
     }
@@ -374,7 +372,7 @@ void DockPanel::on_NewMenu_event()
         return;
 
     // start the animation and launch the application
-    m_AnimationImage = item->m_image;
+    m_AnimationImage = item->m_imageScaled;
     if (!Launcher::Launch(item->m_realgroupname)) {
 
 
@@ -825,10 +823,15 @@ bool DockPanel::on_button_release_event(GdkEventButton *event)
         return true;
     }
 
+
     if (event->button == 1 ) {          // mouse left
 
         m_popupMenuOn = false;
 
+    // check if preview already open.
+    if( m_previewIndex == m_currentMoveIndex && m_dockPreview){
+        return true;
+    }
         if (m_dockPreview && m_currentMoveIndex == m_previewIndex) {
             DockPanel::PreviewClose();
             return true;
@@ -862,10 +865,6 @@ bool DockPanel::on_button_release_event(GdkEventButton *event)
             }
 
 
-            // check if preview already open.
-            if( m_previewIndex == m_currentMoveIndex && m_dockPreview){
-                return true;
-            }
 
             if(m_dockPreview != nullptr ){
                 DockPanel::PreviewClose();
@@ -883,36 +882,21 @@ bool DockPanel::on_button_release_event(GdkEventButton *event)
                 g_print("FULL\n");
                 DockPanel::PreviewClose();
 
-                // generate menu
+                // remove menu items
                 for ( auto itemMenu : m_previewLimitMenu.get_children() ){
-//                        itemMenu->Remove(1)
                       m_previewLimitMenu.remove(*itemMenu);
-//                        itemMenu->delete();
                 }
-              //  gtk_widget_destroy(m_previewLimitMenu);
 
+                // generate menu
                 for (DockItem* childItem : item->m_items) {
 
                     Gtk::MenuItem* menuItem = Gtk::manage(new Gtk::MenuItem(childItem->get_windowName()));
                     m_previewLimitMenu.append(*menuItem);
-
-                   //  menuItem->signal_activate().connect(sigc::mem_fun(*this, &DockPanel::on_PreviewMenuItem_event),NULL);
                      menuItem->signal_activate().connect( sigc::bind<WnckWindow*>( sigc::mem_fun(*this, &DockPanel::on_PreviewMenuItem_event),childItem->m_window));
-
-//void DockPanel::on_button_clicked(Glib::ustring data)
-                   // _button1.signal_clicked().connect( sigc::bind<Glib::ustring>( sigc::mem_fun(*this, &HelloWorld::on_button_clicked), "button 1") )
-//igc::signal<void,int>::iterator signal<void,int>::connect( const sigc::slot<void,int>& );
-
-                   // --||  //// : \\\  ||--
-
-
-
                 }
 
                 m_previewLimitMenu.show_all();
                 m_previewLimitMenu.popup(sigc::mem_fun(*this,&DockPanel::on_popup_previewLimitsMenu_position), 1, event->time);
-
-
 
                 return true;
             }
@@ -1125,7 +1109,7 @@ bool DockPanel::on_timeoutDraw()
 
         m_dragDropItem =  this->get_CurrentItem();
         if ( m_dragDropItem != nullptr){
-            m_AnimationImage = m_dragDropItem->m_image;
+            m_AnimationImage = m_dragDropItem->m_imageScaled;
             m_DragDropBegin = true;
             m_DragDropSourceIndex = this->m_currentMoveIndex;
         }
@@ -1465,11 +1449,11 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
             if (item->m_items.size() > 0) {
                 cr->set_source_rgb(1.0, 1.0, 1.0);
                 if (item->m_items.size() == 1) {
-                    cr->arc(x + center, y + height - 4, 1.7, 0, 2 * M_PI);
+                    cr->arc(x + center, y + height - 3, 1.7, 0, 2 * M_PI);
                 }
                 else if (item->m_items.size() > 1) {
-                    cr->arc(x + center - 4, y + height - 4, 1.7, 0, 2 * M_PI);
-                    cr->arc(x + center + 4, y + height - 4, 1.7, 0, 2 * M_PI);
+                    cr->arc(x + center - 3, y + height - 3, 1.7, 0, 2 * M_PI);
+                    cr->arc(x + center + 3, y + height - 3, 1.7, 0, 2 * M_PI);
                 }
                 cr->fill();
             }
@@ -1479,8 +1463,14 @@ void DockPanel::draw_Items(const Cairo::RefPtr<Cairo::Context>& cr)
             if (item->m_image != NULLPB) {
                 iconsizeWidth = width - CELL_MARGIN;
                 iconsizeHeight = height - CELL_MARGIN;
-                auto icon = item->m_image->scale_simple(iconsizeWidth, iconsizeHeight, Gdk::INTERP_BILINEAR);
-                Gdk::Cairo::set_source_pixbuf(cr, icon, x + center - iconsizeWidth / 2, y + 1);
+
+                if(item->m_imageScaled == NULLPB || Configuration::get_dockWindowSize() != item->m_imageSizeChange ) {
+                    // Create a new Gdk::Pixbuf containing a copy of src scaled to dest_width x dest_height.
+                    item->m_imageScaled = item->m_image->scale_simple(iconsizeWidth, iconsizeHeight, Gdk::INTERP_BILINEAR);
+                    item->m_imageSizeChange = Configuration::get_dockWindowSize();
+                }
+
+                Gdk::Cairo::set_source_pixbuf(cr, item->m_imageScaled, x + center - iconsizeWidth / 2, y + 1);
                 cr->paint();
             }
 

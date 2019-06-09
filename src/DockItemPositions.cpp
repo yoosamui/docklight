@@ -215,6 +215,8 @@ namespace DockItemPositions
 
                     y -= height / 2 - variantItemHeight / 2;
 
+                    g_print("Center %d/%d\n", y, x);
+
                     // check the limit on the top
                     if (y <  DockWindow::Monitor::get_workarea().y){
                         y =  DockWindow::Monitor::get_workarea().y;

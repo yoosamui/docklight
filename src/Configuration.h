@@ -67,12 +67,12 @@
 
 
 
+#define DEF_ICONMAXSIZE 64
 
 
 
 
 ////////////////////////////////////////
-//#define DEF_ICONMAXSIZE 64
 //#define DEF_CELLHIGHT  58                    // Cell Height
 //#define DEF_CELLWIDTH 56 //-3//58                    // Cell Width
 

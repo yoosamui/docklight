@@ -92,7 +92,16 @@ void AppUpdater::Load()
         if (result == 0)
             g_critical("Load Error reading file fread\n");
 
-        DockItem* dockItem = new DockItem(st.width, st.height);
+        DockItem* dockItem = nullptr;
+
+        if (st.dockitemtype == DockItemType::Separator) {
+
+            dockItem = new DockItem(st.width, st.height);
+        }
+        else  {
+            dockItem = new DockItem();
+        }
+
         dockItem->m_isAttached = true;
         dockItem->m_appname = st.appname;
         dockItem->m_titlename = st.titlename;
@@ -195,8 +204,8 @@ void AppUpdater::Save()
         strncpy(st.instancename, item->m_instancename.c_str(), DEF_FIELD_MAX);
         strncpy(st.themeiconname, item->m_theme_iconname.c_str(), DEF_FIELD_MAX);
 
-        st.width = item->get_InmutableWidth();
-        st.height = item->get_InmutableHeight();
+        st.width = item->get_width();
+        st.height = item->get_height();
 
         st.dockitemtype = item->m_dockitemtype;
 
@@ -422,7 +431,9 @@ void AppUpdater::Update(WnckWindow* window, Window_action actiontype)
 
         std::string theme_iconname = "";
         appIcon = IconLoader::GetWindowIcon(window, theme_iconname);
-        appIcon = appIcon->scale_simple(Configuration::get_CellWidth(), Configuration::get_CellHeight(), Gdk::INTERP_BILINEAR);
+//        appIcon = appIcon->scale_simple(Configuration::get_CellWidth(), Configuration::get_CellHeight(), Gdk::INTERP_BILINEAR);
+        appIcon = appIcon->scale_simple(DEF_ICONMAXSIZE, DEF_ICONMAXSIZE, Gdk::INTERP_BILINEAR);
+
 
         // Create a new Item
         DockItem* dockItem = new DockItem();
