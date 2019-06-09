@@ -561,6 +561,8 @@ void AppUpdater::setIconByTheme(DockItem *item)
     auto image = IconLoader::GetIconByAppName(appname, item->m_theme_iconname);
     if (image) {
         item->m_image = image;
+        item->m_imageSizeChange = 0;
+
     }
 }
 
