@@ -4,9 +4,10 @@
     <AutoHide>false</AutoHide>
     <PanelMode>false</PanelMode>
     <Location>RIGHT</Location>
-    <panelSize>52</panelSize>
-    <previewSize>0</previewSize>
+    <PanelSize>48</PanelSize>
+    <PreviewSize>30</PreviewSize>
     <UseStyle>navi</UseStyle>
+    <IsMutter>false</IsMutter>
 
     <Styles>
           <Style  panel="0.07, 0, 0, 0.8,  0,0,0,0 ,1, 0, 0"

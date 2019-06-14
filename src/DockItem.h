@@ -47,9 +47,11 @@ public:
     DockItem(const guint, const guint height);
     virtual ~DockItem();
     DockItemType m_dockitemtype = DockItemType::SingleDock;
+
     Glib::RefPtr<Gdk::Pixbuf> m_image = NULLPB;
     Glib::RefPtr<Gdk::Pixbuf> m_imageScaled = NULLPB;
     Glib::RefPtr<Gdk::Pixbuf> m_firstImage = NULLPB;
+
     guint m_imageSizeChange = 0;
     GdkPixbuf *m_scaledPixbuf = nullptr;
     guint m_scaleWidth = 0;

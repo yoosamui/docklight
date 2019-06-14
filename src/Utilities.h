@@ -62,6 +62,14 @@ namespace Utilities
         void Zenity(const std::string& title, const std::string& message);
         void LimitReachedMessage();
     }
+
+    namespace Pixbuf
+    {
+        Glib::RefPtr<Gdk::Pixbuf> get_pixbufFromWindow(const int xid);
+        Glib::RefPtr<Gdk::Pixbuf> get_pixbufScaled(const Glib::RefPtr<Gdk::Pixbuf>& pixbuf, const guint destWidth, const guint destHeight, guint& scaledWidth, guint& scaledHeight);
+        int ComparePixels(const Glib::RefPtr<Gdk::Pixbuf>& pixbuf_a, const Glib::RefPtr<Gdk::Pixbuf>& pixbuf_b);
+    }
+
 }
 
 #endif	/* UTILITIES_H */

@@ -10,6 +10,18 @@
 namespace WnckHandler
 {
 
+    bool is_windowOnCurrentDesktop(WnckWindow* window)
+    {
+        GdkScreen *screen = gdk_screen_get_default();
+        guint32 current_ws_number = gdk_x11_screen_get_current_desktop(screen);
+        WnckWorkspace* ws = wnck_window_get_workspace(window);
+        if (ws == nullptr || wnck_workspace_get_number(ws) != current_ws_number) {
+            return false;
+        }
+
+        return true;
+    }
+
     std::string get_windowName(WnckWindow* window)
     {
         return std::string(wnck_window_get_name(window));
@@ -719,7 +731,7 @@ namespace WnckHandler
     /////////////////////////
 
 
-    void SelectWindow(WnckWindow* window)
+    /*void SelectWindow(WnckWindow* window)
     {
         if (window == NULL)
             return;
@@ -730,7 +742,7 @@ namespace WnckHandler
 
         if (wnck_window_is_minimized(window))
             wnck_window_unminimize(window, ct);
-    }
+    }*/
 
     /**
      * Active the current Active window
@@ -747,10 +759,21 @@ namespace WnckHandler
         }
 
         int ct = gtk_get_current_event_time();
+        if (!is_windowOnCurrentDesktop(window)){
+            WnckWorkspace* ws = wnck_window_get_workspace(window);
+            if (ws != nullptr) {
+                wnck_workspace_activate (ws, ct);
+            }
+        }
+
+
+
         wnck_window_activate(window, ct);
 
-        if (wnck_window_is_minimized(window))
-            wnck_window_unminimize(window, ct);
+
+
+        //if (wnck_window_is_minimized(window))
+            //wnck_window_unminimize(window, ct);
     }
 
     /**

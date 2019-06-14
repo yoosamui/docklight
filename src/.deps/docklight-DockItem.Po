@@ -1037,8 +1037,33 @@ docklight-DockItem.o: DockItem.cpp /usr/include/stdc-predef.h DockItem.h \
  /usr/include/giomm-2.4/giomm/menuitem.h \
  /usr/include/gtkmm-3.0/gtkmm/windowgroup.h \
  /usr/include/glibmm-2.4/glibmm/timer.h Configuration.h WnckHandler.h \
- /usr/include/X11/X.h DockPanel.h /usr/include/gtkmm-3.0/gtkmm.h \
- /usr/include/glibmm-2.4/glibmm.h /usr/include/glibmm-2.4/glibmm/thread.h \
+ /usr/include/X11/X.h /usr/include/gtk-3.0/gdk/gdkx.h \
+ /usr/include/X11/Xlib.h /usr/include/X11/Xfuncproto.h \
+ /usr/include/X11/Xosdefs.h /usr/include/X11/Xutil.h \
+ /usr/include/X11/keysym.h /usr/include/X11/keysymdef.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11applaunchcontext.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11cursor.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11device.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11device-core.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11device-xi2.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11devicemanager.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11devicemanager-core.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11devicemanager-xi2.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11display.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11displaymanager.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11dnd.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11glcontext.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11keys.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11monitor.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11property.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11screen.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11selection.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11utils.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11visual.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11window.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx-autocleanups.h DockPanel.h \
+ /usr/include/gtkmm-3.0/gtkmm.h /usr/include/glibmm-2.4/glibmm.h \
+ /usr/include/glibmm-2.4/glibmm/thread.h \
  /usr/include/glibmm-2.4/glibmm/threads.h \
  /usr/include/glibmm-2.4/glibmm/balancedtree.h \
  /usr/include/glibmm-2.4/glibmm/base64.h \
@@ -3688,6 +3713,62 @@ Configuration.h:
 WnckHandler.h:
 
 /usr/include/X11/X.h:
+
+/usr/include/gtk-3.0/gdk/gdkx.h:
+
+/usr/include/X11/Xlib.h:
+
+/usr/include/X11/Xfuncproto.h:
+
+/usr/include/X11/Xosdefs.h:
+
+/usr/include/X11/Xutil.h:
+
+/usr/include/X11/keysym.h:
+
+/usr/include/X11/keysymdef.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11applaunchcontext.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11cursor.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11device.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11device-core.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11device-xi2.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11devicemanager.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11devicemanager-core.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11devicemanager-xi2.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11display.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11displaymanager.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11dnd.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11glcontext.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11keys.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11monitor.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11property.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11screen.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11selection.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11utils.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11visual.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11window.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx-autocleanups.h:
 
 DockPanel.h:
 

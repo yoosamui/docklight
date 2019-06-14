@@ -1381,8 +1381,47 @@ docklight-Utilities.o: Utilities.cpp /usr/include/stdc-predef.h \
  /usr/include/X11/Xlib.h /usr/include/X11/X.h \
  /usr/include/X11/Xfuncproto.h /usr/include/X11/Xosdefs.h \
  /usr/include/assert.h /usr/include/malloc.h /usr/include/c++/7/iostream \
- /usr/include/glibmm-2.4/glibmm/i18n.h /usr/include/glib-2.0/glib/gi18n.h \
- /usr/include/libintl.h
+ Configuration.h /usr/include/glibmm-2.4/glibmm/i18n.h \
+ /usr/include/glib-2.0/glib/gi18n.h /usr/include/libintl.h \
+ /usr/include/gtk-3.0/gdk/gdkx.h /usr/include/X11/Xutil.h \
+ /usr/include/X11/keysym.h /usr/include/X11/keysymdef.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11applaunchcontext.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11cursor.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11device.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11device-core.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11device-xi2.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11devicemanager.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11devicemanager-core.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11devicemanager-xi2.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11display.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11displaymanager.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11dnd.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11glcontext.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11keys.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11monitor.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11property.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11screen.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11selection.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11utils.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11visual.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx11window.h \
+ /usr/include/gtk-3.0/gdk/x11/gdkx-autocleanups.h DockWindow.h \
+ /usr/include/libwnck-3.0/libwnck/libwnck.h \
+ /usr/include/libwnck-3.0/libwnck/window.h \
+ /usr/include/libwnck-3.0/libwnck/screen.h \
+ /usr/include/libwnck-3.0/libwnck/application.h \
+ /usr/include/libwnck-3.0/libwnck/class-group.h \
+ /usr/include/libwnck-3.0/libwnck/workspace.h \
+ /usr/include/libwnck-3.0/libwnck/pager.h \
+ /usr/include/libwnck-3.0/libwnck/tasklist.h \
+ /usr/include/libwnck-3.0/libwnck/selector.h \
+ /usr/include/libwnck-3.0/libwnck/window-action-menu.h \
+ /usr/include/libwnck-3.0/libwnck/util.h \
+ /usr/include/libwnck-3.0/libwnck/version.h \
+ /usr/include/libwnck-3.0/libwnck/wnck-enum-types.h AppWindow.h \
+ DockPanel.h DockItem.h LauncherWindow.h AppUpdater.h SessionWindow.h \
+ IconLoader.h TitleWindow.h DockMenu.h DockPreview.h \
+ /usr/include/c++/7/thread About.h Screen.h Struts.h
 
 /usr/include/stdc-predef.h:
 
@@ -4378,8 +4417,116 @@ Utilities.h:
 
 /usr/include/c++/7/iostream:
 
+Configuration.h:
+
 /usr/include/glibmm-2.4/glibmm/i18n.h:
 
 /usr/include/glib-2.0/glib/gi18n.h:
 
 /usr/include/libintl.h:
+
+/usr/include/gtk-3.0/gdk/gdkx.h:
+
+/usr/include/X11/Xutil.h:
+
+/usr/include/X11/keysym.h:
+
+/usr/include/X11/keysymdef.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11applaunchcontext.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11cursor.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11device.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11device-core.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11device-xi2.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11devicemanager.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11devicemanager-core.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11devicemanager-xi2.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11display.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11displaymanager.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11dnd.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11glcontext.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11keys.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11monitor.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11property.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11screen.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11selection.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11utils.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11visual.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx11window.h:
+
+/usr/include/gtk-3.0/gdk/x11/gdkx-autocleanups.h:
+
+DockWindow.h:
+
+/usr/include/libwnck-3.0/libwnck/libwnck.h:
+
+/usr/include/libwnck-3.0/libwnck/window.h:
+
+/usr/include/libwnck-3.0/libwnck/screen.h:
+
+/usr/include/libwnck-3.0/libwnck/application.h:
+
+/usr/include/libwnck-3.0/libwnck/class-group.h:
+
+/usr/include/libwnck-3.0/libwnck/workspace.h:
+
+/usr/include/libwnck-3.0/libwnck/pager.h:
+
+/usr/include/libwnck-3.0/libwnck/tasklist.h:
+
+/usr/include/libwnck-3.0/libwnck/selector.h:
+
+/usr/include/libwnck-3.0/libwnck/window-action-menu.h:
+
+/usr/include/libwnck-3.0/libwnck/util.h:
+
+/usr/include/libwnck-3.0/libwnck/version.h:
+
+/usr/include/libwnck-3.0/libwnck/wnck-enum-types.h:
+
+AppWindow.h:
+
+DockPanel.h:
+
+DockItem.h:
+
+LauncherWindow.h:
+
+AppUpdater.h:
+
+SessionWindow.h:
+
+IconLoader.h:
+
+TitleWindow.h:
+
+DockMenu.h:
+
+DockPreview.h:
+
+/usr/include/c++/7/thread:
+
+About.h:
+
+Screen.h:
+
+Struts.h:

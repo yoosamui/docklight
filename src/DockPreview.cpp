@@ -35,22 +35,23 @@
 #include <algorithm>
 #include <iostream>
 
-#define PREVIEW_FRAMES_PERSECOND  8
-#define PREVIEW_TITLE_OFFSET 28
-#define PREVIEW_HV_OFFSET 20
-#define PREVIEW_MAX_ELAPSED_FRAMES PREVIEW_FRAMES_PERSECOND * 3
 
 using namespace std::chrono_literals;
 
 std::vector<DockItem*> DockPreview::m_previewItems;
 bool DockPreview::m_allowDraw;
 bool DockPreview::m_updateRequired;
+guint DockPreview::m_cellWidth;
+guint DockPreview::m_cellHeight;
+
 
 DockPreview::DockPreview():Gtk::Window(Gtk::WindowType::WINDOW_POPUP)
 {
 
     DockPreview::m_allowDraw = true;
     DockPreview::m_updateRequired = false;
+    DockPreview::m_cellWidth = 0;
+    DockPreview::m_cellHeight = 0;
 
     // Set up the top-level window.
     set_title("DockPreview");
@@ -114,20 +115,27 @@ void DockPreview::Show(const std::vector<DockItem*>& items, const guint index, c
     m_dockItemIndex = index;
     m_dockItemCellSize = cellSize;
 
+    this->Update(); // to obtain cellsize
+
     for (DockItem* item : DockPreview::m_previewItems){
-        item->m_isDynamic = true;
-        item->m_image = NULLPB;
-        item->m_firstImage = NULLPB;
+       // if(Configuration::is_mutter()) {
+
+
+            item->m_isDynamic = true;
+
+
+//        item->m_image = LoadPreviewImage(item);
         item->m_scaledPixbuf = nullptr;
-       // item->m_scaledPixels = nullptr;
+        item->m_firstImage = NULLPB;
         item->m_elapsedFrames = 0;
         item->m_tmpxid = 0;
+//}
         item->m_isAlive = true;
 
         /*if(item->m_window &&  wnck_window_is_minimized (item->m_window)) {
-                   auto timestamp = gtk_get_current_event_time();
-                   wnck_window_unminimize (item->m_window, timestamp);
-                   //wnck_window_minimize (item->m_window);
+          auto timestamp = gtk_get_current_event_time();
+          wnck_window_unminimize (item->m_window, timestamp);
+        //wnck_window_minimize (item->m_window);
 
         }*/
     }
@@ -168,6 +176,7 @@ inline guint DockPreview::get_CountItems()
         if (!item->m_isAlive){
             continue;
         }
+
         count++;
     }
 
@@ -177,6 +186,24 @@ inline guint DockPreview::get_CountItems()
 
 bool DockPreview::Update()
 {
+
+    int x = 0;
+    int y = 0;
+    guint windowWidth;
+    guint windowHeight;
+
+   if (!DockItemPositions::get_previewSize(this->get_CountItems(), windowWidth, windowHeight, m_cellWidth, m_cellHeight)){
+        return false;
+   }
+
+    resize(windowWidth  , windowHeight);
+    DockItemPositions::get_CenterPosition(m_dockItemIndex, x, y, windowWidth,  windowHeight);
+    this->move(x, y);
+
+    this->set_ItemsDynamic();
+
+    return true;
+/*
     if ((int) m_previewItems.size() == 0) {
         return false;
     }
@@ -220,17 +247,10 @@ bool DockPreview::Update()
    //         Utilities::Messages::LimitReachedMessage();
             return false;
     }
+*/
 
 
 
-
-    resize(windowWidth  , windowHeight);
-    DockItemPositions::get_CenterPosition(m_dockItemIndex, x, y, windowWidth,  windowHeight);
-    this->move(x, y);
-
-    this->set_ItemsDynamic();
-
-    return true;
 
 }
 
@@ -469,9 +489,12 @@ bool DockPreview::on_timeoutDraw()
 }
 
 
-void DockPreview::on_window_opened(WnckScreen *screen, WnckWindow *window, gpointer data){
+void DockPreview::on_window_opened(WnckScreen *screen, WnckWindow *window, gpointer data)
+{
+
 
 }
+
 void DockPreview::on_window_closed(WnckScreen *screen, WnckWindow *window, gpointer data)
 {
     if ((int) m_previewItems.size() == 0) {
@@ -701,31 +724,41 @@ bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
             continue;
         }
 
-        if (!item->m_image || item->m_isDynamic ) {
+        // check witch WM is currently running
+        if ( (!item->m_image || item->m_isDynamic) && (!wnck_window_is_minimized(item->m_window) &&  WnckHandler::is_windowOnCurrentDesktop(item->m_window)))
+        {
 
-            // deref pointer
-            if (item->m_scaledPixbuf != nullptr &&  GDK_IS_PIXBUF(item->m_scaledPixbuf)){
-                    g_object_unref(item->m_scaledPixbuf);
-            }
+            auto winPixbuf = Utilities::Pixbuf::get_pixbufFromWindow(item->m_xid);
+            if (winPixbuf) {
+                guint scaledWidth = 0;
+                guint scaledHeight = 0;
+                auto image_pixbuf = Utilities::Pixbuf::get_pixbufScaled(winPixbuf, m_cellWidth, m_cellHeight - PREVIEW_TITLE_OFFSET, scaledWidth, scaledHeight);
 
-            item->m_scaledPixbuf = this->GetPreviewImage(item, item->m_scaleWidth, item->m_scaleHeight);
-            if (item->m_scaledPixbuf != nullptr &&  GDK_IS_PIXBUF(item->m_scaledPixbuf)){
-                item->m_image = Glib::wrap(item->m_scaledPixbuf, true);
-            }
+                if (image_pixbuf) {
+                    item->m_image = image_pixbuf;
+                    item->m_scaleWidth = scaledWidth;
+                    item->m_scaleHeight = scaledHeight;
+                }
 
-            if (!item->m_firstImage && item->m_elapsedFrames == 0) {
-                item->m_firstImage = Glib::wrap(item->m_scaledPixbuf, true);
-                item->m_tmpxid = item->m_xid;
-            }
+                // check if the pixbuf data is dynamic
+                if (item->m_isDynamic) {
+                    if (!item->m_firstImage && item->m_elapsedFrames == 0) {
+                        item->m_firstImage = item->m_image->copy();
+                        item->m_tmpxid = item->m_xid;
+                    }
 
-            if (item->m_firstImage && item->m_elapsedFrames == PREVIEW_MAX_ELAPSED_FRAMES && item->m_tmpxid == item->m_xid ) {
-                if(this->ComparePixels(item->m_firstImage,item->m_image)){
-                    item->m_isDynamic = false;
-                    g_print("static: %s\n",item->get_windowName().c_str());
+                    if (item->m_firstImage && item->m_elapsedFrames == PREVIEW_MAX_ELAPSED_FRAMES && item->m_tmpxid == item->m_xid ) {
+                        if(Utilities::Pixbuf::ComparePixels(item->m_firstImage, item->m_image) == 0){
+                            item->m_isDynamic = false;
+                            item->m_firstImage = NULLPB;
+
+                            g_print("static: %s\n",item->get_windowName().c_str());
+                        }
+                    }
+
+                    item->m_elapsedFrames++;
                 }
             }
-
-            item->m_elapsedFrames++;
         }
 
         if (DockWindow::is_Horizontal()) {
@@ -914,6 +947,74 @@ bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
        return true;
 }
 
+Glib::RefPtr<Gdk::Pixbuf> DockPreview::LoadPreviewImage(DockItem* item)
+{
+    Glib::RefPtr<Gdk::Pixbuf> result_image = NULLPB;
+
+    GdkDisplay *gdk_display = gdk_display_get_default();
+    if(gdk_display == nullptr){
+        return NULLPB;
+    }
+
+    GdkWindow *wm_window = gdk_x11_window_foreign_new_for_display(gdk_display, item->m_xid);
+    if(wm_window == nullptr){
+        return NULLPB;
+    }
+
+    if( GDK_IS_WINDOW(wm_window) == false) {
+       return NULLPB;
+    }
+
+    // Get the window size
+    guint winWidth = gdk_window_get_width(wm_window);
+    guint winHeight = gdk_window_get_height(wm_window);
+
+    int width = m_cellWidth ;
+    int height = m_cellHeight - PREVIEW_TITLE_OFFSET;
+
+    double minSize = std::min(width, height);
+    double maxSize = std::max(winWidth, winHeight);
+    double aspectRatio = minSize / maxSize;
+
+    guint scaleWidth = abs(winWidth * aspectRatio) ;
+    guint scaleHeight = abs(winHeight * aspectRatio);
+
+    guint half_WindowWidth =  DockWindow::Monitor::get_workarea().width / 2 ;
+    guint half_WindowHeight =  DockWindow::Monitor::get_workarea().height / 2 ;
+
+    // ajust width size to make it looks better
+    if(winWidth - 20 > half_WindowWidth ) {
+        if(winHeight - 20 > half_WindowHeight )
+            scaleWidth = abs(width  - 4);
+    }
+
+    // ajust height size to make it looks better
+    if(winHeight - 20 > half_WindowHeight ) {
+        if(winWidth - 20 > half_WindowWidth )
+           scaleHeight = abs(height - 2);
+    }
+
+    try {
+        char fileName[512];
+        sprintf(fileName, "/home/yoo/Pictures/%.d", item->m_xid);
+        item->m_scaleHeight = scaleHeight;
+        item->m_scaleWidth = scaleWidth;
+        result_image = item->m_image->create_from_file(fileName);//,0,0,m_cellWidth, m_cellHeight,true);
+        result_image = result_image->scale_simple(scaleWidth, scaleHeight, Gdk::INTERP_BILINEAR);
+
+    }
+    catch (Gdk::PixbufError pe) {
+        g_critical("AppUpdater Load: Gdk::PixbufError\n");
+    }
+    catch (Glib::FileError fe) {
+        g_critical("AppUpdater Load: Glib::FileError\n");
+    }
+
+    return result_image;
+
+}
+
+
 /**
  * Converts the X11 window to a GdkWindow. The result will procesed to a pixbuf and scaled.
  * Return a GdkPixbuf pointer and the scale values.
@@ -923,11 +1024,40 @@ GdkPixbuf* DockPreview::GetPreviewImage(DockItem* item, guint& scaleWidth, guint
     scaleWidth = 0;
     scaleHeight = 0;
 
+    // https://developer.gnome.org/gdk3/stable/gdk3-X-Window-System-Interaction.html#gdk-x11-screen-get-number-of-desktops
+    // -----------------------------------------------------------------------------------------------------------------------------------------
     // Wraps a native window in a GdkWindow. The function will try to look up the window using gdk_x11_window_lookup_for_display() first.
     // If it does not find it there, it will create a new window.
     // This may fail if the window has been destroyed. If the window was already known to GDK, a new reference to the existing GdkWindow is returned.
     // Returns a GdkWindow wrapper for the native window, or NULL if the window has been destroyed. The wrapper will be newly created, if one doesn’t exist already.
-    GdkWindow *wm_window = gdk_x11_window_foreign_new_for_display(gdk_display_get_default(), item->m_xid);
+
+    GdkScreen *screen = gdk_screen_get_default();
+    GdkDisplay *gdk_display = gdk_display_get_default();
+    if(gdk_display == nullptr){
+        return nullptr;
+    }
+    Display* glib_display = GDK_DISPLAY_XDISPLAY(gdk_display);
+
+
+
+
+
+//    gdk_x11_lookup_xdisplay (Display *xdisplay);
+
+  //  guint32 wsCount = gdk_x11_screen_get_number_of_desktops (GdkScreen *screen);
+
+        //WnckWorkspace* ws = wnck_window_get_workspace(item->m_window);
+       // if (ws != nullptr) {
+       //     wnck_workspace_activate (ws, gtk_get_current_event_time());
+       // }
+//Window win = gdk_x11_window_get_xid (GdkWindow *window);
+//    GdkWindow *wm_window = gdk_x11_window_lookup_for_display (gdk_display, item->m_xid);
+    GdkWindow *wm_window = gdk_x11_window_foreign_new_for_display(gdk_display, item->m_xid);
+
+
+    //GdkWindow* gw =        gdk_x11_window_foreign_new_for_display(gd, w);
+
+
     if(wm_window == nullptr){
         return nullptr;
     }
@@ -935,6 +1065,16 @@ GdkPixbuf* DockPreview::GetPreviewImage(DockItem* item, guint& scaleWidth, guint
     if( GDK_IS_WINDOW(wm_window) == false) {
        return nullptr;
     }
+
+    // Gets the number of the workspace window is on.
+    //guint32 desktopNr = gdk_x11_window_get_desktop (wm_window);
+
+   // gdk_x11_window_move_to_desktop (wm_window, desktopNr);
+
+    //gdk_x11_window_move_to_desktop (wm_window, 1);
+
+
+   // wm_window = gdk_x11_window_foreign_new_for_display(display, item->m_xid);
 
     // Get the window size
     guint winWidth = gdk_window_get_width(wm_window);
@@ -970,8 +1110,8 @@ GdkPixbuf* DockPreview::GetPreviewImage(DockItem* item, guint& scaleWidth, guint
     double maxSize = std::max(winWidth, winHeight);
     double aspectRatio = minSize / maxSize;
 
-    scaleWidth = winWidth * aspectRatio ;
-    scaleHeight = winHeight * aspectRatio;
+    scaleWidth = abs(winWidth * aspectRatio) ;
+    scaleHeight = abs(winHeight * aspectRatio);
 
     guint half_WindowWidth =  DockWindow::Monitor::get_workarea().width / 2 ;
     guint half_WindowHeight =  DockWindow::Monitor::get_workarea().height / 2 ;
@@ -979,14 +1119,15 @@ GdkPixbuf* DockPreview::GetPreviewImage(DockItem* item, guint& scaleWidth, guint
     // ajust width size to make it looks better
     if(winWidth - 20 > half_WindowWidth ) {
         if(winHeight - 20 > half_WindowHeight )
-            scaleWidth = width  - 4;
+            scaleWidth = abs(width  - 4);
     }
 
     // ajust height size to make it looks better
     if(winHeight - 20 > half_WindowHeight ) {
         if(winWidth - 20 > half_WindowWidth )
-           scaleHeight = height - 2;
+           scaleHeight = abs(height - 2);
     }
+
 
     GdkPixbuf* scaledpb = gdk_pixbuf_scale_simple(winPixbuf, scaleWidth  , scaleHeight, GDK_INTERP_BILINEAR);
     if (scaledpb == NULL) {

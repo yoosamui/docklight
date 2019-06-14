@@ -21,7 +21,7 @@ docklight_LDADD = $(ALLDADDLIBS)
 
 
 #  flags for the C compiler & linker
-AM_CPPFLAGS = -g -Wall   -Wno-reorder -std=c++11
+AM_CPPFLAGS = -g -Wall   -Wno-reorder -std=c++11  -pedantic
 #-pthread
 #-pedantic  -lpthread
 

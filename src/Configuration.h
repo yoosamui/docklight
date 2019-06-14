@@ -145,6 +145,7 @@ namespace Configuration {
     bool is_activateStrut();
     bool is_panelMode();
     bool is_allowDraw();
+    bool is_mutter();
     void set_allowDraw(bool value);
     int get_CellHeight();
     int get_CellWidth();

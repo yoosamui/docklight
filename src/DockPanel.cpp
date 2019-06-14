@@ -791,20 +791,23 @@ bool DockPanel::on_button_press_event(GdkEventButton *event)
             }
         }
 
-        // check if can close the preview
-        if(DockPanel::m_previewIndex != m_currentMoveIndex && DockPanel::m_dockPreview != nullptr){
 
-            auto item = this->get_CurrentItem();
-            if(item != nullptr && m_currentMoveIndex > 0 && item->m_items.size() > 1 ){
-                return true;
-            }
+         //check if can close the preview
+        //if(DockPanel::m_previewIndex == m_currentMoveIndex && DockPanel::m_dockPreview){
 
+            ////auto item = this->get_CurrentItem();
+            ////if(item != nullptr && m_currentMoveIndex > 0 && item->m_items.size() > 1 ){
+                ////g_print("RETURN\n");
+                ////return true;
+            ////}
 
-            DockPanel::PreviewClose();
-        }
+           //// DockPanel::m_dockPreview->hide();
+          ////g_print("A Check preview close %d %d\n",DockPanel::m_previewIndex, m_currentMoveIndex);
+            //DockPanel::PreviewClose();
+        //}
 
     }
-    return false;
+    return true;
 }
 /**
  * Returning TRUE means we handled the event, so the signal emission should be stopped (don’t call any further callbacks
@@ -833,9 +836,8 @@ bool DockPanel::on_button_release_event(GdkEventButton *event)
     if( m_previewIndex == m_currentMoveIndex && m_dockPreview){
         return true;
     }
-        if (m_dockPreview && m_currentMoveIndex == m_previewIndex) {
+        if (m_dockPreview ) {
             DockPanel::PreviewClose();
-            return true;
         }
 
         // Execute new or Activate window or show the preview
@@ -867,8 +869,10 @@ bool DockPanel::on_button_release_event(GdkEventButton *event)
 
 
 
+//          g_print("Check preview close %d %d\n",m_previewIndex, m_currentMoveIndex);
             if(m_dockPreview != nullptr ){
                 DockPanel::PreviewClose();
+                return true;
             }
 
             if(m_dockPreview == nullptr ){

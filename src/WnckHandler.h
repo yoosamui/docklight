@@ -16,12 +16,14 @@
 #include "DockItem.h"
 
 #include <X11/X.h>
+#include <gdk/gdkx.h>
 
 namespace WnckHandler
 {
+    bool is_windowOnCurrentDesktop(WnckWindow* window);
     void ActivateWindow(WnckWindow* window);
     WnckWindow* get_ActiveWindowIfAny(DockItem* item);
-    void SelectWindow(WnckWindow* window);
+    //void SelectWindow(WnckWindow* window);
     void HomeCloseAllWindows();
     void HomeCloseAllExceptActive();
     void HomeMinimizeAllExceptActive();

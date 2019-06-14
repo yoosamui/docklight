@@ -285,5 +285,62 @@ namespace DockItemPositions
         return centerpos;
     }
 
+
+
+
+    bool get_previewSize(const guint itemsSize, guint& windowWidth, guint& windowHeight, guint& cellWidth, guint& cellHeight)
+    {
+        if (itemsSize == 0) {
+            return false;
+        }
+
+        int x = 0;
+        int y = 0;
+
+        windowWidth = (Configuration::get_dockWindowSize() * 4) + Configuration::get_previewSize();
+        windowHeight = windowWidth -  (PREVIEW_HV_OFFSET * 2);
+
+        cellWidth = windowWidth - PREVIEW_HV_OFFSET;
+        cellHeight = windowHeight - PREVIEW_HV_OFFSET;
+
+        guint separatorsSize = Configuration::get_separatorMargin() * (itemsSize - 1);
+
+        if (DockWindow::is_Horizontal()){
+
+            windowWidth = cellWidth  *  itemsSize + DockWindow::get_dockWindowStartEndMargin() + separatorsSize;
+
+            if (windowWidth > DockWindow::Monitor::get_workarea().width){
+                cellWidth = (DockWindow::Monitor::get_workarea().width - DockWindow::get_dockWindowStartEndMargin() - separatorsSize ) / itemsSize;
+
+                windowWidth = cellWidth * itemsSize + separatorsSize + PREVIEW_HV_OFFSET;
+                windowHeight = cellWidth -  (PREVIEW_HV_OFFSET * 2) - DockWindow::Monitor::get_workarea().x;
+
+                cellHeight = windowHeight - PREVIEW_HV_OFFSET;
+            }
+
+        } else {
+
+            windowHeight = cellHeight * itemsSize + DockWindow::get_dockWindowStartEndMargin() + separatorsSize;
+
+            if (windowHeight  > DockWindow::Monitor::get_workarea().height){
+                cellHeight =   (DockWindow::Monitor::get_workarea().height - DockWindow::get_dockWindowStartEndMargin() - separatorsSize ) / itemsSize;
+
+                windowHeight = cellHeight *  itemsSize + separatorsSize + PREVIEW_HV_OFFSET;
+                windowWidth = cellWidth;
+
+                cellWidth = windowWidth - PREVIEW_HV_OFFSET;
+            }
+        }
+
+        if (cellHeight < 64 || cellHeight < 64) {
+            return false;
+        }
+
+
+        return true;
+    }
+
+
+
 }
 

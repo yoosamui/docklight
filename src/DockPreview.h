@@ -29,6 +29,14 @@
 #include "Configuration.h"
 #include "DockItem.h"
 #include <thread>
+#include <gdkmm/pixbuf.h>
+
+
+#define PREVIEW_HV_OFFSET 20
+#define PREVIEW_FRAMES_PERSECOND  8
+#define PREVIEW_TITLE_OFFSET 28
+#define PREVIEW_MAX_ELAPSED_FRAMES PREVIEW_FRAMES_PERSECOND * 3
+
 
 class DockPreview : public Gtk::Window
 {
@@ -42,6 +50,11 @@ class DockPreview : public Gtk::Window
         //typedef sigc::signal<void, WnckWindow*, int> type_signal_update;
         //type_signal_update signal_update();
 
+        static GdkPixbuf* GetPreviewImage(DockItem* item, guint& scaleWidth, guint& scaleHeight);
+        static Glib::RefPtr<Gdk::Pixbuf> LoadPreviewImage(DockItem* item);
+
+        static guint m_cellWidth;
+        static guint m_cellHeight;
 
     private:
 
@@ -58,9 +71,6 @@ class DockPreview : public Gtk::Window
         int m_currentIndex = -1;
         bool m_mouseIn = false;
 
-
-        guint m_cellWidth;
-        guint m_cellHeight;
 
         //std::thread* m_thread = nullptr;
        // static bool threadRunning;
@@ -89,7 +99,6 @@ class DockPreview : public Gtk::Window
         bool on_button_release_event(GdkEventButton *event);
         bool on_motion_notify_event(GdkEventMotion*event);
 
-        GdkPixbuf* GetPreviewImage(DockItem* item, guint& scaleWidth, guint& scaleHeight);
         bool ComparePixels (const Glib::RefPtr<Gdk::Pixbuf>& first_pixbuf, const Glib::RefPtr<Gdk::Pixbuf>& current_pixbuf);
         bool ComparePixels(const guint8* pixels, const GdkPixbuf* current_pixbuf);
         bool ComparePixels (const GdkPixbuf* pixbuf, const guint8* pixels_first, const guint8* pixels_current);

@@ -44,6 +44,7 @@ namespace Configuration
     guint m_separatorMargin = 10;
     int m_windowSize = 48;
     int m_previewSize = 24;
+    bool m_ismutter = true;
 
     panel_locationType m_location = panel_locationType::BOTTOM;
     Horizontal_alignment_type m_HorizontalAlignment =  Horizontal_alignment_type::CENTER;
@@ -143,11 +144,14 @@ namespace Configuration
         element = root->FirstChildElement("PanelMode");
         XMLCheckResult(element->QueryBoolText(&m_panelmode));
 
-        element = root->FirstChildElement("panelSize");
+        element = root->FirstChildElement("PanelSize");
         XMLCheckResult(element->QueryIntText(&m_windowSize));
 
-        element = root->FirstChildElement("previewSize");
+        element = root->FirstChildElement("PreviewSize");
         XMLCheckResult(element->QueryIntText(&m_previewSize));
+
+        element = root->FirstChildElement("IsMutter");
+        XMLCheckResult(element->QueryBoolText(&m_ismutter));
 
         element = root->FirstChildElement("Location");
         const char* location = element->GetText();
@@ -263,6 +267,12 @@ namespace Configuration
 
     Style::Theme get_Theme(){
         return m_theme;
+    }
+
+    bool is_mutter()
+    {
+        return m_ismutter;
+
     }
 
     Horizontal_alignment_type get_HorizontalAlignment()
