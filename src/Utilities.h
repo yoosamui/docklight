@@ -54,6 +54,10 @@ namespace Utilities
     bool CreateDirectoryIfNotExitst(const char* dirNamePath);
     bool CreateDirectory(const char* dirNamePath);
 
+    namespace X11
+    {
+        bool is_MutterWindowManager();
+    }
 
     namespace Messages
     {

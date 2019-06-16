@@ -25,7 +25,7 @@ dnl ======================================================
 #AC_PREFIX_PROGRAM ($INSTALLDIR)
 #AC_SUBST(INSTALLDIR)
 dnl ======================================================
-IT_PROG_INTLTOOL([0.35.0])  
+IT_PROG_INTLTOOL([0.35.0])
 
 GETTEXT_PACKAGE=$PACKAGE
 AC_SUBST(GETTEXT_PACKAGE)
@@ -48,11 +48,11 @@ AC_CONFIG_MACRO_DIR([m4])
 dnl ======================================================
 
 # This checks for the presence of gtkmm-3.0 and defines
-# GTKMM_LIBS and GTKMM_CFLAGS for use in Makefile.am files. 
+# GTKMM_LIBS and GTKMM_CFLAGS for use in Makefile.am files.
 PKG_CHECK_MODULES([GTKMM], [gtkmm-3.0 >= 3.8.0])
 
 # This checks for the presence of libwnck-3.0  and defines
-# WNCK_LIBS and WNCK_CFLAGS for use in Makefile.am files. 
+# WNCK_LIBS and WNCK_CFLAGS for use in Makefile.am files.
 PKG_CHECK_MODULES([WNCK], [libwnck-3.0 ] )
 
 #MM_PKG_CONFIG_SUBST([GTHREAD_LIBS], [--libs libwnck-3.0])
@@ -94,7 +94,7 @@ AC_CONFIG_FILES([
  Makefile
  data/Makefile
  data/icons/Makefile
- po/Makefile.in	
+ po/Makefile.in
  src/Makefile
 ])
 

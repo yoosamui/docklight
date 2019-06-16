@@ -90,6 +90,9 @@ DockPreview::DockPreview():Gtk::Window(Gtk::WindowType::WINDOW_POPUP)
     g_signal_connect(G_OBJECT(wnckscreen), "window-opened", G_CALLBACK(DockPreview::on_window_opened), NULL);
     g_signal_connect(wnckscreen, "window_closed", G_CALLBACK(DockPreview::on_window_closed), NULL);
 
+    // check if is Mutter
+    m_isMutterWindowManager = Utilities::X11::is_MutterWindowManager();
+
 }
 /**
  * Destructor
@@ -545,6 +548,12 @@ bool DockPreview::on_button_press_event(GdkEventButton *event)
 bool DockPreview::on_button_release_event(GdkEventButton *event)
 {
 
+
+
+
+
+
+
     if ((event->type != GDK_BUTTON_RELEASE)) {
         m_mouseDown = false;
         return true;
@@ -724,10 +733,9 @@ bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
             continue;
         }
 
-        // check witch WM is currently running
-        if ( (!item->m_image || item->m_isDynamic) && (!wnck_window_is_minimized(item->m_window) &&  WnckHandler::is_windowOnCurrentDesktop(item->m_window)))
+        if ( ((!item->m_image || item->m_isDynamic) &&  m_isMutterWindowManager) ||
+             ((!item->m_image || item->m_isDynamic) &&  !m_isMutterWindowManager && WnckHandler::is_windowOnCurrentDesktop(item->m_window) &&  !wnck_window_is_minimized(item->m_window) ))
         {
-
             auto winPixbuf = Utilities::Pixbuf::get_pixbufFromWindow(item->m_xid);
             if (winPixbuf) {
                 guint scaledWidth = 0;
@@ -752,7 +760,7 @@ bool DockPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
                             item->m_isDynamic = false;
                             item->m_firstImage = NULLPB;
 
-                            g_print("static: %s\n",item->get_windowName().c_str());
+                            g_print("static detected: %s\n",item->get_windowName().c_str());
                         }
                     }
 

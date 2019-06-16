@@ -38,8 +38,22 @@
 #include <gdk/gdkx.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include "DockWindow.h"
+
 namespace Utilities
 {
+    namespace X11
+    {
+        bool is_MutterWindowManager() {
+
+            GdkScreen* screen = gdk_screen_get_default();
+            const char* wm = gdk_x11_screen_get_window_manager_name(screen);
+            if (wm && strncmp(wm,"Mutter", 5) == 0) {
+                return true;
+            }
+
+            return false;
+        }
+    }
 
     namespace Pixbuf
     {

@@ -18,10 +18,12 @@ ALLDADDLIBS = $(GTKMM_LIBS)
 #ALLDADDLIBS +=$(WNCK_LIBS)
 docklight_LDADD = $(ALLDADDLIBS)
 #docklight_LDADD += -llibz
-
+#ALLCPPFLAGS +=  ${CXXFLAGS="-pedantic"}
+#AM_CPPFLAGS = $(CXXFLAGS="-g")
 
 #  flags for the C compiler & linker
-AM_CPPFLAGS = -g -Wall   -Wno-reorder -std=c++11  -pedantic
+AM_CPPFLAGS = -g -Wall   -Wno-reorder -std=c++11 -pedantic
+
 #-pthread
 #-pedantic  -lpthread
 

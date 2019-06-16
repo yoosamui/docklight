@@ -70,7 +70,7 @@ class DockPreview : public Gtk::Window
 
         int m_currentIndex = -1;
         bool m_mouseIn = false;
-
+        bool m_isMutterWindowManager = false;
 
         //std::thread* m_thread = nullptr;
        // static bool threadRunning;
