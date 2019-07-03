@@ -110,6 +110,9 @@ int AppWindow::init()
     this->show_all();
     this->m_screen.init(this);
     g_print("Monitor geometry ready. Monitor count = %d\n",this->m_screen.get_MonitorsCount());
+    g_print("Geometry: %d/%d\n", m_screen.get_PrimaryMonitor()->geometry.width, m_screen.get_NextMonitor()->geometry.height);
+
+
 
     // Load  configuration file
     Configuration::Load();
@@ -157,6 +160,8 @@ int AppWindow::init()
     return  m_dockpanel->Init(this);
 }
 
+bool setStartValues = false;
+
 /**
  * Auto hide this window if auto hide property is enabled.
  * @return true
@@ -196,7 +201,9 @@ bool AppWindow::autohideTimer()
         int currentPositionY = 0;
         float startPosition = 0.f;
         float endPosition = 0.f;
-
+        int resizeFrom = 0;
+        int resizeTo =0;
+        bool mode = 0;
         panel_locationType location = Configuration::get_dockWindowLocation();
 
         int xpos = 0;
@@ -279,22 +286,36 @@ bool AppWindow::autohideTimer()
                 {
                     // avoid hidden if the mouse in the margin area
                     int margin = Configuration::get_WindowDockMonitorMargin_Right();
-                    if (m_visible && margin > 0 && !this->m_mouseIn) {
+                    /*if (m_visible && margin > 0 && !this->m_mouseIn) {
                         Utilities::getMousePosition(mouseX, mouseY);
                         if (mouseX > DockWindow::Monitor::get_geometry().width - margin
                             && mouseY > ypos && mouseY < ypos + this->get_height()) {
                             m_timerStoped = true;
                             return true;
                         }
-                    }
+                    }*/
                     // set start and end position for hide/show
-                    if (m_visible) { // Hide
+                    if (m_visible && !setStartValues) { // Hide
                         startPosition = DockWindow::Monitor::get_geometry().width - ( margin + this->get_width() );
                         endPosition = startPosition + this->get_width() + margin - 1;
+
+                        mode = 0;
+                        resizeFrom = 0;
+                        resizeTo =0;
+                //        startPosition = 0;
+                //        endPosition = this->get_width();
+
+
+                  //      g_print("Sratrt set\n");
+            //          setStartValues = true;
+
+
+
                     }
                     else { // Show
                         startPosition =  DockWindow::Monitor::get_geometry().width  + this->get_width() + margin - 1;
                         endPosition = DockWindow::Monitor::get_geometry().width - ( margin + this->get_width() );
+                        mode = 1;
                     }
                     break;
                 }
@@ -306,6 +327,17 @@ bool AppWindow::autohideTimer()
                 startPosition,
                 endPosition,
                 &ofxeasing::linear::easeIn);
+
+
+        float positionResize = ofxeasing::map_clamp(now,
+                m_initTime,
+                endTime,
+                1.0, //startPosition,
+                0.0, //endPosition,
+                &ofxeasing::linear::easeIn);
+
+
+
 
         switch (location)
         {
@@ -322,14 +354,34 @@ bool AppWindow::autohideTimer()
         }
 
         //  ease move
-        this->move(currentPositionX, currentPositionY);
+//      g_print("size : %f %f\n",startPosition, endPosition);
+      g_print("size : %d %d opacity %f\n",currentPositionX, currentPositionY, positionResize);
+
+    if(mode == 0) {
+
+       this->set_opacity(positionResize );
+   //    this->resize(48 - positionResize, currentPositionY);
+    }
+    else
+    {
+
+       this->set_opacity(1.0 );
+//       this->resize( positionResize, currentPositionY);
+
+    }
+
+//       this->move(currentPositionX, currentPositionY);
+
+
+
 
         if (atime < m_easing_duration) {
             atime++;
         }
 
         // check the end of animation
-        if ((int)position == (int)endPosition) {
+        if (/*(int) position == 48 ||*/  (int)position == (int)endPosition) {
+                      setStartValues = false;
             m_initTime = 0;
             atime = 0;
             m_animate = false;
@@ -432,6 +484,8 @@ void AppWindow::monitor_changed_callback(GdkScreen *screen, gpointer gtkwindow)
 
 
 void AppWindow::window_geometry_changed_callback(WnckWindow *window, gpointer user_data){
+
+    g_print("Geometry: %d/%d\n", m_screen.get_PrimaryMonitor()->geometry.width, m_screen.get_NextMonitor()->geometry.height);
 }
 
 bool AppWindow::on_enter_notify_event(GdkEventCrossing* crossing_event)

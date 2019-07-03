@@ -6,7 +6,7 @@
     <Location>RIGHT</Location>
     <PanelSize>48</PanelSize>
     <PreviewSize>30</PreviewSize>
-    <UseStyle>default</UseStyle>
+    <UseStyle>medium_simple</UseStyle>
     <IsMutter>false</IsMutter>
 
     <Styles>

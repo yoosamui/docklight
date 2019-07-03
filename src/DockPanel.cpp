@@ -1281,7 +1281,7 @@ bool DockPanel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
     this->draw_Panel(cr);
     this->draw_Items(cr);
-    this->show_Title();
+//    this->show_Title();
 
     return true;
 }
