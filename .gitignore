@@ -16,7 +16,11 @@ src/.deps/
 *.ex
 *.EX
 *.in~
-*.pot
+*~
+*.swp
+*.deps
+.dirstamp
+:*.pot
 /ABOUT-NLS
 /Makefile
 /Makefile.in
