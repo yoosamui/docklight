@@ -9,9 +9,9 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
  /usr/include/glib-2.0/glib/galloca.h /usr/include/glib-2.0/glib/gtypes.h \
  /usr/lib/x86_64-linux-gnu/glib-2.0/include/glibconfig.h \
  /usr/include/glib-2.0/glib/gmacros.h \
- /usr/lib/gcc/x86_64-linux-gnu/7/include/stddef.h \
- /usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/limits.h \
- /usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/syslimits.h \
+ /usr/lib/gcc/x86_64-linux-gnu/8/include/stddef.h \
+ /usr/lib/gcc/x86_64-linux-gnu/8/include-fixed/limits.h \
+ /usr/lib/gcc/x86_64-linux-gnu/8/include-fixed/syslimits.h \
  /usr/include/limits.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/x86_64-linux-gnu/sys/cdefs.h \
@@ -25,7 +25,7 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
  /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
  /usr/include/x86_64-linux-gnu/bits/uio_lim.h \
- /usr/lib/gcc/x86_64-linux-gnu/7/include/float.h \
+ /usr/lib/gcc/x86_64-linux-gnu/8/include/float.h \
  /usr/include/glib-2.0/glib/gversionmacros.h /usr/include/time.h \
  /usr/include/x86_64-linux-gnu/bits/time.h \
  /usr/include/x86_64-linux-gnu/bits/types.h \
@@ -45,12 +45,12 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
  /usr/include/glib-2.0/glib/gasyncqueue.h \
  /usr/include/glib-2.0/glib/gthread.h \
  /usr/include/glib-2.0/glib/gatomic.h /usr/include/glib-2.0/glib/gerror.h \
- /usr/lib/gcc/x86_64-linux-gnu/7/include/stdarg.h \
+ /usr/lib/gcc/x86_64-linux-gnu/8/include/stdarg.h \
  /usr/include/glib-2.0/glib/gquark.h /usr/include/glib-2.0/glib/gutils.h \
- /usr/include/c++/7/stdlib.h /usr/include/c++/7/cstdlib \
- /usr/include/x86_64-linux-gnu/c++/7/bits/c++config.h \
- /usr/include/x86_64-linux-gnu/c++/7/bits/os_defines.h \
- /usr/include/x86_64-linux-gnu/c++/7/bits/cpu_defines.h \
+ /usr/include/c++/8/stdlib.h /usr/include/c++/8/cstdlib \
+ /usr/include/x86_64-linux-gnu/c++/8/bits/c++config.h \
+ /usr/include/x86_64-linux-gnu/c++/8/bits/os_defines.h \
+ /usr/include/x86_64-linux-gnu/c++/8/bits/cpu_defines.h \
  /usr/include/stdlib.h /usr/include/x86_64-linux-gnu/bits/waitflags.h \
  /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
  /usr/include/x86_64-linux-gnu/bits/floatn.h \
@@ -59,23 +59,18 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-intn.h /usr/include/endian.h \
  /usr/include/x86_64-linux-gnu/bits/endian.h \
  /usr/include/x86_64-linux-gnu/bits/byteswap.h \
- /usr/include/x86_64-linux-gnu/bits/byteswap-16.h \
  /usr/include/x86_64-linux-gnu/bits/uintn-identity.h \
  /usr/include/x86_64-linux-gnu/sys/select.h \
  /usr/include/x86_64-linux-gnu/bits/select.h \
  /usr/include/x86_64-linux-gnu/bits/types/sigset_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__sigset_t.h \
- /usr/include/x86_64-linux-gnu/bits/select2.h \
- /usr/include/x86_64-linux-gnu/sys/sysmacros.h \
- /usr/include/x86_64-linux-gnu/bits/sysmacros.h \
  /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
  /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
  /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
  /usr/include/alloca.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
- /usr/include/x86_64-linux-gnu/bits/stdlib.h \
- /usr/include/c++/7/bits/std_abs.h \
+ /usr/include/c++/8/bits/std_abs.h \
  /usr/include/glib-2.0/glib/gbacktrace.h /usr/include/signal.h \
  /usr/include/x86_64-linux-gnu/bits/signum.h \
  /usr/include/x86_64-linux-gnu/bits/signum-generic.h \
@@ -129,6 +124,10 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
  /usr/include/glib-2.0/glib/gpattern.h \
  /usr/include/glib-2.0/glib/gprimes.h /usr/include/glib-2.0/glib/gqsort.h \
  /usr/include/glib-2.0/glib/gqueue.h /usr/include/glib-2.0/glib/grand.h \
+ /usr/include/glib-2.0/glib/grcbox.h \
+ /usr/include/glib-2.0/glib/grefcount.h \
+ /usr/include/glib-2.0/glib/grefstring.h \
+ /usr/include/glib-2.0/glib/gmem.h /usr/include/glib-2.0/glib/gmacros.h \
  /usr/include/glib-2.0/glib/gregex.h \
  /usr/include/glib-2.0/glib/gscanner.h \
  /usr/include/glib-2.0/glib/gsequence.h \
@@ -137,10 +136,7 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
  /usr/include/glib-2.0/glib/gstrfuncs.h \
  /usr/include/glib-2.0/glib/gstringchunk.h \
  /usr/include/glib-2.0/glib/gtestutils.h /usr/include/string.h \
- /usr/include/strings.h \
- /usr/include/x86_64-linux-gnu/bits/strings_fortified.h \
- /usr/include/x86_64-linux-gnu/bits/string_fortified.h \
- /usr/include/glib-2.0/glib/gthreadpool.h \
+ /usr/include/strings.h /usr/include/glib-2.0/glib/gthreadpool.h \
  /usr/include/glib-2.0/glib/gtimer.h \
  /usr/include/glib-2.0/glib/gtrashstack.h \
  /usr/include/glib-2.0/glib/gtree.h \
@@ -153,99 +149,102 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
  /usr/include/glib-2.0/glib/deprecated/grel.h \
  /usr/include/glib-2.0/glib/deprecated/gthread.h /usr/include/pthread.h \
  /usr/include/sched.h /usr/include/x86_64-linux-gnu/bits/sched.h \
+ /usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h \
  /usr/include/x86_64-linux-gnu/bits/cpu-set.h \
  /usr/include/x86_64-linux-gnu/bits/setjmp.h \
- /usr/include/glib-2.0/glib/glib-autocleanups.h /usr/include/c++/7/cctype \
- /usr/include/ctype.h /usr/include/c++/7/iosfwd \
- /usr/include/c++/7/bits/stringfwd.h /usr/include/c++/7/bits/memoryfwd.h \
- /usr/include/c++/7/bits/postypes.h /usr/include/c++/7/cwchar \
+ /usr/include/glib-2.0/glib/glib-autocleanups.h /usr/include/c++/8/cctype \
+ /usr/include/ctype.h /usr/include/c++/8/iosfwd \
+ /usr/include/c++/8/bits/stringfwd.h /usr/include/c++/8/bits/memoryfwd.h \
+ /usr/include/c++/8/bits/postypes.h /usr/include/c++/8/cwchar \
  /usr/include/wchar.h /usr/include/x86_64-linux-gnu/bits/wchar.h \
  /usr/include/x86_64-linux-gnu/bits/types/wint_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__FILE.h \
  /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
- /usr/include/x86_64-linux-gnu/bits/wchar2.h /usr/include/c++/7/iterator \
- /usr/include/c++/7/bits/stl_iterator_base_types.h \
- /usr/include/c++/7/type_traits \
- /usr/include/c++/7/bits/stl_iterator_base_funcs.h \
- /usr/include/c++/7/bits/concept_check.h \
- /usr/include/c++/7/debug/assertions.h \
- /usr/include/c++/7/bits/stl_iterator.h \
- /usr/include/c++/7/bits/cpp_type_traits.h \
- /usr/include/c++/7/ext/type_traits.h /usr/include/c++/7/bits/move.h \
- /usr/include/c++/7/bits/ptr_traits.h /usr/include/c++/7/ostream \
- /usr/include/c++/7/ios /usr/include/c++/7/exception \
- /usr/include/c++/7/bits/exception.h \
- /usr/include/c++/7/bits/exception_ptr.h \
- /usr/include/c++/7/bits/exception_defines.h \
- /usr/include/c++/7/bits/cxxabi_init_exception.h \
- /usr/include/c++/7/typeinfo /usr/include/c++/7/bits/hash_bytes.h \
- /usr/include/c++/7/new /usr/include/c++/7/bits/nested_exception.h \
- /usr/include/c++/7/bits/char_traits.h \
- /usr/include/c++/7/bits/stl_algobase.h \
- /usr/include/c++/7/bits/functexcept.h \
- /usr/include/c++/7/ext/numeric_traits.h \
- /usr/include/c++/7/bits/stl_pair.h /usr/include/c++/7/debug/debug.h \
- /usr/include/c++/7/bits/predefined_ops.h /usr/include/c++/7/cstdint \
- /usr/lib/gcc/x86_64-linux-gnu/7/include/stdint.h /usr/include/stdint.h \
+ /usr/include/c++/8/iterator \
+ /usr/include/c++/8/bits/stl_iterator_base_types.h \
+ /usr/include/c++/8/type_traits \
+ /usr/include/c++/8/bits/stl_iterator_base_funcs.h \
+ /usr/include/c++/8/bits/concept_check.h \
+ /usr/include/c++/8/debug/assertions.h \
+ /usr/include/c++/8/bits/stl_iterator.h \
+ /usr/include/c++/8/bits/cpp_type_traits.h \
+ /usr/include/c++/8/ext/type_traits.h /usr/include/c++/8/bits/move.h \
+ /usr/include/c++/8/bits/ptr_traits.h /usr/include/c++/8/ostream \
+ /usr/include/c++/8/ios /usr/include/c++/8/exception \
+ /usr/include/c++/8/bits/exception.h \
+ /usr/include/c++/8/bits/exception_ptr.h \
+ /usr/include/c++/8/bits/exception_defines.h \
+ /usr/include/c++/8/bits/cxxabi_init_exception.h \
+ /usr/include/c++/8/typeinfo /usr/include/c++/8/bits/hash_bytes.h \
+ /usr/include/c++/8/new /usr/include/c++/8/bits/nested_exception.h \
+ /usr/include/c++/8/bits/char_traits.h \
+ /usr/include/c++/8/bits/stl_algobase.h \
+ /usr/include/c++/8/bits/functexcept.h \
+ /usr/include/c++/8/ext/numeric_traits.h \
+ /usr/include/c++/8/bits/stl_pair.h /usr/include/c++/8/debug/debug.h \
+ /usr/include/c++/8/bits/predefined_ops.h /usr/include/c++/8/cstdint \
+ /usr/lib/gcc/x86_64-linux-gnu/8/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
- /usr/include/c++/7/bits/localefwd.h \
- /usr/include/x86_64-linux-gnu/c++/7/bits/c++locale.h \
- /usr/include/c++/7/clocale /usr/include/locale.h \
+ /usr/include/c++/8/bits/localefwd.h \
+ /usr/include/x86_64-linux-gnu/c++/8/bits/c++locale.h \
+ /usr/include/c++/8/clocale /usr/include/locale.h \
  /usr/include/x86_64-linux-gnu/bits/locale.h \
- /usr/include/c++/7/bits/ios_base.h /usr/include/c++/7/ext/atomicity.h \
- /usr/include/x86_64-linux-gnu/c++/7/bits/gthr.h \
- /usr/include/x86_64-linux-gnu/c++/7/bits/gthr-default.h \
- /usr/include/x86_64-linux-gnu/c++/7/bits/atomic_word.h \
- /usr/include/c++/7/bits/locale_classes.h /usr/include/c++/7/string \
- /usr/include/c++/7/bits/allocator.h \
- /usr/include/x86_64-linux-gnu/c++/7/bits/c++allocator.h \
- /usr/include/c++/7/ext/new_allocator.h \
- /usr/include/c++/7/bits/ostream_insert.h \
- /usr/include/c++/7/bits/cxxabi_forced.h \
- /usr/include/c++/7/bits/stl_function.h \
- /usr/include/c++/7/backward/binders.h \
- /usr/include/c++/7/bits/range_access.h \
- /usr/include/c++/7/initializer_list \
- /usr/include/c++/7/bits/basic_string.h \
- /usr/include/c++/7/ext/alloc_traits.h \
- /usr/include/c++/7/bits/alloc_traits.h \
- /usr/include/c++/7/ext/string_conversions.h /usr/include/c++/7/cstdio \
- /usr/include/stdio.h /usr/include/x86_64-linux-gnu/bits/libio.h \
- /usr/include/x86_64-linux-gnu/bits/_G_config.h \
+ /usr/include/c++/8/bits/ios_base.h /usr/include/c++/8/ext/atomicity.h \
+ /usr/include/x86_64-linux-gnu/c++/8/bits/gthr.h \
+ /usr/include/x86_64-linux-gnu/c++/8/bits/gthr-default.h \
+ /usr/include/x86_64-linux-gnu/c++/8/bits/atomic_word.h \
+ /usr/include/c++/8/bits/locale_classes.h /usr/include/c++/8/string \
+ /usr/include/c++/8/bits/allocator.h \
+ /usr/include/x86_64-linux-gnu/c++/8/bits/c++allocator.h \
+ /usr/include/c++/8/ext/new_allocator.h \
+ /usr/include/c++/8/bits/ostream_insert.h \
+ /usr/include/c++/8/bits/cxxabi_forced.h \
+ /usr/include/c++/8/bits/stl_function.h \
+ /usr/include/c++/8/backward/binders.h \
+ /usr/include/c++/8/bits/range_access.h \
+ /usr/include/c++/8/initializer_list \
+ /usr/include/c++/8/bits/basic_string.h \
+ /usr/include/c++/8/ext/alloc_traits.h \
+ /usr/include/c++/8/bits/alloc_traits.h \
+ /usr/include/c++/8/ext/string_conversions.h /usr/include/c++/8/cstdio \
+ /usr/include/stdio.h /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
+ /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h \
+ /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
+ /usr/include/x86_64-linux-gnu/bits/types/cookie_io_functions_t.h \
  /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
  /usr/include/x86_64-linux-gnu/bits/sys_errlist.h \
- /usr/include/x86_64-linux-gnu/bits/stdio.h \
- /usr/include/x86_64-linux-gnu/bits/stdio2.h /usr/include/c++/7/cerrno \
+ /usr/include/x86_64-linux-gnu/bits/stdio.h /usr/include/c++/8/cerrno \
  /usr/include/errno.h /usr/include/x86_64-linux-gnu/bits/errno.h \
  /usr/include/linux/errno.h /usr/include/x86_64-linux-gnu/asm/errno.h \
  /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
- /usr/include/c++/7/bits/functional_hash.h \
- /usr/include/c++/7/bits/basic_string.tcc \
- /usr/include/c++/7/bits/locale_classes.tcc \
- /usr/include/c++/7/system_error \
- /usr/include/x86_64-linux-gnu/c++/7/bits/error_constants.h \
- /usr/include/c++/7/stdexcept /usr/include/c++/7/streambuf \
- /usr/include/c++/7/bits/streambuf.tcc \
- /usr/include/c++/7/bits/basic_ios.h \
- /usr/include/c++/7/bits/locale_facets.h /usr/include/c++/7/cwctype \
+ /usr/include/x86_64-linux-gnu/bits/types/error_t.h \
+ /usr/include/c++/8/bits/functional_hash.h \
+ /usr/include/c++/8/bits/basic_string.tcc \
+ /usr/include/c++/8/bits/locale_classes.tcc \
+ /usr/include/c++/8/system_error \
+ /usr/include/x86_64-linux-gnu/c++/8/bits/error_constants.h \
+ /usr/include/c++/8/stdexcept /usr/include/c++/8/streambuf \
+ /usr/include/c++/8/bits/streambuf.tcc \
+ /usr/include/c++/8/bits/basic_ios.h \
+ /usr/include/c++/8/bits/locale_facets.h /usr/include/c++/8/cwctype \
  /usr/include/wctype.h /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
- /usr/include/x86_64-linux-gnu/c++/7/bits/ctype_base.h \
- /usr/include/c++/7/bits/streambuf_iterator.h \
- /usr/include/x86_64-linux-gnu/c++/7/bits/ctype_inline.h \
- /usr/include/c++/7/bits/locale_facets.tcc \
- /usr/include/c++/7/bits/basic_ios.tcc \
- /usr/include/c++/7/bits/ostream.tcc /usr/include/c++/7/istream \
- /usr/include/c++/7/bits/istream.tcc \
- /usr/include/c++/7/bits/stream_iterator.h /usr/include/c++/7/sstream \
- /usr/include/c++/7/bits/sstream.tcc \
+ /usr/include/x86_64-linux-gnu/c++/8/bits/ctype_base.h \
+ /usr/include/c++/8/bits/streambuf_iterator.h \
+ /usr/include/x86_64-linux-gnu/c++/8/bits/ctype_inline.h \
+ /usr/include/c++/8/bits/locale_facets.tcc \
+ /usr/include/c++/8/bits/basic_ios.tcc \
+ /usr/include/c++/8/bits/ostream.tcc /usr/include/c++/8/istream \
+ /usr/include/c++/8/bits/istream.tcc \
+ /usr/include/c++/8/bits/stream_iterator.h /usr/include/c++/8/sstream \
+ /usr/include/c++/8/bits/sstream.tcc \
  /usr/include/sigc++-2.0/sigc++/sigc++.h \
- /usr/include/sigc++-2.0/sigc++/signal.h /usr/include/c++/7/list \
- /usr/include/c++/7/bits/stl_list.h \
- /usr/include/c++/7/bits/allocated_ptr.h \
- /usr/include/c++/7/ext/aligned_buffer.h /usr/include/c++/7/bits/list.tcc \
- /usr/include/sigc++-2.0/sigc++/signal_base.h /usr/include/c++/7/cstddef \
+ /usr/include/sigc++-2.0/sigc++/signal.h /usr/include/c++/8/list \
+ /usr/include/c++/8/bits/stl_list.h \
+ /usr/include/c++/8/bits/allocated_ptr.h \
+ /usr/include/c++/8/ext/aligned_buffer.h /usr/include/c++/8/bits/list.tcc \
+ /usr/include/sigc++-2.0/sigc++/signal_base.h /usr/include/c++/8/cstddef \
  /usr/lib/x86_64-linux-gnu/sigc++-2.0/include/sigc++config.h \
  /usr/include/sigc++-2.0/sigc++/type_traits.h \
  /usr/include/sigc++-2.0/sigc++/trackable.h \
@@ -263,11 +262,11 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
  /usr/include/sigc++-2.0/sigc++/adaptors/bind.h \
  /usr/include/sigc++-2.0/sigc++/adaptors/bound_argument.h \
  /usr/include/sigc++-2.0/sigc++/reference_wrapper.h \
- /usr/include/c++/7/functional /usr/include/c++/7/tuple \
- /usr/include/c++/7/utility /usr/include/c++/7/bits/stl_relops.h \
- /usr/include/c++/7/array /usr/include/c++/7/bits/uses_allocator.h \
- /usr/include/c++/7/bits/invoke.h /usr/include/c++/7/bits/std_function.h \
- /usr/include/c++/7/bits/refwrap.h \
+ /usr/include/c++/8/functional /usr/include/c++/8/tuple \
+ /usr/include/c++/8/utility /usr/include/c++/8/bits/stl_relops.h \
+ /usr/include/c++/8/array /usr/include/c++/8/bits/uses_allocator.h \
+ /usr/include/c++/8/bits/invoke.h /usr/include/c++/8/bits/refwrap.h \
+ /usr/include/c++/8/bits/std_function.h \
  /usr/include/sigc++-2.0/sigc++/adaptors/bind_return.h \
  /usr/include/sigc++-2.0/sigc++/adaptors/hide.h \
  /usr/include/sigc++-2.0/sigc++/adaptors/retype_return.h \
@@ -276,10 +275,10 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
  /usr/include/sigc++-2.0/sigc++/adaptors/exception_catch.h \
  /usr/include/sigc++-2.0/sigc++/adaptors/track_obj.h \
  /usr/include/sigc++-2.0/sigc++/functors/functors.h \
- /usr/include/c++/7/vector /usr/include/c++/7/bits/stl_construct.h \
- /usr/include/c++/7/bits/stl_uninitialized.h \
- /usr/include/c++/7/bits/stl_vector.h \
- /usr/include/c++/7/bits/stl_bvector.h /usr/include/c++/7/bits/vector.tcc \
+ /usr/include/c++/8/vector /usr/include/c++/8/bits/stl_construct.h \
+ /usr/include/c++/8/bits/stl_uninitialized.h \
+ /usr/include/c++/8/bits/stl_vector.h \
+ /usr/include/c++/8/bits/stl_bvector.h /usr/include/c++/8/bits/vector.tcc \
  /usr/include/gtkmm-3.0/gtkmm/actiongroup.h \
  /usr/include/gtkmm-3.0/gtkmm/widget.h \
  /usr/include/pangomm-1.4/pangomm/context.h \
@@ -315,23 +314,23 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
  /usr/include/glibmm-2.4/glibmm/value_custom.h \
  /usr/include/glibmm-2.4/glibmm/value_basictypes.h \
  /usr/include/glibmm-2.4/glibmm/quark.h \
- /usr/include/glibmm-2.4/glibmm/debug.h /usr/include/c++/7/map \
- /usr/include/c++/7/bits/stl_tree.h /usr/include/c++/7/bits/stl_map.h \
- /usr/include/c++/7/bits/stl_multimap.h /usr/include/c++/7/memory \
- /usr/include/c++/7/bits/stl_tempbuf.h \
- /usr/include/c++/7/bits/stl_raw_storage_iter.h \
- /usr/include/c++/7/ext/concurrence.h \
- /usr/include/c++/7/bits/unique_ptr.h \
- /usr/include/c++/7/bits/shared_ptr.h \
- /usr/include/c++/7/bits/shared_ptr_base.h \
- /usr/include/c++/7/bits/shared_ptr_atomic.h \
- /usr/include/c++/7/bits/atomic_base.h \
- /usr/include/c++/7/bits/atomic_lockfree_defines.h \
- /usr/include/c++/7/backward/auto_ptr.h /usr/include/c++/7/mutex \
- /usr/include/c++/7/chrono /usr/include/c++/7/ratio \
- /usr/include/c++/7/limits /usr/include/c++/7/ctime \
- /usr/include/c++/7/bits/parse_numbers.h \
- /usr/include/c++/7/bits/std_mutex.h \
+ /usr/include/glibmm-2.4/glibmm/debug.h /usr/include/c++/8/map \
+ /usr/include/c++/8/bits/stl_tree.h /usr/include/c++/8/bits/stl_map.h \
+ /usr/include/c++/8/bits/stl_multimap.h /usr/include/c++/8/memory \
+ /usr/include/c++/8/bits/stl_tempbuf.h \
+ /usr/include/c++/8/bits/stl_raw_storage_iter.h \
+ /usr/include/c++/8/ext/concurrence.h \
+ /usr/include/c++/8/bits/unique_ptr.h \
+ /usr/include/c++/8/bits/shared_ptr.h \
+ /usr/include/c++/8/bits/shared_ptr_base.h \
+ /usr/include/c++/8/bits/shared_ptr_atomic.h \
+ /usr/include/c++/8/bits/atomic_base.h \
+ /usr/include/c++/8/bits/atomic_lockfree_defines.h \
+ /usr/include/c++/8/backward/auto_ptr.h /usr/include/c++/8/mutex \
+ /usr/include/c++/8/chrono /usr/include/c++/8/ratio \
+ /usr/include/c++/8/limits /usr/include/c++/8/ctime \
+ /usr/include/c++/8/bits/parse_numbers.h \
+ /usr/include/c++/8/bits/std_mutex.h \
  /usr/include/glibmm-2.4/glibmm/wrap.h \
  /usr/include/glibmm-2.4/glibmm/utility.h \
  /usr/include/glibmm-2.4/glibmm/containerhandle_shared.h \
@@ -342,11 +341,11 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
  /usr/include/glibmm-2.4/glibmm/error.h \
  /usr/include/glibmm-2.4/glibmm/exception.h \
  /usr/include/glibmm-2.4/glibmm/variant_basictypes.h \
- /usr/include/c++/7/algorithm /usr/include/c++/7/bits/stl_algo.h \
- /usr/include/c++/7/bits/algorithmfwd.h \
- /usr/include/c++/7/bits/stl_heap.h \
- /usr/include/c++/7/bits/uniform_int_dist.h /usr/include/c++/7/deque \
- /usr/include/c++/7/bits/stl_deque.h /usr/include/c++/7/bits/deque.tcc \
+ /usr/include/c++/8/algorithm /usr/include/c++/8/bits/stl_algo.h \
+ /usr/include/c++/8/bits/algorithmfwd.h \
+ /usr/include/c++/8/bits/stl_heap.h \
+ /usr/include/c++/8/bits/uniform_int_dist.h /usr/include/c++/8/deque \
+ /usr/include/c++/8/bits/stl_deque.h /usr/include/c++/8/bits/deque.tcc \
  /usr/include/glibmm-2.4/glibmm/arrayhandle.h \
  /usr/include/glibmm-2.4/glibmm/listhandle.h \
  /usr/include/pangomm-1.4/pangomm/fontdescription.h \
@@ -395,7 +394,6 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
  /usr/include/freetype2/freetype/config/ftconfig.h \
  /usr/include/freetype2/freetype/config/ftoption.h \
  /usr/include/freetype2/freetype/config/ftstdlib.h /usr/include/setjmp.h \
- /usr/include/x86_64-linux-gnu/bits/setjmp2.h \
  /usr/include/freetype2/freetype/fttypes.h \
  /usr/include/freetype2/freetype/ftsystem.h \
  /usr/include/freetype2/freetype/ftimage.h \
@@ -405,6 +403,7 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
  /usr/include/fontconfig/fontconfig.h \
  /usr/include/x86_64-linux-gnu/sys/stat.h \
  /usr/include/x86_64-linux-gnu/bits/stat.h \
+ /usr/include/x86_64-linux-gnu/bits/statx.h \
  /usr/include/cairomm-1.0/cairomm/exception.h \
  /usr/include/cairomm-1.0/cairomm/device.h \
  /usr/include/cairomm-1.0/cairomm/types.h \
@@ -417,7 +416,7 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
  /usr/include/cairomm-1.0/cairomm/pattern.h \
  /usr/include/cairomm-1.0/cairomm/path.h \
  /usr/include/cairomm-1.0/cairomm/scaledfont.h \
- /usr/include/c++/7/valarray /usr/include/c++/7/cmath /usr/include/math.h \
+ /usr/include/c++/8/valarray /usr/include/c++/8/cmath /usr/include/math.h \
  /usr/include/x86_64-linux-gnu/bits/math-vector.h \
  /usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h \
  /usr/include/x86_64-linux-gnu/bits/flt-eval-method.h \
@@ -425,16 +424,17 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
  /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
  /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
+ /usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h \
  /usr/include/x86_64-linux-gnu/bits/iscanonical.h \
  /usr/include/x86_64-linux-gnu/bits/mathinline.h \
- /usr/include/c++/7/bits/valarray_array.h \
- /usr/include/c++/7/bits/valarray_array.tcc \
- /usr/include/c++/7/bits/valarray_before.h \
- /usr/include/c++/7/bits/slice_array.h \
- /usr/include/c++/7/bits/valarray_after.h \
- /usr/include/c++/7/bits/gslice.h /usr/include/c++/7/bits/gslice_array.h \
- /usr/include/c++/7/bits/mask_array.h \
- /usr/include/c++/7/bits/indirect_array.h \
+ /usr/include/c++/8/bits/valarray_array.h \
+ /usr/include/c++/8/bits/valarray_array.tcc \
+ /usr/include/c++/8/bits/valarray_before.h \
+ /usr/include/c++/8/bits/slice_array.h \
+ /usr/include/c++/8/bits/valarray_after.h \
+ /usr/include/c++/8/bits/gslice.h /usr/include/c++/8/bits/gslice_array.h \
+ /usr/include/c++/8/bits/mask_array.h \
+ /usr/include/c++/8/bits/indirect_array.h \
  /usr/include/pangomm-1.4/pangomm/layout.h \
  /usr/include/pangomm-1.4/pangomm/tabarray.h \
  /usr/include/pango-1.0/pango/pango-tabs.h \
@@ -487,7 +487,6 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/confname.h \
  /usr/include/x86_64-linux-gnu/bits/getopt_posix.h \
  /usr/include/x86_64-linux-gnu/bits/getopt_core.h \
- /usr/include/x86_64-linux-gnu/bits/unistd.h \
  /usr/include/glib-2.0/gio/gdatagrambased.h \
  /usr/include/glib-2.0/gio/gdatainputstream.h \
  /usr/include/glib-2.0/gio/gdataoutputstream.h \
@@ -794,6 +793,9 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
  /usr/include/gtk-3.0/gtk/gtkdrawingarea.h \
  /usr/include/gtk-3.0/gtk/gtkeventbox.h \
  /usr/include/gtk-3.0/gtk/gtkeventcontroller.h \
+ /usr/include/gtk-3.0/gtk/gtkeventcontrollerkey.h \
+ /usr/include/gtk-3.0/gtk/gtkeventcontrollermotion.h \
+ /usr/include/gtk-3.0/gtk/gtkeventcontrollerscroll.h \
  /usr/include/gtk-3.0/gtk/gtkexpander.h \
  /usr/include/gtk-3.0/gtk/gtkfixed.h \
  /usr/include/gtk-3.0/gtk/gtkfilechooser.h \
@@ -815,6 +817,7 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
  /usr/include/gtk-3.0/gtk/gtkgesturemultipress.h \
  /usr/include/gtk-3.0/gtk/gtkgesturepan.h \
  /usr/include/gtk-3.0/gtk/gtkgesturerotate.h \
+ /usr/include/gtk-3.0/gtk/gtkgesturestylus.h \
  /usr/include/gtk-3.0/gtk/gtkgestureswipe.h \
  /usr/include/gtk-3.0/gtk/gtkgesturezoom.h \
  /usr/include/gtk-3.0/gtk/gtkglarea.h /usr/include/gtk-3.0/gtk/gtkgrid.h \
@@ -1015,388 +1018,11 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
  /usr/include/giomm-2.4/giomm/notification.h \
  /usr/include/giomm-2.4/giomm/menumodel.h \
  /usr/include/giomm-2.4/giomm/menu.h \
- /usr/include/giomm-2.4/giomm/menuitem.h AppWindow.h \
- /usr/include/libwnck-3.0/libwnck/libwnck.h \
- /usr/include/libwnck-3.0/libwnck/window.h \
- /usr/include/libwnck-3.0/libwnck/screen.h \
- /usr/include/libwnck-3.0/libwnck/application.h \
- /usr/include/libwnck-3.0/libwnck/class-group.h \
- /usr/include/libwnck-3.0/libwnck/workspace.h \
- /usr/include/libwnck-3.0/libwnck/pager.h \
- /usr/include/libwnck-3.0/libwnck/tasklist.h \
- /usr/include/libwnck-3.0/libwnck/selector.h \
- /usr/include/libwnck-3.0/libwnck/window-action-menu.h \
- /usr/include/libwnck-3.0/libwnck/util.h \
- /usr/include/libwnck-3.0/libwnck/version.h \
- /usr/include/libwnck-3.0/libwnck/wnck-enum-types.h \
- /usr/include/gtkmm-3.0/gtkmm/window.h /usr/include/gtkmm-3.0/gtkmm/bin.h \
- /usr/include/gtkmm-3.0/gtkmm/container.h \
- /usr/include/gtkmm-3.0/gtkmm/childpropertyproxy.h \
- /usr/include/gtkmm-3.0/gtkmm/childpropertyproxy_base.h \
- /usr/include/gtkmm-3.0/gtkmm/windowgroup.h DockPanel.h \
- /usr/include/glibmm-2.4/glibmm/timer.h /usr/include/gtkmm-3.0/gtkmm.h \
- /usr/include/glibmm-2.4/glibmm.h /usr/include/glibmm-2.4/glibmm/thread.h \
- /usr/include/glibmm-2.4/glibmm/threads.h \
- /usr/include/glibmm-2.4/glibmm/balancedtree.h \
- /usr/include/glibmm-2.4/glibmm/base64.h \
- /usr/include/glibmm-2.4/glibmm/binding.h \
- /usr/include/glibmm-2.4/glibmm/bytearray.h \
- /usr/include/glibmm-2.4/glibmm/checksum.h \
- /usr/include/glibmm-2.4/glibmm/convert.h \
- /usr/include/glibmm-2.4/glibmm/date.h \
- /usr/include/glibmm-2.4/glibmm/dispatcher.h \
- /usr/include/glibmm-2.4/glibmm/main.h \
- /usr/include/glibmm-2.4/glibmm/exceptionhandler.h \
- /usr/include/glibmm-2.4/glibmm/fileutils.h \
- /usr/include/glibmm-2.4/glibmm/helperlist.h \
- /usr/include/glibmm-2.4/glibmm/containers.h \
- /usr/include/glibmm-2.4/glibmm/sarray.h \
- /usr/include/glibmm-2.4/glibmm/init.h \
- /usr/include/glibmm-2.4/glibmm/keyfile.h \
- /usr/include/glibmm-2.4/glibmm/streamiochannel.h \
- /usr/include/glibmm-2.4/glibmm/markup.h \
- /usr/include/glibmm-2.4/glibmm/miscutils.h \
- /usr/include/glibmm-2.4/glibmm/module.h \
- /usr/include/glibmm-2.4/glibmm/nodetree.h /usr/include/c++/7/stack \
- /usr/include/c++/7/bits/stl_stack.h \
- /usr/include/glibmm-2.4/glibmm/optioncontext.h \
- /usr/include/glibmm-2.4/glibmm/pattern.h \
- /usr/include/glibmm-2.4/glibmm/property.h \
- /usr/include/glibmm-2.4/glibmm/random.h \
- /usr/include/glibmm-2.4/glibmm/regex.h \
- /usr/include/glibmm-2.4/glibmm/shell.h \
- /usr/include/glibmm-2.4/glibmm/spawn.h \
- /usr/include/glibmm-2.4/glibmm/stringutils.h \
- /usr/include/glibmm-2.4/glibmm/threadpool.h \
- /usr/include/glibmm-2.4/glibmm/timezone.h \
- /usr/include/glibmm-2.4/glibmm/uriutils.h \
- /usr/include/glibmm-2.4/glibmm/valuearray.h \
- /usr/include/glibmm-2.4/glibmm/vectorutils.h \
- /usr/include/glibmm-2.4/glibmm/weakref.h /usr/include/giomm-2.4/giomm.h \
- /usr/include/giomm-2.4/giomm/bufferedinputstream.h \
- /usr/include/giomm-2.4/giomm/filterinputstream.h \
- /usr/include/giomm-2.4/giomm/bufferedoutputstream.h \
- /usr/include/giomm-2.4/giomm/filteroutputstream.h \
- /usr/include/giomm-2.4/giomm/charsetconverter.h \
- /usr/include/giomm-2.4/giomm/converter.h \
- /usr/include/giomm-2.4/giomm/contenttype.h \
- /usr/include/giomm-2.4/giomm/converterinputstream.h \
- /usr/include/giomm-2.4/giomm/pollableinputstream.h \
- /usr/include/giomm-2.4/giomm/converteroutputstream.h \
- /usr/include/giomm-2.4/giomm/pollableoutputstream.h \
- /usr/include/giomm-2.4/giomm/datainputstream.h \
- /usr/include/giomm-2.4/giomm/enums.h \
- /usr/include/giomm-2.4/giomm/dataoutputstream.h \
- /usr/include/giomm-2.4/giomm/dbusactiongroup.h \
- /usr/include/giomm-2.4/giomm/remoteactiongroup.h \
- /usr/include/giomm-2.4/giomm/dbusaddress.h \
- /usr/include/giomm-2.4/giomm/dbuserror.h \
- /usr/include/giomm-2.4/giomm/dbuserrorutils.h \
- /usr/include/giomm-2.4/giomm/dbusinterface.h \
- /usr/include/giomm-2.4/giomm/dbusmenumodel.h \
- /usr/include/giomm-2.4/giomm/dbusobject.h \
- /usr/include/giomm-2.4/giomm/dbusownname.h \
- /usr/include/giomm-2.4/giomm/dbusproxy.h \
- /usr/include/giomm-2.4/giomm/dbusserver.h \
- /usr/include/giomm-2.4/giomm/dbusutils.h \
- /usr/include/giomm-2.4/giomm/dbuswatchname.h \
- /usr/include/giomm-2.4/giomm/desktopappinfo.h \
- /usr/include/giomm-2.4/giomm/emblem.h \
- /usr/include/giomm-2.4/giomm/emblemedicon.h \
- /usr/include/giomm-2.4/giomm/fileicon.h \
- /usr/include/giomm-2.4/giomm/loadableicon.h \
- /usr/include/giomm-2.4/giomm/filenamecompleter.h \
- /usr/include/giomm-2.4/giomm/inetaddress.h \
- /usr/include/giomm-2.4/giomm/inetsocketaddress.h \
- /usr/include/giomm-2.4/giomm/socketaddress.h \
- /usr/include/giomm-2.4/giomm/socketconnectable.h \
- /usr/include/giomm-2.4/giomm/socketaddressenumerator.h \
- /usr/include/giomm-2.4/giomm/init.h \
- /usr/include/giomm-2.4/giomm/wrap_init.h \
- /usr/include/giomm-2.4/giomm/listmodel.h \
- /usr/include/giomm-2.4/giomm/liststore.h \
- /usr/include/giomm-2.4/giomm/memoryinputstream.h \
- /usr/include/giomm-2.4/giomm/memoryoutputstream.h \
- /usr/include/giomm-2.4/giomm/menuattributeiter.h \
- /usr/include/giomm-2.4/giomm/menulinkiter.h \
- /usr/include/giomm-2.4/giomm/networkaddress.h \
- /usr/include/giomm-2.4/giomm/networkservice.h \
- /usr/include/giomm-2.4/giomm/permission.h \
- /usr/include/giomm-2.4/giomm/proxy.h \
- /usr/include/giomm-2.4/giomm/proxyaddress.h \
- /usr/include/giomm-2.4/giomm/proxyresolver.h \
- /usr/include/giomm-2.4/giomm/resolver.h \
- /usr/include/giomm-2.4/giomm/srvtarget.h \
- /usr/include/giomm-2.4/giomm/resource.h \
- /usr/include/giomm-2.4/giomm/settings.h \
- /usr/include/giomm-2.4/giomm/settingsschema.h \
- /usr/include/giomm-2.4/giomm/settingsschemakey.h \
- /usr/include/giomm-2.4/giomm/settingsschemasource.h \
- /usr/include/giomm-2.4/giomm/simpleactiongroup.h \
- /usr/include/giomm-2.4/giomm/simpleiostream.h \
- /usr/include/giomm-2.4/giomm/simplepermission.h \
- /usr/include/giomm-2.4/giomm/socket.h \
- /usr/include/giomm-2.4/giomm/socketclient.h \
- /usr/include/giomm-2.4/giomm/socketconnection.h \
- /usr/include/giomm-2.4/giomm/socketcontrolmessage.h \
- /usr/include/giomm-2.4/giomm/socketlistener.h \
- /usr/include/giomm-2.4/giomm/socketservice.h \
- /usr/include/giomm-2.4/giomm/socketsource.h \
- /usr/include/giomm-2.4/giomm/tcpconnection.h \
- /usr/include/giomm-2.4/giomm/tcpwrapperconnection.h \
- /usr/include/giomm-2.4/giomm/themedicon.h \
- /usr/include/giomm-2.4/giomm/threadedsocketservice.h \
- /usr/include/giomm-2.4/giomm/tlscertificate.h \
- /usr/include/giomm-2.4/giomm/tlsclientconnection.h \
- /usr/include/giomm-2.4/giomm/tlsconnection.h \
- /usr/include/giomm-2.4/giomm/tlsdatabase.h \
- /usr/include/giomm-2.4/giomm/tlsinteraction.h \
- /usr/include/giomm-2.4/giomm/tlspassword.h \
- /usr/include/giomm-2.4/giomm/tlsserverconnection.h \
- /usr/include/giomm-2.4/giomm/unixconnection.h \
- /usr/include/giomm-2.4/giomm/unixcredentialsmessage.h \
- /usr/include/giomm-2.4/giomm/unixfdmessage.h \
- /usr/include/giomm-2.4/giomm/unixinputstream.h \
- /usr/include/giomm-2.4/giomm/unixoutputstream.h \
- /usr/include/giomm-2.4/giomm/unixsocketaddress.h \
- /usr/include/giomm-2.4/giomm/volume.h \
- /usr/include/giomm-2.4/giomm/volumemonitor.h \
- /usr/include/giomm-2.4/giomm/zlibcompressor.h \
- /usr/include/giomm-2.4/giomm/zlibdecompressor.h \
- /usr/include/gdkmm-3.0/gdkmm.h \
- /usr/include/gdkmm-3.0/gdkmm/pixbufanimation.h \
- /usr/include/gdkmm-3.0/gdkmm/pixbufanimationiter.h \
- /usr/include/gdkmm-3.0/gdkmm/pixbufloader.h \
- /usr/include/gdkmm-3.0/gdkmm/drawingcontext.h \
- /usr/include/gdkmm-3.0/gdkmm/glcontext.h \
- /usr/include/gdkmm-3.0/gdkmm/displaymanager.h \
- /usr/include/gdkmm-3.0/gdkmm/devicemanager.h \
- /usr/include/gdkmm-3.0/gdkmm/seat.h \
- /usr/include/gdkmm-3.0/gdkmm/monitor.h \
- /usr/include/gdkmm-3.0/gdkmm/general.h \
- /usr/include/gtkmm-3.0/gtkmm/toggleaction.h \
- /usr/include/gtkmm-3.0/gtkmm/radioaction.h \
- /usr/include/gtkmm-3.0/gtkmm/radiobuttongroup.h \
- /usr/include/gtkmm-3.0/gtkmm/aboutdialog.h \
- /usr/include/gtkmm-3.0/gtkmm/dialog.h /usr/include/gtkmm-3.0/gtkmm/box.h \
- /usr/include/gtkmm-3.0/gtkmm/orientable.h \
- /usr/include/gtkmm-3.0/gtkmm/hvbox.h \
- /usr/include/gtkmm-3.0/gtkmm/button.h \
- /usr/include/gtkmm-3.0/gtkmm/activatable.h \
- /usr/include/gtkmm-3.0/gtkmm/buttonbox.h \
- /usr/include/gtkmm-3.0/gtkmm/hvbuttonbox.h \
- /usr/include/gtkmm-3.0/gtkmm/headerbar.h \
- /usr/include/gtkmm-3.0/gtkmm/accelmap.h \
- /usr/include/gtkmm-3.0/gtkmm/actionable.h \
- /usr/include/gtkmm-3.0/gtkmm/actionbar.h \
- /usr/include/gtkmm-3.0/gtkmm/adjustment.h \
- /usr/include/gtkmm-3.0/gtkmm/alignment.h \
- /usr/include/gtkmm-3.0/gtkmm/appchooserbutton.h \
- /usr/include/gtkmm-3.0/gtkmm/appchooser.h \
- /usr/include/gtkmm-3.0/gtkmm/combobox.h \
- /usr/include/gtkmm-3.0/gtkmm/celllayout.h \
- /usr/include/gtkmm-3.0/gtkmm/cellrenderer.h \
- /usr/include/gtkmm-3.0/gtkmm/celleditable.h \
- /usr/include/gtkmm-3.0/gtkmm/cellrenderer_generation.h \
- /usr/include/gtkmm-3.0/gtkmm/cellrenderertext.h \
- /usr/include/gtkmm-3.0/gtkmm/cellrendererpixbuf.h \
- /usr/include/gtkmm-3.0/gtkmm/cellrenderertoggle.h \
- /usr/include/gtkmm-3.0/gtkmm/cellrendereraccel.h \
- /usr/include/gtkmm-3.0/gtkmm/treemodel.h \
- /usr/include/gtkmm-3.0/gtkmm/treeiter.h \
- /usr/include/gtkmm-3.0/gtkmm/treemodelcolumn.h \
- /usr/include/gtkmm-3.0/gtkmm/cellarea.h \
- /usr/include/gtkmm-3.0/gtkmm/cellareacontext.h \
- /usr/include/gtkmm-3.0/gtkmm/treeview.h \
- /usr/include/gtkmm-3.0/gtkmm/treeviewcolumn.h \
- /usr/include/gtkmm-3.0/gtkmm/treeselection.h \
- /usr/include/gtkmm-3.0/gtkmm/treepath.h \
- /usr/include/gtkmm-3.0/gtkmm/scrollable.h \
- /usr/include/gtkmm-3.0/gtkmm/entry.h \
- /usr/include/gtkmm-3.0/gtkmm/editable.h \
- /usr/include/gtkmm-3.0/gtkmm/menu.h \
- /usr/include/gtkmm-3.0/gtkmm/menushell.h \
- /usr/include/gtkmm-3.0/gtkmm/menuitem.h \
- /usr/include/gtkmm-3.0/gtkmm/accellabel.h \
- /usr/include/gtkmm-3.0/gtkmm/label.h /usr/include/gtkmm-3.0/gtkmm/misc.h \
- /usr/include/gtkmm-3.0/gtkmm/entrycompletion.h \
- /usr/include/gtkmm-3.0/gtkmm/image.h \
- /usr/include/gtkmm-3.0/gtkmm/entrybuffer.h \
- /usr/include/gtkmm-3.0/gtkmm/tooltip.h \
- /usr/include/gtkmm-3.0/gtkmm/appchooserdialog.h \
- /usr/include/gtkmm-3.0/gtkmm/appchooserwidget.h \
- /usr/include/gtkmm-3.0/gtkmm/applicationwindow.h \
- /usr/include/gtkmm-3.0/gtkmm/arrow.h \
- /usr/include/gtkmm-3.0/gtkmm/aspectframe.h \
- /usr/include/gtkmm-3.0/gtkmm/frame.h \
- /usr/include/gtkmm-3.0/gtkmm/assistant.h \
- /usr/include/gtkmm-3.0/gtkmm/builder.h \
- /usr/include/gtkmm-3.0/gtkmm/cellareabox.h \
- /usr/include/gtkmm-3.0/gtkmm/cellview.h \
- /usr/include/gtkmm-3.0/gtkmm/checkbutton.h \
- /usr/include/gtkmm-3.0/gtkmm/togglebutton.h \
- /usr/include/gtkmm-3.0/gtkmm/checkmenuitem.h \
- /usr/include/gtkmm-3.0/gtkmm/cellrenderercombo.h \
- /usr/include/gtkmm-3.0/gtkmm/cellrendererprogress.h \
- /usr/include/gtkmm-3.0/gtkmm/cellrendererspin.h \
- /usr/include/gtkmm-3.0/gtkmm/cellrendererspinner.h \
- /usr/include/gtkmm-3.0/gtkmm/colorbutton.h \
- /usr/include/gtkmm-3.0/gtkmm/colorchooser.h \
- /usr/include/gtkmm-3.0/gtkmm/colorchooserdialog.h \
- /usr/include/gtkmm-3.0/gtkmm/colorselection.h \
- /usr/include/gtkmm-3.0/gtkmm/comboboxtext.h \
- /usr/include/gtkmm-3.0/gtkmm/cssprovider.h \
- /usr/include/gtkmm-3.0/gtkmm/csssection.h \
- /usr/include/gtkmm-3.0/gtkmm/drawingarea.h \
- /usr/include/gtkmm-3.0/gtkmm/expander.h \
- /usr/include/gtkmm-3.0/gtkmm/eventbox.h \
- /usr/include/gtkmm-3.0/gtkmm/eventcontroller.h \
- /usr/include/gtkmm-3.0/gtkmm/filechooser.h \
- /usr/include/gtkmm-3.0/gtkmm/filefilter.h \
- /usr/include/gtkmm-3.0/gtkmm/filechooserbutton.h \
- /usr/include/gtkmm-3.0/gtkmm/filechooserdialog.h \
- /usr/include/gtkmm-3.0/gtkmm/filechooserwidget.h \
- /usr/include/gtkmm-3.0/gtkmm/fixed.h \
- /usr/include/gtkmm-3.0/gtkmm/flowbox.h \
- /usr/include/gtkmm-3.0/gtkmm/flowboxchild.h \
- /usr/include/gtkmm-3.0/gtkmm/fontbutton.h \
- /usr/include/gtkmm-3.0/gtkmm/fontchooser.h \
- /usr/include/gtkmm-3.0/gtkmm/fontchooserdialog.h \
- /usr/include/gtkmm-3.0/gtkmm/fontchooserwidget.h \
- /usr/include/gtkmm-3.0/gtkmm/fontselection.h \
- /usr/include/gtkmm-3.0/gtkmm/gesture.h \
- /usr/include/gtkmm-3.0/gtkmm/gesturedrag.h \
- /usr/include/gtkmm-3.0/gtkmm/gesturesingle.h \
- /usr/include/gtkmm-3.0/gtkmm/gesturelongpress.h \
- /usr/include/gtkmm-3.0/gtkmm/gesturemultipress.h \
- /usr/include/gtkmm-3.0/gtkmm/gesturepan.h \
- /usr/include/gtkmm-3.0/gtkmm/gesturerotate.h \
- /usr/include/gtkmm-3.0/gtkmm/gestureswipe.h \
- /usr/include/gtkmm-3.0/gtkmm/gesturezoom.h \
- /usr/include/gtkmm-3.0/gtkmm/glarea.h \
- /usr/include/gtkmm-3.0/gtkmm/grid.h \
- /usr/include/gtkmm-3.0/gtkmm/handlebox.h \
- /usr/include/gtkmm-3.0/gtkmm/hvpaned.h \
- /usr/include/gtkmm-3.0/gtkmm/paned.h \
- /usr/include/gtkmm-3.0/gtkmm/hvscale.h \
- /usr/include/gtkmm-3.0/gtkmm/scale.h \
- /usr/include/gtkmm-3.0/gtkmm/range.h \
- /usr/include/gtkmm-3.0/gtkmm/hvscrollbar.h \
- /usr/include/gtkmm-3.0/gtkmm/scrollbar.h \
- /usr/include/gtkmm-3.0/gtkmm/hvseparator.h \
- /usr/include/gtkmm-3.0/gtkmm/separator.h \
- /usr/include/gtkmm-3.0/gtkmm/iconfactory.h \
- /usr/include/gtkmm-3.0/gtkmm/icontheme.h \
- /usr/include/gtkmm-3.0/gtkmm/iconinfo.h \
- /usr/include/gtkmm-3.0/gtkmm/iconview.h \
- /usr/include/gtkmm-3.0/gtkmm/imagemenuitem.h \
- /usr/include/gtkmm-3.0/gtkmm/infobar.h \
- /usr/include/gtkmm-3.0/gtkmm/calendar.h \
- /usr/include/gtkmm-3.0/gtkmm/invisible.h \
- /usr/include/gtkmm-3.0/gtkmm/layout.h \
- /usr/include/gtkmm-3.0/gtkmm/levelbar.h \
- /usr/include/gtkmm-3.0/gtkmm/listbox.h \
- /usr/include/gtkmm-3.0/gtkmm/listboxrow.h \
- /usr/include/gtkmm-3.0/gtkmm/liststore.h \
- /usr/include/gtkmm-3.0/gtkmm/treesortable.h \
- /usr/include/gtkmm-3.0/gtkmm/treedragdest.h \
- /usr/include/gtkmm-3.0/gtkmm/treedragsource.h \
- /usr/include/gtkmm-3.0/gtkmm/listviewtext.h \
- /usr/include/gtkmm-3.0/gtkmm/linkbutton.h \
- /usr/include/gtkmm-3.0/gtkmm/main.h \
- /usr/include/gtkmm-3.0/gtkmm/menubar.h \
- /usr/include/gtkmm-3.0/gtkmm/menubutton.h \
- /usr/include/gtkmm-3.0/gtkmm/popover.h \
- /usr/include/gtkmm-3.0/gtkmm/messagedialog.h \
- /usr/include/gtkmm-3.0/gtkmm/modelbutton.h \
- /usr/include/gtkmm-3.0/gtkmm/notebook.h \
- /usr/include/gtkmm-3.0/gtkmm/numerableicon.h \
- /usr/include/gtkmm-3.0/gtkmm/offscreenwindow.h \
- /usr/include/gtkmm-3.0/gtkmm/overlay.h \
- /usr/include/gtkmm-3.0/gtkmm/pagesetup.h \
- /usr/include/gtkmm-3.0/gtkmm/papersize.h \
- /usr/include/gtkmm-3.0/gtkmm/pagesetupunixdialog.h \
- /usr/include/gtkmm-3.0/gtkmm/printsettings.h \
- /usr/include/gtkmm-3.0/gtkmm/placessidebar.h \
- /usr/include/gtkmm-3.0/gtkmm/scrolledwindow.h \
- /usr/include/gtkmm-3.0/gtkmm/popovermenu.h \
- /usr/include/gtkmm-3.0/gtkmm/printcontext.h \
- /usr/include/gtkmm-3.0/gtkmm/printer.h \
- /usr/include/gtkmm-3.0/gtkmm/printjob.h \
- /usr/include/gtkmm-3.0/gtkmm/printoperation.h \
- /usr/include/gtkmm-3.0/gtkmm/printoperationpreview.h \
- /usr/include/gtkmm-3.0/gtkmm/printunixdialog.h \
- /usr/include/gtkmm-3.0/gtkmm/progressbar.h \
- /usr/include/gtkmm-3.0/gtkmm/radiobutton.h \
- /usr/include/gtkmm-3.0/gtkmm/radiomenuitem.h \
- /usr/include/gtkmm-3.0/gtkmm/radiotoolbutton.h \
- /usr/include/gtkmm-3.0/gtkmm/toggletoolbutton.h \
- /usr/include/gtkmm-3.0/gtkmm/toolbutton.h \
- /usr/include/gtkmm-3.0/gtkmm/toolitem.h \
- /usr/include/gtkmm-3.0/gtkmm/sizegroup.h \
- /usr/include/gtkmm-3.0/gtkmm/recentaction.h \
- /usr/include/gtkmm-3.0/gtkmm/recentchooser.h \
- /usr/include/gtkmm-3.0/gtkmm/recentinfo.h \
- /usr/include/gtkmm-3.0/gtkmm/recentfilter.h \
- /usr/include/gtkmm-3.0/gtkmm/recentmanager.h \
- /usr/include/gtkmm-3.0/gtkmm/recentchooserdialog.h \
- /usr/include/gtkmm-3.0/gtkmm/recentchoosermenu.h \
- /usr/include/gtkmm-3.0/gtkmm/recentchooserwidget.h \
- /usr/include/gtkmm-3.0/gtkmm/revealer.h \
- /usr/include/gtkmm-3.0/gtkmm/scalebutton.h \
- /usr/include/gtkmm-3.0/gtkmm/searchbar.h \
- /usr/include/gtkmm-3.0/gtkmm/searchentry.h \
- /usr/include/gtkmm-3.0/gtkmm/separatormenuitem.h \
- /usr/include/gtkmm-3.0/gtkmm/separatortoolitem.h \
- /usr/include/gtkmm-3.0/gtkmm/settings.h \
- /usr/include/gtkmm-3.0/gtkmm/toolbar.h \
- /usr/include/gtkmm-3.0/gtkmm/toolshell.h \
- /usr/include/gtkmm-3.0/gtkmm/shortcutlabel.h \
- /usr/include/gtkmm-3.0/gtkmm/shortcutsgroup.h \
- /usr/include/gtkmm-3.0/gtkmm/shortcutssection.h \
- /usr/include/gtkmm-3.0/gtkmm/shortcutsshortcut.h \
- /usr/include/gtkmm-3.0/gtkmm/shortcutswindow.h \
- /usr/include/gtkmm-3.0/gtkmm/spinbutton.h \
- /usr/include/gtkmm-3.0/gtkmm/spinner.h \
- /usr/include/gtkmm-3.0/gtkmm/stack.h \
- /usr/include/gtkmm-3.0/gtkmm/stacksidebar.h \
- /usr/include/gtkmm-3.0/gtkmm/stackswitcher.h \
- /usr/include/gtkmm-3.0/gtkmm/statusbar.h \
- /usr/include/gtkmm-3.0/gtkmm/statusicon.h \
- /usr/include/gtkmm-3.0/gtkmm/stock.h \
- /usr/include/gtkmm-3.0/gtkmm/stockitem.h \
- /usr/include/gtkmm-3.0/gtkmm/styleproperty.h \
- /usr/include/gtkmm-3.0/gtkmm/switch.h \
- /usr/include/gtkmm-3.0/gtkmm/table.h \
- /usr/include/gtkmm-3.0/gtkmm/tearoffmenuitem.h \
- /usr/include/gtkmm-3.0/gtkmm/textbuffer.h \
- /usr/include/gtkmm-3.0/gtkmm/texttagtable.h \
- /usr/include/gtkmm-3.0/gtkmm/texttag.h \
- /usr/include/gtkmm-3.0/gtkmm/textchildanchor.h \
- /usr/include/gtkmm-3.0/gtkmm/textmark.h \
- /usr/include/gtkmm-3.0/gtkmm/textiter.h \
- /usr/include/gtkmm-3.0/gtkmm/textattributes.h \
- /usr/include/gtkmm-3.0/gtkmm/textview.h \
- /usr/include/gtkmm-3.0/gtkmm/toolpalette.h \
- /usr/include/gtkmm-3.0/gtkmm/toolitemgroup.h \
- /usr/include/gtkmm-3.0/gtkmm/menutoolbutton.h \
- /usr/include/gtkmm-3.0/gtkmm/treemodelfilter.h \
- /usr/include/gtkmm-3.0/gtkmm/treemodelsort.h \
- /usr/include/gtkmm-3.0/gtkmm/treerowreference.h \
- /usr/include/gtkmm-3.0/gtkmm/treestore.h \
- /usr/include/gtkmm-3.0/gtkmm/uimanager.h \
- /usr/include/gtkmm-3.0/gtkmm/viewport.h \
- /usr/include/gtkmm-3.0/gtkmm/volumebutton.h Configuration.h DockItem.h \
- LauncherWindow.h AppUpdater.h SessionWindow.h Utilities.h \
- /usr/include/c++/7/math.h IconLoader.h TitleWindow.h DockMenu.h \
- /usr/include/glibmm-2.4/glibmm/i18n.h /usr/include/glib-2.0/glib/gi18n.h \
- /usr/include/libintl.h DockPreview.h /usr/include/c++/7/thread About.h \
- Screen.h Struts.h ../config.h /usr/include/gtk-3.0/gtk/gtk.h \
- /usr/include/c++/7/iostream /usr/include/gtk-3.0/gdk/gdkx.h \
- /usr/include/X11/Xlib.h /usr/include/X11/X.h \
- /usr/include/X11/Xfuncproto.h /usr/include/X11/Xosdefs.h \
- /usr/include/X11/Xutil.h /usr/include/X11/keysym.h \
- /usr/include/X11/keysymdef.h \
+ /usr/include/giomm-2.4/giomm/menuitem.h ../config.h \
+ /usr/include/gtk-3.0/gdk/gdkx.h /usr/include/X11/Xlib.h \
+ /usr/include/X11/X.h /usr/include/X11/Xfuncproto.h \
+ /usr/include/X11/Xosdefs.h /usr/include/X11/Xutil.h \
+ /usr/include/X11/keysym.h /usr/include/X11/keysymdef.h \
  /usr/include/gtk-3.0/gdk/x11/gdkx11applaunchcontext.h \
  /usr/include/gtk-3.0/gdk/x11/gdkx11cursor.h \
  /usr/include/gtk-3.0/gdk/x11/gdkx11device.h \
@@ -1417,7 +1043,15 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
  /usr/include/gtk-3.0/gdk/x11/gdkx11utils.h \
  /usr/include/gtk-3.0/gdk/x11/gdkx11visual.h \
  /usr/include/gtk-3.0/gdk/x11/gdkx11window.h \
- /usr/include/gtk-3.0/gdk/x11/gdkx-autocleanups.h
+ /usr/include/gtk-3.0/gdk/x11/gdkx-autocleanups.h \
+ /usr/include/glibmm-2.4/glibmm/i18n.h /usr/include/glib-2.0/glib/gi18n.h \
+ /usr/include/libintl.h /usr/include/gtkmm-3.0/gtkmm/main.h \
+ /usr/include/glibmm-2.4/glibmm/optioncontext.h appwindow.h \
+ /usr/include/gtkmm-3.0/gtkmm/window.h /usr/include/gtkmm-3.0/gtkmm/bin.h \
+ /usr/include/gtkmm-3.0/gtkmm/container.h \
+ /usr/include/gtkmm-3.0/gtkmm/childpropertyproxy.h \
+ /usr/include/gtkmm-3.0/gtkmm/childpropertyproxy_base.h \
+ /usr/include/gtkmm-3.0/gtkmm/windowgroup.h common.h
 
 /usr/include/stdc-predef.h:
 
@@ -1445,11 +1079,11 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
 
 /usr/include/glib-2.0/glib/gmacros.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/7/include/stddef.h:
+/usr/lib/gcc/x86_64-linux-gnu/8/include/stddef.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/limits.h:
+/usr/lib/gcc/x86_64-linux-gnu/8/include-fixed/limits.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed/syslimits.h:
+/usr/lib/gcc/x86_64-linux-gnu/8/include-fixed/syslimits.h:
 
 /usr/include/limits.h:
 
@@ -1479,7 +1113,7 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
 
 /usr/include/x86_64-linux-gnu/bits/uio_lim.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/7/include/float.h:
+/usr/lib/gcc/x86_64-linux-gnu/8/include/float.h:
 
 /usr/include/glib-2.0/glib/gversionmacros.h:
 
@@ -1523,21 +1157,21 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
 
 /usr/include/glib-2.0/glib/gerror.h:
 
-/usr/lib/gcc/x86_64-linux-gnu/7/include/stdarg.h:
+/usr/lib/gcc/x86_64-linux-gnu/8/include/stdarg.h:
 
 /usr/include/glib-2.0/glib/gquark.h:
 
 /usr/include/glib-2.0/glib/gutils.h:
 
-/usr/include/c++/7/stdlib.h:
+/usr/include/c++/8/stdlib.h:
 
-/usr/include/c++/7/cstdlib:
+/usr/include/c++/8/cstdlib:
 
-/usr/include/x86_64-linux-gnu/c++/7/bits/c++config.h:
+/usr/include/x86_64-linux-gnu/c++/8/bits/c++config.h:
 
-/usr/include/x86_64-linux-gnu/c++/7/bits/os_defines.h:
+/usr/include/x86_64-linux-gnu/c++/8/bits/os_defines.h:
 
-/usr/include/x86_64-linux-gnu/c++/7/bits/cpu_defines.h:
+/usr/include/x86_64-linux-gnu/c++/8/bits/cpu_defines.h:
 
 /usr/include/stdlib.h:
 
@@ -1559,8 +1193,6 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
 
 /usr/include/x86_64-linux-gnu/bits/byteswap.h:
 
-/usr/include/x86_64-linux-gnu/bits/byteswap-16.h:
-
 /usr/include/x86_64-linux-gnu/bits/uintn-identity.h:
 
 /usr/include/x86_64-linux-gnu/sys/select.h:
@@ -1570,12 +1202,6 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
 /usr/include/x86_64-linux-gnu/bits/types/sigset_t.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/__sigset_t.h:
-
-/usr/include/x86_64-linux-gnu/bits/select2.h:
-
-/usr/include/x86_64-linux-gnu/sys/sysmacros.h:
-
-/usr/include/x86_64-linux-gnu/bits/sysmacros.h:
 
 /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h:
 
@@ -1589,9 +1215,7 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
 
 /usr/include/x86_64-linux-gnu/bits/stdlib-float.h:
 
-/usr/include/x86_64-linux-gnu/bits/stdlib.h:
-
-/usr/include/c++/7/bits/std_abs.h:
+/usr/include/c++/8/bits/std_abs.h:
 
 /usr/include/glib-2.0/glib/gbacktrace.h:
 
@@ -1721,6 +1345,16 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
 
 /usr/include/glib-2.0/glib/grand.h:
 
+/usr/include/glib-2.0/glib/grcbox.h:
+
+/usr/include/glib-2.0/glib/grefcount.h:
+
+/usr/include/glib-2.0/glib/grefstring.h:
+
+/usr/include/glib-2.0/glib/gmem.h:
+
+/usr/include/glib-2.0/glib/gmacros.h:
+
 /usr/include/glib-2.0/glib/gregex.h:
 
 /usr/include/glib-2.0/glib/gscanner.h:
@@ -1742,10 +1376,6 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
 /usr/include/string.h:
 
 /usr/include/strings.h:
-
-/usr/include/x86_64-linux-gnu/bits/strings_fortified.h:
-
-/usr/include/x86_64-linux-gnu/bits/string_fortified.h:
 
 /usr/include/glib-2.0/glib/gthreadpool.h:
 
@@ -1779,25 +1409,27 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
 
 /usr/include/x86_64-linux-gnu/bits/sched.h:
 
+/usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h:
+
 /usr/include/x86_64-linux-gnu/bits/cpu-set.h:
 
 /usr/include/x86_64-linux-gnu/bits/setjmp.h:
 
 /usr/include/glib-2.0/glib/glib-autocleanups.h:
 
-/usr/include/c++/7/cctype:
+/usr/include/c++/8/cctype:
 
 /usr/include/ctype.h:
 
-/usr/include/c++/7/iosfwd:
+/usr/include/c++/8/iosfwd:
 
-/usr/include/c++/7/bits/stringfwd.h:
+/usr/include/c++/8/bits/stringfwd.h:
 
-/usr/include/c++/7/bits/memoryfwd.h:
+/usr/include/c++/8/bits/memoryfwd.h:
 
-/usr/include/c++/7/bits/postypes.h:
+/usr/include/c++/8/bits/postypes.h:
 
-/usr/include/c++/7/cwchar:
+/usr/include/c++/8/cwchar:
 
 /usr/include/wchar.h:
 
@@ -1813,131 +1445,133 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
 
 /usr/include/x86_64-linux-gnu/bits/types/FILE.h:
 
-/usr/include/x86_64-linux-gnu/bits/wchar2.h:
+/usr/include/c++/8/iterator:
 
-/usr/include/c++/7/iterator:
+/usr/include/c++/8/bits/stl_iterator_base_types.h:
 
-/usr/include/c++/7/bits/stl_iterator_base_types.h:
+/usr/include/c++/8/type_traits:
 
-/usr/include/c++/7/type_traits:
+/usr/include/c++/8/bits/stl_iterator_base_funcs.h:
 
-/usr/include/c++/7/bits/stl_iterator_base_funcs.h:
+/usr/include/c++/8/bits/concept_check.h:
 
-/usr/include/c++/7/bits/concept_check.h:
+/usr/include/c++/8/debug/assertions.h:
 
-/usr/include/c++/7/debug/assertions.h:
+/usr/include/c++/8/bits/stl_iterator.h:
 
-/usr/include/c++/7/bits/stl_iterator.h:
+/usr/include/c++/8/bits/cpp_type_traits.h:
 
-/usr/include/c++/7/bits/cpp_type_traits.h:
+/usr/include/c++/8/ext/type_traits.h:
 
-/usr/include/c++/7/ext/type_traits.h:
+/usr/include/c++/8/bits/move.h:
 
-/usr/include/c++/7/bits/move.h:
+/usr/include/c++/8/bits/ptr_traits.h:
 
-/usr/include/c++/7/bits/ptr_traits.h:
+/usr/include/c++/8/ostream:
 
-/usr/include/c++/7/ostream:
+/usr/include/c++/8/ios:
 
-/usr/include/c++/7/ios:
+/usr/include/c++/8/exception:
 
-/usr/include/c++/7/exception:
+/usr/include/c++/8/bits/exception.h:
 
-/usr/include/c++/7/bits/exception.h:
+/usr/include/c++/8/bits/exception_ptr.h:
 
-/usr/include/c++/7/bits/exception_ptr.h:
+/usr/include/c++/8/bits/exception_defines.h:
 
-/usr/include/c++/7/bits/exception_defines.h:
+/usr/include/c++/8/bits/cxxabi_init_exception.h:
 
-/usr/include/c++/7/bits/cxxabi_init_exception.h:
+/usr/include/c++/8/typeinfo:
 
-/usr/include/c++/7/typeinfo:
+/usr/include/c++/8/bits/hash_bytes.h:
 
-/usr/include/c++/7/bits/hash_bytes.h:
+/usr/include/c++/8/new:
 
-/usr/include/c++/7/new:
+/usr/include/c++/8/bits/nested_exception.h:
 
-/usr/include/c++/7/bits/nested_exception.h:
+/usr/include/c++/8/bits/char_traits.h:
 
-/usr/include/c++/7/bits/char_traits.h:
+/usr/include/c++/8/bits/stl_algobase.h:
 
-/usr/include/c++/7/bits/stl_algobase.h:
+/usr/include/c++/8/bits/functexcept.h:
 
-/usr/include/c++/7/bits/functexcept.h:
+/usr/include/c++/8/ext/numeric_traits.h:
 
-/usr/include/c++/7/ext/numeric_traits.h:
+/usr/include/c++/8/bits/stl_pair.h:
 
-/usr/include/c++/7/bits/stl_pair.h:
+/usr/include/c++/8/debug/debug.h:
 
-/usr/include/c++/7/debug/debug.h:
+/usr/include/c++/8/bits/predefined_ops.h:
 
-/usr/include/c++/7/bits/predefined_ops.h:
+/usr/include/c++/8/cstdint:
 
-/usr/include/c++/7/cstdint:
-
-/usr/lib/gcc/x86_64-linux-gnu/7/include/stdint.h:
+/usr/lib/gcc/x86_64-linux-gnu/8/include/stdint.h:
 
 /usr/include/stdint.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h:
 
-/usr/include/c++/7/bits/localefwd.h:
+/usr/include/c++/8/bits/localefwd.h:
 
-/usr/include/x86_64-linux-gnu/c++/7/bits/c++locale.h:
+/usr/include/x86_64-linux-gnu/c++/8/bits/c++locale.h:
 
-/usr/include/c++/7/clocale:
+/usr/include/c++/8/clocale:
 
 /usr/include/locale.h:
 
 /usr/include/x86_64-linux-gnu/bits/locale.h:
 
-/usr/include/c++/7/bits/ios_base.h:
+/usr/include/c++/8/bits/ios_base.h:
 
-/usr/include/c++/7/ext/atomicity.h:
+/usr/include/c++/8/ext/atomicity.h:
 
-/usr/include/x86_64-linux-gnu/c++/7/bits/gthr.h:
+/usr/include/x86_64-linux-gnu/c++/8/bits/gthr.h:
 
-/usr/include/x86_64-linux-gnu/c++/7/bits/gthr-default.h:
+/usr/include/x86_64-linux-gnu/c++/8/bits/gthr-default.h:
 
-/usr/include/x86_64-linux-gnu/c++/7/bits/atomic_word.h:
+/usr/include/x86_64-linux-gnu/c++/8/bits/atomic_word.h:
 
-/usr/include/c++/7/bits/locale_classes.h:
+/usr/include/c++/8/bits/locale_classes.h:
 
-/usr/include/c++/7/string:
+/usr/include/c++/8/string:
 
-/usr/include/c++/7/bits/allocator.h:
+/usr/include/c++/8/bits/allocator.h:
 
-/usr/include/x86_64-linux-gnu/c++/7/bits/c++allocator.h:
+/usr/include/x86_64-linux-gnu/c++/8/bits/c++allocator.h:
 
-/usr/include/c++/7/ext/new_allocator.h:
+/usr/include/c++/8/ext/new_allocator.h:
 
-/usr/include/c++/7/bits/ostream_insert.h:
+/usr/include/c++/8/bits/ostream_insert.h:
 
-/usr/include/c++/7/bits/cxxabi_forced.h:
+/usr/include/c++/8/bits/cxxabi_forced.h:
 
-/usr/include/c++/7/bits/stl_function.h:
+/usr/include/c++/8/bits/stl_function.h:
 
-/usr/include/c++/7/backward/binders.h:
+/usr/include/c++/8/backward/binders.h:
 
-/usr/include/c++/7/bits/range_access.h:
+/usr/include/c++/8/bits/range_access.h:
 
-/usr/include/c++/7/initializer_list:
+/usr/include/c++/8/initializer_list:
 
-/usr/include/c++/7/bits/basic_string.h:
+/usr/include/c++/8/bits/basic_string.h:
 
-/usr/include/c++/7/ext/alloc_traits.h:
+/usr/include/c++/8/ext/alloc_traits.h:
 
-/usr/include/c++/7/bits/alloc_traits.h:
+/usr/include/c++/8/bits/alloc_traits.h:
 
-/usr/include/c++/7/ext/string_conversions.h:
+/usr/include/c++/8/ext/string_conversions.h:
 
-/usr/include/c++/7/cstdio:
+/usr/include/c++/8/cstdio:
 
 /usr/include/stdio.h:
 
-/usr/include/x86_64-linux-gnu/bits/libio.h:
+/usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h:
 
-/usr/include/x86_64-linux-gnu/bits/_G_config.h:
+/usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/cookie_io_functions_t.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdio_lim.h:
 
@@ -1945,9 +1579,7 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
 
 /usr/include/x86_64-linux-gnu/bits/stdio.h:
 
-/usr/include/x86_64-linux-gnu/bits/stdio2.h:
-
-/usr/include/c++/7/cerrno:
+/usr/include/c++/8/cerrno:
 
 /usr/include/errno.h:
 
@@ -1961,71 +1593,73 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
 
 /usr/include/asm-generic/errno-base.h:
 
-/usr/include/c++/7/bits/functional_hash.h:
+/usr/include/x86_64-linux-gnu/bits/types/error_t.h:
 
-/usr/include/c++/7/bits/basic_string.tcc:
+/usr/include/c++/8/bits/functional_hash.h:
 
-/usr/include/c++/7/bits/locale_classes.tcc:
+/usr/include/c++/8/bits/basic_string.tcc:
 
-/usr/include/c++/7/system_error:
+/usr/include/c++/8/bits/locale_classes.tcc:
 
-/usr/include/x86_64-linux-gnu/c++/7/bits/error_constants.h:
+/usr/include/c++/8/system_error:
 
-/usr/include/c++/7/stdexcept:
+/usr/include/x86_64-linux-gnu/c++/8/bits/error_constants.h:
 
-/usr/include/c++/7/streambuf:
+/usr/include/c++/8/stdexcept:
 
-/usr/include/c++/7/bits/streambuf.tcc:
+/usr/include/c++/8/streambuf:
 
-/usr/include/c++/7/bits/basic_ios.h:
+/usr/include/c++/8/bits/streambuf.tcc:
 
-/usr/include/c++/7/bits/locale_facets.h:
+/usr/include/c++/8/bits/basic_ios.h:
 
-/usr/include/c++/7/cwctype:
+/usr/include/c++/8/bits/locale_facets.h:
+
+/usr/include/c++/8/cwctype:
 
 /usr/include/wctype.h:
 
 /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h:
 
-/usr/include/x86_64-linux-gnu/c++/7/bits/ctype_base.h:
+/usr/include/x86_64-linux-gnu/c++/8/bits/ctype_base.h:
 
-/usr/include/c++/7/bits/streambuf_iterator.h:
+/usr/include/c++/8/bits/streambuf_iterator.h:
 
-/usr/include/x86_64-linux-gnu/c++/7/bits/ctype_inline.h:
+/usr/include/x86_64-linux-gnu/c++/8/bits/ctype_inline.h:
 
-/usr/include/c++/7/bits/locale_facets.tcc:
+/usr/include/c++/8/bits/locale_facets.tcc:
 
-/usr/include/c++/7/bits/basic_ios.tcc:
+/usr/include/c++/8/bits/basic_ios.tcc:
 
-/usr/include/c++/7/bits/ostream.tcc:
+/usr/include/c++/8/bits/ostream.tcc:
 
-/usr/include/c++/7/istream:
+/usr/include/c++/8/istream:
 
-/usr/include/c++/7/bits/istream.tcc:
+/usr/include/c++/8/bits/istream.tcc:
 
-/usr/include/c++/7/bits/stream_iterator.h:
+/usr/include/c++/8/bits/stream_iterator.h:
 
-/usr/include/c++/7/sstream:
+/usr/include/c++/8/sstream:
 
-/usr/include/c++/7/bits/sstream.tcc:
+/usr/include/c++/8/bits/sstream.tcc:
 
 /usr/include/sigc++-2.0/sigc++/sigc++.h:
 
 /usr/include/sigc++-2.0/sigc++/signal.h:
 
-/usr/include/c++/7/list:
+/usr/include/c++/8/list:
 
-/usr/include/c++/7/bits/stl_list.h:
+/usr/include/c++/8/bits/stl_list.h:
 
-/usr/include/c++/7/bits/allocated_ptr.h:
+/usr/include/c++/8/bits/allocated_ptr.h:
 
-/usr/include/c++/7/ext/aligned_buffer.h:
+/usr/include/c++/8/ext/aligned_buffer.h:
 
-/usr/include/c++/7/bits/list.tcc:
+/usr/include/c++/8/bits/list.tcc:
 
 /usr/include/sigc++-2.0/sigc++/signal_base.h:
 
-/usr/include/c++/7/cstddef:
+/usr/include/c++/8/cstddef:
 
 /usr/lib/x86_64-linux-gnu/sigc++-2.0/include/sigc++config.h:
 
@@ -2061,23 +1695,23 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
 
 /usr/include/sigc++-2.0/sigc++/reference_wrapper.h:
 
-/usr/include/c++/7/functional:
+/usr/include/c++/8/functional:
 
-/usr/include/c++/7/tuple:
+/usr/include/c++/8/tuple:
 
-/usr/include/c++/7/utility:
+/usr/include/c++/8/utility:
 
-/usr/include/c++/7/bits/stl_relops.h:
+/usr/include/c++/8/bits/stl_relops.h:
 
-/usr/include/c++/7/array:
+/usr/include/c++/8/array:
 
-/usr/include/c++/7/bits/uses_allocator.h:
+/usr/include/c++/8/bits/uses_allocator.h:
 
-/usr/include/c++/7/bits/invoke.h:
+/usr/include/c++/8/bits/invoke.h:
 
-/usr/include/c++/7/bits/std_function.h:
+/usr/include/c++/8/bits/refwrap.h:
 
-/usr/include/c++/7/bits/refwrap.h:
+/usr/include/c++/8/bits/std_function.h:
 
 /usr/include/sigc++-2.0/sigc++/adaptors/bind_return.h:
 
@@ -2095,17 +1729,17 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
 
 /usr/include/sigc++-2.0/sigc++/functors/functors.h:
 
-/usr/include/c++/7/vector:
+/usr/include/c++/8/vector:
 
-/usr/include/c++/7/bits/stl_construct.h:
+/usr/include/c++/8/bits/stl_construct.h:
 
-/usr/include/c++/7/bits/stl_uninitialized.h:
+/usr/include/c++/8/bits/stl_uninitialized.h:
 
-/usr/include/c++/7/bits/stl_vector.h:
+/usr/include/c++/8/bits/stl_vector.h:
 
-/usr/include/c++/7/bits/stl_bvector.h:
+/usr/include/c++/8/bits/stl_bvector.h:
 
-/usr/include/c++/7/bits/vector.tcc:
+/usr/include/c++/8/bits/vector.tcc:
 
 /usr/include/gtkmm-3.0/gtkmm/actiongroup.h:
 
@@ -2179,49 +1813,49 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
 
 /usr/include/glibmm-2.4/glibmm/debug.h:
 
-/usr/include/c++/7/map:
+/usr/include/c++/8/map:
 
-/usr/include/c++/7/bits/stl_tree.h:
+/usr/include/c++/8/bits/stl_tree.h:
 
-/usr/include/c++/7/bits/stl_map.h:
+/usr/include/c++/8/bits/stl_map.h:
 
-/usr/include/c++/7/bits/stl_multimap.h:
+/usr/include/c++/8/bits/stl_multimap.h:
 
-/usr/include/c++/7/memory:
+/usr/include/c++/8/memory:
 
-/usr/include/c++/7/bits/stl_tempbuf.h:
+/usr/include/c++/8/bits/stl_tempbuf.h:
 
-/usr/include/c++/7/bits/stl_raw_storage_iter.h:
+/usr/include/c++/8/bits/stl_raw_storage_iter.h:
 
-/usr/include/c++/7/ext/concurrence.h:
+/usr/include/c++/8/ext/concurrence.h:
 
-/usr/include/c++/7/bits/unique_ptr.h:
+/usr/include/c++/8/bits/unique_ptr.h:
 
-/usr/include/c++/7/bits/shared_ptr.h:
+/usr/include/c++/8/bits/shared_ptr.h:
 
-/usr/include/c++/7/bits/shared_ptr_base.h:
+/usr/include/c++/8/bits/shared_ptr_base.h:
 
-/usr/include/c++/7/bits/shared_ptr_atomic.h:
+/usr/include/c++/8/bits/shared_ptr_atomic.h:
 
-/usr/include/c++/7/bits/atomic_base.h:
+/usr/include/c++/8/bits/atomic_base.h:
 
-/usr/include/c++/7/bits/atomic_lockfree_defines.h:
+/usr/include/c++/8/bits/atomic_lockfree_defines.h:
 
-/usr/include/c++/7/backward/auto_ptr.h:
+/usr/include/c++/8/backward/auto_ptr.h:
 
-/usr/include/c++/7/mutex:
+/usr/include/c++/8/mutex:
 
-/usr/include/c++/7/chrono:
+/usr/include/c++/8/chrono:
 
-/usr/include/c++/7/ratio:
+/usr/include/c++/8/ratio:
 
-/usr/include/c++/7/limits:
+/usr/include/c++/8/limits:
 
-/usr/include/c++/7/ctime:
+/usr/include/c++/8/ctime:
 
-/usr/include/c++/7/bits/parse_numbers.h:
+/usr/include/c++/8/bits/parse_numbers.h:
 
-/usr/include/c++/7/bits/std_mutex.h:
+/usr/include/c++/8/bits/std_mutex.h:
 
 /usr/include/glibmm-2.4/glibmm/wrap.h:
 
@@ -2243,21 +1877,21 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
 
 /usr/include/glibmm-2.4/glibmm/variant_basictypes.h:
 
-/usr/include/c++/7/algorithm:
+/usr/include/c++/8/algorithm:
 
-/usr/include/c++/7/bits/stl_algo.h:
+/usr/include/c++/8/bits/stl_algo.h:
 
-/usr/include/c++/7/bits/algorithmfwd.h:
+/usr/include/c++/8/bits/algorithmfwd.h:
 
-/usr/include/c++/7/bits/stl_heap.h:
+/usr/include/c++/8/bits/stl_heap.h:
 
-/usr/include/c++/7/bits/uniform_int_dist.h:
+/usr/include/c++/8/bits/uniform_int_dist.h:
 
-/usr/include/c++/7/deque:
+/usr/include/c++/8/deque:
 
-/usr/include/c++/7/bits/stl_deque.h:
+/usr/include/c++/8/bits/stl_deque.h:
 
-/usr/include/c++/7/bits/deque.tcc:
+/usr/include/c++/8/bits/deque.tcc:
 
 /usr/include/glibmm-2.4/glibmm/arrayhandle.h:
 
@@ -2365,8 +1999,6 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
 
 /usr/include/setjmp.h:
 
-/usr/include/x86_64-linux-gnu/bits/setjmp2.h:
-
 /usr/include/freetype2/freetype/fttypes.h:
 
 /usr/include/freetype2/freetype/ftsystem.h:
@@ -2384,6 +2016,8 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
 /usr/include/x86_64-linux-gnu/sys/stat.h:
 
 /usr/include/x86_64-linux-gnu/bits/stat.h:
+
+/usr/include/x86_64-linux-gnu/bits/statx.h:
 
 /usr/include/cairomm-1.0/cairomm/exception.h:
 
@@ -2411,9 +2045,9 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
 
 /usr/include/cairomm-1.0/cairomm/scaledfont.h:
 
-/usr/include/c++/7/valarray:
+/usr/include/c++/8/valarray:
 
-/usr/include/c++/7/cmath:
+/usr/include/c++/8/cmath:
 
 /usr/include/math.h:
 
@@ -2431,27 +2065,29 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
 
 /usr/include/x86_64-linux-gnu/bits/mathcalls.h:
 
+/usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h:
+
 /usr/include/x86_64-linux-gnu/bits/iscanonical.h:
 
 /usr/include/x86_64-linux-gnu/bits/mathinline.h:
 
-/usr/include/c++/7/bits/valarray_array.h:
+/usr/include/c++/8/bits/valarray_array.h:
 
-/usr/include/c++/7/bits/valarray_array.tcc:
+/usr/include/c++/8/bits/valarray_array.tcc:
 
-/usr/include/c++/7/bits/valarray_before.h:
+/usr/include/c++/8/bits/valarray_before.h:
 
-/usr/include/c++/7/bits/slice_array.h:
+/usr/include/c++/8/bits/slice_array.h:
 
-/usr/include/c++/7/bits/valarray_after.h:
+/usr/include/c++/8/bits/valarray_after.h:
 
-/usr/include/c++/7/bits/gslice.h:
+/usr/include/c++/8/bits/gslice.h:
 
-/usr/include/c++/7/bits/gslice_array.h:
+/usr/include/c++/8/bits/gslice_array.h:
 
-/usr/include/c++/7/bits/mask_array.h:
+/usr/include/c++/8/bits/mask_array.h:
 
-/usr/include/c++/7/bits/indirect_array.h:
+/usr/include/c++/8/bits/indirect_array.h:
 
 /usr/include/pangomm-1.4/pangomm/layout.h:
 
@@ -2564,8 +2200,6 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
 /usr/include/x86_64-linux-gnu/bits/getopt_posix.h:
 
 /usr/include/x86_64-linux-gnu/bits/getopt_core.h:
-
-/usr/include/x86_64-linux-gnu/bits/unistd.h:
 
 /usr/include/glib-2.0/gio/gdatagrambased.h:
 
@@ -3217,6 +2851,12 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
 
 /usr/include/gtk-3.0/gtk/gtkeventcontroller.h:
 
+/usr/include/gtk-3.0/gtk/gtkeventcontrollerkey.h:
+
+/usr/include/gtk-3.0/gtk/gtkeventcontrollermotion.h:
+
+/usr/include/gtk-3.0/gtk/gtkeventcontrollerscroll.h:
+
 /usr/include/gtk-3.0/gtk/gtkexpander.h:
 
 /usr/include/gtk-3.0/gtk/gtkfixed.h:
@@ -3258,6 +2898,8 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
 /usr/include/gtk-3.0/gtk/gtkgesturepan.h:
 
 /usr/include/gtk-3.0/gtk/gtkgesturerotate.h:
+
+/usr/include/gtk-3.0/gtk/gtkgesturestylus.h:
 
 /usr/include/gtk-3.0/gtk/gtkgestureswipe.h:
 
@@ -3665,807 +3307,7 @@ docklight-main.o: main.cpp /usr/include/stdc-predef.h \
 
 /usr/include/giomm-2.4/giomm/menuitem.h:
 
-AppWindow.h:
-
-/usr/include/libwnck-3.0/libwnck/libwnck.h:
-
-/usr/include/libwnck-3.0/libwnck/window.h:
-
-/usr/include/libwnck-3.0/libwnck/screen.h:
-
-/usr/include/libwnck-3.0/libwnck/application.h:
-
-/usr/include/libwnck-3.0/libwnck/class-group.h:
-
-/usr/include/libwnck-3.0/libwnck/workspace.h:
-
-/usr/include/libwnck-3.0/libwnck/pager.h:
-
-/usr/include/libwnck-3.0/libwnck/tasklist.h:
-
-/usr/include/libwnck-3.0/libwnck/selector.h:
-
-/usr/include/libwnck-3.0/libwnck/window-action-menu.h:
-
-/usr/include/libwnck-3.0/libwnck/util.h:
-
-/usr/include/libwnck-3.0/libwnck/version.h:
-
-/usr/include/libwnck-3.0/libwnck/wnck-enum-types.h:
-
-/usr/include/gtkmm-3.0/gtkmm/window.h:
-
-/usr/include/gtkmm-3.0/gtkmm/bin.h:
-
-/usr/include/gtkmm-3.0/gtkmm/container.h:
-
-/usr/include/gtkmm-3.0/gtkmm/childpropertyproxy.h:
-
-/usr/include/gtkmm-3.0/gtkmm/childpropertyproxy_base.h:
-
-/usr/include/gtkmm-3.0/gtkmm/windowgroup.h:
-
-DockPanel.h:
-
-/usr/include/glibmm-2.4/glibmm/timer.h:
-
-/usr/include/gtkmm-3.0/gtkmm.h:
-
-/usr/include/glibmm-2.4/glibmm.h:
-
-/usr/include/glibmm-2.4/glibmm/thread.h:
-
-/usr/include/glibmm-2.4/glibmm/threads.h:
-
-/usr/include/glibmm-2.4/glibmm/balancedtree.h:
-
-/usr/include/glibmm-2.4/glibmm/base64.h:
-
-/usr/include/glibmm-2.4/glibmm/binding.h:
-
-/usr/include/glibmm-2.4/glibmm/bytearray.h:
-
-/usr/include/glibmm-2.4/glibmm/checksum.h:
-
-/usr/include/glibmm-2.4/glibmm/convert.h:
-
-/usr/include/glibmm-2.4/glibmm/date.h:
-
-/usr/include/glibmm-2.4/glibmm/dispatcher.h:
-
-/usr/include/glibmm-2.4/glibmm/main.h:
-
-/usr/include/glibmm-2.4/glibmm/exceptionhandler.h:
-
-/usr/include/glibmm-2.4/glibmm/fileutils.h:
-
-/usr/include/glibmm-2.4/glibmm/helperlist.h:
-
-/usr/include/glibmm-2.4/glibmm/containers.h:
-
-/usr/include/glibmm-2.4/glibmm/sarray.h:
-
-/usr/include/glibmm-2.4/glibmm/init.h:
-
-/usr/include/glibmm-2.4/glibmm/keyfile.h:
-
-/usr/include/glibmm-2.4/glibmm/streamiochannel.h:
-
-/usr/include/glibmm-2.4/glibmm/markup.h:
-
-/usr/include/glibmm-2.4/glibmm/miscutils.h:
-
-/usr/include/glibmm-2.4/glibmm/module.h:
-
-/usr/include/glibmm-2.4/glibmm/nodetree.h:
-
-/usr/include/c++/7/stack:
-
-/usr/include/c++/7/bits/stl_stack.h:
-
-/usr/include/glibmm-2.4/glibmm/optioncontext.h:
-
-/usr/include/glibmm-2.4/glibmm/pattern.h:
-
-/usr/include/glibmm-2.4/glibmm/property.h:
-
-/usr/include/glibmm-2.4/glibmm/random.h:
-
-/usr/include/glibmm-2.4/glibmm/regex.h:
-
-/usr/include/glibmm-2.4/glibmm/shell.h:
-
-/usr/include/glibmm-2.4/glibmm/spawn.h:
-
-/usr/include/glibmm-2.4/glibmm/stringutils.h:
-
-/usr/include/glibmm-2.4/glibmm/threadpool.h:
-
-/usr/include/glibmm-2.4/glibmm/timezone.h:
-
-/usr/include/glibmm-2.4/glibmm/uriutils.h:
-
-/usr/include/glibmm-2.4/glibmm/valuearray.h:
-
-/usr/include/glibmm-2.4/glibmm/vectorutils.h:
-
-/usr/include/glibmm-2.4/glibmm/weakref.h:
-
-/usr/include/giomm-2.4/giomm.h:
-
-/usr/include/giomm-2.4/giomm/bufferedinputstream.h:
-
-/usr/include/giomm-2.4/giomm/filterinputstream.h:
-
-/usr/include/giomm-2.4/giomm/bufferedoutputstream.h:
-
-/usr/include/giomm-2.4/giomm/filteroutputstream.h:
-
-/usr/include/giomm-2.4/giomm/charsetconverter.h:
-
-/usr/include/giomm-2.4/giomm/converter.h:
-
-/usr/include/giomm-2.4/giomm/contenttype.h:
-
-/usr/include/giomm-2.4/giomm/converterinputstream.h:
-
-/usr/include/giomm-2.4/giomm/pollableinputstream.h:
-
-/usr/include/giomm-2.4/giomm/converteroutputstream.h:
-
-/usr/include/giomm-2.4/giomm/pollableoutputstream.h:
-
-/usr/include/giomm-2.4/giomm/datainputstream.h:
-
-/usr/include/giomm-2.4/giomm/enums.h:
-
-/usr/include/giomm-2.4/giomm/dataoutputstream.h:
-
-/usr/include/giomm-2.4/giomm/dbusactiongroup.h:
-
-/usr/include/giomm-2.4/giomm/remoteactiongroup.h:
-
-/usr/include/giomm-2.4/giomm/dbusaddress.h:
-
-/usr/include/giomm-2.4/giomm/dbuserror.h:
-
-/usr/include/giomm-2.4/giomm/dbuserrorutils.h:
-
-/usr/include/giomm-2.4/giomm/dbusinterface.h:
-
-/usr/include/giomm-2.4/giomm/dbusmenumodel.h:
-
-/usr/include/giomm-2.4/giomm/dbusobject.h:
-
-/usr/include/giomm-2.4/giomm/dbusownname.h:
-
-/usr/include/giomm-2.4/giomm/dbusproxy.h:
-
-/usr/include/giomm-2.4/giomm/dbusserver.h:
-
-/usr/include/giomm-2.4/giomm/dbusutils.h:
-
-/usr/include/giomm-2.4/giomm/dbuswatchname.h:
-
-/usr/include/giomm-2.4/giomm/desktopappinfo.h:
-
-/usr/include/giomm-2.4/giomm/emblem.h:
-
-/usr/include/giomm-2.4/giomm/emblemedicon.h:
-
-/usr/include/giomm-2.4/giomm/fileicon.h:
-
-/usr/include/giomm-2.4/giomm/loadableicon.h:
-
-/usr/include/giomm-2.4/giomm/filenamecompleter.h:
-
-/usr/include/giomm-2.4/giomm/inetaddress.h:
-
-/usr/include/giomm-2.4/giomm/inetsocketaddress.h:
-
-/usr/include/giomm-2.4/giomm/socketaddress.h:
-
-/usr/include/giomm-2.4/giomm/socketconnectable.h:
-
-/usr/include/giomm-2.4/giomm/socketaddressenumerator.h:
-
-/usr/include/giomm-2.4/giomm/init.h:
-
-/usr/include/giomm-2.4/giomm/wrap_init.h:
-
-/usr/include/giomm-2.4/giomm/listmodel.h:
-
-/usr/include/giomm-2.4/giomm/liststore.h:
-
-/usr/include/giomm-2.4/giomm/memoryinputstream.h:
-
-/usr/include/giomm-2.4/giomm/memoryoutputstream.h:
-
-/usr/include/giomm-2.4/giomm/menuattributeiter.h:
-
-/usr/include/giomm-2.4/giomm/menulinkiter.h:
-
-/usr/include/giomm-2.4/giomm/networkaddress.h:
-
-/usr/include/giomm-2.4/giomm/networkservice.h:
-
-/usr/include/giomm-2.4/giomm/permission.h:
-
-/usr/include/giomm-2.4/giomm/proxy.h:
-
-/usr/include/giomm-2.4/giomm/proxyaddress.h:
-
-/usr/include/giomm-2.4/giomm/proxyresolver.h:
-
-/usr/include/giomm-2.4/giomm/resolver.h:
-
-/usr/include/giomm-2.4/giomm/srvtarget.h:
-
-/usr/include/giomm-2.4/giomm/resource.h:
-
-/usr/include/giomm-2.4/giomm/settings.h:
-
-/usr/include/giomm-2.4/giomm/settingsschema.h:
-
-/usr/include/giomm-2.4/giomm/settingsschemakey.h:
-
-/usr/include/giomm-2.4/giomm/settingsschemasource.h:
-
-/usr/include/giomm-2.4/giomm/simpleactiongroup.h:
-
-/usr/include/giomm-2.4/giomm/simpleiostream.h:
-
-/usr/include/giomm-2.4/giomm/simplepermission.h:
-
-/usr/include/giomm-2.4/giomm/socket.h:
-
-/usr/include/giomm-2.4/giomm/socketclient.h:
-
-/usr/include/giomm-2.4/giomm/socketconnection.h:
-
-/usr/include/giomm-2.4/giomm/socketcontrolmessage.h:
-
-/usr/include/giomm-2.4/giomm/socketlistener.h:
-
-/usr/include/giomm-2.4/giomm/socketservice.h:
-
-/usr/include/giomm-2.4/giomm/socketsource.h:
-
-/usr/include/giomm-2.4/giomm/tcpconnection.h:
-
-/usr/include/giomm-2.4/giomm/tcpwrapperconnection.h:
-
-/usr/include/giomm-2.4/giomm/themedicon.h:
-
-/usr/include/giomm-2.4/giomm/threadedsocketservice.h:
-
-/usr/include/giomm-2.4/giomm/tlscertificate.h:
-
-/usr/include/giomm-2.4/giomm/tlsclientconnection.h:
-
-/usr/include/giomm-2.4/giomm/tlsconnection.h:
-
-/usr/include/giomm-2.4/giomm/tlsdatabase.h:
-
-/usr/include/giomm-2.4/giomm/tlsinteraction.h:
-
-/usr/include/giomm-2.4/giomm/tlspassword.h:
-
-/usr/include/giomm-2.4/giomm/tlsserverconnection.h:
-
-/usr/include/giomm-2.4/giomm/unixconnection.h:
-
-/usr/include/giomm-2.4/giomm/unixcredentialsmessage.h:
-
-/usr/include/giomm-2.4/giomm/unixfdmessage.h:
-
-/usr/include/giomm-2.4/giomm/unixinputstream.h:
-
-/usr/include/giomm-2.4/giomm/unixoutputstream.h:
-
-/usr/include/giomm-2.4/giomm/unixsocketaddress.h:
-
-/usr/include/giomm-2.4/giomm/volume.h:
-
-/usr/include/giomm-2.4/giomm/volumemonitor.h:
-
-/usr/include/giomm-2.4/giomm/zlibcompressor.h:
-
-/usr/include/giomm-2.4/giomm/zlibdecompressor.h:
-
-/usr/include/gdkmm-3.0/gdkmm.h:
-
-/usr/include/gdkmm-3.0/gdkmm/pixbufanimation.h:
-
-/usr/include/gdkmm-3.0/gdkmm/pixbufanimationiter.h:
-
-/usr/include/gdkmm-3.0/gdkmm/pixbufloader.h:
-
-/usr/include/gdkmm-3.0/gdkmm/drawingcontext.h:
-
-/usr/include/gdkmm-3.0/gdkmm/glcontext.h:
-
-/usr/include/gdkmm-3.0/gdkmm/displaymanager.h:
-
-/usr/include/gdkmm-3.0/gdkmm/devicemanager.h:
-
-/usr/include/gdkmm-3.0/gdkmm/seat.h:
-
-/usr/include/gdkmm-3.0/gdkmm/monitor.h:
-
-/usr/include/gdkmm-3.0/gdkmm/general.h:
-
-/usr/include/gtkmm-3.0/gtkmm/toggleaction.h:
-
-/usr/include/gtkmm-3.0/gtkmm/radioaction.h:
-
-/usr/include/gtkmm-3.0/gtkmm/radiobuttongroup.h:
-
-/usr/include/gtkmm-3.0/gtkmm/aboutdialog.h:
-
-/usr/include/gtkmm-3.0/gtkmm/dialog.h:
-
-/usr/include/gtkmm-3.0/gtkmm/box.h:
-
-/usr/include/gtkmm-3.0/gtkmm/orientable.h:
-
-/usr/include/gtkmm-3.0/gtkmm/hvbox.h:
-
-/usr/include/gtkmm-3.0/gtkmm/button.h:
-
-/usr/include/gtkmm-3.0/gtkmm/activatable.h:
-
-/usr/include/gtkmm-3.0/gtkmm/buttonbox.h:
-
-/usr/include/gtkmm-3.0/gtkmm/hvbuttonbox.h:
-
-/usr/include/gtkmm-3.0/gtkmm/headerbar.h:
-
-/usr/include/gtkmm-3.0/gtkmm/accelmap.h:
-
-/usr/include/gtkmm-3.0/gtkmm/actionable.h:
-
-/usr/include/gtkmm-3.0/gtkmm/actionbar.h:
-
-/usr/include/gtkmm-3.0/gtkmm/adjustment.h:
-
-/usr/include/gtkmm-3.0/gtkmm/alignment.h:
-
-/usr/include/gtkmm-3.0/gtkmm/appchooserbutton.h:
-
-/usr/include/gtkmm-3.0/gtkmm/appchooser.h:
-
-/usr/include/gtkmm-3.0/gtkmm/combobox.h:
-
-/usr/include/gtkmm-3.0/gtkmm/celllayout.h:
-
-/usr/include/gtkmm-3.0/gtkmm/cellrenderer.h:
-
-/usr/include/gtkmm-3.0/gtkmm/celleditable.h:
-
-/usr/include/gtkmm-3.0/gtkmm/cellrenderer_generation.h:
-
-/usr/include/gtkmm-3.0/gtkmm/cellrenderertext.h:
-
-/usr/include/gtkmm-3.0/gtkmm/cellrendererpixbuf.h:
-
-/usr/include/gtkmm-3.0/gtkmm/cellrenderertoggle.h:
-
-/usr/include/gtkmm-3.0/gtkmm/cellrendereraccel.h:
-
-/usr/include/gtkmm-3.0/gtkmm/treemodel.h:
-
-/usr/include/gtkmm-3.0/gtkmm/treeiter.h:
-
-/usr/include/gtkmm-3.0/gtkmm/treemodelcolumn.h:
-
-/usr/include/gtkmm-3.0/gtkmm/cellarea.h:
-
-/usr/include/gtkmm-3.0/gtkmm/cellareacontext.h:
-
-/usr/include/gtkmm-3.0/gtkmm/treeview.h:
-
-/usr/include/gtkmm-3.0/gtkmm/treeviewcolumn.h:
-
-/usr/include/gtkmm-3.0/gtkmm/treeselection.h:
-
-/usr/include/gtkmm-3.0/gtkmm/treepath.h:
-
-/usr/include/gtkmm-3.0/gtkmm/scrollable.h:
-
-/usr/include/gtkmm-3.0/gtkmm/entry.h:
-
-/usr/include/gtkmm-3.0/gtkmm/editable.h:
-
-/usr/include/gtkmm-3.0/gtkmm/menu.h:
-
-/usr/include/gtkmm-3.0/gtkmm/menushell.h:
-
-/usr/include/gtkmm-3.0/gtkmm/menuitem.h:
-
-/usr/include/gtkmm-3.0/gtkmm/accellabel.h:
-
-/usr/include/gtkmm-3.0/gtkmm/label.h:
-
-/usr/include/gtkmm-3.0/gtkmm/misc.h:
-
-/usr/include/gtkmm-3.0/gtkmm/entrycompletion.h:
-
-/usr/include/gtkmm-3.0/gtkmm/image.h:
-
-/usr/include/gtkmm-3.0/gtkmm/entrybuffer.h:
-
-/usr/include/gtkmm-3.0/gtkmm/tooltip.h:
-
-/usr/include/gtkmm-3.0/gtkmm/appchooserdialog.h:
-
-/usr/include/gtkmm-3.0/gtkmm/appchooserwidget.h:
-
-/usr/include/gtkmm-3.0/gtkmm/applicationwindow.h:
-
-/usr/include/gtkmm-3.0/gtkmm/arrow.h:
-
-/usr/include/gtkmm-3.0/gtkmm/aspectframe.h:
-
-/usr/include/gtkmm-3.0/gtkmm/frame.h:
-
-/usr/include/gtkmm-3.0/gtkmm/assistant.h:
-
-/usr/include/gtkmm-3.0/gtkmm/builder.h:
-
-/usr/include/gtkmm-3.0/gtkmm/cellareabox.h:
-
-/usr/include/gtkmm-3.0/gtkmm/cellview.h:
-
-/usr/include/gtkmm-3.0/gtkmm/checkbutton.h:
-
-/usr/include/gtkmm-3.0/gtkmm/togglebutton.h:
-
-/usr/include/gtkmm-3.0/gtkmm/checkmenuitem.h:
-
-/usr/include/gtkmm-3.0/gtkmm/cellrenderercombo.h:
-
-/usr/include/gtkmm-3.0/gtkmm/cellrendererprogress.h:
-
-/usr/include/gtkmm-3.0/gtkmm/cellrendererspin.h:
-
-/usr/include/gtkmm-3.0/gtkmm/cellrendererspinner.h:
-
-/usr/include/gtkmm-3.0/gtkmm/colorbutton.h:
-
-/usr/include/gtkmm-3.0/gtkmm/colorchooser.h:
-
-/usr/include/gtkmm-3.0/gtkmm/colorchooserdialog.h:
-
-/usr/include/gtkmm-3.0/gtkmm/colorselection.h:
-
-/usr/include/gtkmm-3.0/gtkmm/comboboxtext.h:
-
-/usr/include/gtkmm-3.0/gtkmm/cssprovider.h:
-
-/usr/include/gtkmm-3.0/gtkmm/csssection.h:
-
-/usr/include/gtkmm-3.0/gtkmm/drawingarea.h:
-
-/usr/include/gtkmm-3.0/gtkmm/expander.h:
-
-/usr/include/gtkmm-3.0/gtkmm/eventbox.h:
-
-/usr/include/gtkmm-3.0/gtkmm/eventcontroller.h:
-
-/usr/include/gtkmm-3.0/gtkmm/filechooser.h:
-
-/usr/include/gtkmm-3.0/gtkmm/filefilter.h:
-
-/usr/include/gtkmm-3.0/gtkmm/filechooserbutton.h:
-
-/usr/include/gtkmm-3.0/gtkmm/filechooserdialog.h:
-
-/usr/include/gtkmm-3.0/gtkmm/filechooserwidget.h:
-
-/usr/include/gtkmm-3.0/gtkmm/fixed.h:
-
-/usr/include/gtkmm-3.0/gtkmm/flowbox.h:
-
-/usr/include/gtkmm-3.0/gtkmm/flowboxchild.h:
-
-/usr/include/gtkmm-3.0/gtkmm/fontbutton.h:
-
-/usr/include/gtkmm-3.0/gtkmm/fontchooser.h:
-
-/usr/include/gtkmm-3.0/gtkmm/fontchooserdialog.h:
-
-/usr/include/gtkmm-3.0/gtkmm/fontchooserwidget.h:
-
-/usr/include/gtkmm-3.0/gtkmm/fontselection.h:
-
-/usr/include/gtkmm-3.0/gtkmm/gesture.h:
-
-/usr/include/gtkmm-3.0/gtkmm/gesturedrag.h:
-
-/usr/include/gtkmm-3.0/gtkmm/gesturesingle.h:
-
-/usr/include/gtkmm-3.0/gtkmm/gesturelongpress.h:
-
-/usr/include/gtkmm-3.0/gtkmm/gesturemultipress.h:
-
-/usr/include/gtkmm-3.0/gtkmm/gesturepan.h:
-
-/usr/include/gtkmm-3.0/gtkmm/gesturerotate.h:
-
-/usr/include/gtkmm-3.0/gtkmm/gestureswipe.h:
-
-/usr/include/gtkmm-3.0/gtkmm/gesturezoom.h:
-
-/usr/include/gtkmm-3.0/gtkmm/glarea.h:
-
-/usr/include/gtkmm-3.0/gtkmm/grid.h:
-
-/usr/include/gtkmm-3.0/gtkmm/handlebox.h:
-
-/usr/include/gtkmm-3.0/gtkmm/hvpaned.h:
-
-/usr/include/gtkmm-3.0/gtkmm/paned.h:
-
-/usr/include/gtkmm-3.0/gtkmm/hvscale.h:
-
-/usr/include/gtkmm-3.0/gtkmm/scale.h:
-
-/usr/include/gtkmm-3.0/gtkmm/range.h:
-
-/usr/include/gtkmm-3.0/gtkmm/hvscrollbar.h:
-
-/usr/include/gtkmm-3.0/gtkmm/scrollbar.h:
-
-/usr/include/gtkmm-3.0/gtkmm/hvseparator.h:
-
-/usr/include/gtkmm-3.0/gtkmm/separator.h:
-
-/usr/include/gtkmm-3.0/gtkmm/iconfactory.h:
-
-/usr/include/gtkmm-3.0/gtkmm/icontheme.h:
-
-/usr/include/gtkmm-3.0/gtkmm/iconinfo.h:
-
-/usr/include/gtkmm-3.0/gtkmm/iconview.h:
-
-/usr/include/gtkmm-3.0/gtkmm/imagemenuitem.h:
-
-/usr/include/gtkmm-3.0/gtkmm/infobar.h:
-
-/usr/include/gtkmm-3.0/gtkmm/calendar.h:
-
-/usr/include/gtkmm-3.0/gtkmm/invisible.h:
-
-/usr/include/gtkmm-3.0/gtkmm/layout.h:
-
-/usr/include/gtkmm-3.0/gtkmm/levelbar.h:
-
-/usr/include/gtkmm-3.0/gtkmm/listbox.h:
-
-/usr/include/gtkmm-3.0/gtkmm/listboxrow.h:
-
-/usr/include/gtkmm-3.0/gtkmm/liststore.h:
-
-/usr/include/gtkmm-3.0/gtkmm/treesortable.h:
-
-/usr/include/gtkmm-3.0/gtkmm/treedragdest.h:
-
-/usr/include/gtkmm-3.0/gtkmm/treedragsource.h:
-
-/usr/include/gtkmm-3.0/gtkmm/listviewtext.h:
-
-/usr/include/gtkmm-3.0/gtkmm/linkbutton.h:
-
-/usr/include/gtkmm-3.0/gtkmm/main.h:
-
-/usr/include/gtkmm-3.0/gtkmm/menubar.h:
-
-/usr/include/gtkmm-3.0/gtkmm/menubutton.h:
-
-/usr/include/gtkmm-3.0/gtkmm/popover.h:
-
-/usr/include/gtkmm-3.0/gtkmm/messagedialog.h:
-
-/usr/include/gtkmm-3.0/gtkmm/modelbutton.h:
-
-/usr/include/gtkmm-3.0/gtkmm/notebook.h:
-
-/usr/include/gtkmm-3.0/gtkmm/numerableicon.h:
-
-/usr/include/gtkmm-3.0/gtkmm/offscreenwindow.h:
-
-/usr/include/gtkmm-3.0/gtkmm/overlay.h:
-
-/usr/include/gtkmm-3.0/gtkmm/pagesetup.h:
-
-/usr/include/gtkmm-3.0/gtkmm/papersize.h:
-
-/usr/include/gtkmm-3.0/gtkmm/pagesetupunixdialog.h:
-
-/usr/include/gtkmm-3.0/gtkmm/printsettings.h:
-
-/usr/include/gtkmm-3.0/gtkmm/placessidebar.h:
-
-/usr/include/gtkmm-3.0/gtkmm/scrolledwindow.h:
-
-/usr/include/gtkmm-3.0/gtkmm/popovermenu.h:
-
-/usr/include/gtkmm-3.0/gtkmm/printcontext.h:
-
-/usr/include/gtkmm-3.0/gtkmm/printer.h:
-
-/usr/include/gtkmm-3.0/gtkmm/printjob.h:
-
-/usr/include/gtkmm-3.0/gtkmm/printoperation.h:
-
-/usr/include/gtkmm-3.0/gtkmm/printoperationpreview.h:
-
-/usr/include/gtkmm-3.0/gtkmm/printunixdialog.h:
-
-/usr/include/gtkmm-3.0/gtkmm/progressbar.h:
-
-/usr/include/gtkmm-3.0/gtkmm/radiobutton.h:
-
-/usr/include/gtkmm-3.0/gtkmm/radiomenuitem.h:
-
-/usr/include/gtkmm-3.0/gtkmm/radiotoolbutton.h:
-
-/usr/include/gtkmm-3.0/gtkmm/toggletoolbutton.h:
-
-/usr/include/gtkmm-3.0/gtkmm/toolbutton.h:
-
-/usr/include/gtkmm-3.0/gtkmm/toolitem.h:
-
-/usr/include/gtkmm-3.0/gtkmm/sizegroup.h:
-
-/usr/include/gtkmm-3.0/gtkmm/recentaction.h:
-
-/usr/include/gtkmm-3.0/gtkmm/recentchooser.h:
-
-/usr/include/gtkmm-3.0/gtkmm/recentinfo.h:
-
-/usr/include/gtkmm-3.0/gtkmm/recentfilter.h:
-
-/usr/include/gtkmm-3.0/gtkmm/recentmanager.h:
-
-/usr/include/gtkmm-3.0/gtkmm/recentchooserdialog.h:
-
-/usr/include/gtkmm-3.0/gtkmm/recentchoosermenu.h:
-
-/usr/include/gtkmm-3.0/gtkmm/recentchooserwidget.h:
-
-/usr/include/gtkmm-3.0/gtkmm/revealer.h:
-
-/usr/include/gtkmm-3.0/gtkmm/scalebutton.h:
-
-/usr/include/gtkmm-3.0/gtkmm/searchbar.h:
-
-/usr/include/gtkmm-3.0/gtkmm/searchentry.h:
-
-/usr/include/gtkmm-3.0/gtkmm/separatormenuitem.h:
-
-/usr/include/gtkmm-3.0/gtkmm/separatortoolitem.h:
-
-/usr/include/gtkmm-3.0/gtkmm/settings.h:
-
-/usr/include/gtkmm-3.0/gtkmm/toolbar.h:
-
-/usr/include/gtkmm-3.0/gtkmm/toolshell.h:
-
-/usr/include/gtkmm-3.0/gtkmm/shortcutlabel.h:
-
-/usr/include/gtkmm-3.0/gtkmm/shortcutsgroup.h:
-
-/usr/include/gtkmm-3.0/gtkmm/shortcutssection.h:
-
-/usr/include/gtkmm-3.0/gtkmm/shortcutsshortcut.h:
-
-/usr/include/gtkmm-3.0/gtkmm/shortcutswindow.h:
-
-/usr/include/gtkmm-3.0/gtkmm/spinbutton.h:
-
-/usr/include/gtkmm-3.0/gtkmm/spinner.h:
-
-/usr/include/gtkmm-3.0/gtkmm/stack.h:
-
-/usr/include/gtkmm-3.0/gtkmm/stacksidebar.h:
-
-/usr/include/gtkmm-3.0/gtkmm/stackswitcher.h:
-
-/usr/include/gtkmm-3.0/gtkmm/statusbar.h:
-
-/usr/include/gtkmm-3.0/gtkmm/statusicon.h:
-
-/usr/include/gtkmm-3.0/gtkmm/stock.h:
-
-/usr/include/gtkmm-3.0/gtkmm/stockitem.h:
-
-/usr/include/gtkmm-3.0/gtkmm/styleproperty.h:
-
-/usr/include/gtkmm-3.0/gtkmm/switch.h:
-
-/usr/include/gtkmm-3.0/gtkmm/table.h:
-
-/usr/include/gtkmm-3.0/gtkmm/tearoffmenuitem.h:
-
-/usr/include/gtkmm-3.0/gtkmm/textbuffer.h:
-
-/usr/include/gtkmm-3.0/gtkmm/texttagtable.h:
-
-/usr/include/gtkmm-3.0/gtkmm/texttag.h:
-
-/usr/include/gtkmm-3.0/gtkmm/textchildanchor.h:
-
-/usr/include/gtkmm-3.0/gtkmm/textmark.h:
-
-/usr/include/gtkmm-3.0/gtkmm/textiter.h:
-
-/usr/include/gtkmm-3.0/gtkmm/textattributes.h:
-
-/usr/include/gtkmm-3.0/gtkmm/textview.h:
-
-/usr/include/gtkmm-3.0/gtkmm/toolpalette.h:
-
-/usr/include/gtkmm-3.0/gtkmm/toolitemgroup.h:
-
-/usr/include/gtkmm-3.0/gtkmm/menutoolbutton.h:
-
-/usr/include/gtkmm-3.0/gtkmm/treemodelfilter.h:
-
-/usr/include/gtkmm-3.0/gtkmm/treemodelsort.h:
-
-/usr/include/gtkmm-3.0/gtkmm/treerowreference.h:
-
-/usr/include/gtkmm-3.0/gtkmm/treestore.h:
-
-/usr/include/gtkmm-3.0/gtkmm/uimanager.h:
-
-/usr/include/gtkmm-3.0/gtkmm/viewport.h:
-
-/usr/include/gtkmm-3.0/gtkmm/volumebutton.h:
-
-Configuration.h:
-
-DockItem.h:
-
-LauncherWindow.h:
-
-AppUpdater.h:
-
-SessionWindow.h:
-
-Utilities.h:
-
-/usr/include/c++/7/math.h:
-
-IconLoader.h:
-
-TitleWindow.h:
-
-DockMenu.h:
-
-/usr/include/glibmm-2.4/glibmm/i18n.h:
-
-/usr/include/glib-2.0/glib/gi18n.h:
-
-/usr/include/libintl.h:
-
-DockPreview.h:
-
-/usr/include/c++/7/thread:
-
-About.h:
-
-Screen.h:
-
-Struts.h:
-
 ../config.h:
-
-/usr/include/gtk-3.0/gtk/gtk.h:
-
-/usr/include/c++/7/iostream:
 
 /usr/include/gtk-3.0/gdk/gdkx.h:
 
@@ -4524,3 +3366,29 @@ Struts.h:
 /usr/include/gtk-3.0/gdk/x11/gdkx11window.h:
 
 /usr/include/gtk-3.0/gdk/x11/gdkx-autocleanups.h:
+
+/usr/include/glibmm-2.4/glibmm/i18n.h:
+
+/usr/include/glib-2.0/glib/gi18n.h:
+
+/usr/include/libintl.h:
+
+/usr/include/gtkmm-3.0/gtkmm/main.h:
+
+/usr/include/glibmm-2.4/glibmm/optioncontext.h:
+
+appwindow.h:
+
+/usr/include/gtkmm-3.0/gtkmm/window.h:
+
+/usr/include/gtkmm-3.0/gtkmm/bin.h:
+
+/usr/include/gtkmm-3.0/gtkmm/container.h:
+
+/usr/include/gtkmm-3.0/gtkmm/childpropertyproxy.h:
+
+/usr/include/gtkmm-3.0/gtkmm/childpropertyproxy_base.h:
+
+/usr/include/gtkmm-3.0/gtkmm/windowgroup.h:
+
+common.h:

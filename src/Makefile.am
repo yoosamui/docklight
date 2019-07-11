@@ -13,6 +13,9 @@ ALLCPPFLAGS += -DPROGRAMNAME_LOCALEDIR=\""/usr/lib/docklight/share/locale"\"
 
 
 docklight_CPPFLAGS = $(ALLCPPFLAGS)
+#docklight_CPPFLAGS += -Wall -Wextra -Werror -std=c++11 -pedantic
+
+docklight_CPPFLAGS += -Wall -std=c++11
 
 ALLDADDLIBS = $(GTKMM_LIBS)
 #ALLDADDLIBS +=$(WNCK_LIBS)
@@ -22,58 +25,20 @@ docklight_LDADD = $(ALLDADDLIBS)
 #AM_CPPFLAGS = $(CXXFLAGS="-g")
 
 #  flags for the C compiler & linker
-AM_CPPFLAGS = -g -Wall   -Wno-reorder -std=c++11 -pedantic
-
+#AM_CPPFLAGS = -g -Wall -Wno-reorder -std=c++11 -pedantic
+#CFLAGS+=" -std=c11"
 #-pthread
 #-pedantic  -lpthread
-
 # list of source files needed to generate target (docklight)
 
 
 docklight_SOURCES =  \
+common.h \
+components/command_line.cpp \
+components/command_line.h \
+appwindow.cpp \
+appwindow.h \
 main.cpp \
-DockWindow.cpp \
-DockWindow.h \
-AppUpdater.cpp \
-AppUpdater.h \
-Screen.cpp \
-Screen.h \
-Struts.cpp \
-Struts.h \
-Animations.h \
-AppWindow.cpp\
-AppWindow.h \
-DockPanel.cpp \
-DockPanel.h \
-DockItem.cpp \
-DockItem.h \
-DockPreview.cpp \
-DockPreview.h \
-IconLoader.cpp \
-IconLoader.h \
-Launcher.cpp \
-Launcher.h \
-LauncherWindow.h \
-LauncherWindow.cpp \
-SessionWindow.cpp \
-SessionWindow.h \
-MoReader.cpp \
-MoReader.h \
-Utilities.cpp \
-Utilities.h \
-Configuration.cpp \
-Configuration.h \
-WnckHandler.cpp \
-WnckHandler.h \
-TitleWindow.cpp \
-TitleWindow.h \
-DockItemPositions.cpp \
-DockItemPositions.h \
-DockMenu.h \
-About.cpp \
-About.h \
-tinyxml2.cpp \
-tinyxml2.h \
 $(NULL)
 
 # this works - it deletes testSubDir in src

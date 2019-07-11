@@ -11,7 +11,8 @@ LOCALEDIR=/usr/lib/docklight/share/locale
 dnl ======================================================
 AC_INIT([docklight], [2.0.0], [bug-automake@gnu.org])
 # this flags are for automake
-AM_INIT_AUTOMAKE([-Wall -Werror foreign])
+AM_INIT_AUTOMAKE([-Wall -Werror subdir-objects foreign])
+
 # find & probe c compiler
 AC_PROG_CC
 # find & probe g++ compiler
@@ -19,6 +20,8 @@ AC_PROG_CXX
 # make config headers
 AC_CONFIG_HEADERS([config.h])
 
+AC_LANG(C++)
+ax_cxx_compile_stdcxx_11AC_PROG_CXX
 
 dnl ======================================================
 #AC_PREFIX_DEFAULT($INSTALLDIR)

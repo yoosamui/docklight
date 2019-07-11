@@ -1,86 +1,25 @@
-//*****************************************************************
-//
-//  Copyright (C) 2015 Juan R. Gonzalez
-//  Created on November 20, 2015, 12:17 PM
-//  j-gonzalez@email.de
-//
-//  This program is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//
-//****************************************************************
 #include <gtkmm/application.h>
-#include "AppWindow.h"
-#include <sstream>
+#include <config.h>
+#include <gdk/gdkx.h>
 #include <glibmm/i18n.h>
 #include <gtkmm/main.h>
 #include <libintl.h>
-#include <config.h>
-#include <gtk-3.0/gtk/gtk.h>
-#include <iostream>
-#include <cstdlib>
-#include <gdk/gdkx.h>
 
-namespace
+#include "appwindow.h"
+
+using namespace docklight;
+
+int main(int argc, char* argv[])
 {
-    int on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine>& command_line,
-            Glib::RefPtr<Gtk::Application>& app)
-    {
-        int argc = 0;
-        char** argv = command_line->get_arguments(argc);
-
-        for (int i = 0; i < argc; ++i) {
-
-            if (strcmp(argv[i], "TOP") == 0) {
-                Configuration::set_dockWindowLocation(panel_locationType::TOP);
-                continue;
-            }
-
-            if (strcmp(argv[i], "BOTTOM") == 0) {
-                Configuration::set_dockWindowLocation(panel_locationType::BOTTOM);
-                continue;
-            }
-
-            if (strcmp(argv[i], "LEFT") == 0) {
-                Configuration::set_dockWindowLocation(panel_locationType::LEFT);
-                continue;
-            }
-            if (strcmp(argv[i], "RIGHT") == 0) {
-                Configuration::set_dockWindowLocation(panel_locationType::RIGHT);
-                continue;
-            }
-        }
-
-
-        app->activate(); // Without activate() the window won't be shown.
-        return EXIT_SUCCESS;
-    }
-} // anonymous namespace
-
-/**
- * The Entry Point.
- * @param argc
- * @param argv
- * @return exit code
- */
-int main(int argc, char *argv[])
-{
-    // The XInitThreads function initializes Xlib support for concurrent threads. This function must be the first Xlib function a multi-threaded program calls,
-    // and it must complete before any other Xlib call is made. This function returns a nonzero status if initialization was successful; otherwise, it returns zero.
+    // The XInitThreads function initializes Xlib support for concurrent threads.
+    // This function must be the first Xlib function a multi-threaded program calls,
+    // and it must complete before any other Xlib call is made. This function returns
+    // a nonzero status if initialization was successful; otherwise, it returns zero.
     // On systems that do not support threads, this function always returns zero.
     // https://www.x.org/releases/X11R7.5/doc/man/man3/XInitThreads.3.html
     XInitThreads();
 
-    g_print("INIT GETTEXT\n");
+    g_print("Initialize gettext\n");
     char* domain = bindtextdomain(GETTEXT_PACKAGE, PROGRAMNAME_LOCALEDIR);
     g_print("bindtextdomain: %s %s %s\n", domain, GETTEXT_PACKAGE, PROGRAMNAME_LOCALEDIR);
 
@@ -90,23 +29,26 @@ int main(int argc, char *argv[])
 
     // The  text domain  function  sets or retrieves the current  message domain.
     char* txtdomain = textdomain(GETTEXT_PACKAGE);
-    g_print("textdomain: %s\n\n", txtdomain);
+    g_print("textdomain: %s\n", txtdomain);
 
-    auto app = Gtk::Application::create(argc, argv,"org.gtkmm.example", Gio::APPLICATION_HANDLES_COMMAND_LINE | Gio::APPLICATION_NON_UNIQUE);
-    app->signal_command_line().connect(sigc::bind(sigc::ptr_fun(&on_command_line), app), false);
+    g_print("create application\n");
+    Glib::RefPtr<Gtk::Application> app = Gtk::Application::create(argc, argv, "org.gtkmm.appwindow",
+        Gio::APPLICATION_HANDLES_COMMAND_LINE | Gio::APPLICATION_NON_UNIQUE);
 
-    g_print("Create AppWindow\n");
-    AppWindow win;
-
-    int r = win.init();
-    if (r != 0) {
-        g_print("Appwindow init error.\n");
-        exit(r);
+    g_print("create window and init signals. evaluate parameters.\n");
+    appwindow win;
+    int result = win.init(app);
+    if (result != 0) {
+        g_error("Appwindow init error.\n");
+        exit(result);
     }
 
-    //Shows the window and returns when it is closed.
-    int result = app->run(win);
+    // Shows the window and returns when it is closed.
+    g_print("app run. start loop\n");
+    result = app->run(win);
+
     g_print("Terminate with code %d \n", result);
+
     return result;
 
 }
