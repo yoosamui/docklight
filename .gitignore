@@ -17,6 +17,8 @@ src/.deps/
 *.EX
 *.in~
 *~
+clang-format.sh
+clang-tidy.sh
 *.swp
 *.deps
 .dirstamp

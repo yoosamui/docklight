@@ -1,9 +1,2 @@
-[Desktop Entry]
-Name=
-Comment=
-Exec=
-Icon=
-Type=Application
-Terminal=false
-StartupNotify=false
-Categories=Other
+[Desktop Entry] Name = Comment = Exec = Icon = Type = Application Terminal =
+    false StartupNotify = false Categories = Other

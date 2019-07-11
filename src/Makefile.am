@@ -34,6 +34,12 @@ docklight_LDADD = $(ALLDADDLIBS)
 
 docklight_SOURCES =  \
 common.h \
+utils/string.cpp \
+utils/string.h \
+utils/file.cpp \
+utils/file.h \
+utils/system.cpp \
+utils/system.h \
 components/command_line.cpp \
 components/command_line.h \
 appwindow.cpp \
