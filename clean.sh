@@ -1,11 +1,19 @@
 #!/bin/bash
 shopt -s extglob
-rm -rf debian/docklight 
+rm -rf debian/docklight
 rm -rf debian/.debhelper
 rm -f src/docklight
 rm -f src/*.o
-rm -f src/Makefile src/Makefile.in 
+rm -rf src/*.swp
+rm -rf src/.*-
+rm -rf src/.*-
+rm -rf src/.*.swo
+find . -name '.*~' -delete
+find . -name '.dirstamp' -delete
+rm -f src/components/*.o
+rm -f src/Makefile src/Makefile.in
 rm -f src/docklight.data/attachments/*
+find 'src/' -type d -name '.deps' -print0 | xargs -0 rm -rf
 rm -f data/Makefile
 rm -f data/Makefile.in
 rm -f data/icons/Makefile
