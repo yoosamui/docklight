@@ -1,5 +1,5 @@
 #include "arguments.h"
-#include <gdk/gdk.h>
+#include <components/device.h>
 #include <getopt.h>
 
 #include "utils/file.h"
@@ -106,8 +106,7 @@ namespace cli
             return m_error_code;
         }
 
-        GdkDisplay *display = gdk_display_get_default();
-        auto count = gdk_display_get_n_monitors(display);
+        auto count = device::monitor::get_monitor_count();
 
         gint value = atoi(coptarg);
         if (value > count) {
