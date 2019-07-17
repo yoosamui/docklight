@@ -1,4 +1,4 @@
-#include "command_line.h"
+#include "arguments.h"
 #include <gdk/gdk.h>
 #include <getopt.h>
 
@@ -12,7 +12,7 @@ namespace cli
     /**
      * Constructor
      */
-    arguments::arguments(int argc, char **argv)
+    Arguments::Arguments(int argc, char **argv)
     {
         m_argc = argc;
         m_argv = argv;
@@ -22,7 +22,7 @@ namespace cli
      * Destructor
      * free memory allocated by  GList
      */
-    arguments::~arguments()
+    Arguments::~Arguments()
     {
         if (m_list == nullptr) {
             return;
@@ -32,13 +32,13 @@ namespace cli
             free(l->data);
         }
         g_slist_free(m_list);
-        g_print("free arguments class.\n");
+        g_print("free Arguments class.\n");
     }
 
     /**
-     * Validate the given arguments by getopt
+     * Validate the given Arguments by getopt
      */
-    bool arguments::validate()
+    bool Arguments::validate()
     {
         // clang-format off
         const char* short_opts = {"m:l:p:a:r:c:h"};
@@ -70,7 +70,7 @@ namespace cli
     /**
      * Parse all options
      */
-    int arguments::parse(int opt, const char *coptarg)
+    int Arguments::parse(int opt, const char *coptarg)
     {
         m_error_code = EXIT_SUCCESS;
 
@@ -98,7 +98,7 @@ namespace cli
      * Validate the monitor number.
      * Returns an error if the parameter is not numeric or out of range
      */
-    int arguments::set_monitor(const char *coptarg)
+    int Arguments::set_monitor(const char *coptarg)
     {
         if (!string_util::is_numeric(coptarg)) {
             g_warning("argument monitor allow only  numeric values.");
@@ -125,7 +125,7 @@ namespace cli
      * Validate the dock location
      * locations are bottom, left, top or right
      */
-    int arguments::set_location(const char *coptarg)
+    int Arguments::set_location(const char *coptarg)
     {
         m_error_code = EXIT_SUCCESS;
         if (strcmp("bottom", coptarg) == 0 || strcmp("left", coptarg) == 0 ||
@@ -142,7 +142,7 @@ namespace cli
     /**
      * Validate the dock  position x or y coordinate
      */
-    int arguments::set_position(const char *coptarg)
+    int Arguments::set_position(const char *coptarg)
     {
         if (!string_util::is_numeric(coptarg)) {
             g_warning("argument position allow only numeric values.");
@@ -161,7 +161,7 @@ namespace cli
      * left, center or right
      * this will be converted in vertical mode to top center bottom
      */
-    gint arguments::set_alignment(const char *coptarg)
+    gint Arguments::set_alignment(const char *coptarg)
     {
         m_error_code = EXIT_SUCCESS;
         if (strcmp("left", coptarg) == 0 || strcmp("center", coptarg) == 0 ||
@@ -184,7 +184,7 @@ namespace cli
     /**
      * Validate the resize argument
      */
-    int arguments::set_resize(const char *coptarg)
+    int Arguments::set_resize(const char *coptarg)
     {
         if (!string_util::is_numeric(coptarg)) {
             g_warning("argument resize allow only numeric values.");
@@ -201,7 +201,7 @@ namespace cli
     /**
      * Validate the configuartion file
      */
-    int arguments::set_config(const char *coptarg)
+    int Arguments::set_config(const char *coptarg)
     {
         if (!file_util::is_file_exits(coptarg)) {
             g_warning("argument config. file could not be found.");
@@ -217,7 +217,7 @@ namespace cli
     /**
      * Add the values to the result list
      */
-    void arguments::add(const char arg, const char *cvalue, int ivalue)
+    void Arguments::add(const char arg, const char *cvalue, int ivalue)
     {
         result_t *data = static_cast<result_t *>(malloc(sizeof(result_t)));
         if (!data) {
@@ -244,13 +244,13 @@ namespace cli
     /**
      * gets the result options list
      */
-    const GSList *arguments::get_results() { return m_list; }
+    const GSList *Arguments::get_results() { return m_list; }
 
-    void arguments::usage()
+    void Arguments::usage()
     {
         // clang-format off
         g_print("--------------------------------\n");
-        g_print(" docklight arguments usage.\n");
+        g_print(" docklight Arguments usage.\n");
         g_print("--------------------------------\n");
         g_print("--m --monitor number to dock.(0 - n) default active.\n");
         g_print("--l --location to dock (bottom, left, top or right) default bottom.\n");

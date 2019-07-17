@@ -1,12 +1,16 @@
 #include <getopt.h>
 
+#include <gdkmm/rectangle.h>
 #include "appwindow.h"
 #include "common.h"
-#include "components/command_line.h"
+#include "components/arguments.h"
+#include "components/config.h"
+#include "components/device.h"
+#include "utils/pixbuf.h"
 
 DL_NS_BEGIN
 
-appwindow::appwindow()
+AppWindow::AppWindow()
 {
     GdkScreen *screen;
     GdkVisual *visual;
@@ -19,30 +23,46 @@ appwindow::appwindow()
         gtk_widget_set_visual(GTK_WIDGET(gobj()), visual);
     }
 
+    //// Set event masks
+    // add_events(Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK |
+    // Gdk::SCROLL_MASK | Gdk::SMOOTH_SCROLL_MASK |
+    // Gdk::POINTER_MOTION_HINT_MASK | Gdk::FOCUS_CHANGE_MASK |
+    // Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK |
+    // Gdk::POINTER_MOTION_HINT_MASK | Gdk::POINTER_MOTION_MASK);
+    this->set_gravity(Gdk::Gravity::GRAVITY_STATIC);
+
+    // A window to implement a docking bar used for creating the dock panel.
+    this->set_skip_taskbar_hint(true);
+    this->set_skip_pager_hint(true);
+    this->set_keep_above(true);
+
+    // this->set_decorated(false);
+    // this->set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
+
     this->show_all();
 }
 
-appwindow::~appwindow()
+AppWindow::~AppWindow()
 {
-    g_print("free appwindow class.\n");
+    g_print("free AppWindow class.\n");
 }
 
-int appwindow::init(Glib::RefPtr<Gtk::Application> &app)
+int AppWindow::init(Glib::RefPtr<Gtk::Application> &app)
 {
     app->signal_command_line().connect(
-        sigc::bind(sigc::ptr_fun(&appwindow::on_command_line), app), false);
+        sigc::bind(sigc::ptr_fun(&AppWindow::on_command_line), app), false);
 
     return 0;
 }
 
-int appwindow::on_command_line(
+int AppWindow::on_command_line(
     const Glib::RefPtr<Gio::ApplicationCommandLine> &command_line,
     Glib::RefPtr<Gtk::Application> &app)
 {
     int argc = 0;
     char **argv = command_line->get_arguments(argc);
 
-    cli::arguments a(argc, argv);
+    cli::Arguments a(argc, argv);
     if (a.validate() == false) {
         return -1;
     }
@@ -60,11 +80,26 @@ int appwindow::on_command_line(
     }
 
     // Load config
+    config::load(list);
+
+    // display the detected monitors
+    for (int i = 0; i < device::monitor::get_monitor_count(); i++) {
+        auto const m = device::monitor::get_monitor(i);
+
+        Gdk::Rectangle geometry, workarea;
+
+        m->get_geometry(geometry);
+        m->get_workarea(workarea);
+
+        g_print("Monitor# %d %s g:%d x %d  w: %d x %d\n", i,
+                m->property_model().get_value().c_str(), geometry.get_width(),
+                geometry.get_height(), workarea.get_width(),
+                workarea.get_height());
+    }
 
     // activate window
     app->activate();
 
-    // clang-format on
     return argc;
 }
 

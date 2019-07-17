@@ -15,11 +15,11 @@ namespace cli
         int int_value = 0;
     } result_t;
 
-    class arguments
+    class Arguments
     {
       public:
-        arguments(int argc, char **argv);
-        ~arguments();
+        Arguments(int argc, char **argv);
+        ~Arguments();
         bool validate();
         const GSList *get_results();
 

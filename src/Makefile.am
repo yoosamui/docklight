@@ -40,8 +40,14 @@ utils/file.cpp \
 utils/file.h \
 utils/system.cpp \
 utils/system.h \
-components/command_line.cpp \
-components/command_line.h \
+utils/pixbuf.cpp \
+utils/pixbuf.h \
+components/arguments.cpp \
+components/arguments.h \
+components/config.cpp \
+components/config.h \
+components/device.cpp \
+components/device.h \
 appwindow.cpp \
 appwindow.h \
 main.cpp \

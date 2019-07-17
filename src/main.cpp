@@ -1,17 +1,21 @@
+
+// clang-format off
+#include <gtkmm/application.h>
 #include <config.h>
 #include <gdk/gdkx.h>
 #include <glibmm/i18n.h>
-#include <gtkmm/application.h>
 #include <gtkmm/main.h>
 #include <libintl.h>
+#include <cstdlib>
 
 #include "appwindow.h"
+// clang-format on
 
 using namespace docklight;
 
 int main(int argc, char *argv[])
 {
-    // The XInitThreads function initializes Xlib support for concurrent
+    // The XInitThreads function initializes Xlib support for concurren
     // threads. This function must be the first Xlib function a multi-threaded
     // program calls, and it must complete before any other Xlib call is made.
     // This function returns a nonzero status if initialization was successful;
@@ -36,14 +40,14 @@ int main(int argc, char *argv[])
 
     g_print("create application\n");
     Glib::RefPtr<Gtk::Application> app = Gtk::Application::create(
-        argc, argv, "org.gtkmm.appwindow",
+        argc, argv, "org.gtkmm.Appwindow",
         Gio::APPLICATION_HANDLES_COMMAND_LINE | Gio::APPLICATION_NON_UNIQUE);
 
     g_print("create window and init signals. evaluate parameters.\n");
-    appwindow win;
+    AppWindow win;
     int result = win.init(app);
     if (result != 0) {
-        g_error("Appwindow init error.\n");
+        g_error("AppWindow init error.\n");
         exit(result);
     }
 

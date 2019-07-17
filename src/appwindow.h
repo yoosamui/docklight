@@ -4,14 +4,13 @@
 #include <gtkmm/application.h>
 #include <gtkmm/window.h>
 #include "common.h"
-
 DL_NS_BEGIN
 
-class appwindow : public Gtk::Window
+class AppWindow : public Gtk::Window
 {
   public:
-    appwindow();
-    ~appwindow();
+    AppWindow();
+    ~AppWindow();
     int init(Glib::RefPtr<Gtk::Application> &app);
 
   private:
