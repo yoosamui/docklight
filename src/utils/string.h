@@ -3,9 +3,12 @@
 #include "common.h"
 DL_NS_BEGIN
 
-namespace string_util {
-bool is_numeric(const char *arg);
-bool is_numeric(const string &s);
-} // namespace string_util
+namespace string_util
+{
+    bool is_numeric(const char *arg);
+    bool is_numeric(const string &s);
+    string remove_extension(const string &text, const string extensions[]);
+    string string_to_lower(const char *strp);
+}  // namespace string_util
 
 DL_NS_END

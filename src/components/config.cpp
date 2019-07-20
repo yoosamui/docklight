@@ -1,13 +1,75 @@
 
 #include "components/config.h"
+#include "components/arguments.h"
+#include "components/device.h"
+
+#define MARGIN 8
 
 DL_NS_BEGIN
 namespace config
 {
-    dock_location m_location = dock_location::bottom;
+    dock_location_t m_location = dock_location_t::bottom;
+    int m_icon_size = 48;
 
-    void load(const GSList* args_list) {}
-    dock_location get_dock_location() { return m_location; }
+    void load(const GSList *args_list)
+    {
+        // TODO Load config
+
+        if (args_list) {
+            for (const GSList *l = args_list; l; l = l->next) {
+                cli::result_t *data = static_cast<cli::result_t *>(l->data);
+                g_print("arguments: --%c %d %s\n", data->arg, data->int_value,
+                        data->string_value);
+
+                if (data->arg == (char)'m') {
+                    device::monitor::get_current()->set_current_monitor(
+                        data->int_value);
+                    continue;
+                }
+
+                if (data->arg == (char)'l') {
+                    if (strcmp(data->string_value, "bottom") == 0) {
+                        m_location = dock_location_t::bottom;
+                        continue;
+                    }
+                    if (strcmp(data->string_value, "left") == 0) {
+                        m_location = dock_location_t::left;
+                        continue;
+                    }
+                    if (strcmp(data->string_value, "top") == 0) {
+                        m_location = dock_location_t::top;
+                        continue;
+                    }
+                    if (strcmp(data->string_value, "right") == 0) {
+                        m_location = dock_location_t::right;
+                        continue;
+                    }
+
+                    continue;
+                }
+            }
+        }
+    }
+
+    dock_location_t get_dock_location() { return m_location; }
+
+    int get_dock_area() { return m_icon_size + MARGIN; }
+
+    Gtk::Orientation get_dock_orientation()
+    {
+        switch (m_location) {
+            case dock_location_t::top:
+            case dock_location_t::bottom:
+                return Gtk::ORIENTATION_HORIZONTAL;
+
+            case dock_location_t::left:
+            case dock_location_t::right:
+                return Gtk::ORIENTATION_VERTICAL;
+
+            default:
+                return Gtk::ORIENTATION_HORIZONTAL;
+        }
+    }
 
 }  // namespace config
 DL_NS_END

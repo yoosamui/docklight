@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
     }
 
     // Shows the window and returns when it is closed.
-    g_print("app run. start loop\n");
+    g_print("app running\n");
     result = app->run(win);
 
     g_print("Terminate with code %d \n", result);

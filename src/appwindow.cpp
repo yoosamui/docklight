@@ -7,6 +7,7 @@
 #include "components/config.h"
 #include "components/device.h"
 #include "utils/pixbuf.h"
+#include "utils/position.h"
 
 DL_NS_BEGIN
 
@@ -23,22 +24,16 @@ AppWindow::AppWindow()
         gtk_widget_set_visual(GTK_WIDGET(gobj()), visual);
     }
 
-    //// Set event masks
-    // add_events(Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK |
-    // Gdk::SCROLL_MASK | Gdk::SMOOTH_SCROLL_MASK |
-    // Gdk::POINTER_MOTION_HINT_MASK | Gdk::FOCUS_CHANGE_MASK |
-    // Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK |
-    // Gdk::POINTER_MOTION_HINT_MASK | Gdk::POINTER_MOTION_MASK);
     this->set_gravity(Gdk::Gravity::GRAVITY_STATIC);
 
     // A window to implement a docking bar used for creating the dock panel.
     this->set_skip_taskbar_hint(true);
     this->set_skip_pager_hint(true);
     this->set_keep_above(true);
+    this->set_decorated(false);
+    this->set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
 
-    // this->set_decorated(false);
-    // this->set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
-
+    this->add(m_panel);
     this->show_all();
 }
 
@@ -49,10 +44,32 @@ AppWindow::~AppWindow()
 
 int AppWindow::init(Glib::RefPtr<Gtk::Application> &app)
 {
+    position_util::init(this);
     app->signal_command_line().connect(
         sigc::bind(sigc::ptr_fun(&AppWindow::on_command_line), app), false);
 
+    // The monitors-changed signal is emitted when the number,
+    // size or position of the monitors attached to the screen change.
+    auto const screen = device::display::get_default_screen()->gobj();
+    g_signal_connect(G_OBJECT(screen), "monitors-changed",
+                     G_CALLBACK(monitor_changed_callback), (gpointer)this);
     return 0;
+}
+
+void AppWindow::monitor_changed_callback(GdkScreen *screen, gpointer gtkwindow)
+{
+    update();
+}
+
+Panel *AppWindow::get_panel()
+{
+    return &m_panel;
+}
+
+void AppWindow::update()
+{
+    g_print("AppWindow update\n");
+    position_util::set_window_position();
 }
 
 int AppWindow::on_command_line(
@@ -73,12 +90,6 @@ int AppWindow::on_command_line(
         g_print("No parameters provided.\n");
     }
 
-    for (const GSList *l = list; l; l = l->next) {
-        cli::result_t *data = static_cast<cli::result_t *>(l->data);
-        g_print("arguments: --%c %d %s\n", data->arg, data->int_value,
-                data->string_value);
-    }
-
     // Load config
     config::load(list);
 
@@ -91,11 +102,19 @@ int AppWindow::on_command_line(
         m->get_geometry(geometry);
         m->get_workarea(workarea);
 
-        g_print("Monitor# %d %s g:%d x %d  w: %d x %d\n", i,
-                m->property_model().get_value().c_str(), geometry.get_width(),
+        g_print("Monitor# %d %s g: %d x %d  w: %d x %d\n", i,
+                m->get_model().c_str(), geometry.get_width(),
                 geometry.get_height(), workarea.get_width(),
                 workarea.get_height());
     }
+
+    g_print(
+        "Default monitor: %d %s\n",
+        device::monitor::get_current()->get_monitor_number(),
+        device::monitor::get_current()->get_monitor_obj()->get_model().c_str());
+
+    // resize and set the position
+    AppWindow::update();
 
     // activate window
     app->activate();
