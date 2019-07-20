@@ -9,11 +9,7 @@ DL_NS_BEGIN
 
 namespace launcher_util
 {
-    map<std::string, std::string> dictionary = {
-        {"Gpk-update-viewer", _("Gpk-update-viewer")},
-        {"Gpk-application", _("Gpk-application")}
-
-    };
+    map<std::string, std::string> dictionary;
 
     bool get_app_info(WnckWindow* window, appinfo_t& info)
     {
@@ -34,7 +30,12 @@ namespace launcher_util
             }
         }
 
+        const std::string extensions[] = {".py", ".exe", ".sh"};
+        // Checks whether or not the window has a name. wnck_window_get_name()
+        // will always return some value, even if window has no name set;
+
         info.m_group = _group;
+        info.m_group = string_util::remove_extension(info.m_group, extensions);
         info.m_name = string_util::string_to_lower(info.m_group.c_str());
         size_t idx = info.m_name.find(" ");
         if (idx != string::npos) {
@@ -42,6 +43,8 @@ namespace launcher_util
         }
 
         info.m_instance = wnck_window_get_class_instance_name(window);
+        info.m_instance =
+            string_util::remove_extension(info.m_instance, extensions);
         info.m_title = wnck_window_get_name(window);
 
         GKeyFile* key_file = g_key_file_new();
@@ -52,6 +55,13 @@ namespace launcher_util
 
         info.m_desktop_name = get_name_from_desktopfile(info.m_group.c_str());
 
+        auto icon = wnck_window_get_icon(window);
+        if (wnck_window_get_icon_is_fallback(window)) {
+            // TODO:   get from desktop file
+        }
+        info.m_wnckwindow = window;
+        info.m_xid = wnck_window_get_xid(window);
+        info.m_image = Glib::wrap(icon, true);
         return info.m_error;
     }
 
@@ -278,7 +288,7 @@ namespace launcher_util
         delete mo;
 
         return dictionary[theappname];
-    }  // namespace launcher_util
+    }
 }  // namespace launcher_util
 
 DL_NS_END

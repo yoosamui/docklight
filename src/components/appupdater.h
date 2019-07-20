@@ -4,6 +4,7 @@
 #include <libwnck/libwnck.h>
 #include <sigc++/sigc++.h>
 #include "common.h"
+#include "components/dockitem.h"
 
 DL_NS_BEGIN
 
@@ -17,6 +18,7 @@ class AppUpdater
     // signal accessor:
     typedef sigc::signal<void, bool, int> type_signal_update;
     type_signal_update signal_update();
+    static vector<shared_ptr<DockItem>> m_dock_items;
 
   private:
     static type_signal_update m_signal_update;

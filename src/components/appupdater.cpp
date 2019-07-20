@@ -1,4 +1,6 @@
 #include "components/appupdater.h"
+#include <algorithm>
+#include <functional>
 #include "components/device.h"
 #include "components/dockitem.h"
 #include "utils/launcher.h"
@@ -6,6 +8,7 @@
 DL_NS_BEGIN
 
 AppUpdater::type_signal_update AppUpdater::m_signal_update;
+vector<shared_ptr<DockItem>> AppUpdater::m_dock_items;
 
 AppUpdater::AppUpdater()
 {
@@ -75,9 +78,47 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
         g_print("desktop-file: %s\n", info.m_desktop_file.c_str());
         g_print("error: %d\n", info.m_error);
 
+        vector<shared_ptr<DockItem>>::iterator it;
+        it = std::find_if(m_dock_items.begin(), m_dock_items.end(),
+                          [info](shared_ptr<DockItem> const &o) {
+                              return o->get_name() == info.m_name;
+                          });
+
+        if (it != m_dock_items.end()) {
+            // Add Child
+            int index = distance(m_dock_items.begin(), it);
+            auto const item = m_dock_items[index];
+            item->m_items.push_back(shared_ptr<DockItem>(new DockItem(info)));
+
+            g_print("Add to group index %d \n", index);
+        } else {
+            // Add new
+            m_dock_items.push_back(shared_ptr<DockItem>(new DockItem(info)));
+            auto const new_item = m_dock_items.back();
+
+            // Add child
+            new_item->m_items.push_back(
+                shared_ptr<DockItem>(new DockItem(info)));
+            g_print("New item %s\n", new_item->get_name().c_str());
+        }
+
         m_signal_update.emit(false, 5);
+        return;
+
     } else {
-        m_signal_update.emit(false, 5);
+        // Iterate over all child elements in Vector
+        for (size_t i = 0; i < m_dock_items.size(); i++) {
+            auto const item = m_dock_items[i];
+            for (size_t c = 0; c < item->m_items.size(); c++) {
+                auto const citem = item->m_items[c];
+                if (citem->get_wnckwindow() == window) {
+                    item->m_items.erase(item->m_items.begin() + c);
+                    m_signal_update.emit(false, 5);
+                    g_print("remove child\n");
+                    return;
+                }
+            }
+        }
     }
 }
 
