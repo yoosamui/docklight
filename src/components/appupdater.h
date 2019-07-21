@@ -18,17 +18,20 @@ class AppUpdater
     // signal accessor:
     typedef sigc::signal<void, bool, int> type_signal_update;
     type_signal_update signal_update();
+
     static vector<shared_ptr<DockItem>> m_dock_items;
+
+    void on_theme_changed();
 
   private:
     static type_signal_update m_signal_update;
 
     static void on_window_opened(WnckScreen* screen, WnckWindow* window,
                                  gpointer data);
+
     static void on_window_closed(WnckScreen* screen, WnckWindow* window,
                                  gpointer data);
-    static void on_theme_changed(GtkSettings* settings, GParamSpec* pspec,
-                                 GtkIconTheme* icon_theme);
+
     static void on_active_window_changed_callback(
         WnckScreen* screen, WnckWindow* previously_active_window,
         gpointer user_data);

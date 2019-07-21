@@ -51,17 +51,25 @@ namespace launcher_util
         info.m_error = get_desktop_file(key_file, info.m_group.c_str(),
                                         info.m_desktop_file) == false;
 
+        // info.m_desktop_icon_name = info.m_name;
+
+        if (!info.m_error) {
+            GError* error = nullptr;
+            info.m_desktop_icon_name = g_key_file_get_string(
+                key_file, "Desktop Entry", "Icon", &error);
+            if (error) {
+                g_error_free(error);
+                error = nullptr;
+            }
+        }
+
         g_key_file_free(key_file);
 
         info.m_desktop_name = get_name_from_desktopfile(info.m_group.c_str());
 
-        auto icon = wnck_window_get_icon(window);
-        if (wnck_window_get_icon_is_fallback(window)) {
-            // TODO:   get from desktop file
-        }
         info.m_wnckwindow = window;
         info.m_xid = wnck_window_get_xid(window);
-        info.m_image = Glib::wrap(icon, true);
+
         return info.m_error;
     }
 

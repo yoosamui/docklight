@@ -22,7 +22,7 @@ enum class dock_location_t : unsigned int {
     right,
 };
 
-enum class struts_position_t {
+enum class struts_position_t : unsigned int {
     Left = 0,
     Right = 1,
     Top = 2,
@@ -35,4 +35,11 @@ enum class struts_position_t {
     TopEnd = 9,
     BottomStart = 10,
     BottomEnd = 11
+};
+
+enum class dock_item_type_t : unsigned int {
+    single = 0,
+    group,
+    separator
+
 };

@@ -48,6 +48,8 @@ utils/launcher.cpp \
 utils/launcher.h \
 utils/moreader.cpp \
 utils/moreader.h \
+utils/cairo.cpp \
+utils/cairo.h \
 components/arguments.cpp \
 components/arguments.h \
 components/panel.cpp \

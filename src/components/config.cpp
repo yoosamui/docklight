@@ -9,7 +9,8 @@ DL_NS_BEGIN
 namespace config
 {
     dock_location_t m_location = dock_location_t::bottom;
-    int m_icon_size = 48;
+    unsigned int m_icon_size = 48;
+    unsigned int m_separator_margin = 10;
 
     void load(const GSList *args_list)
     {
@@ -51,9 +52,15 @@ namespace config
         }
     }
 
+    unsigned int get_window_start_end_margin() { return 20; }
+
+    unsigned int get_separator_margin() { return m_separator_margin; }
+
     dock_location_t get_dock_location() { return m_location; }
 
-    int get_dock_area() { return m_icon_size + MARGIN; }
+    unsigned int get_dock_area() { return m_icon_size + MARGIN; }
+
+    unsigned int get_icon_size() { return m_icon_size; }
 
     Gtk::Orientation get_dock_orientation()
     {

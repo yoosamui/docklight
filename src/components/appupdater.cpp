@@ -1,10 +1,13 @@
 #include "components/appupdater.h"
+#include <gtkmm/icontheme.h>
 #include <algorithm>
 #include <functional>
+#include <thread>
+#include "components/config.h"
 #include "components/device.h"
 #include "components/dockitem.h"
 #include "utils/launcher.h"
-
+#include "utils/pixbuf.h"
 DL_NS_BEGIN
 
 AppUpdater::type_signal_update AppUpdater::m_signal_update;
@@ -13,23 +16,39 @@ vector<shared_ptr<DockItem>> AppUpdater::m_dock_items;
 AppUpdater::AppUpdater()
 {
     WnckScreen *wnckscreen = wnck_screen_get_default();
+
+    // clang-format off
     g_signal_connect(G_OBJECT(wnckscreen), "window-opened",
                      G_CALLBACK(AppUpdater::on_window_opened), NULL);
+
     g_signal_connect(wnckscreen, "window_closed",
                      G_CALLBACK(AppUpdater::on_window_closed), NULL);
+
     g_signal_connect(wnckscreen, "active_window_changed",
                      G_CALLBACK(AppUpdater::on_active_window_changed_callback),
                      NULL);
 
-    /*
-       // theme change
-        GdkScreen* screen =
-       device::monitor::get_current()->get_screen().gobj()); auto icon_theme =
-       g_object_get_data(G_OBJECT(screen), "gtk-icon-theme"); auto settings =
-       gtk_settings_get_for_screen(screen); g_signal_connect(settings,
-       "notify::gtk-icon-theme-name",
-                         G_CALLBACK(AppUpdater::on_theme_changed),
-       icon_theme);*/
+
+     auto const icon_theme = Gtk::IconTheme::get_default();
+     icon_theme->signal_changed().connect(sigc::mem_fun(*this, &AppUpdater::on_theme_changed));
+
+    // clang-format on
+}
+
+void AppUpdater::on_theme_changed()
+{
+    // std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    int icon_size = config::get_icon_size();
+
+    // for (int i = 0; i < 2; i++) {
+    for (auto item : m_dock_items) {
+        auto icon = pixbuf_util::get_window_icon(
+            item->get_wnckwindow(), item->get_desktop_icon_name(), icon_size);
+
+        item->set_image(icon);
+    }
+    // }
+    m_signal_update.emit(false, 5);
 }
 
 void AppUpdater::on_active_window_changed_callback(
@@ -75,6 +94,7 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
         g_print("group-name: %s\n", info.m_group.c_str());
         g_print("title-name: %s\n", info.m_title.c_str());
         g_print("desktop-name: %s\n", info.m_desktop_name.c_str());
+        g_print("desktop-icon-name: %s\n", info.m_desktop_icon_name.c_str());
         g_print("desktop-file: %s\n", info.m_desktop_file.c_str());
         g_print("error: %d\n", info.m_error);
 
@@ -90,16 +110,17 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
             auto const item = m_dock_items[index];
             item->m_items.push_back(shared_ptr<DockItem>(new DockItem(info)));
 
-            g_print("Add to group index %d \n", index);
         } else {
             // Add new
             m_dock_items.push_back(shared_ptr<DockItem>(new DockItem(info)));
             auto const new_item = m_dock_items.back();
 
+            new_item->set_image(pixbuf_util::get_window_icon(
+                window, info.m_desktop_icon_name, config::get_icon_size()));
+
             // Add child
             new_item->m_items.push_back(
                 shared_ptr<DockItem>(new DockItem(info)));
-            g_print("New item %s\n", new_item->get_name().c_str());
         }
 
         m_signal_update.emit(false, 5);
@@ -113,8 +134,11 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
                 auto const citem = item->m_items[c];
                 if (citem->get_wnckwindow() == window) {
                     item->m_items.erase(item->m_items.begin() + c);
+
+                    if (!item->is_attached() && item->m_items.size() == 0) {
+                        m_dock_items.erase(m_dock_items.begin() + i);
+                    }
                     m_signal_update.emit(false, 5);
-                    g_print("remove child\n");
                     return;
                 }
             }
