@@ -51,8 +51,6 @@ namespace launcher_util
         info.m_error = get_desktop_file(key_file, info.m_group.c_str(),
                                         info.m_desktop_file) == false;
 
-        // info.m_desktop_icon_name = info.m_name;
-
         if (!info.m_error) {
             GError* error = nullptr;
             info.m_desktop_icon_name = g_key_file_get_string(
@@ -60,6 +58,15 @@ namespace launcher_util
             if (error) {
                 g_error_free(error);
                 error = nullptr;
+            }
+        } else {
+            // Icon name could not ber found.
+            // We build a icon name from the app name without '-' char
+            info.m_desktop_icon_name = info.m_name;
+            size_t idx = info.m_name.find("-");
+            if (idx != string::npos) {
+                info.m_desktop_icon_name =
+                    info.m_desktop_icon_name.substr(idx + 1);
             }
         }
 

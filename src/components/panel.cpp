@@ -117,7 +117,7 @@ bool Panel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
 void Panel::draw_panel(const Cairo::RefPtr<Cairo::Context>& cr)
 {
-    cr->set_source_rgba(1, 0, 0, 0);
+    cr->set_source_rgba(0.8, 0.8, 0.8, 0.8);
     cr->paint();
 }
 
@@ -145,7 +145,7 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
         item->set_y(y);
 
         // draw cell
-        cr->set_source_rgba(0, 0, 1, 0);
+        cr->set_source_rgba(0, 0, 1, 1);
         cairo_util::rounded_rectangle(cr, x, y, width, height, 3);
         cr->stroke();
 

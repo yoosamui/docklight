@@ -29,25 +29,50 @@ AppUpdater::AppUpdater()
                      NULL);
 
 
+   //GdkScreen *screen = gdk_screen_get_default();
+//auto icon_theme = g_object_get_data(G_OBJECT(screen), "gtk-icon-theme");
+//auto settings = gtk_settings_get_for_screen(screen);
+
+//g_signal_connect(settings, "notify::gtk-icon-theme-name", G_CALLBACK(AppUpdater::on_theme_changed), icon_theme);
+
+
+
+
+
+
      auto const icon_theme = Gtk::IconTheme::get_default();
      icon_theme->signal_changed().connect(sigc::mem_fun(*this, &AppUpdater::on_theme_changed));
 
     // clang-format on
 }
+// void AppUpdater::on_theme_changed(GtkSettings *settings, GParamSpec *pspec,
+// GtkIconTheme *icon_theme)
+//{
+// gtk_icon_theme_add_resource_path(icon_theme, "/home/yoo/.themes/iOS-X");
+// gtk_icon_theme_add_resource_path(icon_theme, "/home/yoo/.icons/dual-0.2");
 
+// g_print("THE CHANGED\n");
+// int icon_size = config::get_icon_size();
+
+// for (auto item : m_dock_items) {
+// auto icon = pixbuf_util::get_window_icon(
+// item->get_wnckwindow(), item->get_desktop_icon_name(), icon_size);
+
+// item->set_image(icon);
+//}
+// m_signal_update.emit(false, 5);
+//}
 void AppUpdater::on_theme_changed()
 {
     // std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     int icon_size = config::get_icon_size();
 
-    // for (int i = 0; i < 2; i++) {
     for (auto item : m_dock_items) {
         auto icon = pixbuf_util::get_window_icon(
             item->get_wnckwindow(), item->get_desktop_icon_name(), icon_size);
 
         item->set_image(icon);
     }
-    // }
     m_signal_update.emit(false, 5);
 }
 

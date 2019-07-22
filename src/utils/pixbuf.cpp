@@ -2,7 +2,6 @@
 #include <glibmm/fileutils.h>
 #include <gtkmm/iconinfo.h>
 #include <gtkmm/icontheme.h>
-
 DL_NS_BEGIN
 
 namespace pixbuf_util
@@ -31,33 +30,30 @@ namespace pixbuf_util
                                                     const string& icon_name,
                                                     int size)
     {
-        GError* error = NULL;
-        GtkIconTheme* icon_theme = gtk_icon_theme_get_default();
+        if (icon_name.c_str() != nullptr) {
+            GError* error = nullptr;
+            GtkIconTheme* icon_theme = gtk_icon_theme_get_default();
+            auto pixbuf =
+                gtk_icon_theme_load_icon(icon_theme,
+                                         icon_name.c_str(),  // icon name
+                                         size,               // icon size
+                                         GTK_ICON_LOOKUP_FORCE_SIZE, &error);
+            if (!error) {
+                return Glib::wrap(pixbuf, false);
+            }
 
-        // clang-format off
-        auto pixbuf = gtk_icon_theme_load_icon(
-            icon_theme,
-            icon_name.c_str(),
-            size,
-            GTK_ICON_LOOKUP_USE_BUILTIN,
-            &error);
-
-        if (error) {
             g_error_free(error);
-            error = NULL;
-
-            referenced_icon = wnck_window_get_icon(window);
-            return Glib::wrap(referenced_icon, true);
+            error = nullptr;
         }
 
-        return Glib::wrap(pixbuf, true);
-        // clang-fromat on
-
+        auto icon = wnck_window_get_icon(window);
+        return Glib::wrap(icon, false);
 
         /*auto const theme = Gtk::IconTheme::get_default();
         auto icon_info =
-            theme->lookup_icon(icon_name, size, Gtk::ICON_LOOKUP_USE_BUILTIN);
-
+            theme->lookup_icon(icon_name, size,
+        Gtk::ICON_LOOKUP_USE_BUILTIN);
+        // try {
         if (icon_info) {
             if (icon_info.get_filename().c_str() == nullptr) {
                 auto icon = icon_info.get_builtin_pixbuf();
@@ -70,13 +66,18 @@ namespace pixbuf_util
             }
         }
 
-        referenced_icon = wnck_window_get_icon(window);
-        return Glib::wrap(referenced_icon, true);*/
+        //  catch (...) {
+        //       g_warning("Could not load icon name: %s\n",
+        icon_name.c_str());
+        //   }*/
+
+        //        auto _referenced_icon = wnck_window_get_icon(window);
+        // V      return Glib::wrap(_referenced_icon, false);
     }
 
     /**
      * Converts a GdkPixbuf to a Glib::RefPtr<Gdk::Pixbuf>.
-     * DEPREATED
+     * DEPRECATED
      */
     const Glib::RefPtr<Gdk::Pixbuf> PixbufConvert(GdkPixbuf* icon)
     {
