@@ -19,7 +19,7 @@ class AppUpdater
     typedef sigc::signal<void, bool, int> type_signal_update;
     type_signal_update signal_update();
 
-    static vector<shared_ptr<DockItem>> m_dock_items;
+    static vector<shared_ptr<DockItem>> m_dockitems;
 
     void on_theme_changed();
 

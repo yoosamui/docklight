@@ -9,11 +9,12 @@ namespace config
 {
     void load(const GSList* args_list);
     dock_location_t get_dock_location();
-    unsigned int get_dock_area();
+    int get_dock_area();
     Gtk::Orientation get_dock_orientation();
-    unsigned int get_separator_margin();
-    unsigned int get_window_start_end_margin();
-    unsigned int get_icon_size();
+    int get_separator_margin();
+    int get_window_start_end_margin();
+    int get_icon_size();
+    bool is_autohidde();
 
 }  // namespace config
 DL_NS_END

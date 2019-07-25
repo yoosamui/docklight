@@ -11,7 +11,7 @@
 DL_NS_BEGIN
 
 AppUpdater::type_signal_update AppUpdater::m_signal_update;
-vector<shared_ptr<DockItem>> AppUpdater::m_dock_items;
+vector<shared_ptr<DockItem>> AppUpdater::m_dockitems;
 
 AppUpdater::AppUpdater()
 {
@@ -54,7 +54,7 @@ AppUpdater::AppUpdater()
 // g_print("THE CHANGED\n");
 // int icon_size = config::get_icon_size();
 
-// for (auto item : m_dock_items) {
+// for (auto item : m_dockitems) {
 // auto icon = pixbuf_util::get_window_icon(
 // item->get_wnckwindow(), item->get_desktop_icon_name(), icon_size);
 
@@ -67,7 +67,7 @@ void AppUpdater::on_theme_changed()
     // std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     int icon_size = config::get_icon_size();
 
-    for (auto item : m_dock_items) {
+    for (auto item : m_dockitems) {
         auto icon = pixbuf_util::get_window_icon(
             item->get_wnckwindow(), item->get_desktop_icon_name(), icon_size);
 
@@ -124,21 +124,21 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
         g_print("error: %d\n", info.m_error);
 
         vector<shared_ptr<DockItem>>::iterator it;
-        it = std::find_if(m_dock_items.begin(), m_dock_items.end(),
+        it = std::find_if(m_dockitems.begin(), m_dockitems.end(),
                           [info](shared_ptr<DockItem> const &o) {
                               return o->get_name() == info.m_name;
                           });
 
-        if (it != m_dock_items.end()) {
+        if (it != m_dockitems.end()) {
             // Add Child
-            int index = distance(m_dock_items.begin(), it);
-            auto const item = m_dock_items[index];
+            int index = distance(m_dockitems.begin(), it);
+            auto const item = m_dockitems[index];
             item->m_items.push_back(shared_ptr<DockItem>(new DockItem(info)));
 
         } else {
             // Add new
-            m_dock_items.push_back(shared_ptr<DockItem>(new DockItem(info)));
-            auto const new_item = m_dock_items.back();
+            m_dockitems.push_back(shared_ptr<DockItem>(new DockItem(info)));
+            auto const new_item = m_dockitems.back();
 
             new_item->set_image(pixbuf_util::get_window_icon(
                 window, info.m_desktop_icon_name, config::get_icon_size()));
@@ -153,15 +153,15 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
 
     } else {
         // Iterate over all child elements in Vector
-        for (size_t i = 0; i < m_dock_items.size(); i++) {
-            auto const item = m_dock_items[i];
+        for (size_t i = 0; i < m_dockitems.size(); i++) {
+            auto const item = m_dockitems[i];
             for (size_t c = 0; c < item->m_items.size(); c++) {
                 auto const citem = item->m_items[c];
                 if (citem->get_wnckwindow() == window) {
                     item->m_items.erase(item->m_items.begin() + c);
 
                     if (!item->is_attached() && item->m_items.size() == 0) {
-                        m_dock_items.erase(m_dock_items.begin() + i);
+                        m_dockitems.erase(m_dockitems.begin() + i);
                     }
                     m_signal_update.emit(false, 5);
                     return;

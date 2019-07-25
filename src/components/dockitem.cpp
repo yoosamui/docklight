@@ -1,16 +1,23 @@
 #include "dockitem.h"
-
+#include "components/config.h"
 DL_NS_BEGIN
 
-DockItem::DockItem(appinfo_t appinfo)
+DockItem::DockItem(appinfo_t app_info, dock_item_type_t item_type)
 {
-    m_app_info = appinfo;
-    m_height = 48;
-    m_width = 48;
+    m_app_info = app_info;
+    m_app_info.m_dock_item_type = item_type;
+
+    m_width = m_height = config::get_icon_size();
 }
+
 DockItem::~DockItem()
 {
     g_print("Free DockItem\n");
+}
+
+dock_item_type_t DockItem::get_dock_item_type() const
+{
+    return m_app_info.m_dock_item_type;
 }
 
 string DockItem::get_name() const
@@ -43,27 +50,27 @@ bool DockItem::is_attached() const
     return m_attached;
 }
 
-unsigned int DockItem::get_width() const
+int DockItem::get_width() const
 {
     return m_width;
 }
 
-unsigned int DockItem::get_height() const
+int DockItem::get_height() const
 {
     return m_height;
 }
 
-void DockItem::set_index(unsigned int index)
+void DockItem::set_index(int index)
 {
     m_index = index;
 }
 
-void DockItem::set_y(unsigned int y)
+void DockItem::set_y(int y)
 {
     m_y = y;
 }
 
-void DockItem::set_x(unsigned int x)
+void DockItem::set_x(int x)
 {
     m_x = x;
 }

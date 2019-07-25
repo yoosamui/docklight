@@ -53,6 +53,20 @@ namespace position_util
         }
     }
 
+    const Gdk::Rectangle get_appwindow_geometry()
+    {
+        Gdk::Rectangle result;
+        int x, y;
+        m_window->get_position(x, y);
+
+        result.set_x(x);
+        result.set_y(y);
+        result.set_width(m_window->get_width());
+        result.set_height(m_window->get_height());
+
+        return result;
+    }
+
 }  // namespace position_util
 DL_NS_END
 
