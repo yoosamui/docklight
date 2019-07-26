@@ -1,14 +1,12 @@
 #pragma once
 
 #include "common.h"
-//#include "components/device.h"
-DL_NS_BEGIN
 
-// using namespace device;
+DL_NS_BEGIN
 
 namespace system_util
 {
-    //    Display get_display();
+    const string get_current_path(const string& str);
 }  // namespace system_util
 
 DL_NS_END

@@ -31,8 +31,6 @@ AppWindow::AppWindow()
         gtk_widget_set_visual(GTK_WIDGET(gobj()), visual);
     }
 
-    // this->set_gravity(Gdk::Gravity::GRAVITY_STATIC);
-
     // A window to implement a docking bar used for creating the dock panel.
     this->set_skip_taskbar_hint(true);
     this->set_skip_pager_hint(true);
@@ -42,8 +40,6 @@ AppWindow::AppWindow()
 
     this->add(m_panel);
     this->show_all();
-    m_gravity = Gdk::GRAVITY_NORTH_WEST;
-    // m_animation_timer.start();
 }
 
 AppWindow::~AppWindow()
@@ -63,8 +59,6 @@ int AppWindow::init(Glib::RefPtr<Gtk::Application> &app)
     g_signal_connect(G_OBJECT(screen), "monitors-changed",
                      G_CALLBACK(monitor_changed_callback), (gpointer)this);
 
-    // Glib::signal_timeout().connect(
-    // sigc::mem_fun(*this, &AppWindow::auto_hidde_timer), 1000 / 30);
     return 0;
 }
 
@@ -80,7 +74,6 @@ Panel *AppWindow::get_panel()
 
 bool AppWindow::on_enter_notify_event(GdkEventCrossing *crossing_event)
 {
-    g_print("mousein\n");
     m_mouse_in = true;
     return true;
 }
@@ -90,91 +83,6 @@ bool AppWindow::on_leave_notify_event(GdkEventCrossing *crossing_event)
     m_mouse_in = false;
     return true;
 }
-/*float m_easing_duration = 16.0;
-float m_initTime = 0;
-bool m_visible = true;
-bool AppWindow::auto_hidde_timer()
-{
-    // if (m_animation_state == 0) {
-    //  return false;
-    //}
-
-    if (m_visible && !m_mouse_in && !m_animation_running &&
-        abs(m_animation_timer.elapsed()) > 1.5f) {
-        g_print("hidde\n");
-        this->set_gravity(Gdk::GRAVITY_NORTH_EAST);
-        m_animation_running = true;
-        m_animation_hidde = true;
-        //  getchar();
-    }
-
-    if (!m_visible && m_mouse_in && !m_animation_running) {
-        g_print("show\n");
-        // this->set_gravity(m_gravity);
-        this->set_gravity(Gdk::GRAVITY_NORTH_EAST);
-        m_animation_running = true;
-    }
-
-    if (m_animation_running) {
-        auto endTime = m_initTime + m_easing_duration;
-
-        float startPosition;
-        float endPosition;
-
-        if (m_visible) {
-            startPosition = config::get_dock_area();
-            endPosition = 1.0;
-        } else {
-            startPosition = 1.0;
-            endPosition = config::get_dock_area();
-        }
-
-        float resize_pos = easing_util::map_clamp(
-            m_animation_time, m_initTime, endTime, startPosition, endPosition,
-            &easing_util::linear::easeIn);
-
-        if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-            this->resize(this->get_width(), resize_pos);
-        } else {
-            this->resize(resize_pos, this->get_height());
-        }
-
-        g_print("anim %d\n", (int)resize_pos);
-        m_animation_time++;
-
-        if ((int)resize_pos == (int)endPosition) {
-            m_animation_time = 0.f;
-            m_animation_timer.stop();
-            m_animation_timer.reset();
-
-            m_animation_timer.start();
-            m_animation_running = false;
-
-            if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-                m_visible = this->get_height() > 4;
-                g_print("END %d %d\n", (int)m_visible, this->get_height());
-            } else {
-                m_visible = this->get_width() > 4;
-                g_print("END %d %d\n", (int)m_visible, this->get_width());
-            }
-
-            [>this->set_gravity(Gdk::Gravity::GRAVITY_NORTH_WEST);
-
-            if (!m_visible) {
-                int y, x, width;
-                this->get_position(x, y);
-
-                resize(1, get_height());
-                width = resize_pos;
-
-                move(2559, y);
-            }<]
-        }
-    }
-
-    return true;
-}*/
-
 void AppWindow::update()
 {
     position_util::set_window_position();
@@ -185,7 +93,6 @@ int AppWindow::on_command_line(
     const Glib::RefPtr<Gio::ApplicationCommandLine> &command_line,
     Glib::RefPtr<Gtk::Application> &app)
 {
-    g_print("ACTIVATE\n");
     int argc = 0;
     char **argv = command_line->get_arguments(argc);
 
@@ -225,6 +132,7 @@ int AppWindow::on_command_line(
 
     // resize and set the position
     AppWindow::update();
+
     // activate window
     app->activate();
 

@@ -9,6 +9,8 @@ DL_NS_BEGIN
 
 namespace pixbuf_util
 {
+    void invert_pixels(Glib::RefPtr<Gdk::Pixbuf> image);
+
     const Glib::RefPtr<Gdk::Pixbuf> get_from_file(const std::string& filename,
                                                   int width, int height);
 

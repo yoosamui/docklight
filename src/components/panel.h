@@ -23,14 +23,14 @@ class Panel : public Gtk::DrawingArea
   protected:
     bool m_mouse_in = false;
     bool m_animation_running = false;
-    bool m_animation_hidde = false;
+    bool m_animation_hide = false;
     float m_animation_time = 0;
     int m_animation_state = 1;
 
     bool m_visible = true;
     Glib::Timer m_animation_timer;
 
-    bool m_connect_autohidde_signal_set = false;
+    bool m_connect_autohide_signal_set = false;
     bool m_connect_draw_signal_set = false;
 
     AppUpdater m_app_updater;
@@ -45,9 +45,9 @@ class Panel : public Gtk::DrawingArea
     bool on_timeout_draw();
 
     sigc::connection m_sigc_draw;
-    sigc::connection m_sigc_autohidde;
+    sigc::connection m_sigc_autohide;
     void connect_draw_signal(bool connect);
-    void connect_autohidde_signal(bool connect);
+    void connect_autohide_signal(bool connect);
 
     void get_item_position(const dock_item_type_t item_type, int& x, int& y,
                            int& width, int& height);
@@ -57,7 +57,8 @@ class Panel : public Gtk::DrawingArea
     bool on_motion_notify_event(GdkEventMotion* event);
 
     int get_index(const int& mouseX, const int& mouseY);
-    bool auto_hidde_timer();
+    bool auto_hide_timer();
+    bool intelli_hide_timer();
 };
 
 DL_NS_END

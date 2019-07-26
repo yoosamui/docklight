@@ -11,7 +11,7 @@ namespace config
     dock_location_t m_location = dock_location_t::bottom;
     int m_icon_size = 48;
     int m_separator_margin = 10;
-    bool m_autohidde = true;
+    bool m_autohide = true;
 
     void load(const GSList *args_list)
     {
@@ -53,7 +53,7 @@ namespace config
         }
     }
 
-    bool is_autohidde() { return m_autohidde; }
+    bool is_autohide() { return m_autohide; }
     int get_window_start_end_margin() { return 20; }
 
     int get_separator_margin() { return m_separator_margin; }

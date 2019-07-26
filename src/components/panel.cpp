@@ -1,12 +1,17 @@
 #include "components/panel.h"
 #include <gdkmm/general.h>  // set_source_pixbuf()
+#include <glibmm/i18n.h>
 #include <glibmm/main.h>
 #include <glibmm/timer.h>
 #include "appwindow.h"
 #include "components/config.h"
 #include "utils/cairo.h"
 #include "utils/easing.h"
+#include "utils/pixbuf.h"
 #include "utils/position.h"
+#include "utils/system.h"
+
+#define DEF_ICONNAME "data/images/docklight.home.ico"
 
 DL_NS_BEGIN
 
@@ -26,67 +31,52 @@ Panel::Panel()
 
     Panel::m_mouse_inside = false;
 
-    if (config::is_autohidde()) {
-        this->connect_autohidde_signal(true);
+    if (config::is_autohide()) {
+        this->connect_autohide_signal(true);
         m_animation_timer.start();
     }
+
+    string filename(system_util::get_current_path(DEF_ICONNAME));
+    appinfo_t info;
+    auto icon_size = config::get_icon_size();
+    auto const homePixbuf =
+        pixbuf_util::get_from_file(filename, icon_size, icon_size);
+
+    info.m_name = "desktop";
+    info.m_title = _("Desktop");
+
+    m_app_updater.m_dockitems.push_back(
+        shared_ptr<DockItem>(new DockItem(info)));
+    auto const new_item = m_app_updater.m_dockitems.back();
+    new_item->set_image(homePixbuf);
 }
 
 Panel::~Panel() {}
 
-void invert_pixels(Glib::RefPtr<Gdk::Pixbuf> image)
+void Panel::connect_autohide_signal(bool connect)
 {
-    gint x, y;
-    // if (image:tabnewl
-    // && image->get_colorspace() == Gdk::COLORSPACE_RGB &&
-    // image->get_bits_per_sample() == 8){
-    int w = image->get_width();
-    int h = image->get_height();
-    int channels = image->get_n_channels();
-    gint rowstride = image->get_rowstride();
-    gint pixel_offset;
-    // for (i = 0; i < 4; i++) {
-    for (y = 0; y < h; y++) {
-        for (x = 0; x < w; x++) {
-            pixel_offset = y * rowstride + x * channels;
-            guchar* pixel = &image->get_pixels()[pixel_offset];
+    if (connect) {
+        if (!m_connect_autohide_signal_set) {
+            m_sigc_autohide = Glib::signal_timeout().connect(
+                sigc::mem_fun(*this, &Panel::auto_hide_timer), 33.33);
 
-            pixel[0] = 255 - pixel[0];
-            pixel[1] = 255 - pixel[1];
-            pixel[2] = 255 - pixel[2];
+            m_connect_autohide_signal_set = true;
         }
-    }
-
-    //    DockPanel::update();
-    //   std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    // }
-}
-
-// https://developer.gnome.org/gobject/unstable/gobject-Signals.html#g-signal-handler-disconnect
-void Panel::connect_autohidde_signal(bool connect)
-{
-    if (connect && !m_connect_autohidde_signal_set) {
-        m_sigc_autohidde = Glib::signal_timeout().connect(
-            sigc::mem_fun(*this, &Panel::auto_hidde_timer), 33.33);
-
-        m_connect_autohidde_signal_set = true;
-        g_print("connect\n");
     } else {
-        m_sigc_autohidde.disconnect();
-        m_connect_autohidde_signal_set = false;
-
-        g_print("disconnect\n");
+        m_sigc_autohide.disconnect();
+        m_connect_autohide_signal_set = false;
     }
 }
 
 void Panel::connect_draw_signal(bool connect)
 {
-    if (connect && !m_connect_draw_signal_set) {
-        m_sigc_draw = Glib::signal_timeout().connect(
-            sigc::mem_fun(*this, &Panel::on_timeout_draw), 125.0);
+    if (connect) {
+        if (!m_connect_draw_signal_set) {
+            m_sigc_draw = Glib::signal_timeout().connect(
+                sigc::mem_fun(*this, &Panel::on_timeout_draw), 125.0);
 
-        m_connect_draw_signal_set = true;
-
+            m_connect_draw_signal_set = true;
+        }
     } else {
         m_sigc_draw.disconnect();
         m_connect_draw_signal_set = false;
@@ -95,7 +85,7 @@ void Panel::connect_draw_signal(bool connect)
 
 void Panel::on_appupdater_update(bool a, int b)
 {
-    g_print("Update signal\n");
+    g_print("From panel Update signal resquested\n");
     AppWindow::update();
 
     m_draw_required = true;
@@ -106,9 +96,6 @@ int Panel::get_required_size()
 {
     int separators =
         config::get_separator_margin() * (m_app_updater.m_dockitems.size() - 1);
-    //        config::get_separator_margin();
-    //
-    g_print("Size %d\n", (int)m_app_updater.m_dockitems.size());
     return (m_app_updater.m_dockitems.size() * config::get_icon_size()) +
            config::get_window_start_end_margin() + separators;
 }
@@ -181,8 +168,8 @@ bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
 {
     Panel::m_mouse_inside = true;
 
-    if (config::is_autohidde()) {
-        this->connect_autohidde_signal(true);
+    if (config::is_autohide()) {
+        this->connect_autohide_signal(true);
     }
 
     this->connect_draw_signal(true);
@@ -199,8 +186,11 @@ bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
 
     Panel::m_mouse_inside = false;
 
-    if (config::is_autohidde()) {
-        this->connect_autohidde_signal(true);
+    if (config::is_autohide()) {
+        this->connect_autohide_signal(true);
+        if (m_visible) {
+            m_animation_timer.start();
+        }
     }
 
     this->connect_draw_signal(false);
@@ -292,27 +282,30 @@ inline void Panel::get_item_position(const dock_item_type_t item_typ, int& x,
     }*/
 }
 
+bool Panel::intelli_hide_timer()
+{
+    return true;
+}
+
 float m_easing_duration = 6.0;
 float m_initTime = 0;
 int m_offset_x = 0;
 int m_offset_y = 0;
-bool Panel::auto_hidde_timer()
+bool Panel::auto_hide_timer()
 {
-    // if (m_animation_state == 0) {
-    //  return false;
-    //}
+    if (config::is_autohide() == false) {
+        return false;
+    }
 
     if (m_visible && !m_mouse_inside && !m_animation_running &&
         abs(m_animation_timer.elapsed()) > 1.5f) {
-        g_print("hidde\n");
-        m_easing_duration = 6.0;
+        // g_print("hide\n");
+        m_easing_duration = 5.0;
         m_animation_running = true;
     }
 
     if (!m_visible && m_mouse_inside && !m_animation_running) {
-        g_print("show\n");
-        // this->set_gravity(m_gravity);
-        //  this->set_gravity(Gdk::GRAVITY_NORTH_EAST);
+        // g_print("show\n");
         m_easing_duration = 4.0;
         m_animation_running = true;
     }
@@ -329,7 +322,6 @@ bool Panel::auto_hidde_timer()
                 if (m_visible) {
                     startPosition = 0;
                     endPosition = -(config::get_dock_area() + 1);
-                    ;
                 } else {
                     startPosition = -(config::get_dock_area() + 1);
                     endPosition = 0;
@@ -349,23 +341,9 @@ bool Panel::auto_hidde_timer()
             }
         }
 
-        /*if (m_visible) {
-            startPosition = 0;  // config::get_dock_area();
-            endPosition = config::get_dock_area();
-        } else {
-            startPosition = config::get_dock_area();
-            endPosition = 0;
-        }*/
-
         float position = easing_util::map_clamp(
             m_animation_time, m_initTime, endTime, startPosition, endPosition,
             &easing_util::linear::easeIn);
-
-        // if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-        ////   this->resize(this->get_width(), resize_pos);
-        //} else {
-        ////    this->resize(resize_pos, this->get_height());
-        //}
 
         if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
             m_offset_x = 0;
@@ -375,7 +353,7 @@ bool Panel::auto_hidde_timer()
             m_offset_y = 0;
         }
 
-        g_print("anim %d\n", (int)position);
+        // g_print("anim %d\n", (int)position);
 
         Gtk::Widget::queue_draw();
         m_animation_time++;
@@ -386,20 +364,10 @@ bool Panel::auto_hidde_timer()
             m_animation_running = false;
             m_animation_time = 0;
 
-            // if (config::get_dock_orientation() ==
-            // Gtk::ORIENTATION_HORIZONTAL) { m_visible = this->get_height() >
-            // 1; g_print("END %d %d\n", (int)m_visible, this->get_height());
-            //} else {
-            // m_visible = (int)endPosition == 0;
-            // g_print("END %d %d\n", (int)m_visible, this->get_width());
-            //}
-
             m_visible = (int)endPosition == 0;  // config::get_dock_area();
-            if (m_visible) {
-                m_animation_timer.start();
-            }
-            connect_autohidde_signal(false);
-            g_print("END %d %d\n", (int)m_visible, config::get_dock_area());
+            connect_autohide_signal(false);
+            //    g_print("END %d %d\n", (int)m_visible,
+            //    config::get_dock_area());
         }
     }
 
@@ -481,7 +449,7 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
         // draw selector
         if ((int)idx == m_current_index) {
             auto tmp = item->get_image()->copy();
-            invert_pixels(tmp);
+            pixbuf_util::invert_pixels(tmp);
             Gdk::Cairo::set_source_pixbuf(cr, tmp, m_offset_x + x,
                                           m_offset_y + y);
             cr->paint();
