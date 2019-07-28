@@ -18,6 +18,7 @@
 // clang-format on
 DL_NS_BEGIN
 
+Panel *AppWindow::m_panel;
 AppWindow::AppWindow()
 {
     GdkScreen *screen;
@@ -38,18 +39,21 @@ AppWindow::AppWindow()
     this->set_decorated(false);
     this->set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
 
-    this->add(m_panel);
+    m_panel = new Panel();
+    this->add(*m_panel);
     this->show_all();
 }
 
 AppWindow::~AppWindow()
 {
+    delete m_panel;
     g_print("free AppWindow class.\n");
 }
 
 int AppWindow::init(Glib::RefPtr<Gtk::Application> &app)
 {
     position_util::init(this);
+
     app->signal_command_line().connect(
         sigc::bind(sigc::ptr_fun(&AppWindow::on_command_line), app), false);
 
@@ -59,7 +63,15 @@ int AppWindow::init(Glib::RefPtr<Gtk::Application> &app)
     g_signal_connect(G_OBJECT(screen), "monitors-changed",
                      G_CALLBACK(monitor_changed_callback), (gpointer)this);
 
+    app->signal_activate().connect(sigc::ptr_fun(&AppWindow::on_app_activated));
+
     return 0;
+}
+
+void AppWindow::on_app_activated()
+{
+    g_print("Applcation activated.\n");
+    m_panel->init();
 }
 
 void AppWindow::monitor_changed_callback(GdkScreen *screen, gpointer gtkwindow)
@@ -67,9 +79,9 @@ void AppWindow::monitor_changed_callback(GdkScreen *screen, gpointer gtkwindow)
     update();
 }
 
-Panel *AppWindow::get_panel()
+Panel *AppWindow::get_panel() const
 {
-    return &m_panel;
+    return m_panel;
 }
 
 bool AppWindow::on_enter_notify_event(GdkEventCrossing *crossing_event)
@@ -83,10 +95,11 @@ bool AppWindow::on_leave_notify_event(GdkEventCrossing *crossing_event)
     m_mouse_in = false;
     return true;
 }
+
 void AppWindow::update()
 {
     position_util::set_window_position();
-    g_print("AppWindow update \n");
+    g_print("AppWindow updated.\n");
 }
 
 int AppWindow::on_command_line(
@@ -98,7 +111,7 @@ int AppWindow::on_command_line(
 
     cli::Arguments a(argc, argv);
     if (a.validate() == false) {
-        return -1;
+        app->quit();
     }
 
     const GSList *list = a.get_results();

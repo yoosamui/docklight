@@ -43,3 +43,8 @@ enum class dock_item_type_t : unsigned int {
     separator
 
 };
+
+enum class dock_autohide_type_t : unsigned int {
+    autohide = 0,
+    sensitive,
+};

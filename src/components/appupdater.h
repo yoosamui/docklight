@@ -14,6 +14,7 @@ class AppUpdater
 
   public:
     AppUpdater();
+    ~AppUpdater();
 
     // signal accessor:
     typedef sigc::signal<void, bool, int> type_signal_update;

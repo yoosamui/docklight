@@ -35,6 +35,10 @@ AppUpdater::AppUpdater()
     // clang-format on
 }
 
+AppUpdater::~AppUpdater()
+{
+    g_print("Free AppUpdater\n");
+}
 void AppUpdater::on_theme_changed()
 {
     int icon_size = config::get_icon_size();

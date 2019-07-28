@@ -23,19 +23,14 @@ class AppWindow : public Gtk::Window
 
     static void update();
 
-    Panel *get_panel();
-
-    Gdk::Gravity m_gravity;
+    Panel *get_panel() const;
 
   private:
-    Panel m_panel;
-    bool m_mouse_in = false;
-    // bool m_animation_running = false;
-    // bool m_animation_hidde = false;
-    // float m_animation_time = 0;
-    // int m_animation_state = 1;
+    static Panel *m_panel;
 
-    // Glib::Timer m_animation_timer;
+    bool m_mouse_in = false;
+
+    static void on_app_activated();
 
     static int on_command_line(
         const Glib::RefPtr<Gio::ApplicationCommandLine> &command_line,

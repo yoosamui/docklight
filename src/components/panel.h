@@ -9,28 +9,41 @@
 #include <glibmm/timer.h>
 DL_NS_BEGIN
 
+#define DEF_HIDE 0
+#define DEF_SHOW 1
+
+typedef struct {
+    sigc::connection m_sigc_autohide;
+    bool m_connect_autohide_signal_set = false;
+    int m_animation_state = DEF_SHOW;
+    gulong m_geometry_change_id = 0;
+    Glib::Timer m_animation_timer;
+} autohide_static_t;
+
 class Panel : public Gtk::DrawingArea
 {
   public:
     Panel();
     ~Panel();
 
+    void init();
     int get_required_size();
 
     // Signal handler:
     void on_appupdater_update(bool a, int b);
 
   protected:
+    static autohide_static_t m_autohide_static_type;
+    static Panel* m_this;
     bool m_mouse_in = false;
     bool m_animation_running = false;
-    bool m_animation_hide = false;
-    float m_animation_time = 0;
-    int m_animation_state = 1;
+    float m_animation_time = 0.f;
+    static bool m_visible;
+    static WnckWindow* m_active_window;
+    static void check_intelihide();
 
-    bool m_visible = true;
-    Glib::Timer m_animation_timer;
+    float m_animation_hide_delay = 0.f;
 
-    bool m_connect_autohide_signal_set = false;
     bool m_connect_draw_signal_set = false;
 
     AppUpdater m_app_updater;
@@ -47,7 +60,7 @@ class Panel : public Gtk::DrawingArea
     sigc::connection m_sigc_draw;
     sigc::connection m_sigc_autohide;
     void connect_draw_signal(bool connect);
-    void connect_autohide_signal(bool connect);
+    static void connect_autohide_signal(bool connect);
 
     void get_item_position(const dock_item_type_t item_type, int& x, int& y,
                            int& width, int& height);
@@ -59,6 +72,16 @@ class Panel : public Gtk::DrawingArea
     int get_index(const int& mouseX, const int& mouseY);
     bool auto_hide_timer();
     bool intelli_hide_timer();
+
+    static void on_geometry_change(WnckWindow* window, gpointer user_data);
+
+    static void on_active_workspace_changed(
+        WnckScreen* screen, WnckWorkspace* previously_active_space,
+        gpointer user_data);
+
+    static void on_active_window_changed(WnckScreen* screen,
+                                         WnckWindow* previously_active_window,
+                                         gpointer user_data);
 };
 
 DL_NS_END

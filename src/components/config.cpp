@@ -11,8 +11,8 @@ namespace config
     dock_location_t m_location = dock_location_t::bottom;
     int m_icon_size = 48;
     int m_separator_margin = 10;
-    bool m_autohide = true;
-
+    dock_autohide_type_t m_autohide_type = dock_autohide_type_t::sensitive;
+    // dock_autohide_type_t m_autohide_type = dock_autohide_type_t::autohide;
     void load(const GSList *args_list)
     {
         // TODO Load config
@@ -53,7 +53,16 @@ namespace config
         }
     }
 
-    bool is_autohide() { return m_autohide; }
+    bool is_autohide()
+    {
+        return m_autohide_type == dock_autohide_type_t::autohide;
+    }
+
+    bool is_intelihide()
+    {
+        return m_autohide_type == dock_autohide_type_t::sensitive;
+    }
+
     int get_window_start_end_margin() { return 20; }
 
     int get_separator_margin() { return m_separator_margin; }

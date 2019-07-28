@@ -17,6 +17,10 @@ DL_NS_BEGIN
 
 bool Panel::m_mouse_inside;
 
+autohide_static_t Panel::m_autohide_static_type;
+Panel* Panel::m_this;
+bool Panel::m_visible;
+WnckWindow* Panel::m_active_window;
 Panel::Panel()
 {
     m_app_updater.signal_update().connect(
@@ -29,12 +33,22 @@ Panel::Panel()
                Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK |
                Gdk::POINTER_MOTION_HINT_MASK | Gdk::POINTER_MOTION_MASK);
 
+    m_this = this;
     Panel::m_mouse_inside = false;
+    Panel::m_visible = true;
+    Panel::m_active_window = nullptr;
 
-    if (config::is_autohide()) {
-        this->connect_autohide_signal(true);
-        m_animation_timer.start();
-    }
+    //  Gets the default WnckScreen on the default display.
+    WnckScreen* wnckscreen = wnck_screen_get_default();
+    g_signal_connect(wnckscreen, "active_window_changed",
+                     G_CALLBACK(Panel::on_active_window_changed), nullptr);
+    g_signal_connect(wnckscreen, "active_workspace_changed",
+                     G_CALLBACK(Panel::on_active_workspace_changed), nullptr);
+
+    // https://developer.gnome.org/gtk-tutorial/stable/x334.html
+    //
+
+    // g_signal_handler_disconnect(wnckscreen, m_geometry_change);
 
     string filename(system_util::get_current_path(DEF_ICONNAME));
     appinfo_t info;
@@ -51,21 +65,40 @@ Panel::Panel()
     new_item->set_image(homePixbuf);
 }
 
-Panel::~Panel() {}
+void Panel::init()
+{
+    if (config::is_autohide()) {
+        m_animation_hide_delay = 1.5;
+        m_autohide_static_type.m_animation_state = DEF_HIDE;
+        Panel::connect_autohide_signal(true);
+        m_autohide_static_type.m_animation_timer.start();
+    }
+}
+
+Panel::~Panel()
+{
+    g_print("Free Panel\n");
+}
 
 void Panel::connect_autohide_signal(bool connect)
 {
+    auto& s = Panel::m_autohide_static_type;
     if (connect) {
-        if (!m_connect_autohide_signal_set) {
-            m_sigc_autohide = Glib::signal_timeout().connect(
-                sigc::mem_fun(*this, &Panel::auto_hide_timer), 33.33);
+        if (!s.m_connect_autohide_signal_set) {
+            s.m_sigc_autohide = Glib::signal_timeout().connect(
+                sigc::mem_fun(*m_this, &Panel::auto_hide_timer), 33.33);
 
-            m_connect_autohide_signal_set = true;
+            s.m_connect_autohide_signal_set = true;
         }
     } else {
-        m_sigc_autohide.disconnect();
-        m_connect_autohide_signal_set = false;
+        s.m_sigc_autohide.disconnect();
+        s.m_connect_autohide_signal_set = false;
     }
+
+    if (s.m_connect_autohide_signal_set)
+        g_print("Connected\n");
+    else
+        g_print("disconnect\n");
 }
 
 void Panel::connect_draw_signal(bool connect)
@@ -168,8 +201,17 @@ bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
 {
     Panel::m_mouse_inside = true;
 
-    if (config::is_autohide()) {
-        this->connect_autohide_signal(true);
+    // if (config::is_intelihide()) {
+    // if (!m_visible) {
+    // m_autohide_static_type.m_animation_state = DEF_SHOW;
+    // Panel::connect_autohide_signal(true);
+    //}
+    //}
+    if (config::is_autohide() || config::is_intelihide()) {
+        if (!m_visible) {
+            m_autohide_static_type.m_animation_state = DEF_SHOW;
+            Panel::connect_autohide_signal(true);
+        }
     }
 
     this->connect_draw_signal(true);
@@ -186,11 +228,15 @@ bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
 
     Panel::m_mouse_inside = false;
 
+    if (config::is_intelihide()) {
+        Panel::connect_autohide_signal(false);
+        Panel::check_intelihide();
+    }
+
     if (config::is_autohide()) {
-        this->connect_autohide_signal(true);
-        if (m_visible) {
-            m_animation_timer.start();
-        }
+        m_autohide_static_type.m_animation_state = DEF_HIDE;
+        Panel::connect_autohide_signal(true);
+        m_autohide_static_type.m_animation_timer.start();
     }
 
     this->connect_draw_signal(false);
@@ -203,6 +249,76 @@ bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
 
     // DockPanel::set_SelectorForActiveWindow(nullptr);
     return true;
+}
+
+void Panel::on_geometry_change(WnckWindow* window, gpointer user_data)
+{
+    if (!config::is_intelihide()) {
+        return;
+    }
+
+    Panel::check_intelihide();
+}
+
+void Panel::check_intelihide()
+{
+    if (m_active_window == nullptr || config::is_intelihide() == false) {
+        return;
+    }
+
+    int xp = 0, yp = 0, widthp = 0, heightp = 0;
+    wnck_window_get_geometry(m_active_window, &xp, &yp, &widthp, &heightp);
+
+    Gdk::Rectangle rect_dock = position_util::get_appwindow_geometry();
+    const Gdk::Rectangle rect_window(xp, yp, widthp, heightp);
+
+    if (rect_dock.intersects(rect_window)) {
+        m_autohide_static_type.m_animation_timer.start();
+        if (m_visible) {
+            m_autohide_static_type.m_animation_state = DEF_HIDE;
+            Panel::connect_autohide_signal(true);
+        }
+    } else {
+        if (!m_visible) {
+            m_autohide_static_type.m_animation_state = DEF_SHOW;
+            Panel::connect_autohide_signal(true);
+        }
+    }
+}
+
+void Panel::on_active_workspace_changed(WnckScreen* screen,
+                                        WnckWorkspace* previously_active_space,
+                                        gpointer user_data)
+{
+    if (config::is_intelihide()) {
+        Panel::check_intelihide();
+    }
+}
+
+void Panel::on_active_window_changed(WnckScreen* screen,
+                                     WnckWindow* previously_active_window,
+                                     gpointer user_data)
+{
+    WnckWindow* active_window = wnck_screen_get_active_window(screen);
+    if (!active_window) {
+        return;
+    }
+
+    Panel::m_active_window = active_window;
+
+    if (config::is_intelihide()) {
+        Panel::check_intelihide();
+
+        if (previously_active_window != nullptr &&
+            m_autohide_static_type.m_geometry_change_id != 0) {
+            g_signal_handler_disconnect(
+                previously_active_window,
+                m_autohide_static_type.m_geometry_change_id);
+        }
+        m_autohide_static_type.m_geometry_change_id =
+            g_signal_connect(active_window, "geometry-changed",
+                             G_CALLBACK(Panel::on_geometry_change), nullptr);
+    }
 }
 
 inline void Panel::get_item_position(const dock_item_type_t item_typ, int& x,
@@ -293,19 +409,24 @@ int m_offset_x = 0;
 int m_offset_y = 0;
 bool Panel::auto_hide_timer()
 {
-    if (config::is_autohide() == false) {
+    if (config::is_autohide() == false && config::is_intelihide() == false) {
         return false;
     }
+    g_print("anim %d %f v:%d\n", m_autohide_static_type.m_animation_state,
+            m_autohide_static_type.m_animation_timer.elapsed(), (int)m_visible);
 
-    if (m_visible && !m_mouse_inside && !m_animation_running &&
-        abs(m_animation_timer.elapsed()) > 1.5f) {
-        // g_print("hide\n");
+    if (m_autohide_static_type.m_animation_state == DEF_HIDE && m_visible &&
+        !m_mouse_inside && !m_animation_running &&
+        abs(m_autohide_static_type.m_animation_timer.elapsed()) >
+            m_animation_hide_delay) {
+        g_print("start hide\n");
         m_easing_duration = 5.0;
         m_animation_running = true;
-    }
 
-    if (!m_visible && m_mouse_inside && !m_animation_running) {
-        // g_print("show\n");
+    } else if (m_autohide_static_type.m_animation_state == DEF_SHOW &&
+               !m_visible &&
+               /* m_mouse_inside &&*/ !m_animation_running) {
+        g_print("start show\n");
         m_easing_duration = 4.0;
         m_animation_running = true;
     }
@@ -359,14 +480,13 @@ bool Panel::auto_hide_timer()
         m_animation_time++;
 
         if ((int)position == (int)endPosition) {
-            m_animation_timer.stop();
-            m_animation_timer.reset();
+            m_autohide_static_type.m_animation_timer.stop();
+            m_autohide_static_type.m_animation_timer.reset();
             m_animation_running = false;
             m_animation_time = 0;
 
-            m_visible = (int)endPosition == 0;  // config::get_dock_area();
-            connect_autohide_signal(false);
-            //    g_print("END %d %d\n", (int)m_visible,
+            m_visible = (int)endPosition == 0;
+            Panel::connect_autohide_signal(false);
             //    config::get_dock_area());
         }
     }

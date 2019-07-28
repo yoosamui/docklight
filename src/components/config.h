@@ -15,6 +15,7 @@ namespace config
     int get_window_start_end_margin();
     int get_icon_size();
     bool is_autohide();
+    bool is_intelihide();
 
 }  // namespace config
 DL_NS_END
