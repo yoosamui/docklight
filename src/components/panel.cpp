@@ -422,10 +422,10 @@ bool Panel::auto_hide_timer()
         g_print("start hide\n");
         m_easing_duration = 5.0;
         m_animation_running = true;
+    }
 
-    } else if (m_autohide_static_type.m_animation_state == DEF_SHOW &&
-               !m_visible &&
-               /* m_mouse_inside &&*/ !m_animation_running) {
+    if (m_autohide_static_type.m_animation_state == DEF_SHOW && !m_visible &&
+        /* m_mouse_inside &&*/ !m_animation_running) {
         g_print("start show\n");
         m_easing_duration = 4.0;
         m_animation_running = true;

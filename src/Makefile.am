@@ -64,6 +64,8 @@ components/appupdater.cpp \
 components/appupdater.h \
 components/dockitem.cpp \
 components/dockitem.h \
+components/autohide.cpp \
+components/autohide.h \
 appwindow.cpp \
 appwindow.h \
 main.cpp \
