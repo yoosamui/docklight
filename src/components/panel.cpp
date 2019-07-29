@@ -26,6 +26,9 @@ Panel::Panel()
     m_app_updater.signal_update().connect(
         sigc::mem_fun(this, &Panel::on_appupdater_update));
 
+    m_autohide.signal_update().connect(
+        sigc::mem_fun(this, &Panel::on_autohide_update));
+
     // Set event masks
     add_events(Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK |
                Gdk::SCROLL_MASK | Gdk::SMOOTH_SCROLL_MASK |
@@ -68,10 +71,13 @@ Panel::Panel()
 void Panel::init()
 {
     if (config::is_autohide()) {
-        m_animation_hide_delay = 1.5;
-        m_autohide_static_type.m_animation_state = DEF_HIDE;
-        Panel::connect_autohide_signal(true);
-        m_autohide_static_type.m_animation_timer.start();
+        // m_animation_hide_delay = 1.5;
+        // m_autohide_static_type.m_animation_state = DEF_HIDE;
+        // Panel::connect_autohide_signal(true);
+        // m_autohide_static_type.m_animation_timer.start();
+        //
+        m_autohide.set_hide_delay(1.5);
+        m_autohide.hide();
     }
 }
 
@@ -82,7 +88,7 @@ Panel::~Panel()
 
 void Panel::connect_autohide_signal(bool connect)
 {
-    auto& s = Panel::m_autohide_static_type;
+    /*auto& s = Panel::m_autohide_static_type;
     if (connect) {
         if (!s.m_connect_autohide_signal_set) {
             s.m_sigc_autohide = Glib::signal_timeout().connect(
@@ -98,7 +104,7 @@ void Panel::connect_autohide_signal(bool connect)
     if (s.m_connect_autohide_signal_set)
         g_print("Connected\n");
     else
-        g_print("disconnect\n");
+        g_print("disconnect\n");*/
 }
 
 void Panel::connect_draw_signal(bool connect)
@@ -123,6 +129,14 @@ void Panel::on_appupdater_update(bool a, int b)
 
     m_draw_required = true;
     on_timeout_draw();
+}
+
+void Panel::on_autohide_update(int x, int y)
+{
+    m_offset_x = x;
+    m_offset_y = y;
+
+    Gtk::Widget::queue_draw();
 }
 
 int Panel::get_required_size()
@@ -208,10 +222,12 @@ bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
     //}
     //}
     if (config::is_autohide() || config::is_intelihide()) {
-        if (!m_visible) {
-            m_autohide_static_type.m_animation_state = DEF_SHOW;
-            Panel::connect_autohide_signal(true);
-        }
+        m_autohide.show();
+
+        // if (!m_visible) {
+        // m_autohide_static_type.m_animation_state = DEF_SHOW;
+        ////   Panel::connect_autohide_signal(true);
+        //}
     }
 
     this->connect_draw_signal(true);
@@ -229,14 +245,16 @@ bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
     Panel::m_mouse_inside = false;
 
     if (config::is_intelihide()) {
-        Panel::connect_autohide_signal(false);
-        Panel::check_intelihide();
+        // n   Panel::connect_autohide_signal(false);
+        //  Panel::check_intelihide();
+        m_autohide.intelihide();
     }
 
     if (config::is_autohide()) {
-        m_autohide_static_type.m_animation_state = DEF_HIDE;
-        Panel::connect_autohide_signal(true);
-        m_autohide_static_type.m_animation_timer.start();
+        m_autohide.hide();
+        // m_autohide_static_type.m_animation_state = DEF_HIDE;
+        ////  Panel::connect_autohide_signal(true);
+        // m_autohide_static_type.m_animation_timer.start();
     }
 
     this->connect_draw_signal(false);
@@ -276,12 +294,12 @@ void Panel::check_intelihide()
         m_autohide_static_type.m_animation_timer.start();
         if (m_visible) {
             m_autohide_static_type.m_animation_state = DEF_HIDE;
-            Panel::connect_autohide_signal(true);
+            //    Panel::connect_autohide_signal(true);
         }
     } else {
         if (!m_visible) {
             m_autohide_static_type.m_animation_state = DEF_SHOW;
-            Panel::connect_autohide_signal(true);
+            //  Panel::connect_autohide_signal(true);
         }
     }
 }
@@ -405,8 +423,6 @@ bool Panel::intelli_hide_timer()
 
 float m_easing_duration = 6.0;
 float m_initTime = 0;
-int m_offset_x = 0;
-int m_offset_y = 0;
 bool Panel::auto_hide_timer()
 {
     if (config::is_autohide() == false && config::is_intelihide() == false) {
@@ -486,7 +502,7 @@ bool Panel::auto_hide_timer()
             m_animation_time = 0;
 
             m_visible = (int)endPosition == 0;
-            Panel::connect_autohide_signal(false);
+            //   Panel::connect_autohide_signal(false);
             //    config::get_dock_area());
         }
     }

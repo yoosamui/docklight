@@ -1,12 +1,12 @@
 
 #pragma once
 
+#include <glibmm/timer.h>
 #include <gtkmm/drawingarea.h>
 #include <sigc++/sigc++.h>
 #include "common.h"
 #include "components/appupdater.h"
-
-#include <glibmm/timer.h>
+#include "components/autohide.h"
 DL_NS_BEGIN
 
 #define DEF_HIDE 0
@@ -33,6 +33,12 @@ class Panel : public Gtk::DrawingArea
     void on_appupdater_update(bool a, int b);
 
   protected:
+    Autohide m_autohide;
+    void on_autohide_update(int x, int y);
+
+    int m_offset_x = 0;
+    int m_offset_y = 0;
+
     static autohide_static_t m_autohide_static_type;
     static Panel* m_this;
     bool m_mouse_in = false;
