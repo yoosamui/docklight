@@ -6,7 +6,6 @@
 #include "appwindow.h"
 #include "components/config.h"
 #include "utils/cairo.h"
-#include "utils/easing.h"
 #include "utils/pixbuf.h"
 #include "utils/position.h"
 #include "utils/system.h"
@@ -17,10 +16,6 @@ DL_NS_BEGIN
 
 bool Panel::m_mouse_inside;
 
-autohide_static_t Panel::m_autohide_static_type;
-Panel* Panel::m_this;
-bool Panel::m_visible;
-WnckWindow* Panel::m_active_window;
 Panel::Panel()
 {
     m_app_updater.signal_update().connect(
@@ -36,22 +31,7 @@ Panel::Panel()
                Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK |
                Gdk::POINTER_MOTION_HINT_MASK | Gdk::POINTER_MOTION_MASK);
 
-    m_this = this;
     Panel::m_mouse_inside = false;
-    Panel::m_visible = true;
-    Panel::m_active_window = nullptr;
-
-    //  Gets the default WnckScreen on the default display.
-    WnckScreen* wnckscreen = wnck_screen_get_default();
-    g_signal_connect(wnckscreen, "active_window_changed",
-                     G_CALLBACK(Panel::on_active_window_changed), nullptr);
-    g_signal_connect(wnckscreen, "active_workspace_changed",
-                     G_CALLBACK(Panel::on_active_workspace_changed), nullptr);
-
-    // https://developer.gnome.org/gtk-tutorial/stable/x334.html
-    //
-
-    // g_signal_handler_disconnect(wnckscreen, m_geometry_change);
 
     string filename(system_util::get_current_path(DEF_ICONNAME));
     appinfo_t info;
@@ -71,11 +51,6 @@ Panel::Panel()
 void Panel::init()
 {
     if (config::is_autohide()) {
-        // m_animation_hide_delay = 1.5;
-        // m_autohide_static_type.m_animation_state = DEF_HIDE;
-        // Panel::connect_autohide_signal(true);
-        // m_autohide_static_type.m_animation_timer.start();
-        //
         m_autohide.set_hide_delay(1.5);
         m_autohide.hide();
     }
@@ -86,33 +61,12 @@ Panel::~Panel()
     g_print("Free Panel\n");
 }
 
-void Panel::connect_autohide_signal(bool connect)
-{
-    /*auto& s = Panel::m_autohide_static_type;
-    if (connect) {
-        if (!s.m_connect_autohide_signal_set) {
-            s.m_sigc_autohide = Glib::signal_timeout().connect(
-                sigc::mem_fun(*m_this, &Panel::auto_hide_timer), 33.33);
-
-            s.m_connect_autohide_signal_set = true;
-        }
-    } else {
-        s.m_sigc_autohide.disconnect();
-        s.m_connect_autohide_signal_set = false;
-    }
-
-    if (s.m_connect_autohide_signal_set)
-        g_print("Connected\n");
-    else
-        g_print("disconnect\n");*/
-}
-
 void Panel::connect_draw_signal(bool connect)
 {
     if (connect) {
         if (!m_connect_draw_signal_set) {
             m_sigc_draw = Glib::signal_timeout().connect(
-                sigc::mem_fun(*this, &Panel::on_timeout_draw), 125.0);
+                sigc::mem_fun(*this, &Panel::on_timeout_draw), 1000 / 8);
 
             m_connect_draw_signal_set = true;
         }
@@ -190,10 +144,31 @@ inline int Panel::get_index(const int& mouseX, const int& mouseY)
 
     return -1;
 }
-
+bool m_enter = false;
 bool Panel::on_motion_notify_event(GdkEventMotion* event)
 {
-    //    g_print("Moution\n");
+    if (!m_enter) {
+        int x = 0, y = 0, w = 0, h = 0;
+        gdk_window_get_geometry(event->window, &x, &y, &w, &h);
+
+        auto location = config::get_dock_location();
+        if (location == dock_location_t::left) {
+            if ((int)event->x < 10) {
+                m_enter = true;
+            }
+        } else
+
+            if (location == dock_location_t::bottom) {
+            if ((int)event->y > h - 10) {
+                m_enter = true;
+            }
+        }
+        if (m_enter) {
+            on_enter_notify_event(nullptr);
+        }
+    }
+
+    //    g_print("Moution %d %d [%d]\n", (int)event->x, (int)event->y, 0);
 
     m_current_index = this->get_index(event->x, event->y);
     /*
@@ -214,129 +189,64 @@ bool Panel::on_motion_notify_event(GdkEventMotion* event)
 bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
 {
     Panel::m_mouse_inside = true;
+    this->connect_draw_signal(true);
 
-    // if (config::is_intelihide()) {
-    // if (!m_visible) {
-    // m_autohide_static_type.m_animation_state = DEF_SHOW;
-    // Panel::connect_autohide_signal(true);
-    //}
-    //}
-    if (config::is_autohide() || config::is_intelihide()) {
-        m_autohide.show();
-
-        // if (!m_visible) {
-        // m_autohide_static_type.m_animation_state = DEF_SHOW;
-        ////   Panel::connect_autohide_signal(true);
-        //}
+    if (!m_enter) {
+        return true;
     }
 
-    this->connect_draw_signal(true);
+    if (config::is_autohide() || config::is_intelihide()) {
+        m_autohide.show();
+    }
+
     // m_HomeMenu.hide();
     // m_ItemMenu.hide();
 
-    return true;
+    return false;
 }
 
 bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
 {
+    int x = 0, y = 0, w = 0, h = 0;
+    gdk_window_get_geometry(crossing_event->window, &x, &y, &w, &h);
+
+    // check for false positives
+    if (config::get_dock_orientation() == Gtk::ORIENTATION_VERTICAL) {
+        if ((int)crossing_event->y >= 0 && (int)crossing_event->y <= h) {
+            if ((int)crossing_event->x == x) {
+                return true;
+            }
+        }
+    } else {
+        if ((int)crossing_event->x >= 0 && (int)crossing_event->x <= w) {
+            if ((int)crossing_event->y == h) {
+                return true;
+            }
+        }
+    }
+
     m_current_index = -1;
     on_timeout_draw();
 
+    m_enter = false;
     Panel::m_mouse_inside = false;
 
     if (config::is_intelihide()) {
-        // n   Panel::connect_autohide_signal(false);
-        //  Panel::check_intelihide();
         m_autohide.intelihide();
     }
-
     if (config::is_autohide()) {
         m_autohide.hide();
-        // m_autohide_static_type.m_animation_state = DEF_HIDE;
-        ////  Panel::connect_autohide_signal(true);
-        // m_autohide_static_type.m_animation_timer.start();
     }
 
     this->connect_draw_signal(false);
-    // m_titlewindow.hide();
-    // m_infowindow.hide();
 
-    // if (m_popupMenuOn || m_dragDropItem) {
-    // return true;
-    //}
-
-    // DockPanel::set_SelectorForActiveWindow(nullptr);
     return true;
-}
-
-void Panel::on_geometry_change(WnckWindow* window, gpointer user_data)
-{
-    if (!config::is_intelihide()) {
-        return;
-    }
-
-    Panel::check_intelihide();
-}
-
-void Panel::check_intelihide()
-{
-    if (m_active_window == nullptr || config::is_intelihide() == false) {
-        return;
-    }
-
-    int xp = 0, yp = 0, widthp = 0, heightp = 0;
-    wnck_window_get_geometry(m_active_window, &xp, &yp, &widthp, &heightp);
-
-    Gdk::Rectangle rect_dock = position_util::get_appwindow_geometry();
-    const Gdk::Rectangle rect_window(xp, yp, widthp, heightp);
-
-    if (rect_dock.intersects(rect_window)) {
-        m_autohide_static_type.m_animation_timer.start();
-        if (m_visible) {
-            m_autohide_static_type.m_animation_state = DEF_HIDE;
-            //    Panel::connect_autohide_signal(true);
-        }
-    } else {
-        if (!m_visible) {
-            m_autohide_static_type.m_animation_state = DEF_SHOW;
-            //  Panel::connect_autohide_signal(true);
-        }
-    }
-}
-
-void Panel::on_active_workspace_changed(WnckScreen* screen,
-                                        WnckWorkspace* previously_active_space,
-                                        gpointer user_data)
-{
-    if (config::is_intelihide()) {
-        Panel::check_intelihide();
-    }
 }
 
 void Panel::on_active_window_changed(WnckScreen* screen,
                                      WnckWindow* previously_active_window,
                                      gpointer user_data)
 {
-    WnckWindow* active_window = wnck_screen_get_active_window(screen);
-    if (!active_window) {
-        return;
-    }
-
-    Panel::m_active_window = active_window;
-
-    if (config::is_intelihide()) {
-        Panel::check_intelihide();
-
-        if (previously_active_window != nullptr &&
-            m_autohide_static_type.m_geometry_change_id != 0) {
-            g_signal_handler_disconnect(
-                previously_active_window,
-                m_autohide_static_type.m_geometry_change_id);
-        }
-        m_autohide_static_type.m_geometry_change_id =
-            g_signal_connect(active_window, "geometry-changed",
-                             G_CALLBACK(Panel::on_geometry_change), nullptr);
-    }
 }
 
 inline void Panel::get_item_position(const dock_item_type_t item_typ, int& x,
@@ -416,99 +326,6 @@ inline void Panel::get_item_position(const dock_item_type_t item_typ, int& x,
     }*/
 }
 
-bool Panel::intelli_hide_timer()
-{
-    return true;
-}
-
-float m_easing_duration = 6.0;
-float m_initTime = 0;
-bool Panel::auto_hide_timer()
-{
-    if (config::is_autohide() == false && config::is_intelihide() == false) {
-        return false;
-    }
-    g_print("anim %d %f v:%d\n", m_autohide_static_type.m_animation_state,
-            m_autohide_static_type.m_animation_timer.elapsed(), (int)m_visible);
-
-    if (m_autohide_static_type.m_animation_state == DEF_HIDE && m_visible &&
-        !m_mouse_inside && !m_animation_running &&
-        abs(m_autohide_static_type.m_animation_timer.elapsed()) >
-            m_animation_hide_delay) {
-        g_print("start hide\n");
-        m_easing_duration = 5.0;
-        m_animation_running = true;
-    }
-
-    if (m_autohide_static_type.m_animation_state == DEF_SHOW && !m_visible &&
-        /* m_mouse_inside &&*/ !m_animation_running) {
-        g_print("start show\n");
-        m_easing_duration = 4.0;
-        m_animation_running = true;
-    }
-
-    if (m_animation_running) {
-        auto endTime = m_initTime + m_easing_duration;
-        float startPosition = 0;
-        float endPosition = 0;
-
-        auto location = config::get_dock_location();
-        switch (location) {
-            case dock_location_t::left:
-            case dock_location_t::top: {
-                if (m_visible) {
-                    startPosition = 0;
-                    endPosition = -(config::get_dock_area() + 1);
-                } else {
-                    startPosition = -(config::get_dock_area() + 1);
-                    endPosition = 0;
-                }
-                break;
-            }
-            case dock_location_t::right:
-            case dock_location_t::bottom: {
-                if (m_visible) {
-                    startPosition = 0;
-                    endPosition = config::get_dock_area();
-                } else {
-                    startPosition = config::get_dock_area();
-                    endPosition = 0;
-                }
-                break;
-            }
-        }
-
-        float position = easing_util::map_clamp(
-            m_animation_time, m_initTime, endTime, startPosition, endPosition,
-            &easing_util::linear::easeIn);
-
-        if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-            m_offset_x = 0;
-            m_offset_y = (int)position;
-        } else {
-            m_offset_x = (int)position;
-            m_offset_y = 0;
-        }
-
-        // g_print("anim %d\n", (int)position);
-
-        Gtk::Widget::queue_draw();
-        m_animation_time++;
-
-        if ((int)position == (int)endPosition) {
-            m_autohide_static_type.m_animation_timer.stop();
-            m_autohide_static_type.m_animation_timer.reset();
-            m_animation_running = false;
-            m_animation_time = 0;
-
-            m_visible = (int)endPosition == 0;
-            //   Panel::connect_autohide_signal(false);
-            //    config::get_dock_area());
-        }
-    }
-
-    return true;
-}
 bool Panel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
     this->draw_panel(cr);
@@ -525,7 +342,7 @@ void Panel::draw_panel(const Cairo::RefPtr<Cairo::Context>& cr)
 
     cr->set_source_rgba(0.8, 0.8, 0.8, 1.0);
     cr->fill();
-    //   cr->paint();
+    // cr->paint();
 }
 
 void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
@@ -538,6 +355,7 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
     int area = config::get_dock_area();
 
     size_t items_count = m_app_updater.m_dockitems.size();
+    // g_print("Draw %d\n", (int)items_count);
 
     // Draw all items with cairo
     for (size_t idx = 0; idx < items_count; idx++) {

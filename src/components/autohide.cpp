@@ -1,11 +1,10 @@
 #include "autohide.h"
-#include <gdkmm/rectangle.h>
 #include <strings.h>
 #include "components/config.h"
+#include "components/device.h"
 #include "utils/easing.h"
 #include "utils/position.h"
 
-//#include <glibmm/main.h>
 DL_NS_BEGIN
 
 static_members_t Autohide::m_stm;
@@ -14,11 +13,12 @@ WnckWindow* Autohide::m_active_window;
 Autohide::Autohide()
 {
     m_stm.m_this = static_cast<Autohide*>(this);
-    m_stm.m_visible = false;
+    m_stm.m_visible = true;
 
     Autohide::m_active_window = nullptr;
 
     WnckScreen* wnckscreen = wnck_screen_get_default();
+
     g_signal_connect(wnckscreen, "active_window_changed",
                      G_CALLBACK(Autohide::on_active_window_changed), nullptr);
 
@@ -27,7 +27,10 @@ Autohide::Autohide()
                      nullptr);
 }
 
-Autohide::~Autohide() {}
+Autohide::~Autohide()
+{
+    g_print("Free autohide\n");
+}
 
 void Autohide::connect_signal_handler(bool connect)
 {
@@ -44,10 +47,10 @@ void Autohide::connect_signal_handler(bool connect)
         m_stm.m_connect_autohide_signal_set = false;
     }
 
-    if (m_stm.m_connect_autohide_signal_set)
-        g_print("Connected\n");
-    else
-        g_print("disonnect\n");
+    // if (m_stm.m_connect_autohide_signal_set)
+    // g_print("autohide signal connected.\n");
+    // else
+    // g_print("autohide signal disconnect.\n");
 }
 
 Autohide::type_signal_update Autohide::signal_update()
@@ -69,17 +72,36 @@ void Autohide::on_active_window_changed(WnckScreen* screen,
     }
 
     m_active_window = active_window;
-    intelihide();
 
-    if (previously_active_window != nullptr &&
-        m_stm.m_geometry_change_id != 0) {
-        g_signal_handler_disconnect(previously_active_window,
-                                    m_stm.m_geometry_change_id);
+    WnckWindowType wt = wnck_window_get_window_type(m_active_window);
+    if (wt == WNCK_WINDOW_DESKTOP) {
+        show();
+    } else {
+        intelihide();
     }
 
-    m_stm.m_geometry_change_id =
-        g_signal_connect(active_window, "geometry-changed",
-                         G_CALLBACK(Autohide::on_geometry_change), nullptr);
+    if (previously_active_window != nullptr) {
+        if (m_stm.m_geometry_change_id != 0) {
+            g_signal_handler_disconnect(previously_active_window,
+                                        m_stm.m_geometry_change_id);
+        }
+
+        if (m_stm.m_state_change_id != 0) {
+            g_signal_handler_disconnect(previously_active_window,
+                                        m_stm.m_state_change_id);
+        }
+    }
+
+    // clang-format off
+    m_stm.m_geometry_change_id = g_signal_connect_after(
+        active_window, "geometry-changed",
+        G_CALLBACK(Autohide::on_geometry_changed), nullptr);
+
+    m_stm.m_state_change_id =  g_signal_connect_after(
+        active_window, "state-changed",
+        G_CALLBACK(Autohide::on_state_changed), nullptr);
+
+    // clang-format on
 }
 
 void Autohide::on_active_workspace_changed(
@@ -90,22 +112,58 @@ void Autohide::on_active_workspace_changed(
         return;
     }
 
-    g_print("Windows count %d\n", Autohide::get_windows_count());
+    show();
+}
 
-    if (Autohide::get_windows_count() == 0) {
-        show();
+void Autohide::on_state_changed(WnckWindow* window,
+                                WnckWindowState changed_mask,
+                                WnckWindowState new_state, gpointer user_data)
+{
+    if ((changed_mask & WNCK_WINDOW_STATE_MINIMIZED) == 0) {
         return;
     }
 
     intelihide();
 }
 
-void Autohide::on_geometry_change(WnckWindow* window, gpointer user_data)
+void Autohide::on_geometry_changed(WnckWindow* window, gpointer user_data)
 {
+    if (m_active_window == nullptr || config::is_intelihide() == false) {
+        return;
+    }
+
+    auto rect_window = Autohide::get_window_geometry(window);
+    if (rect_window == m_stm.m_last_window_geometry) {
+        return;
+    }
+
+    m_stm.m_last_window_geometry == rect_window;
+
+    WnckWindowType wt = wnck_window_get_window_type(m_active_window);
+    if (wt == WNCK_WINDOW_DESKTOP) {
+        return;
+    }
+
     intelihide();
 }
 
 int Autohide::get_windows_count()
+{
+    if (m_active_window == nullptr) {
+        return -1;
+    }
+
+    WnckScreen* screen = wnck_window_get_screen(m_active_window);
+    WnckWorkspace* workspace = wnck_screen_get_active_workspace(screen);
+
+    if (workspace == nullptr) {
+        return -1;
+    }
+
+    return get_windows_count(workspace);
+}
+
+int Autohide::get_windows_count(WnckWorkspace* workspace)
 {
     int count = 0;
     WnckScreen* screen;
@@ -116,19 +174,23 @@ int Autohide::get_windows_count()
 
     for (window_l = wnck_screen_get_windows(screen); window_l != nullptr;
          window_l = window_l->next) {
-        //
         WnckWindow* window = WNCK_WINDOW(window_l->data);
-        if (window == nullptr) continue;
+        if (window == nullptr ||
+            !wnck_window_is_on_workspace(window, workspace) ||
+            wnck_window_is_minimized(window)) {
+            continue;
+        }
 
         WnckWindowType wt = wnck_window_get_window_type(window);
 
         if (wt == WNCK_WINDOW_DESKTOP || wt == WNCK_WINDOW_DOCK ||
-            wt == WNCK_WINDOW_TOOLBAR || wt == WNCK_WINDOW_MENU) {
+            wt == WNCK_WINDOW_TOOLBAR || wt == WNCK_WINDOW_MENU ||
+            wt == WNCK_WINDOW_SPLASHSCREEN) {
             continue;
         }
 
         const char* instancename = wnck_window_get_class_instance_name(window);
-        if (instancename != NULL &&
+        if (instancename != nullptr &&
             strcasecmp(instancename, DOCKLIGHT_INSTANCENAME) == 0) {
             continue;
         }
@@ -139,33 +201,50 @@ int Autohide::get_windows_count()
     return count;
 }
 
+Gdk::Rectangle Autohide::get_window_geometry(WnckWindow* window)
+{
+    Gdk::Rectangle result(0, 0, 0, 0);
+    if (window == nullptr) {
+        return result;
+    }
+
+    int x = 0, y = 0, width = 0, height = 0;
+    wnck_window_get_geometry(window, &x, &y, &width, &height);
+    result.set_x(x);
+    result.set_y(y);
+    result.set_width(width);
+    result.set_height(height);
+
+    return result;
+}
+
+bool Autohide::is_intersection_detected()
+{
+    if (m_active_window == nullptr) {
+        return false;
+    }
+
+    auto rect_dock = position_util::get_appwindow_geometry();
+    auto rect_window = Autohide::get_window_geometry(m_active_window);
+
+    return rect_window.intersects(rect_dock);
+}
+
 void Autohide::intelihide()
 {
     if (m_active_window == nullptr || config::is_intelihide() == false) {
         return;
     }
 
-    int x = 0, y = 0, width = 0, height = 0;
-    wnck_window_get_geometry(m_active_window, &x, &y, &width, &height);
-    const Gdk::Rectangle rect_window(x, y, width, height);
+    if (Autohide::is_intersection_detected()) {
+        if (Autohide::get_windows_count() == 0) {
+            return;
+        }
 
-    Gdk::Rectangle rect_dock = position_util::get_appwindow_geometry();
+        hide();
 
-    connect_signal_handler(false);
-    if (rect_dock.intersects(rect_window)) {
-        // m_autohide_static_type.m_animation_timer.start();
-        // if (m_visible) {
-        // m_autohide_static_type.m_animation_state = DEF_HIDE;
-        ////    Panel::connect_autohide_signal(true);
-        //}
-        //
-        if (m_stm.m_visible) hide();
     } else {
-        if (!m_stm.m_visible) show();
-        // if (!m_visible) {
-        // m_autohide_static_type.m_animation_state = DEF_SHOW;
-        ////  Panel::connect_autohide_signal(true);
-        //}
+        show();
     }
 }
 
@@ -176,34 +255,37 @@ void Autohide::set_hide_delay(float delay)
 
 void Autohide::hide()
 {
-    m_stm.m_animation_state = DEF_AUTOHIDE_HIDE;
-    m_stm.m_animation_timer.start();
-    connect_signal_handler(true);
+    if (m_stm.m_visible) {
+        m_stm.m_animation_state = DEF_AUTOHIDE_HIDE;
+        m_stm.m_animation_timer.start();
+        connect_signal_handler(true);
+    }
 }
 
 void Autohide::show()
 {
-    m_stm.m_animation_state = DEF_AUTOHIDE_SHOW;
-    m_stm.m_animation_timer.start();
-    connect_signal_handler(true);
+    if (!m_stm.m_visible) {
+        m_stm.m_animation_state = DEF_AUTOHIDE_SHOW;
+        m_stm.m_animation_timer.start();
+        connect_signal_handler(true);
+    }
 }
 
 bool Autohide::animation()
 {
-    if (m_stm.m_animation_state == DEF_AUTOHIDE_HIDE && !m_animation_running &&
-        m_stm.m_visible &&
+    if (m_stm.m_animation_state == DEF_AUTOHIDE_HIDE &&
+        !m_stm.m_animation_running &&
         abs(m_stm.m_animation_timer.elapsed()) > m_animation_hide_delay) {
-        g_print("start hide\n");
         m_easing_duration = 5.0;
-        m_animation_running = true;
+        m_stm.m_animation_running = true;
+
     } else if (m_stm.m_animation_state == DEF_AUTOHIDE_SHOW &&
-               !m_stm.m_visible && !m_animation_running) {
-        g_print("start show\n");
-        m_easing_duration = 4.0;
-        m_animation_running = true;
+               !m_stm.m_visible && !m_stm.m_animation_running) {
+        m_easing_duration = 3.0;
+        m_stm.m_animation_running = true;
     }
 
-    if (m_animation_running) {
+    if (m_stm.m_animation_running) {
         auto endTime = m_initTime + m_easing_duration;
         float startPosition = 0.f;
         float endPosition = 0.f;
@@ -212,7 +294,7 @@ bool Autohide::animation()
         switch (location) {
             case dock_location_t::left:
             case dock_location_t::top: {
-                if (m_stm.m_visible) {
+                if (m_stm.m_animation_state == DEF_AUTOHIDE_HIDE) {
                     startPosition = 0;
                     endPosition = -(config::get_dock_area() + 1);
                 } else {
@@ -246,15 +328,13 @@ bool Autohide::animation()
             m_offset_y = 0;
         }
 
-        g_print("anim %d %d\n", m_stm.m_animation_state, (int)position);
-
         m_signal_update.emit(m_offset_x, m_offset_y);
         m_animation_time++;
 
         if ((int)position == (int)endPosition) {
             m_stm.m_animation_timer.stop();
             m_stm.m_animation_timer.reset();
-            m_animation_running = false;
+            m_stm.m_animation_running = false;
             m_animation_time = 0;
 
             m_stm.m_visible = (int)endPosition == 0;

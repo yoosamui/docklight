@@ -37,14 +37,23 @@ namespace launcher_util
         info.m_group = _group;
         info.m_group = string_util::remove_extension(info.m_group, extensions);
         info.m_name = string_util::string_to_lower(info.m_group.c_str());
+
         size_t idx = info.m_name.find(" ");
         if (idx != string::npos) {
             info.m_name = info.m_name.substr(0, idx);
         }
 
-        info.m_instance = wnck_window_get_class_instance_name(window);
+        const char* _instance = wnck_window_get_class_instance_name(window);
+        if (_instance == nullptr) {
+            _instance = wnck_window_get_name(window);
+            g_warning("App %s instance could not be found. Use name instead\n",
+                      _instance);
+        }
+
+        info.m_instance = _instance;
         info.m_instance =
             string_util::remove_extension(info.m_instance, extensions);
+
         info.m_title = wnck_window_get_name(window);
 
         GKeyFile* key_file = g_key_file_new();

@@ -14,7 +14,6 @@ namespace position_util
         int area = config::get_dock_area();
         Gdk::Rectangle workarea =
             device::monitor::get_current()->get_workarea();
-
         if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
             int width = m_window->get_panel()->get_required_size();
             if (width > workarea.get_width()) {

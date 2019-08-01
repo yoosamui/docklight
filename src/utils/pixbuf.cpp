@@ -68,7 +68,8 @@ namespace pixbuf_util
         }
 
         auto icon = wnck_window_get_icon(window);
-        return Glib::wrap(icon, false);
+        return Glib::wrap(icon, false)
+            ->scale_simple(size, size, Gdk::INTERP_BILINEAR);
 
         /*auto const theme = Gtk::IconTheme::get_default();
         auto icon_info =

@@ -2,6 +2,7 @@
 
 #define WNCK_I_KNOW_THIS_IS_UNSTABLE 1
 
+#include <gdkmm/rectangle.h>
 #include <glibmm/main.h>
 #include <glibmm/timer.h>
 #include <gmodule.h>
@@ -20,9 +21,12 @@ typedef struct {
     bool m_connect_autohide_signal_set = false;
     int m_animation_state = DEF_AUTOHIDE_SHOW;
     gulong m_geometry_change_id = 0;
+    gulong m_state_change_id = 0;
     Glib::Timer m_animation_timer;
     void* m_this;
     bool m_visible;
+    bool m_animation_running = false;
+    Gdk::Rectangle m_last_window_geometry;
 } static_members_t;
 
 class Autohide
@@ -51,9 +55,11 @@ class Autohide
     float m_initTime = 0;
     float m_animation_hide_delay = 0.f;
     float m_easing_duration = 0.f;
-    bool m_animation_running = false;
     bool animation();
 
+    static bool is_intersection_detected();
+    static Gdk::Rectangle get_window_geometry(WnckWindow* window);
+    static int get_windows_count(WnckWorkspace* workspace);
     static int get_windows_count();
     static void connect_signal_handler(bool connect);
 
@@ -65,7 +71,10 @@ class Autohide
         WnckScreen* screen, WnckWorkspace* previously_active_space,
         gpointer user_data);
 
-    static void on_geometry_change(WnckWindow* window, gpointer user_data);
+    static void on_geometry_changed(WnckWindow* window, gpointer user_data);
+    static void on_state_changed(WnckWindow* window,
+                                 WnckWindowState changed_mask,
+                                 WnckWindowState new_state, gpointer user_data);
 };
 
 DL_NS_END
