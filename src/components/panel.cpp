@@ -51,7 +51,7 @@ Panel::Panel()
 void Panel::init()
 {
     if (config::is_autohide()) {
-        m_autohide.set_hide_delay(1.5);
+        //        m_autohide.set_hide_delay(1.5);
         m_autohide.hide();
     }
 }
@@ -162,7 +162,16 @@ bool Panel::on_motion_notify_event(GdkEventMotion* event)
             if ((int)event->y > h - 10) {
                 m_enter = true;
             }
+        } else if (location == dock_location_t::right) {
+            if ((int)event->x > w - 10) {
+                m_enter = true;
+            }
+        } else if (location == dock_location_t::top) {
+            if ((int)event->y <= 10) {
+                m_enter = true;
+            }
         }
+
         if (m_enter) {
             on_enter_notify_event(nullptr);
         }
@@ -219,7 +228,7 @@ bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
         }
     } else {
         if ((int)crossing_event->x >= 0 && (int)crossing_event->x <= w) {
-            if ((int)crossing_event->y == h) {
+            if ((int)crossing_event->y == h || (int)crossing_event->y == 0) {
                 return true;
             }
         }

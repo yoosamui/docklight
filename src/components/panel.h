@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <glibmm/timer.h>
@@ -7,6 +6,7 @@
 #include "common.h"
 #include "components/appupdater.h"
 #include "components/autohide.h"
+
 DL_NS_BEGIN
 
 #define DEF_HIDE 0
