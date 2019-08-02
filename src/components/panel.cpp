@@ -51,8 +51,12 @@ Panel::Panel()
 void Panel::init()
 {
     if (config::is_autohide()) {
-        m_autohide.set_hide_delay(1.5);
+        m_autohide.set_hide_delay(1.0);
         m_autohide.hide();
+    }
+    if (config::is_intelihide()) {
+        m_autohide.set_hide_delay(0.5);
+        m_autohide.intelihide();
     }
 }
 
@@ -199,7 +203,7 @@ bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
     Panel::m_mouse_inside = true;
     this->connect_draw_signal(true);
 
-    if (config::is_autohide()) {
+    if (config::is_autohide() || config::is_intelihide()) {
         m_autohide.reset_timer();
     }
 
@@ -219,7 +223,7 @@ bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
 
 bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
 {
-    if (config::is_autohide()) {
+    if (config::is_autohide() || config::is_intelihide()) {
         m_autohide.reset_timer();
     }
 

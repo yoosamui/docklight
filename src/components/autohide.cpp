@@ -253,9 +253,9 @@ void Autohide::show()
 
 void Autohide::reset_timer()
 {
-    if (!config::is_autohide()) {
-        return;
-    }
+    // if (!config::is_autohide()) {
+    // return;
+    //}
 
     m_stm.m_animation_state = DEF_AUTOHIDE_SHOW;
     m_stm.m_animation_timer.stop();
