@@ -39,6 +39,7 @@ class Autohide
     static void intelihide();
 
     void set_hide_delay(float delay);
+    void reset_timer();
 
     typedef sigc::signal<void, int, int> type_signal_update;
     type_signal_update signal_update();
@@ -66,10 +67,6 @@ class Autohide
     static void on_active_window_changed(WnckScreen* screen,
                                          WnckWindow* previously_active_window,
                                          gpointer user_data);
-
-    static void on_active_workspace_changed(
-        WnckScreen* screen, WnckWorkspace* previously_active_space,
-        gpointer user_data);
 
     static void on_geometry_changed(WnckWindow* window, gpointer user_data);
     static void on_state_changed(WnckWindow* window,

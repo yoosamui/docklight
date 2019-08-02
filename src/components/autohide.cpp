@@ -7,6 +7,8 @@
 
 DL_NS_BEGIN
 
+#define DEF_AUTOHIDE_EASING_DURATION 4.0
+
 static_members_t Autohide::m_stm;
 WnckWindow* Autohide::m_active_window;
 
@@ -21,10 +23,6 @@ Autohide::Autohide()
 
     g_signal_connect(wnckscreen, "active_window_changed",
                      G_CALLBACK(Autohide::on_active_window_changed), nullptr);
-
-    g_signal_connect(wnckscreen, "active_workspace_changed",
-                     G_CALLBACK(Autohide::on_active_workspace_changed),
-                     nullptr);
 }
 
 Autohide::~Autohide()
@@ -38,7 +36,7 @@ void Autohide::connect_signal_handler(bool connect)
         if (!m_stm.m_connect_autohide_signal_set) {
             m_stm.m_sigc_autohide = Glib::signal_timeout().connect(
                 sigc::mem_fun((Autohide*)m_stm.m_this, &Autohide::animation),
-                33.33);
+                1000 / 30);
 
             m_stm.m_connect_autohide_signal_set = true;
         }
@@ -46,11 +44,6 @@ void Autohide::connect_signal_handler(bool connect)
         m_stm.m_sigc_autohide.disconnect();
         m_stm.m_connect_autohide_signal_set = false;
     }
-
-    // if (m_stm.m_connect_autohide_signal_set)
-    // g_print("autohide signal connected.\n");
-    // else
-    // g_print("autohide signal disconnect.\n");
 }
 
 Autohide::type_signal_update Autohide::signal_update()
@@ -102,17 +95,6 @@ void Autohide::on_active_window_changed(WnckScreen* screen,
         G_CALLBACK(Autohide::on_state_changed), nullptr);
 
     // clang-format on
-}
-
-void Autohide::on_active_workspace_changed(
-    WnckScreen* screen, WnckWorkspace* previously_active_space,
-    gpointer user_data)
-{
-    if (!config::is_intelihide() || m_active_window == nullptr) {
-        return;
-    }
-
-    show();
 }
 
 void Autohide::on_state_changed(WnckWindow* window,
@@ -257,7 +239,6 @@ void Autohide::hide()
 {
     if (m_stm.m_visible) {
         m_stm.m_animation_state = DEF_AUTOHIDE_HIDE;
-        m_stm.m_animation_timer.start();
         connect_signal_handler(true);
     }
 }
@@ -266,9 +247,21 @@ void Autohide::show()
 {
     if (!m_stm.m_visible) {
         m_stm.m_animation_state = DEF_AUTOHIDE_SHOW;
-        m_stm.m_animation_timer.start();
         connect_signal_handler(true);
     }
+}
+
+void Autohide::reset_timer()
+{
+    if (!config::is_autohide()) {
+        return;
+    }
+
+    m_stm.m_animation_state = DEF_AUTOHIDE_SHOW;
+    m_stm.m_animation_timer.stop();
+    m_stm.m_animation_timer.reset();
+
+    m_stm.m_animation_timer.start();
 }
 
 bool Autohide::animation()
@@ -276,12 +269,12 @@ bool Autohide::animation()
     if (m_stm.m_animation_state == DEF_AUTOHIDE_HIDE &&
         !m_stm.m_animation_running &&
         abs(m_stm.m_animation_timer.elapsed()) > m_animation_hide_delay) {
-        m_easing_duration = 5.0;
+        m_easing_duration = DEF_AUTOHIDE_EASING_DURATION;
         m_stm.m_animation_running = true;
 
     } else if (m_stm.m_animation_state == DEF_AUTOHIDE_SHOW &&
                !m_stm.m_visible && !m_stm.m_animation_running) {
-        m_easing_duration = 3.0;
+        m_easing_duration = DEF_AUTOHIDE_EASING_DURATION;
         m_stm.m_animation_running = true;
     }
 
@@ -332,13 +325,14 @@ bool Autohide::animation()
         m_animation_time++;
 
         if ((int)position == (int)endPosition) {
-            m_stm.m_animation_timer.stop();
-            m_stm.m_animation_timer.reset();
+            this->reset_timer();
             m_stm.m_animation_running = false;
             m_animation_time = 0;
 
             m_stm.m_visible = (int)endPosition == 0;
             connect_signal_handler(false);
+
+            if (m_stm.m_visible) m_stm.m_animation_timer.start();
         }
     }
 

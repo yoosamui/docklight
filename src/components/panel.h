@@ -32,6 +32,7 @@ class Panel : public Gtk::DrawingArea
     int m_offset_y = 0;
 
     bool m_connect_draw_signal_set = false;
+    bool m_enter_achor = false;
 
     AppUpdater m_app_updater;
     bool m_draw_required = false;

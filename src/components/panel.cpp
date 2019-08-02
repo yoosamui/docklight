@@ -51,7 +51,7 @@ Panel::Panel()
 void Panel::init()
 {
     if (config::is_autohide()) {
-        //        m_autohide.set_hide_delay(1.5);
+        m_autohide.set_hide_delay(1.5);
         m_autohide.hide();
     }
 }
@@ -144,35 +144,34 @@ inline int Panel::get_index(const int& mouseX, const int& mouseY)
 
     return -1;
 }
-bool m_enter = false;
 bool Panel::on_motion_notify_event(GdkEventMotion* event)
 {
-    if (!m_enter) {
+    if (!m_enter_achor) {
         int x = 0, y = 0, w = 0, h = 0;
         gdk_window_get_geometry(event->window, &x, &y, &w, &h);
 
         auto location = config::get_dock_location();
         if (location == dock_location_t::left) {
             if ((int)event->x < 10) {
-                m_enter = true;
+                m_enter_achor = true;
             }
         } else
 
             if (location == dock_location_t::bottom) {
             if ((int)event->y > h - 10) {
-                m_enter = true;
+                m_enter_achor = true;
             }
         } else if (location == dock_location_t::right) {
             if ((int)event->x > w - 10) {
-                m_enter = true;
+                m_enter_achor = true;
             }
         } else if (location == dock_location_t::top) {
             if ((int)event->y <= 10) {
-                m_enter = true;
+                m_enter_achor = true;
             }
         }
 
-        if (m_enter) {
+        if (m_enter_achor) {
             on_enter_notify_event(nullptr);
         }
     }
@@ -200,7 +199,11 @@ bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
     Panel::m_mouse_inside = true;
     this->connect_draw_signal(true);
 
-    if (!m_enter) {
+    if (config::is_autohide()) {
+        m_autohide.reset_timer();
+    }
+
+    if (!m_enter_achor) {
         return true;
     }
 
@@ -216,6 +219,10 @@ bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
 
 bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
 {
+    if (config::is_autohide()) {
+        m_autohide.reset_timer();
+    }
+
     int x = 0, y = 0, w = 0, h = 0;
     gdk_window_get_geometry(crossing_event->window, &x, &y, &w, &h);
 
@@ -237,7 +244,7 @@ bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
     m_current_index = -1;
     on_timeout_draw();
 
-    m_enter = false;
+    m_enter_achor = false;
     Panel::m_mouse_inside = false;
 
     if (config::is_intelihide()) {
