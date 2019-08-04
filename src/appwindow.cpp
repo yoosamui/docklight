@@ -1,14 +1,7 @@
+// clang-format off
 #include "appwindow.h"
 #include <getopt.h>
 #include <glibmm/main.h>
-// clang-format off
-//#include <gdkmm/rectangle.h>
-//#include <glibmm/timer.h>
-//#include <sigc++/sigc++.h>
-//#include <gtkmm/main.h>
-//#include <glibmm-2.4/glibmm/timer.h>
-//#include <glibmm/timer.h>
-//#include "common.h"
 #include "components/arguments.h"
 #include "components/config.h"
 #include "components/device.h"
@@ -16,6 +9,7 @@
 #include "utils/position.h"
 #include "utils/easing.h"
 // clang-format on
+
 DL_NS_BEGIN
 
 Panel *AppWindow::m_panel;
