@@ -52,10 +52,14 @@ utils/cairo.cpp \
 utils/cairo.h \
 utils/easing.cpp \
 utils/easing.h \
+utils/wnck.cpp \
+utils/wnck.h \
 components/arguments.cpp \
 components/arguments.h \
 components/panel.cpp \
 components/panel.h \
+components/dockmenu.cpp \
+components/dockmenu.h \
 components/config.cpp \
 components/config.h \
 components/device.cpp \

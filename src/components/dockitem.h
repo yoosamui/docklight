@@ -29,11 +29,16 @@ class DockItem
              dock_item_type_t itemtype = dock_item_type_t::single);
     ~DockItem();
     string get_name() const;
+    string get_title() const;
+    string get_windowname() const;
+    string get_desktop_filename() const;
     WnckWindow* get_wnckwindow() const;
+    shared_ptr<DockItem> get_next() const;
     bool is_attached() const;
     int get_width() const;
     int get_height() const;
     void set_index(int index);
+    int get_index() const;
     void set_y(int y);
     void set_x(int x);
     void set_image(Glib::RefPtr<Gdk::Pixbuf> image);
@@ -49,7 +54,7 @@ class DockItem
     int m_height;
     int m_y;
     int m_x;
-    int m_index;
+    int m_index = 0;
 };
 
 DL_NS_END

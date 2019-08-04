@@ -67,7 +67,7 @@ void Autohide::on_active_window_changed(WnckScreen* screen,
     m_active_window = active_window;
 
     WnckWindowType wt = wnck_window_get_window_type(m_active_window);
-    if (wt == WNCK_WINDOW_DESKTOP) {
+    if (wt == WNCK_WINDOW_DESKTOP || m_stm.m_mouse_inside) {
         show();
     } else {
         intelihide();
@@ -246,9 +246,18 @@ void Autohide::hide()
 void Autohide::show()
 {
     if (!m_stm.m_visible) {
+        if (m_active_window && wnck_window_is_fullscreen(m_active_window)) {
+            return;
+        }
+
         m_stm.m_animation_state = DEF_AUTOHIDE_SHOW;
         connect_signal_handler(true);
     }
+}
+
+void Autohide::set_mouse_inside(bool mouse_inside)
+{
+    m_stm.m_mouse_inside = mouse_inside;
 }
 
 void Autohide::reset_timer()

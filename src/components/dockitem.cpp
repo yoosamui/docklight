@@ -25,6 +25,21 @@ string DockItem::get_name() const
     return m_app_info.m_name;
 }
 
+string DockItem::get_title() const
+{
+    return m_app_info.m_title;
+}
+
+string DockItem::get_windowname() const
+{
+    return wnck_window_get_name(m_app_info.m_wnckwindow);
+}
+
+string DockItem::get_desktop_filename() const
+{
+    return m_app_info.m_desktop_file;
+}
+
 string DockItem::get_desktop_icon_name() const
 {
     return m_app_info.m_desktop_icon_name;
@@ -65,6 +80,10 @@ void DockItem::set_index(int index)
     m_index = index;
 }
 
+int DockItem::get_index() const
+{
+    return m_index;
+}
 void DockItem::set_y(int y)
 {
     m_y = y;
@@ -75,4 +94,17 @@ void DockItem::set_x(int x)
     m_x = x;
 }
 
+shared_ptr<DockItem> DockItem::get_next() const
+{
+    static int index = 0;
+
+    if (m_items.size() == 0) return shared_ptr<DockItem>(nullptr);
+
+    if (index >= (int)m_items.size()) index = 0;
+
+    auto result = m_items[index];
+    index++;
+
+    return result;
+}
 DL_NS_END

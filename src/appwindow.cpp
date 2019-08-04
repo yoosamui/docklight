@@ -32,6 +32,8 @@ AppWindow::AppWindow()
         gtk_widget_set_visual(GTK_WIDGET(gobj()), visual);
     }
 
+    this->set_gravity(Gdk::Gravity::GRAVITY_STATIC);
+
     // A window to implement a docking bar used for creating the dock panel.
     this->set_skip_taskbar_hint(true);
     this->set_skip_pager_hint(true);

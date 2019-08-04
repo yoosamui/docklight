@@ -25,6 +25,7 @@ typedef struct {
     Glib::Timer m_animation_timer;
     void* m_this;
     bool m_visible;
+    bool m_mouse_inside = false;
     bool m_animation_running = false;
     Gdk::Rectangle m_last_window_geometry;
 } static_members_t;
@@ -40,6 +41,7 @@ class Autohide
 
     void set_hide_delay(float delay);
     void reset_timer();
+    void set_mouse_inside(bool mouse_inside);
 
     typedef sigc::signal<void, int, int> type_signal_update;
     type_signal_update signal_update();

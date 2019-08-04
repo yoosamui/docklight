@@ -12,6 +12,7 @@ namespace launcher_util
     bool get_desktop_file(GKeyFile* key_file, const char* appname,
                           string& desktop_file);
     string get_name_from_desktopfile(const char* appname);
+    bool launch(const string& appname, const string& desktop_filename);
 
     /*
          bool Launch(const std::string& appname);
