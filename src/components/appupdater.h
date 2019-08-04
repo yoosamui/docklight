@@ -17,7 +17,7 @@ class AppUpdater
     ~AppUpdater();
 
     // signal accessor:
-    typedef sigc::signal<void, bool, int> type_signal_update;
+    typedef sigc::signal<void> type_signal_update;
     type_signal_update signal_update();
 
     static vector<shared_ptr<DockItem>> m_dockitems;

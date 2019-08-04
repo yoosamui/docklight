@@ -97,7 +97,7 @@ void Panel::connect_draw_signal(bool connect)
     }
 }
 
-void Panel::on_appupdater_update(bool a, int b)
+void Panel::on_appupdater_update()
 {
     AppWindow::update();
 
@@ -170,6 +170,9 @@ void Panel::on_menu_show_event()
 {
     m_context_menu_open = true;
     this->connect_draw_signal(false);
+
+    // save the current index before on leave gets call (-1)
+    m_menu_owner_index = m_current_index;
 }
 
 void Panel::on_menu_hide_event()
@@ -413,11 +416,11 @@ bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
 
 void Panel::open_new()
 {
-    if (m_current_index < 1) {
+    if (m_menu_owner_index < 1) {
         return;
     }
 
-    auto const item = AppUpdater::m_dockitems[m_current_index];
+    auto const item = AppUpdater::m_dockitems[m_menu_owner_index];
     if (!launcher_util::launch(item->get_name(),
                                item->get_desktop_filename())) {
         g_warning("Open new: App %s could not be found.",
@@ -471,7 +474,7 @@ inline bool Panel::get_center_position(int& x, int& y, const int width,
         for (size_t i = 0; i < AppUpdater::m_dockitems.size(); i++) {
             auto const citem = AppUpdater::m_dockitems[i];
             if (citem == item) {
-                x = x - abs((width / 2) - (citem->get_width() / 2));
+                x -= (width / 2) - (citem->get_width() / 2);
 
                 // check left limit
                 if (x < workarea.get_x()) {
@@ -507,7 +510,7 @@ inline bool Panel::get_center_position(int& x, int& y, const int width,
                 citem->get_width() : citem->get_height();
 
             if (citem == item) {
-                y = y - abs((height / 2) - (variantItemHeight / 2));
+                y -= (height / 2) - (variantItemHeight / 2);
 
                 // check left limit
                 if (y < workarea.get_y()) {
@@ -523,7 +526,7 @@ inline bool Panel::get_center_position(int& x, int& y, const int width,
 
                 return true;
             }
-            y += citem->get_height() + config::get_separator_margin();
+            y += variantItemHeight + config::get_separator_margin();
         }
         // clang-format on
     }

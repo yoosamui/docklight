@@ -8,6 +8,7 @@
 #include "components/dockitem.h"
 #include "utils/launcher.h"
 #include "utils/pixbuf.h"
+
 DL_NS_BEGIN
 
 AppUpdater::type_signal_update AppUpdater::m_signal_update;
@@ -19,14 +20,14 @@ AppUpdater::AppUpdater()
 
     // clang-format off
     g_signal_connect(G_OBJECT(wnckscreen), "window-opened",
-                     G_CALLBACK(AppUpdater::on_window_opened), NULL);
+                     G_CALLBACK(AppUpdater::on_window_opened), nullptr);
 
     g_signal_connect(wnckscreen, "window_closed",
-                     G_CALLBACK(AppUpdater::on_window_closed), NULL);
+                     G_CALLBACK(AppUpdater::on_window_closed), nullptr);
 
     g_signal_connect(wnckscreen, "active_window_changed",
                      G_CALLBACK(AppUpdater::on_active_window_changed_callback),
-                     NULL);
+                     nullptr);
 
 
      auto const icon_theme = Gtk::IconTheme::get_default();
@@ -47,9 +48,12 @@ void AppUpdater::on_theme_changed()
         auto icon = pixbuf_util::get_window_icon(
             item->get_wnckwindow(), item->get_desktop_icon_name(), icon_size);
 
+        if (icon == (Glib::RefPtr<Gdk::Pixbuf>)nullptr) continue;
+
         item->set_image(icon);
     }
-    m_signal_update.emit(false, 5);
+
+    m_signal_update.emit();
 }
 
 void AppUpdater::on_active_window_changed_callback(
@@ -124,7 +128,7 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
                 shared_ptr<DockItem>(new DockItem(info)));
         }
 
-        m_signal_update.emit(false, 5);
+        m_signal_update.emit();
         return;
 
     } else {
@@ -139,7 +143,7 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
                     if (!item->is_attached() && item->m_items.size() == 0) {
                         m_dockitems.erase(m_dockitems.begin() + i);
                     }
-                    m_signal_update.emit(false, 5);
+                    m_signal_update.emit();
                     return;
                 }
             }

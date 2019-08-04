@@ -67,6 +67,12 @@ namespace pixbuf_util
             error = nullptr;
         }
 
+        if (!WNCK_IS_WINDOW(window)) {
+            Glib::RefPtr<Gdk::Pixbuf> empty =
+                (Glib::RefPtr<Gdk::Pixbuf>)nullptr;
+            return empty;
+        }
+
         auto icon = wnck_window_get_icon(window);
         return Glib::wrap(icon, false)
             ->scale_simple(size, size, Gdk::INTERP_BILINEAR);

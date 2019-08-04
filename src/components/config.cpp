@@ -9,7 +9,7 @@ DL_NS_BEGIN
 namespace config
 {
     dock_location_t m_location = dock_location_t::bottom;
-    int m_icon_size = 48;
+    int m_icon_size = 42;  // 48;
     int m_separator_margin = 10;
     dock_autohide_type_t m_autohide_type = dock_autohide_type_t::sensitive;
     // dock_autohide_type_t m_autohide_type = dock_autohide_type_t::autohide;
