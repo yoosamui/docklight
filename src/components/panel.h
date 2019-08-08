@@ -36,7 +36,7 @@ class Panel : public Gtk::DrawingArea, DockMenu
     bool m_draw_required = false;
     static bool m_mouse_inside;
     int m_current_index = -1;
-    int m_menu_owner_index = -1;
+    int m_current_index_cache = -1;
     bool m_mouse_left_down = false;
     bool m_mouse_right_down = false;
     void open_new();

@@ -172,7 +172,7 @@ void Panel::on_menu_show_event()
     this->connect_draw_signal(false);
 
     // save the current index before on leave gets call (-1)
-    m_menu_owner_index = m_current_index;
+    m_current_index_cache = m_current_index;
 }
 
 void Panel::on_menu_hide_event()
@@ -416,11 +416,11 @@ bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
 
 void Panel::open_new()
 {
-    if (m_menu_owner_index < 1) {
+    if (m_current_index_cache < 1) {
         return;
     }
 
-    auto const item = AppUpdater::m_dockitems[m_menu_owner_index];
+    auto const item = AppUpdater::m_dockitems[m_current_index_cache];
     if (!launcher_util::launch(item->get_name(),
                                item->get_desktop_filename())) {
         g_warning("Open new: App %s could not be found.",
