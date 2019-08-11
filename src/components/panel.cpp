@@ -452,8 +452,11 @@ void Panel::activate()
     }
 
     auto const item = AppUpdater::m_dockitems[m_current_index];
+    if (item == nullptr) return;
     if ((int)item->m_items.size() == 1) {
-        wnck_util::activate_window(item->get_wnckwindow());
+        auto const citem = item->m_items[0];
+        WnckWindow* window = citem->get_wnckwindow();
+        wnck_util::activate_window(window);
     }
 }
 

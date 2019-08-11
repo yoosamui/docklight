@@ -125,8 +125,8 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
             auto const item = m_dockitems[index];
 
             // update the owner item in case that has been attached
-            item->get_appinfo()->m_wnckwindow = info.m_wnckwindow;
-            item->get_appinfo()->m_xid = info.m_xid;
+            item->get_appinfo()->m_wnckwindow = window;
+            item->get_appinfo()->m_xid = wnck_window_get_xid(window);
 
             item->m_items.push_back(shared_ptr<DockItem>(new DockItem(info)));
 
