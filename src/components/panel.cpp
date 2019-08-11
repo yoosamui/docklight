@@ -23,7 +23,23 @@ bool Panel::m_mouse_inside;
 
 Panel::Panel()
 {
-    m_app_updater.signal_update().connect(
+    string filename(system_util::get_current_path(DEF_ICONNAME));
+    appinfo_t info;
+    auto icon_size = config::get_icon_size();
+    auto const homePixbuf =
+        pixbuf_util::get_from_file(filename, icon_size, icon_size);
+
+    info.m_name = "desktop";
+    info.m_title = _("Desktop");
+
+    m_appupdater.m_dockitems.insert(m_appupdater.m_dockitems.begin(),
+                                    shared_ptr<DockItem>(new DockItem(info)));
+    auto const new_item = m_appupdater.m_dockitems.back();
+    new_item->set_image(homePixbuf);
+
+    m_appupdater.init();
+
+    m_appupdater.signal_update().connect(
         sigc::mem_fun(this, &Panel::on_appupdater_update));
 
     m_autohide.signal_update().connect(
@@ -37,20 +53,6 @@ Panel::Panel()
                Gdk::POINTER_MOTION_HINT_MASK | Gdk::POINTER_MOTION_MASK);
 
     Panel::m_mouse_inside = false;
-
-    string filename(system_util::get_current_path(DEF_ICONNAME));
-    appinfo_t info;
-    auto icon_size = config::get_icon_size();
-    auto const homePixbuf =
-        pixbuf_util::get_from_file(filename, icon_size, icon_size);
-
-    info.m_name = "desktop";
-    info.m_title = _("Desktop");
-
-    m_app_updater.m_dockitems.push_back(
-        shared_ptr<DockItem>(new DockItem(info)));
-    auto const new_item = m_app_updater.m_dockitems.back();
-    new_item->set_image(homePixbuf);
 }
 
 void Panel::init()
@@ -73,6 +75,9 @@ void Panel::init()
     m_item_menu.signal_hide().connect(sigc::mem_fun(*this, &Panel::on_menu_hide_event));
 
     m_item_menu_new.signal_activate().connect(sigc::mem_fun(*this, &Panel::on_item_menu_new_event));
+
+    m_item_menu_attach.set_active(false);
+    m_item_menu_attach.signal_toggled().connect(sigc::mem_fun(*this, &Panel::on_item_menu_attach_event));
 
     // clang-format on
 }
@@ -116,9 +121,9 @@ void Panel::on_autohide_update(int x, int y)
 int Panel::get_required_size()
 {
     int separators =
-        config::get_separator_margin() * (m_app_updater.m_dockitems.size() - 1);
+        config::get_separator_margin() * (m_appupdater.m_dockitems.size() - 1);
 
-    return (m_app_updater.m_dockitems.size() * config::get_icon_size()) +
+    return (m_appupdater.m_dockitems.size() * config::get_icon_size()) +
            config::get_window_start_end_margin() + separators;
 }
 
@@ -139,7 +144,7 @@ inline int Panel::get_index(const int& mouseX, const int& mouseY)
     int y = x;
 
     if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-        for (auto item : m_app_updater.m_dockitems) {
+        for (auto item : m_appupdater.m_dockitems) {
             if (mouse.get_x() >= x && mouse.get_x() <= x + item->get_width()) {
                 return idx;
             }
@@ -149,7 +154,7 @@ inline int Panel::get_index(const int& mouseX, const int& mouseY)
         }
     } else {
         int height;
-        for (auto item : m_app_updater.m_dockitems) {
+        for (auto item : m_appupdater.m_dockitems) {
             height = item->get_dock_item_type() == dock_item_type_t::separator
                          ? item->get_width()
                          : item->get_height();
@@ -197,6 +202,16 @@ void Panel::on_item_menu_windowlist_event(WnckWindow* window)
     wnck_util::activate_window(window);
 }
 
+void Panel::on_item_menu_attach_event()
+{
+    bool attached = m_item_menu_attach.get_active();
+    if (attached) {
+        m_appupdater.attach_item(m_current_index_cache);
+    } else {
+        m_appupdater.detach_item(m_current_index_cache);
+    }
+}
+
 void Panel::on_item_menu_new_event()
 {
     this->open_new();
@@ -217,14 +232,15 @@ bool Panel::on_button_press_event(GdkEventButton* event)
 }
 bool Panel::on_button_release_event(GdkEventButton* event)
 {
-    if ((event->type == GDK_BUTTON_RELEASE)) {
+    if ((event->type == GDK_BUTTON_RELEASE) && m_current_index != -1) {
+        auto const item = AppUpdater::m_dockitems[m_current_index];
+
         if (event->button == 1 && m_mouse_left_down) {
             m_mouse_left_down = false;
 
             if (m_current_index != -1) {
-                auto const item = AppUpdater::m_dockitems[m_current_index];
-
                 if (item->m_items.size() == 0) {
+                    m_current_index_cache = m_current_index;
                     this->open_new();
                 } else {
                     if ((int)item->m_items.size() == 1) {
@@ -268,6 +284,7 @@ bool Panel::on_button_release_event(GdkEventButton* event)
         } else if (event->button == 3 && m_mouse_right_down) {
             if (m_current_index != -1) {
                 if (m_current_index > 0) {
+                    m_item_menu_attach.set_active(item->is_attached());
                     m_item_menu.popup(
                         sigc::mem_fun(*this, &Panel::on_item_menu_position), 1,
                         event->time);
@@ -599,12 +616,12 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
     int center = 0;
     int area = config::get_dock_area();
 
-    size_t items_count = m_app_updater.m_dockitems.size();
+    size_t items_count = m_appupdater.m_dockitems.size();
     // g_print("Draw %d\n", (int)items_count);
 
     // Draw all items with cairo
     for (size_t idx = 0; idx < items_count; idx++) {
-        auto const item = m_app_updater.m_dockitems[idx];
+        auto const item = m_appupdater.m_dockitems[idx];
 
         width = item->get_width();
         height = item->get_height();
@@ -612,7 +629,7 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
         this->get_item_position(dock_item_type_t::single, x, y, width, height);
 
         //     g_print("Draw %d\n", x);
-        item->set_index(idx);
+        //    item->set_index(idx);
         item->set_x(x);
         item->set_y(y);
 
@@ -641,21 +658,23 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
         // draw icon
         // auto const image =
         // item->get_image()->scale_simple(48, 48, Gdk::INTERP_BILINEAR);
-        Gdk::Cairo::set_source_pixbuf(cr, item->get_image(), m_offset_x + x,
-                                      m_offset_y + y);
-        cr->paint();
-
-        // draw selector
-        if ((int)idx == m_current_index) {
-            auto tmp = item->get_image()->copy();
-            pixbuf_util::invert_pixels(tmp);
-            Gdk::Cairo::set_source_pixbuf(cr, tmp, m_offset_x + x,
+        if (item->get_image()) {
+            Gdk::Cairo::set_source_pixbuf(cr, item->get_image(), m_offset_x + x,
                                           m_offset_y + y);
             cr->paint();
 
-            // cr->set_source_rgba(1, 1, 1, 0.4);
-            // cairo_util::rounded_rectangle(cr, x, y, width, height, 0);
-            // cr->fill();
+            // draw selector
+            if ((int)idx == m_current_index) {
+                auto tmp = item->get_image()->copy();
+                pixbuf_util::invert_pixels(tmp);
+                Gdk::Cairo::set_source_pixbuf(cr, tmp, m_offset_x + x,
+                                              m_offset_y + y);
+                cr->paint();
+
+                // cr->set_source_rgba(1, 1, 1, 0.4);
+                // cairo_util::rounded_rectangle(cr, x, y, width, height, 0);
+                // cr->fill();
+            }
         }
     }
 }

@@ -237,7 +237,7 @@ void Autohide::set_hide_delay(float delay)
 
 void Autohide::hide()
 {
-    if (m_stm.m_visible) {
+    if (m_stm.m_visible && !m_stm.m_mouse_inside) {
         m_stm.m_animation_state = DEF_AUTOHIDE_HIDE;
         connect_signal_handler(true);
     }

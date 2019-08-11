@@ -16,6 +16,8 @@ class AppUpdater
     AppUpdater();
     ~AppUpdater();
 
+    void init();
+
     // signal accessor:
     typedef sigc::signal<void> type_signal_update;
     type_signal_update signal_update();
@@ -23,8 +25,21 @@ class AppUpdater
     static vector<shared_ptr<DockItem>> m_dockitems;
 
     void on_theme_changed();
+    bool attach_item(int index);
+    bool detach_item(const int index);
+    bool remove_item(const int index);
+    bool save();
+    bool load();
 
   private:
+    typedef struct {
+        dock_item_type_t dock_item_type;
+        char name[60];
+        char desktop_file[512];
+        char icon_name[128];
+        guint8 pixbuff[1024 << 3] = {0};
+    } attach_rec_t;
+
     static type_signal_update m_signal_update;
 
     static void on_window_opened(WnckScreen* screen, WnckWindow* window,
@@ -38,6 +53,8 @@ class AppUpdater
         gpointer user_data);
 
     static void Update(WnckWindow* window, window_action_t actiontype);
+
+    string get_filepath();
 };
 
 DL_NS_END

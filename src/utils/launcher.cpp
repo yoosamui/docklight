@@ -69,8 +69,8 @@ namespace launcher_util
                 error = nullptr;
             }
         } else {
-            // Icon name could not ber found.
-            // We build a icon name from the app name without '-' char
+            // Icon name could not be found.
+            // We build an icon name from the app name without '-' char
             info.m_desktop_icon_name = info.m_name;
             size_t idx = info.m_name.find("-");
             if (idx != string::npos) {

@@ -51,56 +51,31 @@ namespace pixbuf_util
                                                     const string& icon_name,
                                                     int size)
     {
-        if (icon_name.c_str() != nullptr) {
-            GError* error = nullptr;
-            GtkIconTheme* icon_theme = gtk_icon_theme_get_default();
-            auto pixbuf =
-                gtk_icon_theme_load_icon(icon_theme,
-                                         icon_name.c_str(),  // icon name
-                                         size,               // icon size
-                                         GTK_ICON_LOOKUP_FORCE_SIZE, &error);
-            if (!error) {
-                return Glib::wrap(pixbuf, false);
-            }
-
+        Glib::RefPtr<Gdk::Pixbuf> empty = (Glib::RefPtr<Gdk::Pixbuf>)nullptr;
+        GError* error = nullptr;
+        GtkIconTheme* icon_theme = gtk_icon_theme_get_default();
+        auto pixbuf =
+            gtk_icon_theme_load_icon(icon_theme,
+                                     icon_name.c_str(),           // icon name
+                                     size,                        // icon size
+                                     GTK_ICON_LOOKUP_FORCE_SIZE,  // flags //
+                                     &error);
+        if (error) {
             g_error_free(error);
             error = nullptr;
-        }
 
-        if (!WNCK_IS_WINDOW(window)) {
-            Glib::RefPtr<Gdk::Pixbuf> empty =
-                (Glib::RefPtr<Gdk::Pixbuf>)nullptr;
-            return empty;
-        }
-
-        auto icon = wnck_window_get_icon(window);
-        return Glib::wrap(icon, false)
-            ->scale_simple(size, size, Gdk::INTERP_BILINEAR);
-
-        /*auto const theme = Gtk::IconTheme::get_default();
-        auto icon_info =
-            theme->lookup_icon(icon_name, size,
-        Gtk::ICON_LOOKUP_USE_BUILTIN);
-        // try {
-        if (icon_info) {
-            if (icon_info.get_filename().c_str() == nullptr) {
-                auto icon = icon_info.get_builtin_pixbuf();
-                if (icon) {
-                    return icon;
-                }
-            } else {
-                return theme->load_icon(icon_name, 32, size,
-                                        Gtk::ICON_LOOKUP_USE_BUILTIN);
+            if (window == 0 || !WNCK_IS_WINDOW(window)) {
+                g_warning("Load icon from window failed: %s %ld\n",
+                          icon_name.c_str(), (long)window);
+                return empty;
             }
+
+            auto icon = wnck_window_get_icon(window);
+            return Glib::wrap(icon, true)
+                ->scale_simple(size, size, Gdk::INTERP_BILINEAR);
         }
 
-        //  catch (...) {
-        //       g_warning("Could not load icon name: %s\n",
-        icon_name.c_str());
-        //   }*/
-
-        //        auto _referenced_icon = wnck_window_get_icon(window);
-        // V      return Glib::wrap(_referenced_icon, false);
+        return Glib::wrap(pixbuf, true);
     }
 
     /**

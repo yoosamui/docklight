@@ -1,7 +1,9 @@
 #pragma once
 
 #include <glibmm/i18n.h>
+#include <gtkmm/checkmenuitem.h>
 #include <gtkmm/menu.h>
+#include <gtkmm/separatormenuitem.h>
 #include "common.h"
 
 DL_NS_BEGIN
@@ -15,7 +17,10 @@ class DockMenu
         m_item_menu.set_halign(Gtk::Align::ALIGN_CENTER);
         //   m_item_menu_attach.set_label(_("Attach"));
         m_item_menu_new.set_label(_("Open new"));
+        m_item_menu_attach.set_label(_("Attach"));
 
+        m_item_menu.append(m_item_menu_attach);
+        m_item_menu.append(m_separatorMenuItem0);
         m_item_menu.append(m_item_menu_new);
         m_item_menu.show_all();
 
@@ -87,7 +92,10 @@ class DockMenu
     Gtk::Menu* m_item_menu_windowlist = nullptr;
 
     Gtk::MenuItem m_item_menu_new;
-    Gtk::MenuItem m_item_menu_attach;
+    Gtk::CheckMenuItem m_item_menu_attach;
+
+    Gtk::SeparatorMenuItem m_separatorMenuItem0;
+
     // Home menu
     /*Gtk::Menu m_HomeMenu;
     Gtk::CheckMenuItem m_AutohideMenuItem;

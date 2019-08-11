@@ -27,12 +27,16 @@ class DockItem
   public:
     DockItem(appinfo_t appinfo,
              dock_item_type_t itemtype = dock_item_type_t::single);
+    DockItem();
     ~DockItem();
+    appinfo_t* get_appinfo();
+    void set_attach(bool attach);
     string get_name() const;
     string get_title() const;
     string get_windowname() const;
     string get_desktop_filename() const;
     WnckWindow* get_wnckwindow() const;
+    unsigned long get_xid() const;
     shared_ptr<DockItem> get_next() const;
     bool is_attached() const;
     int get_width() const;

@@ -15,6 +15,16 @@ DockItem::~DockItem()
     g_print("Free DockItem\n");
 }
 
+appinfo_t* DockItem::get_appinfo()
+{
+    return &m_app_info;
+}
+
+void DockItem::set_attach(bool attach)
+{
+    m_attached = attach;
+}
+
 dock_item_type_t DockItem::get_dock_item_type() const
 {
     return m_app_info.m_dock_item_type;
@@ -50,6 +60,10 @@ WnckWindow* DockItem::get_wnckwindow() const
     return m_app_info.m_wnckwindow;
 }
 
+unsigned long DockItem::get_xid() const
+{
+    return m_app_info.m_xid;
+}
 void DockItem::set_image(Glib::RefPtr<Gdk::Pixbuf> image)
 {
     m_app_info.m_image = image;

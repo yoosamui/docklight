@@ -1,6 +1,9 @@
 #include "components/appupdater.h"
+#include <gdkmm/pixbufloader.h>
+#include <glibmm/fileutils.h>
 #include <gtkmm/icontheme.h>
 #include <algorithm>
+#include <fstream>
 #include <functional>
 #include <thread>
 #include "components/config.h"
@@ -8,14 +11,21 @@
 #include "components/dockitem.h"
 #include "utils/launcher.h"
 #include "utils/pixbuf.h"
+#include "utils/system.h"
+
+#define DEF_ATTACHMENTS_FILENAME "docklight.dat"
 
 DL_NS_BEGIN
 
 AppUpdater::type_signal_update AppUpdater::m_signal_update;
 vector<shared_ptr<DockItem>> AppUpdater::m_dockitems;
 
-AppUpdater::AppUpdater()
+AppUpdater::AppUpdater() {}
+
+void AppUpdater::init()
 {
+    this->load();
+
     WnckScreen *wnckscreen = wnck_screen_get_default();
 
     // clang-format off
@@ -35,7 +45,6 @@ AppUpdater::AppUpdater()
 
     // clang-format on
 }
-
 AppUpdater::~AppUpdater()
 {
     g_print("Free AppUpdater\n");
@@ -43,13 +52,14 @@ AppUpdater::~AppUpdater()
 void AppUpdater::on_theme_changed()
 {
     int icon_size = config::get_icon_size();
-
-    for (auto item : m_dockitems) {
+    for (size_t i = 1; i < m_dockitems.size(); i++) {
+        auto const item = m_dockitems[i];
         auto icon = pixbuf_util::get_window_icon(
             item->get_wnckwindow(), item->get_desktop_icon_name(), icon_size);
 
-        if (icon == (Glib::RefPtr<Gdk::Pixbuf>)nullptr) continue;
-
+        if (icon == (Glib::RefPtr<Gdk::Pixbuf>)nullptr) {
+            continue;
+        }
         item->set_image(icon);
     }
 
@@ -113,6 +123,11 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
             // Add Child
             int index = distance(m_dockitems.begin(), it);
             auto const item = m_dockitems[index];
+
+            // update the owner item in case that has been attached
+            item->get_appinfo()->m_wnckwindow = info.m_wnckwindow;
+            item->get_appinfo()->m_xid = info.m_xid;
+
             item->m_items.push_back(shared_ptr<DockItem>(new DockItem(info)));
 
         } else {
@@ -151,4 +166,169 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
     }
 }
 
+string AppUpdater::get_filepath()
+{
+    string config_dir = "/home/yoo/.config/docklight";
+    system_util::create_directory_if_not_exitst(config_dir.c_str());
+
+    char buff[PATH_MAX];
+    sprintf(buff, "%s/%s", config_dir.c_str(), DEF_ATTACHMENTS_FILENAME);
+
+    return buff;
+}
+
+bool AppUpdater::save()
+{
+    string file_name = this->get_filepath();
+    if (file_name == "") {
+        return false;
+    }
+
+    gchar *iconBuffer;
+    gsize buffer_size;
+    attach_rec_t rec;
+    FILE *file_writer;
+    file_writer = fopen(file_name.c_str(), "wb");
+    if (!file_writer) {
+        g_critical("AppUpdater::save: can't create file.");
+        return false;
+    }
+
+    for (size_t idx = 1; idx < this->m_dockitems.size(); idx++) {
+        auto const item = AppUpdater::m_dockitems[idx];
+        if (!item->is_attached()) {
+            continue;
+        }
+
+        appinfo_t *info = item->get_appinfo();
+
+        if (info->m_image) {
+            try {
+                info->m_image->save_to_buffer(iconBuffer, buffer_size);
+                memcpy(rec.pixbuff, iconBuffer, buffer_size);
+
+                delete[](gchar *) iconBuffer;
+
+            } catch (...) {
+                g_critical("Attachments::save: Gdk::PixbufError\n");
+            }
+        }
+
+        strncpy(rec.name, info->m_name.c_str(), sizeof(rec.name) - 1);
+        strncpy(rec.icon_name, info->m_desktop_icon_name.c_str(),
+                sizeof(rec.icon_name) - 1);
+        strncpy(rec.desktop_file, info->m_desktop_file.c_str(),
+                sizeof(rec.desktop_file) - 1);
+
+        rec.dock_item_type = info->m_dock_item_type;
+
+        size_t result = fwrite(&rec, sizeof(rec), 1, file_writer);
+        if (result == 0)
+            g_critical("Attachments::save:: Error writing file> fwrite\n");
+    }
+
+    fclose(file_writer);
+    return true;
+}
+bool AppUpdater::load()
+{
+    string file_name = this->get_filepath();
+    if (file_name == "") {
+        return false;
+    }
+
+    attach_rec_t rec;
+    appinfo_t info;
+    FILE *file_reader;
+    file_reader = fopen(file_name.c_str(), "rb");
+    if (!file_reader) {
+        g_critical("AppUpdater::load: can't open file.");
+        return false;
+    }
+
+    while (true) {
+        auto sn = fread(&rec, sizeof(rec), 1, file_reader);
+        if (feof(file_reader) != 0) break;
+        if (sn == 0) continue;
+
+        try {
+            auto loader = Gdk::PixbufLoader::create();
+            loader->write(rec.pixbuff, sizeof(rec.pixbuff));
+            info.m_image = loader->get_pixbuf();
+            loader->close();
+
+        } catch (...) {
+            g_critical("AppUpdater Load: Gdk::PixbufError\n");
+        }
+
+        info.m_wnckwindow = 0;
+        info.m_xid = 0;
+        info.m_name = rec.name;
+        info.m_desktop_file = rec.desktop_file;
+        info.m_desktop_icon_name = rec.icon_name;
+        info.m_dock_item_type =
+            static_cast<dock_item_type_t>(rec.dock_item_type);
+
+        // Add new
+        auto item = new DockItem(info);
+        item->set_attach(true);
+
+        m_dockitems.push_back(shared_ptr<DockItem>(item));
+    }
+    fclose(file_reader);
+
+    on_theme_changed();
+    return true;
+}
+bool AppUpdater::attach_item(int index)
+{
+    if (index < 0 || index > (int)this->m_dockitems.size()) {
+        return false;
+    }
+
+    auto const item = m_dockitems[index];
+
+    if (item->is_attached()) {
+        return false;
+    }
+
+    item->set_index(index);
+    item->set_attach(true);
+
+    if (!this->save()) {
+        g_critical("Error: could not save data.");
+        return false;
+    }
+
+    return true;
+}
+
+bool AppUpdater::detach_item(const int index)
+{
+    if (index < 0 || index > (int)m_dockitems.size()) {
+        return false;
+    }
+
+    auto const item = this->m_dockitems[index];
+    item->set_attach(false);
+
+    if (item->m_items.size() > 0) {
+        this->save();
+        return true;
+    }
+
+    return this->remove_item(index);
+}
+bool AppUpdater::remove_item(const int index)
+{
+    if (index < 0 || index > (int)m_dockitems.size()) {
+        return false;
+    }
+
+    m_dockitems.erase(m_dockitems.begin() + index);
+    this->save();
+
+    m_signal_update.emit();
+    return true;
+}
 DL_NS_END

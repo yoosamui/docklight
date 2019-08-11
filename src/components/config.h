@@ -5,6 +5,7 @@
 #include "common.h"
 
 DL_NS_BEGIN
+
 namespace config
 {
     void load(const GSList* args_list);

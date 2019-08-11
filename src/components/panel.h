@@ -32,7 +32,7 @@ class Panel : public Gtk::DrawingArea, DockMenu
     bool m_connect_draw_signal_set = false;
     bool m_enter_anchor = false;
 
-    AppUpdater m_app_updater;
+    AppUpdater m_appupdater;
     bool m_draw_required = false;
     static bool m_mouse_inside;
     int m_current_index = -1;
@@ -77,6 +77,7 @@ class Panel : public Gtk::DrawingArea, DockMenu
     void on_item_menu_position(int& x, int& y, bool& push_in);
     void on_item_menu_windowlist_position(int& x, int& y, bool& push_in);
     void on_item_menu_new_event();
+    void on_item_menu_attach_event();
     void on_item_menu_windowlist_event(WnckWindow* window);
 };
 
