@@ -183,6 +183,16 @@ void Panel::on_menu_show_event()
 void Panel::on_menu_hide_event()
 {
     m_context_menu_open = false;
+
+    if (config::is_intelihide() || config::is_autohide()) {
+        m_autohide.reset_timer();
+
+        if (config::is_intelihide()) {
+            m_autohide.intelihide();
+        } else if (config::is_autohide()) {
+            m_autohide.hide();
+        }
+    }
 }
 
 void Panel::on_item_menu_position(int& x, int& y, bool& push_in)
@@ -412,6 +422,7 @@ bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
     m_current_index = -1;
     on_timeout_draw();
 
+    g_print("LEAVE\n");
     if (m_context_menu_open) {
         return true;
     }

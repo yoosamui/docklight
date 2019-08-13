@@ -65,7 +65,6 @@ class Autohide
     static int get_windows_count(WnckWorkspace* workspace);
     static int get_windows_count();
     static void connect_signal_handler(bool connect);
-
     static void on_active_window_changed(WnckScreen* screen,
                                          WnckWindow* previously_active_window,
                                          gpointer user_data);

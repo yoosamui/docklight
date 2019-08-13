@@ -202,6 +202,9 @@ Gdk::Rectangle Autohide::get_window_geometry(WnckWindow* window)
 
 bool Autohide::is_intersection_detected()
 {
+    auto screen = wnck_screen_get_default();
+    m_active_window = wnck_screen_get_active_window(screen);
+
     if (m_active_window == nullptr) {
         return false;
     }
@@ -245,14 +248,13 @@ void Autohide::hide()
 
 void Autohide::show()
 {
-    if (!m_stm.m_visible) {
-        if (m_active_window && wnck_window_is_fullscreen(m_active_window)) {
-            return;
-        }
-
-        m_stm.m_animation_state = DEF_AUTOHIDE_SHOW;
-        connect_signal_handler(true);
+    if (m_active_window != nullptr &&
+        wnck_window_is_fullscreen(m_active_window)) {
+        return;
     }
+
+    m_stm.m_animation_state = DEF_AUTOHIDE_SHOW;
+    connect_signal_handler(true);
 }
 
 void Autohide::set_mouse_inside(bool mouse_inside)
@@ -342,6 +344,13 @@ bool Autohide::animation()
             connect_signal_handler(false);
 
             if (m_stm.m_visible) m_stm.m_animation_timer.start();
+        }
+    } else {
+        // check if connected
+        if (m_stm.m_connect_autohide_signal_set) {
+            if (m_stm.m_animation_timer.elapsed() > m_animation_hide_delay) {
+                connect_signal_handler(false);
+            }
         }
     }
 
