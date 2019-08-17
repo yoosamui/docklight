@@ -89,6 +89,16 @@ namespace launcher_util
         return info.m_error;
     }
 
+    string get_desktop_file(const char* appname)
+    {
+        GKeyFile* key_file = g_key_file_new();
+        string result = "";
+        get_desktop_file(key_file, appname, result);
+        g_key_file_free(key_file);
+
+        return result;
+    }
+
     bool get_desktop_file(GKeyFile* key_file, const char* appname,
                           string& desktop_file)
     {
@@ -321,10 +331,17 @@ namespace launcher_util
         GAppInfo* app_info = nullptr;
         GKeyFile* key_file = g_key_file_new();
 
-        if (!desktop_filename.empty()) {
+        string desktopfile(desktop_filename);
+
+        // if no desktop file provide try to find it by app name
+        if (desktopfile.empty()) {
+            desktopfile = get_desktop_file(appname.c_str());
+        }
+
+        if (!desktopfile.empty()) {
             gboolean found = g_key_file_load_from_file(
-                key_file, desktop_filename.c_str(),
-                GKeyFileFlags::G_KEY_FILE_NONE, &error);
+                key_file, desktopfile.c_str(), GKeyFileFlags::G_KEY_FILE_NONE,
+                &error);
 
             if (error) {
                 g_error_free(error);

@@ -176,8 +176,8 @@ void Panel::on_menu_show_event()
     m_context_menu_open = true;
     this->connect_draw_signal(false);
 
-    // save the current index before on leave gets call (-1)
-    m_current_index_cache = m_current_index;
+    m_draw_required = true;
+    on_timeout_draw();
 }
 
 void Panel::on_menu_hide_event()
@@ -216,9 +216,9 @@ void Panel::on_item_menu_attach_event()
 {
     bool attached = m_item_menu_attach.get_active();
     if (attached) {
-        m_appupdater.attach_item(m_current_index_cache);
+        m_appupdater.attach_item(m_current_index);
     } else {
-        m_appupdater.detach_item(m_current_index_cache);
+        m_appupdater.detach_item(m_current_index);
     }
 }
 
@@ -229,9 +229,9 @@ void Panel::on_item_menu_new_event()
 
 bool Panel::on_button_press_event(GdkEventButton* event)
 {
-    m_current_index = this->get_index(event->x, event->y);
-
     if ((event->type == GDK_BUTTON_PRESS)) {
+        m_current_index = this->get_index(event->x, event->y);
+
         if (event->button == 1) {
             m_mouse_left_down = true;
         } else if (event->button == 3) {
@@ -242,6 +242,8 @@ bool Panel::on_button_press_event(GdkEventButton* event)
 }
 bool Panel::on_button_release_event(GdkEventButton* event)
 {
+    m_current_index = this->get_index(event->x, event->y);
+
     if ((event->type == GDK_BUTTON_RELEASE) && m_current_index != -1) {
         auto const item = AppUpdater::m_dockitems[m_current_index];
 
@@ -250,7 +252,7 @@ bool Panel::on_button_release_event(GdkEventButton* event)
 
             if (m_current_index != -1) {
                 if (item->m_items.size() == 0) {
-                    m_current_index_cache = m_current_index;
+                    m_current_index = m_current_index;
                     this->open_new();
                 } else {
                     if ((int)item->m_items.size() == 1) {
@@ -321,6 +323,8 @@ bool Panel::on_scroll_event(GdkEventScroll* e)
 
 bool Panel::on_motion_notify_event(GdkEventMotion* event)
 {
+    m_current_index = this->get_index(event->x, event->y);
+
     if (!m_enter_anchor) {
         int x = 0, y = 0, w = 0, h = 0;
         gdk_window_get_geometry(event->window, &x, &y, &w, &h);
@@ -353,7 +357,6 @@ bool Panel::on_motion_notify_event(GdkEventMotion* event)
 
     //    g_print("Moution %d %d [%d]\n", (int)event->x, (int)event->y, 0);
 
-    m_current_index = this->get_index(event->x, event->y);
     /*
     if (m_DragDropBegin) {
         m_AppUpdater->MoveItem(this->m_currentMoveIndex);
@@ -418,14 +421,14 @@ bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
         }
     }
 
-    // remove current selection
-    m_current_index = -1;
-    on_timeout_draw();
-
-    g_print("LEAVE\n");
     if (m_context_menu_open) {
         return true;
     }
+
+    // remove current selection
+    m_draw_required = true;
+    m_current_index = -1;
+    on_timeout_draw();
 
     m_enter_anchor = false;
     Panel::m_mouse_inside = false;
@@ -444,15 +447,18 @@ bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
 
 void Panel::open_new()
 {
-    if (m_current_index_cache < 1) {
+    if (m_current_index < 1) {
         return;
     }
 
-    auto const item = AppUpdater::m_dockitems[m_current_index_cache];
+    auto const item = AppUpdater::m_dockitems[m_current_index];
     if (!launcher_util::launch(item->get_name(),
                                item->get_desktop_filename())) {
         g_warning("Open new: App %s could not be found.",
                   item->get_name().c_str());
+
+        m_launcherwindow.init(item);
+        m_launcherwindow.show_all();
     }
 }
 
@@ -678,7 +684,7 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
             cr->paint();
 
             // draw selector
-            if ((int)idx == m_current_index) {
+            if ((int)idx == m_current_index && !m_context_menu_open) {
                 auto tmp = item->get_image()->copy();
                 pixbuf_util::invert_pixels(tmp);
                 Gdk::Cairo::set_source_pixbuf(cr, tmp, m_offset_x + x,

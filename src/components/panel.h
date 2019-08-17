@@ -7,6 +7,7 @@
 #include "components/appupdater.h"
 #include "components/autohide.h"
 #include "components/dockmenu.h"
+#include "components/launcherwindow.h"
 
 DL_NS_BEGIN
 
@@ -23,6 +24,7 @@ class Panel : public Gtk::DrawingArea, DockMenu
     void on_appupdater_update();
 
   protected:
+    launcher_window m_launcherwindow;
     Autohide m_autohide;
     void on_autohide_update(int x, int y);
 
@@ -36,7 +38,6 @@ class Panel : public Gtk::DrawingArea, DockMenu
     bool m_draw_required = false;
     static bool m_mouse_inside;
     int m_current_index = -1;
-    int m_current_index_cache = -1;
     bool m_mouse_left_down = false;
     bool m_mouse_right_down = false;
     void open_new();

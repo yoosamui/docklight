@@ -66,6 +66,21 @@ namespace position_util
         return result;
     }
 
+    void get_center_screen_position(int targetwidth, int targetheight,
+                                    int& posx, int& posy)
+    {
+        Gdk::Rectangle workarea =
+            device::monitor::get_current()->get_workarea();
+
+        int monitorWidth = workarea.get_width();
+        int monitorHeight = workarea.get_height();
+
+        int monitorcenterWidth = monitorWidth / 2;
+        int monitorcenterHeight = monitorHeight / 2;
+
+        posx = monitorcenterWidth - (targetwidth / 2);
+        posy = monitorcenterHeight - (targetheight / 2);
+    }
 }  // namespace position_util
 DL_NS_END
 

@@ -70,6 +70,8 @@ components/dockitem.cpp \
 components/dockitem.h \
 components/autohide.cpp \
 components/autohide.h \
+components/launcherwindow.cpp \
+components/launcherwindow.h \
 appwindow.cpp \
 appwindow.h \
 main.cpp \

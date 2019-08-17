@@ -9,7 +9,7 @@
 
   <action id="org.freedesktop.docklight.policy">
     <description>Run the PolicyKit program createlaucher</description>
-    <message>Authentication is required for DockLight to create a Launcher.</message>
+    <message>Authentication is required for Docklight to create a Launcher.</message>
     <icon_name>audio-x-generic</icon_name> 
     <defaults>
       <allow_any>no</allow_any>
