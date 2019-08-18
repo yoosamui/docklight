@@ -72,6 +72,8 @@ components/autohide.cpp \
 components/autohide.h \
 components/launcherwindow.cpp \
 components/launcherwindow.h \
+components/titlewindow.cpp \
+components/titlewindow.h \
 appwindow.cpp \
 appwindow.h \
 main.cpp \

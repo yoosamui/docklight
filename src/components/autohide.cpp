@@ -240,6 +240,11 @@ void Autohide::set_hide_delay(float delay)
 
 void Autohide::hide()
 {
+    WnckWindowType wt = wnck_window_get_window_type(m_active_window);
+    if (wt == WNCK_WINDOW_DESKTOP) {
+        return;
+    }
+
     if (m_stm.m_visible && !m_stm.m_mouse_inside) {
         m_stm.m_animation_state = DEF_AUTOHIDE_HIDE;
         connect_signal_handler(true);

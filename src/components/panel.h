@@ -3,11 +3,13 @@
 #include <glibmm/timer.h>
 #include <gtkmm/drawingarea.h>
 #include <sigc++/sigc++.h>
+#include <thread>
 #include "common.h"
 #include "components/appupdater.h"
 #include "components/autohide.h"
 #include "components/dockmenu.h"
 #include "components/launcherwindow.h"
+#include "components/titlewindow.h"
 
 DL_NS_BEGIN
 
@@ -23,16 +25,27 @@ class Panel : public Gtk::DrawingArea, DockMenu
     // Signal handler:
     void on_appupdater_update();
 
-  protected:
+  private:
     launcher_window m_launcherwindow;
+    title_window m_titlewindow;
     Autohide m_autohide;
     void on_autohide_update(int x, int y);
 
     int m_offset_x = 0;
     int m_offset_y = 0;
 
+    // Animation thread related
+    // static Glib::RefPtr<Gdk::Pixbuf> m_animation_image;
+    // thread* m_thread_launcher = nullptr;
+    // static bool m_thread_running;
+    // static void animate_item();
+    int m_inverted_index = -1;
+
+    bool m_show_selector = true;
     bool m_connect_draw_signal_set = false;
     bool m_enter_anchor = false;
+
+    void reset_flags();
 
     AppUpdater m_appupdater;
     bool m_draw_required = false;
@@ -47,6 +60,12 @@ class Panel : public Gtk::DrawingArea, DockMenu
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
     void draw_panel(const Cairo::RefPtr<Cairo::Context>& cr);
     void draw_items(const Cairo::RefPtr<Cairo::Context>& cr);
+    void draw_title();
+    void draw();
+
+    Glib::Timer m_title_timer;
+    int m_title_item_index = -1;
+
     bool on_timeout_draw();
 
     sigc::connection m_sigc_draw;

@@ -20,6 +20,9 @@
 DL_NS_BEGIN
 
 bool Panel::m_mouse_inside;
+// Glib::RefPtr<Gdk::Pixbuf> Panel::m_animation_image;
+// bool Panel::m_thread_running;
+// bool Panel::m_draw_required;
 
 Panel::Panel()
 {
@@ -53,6 +56,12 @@ Panel::Panel()
                Gdk::POINTER_MOTION_HINT_MASK | Gdk::POINTER_MOTION_MASK);
 
     Panel::m_mouse_inside = false;
+    // Panel::m_draw_required = false;
+    // Panel::m_animation_image = (Glib::RefPtr<Gdk::Pixbuf>)nullptr;
+    // Panel::m_thread_running = false;
+    // Panel::m_draw_required = false;
+
+    // m_title_timer.start();
 }
 
 void Panel::init()
@@ -80,6 +89,9 @@ void Panel::init()
     m_item_menu_attach.signal_toggled().connect(sigc::mem_fun(*this, &Panel::on_item_menu_attach_event));
 
     // clang-format on
+
+    //    m_thread_running = true;
+    //    m_thread_launcher = new std::thread(animate_item);
 }
 
 Panel::~Panel()
@@ -97,11 +109,47 @@ void Panel::connect_draw_signal(bool connect)
             m_connect_draw_signal_set = true;
         }
     } else {
+        // reset flags before disconect
+        this->reset_flags();
+
         m_sigc_draw.disconnect();
         m_connect_draw_signal_set = false;
     }
 }
 
+/*void Panel::animate_item()
+{
+    gint x, y, i;
+    while (m_thread_running) {
+        if (m_animation_image &&
+            m_animation_image->get_colorspace() == Gdk::COLORSPACE_RGB &&
+            m_animation_image->get_bits_per_sample() == 8) {
+            int w = m_animation_image->get_width();
+            int h = m_animation_image->get_height();
+            int channels = m_animation_image->get_n_channels();
+            gint rowstride = m_animation_image->get_rowstride();
+            gint pixel_offset;
+            for (i = 0; i < 4; i++) {
+                for (y = 0; y < h; y++) {
+                    for (x = 0; x < w; x++) {
+                        pixel_offset = y * rowstride + x * channels;
+                        guchar* pixel =
+                            &m_animation_image->get_pixels()[pixel_offset];
+
+                        pixel[0] = 255 - pixel[0];
+                        pixel[1] = 255 - pixel[1];
+                        pixel[2] = 255 - pixel[2];
+                    }
+                }
+
+                m_draw_required = true;
+                this_thread::sleep_for(std::chrono::milliseconds(200));
+            }
+            m_animation_image = (Glib::RefPtr<Gdk::Pixbuf>)nullptr;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+}*/
 void Panel::on_appupdater_update()
 {
     AppWindow::update();
@@ -171,13 +219,24 @@ inline int Panel::get_index(const int& mouseX, const int& mouseY)
     return -1;
 }
 
+void Panel::draw()
+{
+    m_draw_required = true;
+    on_timeout_draw();
+}
+
+void Panel::reset_flags()
+{
+    m_title_item_index = -1;
+    m_inverted_index = -1;
+
+    draw();
+}
+
 void Panel::on_menu_show_event()
 {
     m_context_menu_open = true;
     this->connect_draw_signal(false);
-
-    m_draw_required = true;
-    on_timeout_draw();
 }
 
 void Panel::on_menu_hide_event()
@@ -193,6 +252,8 @@ void Panel::on_menu_hide_event()
             m_autohide.hide();
         }
     }
+
+    this->reset_flags();
 }
 
 void Panel::on_item_menu_position(int& x, int& y, bool& push_in)
@@ -374,6 +435,7 @@ bool Panel::on_motion_notify_event(GdkEventMotion* event)
 
 bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
 {
+    m_show_selector = true;
     Panel::m_mouse_inside = true;
     this->connect_draw_signal(true);
 
@@ -398,6 +460,8 @@ bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
 
 bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
 {
+    m_show_selector = false;
+
     if (config::is_autohide() || config::is_intelihide()) {
         m_autohide.reset_timer();
         m_autohide.set_mouse_inside(false);
@@ -426,9 +490,8 @@ bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
     }
 
     // remove current selection
-    m_draw_required = true;
     m_current_index = -1;
-    on_timeout_draw();
+    this->draw();
 
     m_enter_anchor = false;
     Panel::m_mouse_inside = false;
@@ -452,6 +515,9 @@ void Panel::open_new()
     }
 
     auto const item = AppUpdater::m_dockitems[m_current_index];
+    m_show_selector = true;
+    this->reset_flags();
+
     if (!launcher_util::launch(item->get_name(),
                                item->get_desktop_filename())) {
         g_warning("Open new: App %s could not be found.",
@@ -612,6 +678,7 @@ bool Panel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
     this->draw_panel(cr);
     this->draw_items(cr);
+    this->draw_title();
     return true;
 }
 void Panel::draw_panel(const Cairo::RefPtr<Cairo::Context>& cr)
@@ -626,7 +693,6 @@ void Panel::draw_panel(const Cairo::RefPtr<Cairo::Context>& cr)
     cr->fill();
     // cr->paint();
 }
-
 void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
 {
     int y = 0;
@@ -683,20 +749,64 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
                                           m_offset_y + y);
             cr->paint();
 
-            // draw selector
-            if ((int)idx == m_current_index && !m_context_menu_open) {
-                auto tmp = item->get_image()->copy();
-                pixbuf_util::invert_pixels(tmp);
-                Gdk::Cairo::set_source_pixbuf(cr, tmp, m_offset_x + x,
-                                              m_offset_y + y);
-                cr->paint();
+            if (m_show_selector) {
+                // draw selector
+                if ((int)idx == m_current_index && !m_context_menu_open &&
+                    m_mouse_inside && (int)idx != m_inverted_index) {
+                    auto tmp = item->get_image()->copy();
+                    pixbuf_util::invert_pixels(tmp);
+                    Gdk::Cairo::set_source_pixbuf(cr, tmp, m_offset_x + x,
+                                                  m_offset_y + y);
 
-                // cr->set_source_rgba(1, 1, 1, 0.4);
-                // cairo_util::rounded_rectangle(cr, x, y, width, height, 0);
-                // cr->fill();
+                    m_inverted_index = (int)m_current_index;
+                    cr->paint();
+
+                    // cr->set_source_rgba(1, 1, 1, 0.4);
+                    // cairo_util::rounded_rectangle(cr, x, y, width, height,
+                    // 0); cr->fill();
+                }
             }
         }
     }
 }
 
+void Panel::draw_title()
+{
+    if (m_current_index < 0 || m_context_menu_open) {
+        m_titlewindow.hide();
+
+        return;
+    }
+
+    if (!m_mouse_inside || (m_current_index == m_title_item_index &&
+                            m_title_timer.elapsed() > 3.0)) {
+        m_title_timer.stop();
+        m_titlewindow.hide();
+
+        return;
+    }
+
+    if (m_current_index != m_title_item_index) {
+        m_title_timer.reset();
+        m_title_timer.start();
+        m_title_item_index = m_current_index;
+        m_titlewindow.hide();
+
+        return;
+    }
+
+    if (m_title_timer.elapsed() < 0.6) {
+        return;
+    }
+
+    auto const item = AppUpdater::m_dockitems[m_current_index];
+    m_titlewindow.set_text(item->get_name());
+
+    int x = 0, y = 0;
+    int height = m_titlewindow.get_height();
+    int width = m_titlewindow.get_width();
+
+    this->get_center_position(x, y, width, height);
+    m_titlewindow.move(x, y);
+}
 DL_NS_END
