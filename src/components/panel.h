@@ -18,11 +18,8 @@ class Panel : public Gtk::DrawingArea, DockMenu
   public:
     Panel();
     ~Panel();
-
     void init();
     int get_required_size();
-
-    // Signal handler:
     void on_appupdater_update();
 
   private:
@@ -34,11 +31,6 @@ class Panel : public Gtk::DrawingArea, DockMenu
     int m_offset_x = 0;
     int m_offset_y = 0;
 
-    // Animation thread related
-    // static Glib::RefPtr<Gdk::Pixbuf> m_animation_image;
-    // thread* m_thread_launcher = nullptr;
-    // static bool m_thread_running;
-    // static void animate_item();
     int m_inverted_index = -1;
 
     bool m_show_selector = true;

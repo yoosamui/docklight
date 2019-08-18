@@ -56,12 +56,6 @@ Panel::Panel()
                Gdk::POINTER_MOTION_HINT_MASK | Gdk::POINTER_MOTION_MASK);
 
     Panel::m_mouse_inside = false;
-    // Panel::m_draw_required = false;
-    // Panel::m_animation_image = (Glib::RefPtr<Gdk::Pixbuf>)nullptr;
-    // Panel::m_thread_running = false;
-    // Panel::m_draw_required = false;
-
-    // m_title_timer.start();
 }
 
 void Panel::init()
@@ -89,9 +83,6 @@ void Panel::init()
     m_item_menu_attach.signal_toggled().connect(sigc::mem_fun(*this, &Panel::on_item_menu_attach_event));
 
     // clang-format on
-
-    //    m_thread_running = true;
-    //    m_thread_launcher = new std::thread(animate_item);
 }
 
 Panel::~Panel()
@@ -117,39 +108,6 @@ void Panel::connect_draw_signal(bool connect)
     }
 }
 
-/*void Panel::animate_item()
-{
-    gint x, y, i;
-    while (m_thread_running) {
-        if (m_animation_image &&
-            m_animation_image->get_colorspace() == Gdk::COLORSPACE_RGB &&
-            m_animation_image->get_bits_per_sample() == 8) {
-            int w = m_animation_image->get_width();
-            int h = m_animation_image->get_height();
-            int channels = m_animation_image->get_n_channels();
-            gint rowstride = m_animation_image->get_rowstride();
-            gint pixel_offset;
-            for (i = 0; i < 4; i++) {
-                for (y = 0; y < h; y++) {
-                    for (x = 0; x < w; x++) {
-                        pixel_offset = y * rowstride + x * channels;
-                        guchar* pixel =
-                            &m_animation_image->get_pixels()[pixel_offset];
-
-                        pixel[0] = 255 - pixel[0];
-                        pixel[1] = 255 - pixel[1];
-                        pixel[2] = 255 - pixel[2];
-                    }
-                }
-
-                m_draw_required = true;
-                this_thread::sleep_for(std::chrono::milliseconds(200));
-            }
-            m_animation_image = (Glib::RefPtr<Gdk::Pixbuf>)nullptr;
-        }
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    }
-}*/
 void Panel::on_appupdater_update()
 {
     AppWindow::update();
@@ -772,7 +730,8 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
 
 void Panel::draw_title()
 {
-    if (m_current_index < 0 || m_context_menu_open) {
+    if (m_current_index < 0 || m_context_menu_open || config::is_show_title() ||
+        !m_connect_draw_signal_set || !m_autohide.is_visible()) {
         m_titlewindow.hide();
 
         return;

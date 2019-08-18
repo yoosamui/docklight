@@ -17,7 +17,9 @@ namespace config
     int get_icon_size();
     bool is_autohide();
     bool is_intelihide();
+    bool is_show_title();
 
 }  // namespace config
+
 DL_NS_END
 

@@ -42,6 +42,7 @@ class Autohide
     void set_hide_delay(float delay);
     void reset_timer();
     void set_mouse_inside(bool mouse_inside);
+    bool is_visible();
 
     typedef sigc::signal<void, int, int> type_signal_update;
     type_signal_update signal_update();

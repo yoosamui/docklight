@@ -238,6 +238,11 @@ void Autohide::set_hide_delay(float delay)
     m_animation_hide_delay = delay;
 }
 
+bool Autohide::is_visible()
+{
+    return m_stm.m_visible;
+}
+
 void Autohide::hide()
 {
     WnckWindowType wt = wnck_window_get_window_type(m_active_window);
