@@ -20,9 +20,7 @@
 DL_NS_BEGIN
 
 bool Panel::m_mouse_inside;
-// Glib::RefPtr<Gdk::Pixbuf> Panel::m_animation_image;
-// bool Panel::m_thread_running;
-// bool Panel::m_draw_required;
+int Panel::m_decrease_factor;
 
 Panel::Panel()
 {
@@ -56,6 +54,7 @@ Panel::Panel()
                Gdk::POINTER_MOTION_HINT_MASK | Gdk::POINTER_MOTION_MASK);
 
     Panel::m_mouse_inside = false;
+    Panel::m_decrease_factor = 0;
 }
 
 void Panel::init()
@@ -126,11 +125,32 @@ void Panel::on_autohide_update(int x, int y)
 
 int Panel::get_required_size()
 {
-    int separators =
-        config::get_separator_margin() * (m_appupdater.m_dockitems.size() - 1);
+    m_decrease_factor = 0;
+    Gdk::Rectangle workarea = device::monitor::get_current()->get_workarea();
 
-    return (m_appupdater.m_dockitems.size() * config::get_icon_size()) +
-           config::get_window_start_end_margin() + separators;
+    // the required full size
+    int size = m_appupdater.get_required_size();
+    int diff = 0;
+
+    // ajust new items size
+    if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+        if (size >= workarea.get_width()) {
+            diff = (size - workarea.get_width()) +
+                   config::get_window_start_end_margin();
+        }
+    } else {
+        if (size >= workarea.get_height()) {
+            diff = (size - workarea.get_height()) +
+                   config::get_window_start_end_margin();
+        }
+    }
+
+    if (diff > 0) {
+        m_decrease_factor = diff / (m_appupdater.m_dockitems.size());
+        size = m_appupdater.get_required_size();
+    }
+
+    return size;
 }
 
 bool Panel::on_timeout_draw()
@@ -507,6 +527,8 @@ void Panel::on_active_window_changed(WnckScreen* screen,
 {
 }
 
+// int get_decrement_factor() {}
+
 inline bool Panel::get_center_position(int& x, int& y, const int width,
                                        const int height)
 {
@@ -603,6 +625,11 @@ inline void Panel::get_item_position(const dock_item_type_t item_typ, int& x,
     if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
         if (x == 0) {
             y = 4;
+
+            if (m_decrease_factor > 0) {
+                y = (config::get_dock_area() / 2) - (height / 2);
+            }
+
             x = config::get_window_start_end_margin() / 2;
             nextsize = width;
             return;
@@ -612,7 +639,7 @@ inline void Panel::get_item_position(const dock_item_type_t item_typ, int& x,
         nextsize = width;
     } else {
         if (y == 0) {
-            x = 4;
+            x = (config::get_dock_area() / 2) - (width / 2);
             y = config::get_window_start_end_margin() / 2;
             nextsize = height;
             return;
@@ -686,15 +713,18 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
         // draw dots
         center = (width / 2);
         if (item->m_items.size() > 0) {
-            cr->set_source_rgb(1.0, 1.0, 1.0);
+            cr->set_source_rgb(0.0, 0.0, 1.0);
             if (item->m_items.size() == 1) {
-                cr->arc(m_offset_x + x + center, m_offset_y + y + area - 5, 1.7,
-                        0, 2 * M_PI);
+                cr->arc(m_offset_x + x + center,
+                        m_offset_y + y + area - 5 - m_decrease_factor, 1.7, 0,
+                        2 * M_PI);
             } else if (item->m_items.size() > 1) {
-                cr->arc(m_offset_x + x + center - 3, m_offset_y + y + area - 5,
-                        1.7, 0, 2 * M_PI);
-                cr->arc(m_offset_x + x + center + 3, m_offset_y + y + area - 5,
-                        1.7, 0, 2 * M_PI);
+                cr->arc(m_offset_x + x + center - 3,
+                        m_offset_y + y + area - 5 - m_decrease_factor, 1.7, 0,
+                        2 * M_PI);
+                cr->arc(m_offset_x + x + center + 3,
+                        m_offset_y + y + area - 5 - m_decrease_factor, 1.7, 0,
+                        2 * M_PI);
             }
             cr->fill();
         }
@@ -703,7 +733,15 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
         // auto const image =
         // item->get_image()->scale_simple(48, 48, Gdk::INTERP_BILINEAR);
         if (item->get_image()) {
-            Gdk::Cairo::set_source_pixbuf(cr, item->get_image(), m_offset_x + x,
+            auto image = item->get_image();
+
+            if (m_decrease_factor > 0) {
+                int image_size = height;
+                image = image->scale_simple(image_size, image_size,
+                                            Gdk::INTERP_BILINEAR);
+            }
+
+            Gdk::Cairo::set_source_pixbuf(cr, image, m_offset_x + x,
                                           m_offset_y + y);
             cr->paint();
 
@@ -711,7 +749,7 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
                 // draw selector
                 if ((int)idx == m_current_index && !m_context_menu_open &&
                     m_mouse_inside && (int)idx != m_inverted_index) {
-                    auto tmp = item->get_image()->copy();
+                    auto tmp = image->copy();
                     pixbuf_util::invert_pixels(tmp);
                     Gdk::Cairo::set_source_pixbuf(cr, tmp, m_offset_x + x,
                                                   m_offset_y + y);
@@ -719,9 +757,9 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
                     m_inverted_index = (int)m_current_index;
                     cr->paint();
 
-                    // cr->set_source_rgba(1, 1, 1, 0.4);
-                    // cairo_util::rounded_rectangle(cr, x, y, width, height,
-                    // 0); cr->fill();
+                    cr->set_source_rgba(1, 1, 1, 0.4);
+                    cairo_util::rounded_rectangle(cr, x, y, width, height, 0);
+                    cr->fill();
                 }
             }
         }
@@ -730,8 +768,9 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
 
 void Panel::draw_title()
 {
-    if (m_current_index < 0 || m_context_menu_open || config::is_show_title() ||
-        !m_connect_draw_signal_set || !m_autohide.is_visible()) {
+    if (m_current_index < 0 || m_context_menu_open ||
+        !config::is_show_title() || !m_connect_draw_signal_set ||
+        !m_autohide.is_visible()) {
         m_titlewindow.hide();
 
         return;
@@ -768,4 +807,5 @@ void Panel::draw_title()
     this->get_center_position(x, y, width, height);
     m_titlewindow.move(x, y);
 }
+
 DL_NS_END

@@ -39,7 +39,6 @@ void AppUpdater::init()
                      G_CALLBACK(AppUpdater::on_active_window_changed_callback),
                      nullptr);
 
-
      auto const icon_theme = Gtk::IconTheme::get_default();
      icon_theme->signal_changed().connect(sigc::mem_fun(*this, &AppUpdater::on_theme_changed));
 
@@ -131,16 +130,20 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
             item->m_items.push_back(shared_ptr<DockItem>(new DockItem(info)));
 
         } else {
-            // Add new
-            m_dockitems.push_back(shared_ptr<DockItem>(new DockItem(info)));
-            auto const new_item = m_dockitems.back();
+            auto const first_item = m_dockitems[0];
 
-            new_item->set_image(pixbuf_util::get_window_icon(
-                window, info.m_desktop_icon_name, config::get_icon_size()));
+            if (first_item->get_width() >= DEF_MIN_ITEM_SIZE) {
+                // Add new
+                m_dockitems.push_back(shared_ptr<DockItem>(new DockItem(info)));
+                auto const new_item = m_dockitems.back();
 
-            // Add child
-            new_item->m_items.push_back(
-                shared_ptr<DockItem>(new DockItem(info)));
+                new_item->set_image(pixbuf_util::get_window_icon(
+                    window, info.m_desktop_icon_name, config::get_icon_size()));
+
+                // Add child
+                new_item->m_items.push_back(
+                    shared_ptr<DockItem>(new DockItem(info)));
+            }
         }
 
         m_signal_update.emit();
@@ -330,5 +333,27 @@ bool AppUpdater::remove_item(const int index)
 
     m_signal_update.emit();
     return true;
+}
+
+int AppUpdater::get_required_size()
+{
+    size_t items_count = m_dockitems.size();
+    int size = config::get_window_start_end_margin() +
+               ((items_count - 1) * config::get_separator_margin());
+
+    if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+        for (size_t i = 0; i < items_count; i++) {
+            auto const item = m_dockitems[i];
+            size += item->get_width();
+        }
+
+    } else {
+        for (size_t i = 0; i < items_count; i++) {
+            auto const item = m_dockitems[i];
+            size += item->get_height();
+        }
+    }
+
+    return size;
 }
 DL_NS_END

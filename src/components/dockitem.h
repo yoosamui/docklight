@@ -41,6 +41,8 @@ class DockItem
     bool is_attached() const;
     int get_width() const;
     int get_height() const;
+    void set_height(int value);
+    void set_width(int value);
     void set_index(int index);
     int get_index() const;
     void set_y(int y);

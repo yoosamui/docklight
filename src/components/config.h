@@ -8,6 +8,8 @@ DL_NS_BEGIN
 
 namespace config
 {
+#define DEF_MIN_ITEM_SIZE 26
+
     void load(const GSList* args_list);
     dock_location_t get_dock_location();
     int get_dock_area();

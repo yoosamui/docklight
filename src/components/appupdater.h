@@ -30,6 +30,7 @@ class AppUpdater
     bool remove_item(const int index);
     bool save();
     bool load();
+    int get_required_size();
 
   private:
     typedef struct {

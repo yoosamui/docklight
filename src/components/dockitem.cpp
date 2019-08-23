@@ -1,5 +1,7 @@
 #include "dockitem.h"
 #include "components/config.h"
+#include "components/panel.h"
+
 DL_NS_BEGIN
 
 DockItem::DockItem(appinfo_t app_info, dock_item_type_t item_type)
@@ -81,14 +83,23 @@ bool DockItem::is_attached() const
 
 int DockItem::get_width() const
 {
-    return m_width;
+    return m_width - Panel::m_decrease_factor;
 }
 
 int DockItem::get_height() const
 {
-    return m_height;
+    return m_height - Panel::m_decrease_factor;
 }
 
+void DockItem::set_width(int value)
+{
+    m_width = value;
+}
+
+void DockItem::set_height(int value)
+{
+    m_height = value;
+}
 void DockItem::set_index(int index)
 {
     m_index = index;

@@ -21,6 +21,7 @@ class Panel : public Gtk::DrawingArea, DockMenu
     void init();
     int get_required_size();
     void on_appupdater_update();
+    static int m_decrease_factor;
 
   private:
     launcher_window m_launcherwindow;
