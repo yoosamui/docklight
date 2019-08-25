@@ -52,6 +52,34 @@ namespace position_util
         }
     }
 
+    void hide()
+    {
+        auto const location = config::get_dock_location();
+        Gdk::Rectangle workarea =
+            device::monitor::get_current()->get_workarea();
+
+        int x = 0, y = 0;
+        m_window->get_position(x, y);
+
+        if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+            m_window->resize(m_window->get_width(), 2);
+
+            if (location == dock_location_t::bottom) {
+                m_window->move(x, workarea.get_height() + workarea.get_y() - 2);
+            } else {
+                m_window->move(x, workarea.get_y());
+            }
+        } else {
+            m_window->resize(2, m_window->get_height());
+
+            if (location == dock_location_t::right) {
+                m_window->move(workarea.get_width() + workarea.get_x() - 2, y);
+            } else {
+                m_window->move(workarea.get_x(), y);
+            }
+        }
+    }
+
     const Gdk::Rectangle get_appwindow_geometry()
     {
         Gdk::Rectangle result;

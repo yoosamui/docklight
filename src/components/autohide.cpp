@@ -209,9 +209,29 @@ bool Autohide::is_intersection_detected()
         return false;
     }
 
+    int area = config::get_dock_area();
+    Gdk::Rectangle workarea = device::monitor::get_current()->get_workarea();
     auto rect_dock = position_util::get_appwindow_geometry();
     auto rect_window = Autohide::get_window_geometry(m_active_window);
+    auto const location = config::get_dock_location();
 
+    if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+        if (location == dock_location_t::bottom) {
+            rect_dock.set_y(workarea.get_height() + workarea.get_y() - area);
+            rect_dock.set_height(area);
+        } else {
+            rect_dock.set_y(workarea.get_y());
+            rect_dock.set_height(area);
+        }
+    } else {
+        if (location == dock_location_t::right) {
+            rect_dock.set_x(workarea.get_width() + workarea.get_x() - area);
+            rect_dock.set_width(area);
+        } else {
+            rect_dock.set_x(workarea.get_x());
+            rect_dock.set_width(area);
+        }
+    }
     return rect_window.intersects(rect_dock);
 }
 
@@ -295,6 +315,7 @@ bool Autohide::animation()
 
     } else if (m_stm.m_animation_state == DEF_AUTOHIDE_SHOW &&
                !m_stm.m_visible && !m_stm.m_animation_running) {
+        position_util::set_window_position();
         m_easing_duration = DEF_AUTOHIDE_EASING_DURATION;
         m_stm.m_animation_running = true;
     }
@@ -353,7 +374,11 @@ bool Autohide::animation()
             m_stm.m_visible = (int)endPosition == 0;
             connect_signal_handler(false);
 
-            if (m_stm.m_visible) m_stm.m_animation_timer.start();
+            if (m_stm.m_visible) {
+                m_stm.m_animation_timer.start();
+            } else {
+                position_util::hide();
+            }
         }
     } else {
         // check if connected

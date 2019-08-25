@@ -31,6 +31,7 @@ class AppUpdater
     bool save();
     bool load();
     int get_required_size();
+    void swap_item(const int next_position);
 
   private:
     typedef struct {

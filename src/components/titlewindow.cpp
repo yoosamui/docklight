@@ -10,7 +10,7 @@ title_window::title_window()
       m_HBox(Gtk::ORIENTATION_HORIZONTAL, 5),
       m_Label("", false)
 {
-    this->set_gravity(Gdk::Gravity::GRAVITY_STATIC);
+    //  this->set_gravity(Gdk::Gravity::GRAVITY_STATIC);
 
     GdkScreen *screen;
     GdkVisual *visual;
@@ -27,7 +27,7 @@ title_window::title_window()
     font.set_size(8 * PANGO_SCALE);
     font.set_weight(Pango::WEIGHT_NORMAL);
 
-    Gtk::Window::set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_TOOLTIP);
+    //   Gtk::Window::set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_TOOLTIP);
     m_HBox.set_margin_left(6);
     m_HBox.set_margin_right(6);
     m_HBox.set_margin_top(6);
@@ -47,20 +47,12 @@ title_window::~title_window()
 {
     hide();
 }
-
-/**
- * Set the tooltip-text to show
- * @param text the text to show
- */
 void title_window::set_text(const Glib::ustring text)
 {
     m_Label.set_text(text);
-
-    m_Label.queue_resize();
-    resize(2, get_height());
+    resize(2, this->get_height());
     show_all();
 }
-
 bool title_window::on_draw(const Cairo::RefPtr<Cairo::Context> &cr)
 {
     // cr->set_source_rgba(m_Theme.PanelTitle().Fill().Color::red,
@@ -84,7 +76,7 @@ bool title_window::on_draw(const Cairo::RefPtr<Cairo::Context> &cr)
     cr->stroke();
 
     Glib::RefPtr<Pango::Layout> layout =
-        create_pango_layout(m_Label.get_text());
+        m_Label.get_layout();  // pcreate_pango_layout(m_text);
     pango_layout_set_alignment(layout->gobj(), PANGO_ALIGN_CENTER);
 
     // cr->set_source_rgba(m_Theme.PanelTitleText().Stroke().Color::red,

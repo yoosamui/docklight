@@ -9,6 +9,7 @@
 DL_NS_BEGIN
 namespace position_util
 {
+    void hide();
     void init(AppWindow *window);
     void set_window_position();
     const Gdk::Rectangle get_appwindow_geometry();

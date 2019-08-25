@@ -169,13 +169,39 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
     }
 }
 
+void AppUpdater::swap_item(const int next_position)
+{
+    static int position = 0;
+
+    if (next_position < 0 || next_position > (int)m_dockitems.size()) {
+        return;
+    }
+
+    if (position == 0 || next_position == 0) {
+        position = next_position;
+        return;
+    }
+
+    if (position == next_position) {
+        return;
+    }
+
+    iter_swap(m_dockitems.begin() + position,
+              m_dockitems.begin() + next_position);
+    position = next_position;
+}
+
 string AppUpdater::get_filepath()
 {
-    string config_dir = "/home/yoo/.config/docklight";
-    system_util::create_directory_if_not_exitst(config_dir.c_str());
+    string user_name = system_util::get_current_user();
+
+    char config_dir[120];
+    sprintf(config_dir, "/home/%s/.config/docklight", user_name.c_str());
+
+    system_util::create_directory_if_not_exitst(config_dir);
 
     char buff[PATH_MAX];
-    sprintf(buff, "%s/%s", config_dir.c_str(), DEF_ATTACHMENTS_FILENAME);
+    sprintf(buff, "%s/%s", config_dir, DEF_ATTACHMENTS_FILENAME);
 
     return buff;
 }

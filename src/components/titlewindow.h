@@ -18,7 +18,6 @@ class title_window : public Gtk::Window
   private:
     // Configuration::Style::Theme m_Theme = Configuration::get_Theme();
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr);
-
     Pango::FontDescription font;
 
     // Child widgets:

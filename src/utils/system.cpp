@@ -4,7 +4,9 @@
 #include <dirent.h>
 #include <limits.h>
 #include <malloc.h>
+#include <pwd.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <stdexcept>
@@ -70,6 +72,16 @@ namespace system_util
         }
 
         return false;
+    }
+
+    const string get_current_user()
+    {
+        uid_t uid = geteuid();
+        struct passwd* pw = getpwuid(uid);
+        if (pw) {
+            return std::string(pw->pw_name);
+        }
+        return {};
     }
 }  // namespace system_util
 

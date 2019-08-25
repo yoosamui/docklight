@@ -40,6 +40,9 @@ class Panel : public Gtk::DrawingArea, DockMenu
 
     void reset_flags();
 
+    bool m_dragdrop_begin = false;
+    Glib::Timer m_dragdrop_timer;
+
     AppUpdater m_appupdater;
     bool m_draw_required = false;
     static bool m_mouse_inside;

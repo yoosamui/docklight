@@ -146,7 +146,7 @@ int Panel::get_required_size()
     }
 
     if (diff > 0) {
-        m_decrease_factor = diff / (m_appupdater.m_dockitems.size());
+        m_decrease_factor = diff / m_appupdater.m_dockitems.size();
         size = m_appupdater.get_required_size();
     }
 
@@ -155,6 +155,14 @@ int Panel::get_required_size()
 
 bool Panel::on_timeout_draw()
 {
+    if (m_current_index > 0 && !m_dragdrop_begin && m_mouse_left_down &&
+        m_dragdrop_timer.elapsed() > 0.25) {
+        m_dragdrop_begin = true;
+
+        // start blink  animation
+        this->reset_flags();
+    }
+
     if (m_draw_required || Panel::m_mouse_inside) {
         Gtk::Widget::queue_draw();
         m_draw_required = false;
@@ -273,6 +281,10 @@ bool Panel::on_button_press_event(GdkEventButton* event)
 
         if (event->button == 1) {
             m_mouse_left_down = true;
+
+            m_dragdrop_timer.reset();
+            m_dragdrop_timer.start();
+
         } else if (event->button == 3) {
             m_mouse_right_down = true;
         }
@@ -288,6 +300,22 @@ bool Panel::on_button_release_event(GdkEventButton* event)
 
         if (event->button == 1 && m_mouse_left_down) {
             m_mouse_left_down = false;
+
+            if (m_dragdrop_begin) {
+                m_dragdrop_begin = false;
+                m_dragdrop_timer.stop();
+                m_dragdrop_timer.reset();
+
+                // allways attach the drop item
+                item->set_attach(true);
+
+                // reset the swap item method.
+                // and save the items with the new position.
+                m_appupdater.swap_item(0);
+                m_appupdater.save();
+
+                return true;
+            }
 
             if (m_current_index != -1) {
                 if (item->m_items.size() == 0) {
@@ -363,51 +391,12 @@ bool Panel::on_scroll_event(GdkEventScroll* e)
 bool Panel::on_motion_notify_event(GdkEventMotion* event)
 {
     m_current_index = this->get_index(event->x, event->y);
-
-    if (!m_enter_anchor) {
-        int x = 0, y = 0, w = 0, h = 0;
-        gdk_window_get_geometry(event->window, &x, &y, &w, &h);
-
-        auto location = config::get_dock_location();
-        if (location == dock_location_t::left) {
-            if ((int)event->x < 10) {
-                m_enter_anchor = true;
-            }
-        } else
-
-            if (location == dock_location_t::bottom) {
-            if ((int)event->y > h - 10) {
-                m_enter_anchor = true;
-            }
-        } else if (location == dock_location_t::right) {
-            if ((int)event->x > w - 10) {
-                m_enter_anchor = true;
-            }
-        } else if (location == dock_location_t::top) {
-            if ((int)event->y <= 10) {
-                m_enter_anchor = true;
-            }
-        }
-
-        if (m_enter_anchor) {
-            on_enter_notify_event(nullptr);
-        }
+    if (m_current_index > 0 && m_dragdrop_begin) {
+        m_appupdater.swap_item(m_current_index);
     }
 
-    //    g_print("Moution %d %d [%d]\n", (int)event->x, (int)event->y, 0);
-
-    /*
-    if (m_DragDropBegin) {
-        m_AppUpdater->MoveItem(this->m_currentMoveIndex);
-        m_dragdropMousePoint.set_x((int)event->x);
-        m_dragdropMousePoint.set_y((int)event->y);
-    }*/
-
-    //   if(DockPanel::m_previewIndex != m_currentMoveIndex &&
-    //   DockPanel::m_dockPreview != nullptr){
-    //       DockPanel::PreviewClose();
-    //   }
-
+    // force enter event
+    on_enter_notify_event(nullptr);
     return false;
 }
 
@@ -422,9 +411,9 @@ bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
         m_autohide.set_mouse_inside(true);
     }
 
-    if (!m_enter_anchor) {
-        return true;
-    }
+    // if (!m_enter_anchor) {
+    // return true;
+    //}
 
     if (config::is_autohide() || config::is_intelihide()) {
         m_autohide.show();
@@ -471,7 +460,7 @@ bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
     m_current_index = -1;
     this->draw();
 
-    m_enter_anchor = false;
+    //  m_enter_anchor = false;
     Panel::m_mouse_inside = false;
 
     if (config::is_intelihide()) {
@@ -527,8 +516,6 @@ void Panel::on_active_window_changed(WnckScreen* screen,
 {
 }
 
-// int get_decrement_factor() {}
-
 inline bool Panel::get_center_position(int& x, int& y, const int width,
                                        const int height)
 {
@@ -567,7 +554,7 @@ inline bool Panel::get_center_position(int& x, int& y, const int width,
 
                 // check the limit on the right
                 if (x + width > workarea.get_width()) {
-                    x = workarea.get_width() - width + workarea.get_x();
+                   // x = workarea.get_width() - width + workarea.get_x();
                     return true;
                 }
 
@@ -603,7 +590,7 @@ inline bool Panel::get_center_position(int& x, int& y, const int width,
 
                 // check the limit on the right
                 if (y + height > workarea.get_height()) {
-                    y = workarea.get_height() - height + workarea.get_y();
+                  //  y = workarea.get_height() - height + workarea.get_y();
                     return true;
                 }
 
@@ -735,7 +722,8 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
         if (item->get_image()) {
             auto image = item->get_image();
 
-            if (m_decrease_factor > 0) {
+            // scaled if needed
+            if (m_decrease_factor > 0 || image->get_width() != width) {
                 int image_size = height;
                 image = image->scale_simple(image_size, image_size,
                                             Gdk::INTERP_BILINEAR);
@@ -757,29 +745,32 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
                     m_inverted_index = (int)m_current_index;
                     cr->paint();
 
-                    cr->set_source_rgba(1, 1, 1, 0.4);
-                    cairo_util::rounded_rectangle(cr, x, y, width, height, 0);
-                    cr->fill();
+                    // cr->set_source_rgba(1, 1, 1, 0.4);
+                    // cairo_util::rounded_rectangle(cr, x, y, width, height,
+                    // 0); cr->fill();
                 }
             }
         }
     }
 }
-
+bool m_titlewindow_visible = false;
 void Panel::draw_title()
 {
     if (m_current_index < 0 || m_context_menu_open ||
         !config::is_show_title() || !m_connect_draw_signal_set ||
         !m_autohide.is_visible()) {
         m_titlewindow.hide();
+        m_titlewindow_visible = false;
 
         return;
     }
 
     if (!m_mouse_inside || (m_current_index == m_title_item_index &&
-                            m_title_timer.elapsed() > 3.0)) {
+                            m_title_timer.elapsed() > 4.0)) {
         m_title_timer.stop();
+        m_title_timer.reset();
         m_titlewindow.hide();
+        m_titlewindow_visible = false;
 
         return;
     }
@@ -789,18 +780,39 @@ void Panel::draw_title()
         m_title_timer.start();
         m_title_item_index = m_current_index;
         m_titlewindow.hide();
+        m_titlewindow_visible = false;
 
         return;
     }
 
-    if (m_title_timer.elapsed() < 0.6) {
+    // delay before show up
+    if (m_title_timer.elapsed() < 0.8) {
+        m_titlewindow.hide();
+        m_titlewindow_visible = false;
+        int y = 0, x = 0;
+        this->get_center_position(x, y, 140, 26);
+        m_titlewindow.move(x, y);
         return;
     }
 
+    if (m_titlewindow_visible) {
+        return;
+    }
+
+    m_titlewindow_visible = true;
     auto const item = AppUpdater::m_dockitems[m_current_index];
-    m_titlewindow.set_text(item->get_name());
-
     int x = 0, y = 0;
+
+    char title[60];
+    int count = (int)item->m_items.size();
+    if (count > 1) {
+        sprintf(title, "%s (%d)", item->get_name().c_str(), count);
+    } else {
+        sprintf(title, "%s", item->get_name().c_str());
+    }
+
+    m_titlewindow.set_text(title);
+
     int height = m_titlewindow.get_height();
     int width = m_titlewindow.get_width();
 
@@ -809,3 +821,4 @@ void Panel::draw_title()
 }
 
 DL_NS_END
+
