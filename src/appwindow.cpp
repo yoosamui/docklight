@@ -37,6 +37,8 @@ AppWindow::AppWindow()
 
     m_panel = new Panel();
     this->add(*m_panel);
+
+    m_panel->set_owner(this);
     this->show_all();
 }
 

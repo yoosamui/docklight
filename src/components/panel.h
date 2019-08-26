@@ -18,12 +18,14 @@ class Panel : public Gtk::DrawingArea, DockMenu
   public:
     Panel();
     ~Panel();
+    void set_owner(Gtk::Window* window);
     void init();
     int get_required_size();
     void on_appupdater_update();
     static int m_decrease_factor;
 
   private:
+    Gtk::Window* m_owner = nullptr;
     launcher_window m_launcherwindow;
     title_window m_titlewindow;
     Autohide m_autohide;
@@ -88,8 +90,14 @@ class Panel : public Gtk::DrawingArea, DockMenu
                                          gpointer user_data);
     // Menus
     bool m_context_menu_open = false;
+
+    void on_home_menu_addseparator_event();
+    void on_home_menu_quit_event();
+
     void on_menu_hide_event();
     void on_menu_show_event();
+
+    void on_home_menu_position(int& x, int& y, bool& push_in);
     void on_item_menu_position(int& x, int& y, bool& push_in);
     void on_item_menu_windowlist_position(int& x, int& y, bool& push_in);
     void on_item_menu_new_event();

@@ -38,7 +38,7 @@ enum class struts_position_t : unsigned int {
 };
 
 enum class dock_item_type_t : unsigned int {
-    single = 0,
+    launcher = 0,
     group,
     separator
 

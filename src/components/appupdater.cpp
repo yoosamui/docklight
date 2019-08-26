@@ -249,6 +249,8 @@ bool AppUpdater::save()
         strncpy(rec.desktop_file, info->m_desktop_file.c_str(),
                 sizeof(rec.desktop_file) - 1);
 
+        rec.width = info->m_width;
+        rec.height = info->m_height;
         rec.dock_item_type = info->m_dock_item_type;
 
         size_t result = fwrite(&rec, sizeof(rec), 1, file_writer);
@@ -295,11 +297,14 @@ bool AppUpdater::load()
         info.m_name = rec.name;
         info.m_desktop_file = rec.desktop_file;
         info.m_desktop_icon_name = rec.icon_name;
+        info.m_width = rec.width;
+        info.m_height = rec.height;
+
         info.m_dock_item_type =
             static_cast<dock_item_type_t>(rec.dock_item_type);
 
         // Add new
-        auto item = new DockItem(info);
+        auto item = new DockItem(info, info.m_dock_item_type);
         item->set_attach(true);
 
         m_dockitems.push_back(shared_ptr<DockItem>(item));

@@ -9,7 +9,7 @@ DL_NS_BEGIN
 namespace config
 {
     dock_location_t m_location = dock_location_t::bottom;
-    int m_icon_size = 38;
+    int m_icon_size = 64;  // 128;  // 38;
     ;
     int m_separator_margin = 10;
     bool m_show_title = true;

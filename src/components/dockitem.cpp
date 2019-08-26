@@ -9,7 +9,9 @@ DockItem::DockItem(appinfo_t app_info, dock_item_type_t item_type)
     m_app_info = app_info;
     m_app_info.m_dock_item_type = item_type;
 
-    m_width = m_height = config::get_icon_size();
+    if (item_type != dock_item_type_t::separator) {
+        m_app_info.m_width = m_app_info.m_height = config::get_icon_size();
+    }
 }
 
 DockItem::~DockItem()
@@ -81,24 +83,52 @@ bool DockItem::is_attached() const
     return m_attached;
 }
 
-int DockItem::get_width() const
+void DockItem::swap_size()
 {
-    return m_width - Panel::m_decrease_factor;
+    int icon_size = config::get_icon_size();
+    int temp = 0;
+
+    if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+        if (m_app_info.m_height != icon_size) {
+            temp = m_app_info.m_height;
+            m_app_info.m_height = icon_size;
+            m_app_info.m_width = temp;
+        }
+    } else {
+        if (m_app_info.m_width != icon_size) {
+            temp = m_app_info.m_width;
+            m_app_info.m_width = icon_size;
+            m_app_info.m_height = temp;
+        }
+    }
 }
 
-int DockItem::get_height() const
+int DockItem::get_width()
 {
-    return m_height - Panel::m_decrease_factor;
+    if (m_app_info.m_dock_item_type == dock_item_type_t::separator) {
+        this->swap_size();
+    }
+
+    return m_app_info.m_width - Panel::m_decrease_factor;
+}
+
+int DockItem::get_height()
+{
+    if (m_app_info.m_dock_item_type == dock_item_type_t::separator) {
+        this->swap_size();
+    }
+
+    return m_app_info.m_height - Panel::m_decrease_factor;
 }
 
 void DockItem::set_width(int value)
 {
-    m_width = value;
+    m_app_info.m_width = value;
 }
 
 void DockItem::set_height(int value)
 {
-    m_height = value;
+    m_app_info.m_height = value;
 }
 void DockItem::set_index(int index)
 {

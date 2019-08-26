@@ -52,6 +52,10 @@ namespace pixbuf_util
                                                     int size)
     {
         Glib::RefPtr<Gdk::Pixbuf> empty = (Glib::RefPtr<Gdk::Pixbuf>)nullptr;
+        if (icon_name.length() == 0) {
+            return empty;
+        }
+
         GError* error = nullptr;
         GtkIconTheme* icon_theme = gtk_icon_theme_get_default();
         auto pixbuf =

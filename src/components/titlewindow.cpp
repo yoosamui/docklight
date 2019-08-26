@@ -10,8 +10,6 @@ title_window::title_window()
       m_HBox(Gtk::ORIENTATION_HORIZONTAL, 5),
       m_Label("", false)
 {
-    //  this->set_gravity(Gdk::Gravity::GRAVITY_STATIC);
-
     GdkScreen *screen;
     GdkVisual *visual;
 
@@ -27,14 +25,11 @@ title_window::title_window()
     font.set_size(8 * PANGO_SCALE);
     font.set_weight(Pango::WEIGHT_NORMAL);
 
-    //   Gtk::Window::set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_TOOLTIP);
+    // Gtk::Window::set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_TOOLTIP);
     m_HBox.set_margin_left(6);
     m_HBox.set_margin_right(6);
     m_HBox.set_margin_top(6);
     m_HBox.set_margin_bottom(6);
-
-    // override_background_color(Gdk::RGBA("black"));
-    // m_Label.override_color(Gdk::RGBA("white"), Gtk::STATE_FLAG_NORMAL);
 
     add(m_HBox);
     m_HBox.add(m_Label);
@@ -46,6 +41,7 @@ title_window::title_window()
 title_window::~title_window()
 {
     hide();
+    g_print("Free title_window\n");
 }
 void title_window::set_text(const Glib::ustring text)
 {

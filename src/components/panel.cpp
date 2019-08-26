@@ -57,6 +57,11 @@ Panel::Panel()
     Panel::m_decrease_factor = 0;
 }
 
+void Panel::set_owner(Gtk::Window* window)
+{
+    m_owner = window;
+}
+
 void Panel::init()
 {
     if (config::is_autohide()) {
@@ -69,6 +74,15 @@ void Panel::init()
     }
 
     // clang-format off
+
+    // home menu
+    m_home_menu.attach_to_widget(*this);
+    m_home_menu.accelerate(*this);
+    m_home_menu.signal_show().connect(sigc::mem_fun(*this, &Panel::on_menu_show_event));
+    m_home_menu.signal_hide().connect(sigc::mem_fun(*this, &Panel::on_menu_hide_event));
+
+    m_home_menu_quit_item.signal_activate().connect(sigc::mem_fun(*this, &Panel::on_home_menu_quit_event));
+    m_home_menu_addseparator_item.signal_activate().connect(sigc::mem_fun(*this, &Panel::on_home_menu_addseparator_event));
 
     // items menu
     m_item_menu.attach_to_widget(*this);
@@ -110,9 +124,7 @@ void Panel::connect_draw_signal(bool connect)
 void Panel::on_appupdater_update()
 {
     AppWindow::update();
-
-    m_draw_required = true;
-    on_timeout_draw();
+    this->draw();
 }
 
 void Panel::on_autohide_update(int x, int y)
@@ -176,28 +188,26 @@ inline int Panel::get_index(const int& mouseX, const int& mouseY)
     int idx = 0;
     int x = config::get_window_start_end_margin() / 2;
     int y = x;
+    int separator_margin = config::get_separator_margin();
 
     if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
         for (auto item : m_appupdater.m_dockitems) {
-            if (mouse.get_x() >= x && mouse.get_x() <= x + item->get_width()) {
+            int width = item->get_width();
+            if (mouse.get_x() >= x && mouse.get_x() <= x + width) {
                 return idx;
             }
 
-            x += item->get_width() + config::get_separator_margin();
+            x += width + separator_margin;
             idx++;
         }
     } else {
-        int height;
         for (auto item : m_appupdater.m_dockitems) {
-            height = item->get_dock_item_type() == dock_item_type_t::separator
-                         ? item->get_width()
-                         : item->get_height();
-
+            int height = item->get_height();
             if (mouse.get_y() >= y && mouse.get_y() <= y + height) {
                 return idx;
             }
 
-            y += height + config::get_separator_margin();
+            y += height + separator_margin;
             idx++;
         }
     }
@@ -242,6 +252,12 @@ void Panel::on_menu_hide_event()
     this->reset_flags();
 }
 
+void Panel::on_home_menu_position(int& x, int& y, bool& push_in)
+{
+    this->get_center_position(x, y, m_home_menu.get_width(),
+                              m_home_menu.get_height());
+}
+
 void Panel::on_item_menu_position(int& x, int& y, bool& push_in)
 {
     this->get_center_position(x, y, m_item_menu.get_width(),
@@ -259,6 +275,34 @@ void Panel::on_item_menu_windowlist_event(WnckWindow* window)
     wnck_util::activate_window(window);
 }
 
+void Panel::on_home_menu_addseparator_event()
+{
+    appinfo_t info;
+    string filename =
+        // system_util::get_current_path("/data/images/separator.png");
+        system_util::get_current_path("/data/images/docklight.logo.png");
+    auto icon_size = config::get_icon_size();
+
+    info.m_width = icon_size;
+    info.m_height = icon_size * 2;
+    info.m_image =
+        pixbuf_util::get_from_file(filename, info.m_width, info.m_height);
+    info.m_name = "separator";
+    info.m_title = _("separator");
+
+    m_appupdater.m_dockitems.push_back(
+        shared_ptr<DockItem>(new DockItem(info, dock_item_type_t::separator)));
+    auto const new_item = m_appupdater.m_dockitems.back();
+    new_item->set_attach(true);
+    // new_item->set_image(info.m_image);
+    m_appupdater.save();
+    this->on_appupdater_update();
+}
+
+void Panel::on_home_menu_quit_event()
+{
+    m_owner->close();
+}
 void Panel::on_item_menu_attach_event()
 {
     bool attached = m_item_menu_attach.get_active();
@@ -302,9 +346,10 @@ bool Panel::on_button_release_event(GdkEventButton* event)
             m_mouse_left_down = false;
 
             if (m_dragdrop_begin) {
-                m_dragdrop_begin = false;
                 m_dragdrop_timer.stop();
                 m_dragdrop_timer.reset();
+
+                m_dragdrop_begin = false;
 
                 // allways attach the drop item
                 item->set_attach(true);
@@ -318,13 +363,14 @@ bool Panel::on_button_release_event(GdkEventButton* event)
             }
 
             if (m_current_index != -1) {
-                if (item->m_items.size() == 0) {
-                    m_current_index = m_current_index;
+                if (item->m_items.size() == 0 &&
+                    item->get_dock_item_type() == dock_item_type_t::launcher) {
                     this->open_new();
                 } else {
                     if ((int)item->m_items.size() == 1) {
                         this->activate();
-                    } else {
+                    } else if (item->get_dock_item_type() ==
+                               dock_item_type_t::launcher) {
                         // show preview if is compositite and not out of limits
 
                         // clang-format off
@@ -362,11 +408,27 @@ bool Panel::on_button_release_event(GdkEventButton* event)
             }
         } else if (event->button == 3 && m_mouse_right_down) {
             if (m_current_index != -1) {
-                if (m_current_index > 0) {
+                if (m_current_index == 0) {
+                    m_home_menu.popup(
+                        sigc::mem_fun(*this, &Panel::on_home_menu_position), 1,
+                        event->time);
+                    return true;
+                }
+                if (m_current_index > 0 &&
+                    item->get_dock_item_type() == dock_item_type_t::launcher) {
                     m_item_menu_attach.set_active(item->is_attached());
                     m_item_menu.popup(
                         sigc::mem_fun(*this, &Panel::on_item_menu_position), 1,
                         event->time);
+                    return true;
+                }
+                if (m_current_index > 0 &&
+                    item->get_dock_item_type() == dock_item_type_t::separator) {
+                    //   m_item_menu_attach.set_active(item->is_attached());
+                    m_item_menu.popup(
+                        sigc::mem_fun(*this, &Panel::on_item_menu_position), 1,
+                        event->time);
+                    return true;
                 }
             }
         }
@@ -528,6 +590,7 @@ inline bool Panel::get_center_position(int& x, int& y, const int width,
     auto const rect = position_util::get_appwindow_geometry();
     auto const workarea = device::monitor::get_current()->get_workarea();
     auto const location = config::get_dock_location();
+    auto const separator_margin = config::get_separator_margin();
 
     x = rect.get_x();
     y = rect.get_y();
@@ -543,8 +606,9 @@ inline bool Panel::get_center_position(int& x, int& y, const int width,
         // clang-format off
         for (size_t i = 0; i < AppUpdater::m_dockitems.size(); i++) {
             auto const citem = AppUpdater::m_dockitems[i];
+            auto const item_width = citem->get_width();
             if (citem == item) {
-                x -= (width / 2) - (citem->get_width() / 2);
+                x -= (width / 2) - (item_width / 2);
 
                 // check left limit
                 if (x < workarea.get_x()) {
@@ -560,7 +624,7 @@ inline bool Panel::get_center_position(int& x, int& y, const int width,
 
                 return true;
             }
-            x += citem->get_width() + config::get_separator_margin();
+            x += item_width + separator_margin;
         }
         // clang-format on
 
@@ -573,14 +637,11 @@ inline bool Panel::get_center_position(int& x, int& y, const int width,
         }
 
         // clang-format off
-        int variantItemHeight = 0;
         for (size_t i = 0; i < AppUpdater::m_dockitems.size(); i++) {
             auto const citem = AppUpdater::m_dockitems[i];
-            variantItemHeight = citem->get_dock_item_type() == dock_item_type_t::separator ?
-                citem->get_width() : citem->get_height();
-
+            auto const item_height = citem->get_height();
             if (citem == item) {
-                y -= (height / 2) - (variantItemHeight / 2);
+                y -= (height / 2) - (item_height / 2);
 
                 // check left limit
                 if (y < workarea.get_y()) {
@@ -596,7 +657,7 @@ inline bool Panel::get_center_position(int& x, int& y, const int width,
 
                 return true;
             }
-            y += variantItemHeight + config::get_separator_margin();
+            y += item_height + separator_margin;
         }
         // clang-format on
     }
@@ -634,12 +695,12 @@ inline void Panel::get_item_position(const dock_item_type_t item_typ, int& x,
 
         // if the item is a separator the wdth is probably not equal.
         // in this case wie remeber the size for use it in the next item.
-        // if (dockType == DockItemType::Separator) {
-        // y += nextsize + Configuration::get_separatorMargin();
-        // height = nextsize = width;
-        // width = Configuration::get_CellWidth();
-        // return;
-        //}
+        /*if (dockType == DockItemType::Separator) {
+            y += nextsize + Configuration::get_separatorMargin();
+            height = nextsize = width;
+            width = Configuration::get_CellWidth();
+            return;
+        }*/
 
         y += nextsize + config::get_separator_margin();
         nextsize = height;
@@ -684,7 +745,8 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
         width = item->get_width();
         height = item->get_height();
 
-        this->get_item_position(dock_item_type_t::single, x, y, width, height);
+        this->get_item_position(dock_item_type_t::launcher, x, y, width,
+                                height);
 
         //     g_print("Draw %d\n", x);
         //    item->set_index(idx);
@@ -723,9 +785,10 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
             auto image = item->get_image();
 
             // scaled if needed
-            if (m_decrease_factor > 0 || image->get_width() != width) {
-                int image_size = height;
-                image = image->scale_simple(image_size, image_size,
+            if (image->get_width() != width || image->get_height() != height) {
+                int image_size_h = height;
+                int image_size_w = width;
+                image = image->scale_simple(image_size_w, image_size_h,
                                             Gdk::INTERP_BILINEAR);
             }
 
@@ -745,9 +808,9 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
                     m_inverted_index = (int)m_current_index;
                     cr->paint();
 
-                    // cr->set_source_rgba(1, 1, 1, 0.4);
-                    // cairo_util::rounded_rectangle(cr, x, y, width, height,
-                    // 0); cr->fill();
+                    cr->set_source_rgba(1, 1, 1, 0.4);
+                    cairo_util::rounded_rectangle(cr, x, y, width, height, 0);
+                    cr->fill();
                 }
             }
         }

@@ -20,13 +20,15 @@ typedef struct {
     dock_item_type_t m_dock_item_type;
     unsigned long m_xid;
     Glib::RefPtr<Gdk::Pixbuf> m_image;
+    int m_width;
+    int m_height;
 } appinfo_t;
 
 class DockItem
 {
   public:
     DockItem(appinfo_t appinfo,
-             dock_item_type_t itemtype = dock_item_type_t::single);
+             dock_item_type_t itemtype = dock_item_type_t::launcher);
     DockItem();
     ~DockItem();
     appinfo_t* get_appinfo();
@@ -39,10 +41,8 @@ class DockItem
     unsigned long get_xid() const;
     shared_ptr<DockItem> get_next() const;
     bool is_attached() const;
-    int get_width() const;
-    int get_height() const;
-    void set_height(int value);
-    void set_width(int value);
+    int get_width();
+    int get_height();
     void set_index(int index);
     int get_index() const;
     void set_y(int y);
@@ -53,14 +53,16 @@ class DockItem
     const Glib::RefPtr<Gdk::Pixbuf> get_image();
     vector<shared_ptr<DockItem>> m_items;
 
-  protected:
+  private:
+    void set_height(int value);
+    void set_width(int value);
     appinfo_t m_app_info;
     bool m_attached = false;
-    int m_width;
-    int m_height;
     int m_y;
     int m_x;
     int m_index = 0;
+
+    void swap_size();
 };
 
 DL_NS_END

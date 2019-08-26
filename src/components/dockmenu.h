@@ -12,10 +12,18 @@ class DockMenu
 {
   protected:
     DockMenu()
-    {
+    {  // Home Menu
+        m_home_menu.set_halign(Gtk::Align::ALIGN_CENTER);
+        m_home_menu_quit_item.set_label(_("Quit"));
+        m_home_menu_addseparator_item.set_label(_("Add separator"));
+
+        m_home_menu.append(m_home_menu_addseparator_item);
+        m_home_menu.append(m_separatorMenuHome0);
+        m_home_menu.append(m_home_menu_quit_item);
+        m_home_menu.show_all();
+
         // items menu
         m_item_menu.set_halign(Gtk::Align::ALIGN_CENTER);
-        //   m_item_menu_attach.set_label(_("Attach"));
         m_item_menu_new.set_label(_("Open new"));
         m_item_menu_attach.set_label(_("Attach"));
 
@@ -87,12 +95,19 @@ class DockMenu
         m_previewLimitMenu.set_halign(Gtk::Align::ALIGN_CENTER);*/
     }
 
+    // Home menu
+    Gtk::Menu m_home_menu;
+    Gtk::MenuItem m_home_menu_quit_item;
+    Gtk::MenuItem m_home_menu_addseparator_item;
+
     // Item menu
     Gtk::Menu m_item_menu;
     Gtk::Menu* m_item_menu_windowlist = nullptr;
 
     Gtk::MenuItem m_item_menu_new;
     Gtk::CheckMenuItem m_item_menu_attach;
+
+    Gtk::SeparatorMenuItem m_separatorMenuHome0;
 
     Gtk::SeparatorMenuItem m_separatorMenuItem0;
 
