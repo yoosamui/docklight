@@ -129,6 +129,59 @@ void Autohide::on_geometry_changed(WnckWindow* window, gpointer user_data)
     intelihide();
 }
 
+// TODO : Check current monitor
+bool Autohide::is_anywindow_fullscreen()
+{
+    GList* window_l;
+
+    auto const screen = wnck_screen_get_default();
+    wnck_screen_force_update(screen);
+    WnckWorkspace* workspace = wnck_screen_get_active_workspace(screen);
+    auto const display = device::display::get_default();
+
+    for (window_l = wnck_screen_get_windows(screen); window_l != nullptr;
+         window_l = window_l->next) {
+        WnckWindow* window = WNCK_WINDOW(window_l->data);
+        if (window == nullptr) continue;
+
+        if (!wnck_window_is_on_workspace(window, workspace)) {
+            continue;
+        }
+
+        // auto const mn = display->get_monitor_at_window(i)
+
+        //        display->get_monitor_number !=
+        //        display->get_monitor_at_window(window);
+
+        //        device::display::get_default()->get_monitor_at_window(window);
+
+        // Glib::RefPtr< const Monitor > 	get_monitor_at_window (const
+        // Glib::RefPtr< Window >& window) const
+        // 	Gets the monitor in which the largest area of window resides, or
+        // a monitor close to window if it is outside of all monit
+        //  device::monitor::get_current().
+
+        WnckWindowType wt = wnck_window_get_window_type(window);
+
+        if (wt == WNCK_WINDOW_DESKTOP || wt == WNCK_WINDOW_DOCK ||
+            wt == WNCK_WINDOW_TOOLBAR || wt == WNCK_WINDOW_MENU ||
+            wt == WNCK_WINDOW_SPLASHSCREEN) {
+            continue;
+        }
+
+        const char* instancename = wnck_window_get_class_instance_name(window);
+        if (instancename != nullptr &&
+            strcasecmp(instancename, DOCKLIGHT_INSTANCENAME) == 0) {
+            continue;
+        }
+
+        if (wnck_window_is_fullscreen(window)) {
+            return true;
+        }
+    }
+
+    return false;
+}
 int Autohide::get_windows_count()
 {
     if (m_active_window == nullptr) {
@@ -265,9 +318,15 @@ bool Autohide::is_visible()
 
 void Autohide::hide()
 {
-    WnckWindowType wt = wnck_window_get_window_type(m_active_window);
-    if (wt == WNCK_WINDOW_DESKTOP) {
-        return;
+    if (config::is_intelihide()) {
+        if (m_active_window == nullptr) {
+            return;
+        }
+
+        WnckWindowType wt = wnck_window_get_window_type(m_active_window);
+        if (wt == WNCK_WINDOW_DESKTOP) {
+            return;
+        }
     }
 
     if (m_stm.m_visible && !m_stm.m_mouse_inside) {
@@ -278,9 +337,10 @@ void Autohide::hide()
 
 void Autohide::show()
 {
-    if (m_active_window != nullptr &&
-        wnck_window_is_fullscreen(m_active_window)) {
-        return;
+    if (config::is_intelihide() || config::is_autohide()) {
+        if (is_anywindow_fullscreen()) {
+            return;
+        }
     }
 
     m_stm.m_animation_state = DEF_AUTOHIDE_SHOW;

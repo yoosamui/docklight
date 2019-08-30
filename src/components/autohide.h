@@ -43,6 +43,7 @@ class Autohide
     void reset_timer();
     void set_mouse_inside(bool mouse_inside);
     bool is_visible();
+    static bool is_anywindow_fullscreen();
 
     typedef sigc::signal<void, int, int> type_signal_update;
     type_signal_update signal_update();

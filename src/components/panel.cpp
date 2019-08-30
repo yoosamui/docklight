@@ -123,6 +123,10 @@ void Panel::connect_draw_signal(bool connect)
 
 void Panel::on_appupdater_update()
 {
+    if (m_autohide.is_visible() == false) {
+        return;
+    }
+
     AppWindow::update();
     this->draw();
 }
@@ -168,7 +172,7 @@ int Panel::get_required_size()
 bool Panel::on_timeout_draw()
 {
     if (m_current_index > 0 && !m_dragdrop_begin && m_mouse_left_down &&
-        m_dragdrop_timer.elapsed() > 0.25) {
+        m_dragdrop_timer.elapsed() > 0.60) {
         m_dragdrop_begin = true;
 
         // start blink  animation
@@ -359,6 +363,10 @@ bool Panel::on_button_release_event(GdkEventButton* event)
                 m_appupdater.swap_item(0);
                 m_appupdater.save();
 
+                return true;
+            }
+
+            if (m_autohide.is_visible() == false) {
                 return true;
             }
 
@@ -717,6 +725,12 @@ bool Panel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 void Panel::draw_panel(const Cairo::RefPtr<Cairo::Context>& cr)
 {
     Gdk::Rectangle rect = position_util::get_appwindow_geometry();
+
+    // cr->set_source_rgba(1.8, 1.8, 1.8, 1.0);
+    // cairo_util::rounded_rectangle(cr, rect.get_x(), rect.get_y(),
+    //                              rect.get_width(), rect.get_height(), 3);
+
+    // cr->stroke();
     rect.set_x(m_offset_x);
     rect.set_y(m_offset_y);
     cairo_util::rounded_rectangle(cr, rect.get_x(), rect.get_y(),
@@ -724,6 +738,7 @@ void Panel::draw_panel(const Cairo::RefPtr<Cairo::Context>& cr)
 
     cr->set_source_rgba(0.8, 0.8, 0.8, 1.0);
     cr->fill();
+
     // cr->paint();
 }
 void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
