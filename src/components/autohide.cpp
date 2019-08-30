@@ -337,10 +337,14 @@ void Autohide::hide()
 
 void Autohide::show()
 {
-    if (config::is_intelihide() || config::is_autohide()) {
-        if (is_anywindow_fullscreen()) {
-            return;
-        }
+    auto screen = wnck_screen_get_default();
+    WnckWindow* m_active_window = wnck_screen_get_active_window(screen);
+    if (m_active_window == nullptr) {
+        return;
+    }
+
+    if (wnck_window_is_fullscreen(m_active_window)) {
+        return;
     }
 
     m_stm.m_animation_state = DEF_AUTOHIDE_SHOW;

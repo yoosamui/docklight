@@ -74,6 +74,16 @@ namespace device
             return get_monitor(m_monitor_number);
         }
 
+        void Current::set_primary()
+        {
+            for (int i = 0; i < get_monitor_count(); i++) {
+                auto m = get_monitor(i);
+                if (m->is_primary()) {
+                    m_monitor_number = i;
+                    break;
+                }
+            }
+        }
         void Current::set_current_monitor(int monitor_num)
         {
             if (monitor_num > get_monitor_count()) {

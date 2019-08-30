@@ -14,7 +14,7 @@ namespace config
     int m_separator_margin = 10;
     bool m_show_title = true;
     dock_autohide_type_t m_autohide_type = dock_autohide_type_t::sensitive;
-    // dock_autohide_type_t m_autohide_type = dock_autohide_type_t::autohide;
+    //:dock_autohide_type_t m_autohide_type = dock_autohide_type_t::autohide;
     void load(const GSList *args_list)
     {
         // TODO Load config

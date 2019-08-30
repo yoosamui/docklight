@@ -30,6 +30,7 @@ namespace device
           public:
             Current();
             void set_current_monitor(int monitor_num);
+            void set_primary();
             Gdk::Rectangle get_workarea();
             Gdk::Rectangle get_geometry();
             const Glib::RefPtr<Gdk::Monitor> get_monitor_obj();
