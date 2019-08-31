@@ -43,7 +43,6 @@ class Autohide
     void reset_timer();
     void set_mouse_inside(bool mouse_inside);
     bool is_visible();
-    static bool is_anywindow_fullscreen();
 
     typedef sigc::signal<void, int, int> type_signal_update;
     type_signal_update signal_update();
@@ -67,13 +66,11 @@ class Autohide
     static int get_windows_count(WnckWorkspace* workspace);
     static int get_windows_count();
     static void connect_signal_handler(bool connect);
-    static void on_active_window_changed(WnckScreen* screen,
-                                         WnckWindow* previously_active_window,
+    static void on_active_window_changed(WnckScreen* screen, WnckWindow* previously_active_window,
                                          gpointer user_data);
 
     static void on_geometry_changed(WnckWindow* window, gpointer user_data);
-    static void on_state_changed(WnckWindow* window,
-                                 WnckWindowState changed_mask,
+    static void on_state_changed(WnckWindow* window, WnckWindowState changed_mask,
                                  WnckWindowState new_state, gpointer user_data);
 };
 

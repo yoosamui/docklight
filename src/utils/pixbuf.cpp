@@ -8,8 +8,7 @@ namespace pixbuf_util
 {
     void invert_pixels(Glib::RefPtr<Gdk::Pixbuf> image)
     {
-        if (image->get_colorspace() != Gdk::COLORSPACE_RGB ||
-            image->get_bits_per_sample() != 8) {
+        if (image->get_colorspace() != Gdk::COLORSPACE_RGB || image->get_bits_per_sample() != 8) {
             return;
         }
         gint x, y;
@@ -31,13 +30,12 @@ namespace pixbuf_util
         }
     }
 
-    const Glib::RefPtr<Gdk::Pixbuf> get_from_file(const std::string& filename,
-                                                  int width, int height)
+    const Glib::RefPtr<Gdk::Pixbuf> get_from_file(const std::string& filename, int width,
+                                                  int height)
     {
         Glib::RefPtr<Gdk::Pixbuf> result;
         try {
-            result =
-                Gdk::Pixbuf::create_from_file(filename, width, height, true);
+            result = Gdk::Pixbuf::create_from_file(filename, width, height, true);
         } catch (const Glib::FileError& ex) {
             g_error("FileError: %s", ex.what().c_str());
         } catch (const Gdk::PixbufError& ex) {
@@ -47,8 +45,7 @@ namespace pixbuf_util
         return result;
     }
 
-    const Glib::RefPtr<Gdk::Pixbuf> get_window_icon(WnckWindow* window,
-                                                    const string& icon_name,
+    const Glib::RefPtr<Gdk::Pixbuf> get_window_icon(WnckWindow* window, const string& icon_name,
                                                     int size)
     {
         Glib::RefPtr<Gdk::Pixbuf> empty = (Glib::RefPtr<Gdk::Pixbuf>)nullptr;
@@ -58,25 +55,23 @@ namespace pixbuf_util
 
         GError* error = nullptr;
         GtkIconTheme* icon_theme = gtk_icon_theme_get_default();
-        auto pixbuf =
-            gtk_icon_theme_load_icon(icon_theme,
-                                     icon_name.c_str(),           // icon name
-                                     size,                        // icon size
-                                     GTK_ICON_LOOKUP_FORCE_SIZE,  // flags //
-                                     &error);
+        auto pixbuf = gtk_icon_theme_load_icon(icon_theme,
+                                               icon_name.c_str(),           // icon name
+                                               size,                        // icon size
+                                               GTK_ICON_LOOKUP_FORCE_SIZE,  // flags //
+                                               &error);
         if (error) {
             g_error_free(error);
             error = nullptr;
 
             if (window == 0 || !WNCK_IS_WINDOW(window)) {
-                g_warning("Load icon from window failed: %s %ld\n",
-                          icon_name.c_str(), (long)window);
+                g_warning("Load icon from window failed: %s %ld\n", icon_name.c_str(),
+                          (long)window);
                 return empty;
             }
 
             auto icon = wnck_window_get_icon(window);
-            return Glib::wrap(icon, true)
-                ->scale_simple(size, size, Gdk::INTERP_BILINEAR);
+            return Glib::wrap(icon, true)->scale_simple(size, size, Gdk::INTERP_BILINEAR);
         }
 
         return Glib::wrap(pixbuf, true);
@@ -100,9 +95,8 @@ namespace pixbuf_util
 
         pdata = static_cast<guint8*>(pixels);
 
-        result =
-            Gdk::Pixbuf::create_from_data(pdata, Gdk::COLORSPACE_RGB, hasalpha,
-                                          bitsaple, width, height, stride);
+        result = Gdk::Pixbuf::create_from_data(pdata, Gdk::COLORSPACE_RGB, hasalpha, bitsaple,
+                                               width, height, stride);
 
         return result;
     }

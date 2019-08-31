@@ -53,8 +53,8 @@ void AppUpdater::on_theme_changed()
     int icon_size = config::get_icon_size();
     for (size_t i = 1; i < m_dockitems.size(); i++) {
         auto const item = m_dockitems[i];
-        auto icon = pixbuf_util::get_window_icon(
-            item->get_wnckwindow(), item->get_desktop_icon_name(), icon_size);
+        auto icon = pixbuf_util::get_window_icon(item->get_wnckwindow(),
+                                                 item->get_desktop_icon_name(), icon_size);
 
         if (icon == (Glib::RefPtr<Gdk::Pixbuf>)nullptr) {
             continue;
@@ -65,20 +65,18 @@ void AppUpdater::on_theme_changed()
     m_signal_update.emit();
 }
 
-void AppUpdater::on_active_window_changed_callback(
-    WnckScreen *screen, WnckWindow *previously_active_window,
-    gpointer user_data)
+void AppUpdater::on_active_window_changed_callback(WnckScreen *screen,
+                                                   WnckWindow *previously_active_window,
+                                                   gpointer user_data)
 {
 }
 
-void AppUpdater::on_window_opened(WnckScreen *screen, WnckWindow *window,
-                                  gpointer data)
+void AppUpdater::on_window_opened(WnckScreen *screen, WnckWindow *window, gpointer data)
 {
     Update(window, window_action_t::OPEN);
 }
 
-void AppUpdater::on_window_closed(WnckScreen *screen, WnckWindow *window,
-                                  gpointer data)
+void AppUpdater::on_window_closed(WnckScreen *screen, WnckWindow *window, gpointer data)
 {
     Update(window, window_action_t::CLOSE);
 }
@@ -92,8 +90,8 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
 {
     WnckWindowType wt = wnck_window_get_window_type(window);
 
-    if (wt == WNCK_WINDOW_DESKTOP || wt == WNCK_WINDOW_DOCK ||
-        wt == WNCK_WINDOW_MENU || wt == WNCK_WINDOW_SPLASHSCREEN) {
+    if (wt == WNCK_WINDOW_DESKTOP || wt == WNCK_WINDOW_DOCK || wt == WNCK_WINDOW_MENU ||
+        wt == WNCK_WINDOW_SPLASHSCREEN) {
         return;
     }
 
@@ -113,10 +111,9 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
         g_print("error: %d\n", info.m_error);
 
         vector<shared_ptr<DockItem>>::iterator it;
-        it = std::find_if(m_dockitems.begin(), m_dockitems.end(),
-                          [info](shared_ptr<DockItem> const &o) {
-                              return o->get_name() == info.m_name;
-                          });
+        it = std::find_if(
+            m_dockitems.begin(), m_dockitems.end(),
+            [info](shared_ptr<DockItem> const &o) { return o->get_name() == info.m_name; });
 
         if (it != m_dockitems.end()) {
             // Add Child
@@ -137,12 +134,11 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
                 m_dockitems.push_back(shared_ptr<DockItem>(new DockItem(info)));
                 auto const new_item = m_dockitems.back();
 
-                new_item->set_image(pixbuf_util::get_window_icon(
-                    window, info.m_desktop_icon_name, config::get_icon_size()));
+                new_item->set_image(pixbuf_util::get_window_icon(window, info.m_desktop_icon_name,
+                                                                 config::get_icon_size()));
 
                 // Add child
-                new_item->m_items.push_back(
-                    shared_ptr<DockItem>(new DockItem(info)));
+                new_item->m_items.push_back(shared_ptr<DockItem>(new DockItem(info)));
             }
         }
 
@@ -186,8 +182,7 @@ void AppUpdater::swap_item(const int next_position)
         return;
     }
 
-    iter_swap(m_dockitems.begin() + position,
-              m_dockitems.begin() + next_position);
+    iter_swap(m_dockitems.begin() + position, m_dockitems.begin() + next_position);
     position = next_position;
 }
 
@@ -244,18 +239,15 @@ bool AppUpdater::save()
         }
 
         strncpy(rec.name, info->m_name.c_str(), sizeof(rec.name) - 1);
-        strncpy(rec.icon_name, info->m_desktop_icon_name.c_str(),
-                sizeof(rec.icon_name) - 1);
-        strncpy(rec.desktop_file, info->m_desktop_file.c_str(),
-                sizeof(rec.desktop_file) - 1);
+        strncpy(rec.icon_name, info->m_desktop_icon_name.c_str(), sizeof(rec.icon_name) - 1);
+        strncpy(rec.desktop_file, info->m_desktop_file.c_str(), sizeof(rec.desktop_file) - 1);
 
         rec.width = info->m_width;
         rec.height = info->m_height;
         rec.dock_item_type = info->m_dock_item_type;
 
         size_t result = fwrite(&rec, sizeof(rec), 1, file_writer);
-        if (result == 0)
-            g_critical("Attachments::save:: Error writing file> fwrite\n");
+        if (result == 0) g_critical("Attachments::save:: Error writing file> fwrite\n");
     }
 
     fclose(file_writer);
@@ -277,6 +269,7 @@ bool AppUpdater::load()
         return false;
     }
 
+    //    int icon_size = config::get_icon_size();
     while (true) {
         auto sn = fread(&rec, sizeof(rec), 1, file_reader);
         if (feof(file_reader) != 0) break;
@@ -292,16 +285,23 @@ bool AppUpdater::load()
             g_critical("AppUpdater Load: Gdk::PixbufError\n");
         }
 
+        info.m_dock_item_type = static_cast<dock_item_type_t>(rec.dock_item_type);
         info.m_wnckwindow = 0;
         info.m_xid = 0;
         info.m_name = rec.name;
         info.m_desktop_file = rec.desktop_file;
         info.m_desktop_icon_name = rec.icon_name;
+
         info.m_width = rec.width;
         info.m_height = rec.height;
-
-        info.m_dock_item_type =
-            static_cast<dock_item_type_t>(rec.dock_item_type);
+        // if (info.m_dock_item_type == dock_item_type_t::separator) {
+        //} else {
+        // info.m_width = icon_size;
+        // info.m_height = icon_size;
+        // info.m_image = info.m_image->scale_simple(icon_size, icon_size, Gdk::INTERP_BILINEAR);
+        // g_print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA %d\n",
+        // icon_size);
+        //}
 
         // Add new
         auto item = new DockItem(info, info.m_dock_item_type);
@@ -375,13 +375,23 @@ int AppUpdater::get_required_size()
     if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
         for (size_t i = 0; i < items_count; i++) {
             auto const item = m_dockitems[i];
-            size += item->get_width();
+            int item_size = item->get_width();
+            if (item_size < 0) {
+                continue;
+            }
+
+            size += item_size;
         }
 
     } else {
         for (size_t i = 0; i < items_count; i++) {
             auto const item = m_dockitems[i];
-            size += item->get_height();
+            int item_size = item->get_height();
+            if (item_size < 0) {
+                continue;
+            }
+
+            size += item_size;
         }
     }
 

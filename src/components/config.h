@@ -17,9 +17,14 @@ namespace config
     int get_separator_margin();
     int get_window_start_end_margin();
     int get_icon_size();
+    void set_icon_size(int value);
     bool is_autohide();
     bool is_intelihide();
     bool is_show_title();
+    bool is_separator_line();
+    void set_separator_line(bool value);
+    dock_alignment_t get_dock_alignment();
+    void set_dock_alignment(dock_alignment_t value);
 
 }  // namespace config
 

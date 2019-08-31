@@ -55,8 +55,7 @@ namespace cli
         // clang-format on
 
         int opt = 0;
-        while ((opt = getopt_long(m_argc, m_argv, short_opts, long_opts,
-                                  nullptr)) != -1) {
+        while ((opt = getopt_long(m_argc, m_argv, short_opts, long_opts, nullptr)) != -1) {
             if (parse(opt, optarg) == EXIT_FAILURE) {
                 m_error_code = EXIT_FAILURE;
                 this->usage();
@@ -83,7 +82,7 @@ namespace cli
         if ((char)opt == 'l') return this->set_location(coptarg);
         if ((char)opt == 'p') return this->set_position(coptarg);
         if ((char)opt == 'a') return this->set_alignment(coptarg);
-        if ((char)opt == 'r') return this->set_resize(coptarg);
+        if ((char)opt == 'r') return this->set_icon_size(coptarg);
         if ((char)opt == 'c') return this->set_config(coptarg);
 
         if ((char)opt == 'h') {
@@ -163,14 +162,14 @@ namespace cli
     gint Arguments::set_alignment(const char *coptarg)
     {
         m_error_code = EXIT_SUCCESS;
-        if (strcmp("left", coptarg) == 0 || strcmp("center", coptarg) == 0 ||
-            strcmp("right", coptarg) == 0) {
+        if (strcmp("start", coptarg) == 0 || strcmp("center", coptarg) == 0 ||
+            strcmp("end", coptarg) == 0 || strcmp("fill", coptarg) == 0) {
             add('a', coptarg, 0);
             return m_error_code;
         }
 
         g_warning(
-            "Argument alignment. please use left, center or right. default "
+            "Argument alignment. please use start, end, center or fill "
             "center.");
         m_error_code = EXIT_FAILURE;
         return m_error_code;
@@ -183,10 +182,10 @@ namespace cli
     /**
      * Validate the resize argument
      */
-    int Arguments::set_resize(const char *coptarg)
+    int Arguments::set_icon_size(const char *coptarg)
     {
         if (!string_util::is_numeric(coptarg)) {
-            g_warning("argument resize allow only numeric values.");
+            g_warning("argument icon size allow only numeric values.");
             m_error_code = EXIT_FAILURE;
             return m_error_code;
         }

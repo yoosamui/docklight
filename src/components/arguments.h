@@ -34,7 +34,7 @@ namespace cli
         int set_position(const char *optarg);
         int set_alignment(const char *coptarg);
         int set_location(const char *coptarg);
-        int set_resize(const char *coptarg);
+        int set_icon_size(const char *coptarg);
         int set_config(const char *coptarg);
         bool is_numeric(const char *coptarg);
         void add(const char arg, const char *cvalue, int ivalue);

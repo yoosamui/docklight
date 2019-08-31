@@ -89,13 +89,13 @@ void DockItem::swap_size()
     int temp = 0;
 
     if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-        if (m_app_info.m_height != icon_size) {
+        if (m_app_info.m_height < icon_size) {
             temp = m_app_info.m_height;
             m_app_info.m_height = icon_size;
             m_app_info.m_width = temp;
         }
     } else {
-        if (m_app_info.m_width != icon_size) {
+        if (m_app_info.m_width < icon_size) {
             temp = m_app_info.m_width;
             m_app_info.m_width = icon_size;
             m_app_info.m_height = temp;

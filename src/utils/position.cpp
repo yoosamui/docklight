@@ -12,24 +12,44 @@ namespace position_util
     void set_window_position()
     {
         int area = config::get_dock_area();
-        Gdk::Rectangle workarea =
-            device::monitor::get_current()->get_workarea();
+        Gdk::Rectangle workarea = device::monitor::get_current()->get_workarea();
+        auto const alignment = config::get_dock_alignment();
+        int xpos = 0, ypos = 0, center = 0;
+
         if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
             int width = m_window->get_panel()->get_required_size();
             if (width > workarea.get_width()) {
                 width = workarea.get_width();
             }
 
-            m_window->resize(width, area);
+            switch (alignment) {
+                case dock_alignment_t::start:
+                    ypos = workarea.get_y();
+                    xpos = workarea.get_x();
+                    break;
 
-            int center = workarea.get_width() / 2 - width / 2;
-            int ypos = workarea.get_y();
-            int xpos = workarea.get_x() + center;
+                case dock_alignment_t::end:
+                    ypos = workarea.get_y();
+                    xpos = workarea.get_x() + workarea.get_width() - width;
+                    break;
+
+                case dock_alignment_t::center:
+                    center = workarea.get_width() / 2 - width / 2;
+                    ypos = workarea.get_y();
+                    xpos = workarea.get_x() + center;
+                    break;
+
+                default:  // fill
+                    ypos = workarea.get_y();
+                    xpos = workarea.get_x();
+                    width = workarea.get_width();
+            }
 
             if (config::get_dock_location() == dock_location_t::bottom) {
                 ypos = workarea.get_y() + workarea.get_height() - area;
             }
 
+            m_window->resize(width, area);
             m_window->move(xpos, ypos);
 
         } else {
@@ -38,16 +58,35 @@ namespace position_util
                 height = workarea.get_height();
             }
 
-            m_window->resize(area, height);
+            switch (alignment) {
+                case dock_alignment_t::start:
+                    ypos = workarea.get_y();
+                    xpos = workarea.get_x();
+                    break;
 
-            int center = workarea.get_height() / 2 - height / 2;
-            int ypos = workarea.get_y() + center;
-            int xpos = workarea.get_x();
+                case dock_alignment_t::end:
+                    ypos = workarea.get_y() + workarea.get_height() - height;
+                    xpos = workarea.get_x();
+                    break;
+
+                case dock_alignment_t::center:
+                    center = workarea.get_height() / 2 - height / 2;
+                    ypos = workarea.get_y() + center;
+                    xpos = workarea.get_x();
+                    break;
+
+                default:  // fill
+                    ypos = workarea.get_y();
+                    xpos = workarea.get_x();
+                    height = workarea.get_height();
+                    break;
+            }
 
             if (config::get_dock_location() == dock_location_t::right) {
                 xpos = workarea.get_x() + workarea.get_width() - area;
             }
 
+            m_window->resize(area, height);
             m_window->move(xpos, ypos);
         }
     }
@@ -55,8 +94,7 @@ namespace position_util
     void hide()
     {
         auto const location = config::get_dock_location();
-        Gdk::Rectangle workarea =
-            device::monitor::get_current()->get_workarea();
+        Gdk::Rectangle workarea = device::monitor::get_current()->get_workarea();
 
         int x = 0, y = 0;
         m_window->get_position(x, y);
@@ -94,11 +132,9 @@ namespace position_util
         return result;
     }
 
-    void get_center_screen_position(int targetwidth, int targetheight,
-                                    int& posx, int& posy)
+    void get_center_screen_position(int targetwidth, int targetheight, int& posx, int& posy)
     {
-        Gdk::Rectangle workarea =
-            device::monitor::get_current()->get_workarea();
+        Gdk::Rectangle workarea = device::monitor::get_current()->get_workarea();
 
         int monitorWidth = workarea.get_width();
         int monitorHeight = workarea.get_height();

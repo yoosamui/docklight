@@ -22,6 +22,13 @@ enum class dock_location_t : unsigned int {
     right,
 };
 
+enum class dock_alignment_t : unsigned int {
+    center = 0,
+    start,
+    end,
+    fill,
+};
+
 enum class struts_position_t : unsigned int {
     Left = 0,
     Right = 1,
@@ -46,5 +53,5 @@ enum class dock_item_type_t : unsigned int {
 
 enum class dock_autohide_type_t : unsigned int {
     autohide = 0,
-    sensitive,
+    intelihide,
 };

@@ -25,6 +25,7 @@ class Panel : public Gtk::DrawingArea, DockMenu
     static int m_decrease_factor;
 
   private:
+    AppUpdater m_appupdater;
     Gtk::Window* m_owner = nullptr;
     launcher_window m_launcherwindow;
     title_window m_titlewindow;
@@ -35,7 +36,7 @@ class Panel : public Gtk::DrawingArea, DockMenu
     int m_offset_y = 0;
 
     int m_inverted_index = -1;
-
+    int m_drop_index = -1;
     bool m_show_selector = true;
     bool m_connect_draw_signal_set = false;
     bool m_enter_anchor = false;
@@ -45,7 +46,6 @@ class Panel : public Gtk::DrawingArea, DockMenu
     bool m_dragdrop_begin = false;
     Glib::Timer m_dragdrop_timer;
 
-    AppUpdater m_appupdater;
     bool m_draw_required = false;
     static bool m_mouse_inside;
     int m_current_index = -1;
@@ -71,8 +71,8 @@ class Panel : public Gtk::DrawingArea, DockMenu
 
     int get_index(const int& mouseX, const int& mouseY);
 
-    void get_item_position(const dock_item_type_t item_type, int& x, int& y,
-                           int& width, int& height);
+    void get_item_position(const dock_item_type_t item_type, int& x, int& y, int& width,
+                           int& height);
 
     bool get_center_position(int& x, int& y, const int width, const int height);
 
@@ -85,12 +85,12 @@ class Panel : public Gtk::DrawingArea, DockMenu
     bool on_motion_notify_event(GdkEventMotion* event);
     bool on_scroll_event(GdkEventScroll* e);
 
-    static void on_active_window_changed(WnckScreen* screen,
-                                         WnckWindow* previously_active_window,
+    static void on_active_window_changed(WnckScreen* screen, WnckWindow* previously_active_window,
                                          gpointer user_data);
     // Menus
     bool m_context_menu_open = false;
 
+    void on_home_menu_showline_event();
     void on_home_menu_addseparator_event();
     void on_home_menu_quit_event();
 
@@ -99,9 +99,11 @@ class Panel : public Gtk::DrawingArea, DockMenu
 
     void on_home_menu_position(int& x, int& y, bool& push_in);
     void on_item_menu_position(int& x, int& y, bool& push_in);
+    void on_separator_menu_position(int& x, int& y, bool& push_in);
     void on_item_menu_windowlist_position(int& x, int& y, bool& push_in);
     void on_item_menu_new_event();
     void on_item_menu_attach_event();
+    void on_separator_menu_attach_event();
     void on_item_menu_windowlist_event(WnckWindow* window);
 };
 

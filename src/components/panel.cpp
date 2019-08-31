@@ -24,34 +24,13 @@ int Panel::m_decrease_factor;
 
 Panel::Panel()
 {
-    string filename(system_util::get_current_path(DEF_ICONNAME));
-    appinfo_t info;
-    auto icon_size = config::get_icon_size();
-    auto const homePixbuf =
-        pixbuf_util::get_from_file(filename, icon_size, icon_size);
-
-    info.m_name = "desktop";
-    info.m_title = _("Desktop");
-
-    m_appupdater.m_dockitems.insert(m_appupdater.m_dockitems.begin(),
-                                    shared_ptr<DockItem>(new DockItem(info)));
-    auto const new_item = m_appupdater.m_dockitems.back();
-    new_item->set_image(homePixbuf);
-
-    m_appupdater.init();
-
-    m_appupdater.signal_update().connect(
-        sigc::mem_fun(this, &Panel::on_appupdater_update));
-
-    m_autohide.signal_update().connect(
-        sigc::mem_fun(this, &Panel::on_autohide_update));
+    m_autohide.signal_update().connect(sigc::mem_fun(this, &Panel::on_autohide_update));
 
     // Set event masks
-    add_events(Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK |
-               Gdk::SCROLL_MASK | Gdk::SMOOTH_SCROLL_MASK |
-               Gdk::POINTER_MOTION_HINT_MASK | Gdk::FOCUS_CHANGE_MASK |
-               Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK |
-               Gdk::POINTER_MOTION_HINT_MASK | Gdk::POINTER_MOTION_MASK);
+    add_events(Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::SCROLL_MASK |
+               Gdk::SMOOTH_SCROLL_MASK | Gdk::POINTER_MOTION_HINT_MASK | Gdk::FOCUS_CHANGE_MASK |
+               Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK | Gdk::POINTER_MOTION_HINT_MASK |
+               Gdk::POINTER_MOTION_MASK);
 
     Panel::m_mouse_inside = false;
     Panel::m_decrease_factor = 0;
@@ -83,6 +62,8 @@ void Panel::init()
 
     m_home_menu_quit_item.signal_activate().connect(sigc::mem_fun(*this, &Panel::on_home_menu_quit_event));
     m_home_menu_addseparator_item.signal_activate().connect(sigc::mem_fun(*this, &Panel::on_home_menu_addseparator_event));
+    m_home_menu_showseparatorline_item.set_active(config::is_separator_line());
+    m_home_menu_showseparatorline_item.signal_toggled().connect(sigc::mem_fun(*this, &Panel::on_home_menu_showline_event));
 
     // items menu
     m_item_menu.attach_to_widget(*this);
@@ -95,7 +76,32 @@ void Panel::init()
     m_item_menu_attach.set_active(false);
     m_item_menu_attach.signal_toggled().connect(sigc::mem_fun(*this, &Panel::on_item_menu_attach_event));
 
+    // user separator
+    m_separator_menu.attach_to_widget(*this);
+    m_separator_menu.accelerate(*this);
+    m_separator_menu.signal_show().connect(sigc::mem_fun(*this, &Panel::on_menu_show_event));
+    m_separator_menu.signal_hide().connect(sigc::mem_fun(*this, &Panel::on_menu_hide_event));
+    m_separator_menu_attach.set_active(false);
+    m_separator_menu_attach.signal_toggled().connect(sigc::mem_fun(*this, &Panel::on_separator_menu_attach_event));
+
     // clang-format on
+    string filename(system_util::get_current_path(DEF_ICONNAME));
+    appinfo_t info;
+    auto icon_size = config::get_icon_size();
+    auto const homePixbuf = pixbuf_util::get_from_file(filename, icon_size, icon_size);
+
+    info.m_name = "desktop";
+    info.m_title = _("Desktop");
+
+    m_appupdater.m_dockitems.insert(m_appupdater.m_dockitems.begin(),
+                                    shared_ptr<DockItem>(new DockItem(info)));
+    auto const new_item = m_appupdater.m_dockitems.back();
+    new_item->set_image(homePixbuf);
+
+    //    m_appupdater.init();
+
+    m_appupdater.signal_update().connect(sigc::mem_fun(this, &Panel::on_appupdater_update));
+    m_appupdater.init();
 }
 
 Panel::~Panel()
@@ -138,7 +144,6 @@ void Panel::on_autohide_update(int x, int y)
 
     Gtk::Widget::queue_draw();
 }
-
 int Panel::get_required_size()
 {
     m_decrease_factor = 0;
@@ -151,19 +156,37 @@ int Panel::get_required_size()
     // ajust new items size
     if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
         if (size >= workarea.get_width()) {
-            diff = (size - workarea.get_width()) +
-                   config::get_window_start_end_margin();
+            diff = (size - workarea.get_width()) + config::get_window_start_end_margin();
         }
     } else {
         if (size >= workarea.get_height()) {
-            diff = (size - workarea.get_height()) +
-                   config::get_window_start_end_margin();
+            diff = (size - workarea.get_height()) + config::get_window_start_end_margin();
         }
     }
 
     if (diff > 0) {
         m_decrease_factor = diff / m_appupdater.m_dockitems.size();
         size = m_appupdater.get_required_size();
+
+        // ajust the decrease factor if items are smaller than 0
+        for (size_t i = 0; i < m_appupdater.m_dockitems.size(); i++) {
+            auto const item = m_appupdater.m_dockitems[i];
+            if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+                int item_width = item->get_width();
+
+                if (item_width < 0) {
+                    diff += abs(item_width);
+                }
+            } else {
+                int item_height = item->get_height();
+
+                if (item_height < 0) {
+                    diff += abs(item_height);
+                }
+            }
+        }
+
+        m_decrease_factor = diff / m_appupdater.m_dockitems.size();
     }
 
     return size;
@@ -174,6 +197,7 @@ bool Panel::on_timeout_draw()
     if (m_current_index > 0 && !m_dragdrop_begin && m_mouse_left_down &&
         m_dragdrop_timer.elapsed() > 0.60) {
         m_dragdrop_begin = true;
+        m_drop_index = m_current_index;
 
         // start blink  animation
         this->reset_flags();
@@ -256,16 +280,19 @@ void Panel::on_menu_hide_event()
     this->reset_flags();
 }
 
+void Panel::on_separator_menu_position(int& x, int& y, bool& push_in)
+{
+    this->get_center_position(x, y, m_separator_menu.get_width(), m_separator_menu.get_height());
+}
+
 void Panel::on_home_menu_position(int& x, int& y, bool& push_in)
 {
-    this->get_center_position(x, y, m_home_menu.get_width(),
-                              m_home_menu.get_height());
+    this->get_center_position(x, y, m_home_menu.get_width(), m_home_menu.get_height());
 }
 
 void Panel::on_item_menu_position(int& x, int& y, bool& push_in)
 {
-    this->get_center_position(x, y, m_item_menu.get_width(),
-                              m_item_menu.get_height());
+    this->get_center_position(x, y, m_item_menu.get_width(), m_item_menu.get_height());
 }
 
 void Panel::on_item_menu_windowlist_position(int& x, int& y, bool& push_in)
@@ -282,15 +309,13 @@ void Panel::on_item_menu_windowlist_event(WnckWindow* window)
 void Panel::on_home_menu_addseparator_event()
 {
     appinfo_t info;
-    string filename =
-        // system_util::get_current_path("/data/images/separator.png");
-        system_util::get_current_path("/data/images/docklight.logo.png");
+    string filename = system_util::get_current_path("/data/images/separator.png");
+    // system_util::get_current_path("/data/images/docklight.logo.png");
     auto icon_size = config::get_icon_size();
 
-    info.m_width = icon_size;
-    info.m_height = icon_size * 2;
-    info.m_image =
-        pixbuf_util::get_from_file(filename, info.m_width, info.m_height);
+    info.m_width = icon_size / 3;
+    info.m_height = info.m_width;
+    info.m_image = pixbuf_util::get_from_file(filename, info.m_width, info.m_height);
     info.m_name = "separator";
     info.m_title = _("separator");
 
@@ -298,7 +323,6 @@ void Panel::on_home_menu_addseparator_event()
         shared_ptr<DockItem>(new DockItem(info, dock_item_type_t::separator)));
     auto const new_item = m_appupdater.m_dockitems.back();
     new_item->set_attach(true);
-    // new_item->set_image(info.m_image);
     m_appupdater.save();
     this->on_appupdater_update();
 }
@@ -315,6 +339,21 @@ void Panel::on_item_menu_attach_event()
     } else {
         m_appupdater.detach_item(m_current_index);
     }
+}
+void Panel::on_separator_menu_attach_event()
+{
+    bool attached = m_separator_menu_attach.get_active();
+    if (attached) {
+        m_appupdater.attach_item(m_current_index);
+    } else {
+        m_appupdater.detach_item(m_current_index);
+    }
+}
+
+void Panel::on_home_menu_showline_event()
+{
+    bool showline = m_home_menu_showseparatorline_item.get_active();
+    config::set_separator_line(showline);
 }
 
 void Panel::on_item_menu_new_event()
@@ -341,34 +380,34 @@ bool Panel::on_button_press_event(GdkEventButton* event)
 }
 bool Panel::on_button_release_event(GdkEventButton* event)
 {
-    m_current_index = this->get_index(event->x, event->y);
+    if (m_autohide.is_visible() == false) {
+        return true;
+    }
+
+    if (m_dragdrop_begin && m_drop_index != -1) {
+        m_dragdrop_timer.stop();
+        m_dragdrop_timer.reset();
+
+        m_dragdrop_begin = false;
+
+        // allways attach the drop item
+        auto const item = AppUpdater::m_dockitems[m_drop_index];
+        item->set_attach(true);
+
+        // reset the swap item method.
+        // and save the items with the new position.
+        m_drop_index = -1;
+        m_appupdater.swap_item(0);
+        m_appupdater.save();
+
+        return true;
+    }
 
     if ((event->type == GDK_BUTTON_RELEASE) && m_current_index != -1) {
         auto const item = AppUpdater::m_dockitems[m_current_index];
 
         if (event->button == 1 && m_mouse_left_down) {
             m_mouse_left_down = false;
-
-            if (m_dragdrop_begin) {
-                m_dragdrop_timer.stop();
-                m_dragdrop_timer.reset();
-
-                m_dragdrop_begin = false;
-
-                // allways attach the drop item
-                item->set_attach(true);
-
-                // reset the swap item method.
-                // and save the items with the new position.
-                m_appupdater.swap_item(0);
-                m_appupdater.save();
-
-                return true;
-            }
-
-            if (m_autohide.is_visible() == false) {
-                return true;
-            }
 
             if (m_current_index != -1) {
                 if (item->m_items.size() == 0 &&
@@ -377,8 +416,7 @@ bool Panel::on_button_release_event(GdkEventButton* event)
                 } else {
                     if ((int)item->m_items.size() == 1) {
                         this->activate();
-                    } else if (item->get_dock_item_type() ==
-                               dock_item_type_t::launcher) {
+                    } else if (item->get_dock_item_type() == dock_item_type_t::launcher) {
                         // show preview if is compositite and not out of limits
 
                         // clang-format off
@@ -417,25 +455,22 @@ bool Panel::on_button_release_event(GdkEventButton* event)
         } else if (event->button == 3 && m_mouse_right_down) {
             if (m_current_index != -1) {
                 if (m_current_index == 0) {
-                    m_home_menu.popup(
-                        sigc::mem_fun(*this, &Panel::on_home_menu_position), 1,
-                        event->time);
+                    m_home_menu.popup(sigc::mem_fun(*this, &Panel::on_home_menu_position), 1,
+                                      event->time);
                     return true;
                 }
                 if (m_current_index > 0 &&
                     item->get_dock_item_type() == dock_item_type_t::launcher) {
                     m_item_menu_attach.set_active(item->is_attached());
-                    m_item_menu.popup(
-                        sigc::mem_fun(*this, &Panel::on_item_menu_position), 1,
-                        event->time);
+                    m_item_menu.popup(sigc::mem_fun(*this, &Panel::on_item_menu_position), 1,
+                                      event->time);
                     return true;
                 }
                 if (m_current_index > 0 &&
                     item->get_dock_item_type() == dock_item_type_t::separator) {
-                    //   m_item_menu_attach.set_active(item->is_attached());
-                    m_item_menu.popup(
-                        sigc::mem_fun(*this, &Panel::on_item_menu_position), 1,
-                        event->time);
+                    m_separator_menu_attach.set_active(item->is_attached());
+                    m_separator_menu.popup(sigc::mem_fun(*this, &Panel::on_separator_menu_position),
+                                           1, event->time);
                     return true;
                 }
             }
@@ -463,6 +498,7 @@ bool Panel::on_motion_notify_event(GdkEventMotion* event)
     m_current_index = this->get_index(event->x, event->y);
     if (m_current_index > 0 && m_dragdrop_begin) {
         m_appupdater.swap_item(m_current_index);
+        m_drop_index = m_current_index;
     }
 
     // force enter event
@@ -555,10 +591,8 @@ void Panel::open_new()
     m_show_selector = true;
     this->reset_flags();
 
-    if (!launcher_util::launch(item->get_name(),
-                               item->get_desktop_filename())) {
-        g_warning("Open new: App %s could not be found.",
-                  item->get_name().c_str());
+    if (!launcher_util::launch(item->get_name(), item->get_desktop_filename())) {
+        g_warning("Open new: App %s could not be found.", item->get_name().c_str());
 
         m_launcherwindow.init(item);
         m_launcherwindow.show_all();
@@ -580,17 +614,14 @@ void Panel::activate()
     }
 }
 
-void Panel::on_active_window_changed(WnckScreen* screen,
-                                     WnckWindow* previously_active_window,
+void Panel::on_active_window_changed(WnckScreen* screen, WnckWindow* previously_active_window,
                                      gpointer user_data)
 {
 }
 
-inline bool Panel::get_center_position(int& x, int& y, const int width,
-                                       const int height)
+inline bool Panel::get_center_position(int& x, int& y, const int width, const int height)
 {
-    if (m_current_index < 0 ||
-        m_current_index > (int)AppUpdater::m_dockitems.size()) {
+    if (m_current_index < 0 || m_current_index > (int)AppUpdater::m_dockitems.size()) {
         return false;
     }
 
@@ -673,8 +704,8 @@ inline bool Panel::get_center_position(int& x, int& y, const int width,
     return false;
 }
 
-inline void Panel::get_item_position(const dock_item_type_t item_typ, int& x,
-                                     int& y, int& width, int& height)
+inline void Panel::get_item_position(const dock_item_type_t item_typ, int& x, int& y, int& width,
+                                     int& height)
 {
     static int nextsize = 0;
 
@@ -733,8 +764,8 @@ void Panel::draw_panel(const Cairo::RefPtr<Cairo::Context>& cr)
     // cr->stroke();
     rect.set_x(m_offset_x);
     rect.set_y(m_offset_y);
-    cairo_util::rounded_rectangle(cr, rect.get_x(), rect.get_y(),
-                                  rect.get_width(), rect.get_height(), 3);
+    cairo_util::rounded_rectangle(cr, rect.get_x(), rect.get_y(), rect.get_width(),
+                                  rect.get_height(), 3);
 
     cr->set_source_rgba(0.8, 0.8, 0.8, 1.0);
     cr->fill();
@@ -760,72 +791,93 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
         width = item->get_width();
         height = item->get_height();
 
-        this->get_item_position(dock_item_type_t::launcher, x, y, width,
-                                height);
+        if (width < 1 || height < 1) {
+            continue;
+        }
 
-        //     g_print("Draw %d\n", x);
-        //    item->set_index(idx);
+        this->get_item_position(dock_item_type_t::launcher, x, y, width, height);
+
         item->set_x(x);
         item->set_y(y);
 
         // draw cell
-        cr->set_source_rgba(0, 0, 1, 1);
-        cairo_util::rounded_rectangle(cr, m_offset_x + x, m_offset_y + y, width,
-                                      height, 3);
-        cr->stroke();
+        if (m_dragdrop_begin && (int)idx == m_drop_index) {
+            cr->set_line_width(1.0);
+            cr->set_source_rgba(0, 0, 1, 1);
+            cairo_util::rounded_rectangle(cr, m_offset_x + x, m_offset_y + y, width, height, 3);
+            cr->stroke();
+        }
 
         // draw dots
         center = (width / 2);
         if (item->m_items.size() > 0) {
             cr->set_source_rgb(0.0, 0.0, 1.0);
             if (item->m_items.size() == 1) {
-                cr->arc(m_offset_x + x + center,
-                        m_offset_y + y + area - 5 - m_decrease_factor, 1.7, 0,
-                        2 * M_PI);
+                cr->arc(m_offset_x + x + center, m_offset_y + y + area - 6 - m_decrease_factor, 1.5,
+                        0, 2 * M_PI);
             } else if (item->m_items.size() > 1) {
-                cr->arc(m_offset_x + x + center - 3,
-                        m_offset_y + y + area - 5 - m_decrease_factor, 1.7, 0,
-                        2 * M_PI);
-                cr->arc(m_offset_x + x + center + 3,
-                        m_offset_y + y + area - 5 - m_decrease_factor, 1.7, 0,
-                        2 * M_PI);
+                cr->arc(m_offset_x + x + center - 3, m_offset_y + y + area - 6 - m_decrease_factor,
+                        1.5, 0, 2 * M_PI);
+                cr->arc(m_offset_x + x + center + 3, m_offset_y + y + area - 6 - m_decrease_factor,
+                        1.5, 0, 2 * M_PI);
             }
             cr->fill();
         }
 
-        // draw icon
-        // auto const image =
-        // item->get_image()->scale_simple(48, 48, Gdk::INTERP_BILINEAR);
-        if (item->get_image()) {
-            auto image = item->get_image();
+        // separator
+        if (config::is_separator_line() &&
+            item->get_dock_item_type() == dock_item_type_t::separator) {
+            cr->set_source_rgb(0, 0, 0);
+            cr->set_line_width(0.4);
 
-            // scaled if needed
-            if (image->get_width() != width || image->get_height() != height) {
-                int image_size_h = height;
-                int image_size_w = width;
-                image = image->scale_simple(image_size_w, image_size_h,
-                                            Gdk::INTERP_BILINEAR);
+            if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+                int centerX = width / 2;
+                cr->move_to(x + m_offset_x + centerX, y + m_offset_y);
+                cr->line_to(x + m_offset_x + centerX, y + m_offset_y);
+                cr->line_to(x + m_offset_x + centerX, y + m_offset_y + height);
+
+            } else {
+                int centerY = height / 2;
+                cr->move_to(x + m_offset_x, y + m_offset_y + centerY);
+                cr->line_to(x + m_offset_x, y + m_offset_y + centerY);
+                cr->line_to(x + m_offset_x + width, y + m_offset_y + centerY);
             }
 
-            Gdk::Cairo::set_source_pixbuf(cr, image, m_offset_x + x,
-                                          m_offset_y + y);
+            cr->stroke();
+        }
+
+        // icon * selector
+        if (auto image = item->get_image()) {
+            // reload or scaled if needed
+            if (image->get_width() != width || image->get_height() != height) {
+                if (width > 0 && height > 0) {
+                    auto const tmp_pixbuf = pixbuf_util::get_window_icon(
+                        item->get_wnckwindow(), item->get_desktop_icon_name(), width);
+                    if (!tmp_pixbuf) {
+                        item->set_image(image->scale_simple(width, height, Gdk::INTERP_BILINEAR));
+                    } else {
+                        item->set_image(tmp_pixbuf);
+                    }
+                }
+            }
+
+            Gdk::Cairo::set_source_pixbuf(cr, item->get_image(), m_offset_x + x, m_offset_y + y);
             cr->paint();
 
             if (m_show_selector) {
                 // draw selector
-                if ((int)idx == m_current_index && !m_context_menu_open &&
-                    m_mouse_inside && (int)idx != m_inverted_index) {
+                if ((int)idx == m_current_index && !m_context_menu_open && m_mouse_inside &&
+                    (int)idx != m_inverted_index) {
                     auto tmp = image->copy();
                     pixbuf_util::invert_pixels(tmp);
-                    Gdk::Cairo::set_source_pixbuf(cr, tmp, m_offset_x + x,
-                                                  m_offset_y + y);
+                    Gdk::Cairo::set_source_pixbuf(cr, tmp, m_offset_x + x, m_offset_y + y);
 
                     m_inverted_index = (int)m_current_index;
                     cr->paint();
 
-                    cr->set_source_rgba(1, 1, 1, 0.4);
-                    cairo_util::rounded_rectangle(cr, x, y, width, height, 0);
-                    cr->fill();
+                    // cr->set_source_rgba(1, 1, 1, 0.4);
+                    // cairo_util::rounded_rectangle(cr, x, y, width, height, 0);
+                    // cr->fill();
                 }
             }
         }
@@ -834,17 +886,16 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
 bool m_titlewindow_visible = false;
 void Panel::draw_title()
 {
-    if (m_current_index < 0 || m_context_menu_open ||
-        !config::is_show_title() || !m_connect_draw_signal_set ||
-        !m_autohide.is_visible()) {
+    if (m_current_index < 0 || m_context_menu_open || !config::is_show_title() ||
+        !m_connect_draw_signal_set || !m_autohide.is_visible()) {
         m_titlewindow.hide();
         m_titlewindow_visible = false;
 
         return;
     }
 
-    if (!m_mouse_inside || (m_current_index == m_title_item_index &&
-                            m_title_timer.elapsed() > 4.0)) {
+    if (!m_mouse_inside ||
+        (m_current_index == m_title_item_index && m_title_timer.elapsed() > 4.0)) {
         m_title_timer.stop();
         m_title_timer.reset();
         m_titlewindow.hide();

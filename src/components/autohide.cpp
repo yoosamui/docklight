@@ -35,8 +35,7 @@ void Autohide::connect_signal_handler(bool connect)
     if (connect) {
         if (!m_stm.m_connect_autohide_signal_set) {
             m_stm.m_sigc_autohide = Glib::signal_timeout().connect(
-                sigc::mem_fun((Autohide*)m_stm.m_this, &Autohide::animation),
-                1000 / 30);
+                sigc::mem_fun((Autohide*)m_stm.m_this, &Autohide::animation), 1000 / 30);
 
             m_stm.m_connect_autohide_signal_set = true;
         }
@@ -51,8 +50,7 @@ Autohide::type_signal_update Autohide::signal_update()
     return m_signal_update;
 }
 
-void Autohide::on_active_window_changed(WnckScreen* screen,
-                                        WnckWindow* previously_active_window,
+void Autohide::on_active_window_changed(WnckScreen* screen, WnckWindow* previously_active_window,
                                         gpointer user_data)
 {
     if (!config::is_intelihide()) {
@@ -75,13 +73,11 @@ void Autohide::on_active_window_changed(WnckScreen* screen,
 
     if (previously_active_window != nullptr) {
         if (m_stm.m_geometry_change_id != 0) {
-            g_signal_handler_disconnect(previously_active_window,
-                                        m_stm.m_geometry_change_id);
+            g_signal_handler_disconnect(previously_active_window, m_stm.m_geometry_change_id);
         }
 
         if (m_stm.m_state_change_id != 0) {
-            g_signal_handler_disconnect(previously_active_window,
-                                        m_stm.m_state_change_id);
+            g_signal_handler_disconnect(previously_active_window, m_stm.m_state_change_id);
         }
     }
 
@@ -97,8 +93,7 @@ void Autohide::on_active_window_changed(WnckScreen* screen,
     // clang-format on
 }
 
-void Autohide::on_state_changed(WnckWindow* window,
-                                WnckWindowState changed_mask,
+void Autohide::on_state_changed(WnckWindow* window, WnckWindowState changed_mask,
                                 WnckWindowState new_state, gpointer user_data)
 {
     if ((changed_mask & WNCK_WINDOW_STATE_MINIMIZED) == 0) {
@@ -129,59 +124,6 @@ void Autohide::on_geometry_changed(WnckWindow* window, gpointer user_data)
     intelihide();
 }
 
-// TODO : Check current monitor
-bool Autohide::is_anywindow_fullscreen()
-{
-    GList* window_l;
-
-    auto const screen = wnck_screen_get_default();
-    wnck_screen_force_update(screen);
-    WnckWorkspace* workspace = wnck_screen_get_active_workspace(screen);
-    auto const display = device::display::get_default();
-
-    for (window_l = wnck_screen_get_windows(screen); window_l != nullptr;
-         window_l = window_l->next) {
-        WnckWindow* window = WNCK_WINDOW(window_l->data);
-        if (window == nullptr) continue;
-
-        if (!wnck_window_is_on_workspace(window, workspace)) {
-            continue;
-        }
-
-        // auto const mn = display->get_monitor_at_window(i)
-
-        //        display->get_monitor_number !=
-        //        display->get_monitor_at_window(window);
-
-        //        device::display::get_default()->get_monitor_at_window(window);
-
-        // Glib::RefPtr< const Monitor > 	get_monitor_at_window (const
-        // Glib::RefPtr< Window >& window) const
-        // 	Gets the monitor in which the largest area of window resides, or
-        // a monitor close to window if it is outside of all monit
-        //  device::monitor::get_current().
-
-        WnckWindowType wt = wnck_window_get_window_type(window);
-
-        if (wt == WNCK_WINDOW_DESKTOP || wt == WNCK_WINDOW_DOCK ||
-            wt == WNCK_WINDOW_TOOLBAR || wt == WNCK_WINDOW_MENU ||
-            wt == WNCK_WINDOW_SPLASHSCREEN) {
-            continue;
-        }
-
-        const char* instancename = wnck_window_get_class_instance_name(window);
-        if (instancename != nullptr &&
-            strcasecmp(instancename, DOCKLIGHT_INSTANCENAME) == 0) {
-            continue;
-        }
-
-        if (wnck_window_is_fullscreen(window)) {
-            return true;
-        }
-    }
-
-    return false;
-}
 int Autohide::get_windows_count()
 {
     if (m_active_window == nullptr) {
@@ -210,23 +152,20 @@ int Autohide::get_windows_count(WnckWorkspace* workspace)
     for (window_l = wnck_screen_get_windows(screen); window_l != nullptr;
          window_l = window_l->next) {
         WnckWindow* window = WNCK_WINDOW(window_l->data);
-        if (window == nullptr ||
-            !wnck_window_is_on_workspace(window, workspace) ||
+        if (window == nullptr || !wnck_window_is_on_workspace(window, workspace) ||
             wnck_window_is_minimized(window)) {
             continue;
         }
 
         WnckWindowType wt = wnck_window_get_window_type(window);
 
-        if (wt == WNCK_WINDOW_DESKTOP || wt == WNCK_WINDOW_DOCK ||
-            wt == WNCK_WINDOW_TOOLBAR || wt == WNCK_WINDOW_MENU ||
-            wt == WNCK_WINDOW_SPLASHSCREEN) {
+        if (wt == WNCK_WINDOW_DESKTOP || wt == WNCK_WINDOW_DOCK || wt == WNCK_WINDOW_TOOLBAR ||
+            wt == WNCK_WINDOW_MENU || wt == WNCK_WINDOW_SPLASHSCREEN) {
             continue;
         }
 
         const char* instancename = wnck_window_get_class_instance_name(window);
-        if (instancename != nullptr &&
-            strcasecmp(instancename, DOCKLIGHT_INSTANCENAME) == 0) {
+        if (instancename != nullptr && strcasecmp(instancename, DOCKLIGHT_INSTANCENAME) == 0) {
             continue;
         }
 
@@ -371,14 +310,13 @@ void Autohide::reset_timer()
 
 bool Autohide::animation()
 {
-    if (m_stm.m_animation_state == DEF_AUTOHIDE_HIDE &&
-        !m_stm.m_animation_running &&
+    if (m_stm.m_animation_state == DEF_AUTOHIDE_HIDE && !m_stm.m_animation_running &&
         abs(m_stm.m_animation_timer.elapsed()) > m_animation_hide_delay) {
         m_easing_duration = DEF_AUTOHIDE_EASING_DURATION;
         m_stm.m_animation_running = true;
 
-    } else if (m_stm.m_animation_state == DEF_AUTOHIDE_SHOW &&
-               !m_stm.m_visible && !m_stm.m_animation_running) {
+    } else if (m_stm.m_animation_state == DEF_AUTOHIDE_SHOW && !m_stm.m_visible &&
+               !m_stm.m_animation_running) {
         position_util::set_window_position();
         m_easing_duration = DEF_AUTOHIDE_EASING_DURATION;
         m_stm.m_animation_running = true;
@@ -415,9 +353,9 @@ bool Autohide::animation()
             }
         }
 
-        float position = easing_util::map_clamp(
-            m_animation_time, m_initTime, endTime, startPosition, endPosition,
-            &easing_util::linear::easeIn);
+        float position =
+            easing_util::map_clamp(m_animation_time, m_initTime, endTime, startPosition,
+                                   endPosition, &easing_util::linear::easeIn);
 
         if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
             m_offset_x = 0;
