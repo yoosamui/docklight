@@ -221,6 +221,11 @@ inline int Panel::get_index(const int& mouseX, const int& mouseY)
     if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
         for (auto item : m_appupdater.m_dockitems) {
             int width = item->get_width();
+            if (width < 0) {
+                idx++;
+                continue;
+            }
+
             if (mouse.get_x() >= x && mouse.get_x() <= x + width) {
                 return idx;
             }
@@ -231,6 +236,11 @@ inline int Panel::get_index(const int& mouseX, const int& mouseY)
     } else {
         for (auto item : m_appupdater.m_dockitems) {
             int height = item->get_height();
+            if (height < 0) {
+                idx++;
+                continue;
+            }
+
             if (mouse.get_y() >= y && mouse.get_y() <= y + height) {
                 return idx;
             }
@@ -311,11 +321,10 @@ void Panel::on_home_menu_addseparator_event()
     appinfo_t info;
     string filename = system_util::get_current_path("/data/images/separator.png");
     // system_util::get_current_path("/data/images/docklight.logo.png");
-    auto icon_size = config::get_icon_size();
 
-    info.m_width = icon_size / 3;
-    info.m_height = info.m_width;
-    info.m_image = pixbuf_util::get_from_file(filename, info.m_width, info.m_height);
+    info.m_separator_length = 10;
+    info.m_image =
+        pixbuf_util::get_from_file(filename, info.m_separator_length, info.m_separator_length);
     info.m_name = "separator";
     info.m_title = _("separator");
 
@@ -323,6 +332,7 @@ void Panel::on_home_menu_addseparator_event()
         shared_ptr<DockItem>(new DockItem(info, dock_item_type_t::separator)));
     auto const new_item = m_appupdater.m_dockitems.back();
     new_item->set_attach(true);
+
     m_appupdater.save();
     this->on_appupdater_update();
 }

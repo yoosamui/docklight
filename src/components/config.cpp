@@ -95,7 +95,14 @@ namespace config
 
     int get_icon_size() { return m_icon_size; }
 
-    void set_icon_size(int value) { m_icon_size = value; }
+    void set_icon_size(int value)
+    {
+        m_icon_size = value;
+
+        if (value > 128) {
+            m_icon_size = 128;
+        }
+    }
 
     dock_alignment_t get_dock_alignment() { return m_alignment; }
 

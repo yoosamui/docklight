@@ -242,9 +242,8 @@ bool AppUpdater::save()
         strncpy(rec.icon_name, info->m_desktop_icon_name.c_str(), sizeof(rec.icon_name) - 1);
         strncpy(rec.desktop_file, info->m_desktop_file.c_str(), sizeof(rec.desktop_file) - 1);
 
-        rec.width = info->m_width;
-        rec.height = info->m_height;
         rec.dock_item_type = info->m_dock_item_type;
+        rec.separator_length = info->m_separator_length;
 
         size_t result = fwrite(&rec, sizeof(rec), 1, file_writer);
         if (result == 0) g_critical("Attachments::save:: Error writing file> fwrite\n");
@@ -291,17 +290,7 @@ bool AppUpdater::load()
         info.m_name = rec.name;
         info.m_desktop_file = rec.desktop_file;
         info.m_desktop_icon_name = rec.icon_name;
-
-        info.m_width = rec.width;
-        info.m_height = rec.height;
-        // if (info.m_dock_item_type == dock_item_type_t::separator) {
-        //} else {
-        // info.m_width = icon_size;
-        // info.m_height = icon_size;
-        // info.m_image = info.m_image->scale_simple(icon_size, icon_size, Gdk::INTERP_BILINEAR);
-        // g_print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA %d\n",
-        // icon_size);
-        //}
+        info.m_separator_length = rec.separator_length;
 
         // Add new
         auto item = new DockItem(info, info.m_dock_item_type);

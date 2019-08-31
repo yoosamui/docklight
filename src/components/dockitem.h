@@ -20,6 +20,7 @@ typedef struct {
     dock_item_type_t m_dock_item_type;
     unsigned long m_xid;
     Glib::RefPtr<Gdk::Pixbuf> m_image;
+    int m_separator_length;
     int m_width;
     int m_height;
 } appinfo_t;
@@ -27,8 +28,7 @@ typedef struct {
 class DockItem
 {
   public:
-    DockItem(appinfo_t appinfo,
-             dock_item_type_t itemtype = dock_item_type_t::launcher);
+    DockItem(appinfo_t appinfo, dock_item_type_t itemtype = dock_item_type_t::launcher);
     DockItem();
     ~DockItem();
     appinfo_t* get_appinfo();

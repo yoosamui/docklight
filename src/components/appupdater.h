@@ -39,8 +39,7 @@ class AppUpdater
         char name[60];
         char desktop_file[512];
         char icon_name[128];
-        int width = 0;
-        int height = 0;
+        int separator_length = 0;
         guint8 pixbuff[1024 << 4] = {0};
     } attach_rec_t;
 
