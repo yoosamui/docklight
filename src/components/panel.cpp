@@ -6,7 +6,6 @@
 #include <gtkmm/image.h>
 #include <gtkmm/imagemenuitem.h>
 #include "appwindow.h"
-#include "components/config.h"
 #include "components/device.h"
 #include "utils/cairo.h"
 #include "utils/launcher.h"
@@ -62,8 +61,6 @@ void Panel::init()
 
     m_home_menu_quit_item.signal_activate().connect(sigc::mem_fun(*this, &Panel::on_home_menu_quit_event));
     m_home_menu_addseparator_item.signal_activate().connect(sigc::mem_fun(*this, &Panel::on_home_menu_addseparator_event));
-    m_home_menu_showseparatorline_item.set_active(config::is_separator_line());
-    m_home_menu_showseparatorline_item.signal_toggled().connect(sigc::mem_fun(*this, &Panel::on_home_menu_showline_event));
 
     // items menu
     m_item_menu.attach_to_widget(*this);
@@ -85,6 +82,9 @@ void Panel::init()
     m_separator_menu_attach.signal_toggled().connect(sigc::mem_fun(*this, &Panel::on_separator_menu_attach_event));
 
     // clang-format on
+
+    m_theme = config::get_theme();
+
     string filename(system_util::get_current_path(DEF_ICONNAME));
     appinfo_t info;
     auto icon_size = config::get_icon_size();
@@ -322,7 +322,7 @@ void Panel::on_home_menu_addseparator_event()
     string filename = system_util::get_current_path("/data/images/separator.png");
     // system_util::get_current_path("/data/images/docklight.logo.png");
 
-    info.m_separator_length = 10;
+    info.m_separator_length = 6;
     info.m_image =
         pixbuf_util::get_from_file(filename, info.m_separator_length, info.m_separator_length);
     info.m_name = "separator";
@@ -358,12 +358,6 @@ void Panel::on_separator_menu_attach_event()
     } else {
         m_appupdater.detach_item(m_current_index);
     }
-}
-
-void Panel::on_home_menu_showline_event()
-{
-    bool showline = m_home_menu_showseparatorline_item.get_active();
-    config::set_separator_line(showline);
 }
 
 void Panel::on_item_menu_new_event()
@@ -777,7 +771,10 @@ void Panel::draw_panel(const Cairo::RefPtr<Cairo::Context>& cr)
     cairo_util::rounded_rectangle(cr, rect.get_x(), rect.get_y(), rect.get_width(),
                                   rect.get_height(), 3);
 
-    cr->set_source_rgba(0.8, 0.8, 0.8, 1.0);
+    cr->set_source_rgba(m_theme.Panel().Fill().Color::red, m_theme.Panel().Fill().Color::green,
+                        m_theme.Panel().Fill().Color::blue, m_theme.Panel().Fill().Color::alpha);
+
+    //    cr->set_source_rgba(0.8, 0.8, 0.8, 1.0);
     cr->fill();
 
     // cr->paint();
@@ -811,6 +808,19 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
         item->set_y(y);
 
         // draw cell
+        //     if (m_theme.PanelCell().Fill().Color::alpha > 0.0) {
+        cr->set_source_rgba(
+            m_theme.PanelCell().Fill().Color::red, m_theme.PanelCell().Fill().Color::green,
+            m_theme.PanelCell().Fill().Color::blue, m_theme.PanelCell().Fill().Color::alpha);
+
+        cr->set_line_width(m_theme.PanelCell().LineWidth());
+        cairo_util::rounded_rectangle(cr, m_offset_x + x, m_offset_y + y, width, height,
+                                      m_theme.PanelCell().Ratio());
+        // cr->set_source_rgba(1, 0, 0, 1);
+        cr->fill();
+        //   }
+
+        // draw drag & drop rectangle
         if (m_dragdrop_begin && (int)idx == m_drop_index) {
             cr->set_line_width(1.0);
             cr->set_source_rgba(0, 0, 1, 1);
@@ -823,13 +833,13 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
         if (item->m_items.size() > 0) {
             cr->set_source_rgb(0.0, 0.0, 1.0);
             if (item->m_items.size() == 1) {
-                cr->arc(m_offset_x + x + center, m_offset_y + y + area - 6 - m_decrease_factor, 1.5,
+                cr->arc(m_offset_x + x + center, m_offset_y + y + area - 8 - m_decrease_factor, 1.6,
                         0, 2 * M_PI);
             } else if (item->m_items.size() > 1) {
-                cr->arc(m_offset_x + x + center - 3, m_offset_y + y + area - 6 - m_decrease_factor,
-                        1.5, 0, 2 * M_PI);
-                cr->arc(m_offset_x + x + center + 3, m_offset_y + y + area - 6 - m_decrease_factor,
-                        1.5, 0, 2 * M_PI);
+                cr->arc(m_offset_x + x + center - 3, m_offset_y + y + area - 8 - m_decrease_factor,
+                        1.6, 0, 2 * M_PI);
+                cr->arc(m_offset_x + x + center + 3, m_offset_y + y + area - 8 - m_decrease_factor,
+                        1.6, 0, 2 * M_PI);
             }
             cr->fill();
         }

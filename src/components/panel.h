@@ -7,6 +7,7 @@
 #include "common.h"
 #include "components/appupdater.h"
 #include "components/autohide.h"
+#include "components/config.h"
 #include "components/dockmenu.h"
 #include "components/launcherwindow.h"
 #include "components/titlewindow.h"
@@ -25,6 +26,7 @@ class Panel : public Gtk::DrawingArea, DockMenu
     static int m_decrease_factor;
 
   private:
+    config::style::Theme m_theme;
     AppUpdater m_appupdater;
     Gtk::Window* m_owner = nullptr;
     launcher_window m_launcherwindow;
@@ -90,7 +92,6 @@ class Panel : public Gtk::DrawingArea, DockMenu
     // Menus
     bool m_context_menu_open = false;
 
-    void on_home_menu_showline_event();
     void on_home_menu_addseparator_event();
     void on_home_menu_quit_event();
 

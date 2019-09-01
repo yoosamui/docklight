@@ -1,4 +1,5 @@
 #include "utils/string.h"
+#include <string.h>
 #include <algorithm>
 DL_NS_BEGIN
 
@@ -23,6 +24,11 @@ namespace string_util
         std::string::const_iterator it = s.begin();
         while (it != s.end() && std::isdigit(*it)) ++it;
         return !s.empty() && it == s.end();
+    }
+
+    bool is_matching(const string &s, const char *characters)
+    {
+        return (strspn(s.c_str(), characters) == s.size());
     }
 
     string remove_extension(const string &s, const string extensions[])
