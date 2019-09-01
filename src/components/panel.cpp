@@ -808,17 +808,16 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
         item->set_y(y);
 
         // draw cell
-        //     if (m_theme.PanelCell().Fill().Color::alpha > 0.0) {
-        cr->set_source_rgba(
-            m_theme.PanelCell().Fill().Color::red, m_theme.PanelCell().Fill().Color::green,
-            m_theme.PanelCell().Fill().Color::blue, m_theme.PanelCell().Fill().Color::alpha);
+        if (m_theme.PanelCell().Fill().Color::alpha > 0.0) {
+            cr->set_source_rgba(
+                m_theme.PanelCell().Fill().Color::red, m_theme.PanelCell().Fill().Color::green,
+                m_theme.PanelCell().Fill().Color::blue, m_theme.PanelCell().Fill().Color::alpha);
 
-        cr->set_line_width(m_theme.PanelCell().LineWidth());
-        cairo_util::rounded_rectangle(cr, m_offset_x + x, m_offset_y + y, width, height,
-                                      m_theme.PanelCell().Ratio());
-        // cr->set_source_rgba(1, 0, 0, 1);
-        cr->fill();
-        //   }
+            cr->set_line_width(m_theme.PanelCell().LineWidth());
+            cairo_util::rounded_rectangle(cr, m_offset_x + x, m_offset_y + y, width, height,
+                                          m_theme.PanelCell().Ratio());
+            cr->fill();
+        }
 
         // draw drag & drop rectangle
         if (m_dragdrop_begin && (int)idx == m_drop_index) {
