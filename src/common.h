@@ -51,7 +51,8 @@ enum class dock_item_type_t : unsigned int {
 
 };
 
-enum class dock_autohide_type_t : unsigned int {
+enum class dock_autohide_type_t : int {
+    none = -1,
     autohide = 0,
-    intelihide,
+    intelihide = 1,
 };

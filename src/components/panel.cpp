@@ -43,11 +43,11 @@ void Panel::set_owner(Gtk::Window* window)
 void Panel::init()
 {
     if (config::is_autohide()) {
-        m_autohide.set_hide_delay(1.0);
+        m_autohide.set_hide_delay(0.6);
         m_autohide.hide();
     }
     if (config::is_intelihide()) {
-        m_autohide.set_hide_delay(0.5);
+        m_autohide.set_hide_delay(0.6);
         m_autohide.intelihide();
     }
 
@@ -521,10 +521,6 @@ bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
         m_autohide.set_mouse_inside(true);
     }
 
-    // if (!m_enter_anchor) {
-    // return true;
-    //}
-
     if (config::is_autohide() || config::is_intelihide()) {
         m_autohide.show();
     }
@@ -575,8 +571,7 @@ bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
 
     if (config::is_intelihide()) {
         m_autohide.intelihide();
-    }
-    if (config::is_autohide()) {
+    } else if (config::is_autohide()) {
         m_autohide.hide();
     }
 
@@ -761,20 +756,17 @@ void Panel::draw_panel(const Cairo::RefPtr<Cairo::Context>& cr)
 {
     Gdk::Rectangle rect = position_util::get_appwindow_geometry();
 
-    // cr->set_source_rgba(1.8, 1.8, 1.8, 1.0);
-    // cairo_util::rounded_rectangle(cr, rect.get_x(), rect.get_y(),
-    //                              rect.get_width(), rect.get_height(), 3);
-
     // cr->stroke();
     rect.set_x(m_offset_x);
     rect.set_y(m_offset_y);
+
+    //    cr->set_source_rgba(0.8, 0.8, 0.8, 1.0);
     cairo_util::rounded_rectangle(cr, rect.get_x(), rect.get_y(), rect.get_width(),
-                                  rect.get_height(), 3);
+                                  rect.get_height(), 0);
 
     cr->set_source_rgba(m_theme.Panel().Fill().Color::red, m_theme.Panel().Fill().Color::green,
                         m_theme.Panel().Fill().Color::blue, m_theme.Panel().Fill().Color::alpha);
 
-    //    cr->set_source_rgba(0.8, 0.8, 0.8, 1.0);
     cr->fill();
 
     // cr->paint();

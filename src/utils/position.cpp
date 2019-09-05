@@ -24,29 +24,27 @@ namespace position_util
 
             switch (alignment) {
                 case dock_alignment_t::start:
-                    ypos = workarea.get_y();
                     xpos = workarea.get_x();
                     break;
 
                 case dock_alignment_t::end:
-                    ypos = workarea.get_y();
                     xpos = workarea.get_x() + workarea.get_width() - width;
                     break;
 
                 case dock_alignment_t::center:
                     center = workarea.get_width() / 2 - width / 2;
-                    ypos = workarea.get_y();
                     xpos = workarea.get_x() + center;
                     break;
 
                 default:  // fill
-                    ypos = workarea.get_y();
                     xpos = workarea.get_x();
                     width = workarea.get_width();
             }
 
             if (config::get_dock_location() == dock_location_t::bottom) {
                 ypos = workarea.get_y() + workarea.get_height() - area;
+            } else {
+                ypos = workarea.get_y() + area;
             }
 
             m_window->resize(width, area);
@@ -61,29 +59,27 @@ namespace position_util
             switch (alignment) {
                 case dock_alignment_t::start:
                     ypos = workarea.get_y();
-                    xpos = workarea.get_x();
                     break;
 
                 case dock_alignment_t::end:
                     ypos = workarea.get_y() + workarea.get_height() - height;
-                    xpos = workarea.get_x();
                     break;
 
                 case dock_alignment_t::center:
                     center = workarea.get_height() / 2 - height / 2;
                     ypos = workarea.get_y() + center;
-                    xpos = workarea.get_x();
                     break;
 
                 default:  // fill
                     ypos = workarea.get_y();
-                    xpos = workarea.get_x();
                     height = workarea.get_height();
                     break;
             }
 
             if (config::get_dock_location() == dock_location_t::right) {
                 xpos = workarea.get_x() + workarea.get_width() - area;
+            } else {
+                xpos = workarea.get_x() + area;
             }
 
             m_window->resize(area, height);
@@ -100,18 +96,18 @@ namespace position_util
         m_window->get_position(x, y);
 
         if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-            m_window->resize(m_window->get_width(), 2);
+            //    m_window->resize(m_window->get_width(), 1);
 
             if (location == dock_location_t::bottom) {
-                m_window->move(x, workarea.get_height() + workarea.get_y() - 2);
+                m_window->move(x, workarea.get_height() + workarea.get_y() - 1);
             } else {
                 m_window->move(x, workarea.get_y());
             }
         } else {
-            m_window->resize(2, m_window->get_height());
+            // m_window->resize(1, m_window->get_height());
 
             if (location == dock_location_t::right) {
-                m_window->move(workarea.get_width() + workarea.get_x() - 2, y);
+                m_window->move(workarea.get_width() + workarea.get_x() - 1, y);
             } else {
                 m_window->move(workarea.get_x(), y);
             }

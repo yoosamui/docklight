@@ -53,7 +53,7 @@ Autohide::type_signal_update Autohide::signal_update()
 void Autohide::on_active_window_changed(WnckScreen* screen, WnckWindow* previously_active_window,
                                         gpointer user_data)
 {
-    if (!config::is_intelihide()) {
+    if (!config::is_intelihide() || config::is_autohide()) {
         return;
     }
 
@@ -239,7 +239,6 @@ void Autohide::intelihide()
         }
 
         hide();
-
     } else {
         show();
     }
@@ -257,6 +256,12 @@ bool Autohide::is_visible()
 
 void Autohide::hide()
 {
+    if (!config::is_intelihide() && !config::is_autohide()) {
+        return;
+    }
+
+    // g_print("Start hide %d %d\n", (int)m_stm.m_visible, (int)m_stm.m_mouse_inside);
+
     if (config::is_intelihide()) {
         if (m_active_window == nullptr) {
             return;
@@ -271,6 +276,7 @@ void Autohide::hide()
     if (m_stm.m_visible && !m_stm.m_mouse_inside) {
         m_stm.m_animation_state = DEF_AUTOHIDE_HIDE;
         connect_signal_handler(true);
+        //  g_print("Exec hide\n");
     }
 }
 
@@ -317,9 +323,9 @@ bool Autohide::animation()
 
     } else if (m_stm.m_animation_state == DEF_AUTOHIDE_SHOW && !m_stm.m_visible &&
                !m_stm.m_animation_running) {
-        position_util::set_window_position();
         m_easing_duration = DEF_AUTOHIDE_EASING_DURATION;
         m_stm.m_animation_running = true;
+        position_util::set_window_position();
     }
 
     if (m_stm.m_animation_running) {
@@ -344,10 +350,12 @@ bool Autohide::animation()
             case dock_location_t::bottom: {
                 if (m_stm.m_visible) {
                     startPosition = 0;
-                    endPosition = config::get_dock_area();
+                    endPosition = config::get_dock_area() + 1;
+
                 } else {
-                    startPosition = config::get_dock_area();
+                    startPosition = config::get_dock_area() + 1;
                     endPosition = 0;
+                    ;
                 }
                 break;
             }

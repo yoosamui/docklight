@@ -24,7 +24,6 @@ namespace config
     bool m_show_separator_line = true;
     dock_alignment_t m_alignment = dock_alignment_t::center;
     dock_autohide_type_t m_autohide_type = dock_autohide_type_t::intelihide;
-    //:dock_autohide_type_t m_autohide_type = dock_autohide_type_t::autohide;
 
     void get_color_from_string(const std::string &s, Color &fill, Color &stroke, double &lineWidth,
                                double &ratio, int &mask)
@@ -191,6 +190,20 @@ namespace config
         return value;
     }
 
+    string get_autohide(GKeyFile *key_file)
+    {
+        GError *error = nullptr;
+        char *value = g_key_file_get_string(key_file, "dock", "autohide_mode", &error);
+        if (error) {
+            g_error_free(error);
+            error = nullptr;
+
+            return string{};
+        }
+
+        return value;
+    }
+
     string get_alignment(GKeyFile *key_file)
     {
         GError *error = nullptr;
@@ -271,6 +284,19 @@ namespace config
                     m_alignment = dock_alignment_t::fill;
                 } else {
                     g_warning("configuration: invalid alignment. %s\n", alignment.c_str());
+                }
+            }
+
+            string autohide = get_autohide(key_file);
+            if (!autohide.empty()) {
+                if (autohide == "autohide") {
+                    m_autohide_type = dock_autohide_type_t::autohide;
+                } else if (autohide == "intelihide") {
+                    m_autohide_type = dock_autohide_type_t::intelihide;
+                } else if (autohide == "none") {
+                    m_autohide_type = dock_autohide_type_t::none;
+                } else {
+                    g_warning("configuration: invalid autohide mode. %s\n", autohide.c_str());
                 }
             }
 
