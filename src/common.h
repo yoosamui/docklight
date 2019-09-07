@@ -56,3 +56,8 @@ enum class dock_autohide_type_t : int {
     autohide = 0,
     intelihide = 1,
 };
+
+enum class dock_indicator_type_t : unsigned int {
+    dots = 0,
+    lines = 1,
+};

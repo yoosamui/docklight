@@ -768,7 +768,7 @@ void Panel::draw_panel(const Cairo::RefPtr<Cairo::Context>& cr)
 
     //    cr->set_source_rgba(0.8, 0.8, 0.8, 1.0);
     cairo_util::rounded_rectangle(cr, rect.get_x(), rect.get_y(), rect.get_width(),
-                                  rect.get_height(), 0);
+                                  rect.get_height(), m_theme.Panel().Ratio());
 
     cr->set_source_rgba(m_theme.Panel().Fill().Color::red, m_theme.Panel().Fill().Color::green,
                         m_theme.Panel().Fill().Color::blue, m_theme.Panel().Fill().Color::alpha);
@@ -823,27 +823,15 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
             }
         }
 
-        // draw dots
-        center = (width / 2);
-        if (item->m_items.size() > 0) {
-            cr->set_source_rgb(0.0, 0.0, 1.0);
-            if (item->m_items.size() == 1) {
-                cr->arc(m_offset_x + x + center, m_offset_y + y + area - 8 - m_decrease_factor, 1.6,
-                        0, 2 * M_PI);
-            } else if (item->m_items.size() > 1) {
-                cr->arc(m_offset_x + x + center - 3, m_offset_y + y + area - 8 - m_decrease_factor,
-                        1.6, 0, 2 * M_PI);
-                cr->arc(m_offset_x + x + center + 3, m_offset_y + y + area - 8 - m_decrease_factor,
-                        1.6, 0, 2 * M_PI);
-            }
-            cr->fill();
-        }
-
         // separator
         if (config::is_separator_line() &&
             item->get_dock_item_type() == dock_item_type_t::separator) {
-            cr->set_source_rgb(0, 0, 0);
-            cr->set_line_width(0.4);
+            cr->set_source_rgba(m_theme.PanelSeparator().Stroke().Color::red,
+                                m_theme.PanelSeparator().Stroke().Color::green,
+                                m_theme.PanelSeparator().Stroke().Color::blue,
+                                m_theme.PanelSeparator().Stroke().Color::alpha);
+
+            cr->set_line_width(m_theme.PanelSeparator().LineWidth());
 
             if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
                 int centerX = width / 2;
@@ -861,7 +849,7 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
             cr->stroke();
         }
 
-        // icon * selector
+        // icon + selector
         if (auto image = item->get_image()) {
             // reload or scaled if needed
             if (image->get_width() != width || image->get_height() != height) {
@@ -907,7 +895,6 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
                                     m_theme.PanelCell().Stroke().Color::alpha);
 
                 cr->set_line_width(m_theme.PanelCell().LineWidth());
-                g_print("cell %f\n", m_theme.PanelCell().LineWidth());
                 cairo_util::rounded_rectangle(cr, m_offset_x + x, m_offset_y + y, width, height,
                                               m_theme.PanelCell().Ratio());
                 cr->stroke();
@@ -916,6 +903,15 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
 
         // draw cell & drop stroke
         if (m_dragdrop_begin && (int)idx == m_drop_index) {
+            cr->set_source_rgba(
+                m_theme.PanelDrag().Fill().Color::red, m_theme.PanelDrag().Fill().Color::green,
+                m_theme.PanelDrag().Fill().Color::blue, m_theme.PanelDrag().Fill().Color::alpha);
+
+            cairo_util::rounded_rectangle(cr, m_offset_x + x, m_offset_y + y, width, height,
+                                          m_theme.PanelDrag().Ratio());
+
+            cr->fill();
+
             cr->set_source_rgba(m_theme.PanelDrag().Stroke().Color::red,
                                 m_theme.PanelDrag().Stroke().Color::green,
                                 m_theme.PanelDrag().Stroke().Color::blue,
@@ -924,6 +920,48 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
             cr->set_line_width(m_theme.PanelDrag().LineWidth());
             cairo_util::rounded_rectangle(cr, m_offset_x + x, m_offset_y + y, width, height,
                                           m_theme.PanelDrag().Ratio());
+            cr->stroke();
+        }
+
+        // draw indicator
+        center = (width / 2);
+        cr->set_source_rgba(m_theme.PanelIndicator().Fill().Color::red,
+                            m_theme.PanelIndicator().Fill().Color::green,
+                            m_theme.PanelIndicator().Fill().Color::blue,
+                            m_theme.PanelIndicator().Fill().Color::alpha);
+        if (config::get_indicator_type() == dock_indicator_type_t::dots) {
+            if (item->m_items.size() > 0) {
+                if (item->m_items.size() == 1) {
+                    cr->arc(m_offset_x + x + center, m_offset_y + y + area - 7 - m_decrease_factor,
+                            1.6, 0, 2 * M_PI);
+                } else if (item->m_items.size() > 1) {
+                    cr->arc(m_offset_x + x + center - 3,
+                            m_offset_y + y + area - 7 - m_decrease_factor, 1.6, 0, 2 * M_PI);
+                    cr->arc(m_offset_x + x + center + 3,
+                            m_offset_y + y + area - 7 - m_decrease_factor, 1.6, 0, 2 * M_PI);
+                }
+                cr->fill();
+            }
+        } else if (config::get_indicator_type() == dock_indicator_type_t::lines) {
+            int marginY = area - m_decrease_factor - 7;
+            if (item->m_items.size() > 0) {
+                if (item->m_items.size() == 1) {
+                    cr->move_to(x + m_offset_x, y + m_offset_y + marginY);
+                    cr->line_to(x + m_offset_x, y + m_offset_y + marginY);
+                    cr->line_to(x + m_offset_x + width, y + m_offset_y + marginY);
+
+                } else if (item->m_items.size() > 1) {
+                    cr->move_to(x + m_offset_x, y + m_offset_y + marginY);
+                    cr->line_to(x + m_offset_x, y + m_offset_y + marginY);
+                    cr->line_to(x + m_offset_x + center - 2, y + m_offset_y + marginY);
+
+                    cr->move_to(x + m_offset_x + center + 2, y + m_offset_y + marginY);
+                    cr->line_to(x + m_offset_x + center + 2, y + m_offset_y + marginY);
+                    cr->line_to(x + m_offset_x + width, y + m_offset_y + marginY);
+                }
+            }
+
+            cr->set_line_width(1.4);
             cr->stroke();
         }
     }

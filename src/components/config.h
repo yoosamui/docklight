@@ -38,8 +38,6 @@ namespace config
                 m_Fill = fill;
                 m_Stroke = stroke;
                 m_LineWidth = lineWith;
-                g_print("Construct line %f\n", m_LineWidth);
-
                 m_Ratio = ratio;
                 m_Mask = mask;
             }
@@ -66,6 +64,8 @@ namespace config
             ColorWindow& Panel() const { return *m_Panel; }
             ColorWindow& PanelCell() const { return *m_PanelCell; }
             ColorWindow& PanelDrag() const { return *m_PanelDrag; }
+            ColorWindow& PanelIndicator() const { return *m_PanelIndicator; }
+            ColorWindow& PanelSeparator() const { return *m_PanelSeparator; }
             ColorWindow& PanelTitle() const { return *m_PanelTitle; }
             ColorWindow& PanelTitleText() const { return *m_PanelTitleText; }
             ColorWindow& Selector() const { return *m_Selector; }
@@ -101,6 +101,34 @@ namespace config
                 }
 
                 m_PanelDrag = cw;
+            }
+
+            void set_PanelIndicator(ColorWindow* cw)
+            {
+                if (cw == nullptr) {
+                    return;
+                }
+
+                if (m_PanelIndicator != nullptr) {
+                    delete m_PanelIndicator;
+                    m_PanelIndicator = nullptr;
+                }
+
+                m_PanelIndicator = cw;
+            }
+
+            void set_PanelSeparator(ColorWindow* cw)
+            {
+                if (cw == nullptr) {
+                    return;
+                }
+
+                if (m_PanelSeparator != nullptr) {
+                    delete m_PanelSeparator;
+                    m_PanelSeparator = nullptr;
+                }
+
+                m_PanelSeparator = cw;
             }
 
             void set_PanelTitle(ColorWindow* cw)
@@ -232,6 +260,8 @@ namespace config
           private:
             ColorWindow* m_Panel = new ColorWindow();
             ColorWindow* m_PanelDrag = new ColorWindow();
+            ColorWindow* m_PanelIndicator = new ColorWindow();
+            ColorWindow* m_PanelSeparator = new ColorWindow();
             ColorWindow* m_PanelTitle = new ColorWindow();
             ColorWindow* m_PanelTitleText = new ColorWindow();
             ColorWindow* m_PanelCell = new ColorWindow();
@@ -253,6 +283,7 @@ namespace config
     int get_window_start_end_margin();
     int get_icon_size();
     void set_icon_size(int value);
+    dock_indicator_type_t get_indicator_type();
     bool is_autohide();
     bool is_intelihide();
     bool is_show_title();

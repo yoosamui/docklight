@@ -20,6 +20,7 @@ namespace config
     dock_location_t m_location = dock_location_t::bottom;
     int m_icon_size = DEF_DEFAULT_ICON_SIZE;
     int m_separator_margin = DEF_DEFAULT_SEPARATOR_MARGIN;
+    dock_indicator_type_t m_indicator_type = dock_indicator_type_t::dots;
     bool m_show_title = true;
     bool m_show_separator_line = true;
     dock_alignment_t m_alignment = dock_alignment_t::center;
@@ -97,8 +98,12 @@ namespace config
         // clang-format off
         //
         m_theme.set_Panel(new ColorWindow());
-        m_theme.set_PanelCell(new ColorWindow(Color(1, 1, 1, 3), Color(1, 1, 1, 1), 1.2, 3, 0));
-        m_theme.set_PanelDrag(new ColorWindow(Color(1, 1, 1, 3), Color(1, 1, 1, 1), 2.5, 3, 0));
+        m_theme.set_PanelCell(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 1, 1, 1), 1.0, 3, 0));
+        m_theme.set_PanelDrag(new ColorWindow(Color(1, 1, 1, 0.4), Color(1, 1, 1, 1), 2.5, 3, 0));
+        m_theme.set_PanelIndicator(new ColorWindow(Color(1, 1, 1, 1), Color(1, 1, 1, 1), 0, 0, 0));
+        m_theme.set_PanelSeparator(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 1, 1, 1), 1.0, 3, 0));
+
+        set_separator_line(false);
 /*
         m_theme.set_Selector(new ColorWindow(Color(255, 255, 255, 0.3), Color(1, 1, 1, 1), 1.5, 3, 0));
         m_theme.set_PanelTitle(new ColorWindow(Color(0, 0, 0, 1), Color(0, 0, 0, 1), 1, 6, 0));
@@ -149,11 +154,34 @@ namespace config
 
         return value;
     }
+
+    string get_indicator_type_key(GKeyFile *key_file)
+    {
+        GError *error = nullptr;
+        char *value = g_key_file_get_string(key_file, "dock", "indicator_type", &error);
+        if (error) {
+            g_error_free(error);
+            error = nullptr;
+
+            return string{};
+        }
+
+        return value;
+    }
+
     string get_style(GKeyFile *key_file)
     {
         GError *error = nullptr;
         char *value = g_key_file_get_string(key_file, "dock", "style", &error);
         if (error) {
+            g_error_free(error);
+            error = nullptr;
+
+            return string{};
+        }
+
+        // check if exits
+        if (g_key_file_get_string(key_file, value, "panel", &error) == nullptr) {
             g_error_free(error);
             error = nullptr;
 
@@ -168,7 +196,7 @@ namespace config
         GError *error = nullptr;
         char *value =
             g_key_file_get_string(key_file, style_name.c_str(), item_name.c_str(), &error);
-        if (error) {
+        if (!value || error) {
             g_error_free(error);
             error = nullptr;
 
@@ -302,6 +330,17 @@ namespace config
                 }
             }
 
+            string indicator = get_indicator_type_key(key_file);
+            if (!indicator.empty()) {
+                if (indicator == "dots") {
+                    m_indicator_type = dock_indicator_type_t::dots;
+                } else if (indicator == "lines") {
+                    m_indicator_type = dock_indicator_type_t::lines;
+                } else {
+                    g_warning("configuration: invalid indicator mode. %s\n", indicator.c_str());
+                }
+            }
+
             // separator show line
             m_show_separator_line = get_separator_show_line(key_file);
 
@@ -328,10 +367,26 @@ namespace config
 
                 const string panel_cell = get_style_item(key_file, style_name, "panel_cell");
                 if (!panel_cell.empty()) {
-                    g_error("%s\n", panel_cell.c_str());
                     get_color_from_string(panel_cell.c_str(), fill, stroke, lineWidth, ratio, mask);
                     m_theme.set_PanelCell(new ColorWindow(fill, stroke, lineWidth, ratio, mask));
                 }
+
+                const string panel_indicator =
+                    get_style_item(key_file, style_name, "panel_indicator");
+                if (!panel_cell.empty()) {
+                    get_color_from_string(panel_indicator.c_str(), fill, stroke, lineWidth, ratio,
+                                          mask);
+                    m_theme.set_PanelIndicator(
+                        new ColorWindow(fill, stroke, lineWidth, ratio, mask));
+                }
+
+                const string panel_drag = get_style_item(key_file, style_name, "panel_drag");
+                if (!panel_cell.empty()) {
+                    get_color_from_string(panel_drag.c_str(), fill, stroke, lineWidth, ratio, mask);
+                    m_theme.set_PanelDrag(new ColorWindow(fill, stroke, lineWidth, ratio, mask));
+                }
+            } else {  // use default theme
+                m_show_separator_line = false;
             }
 
             g_key_file_free(key_file);
@@ -397,6 +452,7 @@ namespace config
     Theme get_theme() { return m_theme; }
 
     bool is_show_title() { return m_show_title; }
+
     bool is_autohide() { return m_autohide_type == dock_autohide_type_t::autohide; }
 
     bool is_intelihide() { return m_autohide_type == dock_autohide_type_t::intelihide; }
@@ -410,6 +466,8 @@ namespace config
     int get_separator_margin() { return m_separator_margin; }
 
     dock_location_t get_dock_location() { return m_location; }
+
+    dock_indicator_type_t get_indicator_type() { return m_indicator_type; }
 
     int get_dock_area() { return m_icon_size + MARGIN; }
 
