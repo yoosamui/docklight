@@ -43,11 +43,11 @@ void Panel::set_owner(Gtk::Window* window)
 void Panel::init()
 {
     if (config::is_autohide()) {
-        m_autohide.set_hide_delay(0.6);
+        m_autohide.set_hide_delay(0.5);
         m_autohide.hide();
     }
     if (config::is_intelihide()) {
-        m_autohide.set_hide_delay(0.6);
+        m_autohide.set_hide_delay(0.5);
         m_autohide.intelihide();
     }
 
@@ -540,19 +540,25 @@ bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
         m_autohide.set_mouse_inside(false);
     }
 
-    int x = 0, y = 0, w = 0, h = 0;
-    gdk_window_get_geometry(crossing_event->window, &x, &y, &w, &h);
-
-    // check for false positives
-    if (config::get_dock_orientation() == Gtk::ORIENTATION_VERTICAL) {
-        if ((int)crossing_event->y >= 0 && (int)crossing_event->y <= h) {
-            if ((int)crossing_event->x == x) {
+    auto const location = config::get_dock_location();
+    int area = config::get_dock_area();
+    if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+        if (location == dock_location_t::top) {
+            if ((int)crossing_event->y < 0) {
+                return true;
+            }
+        } else {
+            if ((int)crossing_event->y > area) {
                 return true;
             }
         }
     } else {
-        if ((int)crossing_event->x >= 0 && (int)crossing_event->x <= w) {
-            if ((int)crossing_event->y == h || (int)crossing_event->y == 0) {
+        if (location == dock_location_t::left) {
+            if ((int)crossing_event->x < 0) {
+                return true;
+            }
+        } else {
+            if ((int)crossing_event->x > area) {
                 return true;
             }
         }

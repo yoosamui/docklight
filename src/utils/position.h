@@ -10,11 +10,11 @@ DL_NS_BEGIN
 namespace position_util
 {
     void hide();
+    bool is_visible();
     void init(AppWindow *window);
     void set_window_position();
     const Gdk::Rectangle get_appwindow_geometry();
-    void get_center_screen_position(int targetwidth, int targetheight,
-                                    int &posx, int &posy);
+    void get_center_screen_position(int targetwidth, int targetheight, int &posx, int &posy);
 
 }  // namespace position_util
 DL_NS_END

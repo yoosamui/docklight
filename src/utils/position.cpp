@@ -44,7 +44,7 @@ namespace position_util
             if (config::get_dock_location() == dock_location_t::bottom) {
                 ypos = workarea.get_y() + workarea.get_height() - area;
             } else {
-                ypos = workarea.get_y() + area;
+                ypos = workarea.get_y();
             }
 
             m_window->resize(width, area);
@@ -79,7 +79,7 @@ namespace position_util
             if (config::get_dock_location() == dock_location_t::right) {
                 xpos = workarea.get_x() + workarea.get_width() - area;
             } else {
-                xpos = workarea.get_x() + area;
+                xpos = workarea.get_x();
             }
 
             m_window->resize(area, height);
@@ -91,6 +91,7 @@ namespace position_util
     {
         auto const location = config::get_dock_location();
         Gdk::Rectangle workarea = device::monitor::get_current()->get_workarea();
+        int area = config::get_dock_area();
 
         int x = 0, y = 0;
         m_window->get_position(x, y);
@@ -101,7 +102,7 @@ namespace position_util
             if (location == dock_location_t::bottom) {
                 m_window->move(x, workarea.get_height() + workarea.get_y() - 1);
             } else {
-                m_window->move(x, workarea.get_y());
+                m_window->move(x, workarea.get_y() - area + 1);
             }
         } else {
             // m_window->resize(1, m_window->get_height());
@@ -109,11 +110,32 @@ namespace position_util
             if (location == dock_location_t::right) {
                 m_window->move(workarea.get_width() + workarea.get_x() - 1, y);
             } else {
-                m_window->move(workarea.get_x(), y);
+                m_window->move(workarea.get_x() - area + 1, y);
             }
         }
     }
+    bool is_visible()
+    {
+        int x = 0, y = 0;
+        int area = config::get_dock_area();
+        auto const location = config::get_dock_location();
+        Gdk::Rectangle workarea = device::monitor::get_current()->get_workarea();
 
+        m_window->get_position(x, y);
+
+        switch (location) {
+            case dock_location_t::top:
+                return y == workarea.get_y();
+            case dock_location_t::bottom:
+                return (y + area) == (workarea.get_y() + workarea.get_height());
+            case dock_location_t::left:
+                return x == workarea.get_x();
+            case dock_location_t::right:
+                return (x + area) == (workarea.get_x() + workarea.get_width());
+            default:
+                return false;
+        }
+    }
     const Gdk::Rectangle get_appwindow_geometry()
     {
         Gdk::Rectangle result;

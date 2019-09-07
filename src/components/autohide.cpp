@@ -260,8 +260,6 @@ void Autohide::hide()
         return;
     }
 
-    // g_print("Start hide %d %d\n", (int)m_stm.m_visible, (int)m_stm.m_mouse_inside);
-
     if (config::is_intelihide()) {
         if (m_active_window == nullptr) {
             return;
@@ -273,15 +271,22 @@ void Autohide::hide()
         }
     }
 
+    if (!m_stm.m_visible && position_util::is_visible()) {
+        m_stm.m_visible = true;
+    }
+
     if (m_stm.m_visible && !m_stm.m_mouse_inside) {
         m_stm.m_animation_state = DEF_AUTOHIDE_HIDE;
         connect_signal_handler(true);
-        //  g_print("Exec hide\n");
     }
 }
 
 void Autohide::show()
 {
+    if (m_stm.m_visible) {
+        return;
+    }
+
     auto screen = wnck_screen_get_default();
     WnckWindow* m_active_window = wnck_screen_get_active_window(screen);
     if (m_active_window == nullptr) {
@@ -303,10 +308,6 @@ void Autohide::set_mouse_inside(bool mouse_inside)
 
 void Autohide::reset_timer()
 {
-    // if (!config::is_autohide()) {
-    // return;
-    //}
-
     m_stm.m_animation_state = DEF_AUTOHIDE_SHOW;
     m_stm.m_animation_timer.stop();
     m_stm.m_animation_timer.reset();
@@ -355,7 +356,6 @@ bool Autohide::animation()
                 } else {
                     startPosition = config::get_dock_area() + 1;
                     endPosition = 0;
-                    ;
                 }
                 break;
             }
