@@ -283,9 +283,9 @@ void Autohide::hide()
 
 void Autohide::show()
 {
-    if (m_stm.m_visible) {
-        return;
-    }
+    // if (m_stm.m_visible) {
+    // return;
+    //}
 
     auto screen = wnck_screen_get_default();
     WnckWindow* m_active_window = wnck_screen_get_active_window(screen);

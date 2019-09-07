@@ -97,7 +97,9 @@ namespace config
         // clang-format off
         //
         m_theme.set_Panel(new ColorWindow());
-        m_theme.set_PanelCell(new ColorWindow(Color(0, 0.50, 0.66, 1), Color(1, 1, 1, 1), 1.5, 3, 0));
+        m_theme.set_PanelCell(new ColorWindow(Color(1, 1, 1, 3), Color(1, 1, 1, 1), 1.2, 3, 0));
+        m_theme.set_PanelDrag(new ColorWindow(Color(1, 1, 1, 3), Color(1, 1, 1, 1), 2.5, 3, 0));
+/*
         m_theme.set_Selector(new ColorWindow(Color(255, 255, 255, 0.3), Color(1, 1, 1, 1), 1.5, 3, 0));
         m_theme.set_PanelTitle(new ColorWindow(Color(0, 0, 0, 1), Color(0, 0, 0, 1), 1, 6, 0));
         m_theme.set_PanelTitleText(new ColorWindow(Color(), Color(1, 1, 1, 1), 1, 0, 0));
@@ -106,7 +108,7 @@ namespace config
         m_theme.set_PreviewTitleText(new ColorWindow(Color(), Color(1, 1, 1, 1), 0, 0, 0));
         m_theme.set_PreviewClose(new ColorWindow(Color(1, 0, 0, 1), Color(1, 1, 1, 1), 1.5, 0, 0));
         m_theme.set_Separator(new ColorWindow(Color(), Color(1, 1, 1, 1), 1, 0, 0));
-
+*/
         // clang-format on
     }
     GKeyFile *load_config_file()
@@ -319,13 +321,17 @@ namespace config
                 int mask;
 
                 const string panel = get_style_item(key_file, style_name, "panel");
-                get_color_from_string(panel.c_str(), fill, stroke, lineWidth, ratio, mask);
-                m_theme.set_Panel(new ColorWindow(fill, stroke, lineWidth, ratio, mask));
+                if (!panel.empty()) {
+                    get_color_from_string(panel.c_str(), fill, stroke, lineWidth, ratio, mask);
+                    m_theme.set_Panel(new ColorWindow(fill, stroke, lineWidth, ratio, mask));
+                }
 
                 const string panel_cell = get_style_item(key_file, style_name, "panel_cell");
-                //    g_error("%s\n", panel_cell.c_str());
-                get_color_from_string(panel_cell.c_str(), fill, stroke, lineWidth, ratio, mask);
-                m_theme.set_PanelCell(new ColorWindow(fill, stroke, lineWidth, ratio, mask));
+                if (!panel_cell.empty()) {
+                    g_error("%s\n", panel_cell.c_str());
+                    get_color_from_string(panel_cell.c_str(), fill, stroke, lineWidth, ratio, mask);
+                    m_theme.set_PanelCell(new ColorWindow(fill, stroke, lineWidth, ratio, mask));
+                }
             }
 
             g_key_file_free(key_file);

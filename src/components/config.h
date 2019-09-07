@@ -38,6 +38,8 @@ namespace config
                 m_Fill = fill;
                 m_Stroke = stroke;
                 m_LineWidth = lineWith;
+                g_print("Construct line %f\n", m_LineWidth);
+
                 m_Ratio = ratio;
                 m_Mask = mask;
             }
@@ -50,10 +52,10 @@ namespace config
 
           private:
             // defaults
-            Color m_Fill = Color(0.0, 0.50, 0.66, 1.8);
+            Color m_Fill = Color(0.0, 0.50, 0.66, 0.9);
             Color m_Stroke = Color(0, 0, 0, 0);
-            double m_LineWidth = 1.0;
-            double m_Ratio = 6.0;
+            double m_LineWidth = 0.5;
+            double m_Ratio = 3.0;
             int m_Mask = 0;
         };
 
@@ -62,9 +64,10 @@ namespace config
           public:
             Theme(){};
             ColorWindow& Panel() const { return *m_Panel; }
+            ColorWindow& PanelCell() const { return *m_PanelCell; }
+            ColorWindow& PanelDrag() const { return *m_PanelDrag; }
             ColorWindow& PanelTitle() const { return *m_PanelTitle; }
             ColorWindow& PanelTitleText() const { return *m_PanelTitleText; }
-            ColorWindow& PanelCell() const { return *m_PanelCell; }
             ColorWindow& Selector() const { return *m_Selector; }
             ColorWindow& Preview() const { return *m_Preview; }
             ColorWindow& PreviewCell() const { return *m_PreviewCell; }
@@ -84,6 +87,20 @@ namespace config
                 }
 
                 m_Panel = cw;
+            }
+
+            void set_PanelDrag(ColorWindow* cw)
+            {
+                if (cw == nullptr) {
+                    return;
+                }
+
+                if (m_PanelDrag != nullptr) {
+                    delete m_PanelDrag;
+                    m_PanelDrag = nullptr;
+                }
+
+                m_PanelDrag = cw;
             }
 
             void set_PanelTitle(ColorWindow* cw)
@@ -214,6 +231,7 @@ namespace config
 
           private:
             ColorWindow* m_Panel = new ColorWindow();
+            ColorWindow* m_PanelDrag = new ColorWindow();
             ColorWindow* m_PanelTitle = new ColorWindow();
             ColorWindow* m_PanelTitleText = new ColorWindow();
             ColorWindow* m_PanelCell = new ColorWindow();
