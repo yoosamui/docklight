@@ -12,6 +12,8 @@ typedef struct {
     string m_instance;
     string m_group;
     string m_title;
+    string m_comment;
+    string m_lang;
     bool m_error = false;
     string m_desktop_file;
     string m_desktop_name;
@@ -47,6 +49,8 @@ class DockItem
     int get_index() const;
     void set_y(int y);
     void set_x(int x);
+    int get_y();
+    int get_x();
     void set_image(Glib::RefPtr<Gdk::Pixbuf> image);
     dock_item_type_t get_dock_item_type() const;
     string get_desktop_icon_name() const;

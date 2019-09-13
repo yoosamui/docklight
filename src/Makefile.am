@@ -54,6 +54,8 @@ utils/easing.cpp \
 utils/easing.h \
 utils/wnck.cpp \
 utils/wnck.h \
+utils/desktopfile.cpp \
+utils/desktopfile.h \
 components/arguments.cpp \
 components/arguments.h \
 components/panel.cpp \

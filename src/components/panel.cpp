@@ -169,7 +169,7 @@ int Panel::get_required_size()
         size = m_appupdater.get_required_size();
 
         // ajust the decrease factor if items are smaller than 0
-        for (size_t i = 0; i < m_appupdater.m_dockitems.size(); i++) {
+        /*for (size_t i = 0; i < m_appupdater.m_dockitems.size(); i++) {
             auto const item = m_appupdater.m_dockitems[i];
             if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
                 int item_width = item->get_width();
@@ -184,7 +184,7 @@ int Panel::get_required_size()
                     diff += abs(item_height);
                 }
             }
-        }
+        }*/
 
         m_decrease_factor = diff / m_appupdater.m_dockitems.size();
     }
@@ -632,9 +632,8 @@ inline bool Panel::get_center_position(int& x, int& y, const int width, const in
 
     auto const item = AppUpdater::m_dockitems[m_current_index];
     auto const rect = position_util::get_appwindow_geometry();
-    auto const workarea = device::monitor::get_current()->get_workarea();
+    //   auto const workarea = device::monitor::get_current()->get_workarea();
     auto const location = config::get_dock_location();
-    auto const separator_margin = config::get_separator_margin();
 
     x = rect.get_x();
     y = rect.get_y();
@@ -647,30 +646,15 @@ inline bool Panel::get_center_position(int& x, int& y, const int width, const in
             y += rect.get_height();
         }
 
-        // clang-format off
         for (size_t i = 0; i < AppUpdater::m_dockitems.size(); i++) {
             auto const citem = AppUpdater::m_dockitems[i];
             auto const item_width = citem->get_width();
             if (citem == item) {
-                x -= (width / 2) - (item_width / 2);
-
-                // check left limit
-                if (x < workarea.get_x()) {
-                    x = workarea.get_x();
-                    return true;
-                }
-
-                // check the limit on the right
-                if (x + width > workarea.get_width()) {
-                   // x = workarea.get_width() - width + workarea.get_x();
-                    return true;
-                }
-
+                int center = (item_width / 2) - (width / 2);
+                x = (rect.get_x() + citem->get_x()) + center;
                 return true;
             }
-            x += item_width + separator_margin;
         }
-        // clang-format on
 
     } else {
         y += config::get_window_start_end_margin() / 2;
@@ -680,30 +664,16 @@ inline bool Panel::get_center_position(int& x, int& y, const int width, const in
             x += rect.get_width();  // iockWindow::get_DockWindowWidth();
         }
 
-        // clang-format off
         for (size_t i = 0; i < AppUpdater::m_dockitems.size(); i++) {
             auto const citem = AppUpdater::m_dockitems[i];
             auto const item_height = citem->get_height();
+
             if (citem == item) {
-                y -= (height / 2) - (item_height / 2);
-
-                // check left limit
-                if (y < workarea.get_y()) {
-                    y = workarea.get_y();
-                    return true;
-                }
-
-                // check the limit on the right
-                if (y + height > workarea.get_height()) {
-                  //  y = workarea.get_height() - height + workarea.get_y();
-                    return true;
-                }
-
+                int center = (item_height / 2) - (height / 2);
+                y = (rect.get_y() + citem->get_y()) + center;
                 return true;
             }
-            y += item_height + separator_margin;
         }
-        // clang-format on
     }
 
     return false;
@@ -1018,9 +988,9 @@ void Panel::draw_title()
     char title[60];
     int count = (int)item->m_items.size();
     if (count > 1) {
-        sprintf(title, "%s (%d)", item->get_name().c_str(), count);
+        sprintf(title, "%s (%d)", item->get_title().c_str(), count);
     } else {
-        sprintf(title, "%s", item->get_name().c_str());
+        sprintf(title, "%s", item->get_title().c_str());
     }
 
     m_titlewindow.set_text(title);

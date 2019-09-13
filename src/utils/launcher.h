@@ -9,11 +9,12 @@ DL_NS_BEGIN
 namespace launcher_util
 {
     bool get_app_info(WnckWindow* window, appinfo_t& info);
-    bool get_desktop_file(GKeyFile* key_file, const char* appname,
-                          string& desktop_file);
+    bool get_desktop_file(GKeyFile* key_file, const char* appname, string& desktop_file);
     string get_name_from_desktopfile(const char* appname);
     bool launch(const string& appname, const string& desktop_filename);
-
+    int get_desktop_files(vector<string>& desktop_file_list);
+    bool get_info_from_desktopfile(GKeyFile* key_file, const char* desktop_file_name,
+                                   appinfo_t& info);
     /*
          bool Launch(const std::string& appname);
          bool Launch(const char* appname);

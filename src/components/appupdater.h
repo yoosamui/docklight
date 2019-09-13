@@ -37,6 +37,9 @@ class AppUpdater
     typedef struct {
         dock_item_type_t dock_item_type;
         char name[60];
+        char title[60];
+        char lang[12];
+        char comment[512];
         char desktop_file[512];
         char icon_name[128];
         int separator_length = 0;

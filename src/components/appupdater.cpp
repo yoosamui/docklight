@@ -9,6 +9,7 @@
 #include "components/config.h"
 #include "components/device.h"
 #include "components/dockitem.h"
+#include "utils/desktopfile.h"
 #include "utils/launcher.h"
 #include "utils/pixbuf.h"
 #include "utils/system.h"
@@ -121,6 +122,9 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
             auto const item = m_dockitems[index];
 
             // update the owner item in case that has been attached
+            // or language has been changed
+            item->get_appinfo()->m_title = info.m_title;
+
             item->get_appinfo()->m_wnckwindow = window;
             item->get_appinfo()->m_xid = wnck_window_get_xid(window);
 
@@ -239,6 +243,9 @@ bool AppUpdater::save()
         }
 
         strncpy(rec.name, info->m_name.c_str(), sizeof(rec.name) - 1);
+        strncpy(rec.title, info->m_title.c_str(), sizeof(rec.title) - 1);
+        strncpy(rec.comment, info->m_comment.c_str(), sizeof(rec.comment) - 1);
+        strncpy(rec.lang, info->m_lang.c_str(), sizeof(rec.lang) - 1);
         strncpy(rec.icon_name, info->m_desktop_icon_name.c_str(), sizeof(rec.icon_name) - 1);
         strncpy(rec.desktop_file, info->m_desktop_file.c_str(), sizeof(rec.desktop_file) - 1);
 
@@ -288,9 +295,17 @@ bool AppUpdater::load()
         info.m_wnckwindow = 0;
         info.m_xid = 0;
         info.m_name = rec.name;
+        info.m_title = rec.title;
+        info.m_comment = rec.comment;
+        info.m_lang = rec.lang;
         info.m_desktop_file = rec.desktop_file;
         info.m_desktop_icon_name = rec.icon_name;
         info.m_separator_length = rec.separator_length;
+
+        // get the title form current locale
+        //     info.m_title = launcher_util::get_name_from_desktopfile(info.m_name.c_str());
+
+        desktopfile_util::scanning(info);
 
         // Add new
         auto item = new DockItem(info, info.m_dock_item_type);

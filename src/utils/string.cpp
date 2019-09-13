@@ -1,10 +1,48 @@
 #include "utils/string.h"
-#include <string.h>
-#include <algorithm>
+
 DL_NS_BEGIN
 
 namespace string_util
 {
+    vector<string> split(const string &source, char delim)
+    {
+        stringstream string_stream(source);
+        string item;
+        vector<string> elems;
+        while (getline(string_stream, item, delim)) {
+            elems.push_back(move(item));
+        }
+        return elems;
+    }
+
+    string split_find_token(const string &source, const string &token, char delim)
+    {
+        stringstream string_stream(source);
+        string item;
+        while (getline(string_stream, item, delim)) {
+            if (item == token) {
+                return item;
+            }
+        }
+        return {};
+    }
+
+    bool split_token_exist(const string &source, const string &token, const string &delimeters)
+    {
+        string item;
+
+        for (size_t i = 0; i < delimeters.size(); i++) {
+            stringstream string_stream(source);
+            while (getline(string_stream, item, delimeters[i])) {
+                if (item == token) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     /**
      * Validate numeric strings.
      * returns true id the string is numeric, otherwise false.
@@ -21,8 +59,8 @@ namespace string_util
      */
     bool is_numeric(const string &s)
     {
-        std::string::const_iterator it = s.begin();
-        while (it != s.end() && std::isdigit(*it)) ++it;
+        string::const_iterator it = s.begin();
+        while (it != s.end() && isdigit(*it)) ++it;
         return !s.empty() && it == s.end();
     }
 
@@ -49,7 +87,7 @@ namespace string_util
 
     string string_to_lower(const char *strp)
     {
-        std::string str = strp;
+        string str = strp;
         transform(str.begin(), str.end(), str.begin(), ::tolower);
 
         return str;

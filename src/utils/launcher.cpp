@@ -46,39 +46,81 @@ namespace launcher_util
         const char* _instance = wnck_window_get_class_instance_name(window);
         if (_instance == nullptr) {
             _instance = wnck_window_get_name(window);
-            g_warning("App %s instance could not be found. Use name instead\n",
-                      _instance);
+            g_warning("App %s instance could not be found. Use name instead\n", _instance);
         }
 
         info.m_instance = _instance;
-        info.m_instance =
-            string_util::remove_extension(info.m_instance, extensions);
+        info.m_instance = string_util::remove_extension(info.m_instance, extensions);
+        info.m_title = _group;
 
-        info.m_title = wnck_window_get_name(window);
+        // const char* appname = wnck_window_get_name(window);
 
+        // g_print("Get Desktop file ...................................%s\n", info.m_name.c_str());
         GKeyFile* key_file = g_key_file_new();
-        info.m_error = get_desktop_file(key_file, info.m_group.c_str(),
-                                        info.m_desktop_file) == false;
+        GError* error = nullptr;
+        info.m_error =
+            get_desktop_file(key_file, info.m_name.c_str(), info.m_desktop_file) == false;
 
-        if (!info.m_error) {
-            GError* error = nullptr;
-            info.m_desktop_icon_name = g_key_file_get_string(
-                key_file, "Desktop Entry", "Icon", &error);
-            if (error) {
-                g_error_free(error);
-                error = nullptr;
-            }
-        } else {
-            // Icon name could not be found.
-            // We build an icon name from the app name without '-' char
-            info.m_desktop_icon_name = info.m_name;
-            size_t idx = info.m_name.find("-");
-            if (idx != string::npos) {
-                info.m_desktop_icon_name =
-                    info.m_desktop_icon_name.substr(idx + 1);
+        /*if (info.m_error) {
+            info.m_error =
+                get_desktop_file(key_file, info.m_name.c_str(), info.m_desktop_file) == false;
+        }
+
+        if (info.m_error) {
+            info.m_error =
+                get_desktop_file(key_file, info.m_title.c_str(), info.m_desktop_file) == false;
+        }*/
+
+        if (info.m_error) {
+            vector<string> desktop_files;
+            get_desktop_files(desktop_files);
+            for (auto const desktop_file : desktop_files) {
+                if (get_info_from_desktopfile(key_file, desktop_file.c_str(), info)) break;
             }
         }
 
+        if (!info.m_error) {
+            info.m_title = g_key_file_get_string(key_file, "Desktop Entry", "Name", &error);
+            info.m_desktop_icon_name =
+                g_key_file_get_string(key_file, "Desktop Entry", "Icon", &error);
+        }
+
+        /*
+                if (!info.m_error) {
+                    GError* error = nullptr;
+                    info.m_desktop_icon_name =
+                        g_key_file_get_string(key_file, "Desktop Entry", "Icon", &error);
+                    if (info.m_title.empty()) {
+                        info.m_title = g_key_file_get_string(key_file, "Desktop Entry", "Name",
+           &error);
+                    }
+                    g_print(".........................................%s\n", info.m_name.c_str());
+                    info.m_title = wnck_window_get_name(window);
+                    if (error) {
+                        g_error_free(error);
+                        error = nullptr;
+                    }
+                } else {
+                    // Icon name could not be found.
+                    // We build an icon name from the app name without '-' char
+                    if (info.m_desktop_icon_name.empty()) {
+                        info.m_desktop_icon_name = info.m_name;
+                        size_t idx = info.m_name.find("-");
+                        if (idx != string::npos) {
+                            info.m_desktop_icon_name = info.m_desktop_icon_name.substr(idx + 1);
+                        }
+                    }
+                }*/
+
+        // Icon name could not be found.
+        // We build an icon name from the app name without '-' char
+        if (info.m_desktop_icon_name.empty()) {
+            info.m_desktop_icon_name = info.m_name;
+            size_t idx = info.m_name.find("-");
+            if (idx != string::npos) {
+                info.m_desktop_icon_name = info.m_desktop_icon_name.substr(idx + 1);
+            }
+        }
         g_key_file_free(key_file);
 
         info.m_desktop_name = get_name_from_desktopfile(info.m_group.c_str());
@@ -99,8 +141,32 @@ namespace launcher_util
         return result;
     }
 
-    bool get_desktop_file(GKeyFile* key_file, const char* appname,
-                          string& desktop_file)
+    int get_desktop_files(vector<string>& desktop_file_list)
+    {
+        DIR* dirFile = opendir("/usr/share/applications/");
+        if (dirFile == 0) {
+            g_warning("Directory could not be found.\n");
+            if (ENOENT == errno)
+                g_critical("Error loading desktop files: Directory does not exist.\n");
+
+            return -1;
+        }
+
+        desktop_file_list.clear();
+        struct dirent* hFile;
+        while ((hFile = readdir(dirFile)) != NULL) {
+            if (!strcmp(hFile->d_name, ".")) continue;
+            if (!strcmp(hFile->d_name, "..")) continue;
+            if ((hFile->d_name[0] == '.')) continue;  //  hidden files
+            if (!strstr(hFile->d_name, ".desktop")) continue;
+
+            desktop_file_list.push_back(hFile->d_name);
+        }
+
+        return closedir(dirFile);
+    }
+
+    bool get_desktop_file(GKeyFile* key_file, const char* appname, string& desktop_file)
     {
         if (appname == nullptr) return false;
         if (strcmp(appname, "Untitled window") == 0) return false;
@@ -126,8 +192,8 @@ namespace launcher_util
             for (auto f : desktopfilename) {
                 sprintf(filepath, "%s%s.desktop", p.c_str(), f.c_str());
 
-                gboolean found = g_key_file_load_from_file(
-                    key_file, filepath, GKeyFileFlags::G_KEY_FILE_NONE, &error);
+                gboolean found = g_key_file_load_from_file(key_file, filepath,
+                                                           GKeyFileFlags::G_KEY_FILE_NONE, &error);
 
                 if (error) {
                     g_error_free(error);
@@ -145,6 +211,32 @@ namespace launcher_util
         return false;
     }
 
+    bool get_info_from_desktopfile(GKeyFile* key_file, const char* desktop_file_name,
+                                   appinfo_t& info)
+    {
+        GError* error = nullptr;
+
+        char desktop_file_path[PATH_MAX];
+        sprintf(desktop_file_path, "/usr/share/applications/%s", desktop_file_name);
+        auto const found = g_key_file_load_from_file(key_file, desktop_file_path,
+                                                     GKeyFileFlags::G_KEY_FILE_NONE, &error);
+        if (!found) {
+            if (error) {
+                g_error_free(error);
+                error = nullptr;
+            }
+            info.m_error = true;
+            return false;
+        }
+        char* exec = g_key_file_get_string(key_file, "Desktop Entry", "Exec", &error);
+        if (exec && strncmp(exec, info.m_name.c_str(), info.m_name.size()) == 0) {
+            info.m_error = false;
+            info.m_desktop_file = desktop_file_name;
+            return true;
+        }
+
+        return false;
+    }
     string get_name_from_desktopfile(const char* appname)
     {
         string theappname = appname;
@@ -164,6 +256,8 @@ namespace launcher_util
         if (!get_desktop_file(key_file, _appname, desktop_file)) {
             dictionary[theappname] = theappname;
             g_key_file_free(key_file);
+            // g_print("...................................................NO from desktop %s\n",
+            // appname);
             return theappname;
         }
 
@@ -176,9 +270,9 @@ namespace launcher_util
 
         string lang(elang);
         lang = lang.substr(0, 2);
+        //     g_print("LANG                            %s......%s\n", _appname, lang.c_str());
         if (lang == "en") {
-            char* titlename = g_key_file_get_string(key_file, "Desktop Entry",
-                                                    "Name", &error);
+            char* titlename = g_key_file_get_string(key_file, "Desktop Entry", "Name", &error);
             if (titlename != nullptr) {
                 dictionary[theappname] = titlename;
                 g_key_file_free(key_file);
@@ -197,8 +291,8 @@ namespace launcher_util
 
         // check if the GenericName Entry exists
         string langNameKey = "GenericName[" + lang + "]";
-        char* titlename = g_key_file_get_string(key_file, "Desktop Entry",
-                                                langNameKey.c_str(), &error);
+        char* titlename =
+            g_key_file_get_string(key_file, "Desktop Entry", langNameKey.c_str(), &error);
         if (titlename != nullptr) {
             dictionary[theappname] = titlename;
             g_key_file_free(key_file);
@@ -212,8 +306,20 @@ namespace launcher_util
 
         // check if the Name Entry exists
         langNameKey = "Name[" + lang + "]";
-        titlename = g_key_file_get_string(key_file, "Desktop Entry",
-                                          langNameKey.c_str(), &error);
+        titlename = g_key_file_get_string(key_file, "Desktop Entry", langNameKey.c_str(), &error);
+        if (titlename != nullptr) {
+            dictionary[theappname] = titlename;
+            g_key_file_free(key_file);
+            return titlename;
+        }
+
+        if (error) {
+            g_error_free(error);
+            error = nullptr;
+        }
+
+        langNameKey = "Name";
+        titlename = g_key_file_get_string(key_file, "Desktop Entry", langNameKey.c_str(), &error);
         if (titlename != nullptr) {
             dictionary[theappname] = titlename;
             g_key_file_free(key_file);
@@ -227,8 +333,8 @@ namespace launcher_util
 
         // check if the dektop file is a Domain file
         langNameKey = "X-Ubuntu-Gettext-Domain";
-        char* mofile = g_key_file_get_string(key_file, "Desktop Entry",
-                                             langNameKey.c_str(), &error);
+        char* mofile =
+            g_key_file_get_string(key_file, "Desktop Entry", langNameKey.c_str(), &error);
         if (mofile == nullptr) {
             if (error) {
                 g_error_free(error);
@@ -241,8 +347,8 @@ namespace launcher_util
         }
 
         langNameKey = "X-GNOME-FullName";
-        char* xFullname = g_key_file_get_string(key_file, "Desktop Entry",
-                                                langNameKey.c_str(), &error);
+        char* xFullname =
+            g_key_file_get_string(key_file, "Desktop Entry", langNameKey.c_str(), &error);
         if (xFullname == nullptr) {
             if (error) {
                 g_error_free(error);
@@ -251,8 +357,8 @@ namespace launcher_util
         }
 
         langNameKey = "GenericName";
-        char* xGenericName = g_key_file_get_string(key_file, "Desktop Entry",
-                                                   langNameKey.c_str(), &error);
+        char* xGenericName =
+            g_key_file_get_string(key_file, "Desktop Entry", langNameKey.c_str(), &error);
         if (xGenericName == nullptr) {
             if (error) {
                 g_error_free(error);
@@ -261,8 +367,7 @@ namespace launcher_util
         }
 
         langNameKey = "Name";
-        char* xName = g_key_file_get_string(key_file, "Desktop Entry",
-                                            langNameKey.c_str(), &error);
+        char* xName = g_key_file_get_string(key_file, "Desktop Entry", langNameKey.c_str(), &error);
         if (xName == nullptr) {
             if (error) {
                 g_error_free(error);
@@ -271,8 +376,7 @@ namespace launcher_util
         }
 
         MoReader* mo = new MoReader();
-        string moFilePath("/usr/share/locale-langpack/" + lang +
-                          "/LC_MESSAGES/" + mofile + ".mo");
+        string moFilePath("/usr/share/locale-langpack/" + lang + "/LC_MESSAGES/" + mofile + ".mo");
 
         if (mo->Load(moFilePath.c_str()) < 0) {
             dictionary[theappname] = theappname;
@@ -286,24 +390,20 @@ namespace launcher_util
         string xGenericNameTranslatedText = "";
         string xNameTranslatedText = "";
 
-        if (xFullname != nullptr)
-            xFullnameTranslatedText = mo->getText(xFullname);
+        if (xFullname != nullptr) xFullnameTranslatedText = mo->getText(xFullname);
 
-        if (xGenericName != nullptr)
-            xGenericNameTranslatedText = mo->getText(xGenericName);
+        if (xGenericName != nullptr) xGenericNameTranslatedText = mo->getText(xGenericName);
 
         if (xName != nullptr) xNameTranslatedText = mo->getText(xName);
 
-        if (!xFullnameTranslatedText.empty() &&
-            xFullnameTranslatedText != theappname) {
+        if (!xFullnameTranslatedText.empty() && xFullnameTranslatedText != theappname) {
             dictionary[theappname] = xFullnameTranslatedText;
             g_key_file_free(key_file);
             delete mo;
             return dictionary[theappname];
         }
 
-        if (!xGenericNameTranslatedText.empty() &&
-            xGenericNameTranslatedText != theappname) {
+        if (!xGenericNameTranslatedText.empty() && xGenericNameTranslatedText != theappname) {
             dictionary[theappname] = xGenericNameTranslatedText;
             g_key_file_free(key_file);
             delete mo;
@@ -339,9 +439,8 @@ namespace launcher_util
         }
 
         if (!desktopfile.empty()) {
-            gboolean found = g_key_file_load_from_file(
-                key_file, desktopfile.c_str(), GKeyFileFlags::G_KEY_FILE_NONE,
-                &error);
+            gboolean found = g_key_file_load_from_file(key_file, desktopfile.c_str(),
+                                                       GKeyFileFlags::G_KEY_FILE_NONE, &error);
 
             if (error) {
                 g_error_free(error);
@@ -349,8 +448,7 @@ namespace launcher_util
             }
 
             if (found) {
-                app_info =
-                    (GAppInfo*)g_desktop_app_info_new_from_keyfile(key_file);
+                app_info = (GAppInfo*)g_desktop_app_info_new_from_keyfile(key_file);
 
                 if (app_info != nullptr) {
                     char* uri = nullptr;
@@ -360,16 +458,13 @@ namespace launcher_util
                     // TODO: check parameters
 
                     GdkDisplay* display = gdk_display_get_default();
-                    context =
-                        (GAppLaunchContext*)gdk_display_get_app_launch_context(
-                            display);
+                    context = (GAppLaunchContext*)gdk_display_get_app_launch_context(display);
 
-                    gboolean launched = g_app_info_launch_uris(
-                        app_info, glist_parameters, context, &error);
+                    gboolean launched =
+                        g_app_info_launch_uris(app_info, glist_parameters, context, &error);
 
                     if (error) {
-                        g_warning("Launcher: Error %s %s \n", appname.c_str(),
-                                  error->message);
+                        g_warning("Launcher: Error %s %s \n", appname.c_str(), error->message);
                         g_error_free(error);
                         error = nullptr;
                     }
@@ -383,8 +478,7 @@ namespace launcher_util
 
                     if (launched) {
                         g_key_file_free(key_file);
-                        g_print("Launch via Desktop file %s\n",
-                                appname.c_str());
+                        g_print("Launch via Desktop file %s\n", appname.c_str());
                         return launched;
                     }
                 }
@@ -396,8 +490,7 @@ namespace launcher_util
         gboolean launched = g_spawn_command_line_async(appname.c_str(), &error);
 
         if (error) {
-            g_warning("Lauch via command line: Error (%s) %s \n",
-                      appname.c_str(), error->message);
+            g_warning("Lauch via command line: Error (%s) %s \n", appname.c_str(), error->message);
             g_error_free(error);
             error = nullptr;
             g_key_file_free(key_file);

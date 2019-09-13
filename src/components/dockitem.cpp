@@ -139,6 +139,16 @@ void DockItem::set_x(int x)
     m_x = x;
 }
 
+int DockItem::get_y()
+{
+    return m_y;
+}
+
+int DockItem::get_x()
+{
+    return m_x;
+}
+
 shared_ptr<DockItem> DockItem::get_next() const
 {
     static int index = 0;
