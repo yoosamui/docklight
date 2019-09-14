@@ -103,14 +103,37 @@ namespace desktopfile_util
     {
         const std::string extensions[] = {".py", ".exe", ".sh"};
 
-        info.m_group = wnck_window_get_class_group_name(window);
-        if (info.m_group.empty()) {
+        const char* group = wnck_window_get_class_group_name(window);
+        if (group == nullptr) {
+            // Wie assume that this application don't have any desktop file.
+            // --------------------------------------------------------------
+            // Gets the name of window ,
+            // Always returns some value, even if window has no name set;
+            group = wnck_window_get_name(window);
+
+            // build the essential data
+            if (group != nullptr) {
+                info.m_group = group;
+                info.m_group = string_util::remove_extension(info.m_group, extensions);
+
+                info.m_name = group;
+                replace(info.m_name.begin(), info.m_name.end(), ' ', '-');
+
+                info.m_title = group;
+                info.m_icon_name = wnck_window_get_icon_name(window);
+
+                return true;
+            }
+
+            g_critical("Application group not found!!!\n");
             return false;
         }
+
+        info.m_group = group;
         info.m_group = string_util::remove_extension(info.m_group, extensions);
 
-        info.m_instance = wnck_window_get_class_instance_name(window);
-        if (!info.m_instance.empty()) {
+        const char* instance_name = wnck_window_get_class_instance_name(window);
+        if (instance_name != nullptr) {
             info.m_instance = string_util::remove_extension(info.m_instance, extensions);
         }
 
@@ -134,12 +157,13 @@ namespace desktopfile_util
         if (cache.count(info.m_name) == 1) {
             auto const cache_info = cache[info.m_name];
 
-            if (info.m_locale == getenv("LANG")) {
+            if (info.m_locale != getenv("LANG")) {
                 info.m_title = cache_info.m_title;
                 info.m_comment = cache_info.m_comment;
                 info.m_desktop_file = cache_info.m_desktop_file;
                 info.m_icon_name = cache_info.m_icon_name;
                 info.m_locale = cache_info.m_locale;
+                info.m_cache = true;
 
                 return true;
             }

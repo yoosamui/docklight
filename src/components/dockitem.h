@@ -17,6 +17,7 @@ typedef struct {
     bool m_error = false;
     string m_desktop_file;
     string m_icon_name;
+    bool m_cache = false;
     WnckWindow* m_wnckwindow;
     dock_item_type_t m_dock_item_type;
     unsigned long m_xid;

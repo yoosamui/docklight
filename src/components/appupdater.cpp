@@ -100,7 +100,7 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
         appinfo_t info;
         desktopfile_util::get_app_info(window, info);
 
-        g_print("App =>\n");
+        g_print("[------Application --------]\n");
         g_print("app-name: %s\n", info.m_name.c_str());
         g_print("instance-name: %s\n", info.m_instance.c_str());
         g_print("group-name: %s\n", info.m_group.c_str());
@@ -109,6 +109,7 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
         g_print("desktop-icon-name: %s\n", info.m_icon_name.c_str());
         g_print("desktop-file: %s\n", info.m_desktop_file.c_str());
         g_print("locale: %s\n", info.m_locale.c_str());
+        g_print("from cache: %d\n", (int)info.m_cache);
 
         info.m_wnckwindow = window;
         info.m_xid = wnck_window_get_xid(window);
