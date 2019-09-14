@@ -615,7 +615,9 @@ void Panel::activate()
     if ((int)item->m_items.size() == 1) {
         auto const citem = item->m_items[0];
         WnckWindow* window = citem->get_wnckwindow();
-        wnck_util::activate_window(window);
+        if (window != nullptr) {
+            wnck_util::activate_window(window);
+        }
     }
 }
 

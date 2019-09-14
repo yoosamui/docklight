@@ -13,11 +13,10 @@ typedef struct {
     string m_group;
     string m_title;
     string m_comment;
-    string m_lang;
+    string m_locale;
     bool m_error = false;
     string m_desktop_file;
-    string m_desktop_name;
-    string m_desktop_icon_name;
+    string m_icon_name;
     WnckWindow* m_wnckwindow;
     dock_item_type_t m_dock_item_type;
     unsigned long m_xid;

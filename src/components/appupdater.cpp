@@ -98,18 +98,20 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
 
     if (actiontype == window_action_t::OPEN) {
         appinfo_t info;
-
-        launcher_util::get_app_info(window, info);
+        desktopfile_util::get_app_info(window, info);
 
         g_print("App =>\n");
         g_print("app-name: %s\n", info.m_name.c_str());
         g_print("instance-name: %s\n", info.m_instance.c_str());
         g_print("group-name: %s\n", info.m_group.c_str());
         g_print("title-name: %s\n", info.m_title.c_str());
-        g_print("desktop-name: %s\n", info.m_desktop_name.c_str());
-        g_print("desktop-icon-name: %s\n", info.m_desktop_icon_name.c_str());
+        g_print("comment: %s\n", info.m_comment.c_str());
+        g_print("desktop-icon-name: %s\n", info.m_icon_name.c_str());
         g_print("desktop-file: %s\n", info.m_desktop_file.c_str());
-        g_print("error: %d\n", info.m_error);
+        g_print("locale: %s\n", info.m_locale.c_str());
+
+        info.m_wnckwindow = window;
+        info.m_xid = wnck_window_get_xid(window);
 
         vector<shared_ptr<DockItem>>::iterator it;
         it = std::find_if(
@@ -123,7 +125,7 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
 
             // update the owner item in case that has been attached
             // or language has been changed
-            item->get_appinfo()->m_title = info.m_title;
+            // item->get_appinfo()->m_title = info.m_title;
 
             item->get_appinfo()->m_wnckwindow = window;
             item->get_appinfo()->m_xid = wnck_window_get_xid(window);
@@ -138,7 +140,7 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
                 m_dockitems.push_back(shared_ptr<DockItem>(new DockItem(info)));
                 auto const new_item = m_dockitems.back();
 
-                new_item->set_image(pixbuf_util::get_window_icon(window, info.m_desktop_icon_name,
+                new_item->set_image(pixbuf_util::get_window_icon(window, info.m_icon_name,
                                                                  config::get_icon_size()));
 
                 // Add child
@@ -245,8 +247,8 @@ bool AppUpdater::save()
         strncpy(rec.name, info->m_name.c_str(), sizeof(rec.name) - 1);
         strncpy(rec.title, info->m_title.c_str(), sizeof(rec.title) - 1);
         strncpy(rec.comment, info->m_comment.c_str(), sizeof(rec.comment) - 1);
-        strncpy(rec.lang, info->m_lang.c_str(), sizeof(rec.lang) - 1);
-        strncpy(rec.icon_name, info->m_desktop_icon_name.c_str(), sizeof(rec.icon_name) - 1);
+        strncpy(rec.locale, info->m_locale.c_str(), sizeof(rec.locale) - 1);
+        strncpy(rec.icon_name, info->m_icon_name.c_str(), sizeof(rec.icon_name) - 1);
         strncpy(rec.desktop_file, info->m_desktop_file.c_str(), sizeof(rec.desktop_file) - 1);
 
         rec.dock_item_type = info->m_dock_item_type;
@@ -297,15 +299,12 @@ bool AppUpdater::load()
         info.m_name = rec.name;
         info.m_title = rec.title;
         info.m_comment = rec.comment;
-        info.m_lang = rec.lang;
+        info.m_locale = rec.locale;
         info.m_desktop_file = rec.desktop_file;
-        info.m_desktop_icon_name = rec.icon_name;
+        info.m_icon_name = rec.icon_name;
         info.m_separator_length = rec.separator_length;
 
-        // get the title form current locale
-        //     info.m_title = launcher_util::get_name_from_desktopfile(info.m_name.c_str());
-
-        desktopfile_util::scanning(info);
+        desktopfile_util::get_app_info(info);
 
         // Add new
         auto item = new DockItem(info, info.m_dock_item_type);

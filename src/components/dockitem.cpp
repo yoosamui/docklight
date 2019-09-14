@@ -53,7 +53,7 @@ string DockItem::get_desktop_filename() const
 
 string DockItem::get_desktop_icon_name() const
 {
-    return m_app_info.m_desktop_icon_name;
+    return m_app_info.m_icon_name;
 }
 
 WnckWindow* DockItem::get_wnckwindow() const

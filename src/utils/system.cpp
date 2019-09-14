@@ -16,7 +16,7 @@ DL_NS_BEGIN
 
 namespace system_util
 {
-    inline string get_current_path()
+    string get_current_path()
     {
         char szTmp[32];
         sprintf(szTmp, "/proc/%d/exe", getpid());
@@ -35,6 +35,12 @@ namespace system_util
         string path = get_current_path();
         string result = path + "/" + str;
         return result;
+    }
+
+    bool file_exists(const std::string& name)
+    {
+        struct stat buffer;
+        return (stat(name.c_str(), &buffer) == 0);
     }
 
     bool is_directory_exists(const char* directory_name)
@@ -56,8 +62,7 @@ namespace system_util
 
     bool create_directory(const char* directory_name)
     {
-        const int dir_err =
-            mkdir(directory_name, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+        const int dir_err = mkdir(directory_name, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
         if (dir_err == -1) {
             return false;
         }
