@@ -15,6 +15,7 @@
 #include "utils/system.h"
 
 #define DEF_ATTACHMENTS_FILENAME "docklight.dat"
+#define DOCKLIGHT_INSTANCENAME "docklight"
 
 DL_NS_BEGIN
 
@@ -93,6 +94,11 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
 
     if (wt == WNCK_WINDOW_DESKTOP || wt == WNCK_WINDOW_DOCK || wt == WNCK_WINDOW_MENU ||
         wt == WNCK_WINDOW_SPLASHSCREEN) {
+        return;
+    }
+
+    const char *instance_name = wnck_window_get_class_instance_name(window);
+    if (instance_name != nullptr && strcmp(instance_name, DOCKLIGHT_INSTANCENAME) == 0) {
         return;
     }
 
@@ -247,8 +253,8 @@ bool AppUpdater::save()
 
         strncpy(rec.name, info->m_name.c_str(), sizeof(rec.name) - 1);
         strncpy(rec.title, info->m_title.c_str(), sizeof(rec.title) - 1);
-        strncpy(rec.comment, info->m_comment.c_str(), sizeof(rec.comment) - 1);
-        strncpy(rec.locale, info->m_locale.c_str(), sizeof(rec.locale) - 1);
+        //    strncpy(rec.comment, info->m_comment.c_str(), sizeof(rec.comment) - 1);
+        //     strncpy(rec.locale, info->m_locale.c_str(), sizeof(rec.locale) - 1);
         strncpy(rec.icon_name, info->m_icon_name.c_str(), sizeof(rec.icon_name) - 1);
         strncpy(rec.desktop_file, info->m_desktop_file.c_str(), sizeof(rec.desktop_file) - 1);
 
@@ -299,10 +305,10 @@ bool AppUpdater::load()
         info.m_xid = 0;
         info.m_name = rec.name;
         info.m_title = rec.title;
-        info.m_comment = rec.comment;
-        info.m_locale = rec.locale;
-        info.m_desktop_file = rec.desktop_file;
+        // info.m_comment = rec.comment;
         info.m_icon_name = rec.icon_name;
+        // info.m_locale = rec.locale;
+        info.m_desktop_file = rec.desktop_file;
         info.m_separator_length = rec.separator_length;
 
         desktopfile_util::get_app_info(info);

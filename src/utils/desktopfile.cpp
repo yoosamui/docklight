@@ -69,7 +69,6 @@ namespace desktopfile_util
 
         info.m_desktop_file = desktop_file;
         info.m_locale = getenv("LANG");  // en_US.UTF-8
-        // info.m_locale = info.m_locale.substr(0, 2);
 
         char* title = g_desktop_app_info_get_locale_string(app_info, "Name");
         if (title == nullptr) {
@@ -90,13 +89,6 @@ namespace desktopfile_util
 
         char* icon_name = g_desktop_app_info_get_string(app_info, "Icon");
         if (icon_name) info.m_icon_name = icon_name;
-
-        // g_print("name...%s\n", info.m_name.c_str());
-        // g_print("desktop_file..%s\n", info.m_desktop_file.c_str());
-        // g_print("icon..%s\n", info.m_icon_name.c_str());
-        // g_print("title..%s\n", info.m_title.c_str());
-        // g_print("comment..%s\n", info.m_comment.c_str());
-        // g_print("lang..%s\n", info.m_lang.c_str());
     }
 
     bool get_app_info(WnckWindow* window, appinfo_t& info)
@@ -134,6 +126,7 @@ namespace desktopfile_util
 
         const char* instance_name = wnck_window_get_class_instance_name(window);
         if (instance_name != nullptr) {
+            info.m_instance = instance_name;
             info.m_instance = string_util::remove_extension(info.m_instance, extensions);
         }
 
@@ -157,7 +150,7 @@ namespace desktopfile_util
         if (cache.count(info.m_name) == 1) {
             auto const cache_info = cache[info.m_name];
 
-            if (info.m_locale != getenv("LANG")) {
+            if (cache_info.m_locale == getenv("LANG")) {
                 info.m_title = cache_info.m_title;
                 info.m_comment = cache_info.m_comment;
                 info.m_desktop_file = cache_info.m_desktop_file;
