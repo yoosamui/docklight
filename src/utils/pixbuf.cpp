@@ -61,17 +61,27 @@ namespace pixbuf_util
                                                GTK_ICON_LOOKUP_FORCE_SIZE,  // flags //
                                                &error);
         if (error) {
+            string error_message = error->message;
             g_error_free(error);
             error = nullptr;
 
-            if (window == 0 || !WNCK_IS_WINDOW(window)) {
-                g_warning("Load icon from window failed: %s %ld\n", icon_name.c_str(),
-                          (long)window);
-                return empty;
+            if (WNCK_IS_WINDOW(window)) {
+                auto icon = wnck_window_get_icon(window);
+                return Glib::wrap(icon, true)->scale_simple(size, size, Gdk::INTERP_BILINEAR);
             }
 
-            auto icon = wnck_window_get_icon(window);
-            return Glib::wrap(icon, true)->scale_simple(size, size, Gdk::INTERP_BILINEAR);
+            // try load from file
+            auto pixbuf = get_from_file(icon_name.c_str(), size, size);
+            if (pixbuf) {
+                return pixbuf;
+            } else {
+                g_warning(
+                    "Can't load icon from theme.\n Can't load icon from file \nwindow is NULL\n "
+                    "Theme error: %s\n",
+                    error_message.c_str());
+            }
+
+            return empty;
         }
 
         return Glib::wrap(pixbuf, true);

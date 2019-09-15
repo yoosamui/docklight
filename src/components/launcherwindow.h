@@ -18,8 +18,8 @@ class DockItem;
 class launcher_buttons_box : public Gtk::Frame
 {
   public:
-    launcher_buttons_box(bool horizontal, const Glib::ustring& title,
-                         gint spacing, Gtk::ButtonBoxStyle layout);
+    launcher_buttons_box(bool horizontal, const Glib::ustring& title, gint spacing,
+                         Gtk::ButtonBoxStyle layout);
 
     Gtk::Button m_button_createLauncher;
     Gtk::Button m_button_testLauncher;
@@ -36,6 +36,7 @@ class launcher_window : public Gtk::Window
   private:
     shared_ptr<DockItem> m_dockitem;
 
+    bool m_test_launch = false;
     // Signal handlers:
     void on_button_file_clicked();
     void on_button_close_clicked();

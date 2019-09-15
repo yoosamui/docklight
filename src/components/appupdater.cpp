@@ -15,7 +15,6 @@
 #include "utils/system.h"
 
 #define DEF_ATTACHMENTS_FILENAME "docklight.dat"
-#define DOCKLIGHT_INSTANCENAME "docklight"
 
 DL_NS_BEGIN
 

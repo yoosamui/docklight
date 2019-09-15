@@ -14,6 +14,14 @@
 
 DL_NS_BEGIN
 
+typedef struct {
+    bool m_mouse_inside = false;
+    int m_active_window_index = -1;
+    bool m_dragdrop_begin = false;
+    int m_decrease_factor = 0;
+
+} panel_static_members_t;
+
 class Panel : public Gtk::DrawingArea, DockMenu
 {
   public:
@@ -23,7 +31,8 @@ class Panel : public Gtk::DrawingArea, DockMenu
     void init();
     int get_required_size();
     void on_appupdater_update();
-    static int m_decrease_factor;
+
+    static panel_static_members_t m_stm;
 
   private:
     config::style::Theme m_theme;
@@ -45,17 +54,16 @@ class Panel : public Gtk::DrawingArea, DockMenu
 
     void reset_flags();
 
-    bool m_dragdrop_begin = false;
     Glib::Timer m_dragdrop_timer;
 
     bool m_draw_required = false;
-    static bool m_mouse_inside;
     int m_current_index = -1;
     bool m_mouse_left_down = false;
     bool m_mouse_right_down = false;
     void open_new();
     void activate();
 
+    void load_home_icon(int icon_size);
     // Override default signal handler
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
     void draw_panel(const Cairo::RefPtr<Cairo::Context>& cr);
@@ -87,6 +95,7 @@ class Panel : public Gtk::DrawingArea, DockMenu
     bool on_motion_notify_event(GdkEventMotion* event);
     bool on_scroll_event(GdkEventScroll* e);
 
+    static void set_active_window_indexp(WnckWindow* window);
     static void on_active_window_changed(WnckScreen* screen, WnckWindow* previously_active_window,
                                          gpointer user_data);
     // Menus

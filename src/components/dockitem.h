@@ -39,6 +39,7 @@ class DockItem
     string get_title() const;
     string get_windowname() const;
     string get_desktop_filename() const;
+    void set_desktop_filename(const string& desktop_file);
     WnckWindow* get_wnckwindow() const;
     unsigned long get_xid() const;
     shared_ptr<DockItem> get_next() const;

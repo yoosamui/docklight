@@ -19,10 +19,8 @@ DL_NS_BEGIN
 #define DEF_DIALOG_WIDTH 440
 #define DEF_DIALOG_HEIGHT 200
 
-launcher_buttons_box::launcher_buttons_box(bool horizontal,
-                                           const Glib::ustring& title,
-                                           gint spacing,
-                                           Gtk::ButtonBoxStyle layout)
+launcher_buttons_box::launcher_buttons_box(bool horizontal, const Glib::ustring& title,
+                                           gint spacing, Gtk::ButtonBoxStyle layout)
     : Gtk::Frame(title),
       m_button_createLauncher(_("Create Launcher")),
       m_button_testLauncher(_("Test Launcher")),
@@ -86,8 +84,7 @@ launcher_window::launcher_window()
     m_vbox_center.add(m_grid);
     m_vbox.add(m_hbox);
 
-    launcher_buttons_box* lb =
-        new launcher_buttons_box(true, "", 5, Gtk::BUTTONBOX_SPREAD);
+    launcher_buttons_box* lb = new launcher_buttons_box(true, "", 5, Gtk::BUTTONBOX_SPREAD);
 
     m_hbox.pack_start(*Gtk::manage(lb), Gtk::PACK_EXPAND_WIDGET);
     m_entry_file.set_max_length(MAX_INPUT);
@@ -109,8 +106,8 @@ launcher_window::launcher_window()
     lb->m_button_cancel.signal_pressed().connect(
         sigc::mem_fun(*this, &launcher_window::on_button_close_clicked));
 
-    lb->m_button_createLauncher.signal_pressed().connect(sigc::mem_fun(
-        *this, &launcher_window::on_button_createLauncher_clicked));
+    lb->m_button_createLauncher.signal_pressed().connect(
+        sigc::mem_fun(*this, &launcher_window::on_button_createLauncher_clicked));
 
     lb->m_button_testLauncher.signal_pressed().connect(
         sigc::mem_fun(*this, &launcher_window::on_button_testLauncher_clicked));
@@ -118,12 +115,11 @@ launcher_window::launcher_window()
     m_button_file.signal_clicked().connect(
         sigc::mem_fun(*this, &launcher_window::on_button_file_clicked));
 
-    m_button_categories_link.signal_clicked().connect(sigc::mem_fun(
-        *this, &launcher_window::on_button_categories_link_clicked));
+    m_button_categories_link.signal_clicked().connect(
+        sigc::mem_fun(*this, &launcher_window::on_button_categories_link_clicked));
 
     int x, y;
-    position_util::get_center_screen_position(DEF_DIALOG_WIDTH,
-                                              DEF_DIALOG_HEIGHT, x, y);
+    position_util::get_center_screen_position(DEF_DIALOG_WIDTH, DEF_DIALOG_HEIGHT, x, y);
     move(x, y);
     m_grid.show_all();
 }
@@ -171,26 +167,27 @@ void launcher_window::on_button_testLauncher_clicked()
     }
 
     if (system(m_entry_file.get_text().c_str()) == 0) {
+        m_test_launch = true;
         return;
     }
 
-    Gtk::MessageDialog dialog(*this, _("Launcher test failed!"), false,
-                              Gtk::MESSAGE_INFO);
+    m_test_launch = false;
+    Gtk::MessageDialog dialog(*this, _("Launcher test failed!"), false, Gtk::MESSAGE_INFO);
 
     // dialog.set_icon_name()
-    dialog.set_secondary_text(_(
-        "The command you enter is invalid.\n\n"
-        "Some Applications are scripts files and others requires Administrator "
-        "privileges:\n"
-        "for scrips files you need to add the bash on the beginning:\n\n"
-        "/bin/sh \"/usr/local/scriptfile.sh\"\n"
-        "/usr/bin/bash \"/home/USER/Develop/scriptfile\"\n\n"
-        "for Applications that requires Administrator privileges:\n"
-        "pkexec Application\n\n"
-        "Please make sure that the Application starts from the command line.\n"
-        "Open a terminal and navigate to the directory where the application "
-        "is locate\n"
-        "and trying the command from there..."));
+    dialog.set_secondary_text(
+        _("The command you enter is invalid.\n\n"
+          "Some Applications are scripts files and others requires Administrator "
+          "privileges:\n"
+          "for scrips files you need to add the bash on the beginning:\n\n"
+          "/bin/sh \"/usr/local/scriptfile.sh\"\n"
+          "/usr/bin/bash \"/home/USER/Develop/scriptfile\"\n\n"
+          "for Applications that requires Administrator privileges:\n"
+          "pkexec Application\n\n"
+          "Please make sure that the Application starts from the command line.\n"
+          "Open a terminal and navigate to the directory where the application "
+          "is locate\n"
+          "and trying the command from there..."));
 
     dialog.run();
 }
@@ -202,27 +199,33 @@ void launcher_window::on_button_createLauncher_clicked()
         return;
     }
 
-    std::string desktopfile = m_dockitem->get_name() + ".desktop";
-    std::string templatefileLocal(
-        system_util::get_current_path(DEF_LAUCHERTEMPLATEPATH));
-
-    std::string desktopfileLocal(
-        system_util::get_current_path(DEF_DATADIRNAME + desktopfile));
-
-    // create a copy from template
-    char command[NAME_MAX];
-    sprintf(command, "cp %s %s ", templatefileLocal.c_str(),
-            desktopfileLocal.c_str());
-
-    if (system(command) != 0) {
-        Gtk::MessageDialog dialog(*this, _("\n\nCopy template Error!\n\n"),
-                                  false, Gtk::MESSAGE_INFO);
+    if (!m_test_launch) {
+        Gtk::MessageDialog dialog(
+            *this,
+            _("\n\nYou need to make a test launch first.\nAfter the Application "
+              "starts, close it and click create launcher.\n\n"),
+            false, Gtk::MESSAGE_INFO);
         dialog.run();
         return;
     }
 
-    sprintf(command, "%s/%s.png",
-            system_util::get_current_path(DEF_DATADIRNAME).c_str(),
+    std::string desktopfile = m_dockitem->get_name() + ".desktop";
+    std::string templatefileLocal(system_util::get_current_path(DEF_LAUCHERTEMPLATEPATH));
+
+    std::string desktopfileLocal(system_util::get_current_path(DEF_DATADIRNAME + desktopfile));
+
+    // create a copy from template
+    char command[NAME_MAX];
+    sprintf(command, "cp %s %s ", templatefileLocal.c_str(), desktopfileLocal.c_str());
+
+    if (system(command) != 0) {
+        Gtk::MessageDialog dialog(*this, _("\n\nCopy template Error!\n\n"), false,
+                                  Gtk::MESSAGE_INFO);
+        dialog.run();
+        return;
+    }
+
+    sprintf(command, "%s/%s.png", system_util::get_current_path(DEF_DATADIRNAME).c_str(),
             m_dockitem->get_name().c_str());
 
     string iconlocal(command);
@@ -231,8 +234,7 @@ void launcher_window::on_button_createLauncher_clicked()
     GError* error = NULL;
     GKeyFile* key_file = g_key_file_new();
     if (FALSE == g_key_file_load_from_file(key_file, desktopfileLocal.c_str(),
-                                           GKeyFileFlags::G_KEY_FILE_NONE,
-                                           &error)) {
+                                           GKeyFileFlags::G_KEY_FILE_NONE, &error)) {
         if (error) {
             g_error_free(error);
             error = NULL;
@@ -242,12 +244,10 @@ void launcher_window::on_button_createLauncher_clicked()
     }
 
     // Name
-    g_key_file_set_string(key_file, "Desktop Entry", "Name",
-                          m_dockitem->get_name().c_str());
+    g_key_file_set_string(key_file, "Desktop Entry", "Name", m_dockitem->get_name().c_str());
 
     // icon
-    sprintf(command, "/usr/share/icons/hicolor/48x48/apps/%s.png",
-            m_dockitem->get_name().c_str());
+    sprintf(command, "/usr/share/icons/hicolor/48x48/apps/%s.png", m_dockitem->get_name().c_str());
 
     g_key_file_set_string(key_file, "Desktop Entry", "Icon", command);
 
@@ -257,8 +257,7 @@ void launcher_window::on_button_createLauncher_clicked()
         g_key_file_free(key_file);
         return;
     }
-    g_key_file_set_string(key_file, "Desktop Entry", "Exec",
-                          executable.c_str());
+    g_key_file_set_string(key_file, "Desktop Entry", "Exec", executable.c_str());
 
     // Categories
     std::string categories(m_entry_categories.get_text());
@@ -266,11 +265,9 @@ void launcher_window::on_button_createLauncher_clicked()
         g_key_file_free(key_file);
         return;
     }
-    g_key_file_set_string(key_file, "Desktop Entry", "Categories",
-                          categories.c_str());
+    g_key_file_set_string(key_file, "Desktop Entry", "Categories", categories.c_str());
 
-    if (FALSE ==
-        g_key_file_save_to_file(key_file, desktopfileLocal.c_str(), &error)) {
+    if (FALSE == g_key_file_save_to_file(key_file, desktopfileLocal.c_str(), &error)) {
         if (error) {
             g_error_free(error);
             error = NULL;
@@ -283,28 +280,29 @@ void launcher_window::on_button_createLauncher_clicked()
 
     // https://www.freedesktop.org/software/polkit/docs/0.105/pkexec.1.html
     sprintf(command, "pkexec %s %s %s",
-            system_util::get_current_path(DEF_LAUCHERSCRIPTPATH).c_str(),
-            desktopfileLocal.c_str(), iconlocal.c_str());
+            system_util::get_current_path(DEF_LAUCHERSCRIPTPATH).c_str(), desktopfileLocal.c_str(),
+            iconlocal.c_str());
 
     if (system(command) != 0) {
-        Gtk::MessageDialog dialog(
-            *this, _("\n\nPermissions required. Please try again!\n\n"), false,
-            Gtk::MESSAGE_INFO);
+        Gtk::MessageDialog dialog(*this, _("\n\nPermissions required. Please try again!\n\n"),
+                                  false, Gtk::MESSAGE_INFO);
         dialog.run();
         return;
     }
 
-    Gtk::MessageDialog dialog(*this,
-                              _("\n\nLauncher created successfully!\n\n"),
-                              false, Gtk::MESSAGE_INFO);
-    dialog.run();
+    string desktop_filename = "/usr/share/applications/" + m_dockitem->get_name() + ".desktop";
+    m_dockitem->set_desktop_filename(desktop_filename);
+
+    // Gtk::MessageDialog dialog(*this, _("\n\nLauncher created successfully!\n\n"), false,
+    // Gtk::MessageDialog dialog(*this, desktop_filename.c_str(), false, Gtk::MESSAGE_INFO);
+    // dialog.run();
     close();
 }
 
 void launcher_window::on_button_file_clicked()
 {
-    Gtk::FileChooserDialog dialog(_("Please choose a file"),
-                                  Gtk::FILE_CHOOSER_ACTION_OPEN);
+    m_test_launch = false;
+    Gtk::FileChooserDialog dialog(_("Please choose a file"), Gtk::FILE_CHOOSER_ACTION_OPEN);
     dialog.set_transient_for(*this);
 
     // Add response buttons the the dialog:
@@ -331,9 +329,8 @@ void launcher_window::on_button_categories_link_clicked()
     if (system("xdg-open "
                "https://specifications.freedesktop.org/menu-spec/"
                "menu-spec-1.0.html#category-registry") != 0) {
-        Gtk::MessageDialog dialog(*this, _("Browser could not be found!\n"),
-                                  false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_OK,
-                                  true);
+        Gtk::MessageDialog dialog(*this, _("Browser could not be found!\n"), false,
+                                  Gtk::MESSAGE_INFO, Gtk::BUTTONS_OK, true);
         dialog.run();
     }
 }
@@ -348,8 +345,8 @@ bool launcher_window::is_valid_command()
 
 void launcher_window::invalid_entry_message()
 {
-    Gtk::MessageDialog dialog(*this, _("The field command can't be empty!\n"),
-                              false, Gtk::MESSAGE_INFO, Gtk::BUTTONS_OK, true);
+    Gtk::MessageDialog dialog(*this, _("The field command can't be empty!\n"), false,
+                              Gtk::MESSAGE_INFO, Gtk::BUTTONS_OK, true);
     dialog.run();
 }
 

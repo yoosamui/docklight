@@ -51,6 +51,11 @@ string DockItem::get_desktop_filename() const
     return m_app_info.m_desktop_file;
 }
 
+void DockItem::set_desktop_filename(const string& desktop_file)
+{
+    m_app_info.m_desktop_file = desktop_file;
+}
+
 string DockItem::get_desktop_icon_name() const
 {
     return m_app_info.m_icon_name;
@@ -99,7 +104,7 @@ int DockItem::get_width()
         this->swap_size();
     }
 
-    return m_app_info.m_width - Panel::m_decrease_factor;
+    return m_app_info.m_width - Panel::m_stm.m_decrease_factor;
 }
 
 int DockItem::get_height()
@@ -108,7 +113,7 @@ int DockItem::get_height()
         this->swap_size();
     }
 
-    return m_app_info.m_height - Panel::m_decrease_factor;
+    return m_app_info.m_height - Panel::m_stm.m_decrease_factor;
 }
 
 void DockItem::set_width(int value)

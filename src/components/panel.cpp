@@ -18,8 +18,7 @@
 
 DL_NS_BEGIN
 
-bool Panel::m_mouse_inside;
-int Panel::m_decrease_factor;
+panel_static_members_t Panel::m_stm;
 
 Panel::Panel()
 {
@@ -31,8 +30,13 @@ Panel::Panel()
                Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK | Gdk::POINTER_MOTION_HINT_MASK |
                Gdk::POINTER_MOTION_MASK);
 
-    Panel::m_mouse_inside = false;
-    Panel::m_decrease_factor = 0;
+    WnckScreen* wnckscreen = wnck_screen_get_default();
+    g_signal_connect(wnckscreen, "active_window_changed",
+                     G_CALLBACK(Panel::on_active_window_changed), nullptr);
+
+    // Panel::m_stm.m_decrease_factor = 0;
+    // Panel::m_stm.m_mouse_inside = false;
+    // Panel::m_stm.m_active_window_index = -1;
 }
 
 void Panel::set_owner(Gtk::Window* window)
@@ -85,18 +89,16 @@ void Panel::init()
 
     // clang-format on
 
-    string filename(system_util::get_current_path(DEF_ICONNAME));
     appinfo_t info;
-    auto icon_size = config::get_icon_size();
-    auto const homePixbuf = pixbuf_util::get_from_file(filename, icon_size, icon_size);
 
     info.m_name = "desktop";
     info.m_title = _("Desktop");
 
     m_appupdater.m_dockitems.insert(m_appupdater.m_dockitems.begin(),
                                     shared_ptr<DockItem>(new DockItem(info)));
-    auto const new_item = m_appupdater.m_dockitems.back();
-    new_item->set_image(homePixbuf);
+    //    auto const new_item = m_appupdater.m_dockitems.back();
+    auto icon_size = config::get_icon_size();
+    load_home_icon(icon_size);
 
     //    m_appupdater.init();
 
@@ -108,7 +110,14 @@ Panel::~Panel()
 {
     g_print("Free Panel\n");
 }
+void Panel::load_home_icon(int icon_size)
+{
+    string filename(system_util::get_current_path(DEF_ICONNAME));
+    auto const home_pixbuf = pixbuf_util::get_from_file(filename, icon_size, icon_size);
 
+    auto const home_item = AppUpdater::m_dockitems[0];
+    home_item->set_image(home_pixbuf);
+}
 void Panel::connect_draw_signal(bool connect)
 {
     if (connect) {
@@ -146,7 +155,7 @@ void Panel::on_autohide_update(int x, int y)
 }
 int Panel::get_required_size()
 {
-    m_decrease_factor = 0;
+    m_stm.m_decrease_factor = 0;
     Gdk::Rectangle workarea = device::monitor::get_current()->get_workarea();
 
     // the required full size
@@ -165,7 +174,7 @@ int Panel::get_required_size()
     }
 
     if (diff > 0) {
-        m_decrease_factor = diff / m_appupdater.m_dockitems.size();
+        m_stm.m_decrease_factor = diff / m_appupdater.m_dockitems.size();
         size = m_appupdater.get_required_size();
 
         // ajust the decrease factor if items are smaller than 0
@@ -186,7 +195,7 @@ int Panel::get_required_size()
             }
         }*/
 
-        m_decrease_factor = diff / m_appupdater.m_dockitems.size();
+        m_stm.m_decrease_factor = diff / m_appupdater.m_dockitems.size();
     }
 
     return size;
@@ -194,16 +203,16 @@ int Panel::get_required_size()
 
 bool Panel::on_timeout_draw()
 {
-    if (m_current_index > 0 && !m_dragdrop_begin && m_mouse_left_down &&
+    if (m_current_index > 0 && !m_stm.m_dragdrop_begin && m_mouse_left_down &&
         m_dragdrop_timer.elapsed() > 0.60) {
-        m_dragdrop_begin = true;
+        m_stm.m_dragdrop_begin = true;
         m_drop_index = m_current_index;
 
         // start blink  animation
         this->reset_flags();
     }
 
-    if (m_draw_required || Panel::m_mouse_inside) {
+    if (m_draw_required || m_stm.m_mouse_inside) {
         Gtk::Widget::queue_draw();
         m_draw_required = false;
     }
@@ -388,11 +397,11 @@ bool Panel::on_button_release_event(GdkEventButton* event)
         return true;
     }
 
-    if (m_dragdrop_begin && m_drop_index != -1) {
+    if (m_stm.m_dragdrop_begin && m_drop_index != -1) {
         m_dragdrop_timer.stop();
         m_dragdrop_timer.reset();
 
-        m_dragdrop_begin = false;
+        m_stm.m_dragdrop_begin = false;
 
         // allways attach the drop item
         auto const item = AppUpdater::m_dockitems[m_drop_index];
@@ -500,7 +509,7 @@ bool Panel::on_scroll_event(GdkEventScroll* e)
 bool Panel::on_motion_notify_event(GdkEventMotion* event)
 {
     m_current_index = this->get_index(event->x, event->y);
-    if (m_current_index > 0 && m_dragdrop_begin) {
+    if (m_current_index > 0 && m_stm.m_dragdrop_begin) {
         m_appupdater.swap_item(m_current_index);
         m_drop_index = m_current_index;
     }
@@ -513,7 +522,7 @@ bool Panel::on_motion_notify_event(GdkEventMotion* event)
 bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
 {
     m_show_selector = true;
-    Panel::m_mouse_inside = true;
+    m_stm.m_mouse_inside = true;
     this->connect_draw_signal(true);
 
     if (config::is_autohide() || config::is_intelihide()) {
@@ -573,7 +582,7 @@ bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
     this->draw();
 
     //  m_enter_anchor = false;
-    Panel::m_mouse_inside = false;
+    m_stm.m_mouse_inside = false;
 
     if (config::is_intelihide()) {
         m_autohide.intelihide();
@@ -624,8 +633,56 @@ void Panel::activate()
 void Panel::on_active_window_changed(WnckScreen* screen, WnckWindow* previously_active_window,
                                      gpointer user_data)
 {
+    WnckWindow* window = wnck_screen_get_active_window(screen);
+    if (window == nullptr) {
+        return;
+    }
+
+    set_active_window_indexp(window);
+    g_print("ACTIVE\n");
 }
 
+void Panel::set_active_window_indexp(WnckWindow* window)
+{
+    m_stm.m_active_window_index = -1;
+
+    if (m_stm.m_dragdrop_begin || m_stm.m_mouse_inside == false) {
+        return;
+    }
+
+    /*
+        if (DockPanel::m_dragdropsStarts)
+            return;
+
+        m_currentMoveIndex = -1;
+
+        WnckWindow * window = WindowControl::getActive();
+        if (window == nullptr)
+            return;
+
+        int idx = 0;
+        bool found = false;
+        for (auto item : m_dockitems) {
+            if (item->m_dockitemSesssionGrpId > 0) {
+                idx++;
+                continue;
+            }
+
+            for (auto chiditem : item->m_items) {
+                if (window == chiditem->m_window) {
+                    found = true;
+                    break;
+                }
+            }
+            if (found)
+                break;
+
+            idx++;
+        }
+
+        if (found)
+            m_currentMoveIndex = idx;*/
+}
 inline bool Panel::get_center_position(int& x, int& y, const int width, const int height)
 {
     if (m_current_index < 0 || m_current_index > (int)AppUpdater::m_dockitems.size()) {
@@ -690,7 +747,7 @@ inline void Panel::get_item_position(const dock_item_type_t item_typ, int& x, in
         if (x == 0) {
             y = 4;
 
-            if (m_decrease_factor > 0) {
+            if (m_stm.m_decrease_factor > 0) {
                 y = (config::get_dock_area() / 2) - (height / 2);
             }
 
@@ -733,25 +790,45 @@ bool Panel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 void Panel::draw_panel(const Cairo::RefPtr<Cairo::Context>& cr)
 {
     Gdk::Rectangle rect = position_util::get_appwindow_geometry();
-
-    // cr->stroke();
     rect.set_x(m_offset_x);
     rect.set_y(m_offset_y);
 
-    //    cr->set_source_rgba(0.8, 0.8, 0.8, 1.0);
-    cairo_util::rounded_rectangle(cr, rect.get_x(), rect.get_y(), rect.get_width(),
-                                  rect.get_height(), m_theme.Panel().Ratio());
+    // clang-format off
+    if (m_theme.Panel().Fill().Color::alpha != 0.0) {
 
-    cr->set_source_rgba(m_theme.Panel().Fill().Color::red, m_theme.Panel().Fill().Color::green,
-                        m_theme.Panel().Fill().Color::blue, m_theme.Panel().Fill().Color::alpha);
+        cairo_util::rounded_rectangle(cr, rect.get_x(),
+                                          rect.get_y(),
+                                          rect.get_width(),
+                                          rect.get_height(),
+                                          m_theme.Panel().Ratio());
 
-    // g_print("%f,%f,%f,%f\n", m_theme.Panel().Fill().Color::red,
-    // m_theme.Panel().Fill().Color::green,
-    //        m_theme.Panel().Fill().Color::blue, m_theme.Panel().Fill().Color::alpha);
 
-    cr->fill();
+        cr->set_source_rgba(m_theme.Panel().Fill().Color::red,
+                            m_theme.Panel().Fill().Color::green,
+                            m_theme.Panel().Fill().Color::blue,
+                            m_theme.Panel().Fill().Color::alpha);
 
+        cr->fill();
+    }
+
+    if (m_theme.Panel().Stroke().Color::alpha != 0.0) {
+
+        cairo_util::rounded_rectangle(cr, rect.get_x(),
+                                          rect.get_y(),
+                                          rect.get_width(),
+                                          rect.get_height(),
+                                          m_theme.Panel().Ratio());
+
+        cr->set_source_rgba(m_theme.Panel().Stroke().Color::red,
+                            m_theme.Panel().Stroke().Color::green,
+                            m_theme.Panel().Stroke().Color::blue,
+                            m_theme.Panel().Stroke().Color::alpha);
+
+
+        cr->stroke();
+    }
     // cr->paint();
+    // clang-format on
 }
 void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
 {
@@ -763,7 +840,7 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
     int area = config::get_dock_area();
 
     size_t items_count = m_appupdater.m_dockitems.size();
-    // g_print("Draw %d\n", (int)items_count);
+    g_print("Draw %d\n", (int)items_count);
 
     // Draw all items with cairo
     for (size_t idx = 0; idx < items_count; idx++) {
@@ -826,8 +903,10 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
             // reload or scaled if needed
             if (image->get_width() != width || image->get_height() != height) {
                 if (width > 0 && height > 0) {
+                    this->load_home_icon(width);
                     auto const tmp_pixbuf = pixbuf_util::get_window_icon(
                         item->get_wnckwindow(), item->get_desktop_icon_name(), width);
+
                     if (!tmp_pixbuf) {
                         item->set_image(image->scale_simple(width, height, Gdk::INTERP_BILINEAR));
                     } else {
@@ -841,7 +920,7 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
 
             if (m_show_selector) {
                 // draw selector
-                if ((int)idx == m_current_index && !m_context_menu_open && m_mouse_inside &&
+                if ((int)idx == m_current_index && !m_context_menu_open && m_stm.m_mouse_inside &&
                     (int)idx != m_inverted_index) {
                     auto tmp = image->copy();
                     pixbuf_util::invert_pixels(tmp);
@@ -874,7 +953,7 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
         }
 
         // draw cell & drop stroke
-        if (m_dragdrop_begin && (int)idx == m_drop_index) {
+        if (m_stm.m_dragdrop_begin && (int)idx == m_drop_index) {
             cr->set_source_rgba(
                 m_theme.PanelDrag().Fill().Color::red, m_theme.PanelDrag().Fill().Color::green,
                 m_theme.PanelDrag().Fill().Color::blue, m_theme.PanelDrag().Fill().Color::alpha);
@@ -904,18 +983,18 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
         if (config::get_indicator_type() == dock_indicator_type_t::dots) {
             if (item->m_items.size() > 0) {
                 if (item->m_items.size() == 1) {
-                    cr->arc(m_offset_x + x + center, m_offset_y + y + area - 7 - m_decrease_factor,
-                            1.6, 0, 2 * M_PI);
+                    cr->arc(m_offset_x + x + center,
+                            m_offset_y + y + area - 7 - m_stm.m_decrease_factor, 1.6, 0, 2 * M_PI);
                 } else if (item->m_items.size() > 1) {
                     cr->arc(m_offset_x + x + center - 3,
-                            m_offset_y + y + area - 7 - m_decrease_factor, 1.6, 0, 2 * M_PI);
+                            m_offset_y + y + area - 7 - m_stm.m_decrease_factor, 1.6, 0, 2 * M_PI);
                     cr->arc(m_offset_x + x + center + 3,
-                            m_offset_y + y + area - 7 - m_decrease_factor, 1.6, 0, 2 * M_PI);
+                            m_offset_y + y + area - 7 - m_stm.m_decrease_factor, 1.6, 0, 2 * M_PI);
                 }
                 cr->fill();
             }
         } else if (config::get_indicator_type() == dock_indicator_type_t::lines) {
-            int marginY = area - m_decrease_factor - 7;
+            int marginY = area - m_stm.m_decrease_factor - 7;
             if (item->m_items.size() > 0) {
                 if (item->m_items.size() == 1) {
                     cr->move_to(x + m_offset_x, y + m_offset_y + marginY);
@@ -949,7 +1028,7 @@ void Panel::draw_title()
         return;
     }
 
-    if (!m_mouse_inside ||
+    if (!m_stm.m_mouse_inside ||
         (m_current_index == m_title_item_index && m_title_timer.elapsed() > 4.0)) {
         m_title_timer.stop();
         m_title_timer.reset();
