@@ -159,6 +159,8 @@ namespace desktopfile_util
                 info.m_comment = cache_info.m_comment;
                 info.m_desktop_file = cache_info.m_desktop_file;
                 info.m_icon_name = cache_info.m_icon_name;
+                info.m_group = cache_info.m_group;
+                info.m_instance = cache_info.m_instance;
                 info.m_locale = cache_info.m_locale;
                 info.m_cache = true;
 

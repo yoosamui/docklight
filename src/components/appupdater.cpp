@@ -283,7 +283,6 @@ bool AppUpdater::load()
         return false;
     }
 
-    //    int icon_size = config::get_icon_size();
     while (true) {
         auto sn = fread(&rec, sizeof(rec), 1, file_reader);
         if (feof(file_reader) != 0) break;
