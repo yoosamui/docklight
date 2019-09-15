@@ -33,10 +33,14 @@ namespace desktopfile_util
         }
 
         GDesktopAppInfo* app_info = g_desktop_app_info_new_from_keyfile(key_file);
-
+        if (app_info == nullptr) {
+            g_key_file_free(key_file);
+            return nullptr;
+        }
         // Gets the value of the NoDisplay key, which helps determine if the application
         // info should be shown in menus. See G_KEY_FILE_DESKTOP_KEY_NO_DISPLAY and
         // g_app_info_should_show().
+
         if (g_desktop_app_info_get_nodisplay(app_info)) {
             g_key_file_free(key_file);
             return nullptr;
