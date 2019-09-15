@@ -15,10 +15,16 @@
 DL_NS_BEGIN
 
 typedef struct {
+    void* m_this;
     bool m_mouse_inside = false;
     int m_active_window_index = -1;
     bool m_dragdrop_begin = false;
     int m_decrease_factor = 0;
+    bool m_connect_draw_signal_set = false;
+    sigc::connection m_sigc_draw;
+    bool m_draw_required = false;
+    bool m_bck_thread_run = true;
+    bool m_bck_thread_connect = false;
 
 } panel_static_members_t;
 
@@ -35,6 +41,8 @@ class Panel : public Gtk::DrawingArea, DockMenu
     static panel_static_members_t m_stm;
 
   private:
+    thread* m_bck_thread = nullptr;
+    static void connect_async();
     config::style::Theme m_theme;
     AppUpdater m_appupdater;
     Gtk::Window* m_owner = nullptr;
@@ -49,14 +57,11 @@ class Panel : public Gtk::DrawingArea, DockMenu
     int m_inverted_index = -1;
     int m_drop_index = -1;
     bool m_show_selector = true;
-    bool m_connect_draw_signal_set = false;
-    bool m_enter_anchor = false;
 
     void reset_flags();
 
     Glib::Timer m_dragdrop_timer;
 
-    bool m_draw_required = false;
     int m_current_index = -1;
     bool m_mouse_left_down = false;
     bool m_mouse_right_down = false;
@@ -76,8 +81,7 @@ class Panel : public Gtk::DrawingArea, DockMenu
 
     bool on_timeout_draw();
 
-    sigc::connection m_sigc_draw;
-    void connect_draw_signal(bool connect);
+    static void connect_draw_signal(bool connect);
 
     int get_index(const int& mouseX, const int& mouseY);
 

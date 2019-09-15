@@ -22,6 +22,7 @@ panel_static_members_t Panel::m_stm;
 
 Panel::Panel()
 {
+    m_stm.m_this = static_cast<Panel*>(this);
     m_autohide.signal_update().connect(sigc::mem_fun(this, &Panel::on_autohide_update));
 
     // Set event masks
@@ -33,10 +34,6 @@ Panel::Panel()
     WnckScreen* wnckscreen = wnck_screen_get_default();
     g_signal_connect(wnckscreen, "active_window_changed",
                      G_CALLBACK(Panel::on_active_window_changed), nullptr);
-
-    // Panel::m_stm.m_decrease_factor = 0;
-    // Panel::m_stm.m_mouse_inside = false;
-    // Panel::m_stm.m_active_window_index = -1;
 }
 
 void Panel::set_owner(Gtk::Window* window)
@@ -104,10 +101,24 @@ void Panel::init()
 
     m_appupdater.signal_update().connect(sigc::mem_fun(this, &Panel::on_appupdater_update));
     m_appupdater.init();
+
+    m_bck_thread = new thread(connect_async);
 }
 
 Panel::~Panel()
 {
+    // tell the background thread to terminate.
+    m_stm.m_bck_thread_run = false;
+
+    // Detach
+    m_bck_thread->detach();
+
+    // free memory
+    delete m_bck_thread;
+
+    // pointed dangling to ptr NULL
+    m_bck_thread = nullptr;
+
     g_print("Free Panel\n");
 }
 void Panel::load_home_icon(int icon_size)
@@ -121,18 +132,15 @@ void Panel::load_home_icon(int icon_size)
 void Panel::connect_draw_signal(bool connect)
 {
     if (connect) {
-        if (!m_connect_draw_signal_set) {
-            m_sigc_draw = Glib::signal_timeout().connect(
-                sigc::mem_fun(*this, &Panel::on_timeout_draw), 1000 / 8);
-
-            m_connect_draw_signal_set = true;
+        if (!m_stm.m_connect_draw_signal_set) {
+            m_stm.m_sigc_draw = Glib::signal_timeout().connect(
+                sigc::mem_fun(static_cast<Panel*>(m_stm.m_this), &Panel::on_timeout_draw),
+                1000 / 8);
+            m_stm.m_connect_draw_signal_set = true;
         }
     } else {
-        // reset flags before disconect
-        this->reset_flags();
-
-        m_sigc_draw.disconnect();
-        m_connect_draw_signal_set = false;
+        m_stm.m_sigc_draw.disconnect();
+        m_stm.m_connect_draw_signal_set = false;
     }
 }
 
@@ -208,14 +216,15 @@ bool Panel::on_timeout_draw()
         m_stm.m_dragdrop_begin = true;
         m_drop_index = m_current_index;
 
-        // start blink  animation
+        // start blink animation
         this->reset_flags();
     }
 
-    if (m_draw_required || m_stm.m_mouse_inside) {
+    if (m_stm.m_draw_required || m_stm.m_mouse_inside) {
         Gtk::Widget::queue_draw();
-        m_draw_required = false;
+        m_stm.m_draw_required = false;
     }
+
     return true;
 }
 
@@ -264,7 +273,7 @@ inline int Panel::get_index(const int& mouseX, const int& mouseY)
 
 void Panel::draw()
 {
-    m_draw_required = true;
+    m_stm.m_draw_required = true;
     on_timeout_draw();
 }
 
@@ -630,6 +639,25 @@ void Panel::activate()
     }
 }
 
+void Panel::connect_async()
+{
+    while (m_stm.m_bck_thread_run) {
+        if (m_stm.m_bck_thread_connect) {
+            m_stm.m_bck_thread_connect = false;
+
+            if (m_stm.m_connect_draw_signal_set == false) {
+                m_stm.m_draw_required = true;
+                connect_draw_signal(true);
+                std::this_thread::sleep_for(std::chrono::milliseconds(200));
+
+                m_stm.m_draw_required = false;
+                connect_draw_signal(false);
+            }
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000 / 9));
+    }
+    connect_draw_signal(false);
+}
 void Panel::on_active_window_changed(WnckScreen* screen, WnckWindow* previously_active_window,
                                      gpointer user_data)
 {
@@ -639,50 +667,38 @@ void Panel::on_active_window_changed(WnckScreen* screen, WnckWindow* previously_
     }
 
     set_active_window_indexp(window);
-    g_print("ACTIVE\n");
 }
 
 void Panel::set_active_window_indexp(WnckWindow* window)
 {
     m_stm.m_active_window_index = -1;
 
-    if (m_stm.m_dragdrop_begin || m_stm.m_mouse_inside == false) {
-        return;
-    }
-
-    /*
-        if (DockPanel::m_dragdropsStarts)
-            return;
-
-        m_currentMoveIndex = -1;
-
-        WnckWindow * window = WindowControl::getActive();
-        if (window == nullptr)
-            return;
-
-        int idx = 0;
+    if (m_stm.m_dragdrop_begin == false) {
         bool found = false;
-        for (auto item : m_dockitems) {
-            if (item->m_dockitemSesssionGrpId > 0) {
-                idx++;
-                continue;
-            }
+        for (size_t i = 1; i < AppUpdater::m_dockitems.size(); i++) {
+            auto const item = AppUpdater::m_dockitems[i];
+            if (!item) continue;
 
-            for (auto chiditem : item->m_items) {
-                if (window == chiditem->m_window) {
+            for (size_t idx = 0; idx < item->m_items.size(); idx++) {
+                auto const citem = item->m_items[idx];
+                if (!citem) continue;
+
+                if (citem->get_wnckwindow() == window) {
+                    m_stm.m_active_window_index = i;
                     found = true;
                     break;
                 }
             }
-            if (found)
+
+            if (found) {
                 break;
-
-            idx++;
+            }
         }
+    }
 
-        if (found)
-            m_currentMoveIndex = idx;*/
+    m_stm.m_bck_thread_connect = true;
 }
+
 inline bool Panel::get_center_position(int& x, int& y, const int width, const int height)
 {
     if (m_current_index < 0 || m_current_index > (int)AppUpdater::m_dockitems.size()) {
@@ -840,7 +856,6 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
     int area = config::get_dock_area();
 
     size_t items_count = m_appupdater.m_dockitems.size();
-    g_print("Draw %d\n", (int)items_count);
 
     // Draw all items with cairo
     for (size_t idx = 0; idx < items_count; idx++) {
@@ -870,6 +885,22 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
                                               m_theme.PanelCell().Ratio());
                 cr->fill();
             }
+        }
+
+        // draw active window selector
+        if (!m_stm.m_dragdrop_begin && idx > 0 && m_stm.m_active_window_index == (int)idx) {
+            auto area = config::get_dock_area();
+
+            if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+                cairo_util::rounded_rectangle(cr, m_offset_x + x - 4, m_offset_y + 0, width + 8,
+                                              area, 0);
+            } else {
+                cairo_util::rounded_rectangle(cr, m_offset_x + 0, m_offset_y + y - 4,
+                                              config::get_dock_area(), height + 8, 0);
+            }
+
+            cr->set_source_rgba(1, 1, 1, 0.2);
+            cr->fill();
         }
 
         // separator
@@ -903,7 +934,11 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
             // reload or scaled if needed
             if (image->get_width() != width || image->get_height() != height) {
                 if (width > 0 && height > 0) {
-                    this->load_home_icon(width);
+                    int icon_size = config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL
+                                        ? height
+                                        : width;
+                    this->load_home_icon(icon_size);
+
                     auto const tmp_pixbuf = pixbuf_util::get_window_icon(
                         item->get_wnckwindow(), item->get_desktop_icon_name(), width);
 
@@ -1021,7 +1056,7 @@ bool m_titlewindow_visible = false;
 void Panel::draw_title()
 {
     if (m_current_index < 0 || m_context_menu_open || !config::is_show_title() ||
-        !m_connect_draw_signal_set || !m_autohide.is_visible()) {
+        !m_stm.m_connect_draw_signal_set || !m_autohide.is_visible()) {
         m_titlewindow.hide();
         m_titlewindow_visible = false;
 
