@@ -201,7 +201,7 @@ bool Autohide::is_intersection_detected()
         return false;
     }
 
-    int area = config::get_dock_area();
+    int area = position_util::get_area();
     Gdk::Rectangle workarea = device::monitor::get_current()->get_workarea();
     auto rect_dock = position_util::get_appwindow_geometry();
     auto rect_window = Autohide::get_window_geometry(m_active_window);
@@ -340,9 +340,9 @@ bool Autohide::animation()
             case dock_location_t::top: {
                 if (m_stm.m_animation_state == DEF_AUTOHIDE_HIDE) {
                     startPosition = 0;
-                    endPosition = -(config::get_dock_area() + 1);
+                    endPosition = -(position_util::get_area() + 1);
                 } else {
-                    startPosition = -(config::get_dock_area() + 1);
+                    startPosition = -(position_util::get_area() + 1);
                     endPosition = 0;
                 }
                 break;
@@ -351,10 +351,10 @@ bool Autohide::animation()
             case dock_location_t::bottom: {
                 if (m_stm.m_visible) {
                     startPosition = 0;
-                    endPosition = config::get_dock_area() + 1;
+                    endPosition = position_util::get_area() + 1;
 
                 } else {
-                    startPosition = config::get_dock_area() + 1;
+                    startPosition = position_util::get_area() + 1;
                     endPosition = 0;
                 }
                 break;

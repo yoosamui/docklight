@@ -11,6 +11,7 @@ namespace position_util
 {
     void hide();
     bool is_visible();
+    int get_area();
     void init(AppWindow *window);
     void set_window_position();
     const Gdk::Rectangle get_appwindow_geometry();

@@ -3,13 +3,14 @@
 #include <string>
 #include "components/arguments.h"
 #include "components/device.h"
+#include "components/panel.h"
 #include "utils/string.h"
 #include "utils/system.h"
 
 DL_NS_BEGIN
 namespace config
 {
-#define MARGIN 10
+#define MARGIN 12
 #define DEF_CONFIG_FILENAME "docklight.config"
 #define DEF_DEFAULT_ICON_SIZE 42
 #define DEF_DEFAULT_SEPARATOR_MARGIN 12
@@ -98,7 +99,7 @@ namespace config
         // clang-format off
         //
         m_theme.set_Panel(new ColorWindow());
-        m_theme.set_PanelCell(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 1, 1, 1), 1.0, 3, 0));
+        m_theme.set_PanelCell(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 0, 0, 1), 1.5, 1, 0));
         m_theme.set_PanelDrag(new ColorWindow(Color(1, 1, 1, 0.4), Color(1, 1, 1, 1), 2.5, 3, 0));
         m_theme.set_PanelIndicator(new ColorWindow(Color(1, 1, 1, 1), Color(1, 1, 1, 1), 0, 0, 0));
         m_theme.set_PanelSeparator(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 1, 1, 1), 1.0, 3, 0));
@@ -469,9 +470,27 @@ namespace config
 
     dock_indicator_type_t get_indicator_type() { return m_indicator_type; }
 
-    int get_dock_area() { return m_icon_size + MARGIN; }
+    int get_dock_area()
+    {
+        int area = m_icon_size + MARGIN;
 
-    int get_icon_size() { return m_icon_size; }
+        // if (Panel::m_stm.m_decrease_factor > 0) {
+        // area = AppUpdater::m_dockitems[0]->get_width();  // Panel::m_stm.m_decrease_factor;
+        //}
+
+        return area;
+    }
+
+    int get_icon_size()
+    {
+        int icon_size = m_icon_size;
+
+        // if (Panel::m_stm.m_decrease_factor > 0) {
+        // icon_size -= Panel::m_stm.m_decrease_factor;
+        //}
+
+        return icon_size;
+    }
 
     void set_icon_size(int value)
     {

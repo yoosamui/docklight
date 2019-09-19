@@ -24,6 +24,16 @@ class AppUpdater
 
     static vector<shared_ptr<DockItem>> m_dockitems;
 
+    const vector<shared_ptr<DockItem>> get_dockitems() { return m_dockitems; }
+
+    static int get_first_item_area()
+    {
+        if (m_dockitems.size() == (int)0) {
+            return 0;
+        }
+        return m_dockitems[0]->get_width();
+    }
+
     void on_theme_changed();
     bool attach_item(int index);
     bool detach_item(const int index);
@@ -38,6 +48,8 @@ class AppUpdater
         dock_item_type_t dock_item_type;
         char name[60];
         char title[60];
+        char group[60];
+        char instance[60];
         char locale[20];
         char comment[512];
         char desktop_file[512];

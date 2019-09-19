@@ -251,9 +251,11 @@ bool AppUpdater::save()
         }
 
         strncpy(rec.name, info->m_name.c_str(), sizeof(rec.name) - 1);
+        strncpy(rec.group, info->m_group.c_str(), sizeof(rec.group) - 1);
+        strncpy(rec.instance, info->m_instance.c_str(), sizeof(rec.instance) - 1);
         strncpy(rec.title, info->m_title.c_str(), sizeof(rec.title) - 1);
-        //    strncpy(rec.comment, info->m_comment.c_str(), sizeof(rec.comment) - 1);
-        //     strncpy(rec.locale, info->m_locale.c_str(), sizeof(rec.locale) - 1);
+        strncpy(rec.comment, info->m_comment.c_str(), sizeof(rec.comment) - 1);
+        strncpy(rec.locale, info->m_locale.c_str(), sizeof(rec.locale) - 1);
         strncpy(rec.icon_name, info->m_icon_name.c_str(), sizeof(rec.icon_name) - 1);
         strncpy(rec.desktop_file, info->m_desktop_file.c_str(), sizeof(rec.desktop_file) - 1);
 
@@ -302,14 +304,22 @@ bool AppUpdater::load()
         info.m_wnckwindow = 0;
         info.m_xid = 0;
         info.m_name = rec.name;
+        info.m_group = rec.group;
+        info.m_instance = rec.instance;
         info.m_title = rec.title;
-        // info.m_comment = rec.comment;
+        info.m_comment = rec.comment;
         info.m_icon_name = rec.icon_name;
-        // info.m_locale = rec.locale;
+        info.m_locale = rec.locale;
         info.m_desktop_file = rec.desktop_file;
         info.m_separator_length = rec.separator_length;
 
-        desktopfile_util::get_app_info(info);
+        // check if locale has been changed and desktop file still exists.
+        if (!info.m_desktop_file.empty()) {
+            // if the desktop file could not be found the app has been removed
+            if (!desktopfile_util::get_app_info(info)) {
+                continue;
+            }
+        }
 
         // Add new
         auto item = new DockItem(info, info.m_dock_item_type);

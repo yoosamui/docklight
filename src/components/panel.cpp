@@ -559,7 +559,7 @@ bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
     }
 
     auto const location = config::get_dock_location();
-    int area = config::get_dock_area();
+    int area = position_util::get_area();
     if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
         if (location == dock_location_t::top) {
             if ((int)crossing_event->y < 0) {
@@ -761,11 +761,11 @@ inline void Panel::get_item_position(const dock_item_type_t item_typ, int& x, in
 
     if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
         if (x == 0) {
-            y = 4;
+            y = 0;
 
-            if (m_stm.m_decrease_factor > 0) {
-                y = (config::get_dock_area() / 2) - (height / 2);
-            }
+            // if (m_stm.m_decrease_factor > 0) {
+            // y = (position_util::get_area() / 2) - (height / 2);
+            //}
 
             x = config::get_window_start_end_margin() / 2;
             nextsize = width;
@@ -776,7 +776,7 @@ inline void Panel::get_item_position(const dock_item_type_t item_typ, int& x, in
         nextsize = width;
     } else {
         if (y == 0) {
-            x = (config::get_dock_area() / 2) - (width / 2);
+            x = 0;  //
             y = config::get_window_start_end_margin() / 2;
             nextsize = height;
             return;
@@ -824,7 +824,8 @@ void Panel::draw_panel(const Cairo::RefPtr<Cairo::Context>& cr)
                             m_theme.Panel().Fill().Color::blue,
                             m_theme.Panel().Fill().Color::alpha);
 
-        cr->fill();
+      cr->fill();
+    // cr->paint();
     }
 
     if (m_theme.Panel().Stroke().Color::alpha != 0.0) {
@@ -843,7 +844,6 @@ void Panel::draw_panel(const Cairo::RefPtr<Cairo::Context>& cr)
 
         cr->stroke();
     }
-    // cr->paint();
     // clang-format on
 }
 void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
@@ -853,10 +853,12 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
     int width = 0;
     int height = 0;
     int center = 0;
-    int area = config::get_dock_area();
+    int area = position_util::get_area();
 
     size_t items_count = m_appupdater.m_dockitems.size();
 
+    // position_util::set_window_position();
+    // AppWindow::update();
     // Draw all items with cairo
     for (size_t idx = 0; idx < items_count; idx++) {
         auto const item = m_appupdater.m_dockitems[idx];
@@ -874,7 +876,7 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
         item->set_y(y);
 
         // draw cell fill
-        if (item->get_dock_item_type() != dock_item_type_t::separator) {
+        /*if (item->get_dock_item_type() != dock_item_type_t::separator) {
             if (m_theme.PanelCell().Fill().Color::alpha > 0.0) {
                 cr->set_source_rgba(m_theme.PanelCell().Fill().Color::red,
                                     m_theme.PanelCell().Fill().Color::green,
@@ -885,32 +887,32 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
                                               m_theme.PanelCell().Ratio());
                 cr->fill();
             }
-        }
+        }*/
 
         // draw active window selector
-        if (!m_stm.m_dragdrop_begin && idx > 0 && m_stm.m_active_window_index == (int)idx) {
-            auto area = config::get_dock_area();
+        // if (!m_stm.m_dragdrop_begin && idx > 0 && m_stm.m_active_window_index == (int)idx) {
+        // auto area = position_util::get_area();
 
-            if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-                cairo_util::rounded_rectangle(cr, m_offset_x + x - 4, m_offset_y + 0, width + 8,
-                                              area, 0);
-            } else {
-                cairo_util::rounded_rectangle(cr, m_offset_x + 0, m_offset_y + y - 4,
-                                              config::get_dock_area(), height + 8, 0);
-            }
+        // if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+        // cairo_util::rounded_rectangle(cr, m_offset_x + x - 4, m_offset_y + 0, width + 8,
+        // area, 0);
+        //} else {
+        // cairo_util::rounded_rectangle(cr, m_offset_x + 0, m_offset_y + y - 4,
+        // position_util::get_area(), height + 8, 0);
+        //}
 
-            cr->set_source_rgba(1, 1, 1, 0.2);
-            cr->fill();
-        }
+        // cr->set_source_rgba(1, 1, 1, 0.2);
+        // cr->fill();
+        //}
 
         // separator
-        if (config::is_separator_line() &&
+        /*if (config::is_separator_line() &&
             item->get_dock_item_type() == dock_item_type_t::separator) {
             cr->set_source_rgba(m_theme.PanelSeparator().Stroke().Color::red,
                                 m_theme.PanelSeparator().Stroke().Color::green,
                                 m_theme.PanelSeparator().Stroke().Color::blue,
                                 m_theme.PanelSeparator().Stroke().Color::alpha);
-
+            cr->set_source_rgba(1, 1, 1, 1);
             cr->set_line_width(m_theme.PanelSeparator().LineWidth());
 
             if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
@@ -928,33 +930,44 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
 
             cr->stroke();
         }
-
+*/
         // icon + selector
         if (auto image = item->get_image()) {
-            // reload or scaled if needed
-            if (image->get_width() != width || image->get_height() != height) {
-                if (width > 0 && height > 0) {
-                    int icon_size = config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL
-                                        ? height
-                                        : width;
-                    this->load_home_icon(icon_size);
+            int icon_size = width - 12;  // config::get_icon_size();
 
-                    auto const tmp_pixbuf = pixbuf_util::get_window_icon(
-                        item->get_wnckwindow(), item->get_desktop_icon_name(), width);
+            // reload or scaled if needed if (image->get_width() != icon_size ||
+            // image->get_height() != icon_size)
+            //{
+            if (width > 0 && height > 0) {
+                //  int icon_size =
+                //        config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL ? height :
+                //        width;
 
-                    if (!tmp_pixbuf) {
-                        item->set_image(image->scale_simple(width, height, Gdk::INTERP_BILINEAR));
-                    } else {
-                        item->set_image(tmp_pixbuf);
-                    }
+                // if (m_stm.m_decrease_factor > 0) {
+                // icon_size -= m_stm.m_decrease_factor;
+                //}
+                this->load_home_icon(icon_size);
+
+                auto const tmp_pixbuf = pixbuf_util::get_window_icon(
+                    item->get_wnckwindow(), item->get_desktop_icon_name(), icon_size);
+
+                if (!tmp_pixbuf) {
+                    item->set_image(
+                        image->scale_simple(icon_size, icon_size, Gdk::INTERP_BILINEAR));
+                } else {
+                    item->set_image(tmp_pixbuf);
                 }
             }
+            //            }
 
-            Gdk::Cairo::set_source_pixbuf(cr, item->get_image(), m_offset_x + x, m_offset_y + y);
+            int center_pos_x =
+                0;  //(position_util::get_area() / 2) - (config::get_icon_size() / 2);
+            Gdk::Cairo::set_source_pixbuf(cr, item->get_image(), m_offset_x + x + center_pos_x,
+                                          m_offset_y + y + 4);
             cr->paint();
 
             if (m_show_selector) {
-                // draw selector
+                //  draw selector
                 if ((int)idx == m_current_index && !m_context_menu_open && m_stm.m_mouse_inside &&
                     (int)idx != m_inverted_index) {
                     auto tmp = image->copy();
@@ -964,31 +977,32 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
                     m_inverted_index = (int)m_current_index;
                     cr->paint();
 
-                    // cr->set_source_rgba(1, 1, 1, 0.4);
-                    // cairo_util::rounded_rectangle(cr, x, y, width, height, 0);
-                    // cr->fill();
+                    cr->set_source_rgba(1, 1, 1, 0.4);
+                    cairo_util::rounded_rectangle(cr, x, y, width, height, 0);
+                    cr->fill();
                 }
             }
         }
 
         // Draw cell
         // draw cell stroke
-        if (item->get_dock_item_type() != dock_item_type_t::separator) {
-            if (m_theme.PanelCell().Fill().Color::alpha > 0.0) {
-                cr->set_source_rgba(m_theme.PanelCell().Stroke().Color::red,
-                                    m_theme.PanelCell().Stroke().Color::green,
-                                    m_theme.PanelCell().Stroke().Color::blue,
-                                    m_theme.PanelCell().Stroke().Color::alpha);
-
-                cr->set_line_width(m_theme.PanelCell().LineWidth());
-                cairo_util::rounded_rectangle(cr, m_offset_x + x, m_offset_y + y, width, height,
-                                              m_theme.PanelCell().Ratio());
-                cr->stroke();
-            }
+        //  if (item->get_dock_item_type() != dock_item_type_t::separator) {
+        if (m_theme.PanelCell().Fill().Color::alpha > 0.0) {
+            cr->set_source_rgba(m_theme.PanelCell().Stroke().Color::red,
+                                m_theme.PanelCell().Stroke().Color::green,
+                                m_theme.PanelCell().Stroke().Color::blue,
+                                m_theme.PanelCell().Stroke().Color::alpha);
+            // int area = config::get_current_area_size();
+            //  g_print(" %d  x %d area %d \n", width, height, area);
+            cr->set_line_width(m_theme.PanelCell().LineWidth());
+            cairo_util::rounded_rectangle(cr, m_offset_x + x, m_offset_y + y, width, height,
+                                          m_theme.PanelCell().Ratio());
+            cr->stroke();
         }
+        //  }
 
         // draw cell & drop stroke
-        if (m_stm.m_dragdrop_begin && (int)idx == m_drop_index) {
+        /*if (m_stm.m_dragdrop_begin && (int)idx == m_drop_index) {
             cr->set_source_rgba(
                 m_theme.PanelDrag().Fill().Color::red, m_theme.PanelDrag().Fill().Color::green,
                 m_theme.PanelDrag().Fill().Color::blue, m_theme.PanelDrag().Fill().Color::alpha);
@@ -1007,7 +1021,7 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
             cairo_util::rounded_rectangle(cr, m_offset_x + x, m_offset_y + y, width, height,
                                           m_theme.PanelDrag().Ratio());
             cr->stroke();
-        }
+        }*/
 
         // draw indicator
         center = (width / 2);
@@ -1019,17 +1033,17 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
             if (item->m_items.size() > 0) {
                 if (item->m_items.size() == 1) {
                     cr->arc(m_offset_x + x + center,
-                            m_offset_y + y + area - 7 - m_stm.m_decrease_factor, 1.6, 0, 2 * M_PI);
+                            m_offset_y + y + area - 4 - m_stm.m_decrease_factor, 1.8, 0, 2 * M_PI);
                 } else if (item->m_items.size() > 1) {
                     cr->arc(m_offset_x + x + center - 3,
-                            m_offset_y + y + area - 7 - m_stm.m_decrease_factor, 1.6, 0, 2 * M_PI);
+                            m_offset_y + y + area - 4 - m_stm.m_decrease_factor, 1.8, 0, 2 * M_PI);
                     cr->arc(m_offset_x + x + center + 3,
-                            m_offset_y + y + area - 7 - m_stm.m_decrease_factor, 1.6, 0, 2 * M_PI);
+                            m_offset_y + y + area - 4 - m_stm.m_decrease_factor, 1.8, 0, 2 * M_PI);
                 }
                 cr->fill();
             }
         } else if (config::get_indicator_type() == dock_indicator_type_t::lines) {
-            int marginY = area - m_stm.m_decrease_factor - 7;
+            int marginY = area - m_stm.m_decrease_factor - 4;
             if (item->m_items.size() > 0) {
                 if (item->m_items.size() == 1) {
                     cr->move_to(x + m_offset_x, y + m_offset_y + marginY);
@@ -1047,7 +1061,7 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
                 }
             }
 
-            cr->set_line_width(1.4);
+            cr->set_line_width(2.0);
             cr->stroke();
         }
     }

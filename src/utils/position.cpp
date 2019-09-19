@@ -9,15 +9,27 @@ namespace position_util
 
     void init(AppWindow* window) { m_window = window; }
 
+    int get_area()
+    {
+        return (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL)
+                   ? m_window->get_height()
+                   : m_window->get_width();
+    }
+
     void set_window_position()
     {
         int area = config::get_dock_area();
+
         Gdk::Rectangle workarea = device::monitor::get_current()->get_workarea();
         auto const alignment = config::get_dock_alignment();
         int xpos = 0, ypos = 0, center = 0;
 
         if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
             int width = m_window->get_panel()->get_required_size();
+            if (Panel::m_stm.m_decrease_factor > 0) {
+                area -= Panel::m_stm.m_decrease_factor;
+            }
+
             if (width > workarea.get_width()) {
                 width = workarea.get_width();
             }
@@ -52,6 +64,10 @@ namespace position_util
 
         } else {
             int height = m_window->get_panel()->get_required_size();
+            if (Panel::m_stm.m_decrease_factor > 0) {
+                area -= Panel::m_stm.m_decrease_factor;
+            }
+
             if (height > workarea.get_height()) {
                 height = workarea.get_height();
             }
@@ -91,7 +107,7 @@ namespace position_util
     {
         auto const location = config::get_dock_location();
         Gdk::Rectangle workarea = device::monitor::get_current()->get_workarea();
-        int area = config::get_dock_area();
+        int area = position_util::get_area();
 
         int x = 0, y = 0;
         m_window->get_position(x, y);
@@ -117,7 +133,7 @@ namespace position_util
     bool is_visible()
     {
         int x = 0, y = 0;
-        int area = config::get_dock_area();
+        int area = position_util::get_area();
         auto const location = config::get_dock_location();
         Gdk::Rectangle workarea = device::monitor::get_current()->get_workarea();
 

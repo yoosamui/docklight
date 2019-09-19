@@ -101,7 +101,7 @@ namespace desktopfile_util
 
         const char* group = wnck_window_get_class_group_name(window);
         if (group == nullptr) {
-            // Wie assume that this application don't have any desktop file.
+            // We assume that this application don't have any desktop file.
             // --------------------------------------------------------------
             // Gets the name of window ,
             // Always returns some value, even if window has no name set;
@@ -178,19 +178,27 @@ namespace desktopfile_util
             {"/usr/local/share/applications/"}};
         // clang-format on
 
-        for (auto const directory : desktop_directories) {
-            desktop_file = directory + info.m_name + ".desktop";
-            if (system_util::file_exists(desktop_file)) {
-                key_file = get_key_file(info.m_name, desktop_file);
-                if (key_file != nullptr) {
-                    set_info(key_file, desktop_file, info);
-                    found = true;
-                    break;
-                }
-            }
-        }
+        // if (!info.m_desktop_file.empty() && system_util::file_exists(info.m_desktop_file)) {
+        // key_file = get_key_file(info.m_name, info.m_desktop_file);
+        // if (key_file != nullptr) {
+        // set_info(key_file, info.m_desktop_file, info);
+        // found = true;
+        //}
+        //}
 
         if (!found) {
+            for (auto const directory : desktop_directories) {
+                desktop_file = directory + info.m_name + ".desktop";
+                if (system_util::file_exists(desktop_file)) {
+                    key_file = get_key_file(info.m_name, desktop_file);
+                    if (key_file != nullptr) {
+                        set_info(key_file, desktop_file, info);
+                        found = true;
+                        break;
+                    }
+                }
+            }
+
             char*** result_list = g_desktop_app_info_search(info.m_name.c_str());
             char*** groups;
 
@@ -215,8 +223,10 @@ namespace desktopfile_util
             }
         }
 
-        // cache
-        cache[info.m_name] = info;
+        // save to cache
+        if (!info.m_name.empty()) {
+            cache[info.m_name] = info;
+        }
 
         if (key_file != nullptr) {
             g_key_file_free(key_file);

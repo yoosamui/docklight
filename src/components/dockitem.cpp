@@ -8,7 +8,7 @@ DockItem::DockItem(appinfo_t app_info, dock_item_type_t item_type)
 {
     m_app_info = app_info;
     m_app_info.m_dock_item_type = item_type;
-    m_app_info.m_width = m_app_info.m_height = config::get_icon_size();
+    m_app_info.m_width = m_app_info.m_height = config::get_dock_area();  // config::get_icon_size();
 }
 
 DockItem::~DockItem()
@@ -87,13 +87,13 @@ bool DockItem::is_attached() const
 
 void DockItem::swap_size()
 {
-    int icon_size = config::get_icon_size();
+    int area = config::get_dock_area();
 
     if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-        m_app_info.m_height = icon_size;
+        m_app_info.m_height = area;
         m_app_info.m_width = m_app_info.m_separator_length;
     } else {
-        m_app_info.m_width = icon_size;
+        m_app_info.m_width = area;
         m_app_info.m_height = m_app_info.m_separator_length;
     }
 }
