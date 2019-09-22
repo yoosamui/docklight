@@ -154,17 +154,6 @@ namespace desktopfile_util
             info.m_name = info.m_name.substr(0, idx);
         }
 
-        // count and remove prefix if contains more the one word
-        int count = 0;
-        for (int i = 0; i < (int)info.m_name.size(); i++) {
-            if (info.m_name[i] == '-') {
-                count++;
-            }
-        }
-        if (count > 1) {
-            info.m_name = info.m_name.substr(count + 1);
-        }
-
         info.m_title = info.m_group;
         info.m_icon_name = info.m_name;
 
@@ -213,36 +202,36 @@ namespace desktopfile_util
         if (!found) {
             for (auto const directory : desktop_directories) {
                 desktop_file = directory + info.m_name + ".desktop";
-                if (system_util::file_exists(desktop_file)) {
-                    key_file = get_key_file(info.m_name, desktop_file);
-                    if (key_file != nullptr) {
-                        set_info(key_file, desktop_file, info);
-                        found = true;
-                        break;
-                    }
+                key_file = get_key_file(info.m_name, desktop_file);
+                if (key_file != nullptr) {
+                    set_info(key_file, desktop_file, info);
+                    found = true;
+                    break;
                 }
             }
 
-            char*** result_list = g_desktop_app_info_search(info.m_name.c_str());
-            char*** groups;
+            if (!found) {
+                char*** result_list = g_desktop_app_info_search(info.m_name.c_str());
+                char*** groups;
 
-            for (groups = result_list; *groups; groups++) {
-                string file_name(*groups[0]);
-                for (auto const directory : desktop_directories) {
-                    desktop_file = directory + file_name;
-                    if (system_util::file_exists(desktop_file)) {
-                        key_file = get_key_file(info.m_name, desktop_file);
-                        if (key_file != nullptr) {
-                            set_info(key_file, desktop_file, info);
-                            found = true;
-                            break;
+                for (groups = result_list; *groups; groups++) {
+                    string file_name(*groups[0]);
+                    for (auto const directory : desktop_directories) {
+                        desktop_file = directory + file_name;
+                        if (system_util::file_exists(desktop_file)) {
+                            key_file = get_key_file(info.m_name, desktop_file);
+                            if (key_file != nullptr) {
+                                set_info(key_file, desktop_file, info);
+                                found = true;
+                                break;
+                            }
                         }
                     }
                 }
-            }
 
-            if (result_list) {
-                g_free(result_list);
+                if (result_list) {
+                    g_free(result_list);
+                }
             }
         }
 
