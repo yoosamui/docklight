@@ -26,14 +26,6 @@ class AppUpdater
 
     const vector<shared_ptr<DockItem>> get_dockitems() { return m_dockitems; }
 
-    static int get_first_item_area()
-    {
-        if (m_dockitems.size() == (int)0) {
-            return 0;
-        }
-        return m_dockitems[0]->get_width();
-    }
-
     void on_theme_changed();
     bool attach_item(int index);
     bool detach_item(const int index);
@@ -54,8 +46,8 @@ class AppUpdater
         char comment[512];
         char desktop_file[512];
         char icon_name[128];
+        guint8 pixbuff[16384] = {0};  //  128 x 128 max
         int separator_length = 0;
-        guint8 pixbuff[1024 << 4] = {0};
     } attach_rec_t;
 
     static type_signal_update m_signal_update;

@@ -47,6 +47,21 @@ namespace pixbuf_util
         return result;
     }
 
+    // const Glib::RefPtr<Gdk::Pixbuf> get_icon_from_info(const appinfo_t& info, int size)
+    //{
+    // Glib::RefPtr<Gdk::Pixbuf> empty = (Glib::RefPtr<Gdk::Pixbuf>)nullptr;
+    // GtkIconTheme* icon_theme = gtk_icon_theme_get_default();
+    // auto pixbuf = gtk_icon_theme_load_icon(icon_theme,
+    // info.m_icon_name.c_str(),     // icon name
+    // size,                         // icon size
+    // GTK_ICON_LOOKUP_USE_BUILTIN,  // flags //
+    //&error);
+    // if (error) {
+    // g_error_free(error);
+    // error = nullptr;
+    //}
+    //}
+
     const Glib::RefPtr<Gdk::Pixbuf> get_window_icon(WnckWindow* window, const string& icon_name,
                                                     int size)
     {

@@ -101,10 +101,13 @@ namespace position_util
             m_window->resize(area, height);
             m_window->move(xpos, ypos);
         }
+
+        //  m_window->show_all();
     }
 
     void hide()
     {
+        // m_window->hide();
         auto const location = config::get_dock_location();
         Gdk::Rectangle workarea = device::monitor::get_current()->get_workarea();
         int area = position_util::get_area();
@@ -113,7 +116,7 @@ namespace position_util
         m_window->get_position(x, y);
 
         if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-            //    m_window->resize(m_window->get_width(), 1);
+            // m_window->resize(m_window->get_width(), 1);
 
             if (location == dock_location_t::bottom) {
                 m_window->move(x, workarea.get_height() + workarea.get_y() - 1);

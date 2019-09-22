@@ -347,7 +347,7 @@ namespace config
 
             // separator margin
             m_separator_margin = get_separator_margin(key_file);
-            if (m_separator_margin < 1 || m_separator_margin > 20) {
+            if (m_separator_margin < 0 || m_separator_margin > 20) {
                 m_separator_margin = DEF_DEFAULT_ICON_SIZE;
             }
 

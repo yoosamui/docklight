@@ -21,8 +21,8 @@ typedef struct {
     WnckWindow* m_wnckwindow;
     dock_item_type_t m_dock_item_type;
     unsigned long m_xid;
-    Glib::RefPtr<Gdk::Pixbuf> m_image;
-    int m_separator_length;
+    Glib::RefPtr<Gdk::Pixbuf> m_image = (Glib::RefPtr<Gdk::Pixbuf>)nullptr;
+    int m_separator_length = 0;
     int m_width;
     int m_height;
 } appinfo_t;

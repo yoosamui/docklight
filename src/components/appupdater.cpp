@@ -89,16 +89,43 @@ AppUpdater::type_signal_update AppUpdater::signal_update()
 
 void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
 {
+    // clang-format off
+    //
+    /*
+    enum WnckWindowType
+
+    WNCK_WINDOW_NORMAL the window is a normal window.
+    WNCK_WINDOW_DESKTOP the window is a desktop.
+    WNCK_WINDOW_DOCK the window is a dock or a panel.
+    WNCK_WINDOW_DIALOG the window is a dialog window.
+    WNCK_WINDOW_TOOLBAR the window is a tearoff toolbar.
+    WNCK_WINDOW_MENU the window is a tearoff menu.
+    WNCK_WINDOW_UTILITY the window is a small persistent utility window, such as a palette or toolbox.
+    WNCK_WINDOW_SPLASHSCREEN the window is a splash screen displayed as an application is starting up.
+    */
+
+
     WnckWindowType wt = wnck_window_get_window_type(window);
 
-    if (wt == WNCK_WINDOW_DESKTOP || wt == WNCK_WINDOW_DOCK || wt == WNCK_WINDOW_MENU ||
+    if (wt == WNCK_WINDOW_DESKTOP ||
+        wt == WNCK_WINDOW_DOCK ||
+        wt == WNCK_WINDOW_MENU ||
         wt == WNCK_WINDOW_SPLASHSCREEN) {
         return;
-    }
+        }
 
-    const char *instance_name = wnck_window_get_class_instance_name(window);
-    if (instance_name != nullptr && strcmp(instance_name, DOCKLIGHT_INSTANCENAME) == 0) {
-        return;
+    const string ignore_instances[] =
+        {
+            {DOCKLIGHT_INSTANCENAME},
+            {"wrapper-2.0"}            //xcfe menu
+        };
+
+    // clang-format on
+    for (auto const instance : ignore_instances) {
+        const char *instance_name = wnck_window_get_class_instance_name(window);
+        if (instance_name != nullptr && strcmp(instance_name, instance.c_str()) == 0) {
+            return;
+        }
     }
 
     if (actiontype == window_action_t::OPEN) {
@@ -236,17 +263,16 @@ bool AppUpdater::save()
             continue;
         }
 
-        appinfo_t *info = item->get_appinfo();
+        auto const info = item->get_appinfo();
 
         if (info->m_image) {
             try {
                 info->m_image->save_to_buffer(iconBuffer, buffer_size);
                 memcpy(rec.pixbuff, iconBuffer, buffer_size);
-
                 delete[](gchar *) iconBuffer;
 
             } catch (...) {
-                g_critical("Attachments::save: Gdk::PixbufError\n");
+                g_critical("Attachments::save: Gdk::PixbufError %s\n", info->m_name.c_str());
             }
         }
 
@@ -290,16 +316,18 @@ bool AppUpdater::load()
         if (feof(file_reader) != 0) break;
         if (sn == 0) continue;
 
-        try {
-            auto loader = Gdk::PixbufLoader::create();
-            loader->write(rec.pixbuff, sizeof(rec.pixbuff));
-            info.m_image = loader->get_pixbuf();
-            loader->close();
+        if (rec.pixbuff != nullptr) {
+            try {
+                auto loader = Gdk::PixbufLoader::create();
+                loader->write(rec.pixbuff, sizeof(rec.pixbuff));
+                info.m_image = loader->get_pixbuf();
+                loader->close();
 
-        } catch (...) {
-            g_critical("AppUpdater Load: Gdk::PixbufError\n");
+            } catch (...) {
+                g_warning("AppUpdater Load: Gdk::PixbufError %s \n", rec.name);
+                info.m_image = (Glib::RefPtr<Gdk::Pixbuf>)nullptr;
+            }
         }
-
         info.m_dock_item_type = static_cast<dock_item_type_t>(rec.dock_item_type);
         info.m_wnckwindow = 0;
         info.m_xid = 0;
@@ -393,6 +421,7 @@ int AppUpdater::get_required_size()
     if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
         for (size_t i = 0; i < items_count; i++) {
             auto const item = m_dockitems[i];
+
             int item_size = item->get_width();
             if (item_size < 0) {
                 continue;
@@ -404,8 +433,10 @@ int AppUpdater::get_required_size()
     } else {
         for (size_t i = 0; i < items_count; i++) {
             auto const item = m_dockitems[i];
+
             int item_size = item->get_height();
             if (item_size < 0) {
+                g_print("exclude .........\n");
                 continue;
             }
 

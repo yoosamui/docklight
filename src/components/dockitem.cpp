@@ -8,7 +8,7 @@ DockItem::DockItem(appinfo_t app_info, dock_item_type_t item_type)
 {
     m_app_info = app_info;
     m_app_info.m_dock_item_type = item_type;
-    m_app_info.m_width = m_app_info.m_height = config::get_dock_area();  // config::get_icon_size();
+    m_app_info.m_width = m_app_info.m_height = config::get_dock_area();
 }
 
 DockItem::~DockItem()
@@ -102,6 +102,7 @@ int DockItem::get_width()
 {
     if (m_app_info.m_dock_item_type == dock_item_type_t::separator) {
         this->swap_size();
+        return m_app_info.m_width;  // - Panel::m_stm.m_decrease_factor;
     }
 
     return m_app_info.m_width - Panel::m_stm.m_decrease_factor;
@@ -111,6 +112,7 @@ int DockItem::get_height()
 {
     if (m_app_info.m_dock_item_type == dock_item_type_t::separator) {
         this->swap_size();
+        return m_app_info.m_height;  // - Panel::m_stm.m_decrease_factor;
     }
 
     return m_app_info.m_height - Panel::m_stm.m_decrease_factor;
