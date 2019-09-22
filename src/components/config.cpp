@@ -14,6 +14,7 @@ namespace config
 #define DEF_CONFIG_FILENAME "docklight.config"
 #define DEF_DEFAULT_ICON_SIZE 42
 #define DEF_DEFAULT_SEPARATOR_MARGIN 12
+#define DEF_DEFAULT_SEPARATOR_SIZE 8
 
     using namespace style;
 
@@ -21,6 +22,7 @@ namespace config
     dock_location_t m_location = dock_location_t::bottom;
     int m_icon_size = DEF_DEFAULT_ICON_SIZE;
     int m_separator_margin = DEF_DEFAULT_SEPARATOR_MARGIN;
+    int m_separator_size = DEF_DEFAULT_SEPARATOR_SIZE;
     dock_indicator_type_t m_indicator_type = dock_indicator_type_t::dots;
     bool m_show_title = true;
     bool m_show_separator_line = true;
@@ -102,9 +104,8 @@ namespace config
         m_theme.set_PanelCell(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 0, 0, 1), 1.5, 1, 0));
         m_theme.set_PanelDrag(new ColorWindow(Color(1, 1, 1, 0.4), Color(1, 1, 1, 1), 2.5, 3, 0));
         m_theme.set_PanelIndicator(new ColorWindow(Color(1, 1, 1, 1), Color(1, 1, 1, 1), 0, 0, 0));
-        m_theme.set_PanelSeparator(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 1, 1, 1), 1.0, 3, 0));
+        m_theme.set_PanelSeparator(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 1, 1, 1.0), 1.0, 0, 0));
 
-        set_separator_line(false);
 /*
         m_theme.set_Selector(new ColorWindow(Color(255, 255, 255, 0.3), Color(1, 1, 1, 1), 1.5, 3, 0));
         m_theme.set_PanelTitle(new ColorWindow(Color(0, 0, 0, 1), Color(0, 0, 0, 1), 1, 6, 0));
@@ -264,6 +265,20 @@ namespace config
         return result;
     }
 
+    int get_separator_size(GKeyFile *key_file)
+    {
+        GError *error = nullptr;
+        int value = g_key_file_get_integer(key_file, "separator", "separator_size", &error);
+        if (error) {
+            g_error_free(error);
+            error = nullptr;
+
+            return m_separator_size;
+        }
+
+        return value;
+    }
+
     int get_separator_margin(GKeyFile *key_file)
     {
         GError *error = nullptr;
@@ -345,6 +360,12 @@ namespace config
             // separator show line
             m_show_separator_line = get_separator_show_line(key_file);
 
+            // separator size
+            m_separator_size = get_separator_size(key_file);
+            if (m_separator_size < 0 || m_separator_size > 20) {
+                m_separator_size = DEF_DEFAULT_SEPARATOR_SIZE;
+            }
+
             // separator margin
             m_separator_margin = get_separator_margin(key_file);
             if (m_separator_margin < 0 || m_separator_margin > 20) {
@@ -387,7 +408,7 @@ namespace config
                     m_theme.set_PanelDrag(new ColorWindow(fill, stroke, lineWidth, ratio, mask));
                 }
             } else {  // use default theme
-                m_show_separator_line = false;
+                //    m_show_separator_line = false;
             }
 
             g_key_file_free(key_file);
@@ -465,6 +486,8 @@ namespace config
     int get_window_start_end_margin() { return 20; }
 
     int get_separator_margin() { return m_separator_margin; }
+
+    int get_separator_size() { return m_separator_size; }
 
     dock_location_t get_dock_location() { return m_location; }
 

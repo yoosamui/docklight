@@ -31,6 +31,11 @@ dock_item_type_t DockItem::get_dock_item_type() const
     return m_app_info.m_dock_item_type;
 }
 
+bool DockItem::is_resizable() const
+{
+    return m_app_info.m_resizable;
+}
+
 string DockItem::get_name() const
 {
     return m_app_info.m_name;
@@ -102,7 +107,8 @@ int DockItem::get_width()
 {
     if (m_app_info.m_dock_item_type == dock_item_type_t::separator) {
         this->swap_size();
-        return m_app_info.m_width;  // - Panel::m_stm.m_decrease_factor;
+        m_app_info.m_resizable = false;
+        return m_app_info.m_width;
     }
 
     return m_app_info.m_width - Panel::m_stm.m_decrease_factor;
@@ -112,7 +118,8 @@ int DockItem::get_height()
 {
     if (m_app_info.m_dock_item_type == dock_item_type_t::separator) {
         this->swap_size();
-        return m_app_info.m_height;  // - Panel::m_stm.m_decrease_factor;
+        m_app_info.m_resizable = false;
+        return m_app_info.m_height;
     }
 
     return m_app_info.m_height - Panel::m_stm.m_decrease_factor;

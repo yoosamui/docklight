@@ -287,6 +287,7 @@ bool AppUpdater::save()
 
         rec.dock_item_type = info->m_dock_item_type;
         rec.separator_length = info->m_separator_length;
+        rec.resizable = (int)info->m_resizable;
 
         size_t result = fwrite(&rec, sizeof(rec), 1, file_writer);
         if (result == 0) g_critical("Attachments::save:: Error writing file> fwrite\n");
@@ -340,10 +341,11 @@ bool AppUpdater::load()
         info.m_locale = rec.locale;
         info.m_desktop_file = rec.desktop_file;
         info.m_separator_length = rec.separator_length;
+        info.m_resizable = (bool)rec.resizable;
 
         // check if locale has been changed and desktop file still exists.
         if (!info.m_desktop_file.empty()) {
-            // if the desktop file could not be found the app has been removed
+            // if the desktop file could not be found than app has been removed
             if (!desktopfile_util::get_app_info(info)) {
                 continue;
             }
@@ -360,6 +362,23 @@ bool AppUpdater::load()
     on_theme_changed();
     return true;
 }
+
+bool AppUpdater::attach_all()
+{
+    for (size_t i = 1; i < m_dockitems.size(); i++) {
+        auto const item = m_dockitems[i];
+        if (!item) continue;
+
+        item->set_attach(true);
+    }
+
+    if (!this->save()) {
+        g_critical("Error: attach_all: could not save data.");
+    }
+
+    return true;
+}
+
 bool AppUpdater::attach_item(int index)
 {
     if (index < 0 || index > (int)this->m_dockitems.size()) {
@@ -376,7 +395,7 @@ bool AppUpdater::attach_item(int index)
     item->set_attach(true);
 
     if (!this->save()) {
-        g_critical("Error: could not save data.");
+        g_critical("Error: attach_item: could not save data.");
         return false;
     }
 
@@ -414,35 +433,71 @@ bool AppUpdater::remove_item(const int index)
 
 int AppUpdater::get_required_size()
 {
+    int dummy;
+
+    return get_required_size(dummy);
+}
+
+int AppUpdater::get_required_size(int &exclude_count)
+{
+    exclude_count = 0;
     size_t items_count = m_dockitems.size();
     int size = config::get_window_start_end_margin() +
                ((items_count - 1) * config::get_separator_margin());
 
-    if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-        for (size_t i = 0; i < items_count; i++) {
-            auto const item = m_dockitems[i];
+    for (size_t i = 0; i < items_count; i++) {
+        auto const item = m_dockitems[i];
 
-            int item_size = item->get_width();
-            if (item_size < 0) {
-                continue;
-            }
+        int item_size = config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL
+                            ? item->get_width()
+                            : item->get_height();
 
-            size += item_size;
+        if (item_size < 0) {
+            exclude_count++;
+            continue;
         }
 
-    } else {
-        for (size_t i = 0; i < items_count; i++) {
-            auto const item = m_dockitems[i];
-
-            int item_size = item->get_height();
-            if (item_size < 0) {
-                g_print("exclude .........\n");
-                continue;
-            }
-
-            size += item_size;
+        if (!item->is_resizable()) {
+            exclude_count++;
         }
+
+        size += item_size;
     }
+
+    // if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+    // for (size_t i = 0; i < items_count; i++) {
+    // auto const item = m_dockitems[i];
+    // int item_size = item->get_width();
+
+    // if (item_size < 0) {
+    // exclude_count++;
+    // continue;
+    //}
+
+    // if (!item->is_resizable()) {
+    // exclude_count++;
+    //}
+
+    // size += item_size;
+    //}
+
+    //} else {
+    // for (size_t i = 0; i < items_count; i++) {
+    // auto const item = m_dockitems[i];
+    // int item_size = item->get_height();
+
+    // if (item_size < 0) {
+    // exclude_count++;
+    // continue;
+    //}
+
+    // if (!item->is_resizable()) {
+    // exclude_count++;
+    //}
+
+    // size += item_size;
+    //}
+    //}
 
     return size;
 }

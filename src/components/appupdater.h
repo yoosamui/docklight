@@ -29,10 +29,12 @@ class AppUpdater
     void on_theme_changed();
     bool attach_item(int index);
     bool detach_item(const int index);
+    bool attach_all();
     bool remove_item(const int index);
     bool save();
     bool load();
     int get_required_size();
+    int get_required_size(int& exclude_count);
     void swap_item(const int next_position);
 
   private:
@@ -48,6 +50,7 @@ class AppUpdater
         char icon_name[128];
         guint8 pixbuff[16384] = {0};  //  128 x 128 max
         int separator_length = 0;
+        int resizable = 1;
     } attach_rec_t;
 
     static type_signal_update m_signal_update;

@@ -288,6 +288,7 @@ namespace config
     bool is_intelihide();
     bool is_show_title();
     bool is_separator_line();
+    int get_separator_size();
     void set_separator_line(bool value);
     dock_alignment_t get_dock_alignment();
     void set_dock_alignment(dock_alignment_t value);

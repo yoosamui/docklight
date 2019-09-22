@@ -28,12 +28,14 @@ namespace desktopfile_util
         }
 
         if (!found && key_file != nullptr) {
+            g_warning("desktopfile:get_key_file: File not found: %s", app_name.c_str());
             g_key_file_free(key_file);
             return nullptr;
         }
 
         GDesktopAppInfo* app_info = g_desktop_app_info_new_from_keyfile(key_file);
         if (app_info == nullptr) {
+            g_warning("desktopfile:get_key_file: GetDesktopInfo is NULL %s", app_name.c_str());
             g_key_file_free(key_file);
             return nullptr;
         }
@@ -60,6 +62,17 @@ namespace desktopfile_util
         if (!g_desktop_app_info_has_key(app_info, "Exec")) {
             g_key_file_free(key_file);
             return nullptr;
+        }
+
+        char* exec = g_desktop_app_info_get_string(app_info, "Exec");
+        if (exec) {
+            string exec_string(exec);
+
+            size_t idx = exec_string.find(app_name);
+            if (idx == string::npos) {
+                g_key_file_free(key_file);
+                return nullptr;
+            }
         }
 
         return key_file;
@@ -141,6 +154,17 @@ namespace desktopfile_util
             info.m_name = info.m_name.substr(0, idx);
         }
 
+        // count and remove prefix if contains more the one word
+        int count = 0;
+        for (int i = 0; i < (int)info.m_name.size(); i++) {
+            if (info.m_name[i] == '-') {
+                count++;
+            }
+        }
+        if (count > 1) {
+            info.m_name = info.m_name.substr(count + 1);
+        }
+
         info.m_title = info.m_group;
         info.m_icon_name = info.m_name;
 
@@ -187,17 +211,17 @@ namespace desktopfile_util
         }
 
         if (!found) {
-            // for (auto const directory : desktop_directories) {
-            // desktop_file = directory + info.m_name + ".desktop";
-            // if (system_util::file_exists(desktop_file)) {
-            // key_file = get_key_file(info.m_name, desktop_file);
-            // if (key_file != nullptr) {
-            // set_info(key_file, desktop_file, info);
-            // found = true;
-            // break;
-            //}
-            //}
-            //}
+            for (auto const directory : desktop_directories) {
+                desktop_file = directory + info.m_name + ".desktop";
+                if (system_util::file_exists(desktop_file)) {
+                    key_file = get_key_file(info.m_name, desktop_file);
+                    if (key_file != nullptr) {
+                        set_info(key_file, desktop_file, info);
+                        found = true;
+                        break;
+                    }
+                }
+            }
 
             char*** result_list = g_desktop_app_info_search(info.m_name.c_str());
             char*** groups;
@@ -223,7 +247,7 @@ namespace desktopfile_util
         }
 
         // save to cache
-        if (!info.m_name.empty()) {
+        if (!info.m_name.empty() && cache.count(info.m_name) == 0) {
             cache[info.m_name] = info;
         }
 

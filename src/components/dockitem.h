@@ -8,6 +8,7 @@
 DL_NS_BEGIN
 
 typedef struct {
+    bool m_resizable = true;
     string m_name;
     string m_instance;
     string m_group;
@@ -44,6 +45,7 @@ class DockItem
     unsigned long get_xid() const;
     shared_ptr<DockItem> get_next() const;
     bool is_attached() const;
+    bool is_resizable() const;
     int get_width();
     int get_height();
     void set_index(int index);
