@@ -881,20 +881,16 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
         }*/
 
         // draw active window selector
-        // if (!m_stm.m_dragdrop_begin && idx > 0 && m_stm.m_active_window_index == (int)idx) {
-        // auto area = position_util::get_area();
+        if (!m_stm.m_dragdrop_begin && idx > 0 && m_stm.m_active_window_index == (int)idx) {
+            if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+                cairo_util::rounded_rectangle(cr, m_offset_x + x, m_offset_y, width, height, 0);
+            } else {
+                cairo_util::rounded_rectangle(cr, m_offset_x, m_offset_y + y, width, height, 0);
+            }
 
-        // if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-        // cairo_util::rounded_rectangle(cr, m_offset_x + x - 4, m_offset_y + 0, width + 8,
-        // area, 0);
-        //} else {
-        // cairo_util::rounded_rectangle(cr, m_offset_x + 0, m_offset_y + y - 4,
-        // position_util::get_area(), height + 8, 0);
-        //}
-
-        // cr->set_source_rgba(1, 1, 1, 0.2);
-        // cr->fill();
-        //}
+            cr->set_source_rgba(1, 1, 1, 0.2);
+            cr->fill();
+        }
 
         // separator
         if (config::is_separator_line() && m_theme.PanelSeparator().Stroke().Color::alpha > 0.0 &&

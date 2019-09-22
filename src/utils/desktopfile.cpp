@@ -200,43 +200,57 @@ namespace desktopfile_util
         }
 
         if (!found) {
-            for (auto const directory : desktop_directories) {
-                desktop_file = directory + info.m_name + ".desktop";
-                key_file = get_key_file(info.m_name, desktop_file);
-                if (key_file != nullptr) {
-                    set_info(key_file, desktop_file, info);
-                    found = true;
-                    break;
-                }
+            string noprefix_name;
+            size_t idx = info.m_name.find("-");
+            if (idx != string::npos) {
+                noprefix_name = info.m_name.substr(0, idx);
             }
 
-            if (!found) {
-                char*** result_list = g_desktop_app_info_search(info.m_name.c_str());
-                char*** groups;
+            // clang-format off
+        const string app_names[] = {
+            {info.m_name},
+            {noprefix_name}};
+            // clang-format on
 
-                for (groups = result_list; *groups; groups++) {
-                    string file_name(*groups[0]);
-                    for (auto const directory : desktop_directories) {
-                        desktop_file = directory + file_name;
-                        if (system_util::file_exists(desktop_file)) {
-                            key_file = get_key_file(info.m_name, desktop_file);
-                            if (key_file != nullptr) {
-                                set_info(key_file, desktop_file, info);
-                                found = true;
-                                break;
-                            }
-                        }
+            for (auto const app_name : app_names) {
+                for (auto const directory : desktop_directories) {
+                    desktop_file = directory + app_name + ".desktop";
+                    key_file = get_key_file(app_name, desktop_file);
+                    if (key_file != nullptr) {
+                        set_info(key_file, desktop_file, info);
+                        found = true;
+                        break;
                     }
                 }
 
-                if (result_list) {
-                    g_free(result_list);
+                if (!found) {
+                    char*** result_list = g_desktop_app_info_search(app_name.c_str());
+                    char*** groups;
+
+                    for (groups = result_list; *groups; groups++) {
+                        string file_name(*groups[0]);
+                        for (auto const directory : desktop_directories) {
+                            desktop_file = directory + file_name;
+                            if (system_util::file_exists(desktop_file)) {
+                                key_file = get_key_file(app_name, desktop_file);
+                                if (key_file != nullptr) {
+                                    set_info(key_file, desktop_file, info);
+                                    found = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if (result_list) {
+                        g_free(result_list);
+                    }
                 }
             }
         }
 
         // save to cache
-        if (!info.m_name.empty() && cache.count(info.m_name) == 0) {
+        if (found && !info.m_name.empty() && cache.count(info.m_name) == 0) {
             cache[info.m_name] = info;
         }
 
