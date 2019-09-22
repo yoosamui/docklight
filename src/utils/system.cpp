@@ -1,4 +1,3 @@
-
 #include "system.h"
 #include <assert.h>
 #include <dirent.h>
@@ -7,11 +6,12 @@
 #include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <strings.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <stdexcept>
 #include <string>
-
 DL_NS_BEGIN
 
 namespace system_util
@@ -41,6 +41,31 @@ namespace system_util
     {
         struct stat buffer;
         return (stat(name.c_str(), &buffer) == 0);
+    }
+
+    // ignore case
+    string file_exists(const string& directory, string& file_name)
+    {
+        DIR* dir = nullptr;
+        dir = opendir(directory.c_str());
+        if (dir == 0) {
+            return {};
+        }
+        string result = {};
+
+        struct dirent* hFile;
+        while ((hFile = readdir(dir)) != nullptr) {
+            if (!strcmp(hFile->d_name, ".")) continue;
+            if (!strcmp(hFile->d_name, "..")) continue;
+
+            if (strcasecmp(hFile->d_name, file_name.c_str()) == 0) {
+                result = directory + hFile->d_name;
+                break;
+            }
+        }
+
+        closedir(dir);
+        return result;
     }
 
     bool is_directory_exists(const char* directory_name)

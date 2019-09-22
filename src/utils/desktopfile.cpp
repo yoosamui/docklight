@@ -214,12 +214,16 @@ namespace desktopfile_util
 
             for (auto const app_name : app_names) {
                 for (auto const directory : desktop_directories) {
-                    desktop_file = directory + app_name + ".desktop";
-                    key_file = get_key_file(app_name, desktop_file);
-                    if (key_file != nullptr) {
-                        set_info(key_file, desktop_file, info);
-                        found = true;
-                        break;
+                    string file_name(app_name + ".desktop");
+                    desktop_file = system_util::file_exists(directory, file_name);
+
+                    if (!desktop_file.empty()) {
+                        key_file = get_key_file(app_name, desktop_file);
+                        if (key_file != nullptr) {
+                            set_info(key_file, desktop_file, info);
+                            found = true;
+                            break;
+                        }
                     }
                 }
 
@@ -230,8 +234,9 @@ namespace desktopfile_util
                     for (groups = result_list; *groups; groups++) {
                         string file_name(*groups[0]);
                         for (auto const directory : desktop_directories) {
-                            desktop_file = directory + file_name;
-                            if (system_util::file_exists(desktop_file)) {
+                            desktop_file = system_util::file_exists(directory, file_name);
+
+                            if (!desktop_file.empty()) {
                                 key_file = get_key_file(app_name, desktop_file);
                                 if (key_file != nullptr) {
                                     set_info(key_file, desktop_file, info);
@@ -246,6 +251,7 @@ namespace desktopfile_util
                         g_free(result_list);
                     }
                 }
+                if (found) break;
             }
         }
 
