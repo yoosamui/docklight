@@ -30,6 +30,14 @@ namespace system_util
         return result;
     }
 
+    int execute(const string& command_string)
+    {
+        char command[NAME_MAX];
+        sprintf(command, "%s &", command_string.c_str());
+        printf("COMMAND %s\n", command);
+        return std::system(command);
+    }
+
     const string get_current_path(const string& str)
     {
         string path = get_current_path();

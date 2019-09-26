@@ -19,9 +19,9 @@ typedef struct {
     string m_desktop_file;
     string m_icon_name;
     bool m_cache = false;
-    WnckWindow* m_wnckwindow;
+    WnckWindow* m_wnckwindow = nullptr;
     dock_item_type_t m_dock_item_type;
-    unsigned long m_xid;
+    unsigned long m_xid = 0;
     Glib::RefPtr<Gdk::Pixbuf> m_image = (Glib::RefPtr<Gdk::Pixbuf>)nullptr;
     int m_separator_length = 0;
     int m_width;

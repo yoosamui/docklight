@@ -6,6 +6,7 @@ DL_NS_BEGIN
 
 namespace system_util
 {
+    int execute(const string& command_string);
     bool file_exists(const std::string& name);
     string file_exists(const string& directory, string& file_name);
     const string get_current_path(const string& str);

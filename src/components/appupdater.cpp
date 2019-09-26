@@ -44,7 +44,9 @@ void AppUpdater::init()
      icon_theme->signal_changed().connect(sigc::mem_fun(*this, &AppUpdater::on_theme_changed));
 
     // clang-format on
+    g_print("AppUpdater init done.\n");
 }
+
 AppUpdater::~AppUpdater()
 {
     g_print("Free AppUpdater\n");
@@ -345,7 +347,7 @@ bool AppUpdater::load()
 
         // check if locale has been changed and desktop file still exists.
         if (!info.m_desktop_file.empty()) {
-            // if the desktop file could not be found than app has been removed
+            // if the desktop file could not be found then the app has been removed
             if (!desktopfile_util::get_app_info(info)) {
                 continue;
             }

@@ -43,17 +43,16 @@ void Panel::set_owner(Gtk::Window* window)
 
 void Panel::init()
 {
+    m_theme = config::get_theme();
+
     if (config::is_autohide()) {
         m_autohide.set_hide_delay(0.5);
-        m_autohide.hide();
     }
     if (config::is_intelihide()) {
         m_autohide.set_hide_delay(0.5);
-        m_autohide.intelihide();
     }
 
-    m_theme = config::get_theme();
-
+    // int Panel::get_required_size()
     // clang-format off
 
     // home menu
@@ -97,11 +96,10 @@ void Panel::init()
     auto icon_size = config::get_icon_size();
     load_home_icon(icon_size);
 
-    //    m_appupdater.init();
-
     m_appupdater.signal_update().connect(sigc::mem_fun(this, &Panel::on_appupdater_update));
     m_appupdater.init();
 
+    m_autohide.init();
     m_bck_thread = new thread(connect_async);
 }
 
@@ -391,10 +389,6 @@ bool Panel::on_button_press_event(GdkEventButton* event)
 }
 bool Panel::on_button_release_event(GdkEventButton* event)
 {
-    if (m_autohide.is_visible() == false) {
-        return true;
-    }
-
     // handle drop
     if (m_stm.m_dragdrop_begin && m_drop_index > 0) {
         m_dragdrop_timer.stop();
@@ -409,6 +403,10 @@ bool Panel::on_button_release_event(GdkEventButton* event)
         // allways attach all after drop
         m_appupdater.attach_all();
 
+        return true;
+    }
+
+    if (m_autohide.is_visible() == false) {
         return true;
     }
 
@@ -842,7 +840,10 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
     int width = 0;
     int height = 0;
     int center = 0;
+    // int center_pos_x = 0;
+
     int area = position_util::get_area();
+    Gtk::Orientation orientation = config::get_dock_orientation();
 
     size_t items_count = m_appupdater.m_dockitems.size();
 
@@ -864,8 +865,15 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
         item->set_x(x);
         item->set_y(y);
 
-        center = (width / 2);
+        if (orientation == Gtk::ORIENTATION_HORIZONTAL) {
+            center = (width / 2);
+            y = m_offset_y;
+        } else {
+            center = (height / 2);
+            x = m_offset_x;
+        }
 
+        // center_pos_x = x + center / 2;
         // draw cell fill
         /*if (item->get_dock_item_type() != dock_item_type_t::separator) {
             if (m_theme.PanelCell().Fill().Color::alpha > 0.0) {
@@ -874,7 +882,7 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
                                     m_theme.PanelCell().Fill().Color::blue,
                                     m_theme.PanelCell().Fill().Color::alpha);
 
-                cairo_util::rounded_rectangle(cr, m_offset_x + x, m_offset_y + y, width, height,
+                cairo_util::rounded_rectangle(cr,  + x,  y, width, height,
                                               m_theme.PanelCell().Ratio());
                 cr->fill();
             }
@@ -883,9 +891,9 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
         // draw active window selector
         if (!m_stm.m_dragdrop_begin && idx > 0 && m_stm.m_active_window_index == (int)idx) {
             if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-                cairo_util::rounded_rectangle(cr, m_offset_x + x, m_offset_y, width, height, 0);
+                cairo_util::rounded_rectangle(cr, x, m_offset_y, width, height, 0);
             } else {
-                cairo_util::rounded_rectangle(cr, m_offset_x, m_offset_y + y, width, height, 0);
+                cairo_util::rounded_rectangle(cr, x, y, width, height, 0);
             }
 
             cr->set_source_rgba(1, 1, 1, 0.2);
@@ -902,17 +910,14 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
 
             cr->set_line_width(m_theme.PanelSeparator().LineWidth());
 
-            if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-                int centerX = width / 2;
-                cr->move_to(x + m_offset_x + centerX, y + m_offset_y);
-                cr->line_to(x + m_offset_x + centerX, y + m_offset_y);
-                cr->line_to(x + m_offset_x + centerX, y + m_offset_y + height);
-
+            if (orientation == Gtk::ORIENTATION_HORIZONTAL) {
+                cr->move_to(x, y + 6);
+                cr->line_to(x, y + 6);
+                cr->line_to(x, y + area - 6);
             } else {
-                int centerY = height / 2;
-                cr->move_to(x + m_offset_x, y + m_offset_y + centerY);
-                cr->line_to(x + m_offset_x, y + m_offset_y + centerY);
-                cr->line_to(x + m_offset_x + width, y + m_offset_y + centerY);
+                cr->move_to(x + 6, y);
+                cr->line_to(x + 6, y);
+                cr->line_to(x + area - 6, y);
             }
 
             cr->stroke();
@@ -947,8 +952,7 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
             }
 
             int center_pos_x = (position_util::get_area() / 2) - (icon_size / 2);
-            Gdk::Cairo::set_source_pixbuf(cr, item->get_image(), m_offset_x + x + center_pos_x,
-                                          m_offset_y + y + 4);
+            Gdk::Cairo::set_source_pixbuf(cr, item->get_image(), x + center_pos_x, y + 4);
             cr->paint();
 
             if (m_show_selector) {
@@ -959,8 +963,7 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
                     auto tmp = item->get_image()->copy();
                     pixbuf_util::invert_pixels(tmp);
 
-                    Gdk::Cairo::set_source_pixbuf(cr, tmp, m_offset_x + x + center_pos_x,
-                                                  m_offset_y + y + 4);
+                    Gdk::Cairo::set_source_pixbuf(cr, tmp, x + center_pos_x, y + 4);
 
                     m_inverted_index = (int)m_current_index;
                     cr->paint();
@@ -984,8 +987,7 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
             // int area = config::get_current_area_size();
             //  g_print(" %d  x %d area %d \n", width, height, area);
             cr->set_line_width(m_theme.PanelCell().LineWidth());
-            cairo_util::rounded_rectangle(cr, m_offset_x + x, m_offset_y + y, width, height,
-                                          m_theme.PanelCell().Ratio());
+            cairo_util::rounded_rectangle(cr, x, y, width, height, m_theme.PanelCell().Ratio());
             cr->stroke();
         }
         //  }
@@ -996,8 +998,7 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
                 m_theme.PanelDrag().Fill().Color::red, m_theme.PanelDrag().Fill().Color::green,
                 m_theme.PanelDrag().Fill().Color::blue, m_theme.PanelDrag().Fill().Color::alpha);
 
-            cairo_util::rounded_rectangle(cr, m_offset_x + x, m_offset_y + y, width, height,
-                                          m_theme.PanelDrag().Ratio());
+            cairo_util::rounded_rectangle(cr, x, y, width, height, m_theme.PanelDrag().Ratio());
 
             cr->fill();
 
@@ -1007,8 +1008,7 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
                                 m_theme.PanelDrag().Stroke().Color::alpha);
 
             cr->set_line_width(m_theme.PanelDrag().LineWidth());
-            cairo_util::rounded_rectangle(cr, m_offset_x + x, m_offset_y + y, width, height,
-                                          m_theme.PanelDrag().Ratio());
+            cairo_util::rounded_rectangle(cr, x, y, width, height, m_theme.PanelDrag().Ratio());
             cr->stroke();
         }
 
@@ -1022,13 +1022,10 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
             if (config::get_indicator_type() == dock_indicator_type_t::dots) {
                 if (item->m_items.size() > 0) {
                     if (item->m_items.size() == 1) {
-                        cr->arc(m_offset_x + x + center, m_offset_y + y + area - 4, 1.8, 0,
-                                2 * M_PI);
+                        cr->arc(x + center, y + area - 4, 1.8, 0, 2 * M_PI);
                     } else if (item->m_items.size() > 1) {
-                        cr->arc(m_offset_x + x + center - 3, m_offset_y + y + area - 4, 1.8, 0,
-                                2 * M_PI);
-                        cr->arc(m_offset_x + x + center + 3, m_offset_y + y + area - 4, 1.8, 0,
-                                2 * M_PI);
+                        cr->arc(x + center - 3, y + area - 4, 1.8, 0, 2 * M_PI);
+                        cr->arc(x + center + 3, y + area - 4, 1.8, 0, 2 * M_PI);
                     }
                     cr->fill();
                 }
@@ -1036,18 +1033,18 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
                 int marginY = area - m_stm.m_decrease_factor - 4;
                 if (item->m_items.size() > 0) {
                     if (item->m_items.size() == 1) {
-                        cr->move_to(x + m_offset_x, y + m_offset_y + marginY);
-                        cr->line_to(x + m_offset_x, y + m_offset_y + marginY);
-                        cr->line_to(x + m_offset_x + width, y + m_offset_y + marginY);
+                        cr->move_to(x, y + marginY);
+                        cr->line_to(x, y + marginY);
+                        cr->line_to(x + width, y + marginY);
 
                     } else if (item->m_items.size() > 1) {
-                        cr->move_to(x + m_offset_x, y + m_offset_y + marginY);
-                        cr->line_to(x + m_offset_x, y + m_offset_y + marginY);
-                        cr->line_to(x + m_offset_x + center - 2, y + m_offset_y + marginY);
+                        cr->move_to(x, y + marginY);
+                        cr->line_to(x, y + marginY);
+                        cr->line_to(x + center - 2, y + marginY);
 
-                        cr->move_to(x + m_offset_x + center + 2, y + m_offset_y + marginY);
-                        cr->line_to(x + m_offset_x + center + 2, y + m_offset_y + marginY);
-                        cr->line_to(x + m_offset_x + width, y + m_offset_y + marginY);
+                        cr->move_to(x + center + 2, y + marginY);
+                        cr->line_to(x + center + 2, y + marginY);
+                        cr->line_to(x + width, y + marginY);
                     }
                 }
 

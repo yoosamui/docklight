@@ -39,6 +39,7 @@ class Autohide
     static void show();
     static void intelihide();
 
+    void init();
     void set_hide_delay(float delay);
     void reset_timer();
     void set_mouse_inside(bool mouse_inside);

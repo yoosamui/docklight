@@ -7,7 +7,7 @@
 
 DL_NS_BEGIN
 
-#define DEF_AUTOHIDE_EASING_DURATION 4.0
+#define DEF_AUTOHIDE_EASING_DURATION 5.0
 
 static_members_t Autohide::m_stm;
 WnckWindow* Autohide::m_active_window;
@@ -18,9 +18,11 @@ Autohide::Autohide()
     m_stm.m_visible = true;
 
     Autohide::m_active_window = nullptr;
+}
 
+void Autohide::init()
+{
     WnckScreen* wnckscreen = wnck_screen_get_default();
-
     g_signal_connect(wnckscreen, "active_window_changed",
                      G_CALLBACK(Autohide::on_active_window_changed), nullptr);
 }
@@ -183,7 +185,16 @@ Gdk::Rectangle Autohide::get_window_geometry(WnckWindow* window)
     }
 
     int x = 0, y = 0, width = 0, height = 0;
+
+    // Gets the size and position of window , including decorations.
+    // This function uses the information last received in a ConfigureNotify
+    // event and adjusts it according to the size of the frame that is added
+    // by the window manager (this call does not round-trip to the server,
+    // it just gets the last sizes that were notified).
+    // ----------------------------------------------------------------------
+    // The X and Y coordinates are relative to the root window.
     wnck_window_get_geometry(window, &x, &y, &width, &height);
+
     result.set_x(x);
     result.set_y(y);
     result.set_width(width);
@@ -207,23 +218,60 @@ bool Autohide::is_intersection_detected()
     auto rect_window = Autohide::get_window_geometry(m_active_window);
     auto const location = config::get_dock_location();
 
+    bool initial_size = false;
+    // check the initial panel size. It can't deliver the width and height correctly.
+    // This should only happen on application startup where the size of the dock window is
+    // width = 1 and height = 1
+    if (rect_dock.get_width() == 1 && rect_dock.get_height() == 1) {
+        area = config::get_dock_area() - Panel::m_stm.m_decrease_factor;
+        initial_size = true;
+    }
+
     if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
         if (location == dock_location_t::bottom) {
+            if (initial_size) {
+                if (rect_window.get_y() + rect_window.get_height() - workarea.get_y() >
+                    workarea.get_height() - area) {
+                    return true;
+                }
+            }
+
             rect_dock.set_y(workarea.get_height() + workarea.get_y() - area);
             rect_dock.set_height(area);
         } else {
+            if (initial_size) {
+                if (rect_window.get_y() - workarea.get_y() < area) {
+                    return true;
+                }
+            }
+            rect_window.set_y(rect_window.get_y() + workarea.get_y());
             rect_dock.set_y(workarea.get_y());
-            rect_dock.set_height(area);
+            rect_dock.set_height(workarea.get_y() + area);
         }
     } else {
         if (location == dock_location_t::right) {
+            if (initial_size) {
+                if (rect_window.get_x() + rect_window.get_width() > workarea.get_width() - area) {
+                    return true;
+                }
+            }
+
             rect_dock.set_x(workarea.get_width() + workarea.get_x() - area);
             rect_dock.set_width(area);
+
         } else {
+            if (initial_size) {
+                if (rect_window.get_x() - workarea.get_x() < area) {
+                    return true;
+                }
+            }
+
+            rect_window.set_x(rect_window.get_x() + workarea.get_x());
             rect_dock.set_x(workarea.get_x());
-            rect_dock.set_width(area);
+            rect_dock.set_width(workarea.get_x() + area);
         }
     }
+
     return rect_window.intersects(rect_dock);
 }
 
@@ -235,6 +283,7 @@ void Autohide::intelihide()
 
     if (Autohide::is_intersection_detected()) {
         if (Autohide::get_windows_count() == 0) {
+            g_print("INTERSECTION\n");
             return;
         }
 
