@@ -475,6 +475,8 @@ namespace config
 
     bool is_show_title() { return m_show_title; }
 
+    bool is_autohide_none() { return m_autohide_type == dock_autohide_type_t::none; }
+
     bool is_autohide() { return m_autohide_type == dock_autohide_type_t::autohide; }
 
     bool is_intelihide() { return m_autohide_type == dock_autohide_type_t::intelihide; }
@@ -496,22 +498,12 @@ namespace config
     int get_dock_area()
     {
         int area = m_icon_size + MARGIN;
-
-        // if (Panel::m_stm.m_decrease_factor > 0) {
-        // area = AppUpdater::m_dockitems[0]->get_width();  // Panel::m_stm.m_decrease_factor;
-        //}
-
         return area;
     }
 
     int get_icon_size()
     {
         int icon_size = m_icon_size;
-
-        // if (Panel::m_stm.m_decrease_factor > 0) {
-        // icon_size -= Panel::m_stm.m_decrease_factor;
-        //}
-
         return icon_size;
     }
 

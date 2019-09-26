@@ -45,14 +45,15 @@ void Panel::init()
 {
     m_theme = config::get_theme();
 
-    if (config::is_autohide()) {
-        m_autohide.set_hide_delay(0.5);
-    }
-    if (config::is_intelihide()) {
-        m_autohide.set_hide_delay(0.5);
+    if (config::is_autohide_none() == false) {
+        if (config::is_autohide()) {
+            m_autohide.set_hide_delay(0.5);
+        }
+        if (config::is_intelihide()) {
+            m_autohide.set_hide_delay(0.5);
+        }
     }
 
-    // int Panel::get_required_size()
     // clang-format off
 
     // home menu
@@ -99,7 +100,10 @@ void Panel::init()
     m_appupdater.signal_update().connect(sigc::mem_fun(this, &Panel::on_appupdater_update));
     m_appupdater.init();
 
-    m_autohide.init();
+    if (config::is_autohide_none() == false) {
+        m_autohide.init();
+    }
+
     m_bck_thread = new thread(connect_async);
 }
 
@@ -144,8 +148,10 @@ void Panel::connect_draw_signal(bool connect)
 
 void Panel::on_appupdater_update()
 {
-    if (m_autohide.is_visible() == false) {
-        return;
+    if (!config::is_autohide_none()) {
+        if (m_autohide.is_visible() == false) {
+            return;
+        }
     }
 
     AppWindow::update();
@@ -285,13 +291,15 @@ void Panel::on_menu_hide_event()
 {
     m_context_menu_open = false;
 
-    if (config::is_intelihide() || config::is_autohide()) {
-        m_autohide.reset_timer();
+    if (!config::is_autohide_none()) {
+        if (config::is_intelihide() || config::is_autohide()) {
+            m_autohide.reset_timer();
 
-        if (config::is_intelihide()) {
-            m_autohide.intelihide();
-        } else if (config::is_autohide()) {
-            m_autohide.hide();
+            if (config::is_intelihide()) {
+                m_autohide.intelihide();
+            } else if (config::is_autohide()) {
+                m_autohide.hide();
+            }
         }
     }
 
@@ -406,8 +414,10 @@ bool Panel::on_button_release_event(GdkEventButton* event)
         return true;
     }
 
-    if (m_autohide.is_visible() == false) {
-        return true;
+    if (!config::is_autohide_none()) {
+        if (m_autohide.is_visible() == false) {
+            return true;
+        }
     }
 
     if ((event->type == GDK_BUTTON_RELEASE) && m_current_index != -1) {
@@ -519,15 +529,16 @@ bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
     m_stm.m_mouse_inside = true;
     this->connect_draw_signal(true);
 
-    if (config::is_autohide() || config::is_intelihide()) {
-        m_autohide.reset_timer();
-        m_autohide.set_mouse_inside(true);
-    }
+    if (!config::is_autohide_none()) {
+        if (config::is_autohide() || config::is_intelihide()) {
+            m_autohide.reset_timer();
+            m_autohide.set_mouse_inside(true);
+        }
 
-    if (config::is_autohide() || config::is_intelihide()) {
-        m_autohide.show();
+        if (config::is_autohide() || config::is_intelihide()) {
+            m_autohide.show();
+        }
     }
-
     // m_HomeMenu.hide();
     // m_ItemMenu.hide();
 
@@ -538,9 +549,11 @@ bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
 {
     m_show_selector = false;
 
-    if (config::is_autohide() || config::is_intelihide()) {
-        m_autohide.reset_timer();
-        m_autohide.set_mouse_inside(false);
+    if (!config::is_autohide_none()) {
+        if (config::is_autohide() || config::is_intelihide()) {
+            m_autohide.reset_timer();
+            m_autohide.set_mouse_inside(false);
+        }
     }
 
     auto const location = config::get_dock_location();
@@ -578,14 +591,15 @@ bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
     //  m_enter_anchor = false;
     m_stm.m_mouse_inside = false;
 
-    if (config::is_intelihide()) {
-        m_autohide.intelihide();
-    } else if (config::is_autohide()) {
-        m_autohide.hide();
+    if (!config::is_autohide_none()) {
+        if (config::is_intelihide()) {
+            m_autohide.intelihide();
+        } else if (config::is_autohide()) {
+            m_autohide.hide();
+        }
     }
 
     this->connect_draw_signal(false);
-
     return true;
 }
 

@@ -284,6 +284,7 @@ namespace config
     int get_icon_size();
     void set_icon_size(int value);
     dock_indicator_type_t get_indicator_type();
+    bool is_autohide_none();
     bool is_autohide();
     bool is_intelihide();
     bool is_show_title();
