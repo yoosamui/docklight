@@ -25,6 +25,7 @@ namespace position_util
     } struts_position_t;
 
     void set_strut(bool reset);
+    void reset_strut();
     void hide();
     bool is_visible();
     int get_area();

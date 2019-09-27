@@ -161,7 +161,9 @@ void Panel::on_autohide_update(int x, int y)
 int Panel::get_required_size()
 {
     m_stm.m_decrease_factor = 0;
-    Gdk::Rectangle workarea = device::monitor::get_current()->get_workarea();
+    Gdk::Rectangle workarea = config::is_autohide_none()
+                                  ? device::monitor::get_current()->get_geometry()
+                                  : device::monitor::get_current()->get_workarea();
 
     // the required full size
     int size = m_appupdater.get_required_size();
