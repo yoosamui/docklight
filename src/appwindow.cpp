@@ -75,6 +75,7 @@ void AppWindow::on_app_activated()
 
 void AppWindow::monitor_changed_callback(GdkScreen *screen, gpointer gtkwindow)
 {
+    g_print("Monitor changed event.\n");
     device::monitor::get_current()->set_primary();
     update();
 }

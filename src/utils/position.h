@@ -9,6 +9,22 @@
 DL_NS_BEGIN
 namespace position_util
 {
+    typedef enum struts_enum {
+        left = 0,
+        right = 1,
+        top = 2,
+        bottom = 3,
+        left_start = 4,
+        left_end = 5,
+        right_start = 6,
+        right_end = 7,
+        top_start = 8,
+        top_end = 9,
+        bottom_start = 10,
+        bottom_end = 11
+    } struts_position_t;
+
+    void set_strut(bool reset);
     void hide();
     bool is_visible();
     int get_area();

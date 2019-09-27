@@ -6,6 +6,7 @@ DL_NS_BEGIN
 namespace position_util
 {
     AppWindow* m_window;
+    bool strut_initialized = false;
 
     void init(AppWindow* window) { m_window = window; }
 
@@ -19,8 +20,10 @@ namespace position_util
     void set_window_position()
     {
         int area = config::get_dock_area();
+        Gdk::Rectangle workarea = config::is_autohide_none()
+                                      ? device::monitor::get_current()->get_geometry()
+                                      : device::monitor::get_current()->get_workarea();
 
-        Gdk::Rectangle workarea = device::monitor::get_current()->get_workarea();
         auto const alignment = config::get_dock_alignment();
         int xpos = 0, ypos = 0, center = 0;
 
@@ -57,6 +60,10 @@ namespace position_util
                 ypos = workarea.get_y() + workarea.get_height() - area;
             } else {
                 ypos = workarea.get_y();
+            }
+
+            if (config::is_autohide_none()) {
+                position_util::set_strut(false);
             }
 
             m_window->resize(width, area);
@@ -101,16 +108,15 @@ namespace position_util
             m_window->resize(area, height);
             m_window->move(xpos, ypos);
         }
-
-        //  m_window->show_all();
     }
 
     void hide()
     {
-        // m_window->hide();
         auto const location = config::get_dock_location();
-        Gdk::Rectangle workarea = device::monitor::get_current()->get_workarea();
         int area = position_util::get_area();
+        Gdk::Rectangle workarea = config::is_autohide_none()
+                                      ? device::monitor::get_current()->get_geometry()
+                                      : device::monitor::get_current()->get_workarea();
 
         int x = 0, y = 0;
         m_window->get_position(x, y);
@@ -182,6 +188,61 @@ namespace position_util
         posx = monitorcenterWidth - (targetwidth / 2);
         posy = monitorcenterHeight - (targetheight / 2);
     }
+
+    void set_strut(bool reset)
+    {
+        if (strut_initialized && !reset) {
+            return;
+        }
+
+        long insets[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        GtkWidget* toplevel = gtk_widget_get_toplevel(GTK_WIDGET(m_window->gobj()));
+        auto gdk_window = gtk_widget_get_window(toplevel);
+        if (gdk_window == NULL) {
+            g_critical("set_strut: gdk_window is null.");
+            return;
+        }
+
+        if (!reset) {
+            strut_initialized = true;
+            int area = config::get_dock_area();
+            Gdk::Rectangle workarea = device::monitor::get_current()->get_workarea();
+            // Gdk::Rectangle workarea = device::monitor::get_current()->get_geometry();
+            auto const location = config::get_dock_location();
+            auto const screen = device::display::get_default_screen();
+
+            switch (location) {
+                case dock_location_t::top:
+                case dock_location_t::bottom:
+                    g_print("strut set........................area %d. %d.\n", area,
+                            m_window->get_height());
+                    // insets[struts_position_t::bottom] =
+                    //(area + screen->get_height()) - workarea.get_y() - workarea.get_height();
+
+                    // insets[struts_position_t::bottom_start] = workarea.get_x();
+                    // insets[struts_position_t::bottom_end] = workarea.get_x() +
+                    // workarea.get_width();
+
+                    insets[struts_position_t::bottom] = area;
+                    insets[struts_position_t::bottom_start] = workarea.get_x();
+                    insets[struts_position_t::bottom_end] = workarea.get_width() - 1;
+
+                    break;
+                case dock_location_t::left:
+                case dock_location_t::right:
+                default:
+                    return;
+            }
+            gdk_property_change(gdk_window, gdk_atom_intern("_NET_WM_STRUT_PARTIAL", FALSE),
+                                gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
+                                (unsigned char*)&insets, 12);
+
+            gdk_property_change(gdk_window, gdk_atom_intern("_NET_WM_STRUT", FALSE),
+                                gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
+                                (unsigned char*)&insets, 4);
+        }
+    }
+
 }  // namespace position_util
 DL_NS_END
 

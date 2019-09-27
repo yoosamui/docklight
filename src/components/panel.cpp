@@ -45,15 +45,6 @@ void Panel::init()
 {
     m_theme = config::get_theme();
 
-    if (config::is_autohide_none() == false) {
-        if (config::is_autohide()) {
-            m_autohide.set_hide_delay(0.5);
-        }
-        if (config::is_intelihide()) {
-            m_autohide.set_hide_delay(0.5);
-        }
-    }
-
     // clang-format off
 
     // home menu
@@ -101,6 +92,11 @@ void Panel::init()
     m_appupdater.init();
 
     if (config::is_autohide_none() == false) {
+        if (config::is_autohide()) {
+            m_autohide.set_hide_delay(0.5);
+        } else if (config::is_intelihide()) {
+            m_autohide.set_hide_delay(0.5);
+        }
         m_autohide.init();
     }
 
@@ -548,11 +544,13 @@ bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
 bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
 {
     m_show_selector = false;
-
+    g_print("LEAVING .......................\n");
     if (!config::is_autohide_none()) {
         if (config::is_autohide() || config::is_intelihide()) {
             m_autohide.reset_timer();
             m_autohide.set_mouse_inside(false);
+            // m_autohide.hide();
+            // return true;
         }
     }
 
