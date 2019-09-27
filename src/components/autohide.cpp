@@ -26,9 +26,11 @@ void Autohide::init()
     g_signal_connect(wnckscreen, "active_window_changed",
                      G_CALLBACK(Autohide::on_active_window_changed), nullptr);
 
-    this->reset_timer();
-    connect_signal_handler(true);
-    this->hide();
+    if (config::is_autohide_none() == false) {
+        this->reset_timer();
+        connect_signal_handler(true);
+        this->hide();
+    }
 }
 
 Autohide::~Autohide()
@@ -59,9 +61,9 @@ Autohide::type_signal_update Autohide::signal_update()
 void Autohide::on_active_window_changed(WnckScreen* screen, WnckWindow* previously_active_window,
                                         gpointer user_data)
 {
-    if (!config::is_intelihide() || config::is_autohide()) {
-        return;
-    }
+    // if (!config::is_intelihide() || config::is_autohide()) {
+    // return;
+    //}
 
     WnckWindow* active_window = wnck_screen_get_active_window(screen);
     if (!active_window) {
@@ -70,11 +72,13 @@ void Autohide::on_active_window_changed(WnckScreen* screen, WnckWindow* previous
 
     m_active_window = active_window;
 
-    WnckWindowType wt = wnck_window_get_window_type(m_active_window);
-    if (wt == WNCK_WINDOW_DESKTOP || m_stm.m_mouse_inside) {
-        show();
-    } else {
-        intelihide();
+    if (config::is_autohide_none() == false) {
+        WnckWindowType wt = wnck_window_get_window_type(m_active_window);
+        if (wt == WNCK_WINDOW_DESKTOP || m_stm.m_mouse_inside) {
+            show();
+        } else {
+            intelihide();
+        }
     }
 
     if (previously_active_window != nullptr) {
@@ -92,10 +96,11 @@ void Autohide::on_active_window_changed(WnckScreen* screen, WnckWindow* previous
         active_window, "geometry-changed",
         G_CALLBACK(Autohide::on_geometry_changed), nullptr);
 
-    m_stm.m_state_change_id =  g_signal_connect_after(
-        active_window, "state-changed",
-        G_CALLBACK(Autohide::on_state_changed), nullptr);
-
+    if (config::is_autohide_none() == false) {
+        m_stm.m_state_change_id =  g_signal_connect_after(
+                active_window, "state-changed",
+                G_CALLBACK(Autohide::on_state_changed), nullptr);
+    }
     // clang-format on
 }
 
@@ -111,7 +116,7 @@ void Autohide::on_state_changed(WnckWindow* window, WnckWindowState changed_mask
 
 void Autohide::on_geometry_changed(WnckWindow* window, gpointer user_data)
 {
-    if (m_active_window == nullptr || config::is_intelihide() == false) {
+    if (m_active_window == nullptr) {
         return;
     }
 
@@ -276,24 +281,31 @@ bool Autohide::is_intersection_detected()
         }
     }
 
-    // if (rect_window.intersects(rect_dock)) {
-    // g_print("YES\n");
-    //} else {
-    // g_print("NO\n");
-    //}
-
     return rect_window.intersects(rect_dock);
 }
 
 void Autohide::intelihide()
 {
-    if (m_active_window == nullptr || config::is_intelihide() == false) {
+    if (m_active_window == nullptr) {
+        return;
+    }
+
+    if (wnck_window_is_fullscreen(m_active_window)) {
+        hide();
+        return;
+    }
+
+    if (config::is_autohide_none()) {
+        show();
+        return;
+    }
+
+    if (config::is_autohide()) {
         return;
     }
 
     if (Autohide::is_intersection_detected()) {
         if (Autohide::get_windows_count() == 0) {
-            g_print("INTERSECTION\n");
             return;
         }
 
@@ -316,10 +328,9 @@ bool Autohide::is_visible()
 int c_count = 0;
 void Autohide::hide()
 {
-    if (config::is_autohide_none()) {
-        return;
-    }
-
+    // if (config::is_autohide_none()) {
+    // return;
+    //}
     if (config::is_intelihide()) {
         if (m_active_window == nullptr) {
             return;
@@ -331,33 +342,21 @@ void Autohide::hide()
         }
     }
 
-    g_print("HIDE CALL %d  visible %d\n", c_count++, m_stm.m_visible);
     if (!m_stm.m_visible && position_util::is_visible()) {
-        //    if (config::is_autohide()) {
         m_stm.m_visible = true;
-        g_print("HIDE ...................VISI %d \n", c_count++);
-        //  }
     }
 
     if (m_stm.m_visible && !m_stm.m_mouse_inside) {
-        g_print("START HIDE CALL %d \n", c_count++);
         m_stm.m_animation_state = DEF_AUTOHIDE_HIDE;
         connect_signal_handler(true);
     }
 }
 void Autohide::show()
 {
-    // if (m_stm.m_visible) {
-    // return;
-    //}
+    if (m_stm.m_visible || position_util::is_visible()) {
+        return;
+    }
 
-    // if (rect_window.intersects(rect_dock)) {
-    // g_print("YES\n");
-    //} else {
-    // g_print("NO\n");
-    //}
-    //
-    g_print("SHOW %d \n", c_count++);
     auto screen = wnck_screen_get_default();
     WnckWindow* m_active_window = wnck_screen_get_active_window(screen);
     if (m_active_window == nullptr) {
@@ -367,8 +366,7 @@ void Autohide::show()
     if (wnck_window_is_fullscreen(m_active_window)) {
         return;
     }
-    // m_stm.m_visible = false;
-    g_print("STAm_stm.m_visible RT SHOW %d %d\n", c_count++, (int)m_stm.m_visible);
+
     m_stm.m_animation_state = DEF_AUTOHIDE_SHOW;
     connect_signal_handler(true);
 }
@@ -389,8 +387,6 @@ void Autohide::reset_timer()
 
 bool Autohide::animation()
 {
-    g_print("anim %d\n", m_stm.m_animation_state);
-
     if (m_stm.m_animation_state == DEF_AUTOHIDE_HIDE && !m_stm.m_animation_running &&
         abs(m_stm.m_animation_timer.elapsed()) > m_animation_hide_delay) {
         m_easing_duration = DEF_AUTOHIDE_EASING_DURATION;

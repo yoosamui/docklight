@@ -25,6 +25,7 @@ typedef struct {
     bool m_draw_required = false;
     bool m_bck_thread_run = true;
     bool m_bck_thread_connect = false;
+    Autohide m_autohide;
 
 } panel_static_members_t;
 
@@ -48,8 +49,8 @@ class Panel : public Gtk::DrawingArea, DockMenu
     Gtk::Window* m_owner = nullptr;
     launcher_window m_launcherwindow;
     title_window m_titlewindow;
-    Autohide m_autohide;
     void on_autohide_update(int x, int y);
+    bool m_titlewindow_visible = false;
 
     int m_offset_x = 0;
     int m_offset_y = 0;

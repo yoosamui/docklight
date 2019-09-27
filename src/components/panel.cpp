@@ -23,7 +23,7 @@ panel_static_members_t Panel::m_stm;
 Panel::Panel()
 {
     m_stm.m_this = static_cast<Panel*>(this);
-    m_autohide.signal_update().connect(sigc::mem_fun(this, &Panel::on_autohide_update));
+    m_stm.m_autohide.signal_update().connect(sigc::mem_fun(this, &Panel::on_autohide_update));
 
     // Set event masks
     add_events(Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::SCROLL_MASK |
@@ -43,9 +43,9 @@ void Panel::set_owner(Gtk::Window* window)
 
 void Panel::init()
 {
-    m_theme = config::get_theme();
-
     // clang-format off
+
+    m_theme = config::get_theme();
 
     // home menu
     m_home_menu.attach_to_widget(*this);
@@ -91,14 +91,10 @@ void Panel::init()
     m_appupdater.signal_update().connect(sigc::mem_fun(this, &Panel::on_appupdater_update));
     m_appupdater.init();
 
-    if (config::is_autohide_none() == false) {
-        if (config::is_autohide()) {
-            m_autohide.set_hide_delay(0.5);
-        } else if (config::is_intelihide()) {
-            m_autohide.set_hide_delay(0.5);
-        }
-        m_autohide.init();
-    }
+    // if (config::is_autohide_none() == false) {
+    m_stm.m_autohide.set_hide_delay(0.5);
+    m_stm.m_autohide.init();
+    //  }
 
     m_bck_thread = new thread(connect_async);
 }
@@ -145,7 +141,7 @@ void Panel::connect_draw_signal(bool connect)
 void Panel::on_appupdater_update()
 {
     if (!config::is_autohide_none()) {
-        if (m_autohide.is_visible() == false) {
+        if (m_stm.m_autohide.is_visible() == false) {
             return;
         }
     }
@@ -161,6 +157,7 @@ void Panel::on_autohide_update(int x, int y)
 
     Gtk::Widget::queue_draw();
 }
+
 int Panel::get_required_size()
 {
     m_stm.m_decrease_factor = 0;
@@ -203,8 +200,8 @@ int Panel::get_required_size()
 
 bool Panel::on_timeout_draw()
 {
-    if (m_current_index > 0 && !m_stm.m_dragdrop_begin && m_mouse_left_down &&
-        m_dragdrop_timer.elapsed() > 0.60) {
+    if (!m_stm.m_dragdrop_begin && m_mouse_left_down && m_current_index > 0 &&
+        m_dragdrop_timer.elapsed() > 0.50) {
         m_stm.m_dragdrop_begin = true;
         m_drop_index = m_current_index;
 
@@ -289,12 +286,12 @@ void Panel::on_menu_hide_event()
 
     if (!config::is_autohide_none()) {
         if (config::is_intelihide() || config::is_autohide()) {
-            m_autohide.reset_timer();
+            m_stm.m_autohide.reset_timer();
 
             if (config::is_intelihide()) {
-                m_autohide.intelihide();
+                m_stm.m_autohide.intelihide();
             } else if (config::is_autohide()) {
-                m_autohide.hide();
+                m_stm.m_autohide.hide();
             }
         }
     }
@@ -411,7 +408,7 @@ bool Panel::on_button_release_event(GdkEventButton* event)
     }
 
     if (!config::is_autohide_none()) {
-        if (m_autohide.is_visible() == false) {
+        if (m_stm.m_autohide.is_visible() == false) {
             return true;
         }
     }
@@ -509,13 +506,12 @@ bool Panel::on_scroll_event(GdkEventScroll* e)
 bool Panel::on_motion_notify_event(GdkEventMotion* event)
 {
     m_current_index = this->get_index(event->x, event->y);
-    if (m_current_index > 0 && m_stm.m_dragdrop_begin) {
-        m_appupdater.swap_item(m_current_index);
+
+    if (m_stm.m_dragdrop_begin && m_current_index > 0) {
         m_drop_index = m_current_index;
+        m_appupdater.swap_item(m_drop_index);
     }
 
-    // force enter event
-    on_enter_notify_event(nullptr);
     return false;
 }
 
@@ -527,12 +523,12 @@ bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
 
     if (!config::is_autohide_none()) {
         if (config::is_autohide() || config::is_intelihide()) {
-            m_autohide.reset_timer();
-            m_autohide.set_mouse_inside(true);
+            m_stm.m_autohide.reset_timer();
+            m_stm.m_autohide.set_mouse_inside(true);
         }
 
         if (config::is_autohide() || config::is_intelihide()) {
-            m_autohide.show();
+            m_stm.m_autohide.show();
         }
     }
     // m_HomeMenu.hide();
@@ -544,13 +540,10 @@ bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
 bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
 {
     m_show_selector = false;
-    g_print("LEAVING .......................\n");
     if (!config::is_autohide_none()) {
         if (config::is_autohide() || config::is_intelihide()) {
-            m_autohide.reset_timer();
-            m_autohide.set_mouse_inside(false);
-            // m_autohide.hide();
-            // return true;
+            m_stm.m_autohide.reset_timer();
+            m_stm.m_autohide.set_mouse_inside(false);
         }
     }
 
@@ -591,9 +584,9 @@ bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
 
     if (!config::is_autohide_none()) {
         if (config::is_intelihide()) {
-            m_autohide.intelihide();
+            m_stm.m_autohide.intelihide();
         } else if (config::is_autohide()) {
-            m_autohide.hide();
+            m_stm.m_autohide.hide();
         }
     }
 
@@ -661,6 +654,11 @@ void Panel::on_active_window_changed(WnckScreen* screen, WnckWindow* previously_
     WnckWindow* window = wnck_screen_get_active_window(screen);
     if (window == nullptr) {
         return;
+    }
+
+    if (wnck_window_is_fullscreen(window)) {
+        g_print("FULL\n");
+        m_stm.m_autohide.hide();
     }
 
     set_active_window_indexp(window);
@@ -760,10 +758,6 @@ inline void Panel::get_item_position(const dock_item_type_t item_typ, int& x, in
         if (x == 0) {
             y = 0;
 
-            // if (m_stm.m_decrease_factor > 0) {
-            // y = (position_util::get_area() / 2) - (height / 2);
-            //}
-
             x = config::get_window_start_end_margin() / 2;
             nextsize = width;
             return;
@@ -773,22 +767,11 @@ inline void Panel::get_item_position(const dock_item_type_t item_typ, int& x, in
         nextsize = width;
     } else {
         if (y == 0) {
-            x = 0;  //
+            x = 0;
             y = config::get_window_start_end_margin() / 2;
             nextsize = height;
             return;
         }
-        // if (height < 0) {
-        // g_error("AAAAAAAAAAAAA\n");
-        //}
-        // if the item is a separator the wdth is probably not equal.
-        // in this case wie remeber the size for use it in the next item.
-        /*if (dockType == DockItemType::Separator) {
-            y += nextsize + Configuration::get_separatorMargin();
-            height = nextsize = width;
-            width = Configuration::get_CellWidth();
-            return;
-        }*/
 
         y += nextsize + config::get_separator_margin();
         nextsize = height;
@@ -800,6 +783,7 @@ bool Panel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     this->draw_panel(cr);
     this->draw_items(cr);
     this->draw_title();
+
     return true;
 }
 void Panel::draw_panel(const Cairo::RefPtr<Cairo::Context>& cr)
@@ -936,8 +920,8 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
         }
 
         // icon + selector
-        if (item->get_image() && item->get_dock_item_type() != dock_item_type_t::separator) {
-            auto image = item->get_image();
+        auto image = item->get_image();
+        if (image && item->get_dock_item_type() != dock_item_type_t::separator) {
             int icon_size = config::get_icon_size();
 
             if (m_stm.m_decrease_factor > 0) {
@@ -974,14 +958,13 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
                     // create copy and invert image colors
                     auto tmp = item->get_image()->copy();
                     pixbuf_util::invert_pixels(tmp);
-
                     Gdk::Cairo::set_source_pixbuf(cr, tmp, x + center_pos_x, y + 4);
 
                     m_inverted_index = (int)m_current_index;
                     cr->paint();
 
                     // normal selector cell
-                    // cr->set_source_rgba(1, 1, 1, 0.4);
+                    // cr->set_source_rgba(1, 1, 1, 0.2);
                     // cairo_util::rounded_rectangle(cr, x, y, width, height, 0);
                     // cr->fill();
                 }
@@ -1042,21 +1025,21 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
                     cr->fill();
                 }
             } else if (config::get_indicator_type() == dock_indicator_type_t::lines) {
-                int marginY = area - m_stm.m_decrease_factor - 4;
+                int marginY = area - 5;  // - m_stm.m_decrease_factor - 4;
                 if (item->m_items.size() > 0) {
                     if (item->m_items.size() == 1) {
-                        cr->move_to(x, y + marginY);
-                        cr->line_to(x, y + marginY);
-                        cr->line_to(x + width, y + marginY);
+                        cr->move_to(x + 4, y + marginY);
+                        cr->line_to(x + 4, y + marginY);
+                        cr->line_to(x + width - 4, y + marginY);
 
                     } else if (item->m_items.size() > 1) {
-                        cr->move_to(x, y + marginY);
-                        cr->line_to(x, y + marginY);
-                        cr->line_to(x + center - 2, y + marginY);
+                        cr->move_to(x + 4, y + marginY);
+                        cr->line_to(x + 4, y + marginY);
+                        cr->line_to(x + center - 3, y + marginY);
 
-                        cr->move_to(x + center + 2, y + marginY);
-                        cr->line_to(x + center + 2, y + marginY);
-                        cr->line_to(x + width, y + marginY);
+                        cr->move_to(x + center + 3, y + marginY);
+                        cr->line_to(x + center + 3, y + marginY);
+                        cr->line_to(x + width - 4, y + marginY);
                     }
                 }
 
@@ -1066,11 +1049,10 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
         }
     }
 }
-bool m_titlewindow_visible = false;
 void Panel::draw_title()
 {
     if (m_current_index < 0 || m_context_menu_open || !config::is_show_title() ||
-        !m_stm.m_connect_draw_signal_set || !m_autohide.is_visible()) {
+        !m_stm.m_connect_draw_signal_set || !m_stm.m_autohide.is_visible()) {
         m_titlewindow.hide();
         m_titlewindow_visible = false;
 
