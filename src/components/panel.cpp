@@ -23,7 +23,7 @@ panel_static_members_t Panel::m_stm;
 Panel::Panel()
 {
     m_stm.m_this = static_cast<Panel*>(this);
-    m_stm.m_autohide.signal_update().connect(sigc::mem_fun(this, &Panel::on_autohide_update));
+    m_autohide.signal_update().connect(sigc::mem_fun(this, &Panel::on_autohide_update));
 
     // Set event masks
     add_events(Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::SCROLL_MASK |
@@ -92,8 +92,8 @@ void Panel::init()
     m_appupdater.init();
 
     // if (config::is_autohide_none() == false) {
-    m_stm.m_autohide.set_hide_delay(0.5);
-    m_stm.m_autohide.init();
+    m_autohide.set_hide_delay(0.5);
+    m_autohide.init();
     //  }
 
     m_bck_thread = new thread(connect_async);
@@ -141,7 +141,7 @@ void Panel::connect_draw_signal(bool connect)
 void Panel::on_appupdater_update()
 {
     if (!config::is_autohide_none()) {
-        if (m_stm.m_autohide.is_visible() == false) {
+        if (m_autohide.is_visible() == false) {
             return;
         }
     }
@@ -286,12 +286,12 @@ void Panel::on_menu_hide_event()
 
     if (!config::is_autohide_none()) {
         if (config::is_intelihide() || config::is_autohide()) {
-            m_stm.m_autohide.reset_timer();
+            m_autohide.reset_timer();
 
             if (config::is_intelihide()) {
-                m_stm.m_autohide.intelihide();
+                m_autohide.intelihide();
             } else if (config::is_autohide()) {
-                m_stm.m_autohide.hide();
+                m_autohide.hide();
             }
         }
     }
@@ -408,7 +408,7 @@ bool Panel::on_button_release_event(GdkEventButton* event)
     }
 
     if (!config::is_autohide_none()) {
-        if (m_stm.m_autohide.is_visible() == false) {
+        if (m_autohide.is_visible() == false) {
             return true;
         }
     }
@@ -523,12 +523,12 @@ bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
 
     if (!config::is_autohide_none()) {
         if (config::is_autohide() || config::is_intelihide()) {
-            m_stm.m_autohide.reset_timer();
-            m_stm.m_autohide.set_mouse_inside(true);
+            m_autohide.reset_timer();
+            m_autohide.set_mouse_inside(true);
         }
 
         if (config::is_autohide() || config::is_intelihide()) {
-            m_stm.m_autohide.show();
+            m_autohide.show();
         }
     }
     // m_HomeMenu.hide();
@@ -542,8 +542,8 @@ bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
     m_show_selector = false;
     if (!config::is_autohide_none()) {
         if (config::is_autohide() || config::is_intelihide()) {
-            m_stm.m_autohide.reset_timer();
-            m_stm.m_autohide.set_mouse_inside(false);
+            m_autohide.reset_timer();
+            m_autohide.set_mouse_inside(false);
         }
     }
 
@@ -584,9 +584,9 @@ bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
 
     if (!config::is_autohide_none()) {
         if (config::is_intelihide()) {
-            m_stm.m_autohide.intelihide();
+            m_autohide.intelihide();
         } else if (config::is_autohide()) {
-            m_stm.m_autohide.hide();
+            m_autohide.hide();
         }
     }
 
@@ -654,11 +654,6 @@ void Panel::on_active_window_changed(WnckScreen* screen, WnckWindow* previously_
     WnckWindow* window = wnck_screen_get_active_window(screen);
     if (window == nullptr) {
         return;
-    }
-
-    if (wnck_window_is_fullscreen(window)) {
-        g_print("FULL\n");
-        m_stm.m_autohide.hide();
     }
 
     set_active_window_indexp(window);
@@ -1052,7 +1047,7 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
 void Panel::draw_title()
 {
     if (m_current_index < 0 || m_context_menu_open || !config::is_show_title() ||
-        !m_stm.m_connect_draw_signal_set || !m_stm.m_autohide.is_visible()) {
+        !m_stm.m_connect_draw_signal_set || !m_autohide.is_visible()) {
         m_titlewindow.hide();
         m_titlewindow_visible = false;
 
