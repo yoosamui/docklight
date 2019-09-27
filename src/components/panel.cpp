@@ -894,27 +894,8 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
         }
 
         // separator
-        if (config::is_separator_line() && m_theme.PanelSeparator().Stroke().Color::alpha > 0.0 &&
-            item->get_dock_item_type() == dock_item_type_t::separator) {
-            cr->set_source_rgba(m_theme.PanelSeparator().Stroke().Color::red,
-                                m_theme.PanelSeparator().Stroke().Color::green,
-                                m_theme.PanelSeparator().Stroke().Color::blue,
-                                m_theme.PanelSeparator().Stroke().Color::alpha);
 
-            cr->set_line_width(m_theme.PanelSeparator().LineWidth());
-
-            if (orientation == Gtk::ORIENTATION_HORIZONTAL) {
-                cr->move_to(x, y + 6);
-                cr->line_to(x, y + 6);
-                cr->line_to(x, y + area - 6);
-            } else {
-                cr->move_to(x + 6, y);
-                cr->line_to(x + 6, y);
-                cr->line_to(x + area - 6, y);
-            }
-
-            cr->stroke();
-        }
+        Panel::draw_separator(cr, item, x, y, area, orientation);
 
         // icon + selector
         auto image = item->get_image();
@@ -1044,6 +1025,36 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
                 cr->stroke();
             }
         }
+    }
+}
+
+inline void Panel::draw_separator(const Cairo::RefPtr<Cairo::Context>& cr,
+                                  const shared_ptr<DockItem>& item, const int x, const int y,
+                                  const int area, const Gtk::Orientation orientation)
+
+{
+    if (config::is_separator_line() && m_theme.PanelSeparator().Stroke().Color::alpha > 0.0 &&
+        item->get_dock_item_type() == dock_item_type_t::separator) {
+        cr->set_source_rgba(m_theme.PanelSeparator().Stroke().Color::red,
+                            m_theme.PanelSeparator().Stroke().Color::green,
+                            m_theme.PanelSeparator().Stroke().Color::blue,
+                            m_theme.PanelSeparator().Stroke().Color::alpha);
+
+        cr->set_line_width(m_theme.PanelSeparator().LineWidth());
+
+        if (orientation == Gtk::ORIENTATION_HORIZONTAL) {
+            int center = item->get_width() / 2;
+            cr->move_to(x + center, y + 6);
+            cr->line_to(x + center, y + 6);
+            cr->line_to(x + center, y + area - 6);
+        } else {
+            int center = item->get_height() / 2;
+            cr->move_to(x + 6, y + center);
+            cr->line_to(x + 6, y + center);
+            cr->line_to(x + area - 6, y + center);
+        }
+
+        cr->stroke();
     }
 }
 void Panel::draw_title()

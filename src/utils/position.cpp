@@ -182,7 +182,7 @@ namespace position_util
 
     void get_center_screen_position(int targetwidth, int targetheight, int& posx, int& posy)
     {
-        Gdk::Rectangle workarea = device::monitor::get_current()->get_workarea();
+        Gdk::Rectangle workarea = device::monitor::get_current()->get_geometry();
 
         int monitorWidth = workarea.get_width();
         int monitorHeight = workarea.get_height();
@@ -200,7 +200,7 @@ namespace position_util
         long insets[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         GtkWidget* toplevel = gtk_widget_get_toplevel(GTK_WIDGET(m_window->gobj()));
         auto gdk_window = gtk_widget_get_window(toplevel);
-        if (gdk_window == NULL) {
+        if (gdk_window == nullptr) {
             g_critical("set_strut: gdk_window is null.");
             return;
         }

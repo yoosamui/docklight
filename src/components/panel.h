@@ -74,6 +74,9 @@ class Panel : public Gtk::DrawingArea, DockMenu
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
     void draw_panel(const Cairo::RefPtr<Cairo::Context>& cr);
     void draw_items(const Cairo::RefPtr<Cairo::Context>& cr);
+    void draw_separator(const Cairo::RefPtr<Cairo::Context>& cr, const shared_ptr<DockItem>& item,
+                        const int x, const int y, const int area,
+                        const Gtk::Orientation orientation);
     void draw_title();
     void draw();
 
