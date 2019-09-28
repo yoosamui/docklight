@@ -172,16 +172,16 @@ int Panel::get_required_size()
     // ajust new items size
     if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
         if (size >= workarea.get_width()) {
-            diff = (size - workarea.get_width()) + config::get_window_start_end_margin();
+            diff = (size - workarea.get_width()) + config::get_window_start_end_margin() / 2;
         }
     } else {
         if (size >= workarea.get_height()) {
-            diff = (size - workarea.get_height()) + config::get_window_start_end_margin();
+            diff = (size - workarea.get_height()) + config::get_window_start_end_margin() / 2;
         }
     }
 
     if (diff > 0) {
-        m_stm.m_decrease_factor = diff / (m_appupdater.m_dockitems.size());
+        m_stm.m_decrease_factor = diff / (m_appupdater.m_dockitems.size() - 0);
         size = m_appupdater.get_required_size();
 
         if ((size - workarea.get_height()) > 0) {
@@ -194,7 +194,7 @@ int Panel::get_required_size()
             m_stm.m_decrease_factor = diff / (m_appupdater.m_dockitems.size() - count);
 
             // loop to calculate the equired size depending of the factor
-            size = m_appupdater.get_required_size();
+            // size = m_appupdater.get_required_size();
         }
     }
     return size;
@@ -203,7 +203,7 @@ int Panel::get_required_size()
 bool Panel::on_timeout_draw()
 {
     if (!m_stm.m_dragdrop_begin && m_mouse_left_down && m_current_index > 0 &&
-        m_dragdrop_timer.elapsed() > 0.50) {
+        m_drop_index == m_current_index && m_dragdrop_timer.elapsed() > 0.50) {
         m_stm.m_dragdrop_begin = true;
         m_drop_index = m_current_index;
 
@@ -380,7 +380,7 @@ bool Panel::on_button_press_event(GdkEventButton* event)
 
         if (event->button == 1) {
             m_mouse_left_down = true;
-
+            m_drop_index = m_current_index;
             m_dragdrop_timer.reset();
             m_dragdrop_timer.start();
 
@@ -833,15 +833,12 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
     int width = 0;
     int height = 0;
     int center = 0;
-    // int center_pos_x = 0;
-
-    int area = position_util::get_area();
+    int initial_icon_size = config::get_icon_size();
+    int icon_size = initial_icon_size;
     Gtk::Orientation orientation = config::get_dock_orientation();
-
+    int area = position_util::get_area();
     size_t items_count = m_appupdater.m_dockitems.size();
 
-    // position_util::set_window_position();
-    // AppWindow::update();
     // Draw all items with cairo
     for (size_t idx = 0; idx < items_count; idx++) {
         auto const item = m_appupdater.m_dockitems[idx];
@@ -866,20 +863,19 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
             x = m_offset_x;
         }
 
-        // center_pos_x = x + center / 2;
-        // draw cell fill
-        /*if (item->get_dock_item_type() != dock_item_type_t::separator) {
-            if (m_theme.PanelCell().Fill().Color::alpha > 0.0) {
-                cr->set_source_rgba(m_theme.PanelCell().Fill().Color::red,
-                                    m_theme.PanelCell().Fill().Color::green,
-                                    m_theme.PanelCell().Fill().Color::blue,
-                                    m_theme.PanelCell().Fill().Color::alpha);
+        icon_size = initial_icon_size;
+        if (m_stm.m_decrease_factor > 0) {
+            icon_size -= m_stm.m_decrease_factor;
+        }
 
-                cairo_util::rounded_rectangle(cr,  + x,  y, width, height,
-                                              m_theme.PanelCell().Ratio());
-                cr->fill();
-            }
-        }*/
+        // separator
+        this->draw_separator(cr, item, x, y, area, orientation);
+
+        // cell
+        this->draw_cell(cr, item, x, y, area, orientation);
+
+        // drag indicator
+        this->draw_drag_indicator(cr, item, x, y, idx, width, height, orientation);
 
         // draw active window selector
         if (!m_stm.m_dragdrop_begin && idx > 0 && m_stm.m_active_window_index == (int)idx) {
@@ -893,19 +889,9 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
             cr->fill();
         }
 
-        // separator
-
-        Panel::draw_separator(cr, item, x, y, area, orientation);
-
         // icon + selector
         auto image = item->get_image();
         if (image && item->get_dock_item_type() != dock_item_type_t::separator) {
-            int icon_size = config::get_icon_size();
-
-            if (m_stm.m_decrease_factor > 0) {
-                icon_size -= m_stm.m_decrease_factor;
-            }
-
             // reload or scaled if needed if (image->get_width() != icon_size ||
             if (image->get_height() != icon_size) {
                 // int icon_size =
@@ -949,42 +935,6 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
             }
         }
 
-        // Draw cell
-        // draw cell stroke
-        //  if (item->get_dock_item_type() != dock_item_type_t::separator) {
-        if (m_theme.PanelCell().Fill().Color::alpha > 0.0) {
-            cr->set_source_rgba(m_theme.PanelCell().Stroke().Color::red,
-                                m_theme.PanelCell().Stroke().Color::green,
-                                m_theme.PanelCell().Stroke().Color::blue,
-                                m_theme.PanelCell().Stroke().Color::alpha);
-            // int area = config::get_current_area_size();
-            //  g_print(" %d  x %d area %d \n", width, height, area);
-            cr->set_line_width(m_theme.PanelCell().LineWidth());
-            cairo_util::rounded_rectangle(cr, x, y, width, height, m_theme.PanelCell().Ratio());
-            cr->stroke();
-        }
-        //  }
-
-        // draw cell & drop stroke
-        if (m_stm.m_dragdrop_begin && (int)idx == m_drop_index) {
-            cr->set_source_rgba(
-                m_theme.PanelDrag().Fill().Color::red, m_theme.PanelDrag().Fill().Color::green,
-                m_theme.PanelDrag().Fill().Color::blue, m_theme.PanelDrag().Fill().Color::alpha);
-
-            cairo_util::rounded_rectangle(cr, x, y, width, height, m_theme.PanelDrag().Ratio());
-
-            cr->fill();
-
-            cr->set_source_rgba(m_theme.PanelDrag().Stroke().Color::red,
-                                m_theme.PanelDrag().Stroke().Color::green,
-                                m_theme.PanelDrag().Stroke().Color::blue,
-                                m_theme.PanelDrag().Stroke().Color::alpha);
-
-            cr->set_line_width(m_theme.PanelDrag().LineWidth());
-            cairo_util::rounded_rectangle(cr, x, y, width, height, m_theme.PanelDrag().Ratio());
-            cr->stroke();
-        }
-
         // draw indicator
         if (m_theme.PanelIndicator().Fill().Color::alpha > 0.0) {
             cr->set_source_rgba(m_theme.PanelIndicator().Fill().Color::red,
@@ -1003,7 +953,7 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
                     cr->fill();
                 }
             } else if (config::get_indicator_type() == dock_indicator_type_t::lines) {
-                int marginY = area - 5;  // - m_stm.m_decrease_factor - 4;
+                int marginY = area - 4;  // - m_stm.m_decrease_factor - 4;
                 if (item->m_items.size() > 0) {
                     if (item->m_items.size() == 1) {
                         cr->move_to(x + 4, y + marginY);
@@ -1024,6 +974,63 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
                 cr->set_line_width(2.0);
                 cr->stroke();
             }
+        }
+    }
+}
+
+inline void Panel::draw_cell(const Cairo::RefPtr<Cairo::Context>& cr,
+                             const shared_ptr<DockItem>& item, const int x, const int y,
+                             const int area, const Gtk::Orientation orientation)
+{
+    if (item->get_dock_item_type() != dock_item_type_t::separator) {
+        if (m_theme.PanelCell().Fill().Color::alpha > 0.0) {
+            cr->set_source_rgba(
+                m_theme.PanelCell().Fill().Color::red, m_theme.PanelCell().Fill().Color::green,
+                m_theme.PanelCell().Fill().Color::blue, m_theme.PanelCell().Fill().Color::alpha);
+
+            cairo_util::rounded_rectangle(cr, x, y + 1, area, area - 2,
+                                          m_theme.PanelCell().Ratio());
+            cr->fill();
+        }
+
+        if (m_theme.PanelCell().Stroke().Color::alpha > 0.0) {
+            cr->set_source_rgba(m_theme.PanelCell().Stroke().Color::red,
+                                m_theme.PanelCell().Stroke().Color::green,
+                                m_theme.PanelCell().Stroke().Color::blue,
+                                m_theme.PanelCell().Stroke().Color::alpha);
+
+            cr->set_line_width(m_theme.PanelCell().LineWidth());
+
+            cairo_util::rounded_rectangle(cr, x, y + 1, area, area - 2,
+                                          m_theme.PanelCell().Ratio());
+            cr->stroke();
+        }
+    }
+}
+
+inline void Panel::draw_drag_indicator(const Cairo::RefPtr<Cairo::Context>& cr,
+                                       const shared_ptr<DockItem>& item, int x, int y, int idx,
+                                       int width, int height, Gtk::Orientation orientation) const
+{
+    if (m_stm.m_dragdrop_begin && idx == m_drop_index) {
+        if (m_theme.PanelDrag().Fill().Color::alpha > 0.0) {
+            cr->set_source_rgba(
+                m_theme.PanelDrag().Fill().Color::red, m_theme.PanelDrag().Fill().Color::green,
+                m_theme.PanelDrag().Fill().Color::blue, m_theme.PanelDrag().Fill().Color::alpha);
+
+            cairo_util::rounded_rectangle(cr, x, y, width, height, m_theme.PanelDrag().Ratio());
+            cr->fill();
+        }
+
+        if (m_theme.PanelDrag().Stroke().Color::alpha > 0.0) {
+            cr->set_source_rgba(m_theme.PanelDrag().Stroke().Color::red,
+                                m_theme.PanelDrag().Stroke().Color::green,
+                                m_theme.PanelDrag().Stroke().Color::blue,
+                                m_theme.PanelDrag().Stroke().Color::alpha);
+
+            cr->set_line_width(m_theme.PanelDrag().LineWidth());
+            cairo_util::rounded_rectangle(cr, x, y, width, height, m_theme.PanelDrag().Ratio());
+            cr->stroke();
         }
     }
 }

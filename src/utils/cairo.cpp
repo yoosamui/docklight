@@ -3,9 +3,14 @@
 DL_NS_BEGIN
 namespace cairo_util
 {
-    void rounded_rectangle(const Cairo::RefPtr<Cairo::Context>& cr, double x,
-                           double y, double width, double height, double radius)
+    void rounded_rectangle(const Cairo::RefPtr<Cairo::Context>& cr, double x, double y,
+                           double width, double height, double radius)
     {
+        if (radius < 1.0) {
+            cr->rectangle(x, y, width, height);
+            return;
+        }
+
         // radius can be no larger than half our height or width
         radius = std::min(radius, std::min(width / 2, height / 2));
         cr->move_to(x + radius, y);

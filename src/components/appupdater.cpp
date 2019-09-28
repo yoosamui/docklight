@@ -134,6 +134,9 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
         appinfo_t info;
         desktopfile_util::get_app_info(window, info);
 
+        info.m_wnckwindow = window;
+        info.m_xid = wnck_window_get_xid(window);
+
         g_print("[------Application --------]\n");
         g_print("app-name: %s\n", info.m_name.c_str());
         g_print("instance-name: %s\n", info.m_instance.c_str());
@@ -143,10 +146,8 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
         g_print("desktop-icon-name: %s\n", info.m_icon_name.c_str());
         g_print("desktop-file: %s\n", info.m_desktop_file.c_str());
         g_print("locale: %s\n", info.m_locale.c_str());
-        g_print("from cache: %d\n", (int)info.m_cache);
-
-        info.m_wnckwindow = window;
-        info.m_xid = wnck_window_get_xid(window);
+        g_print("cache: %d\n", (int)info.m_cache);
+        g_print("xid: %d\n", (int)info.m_xid);
 
         vector<shared_ptr<DockItem>>::iterator it;
         it = std::find_if(
@@ -465,41 +466,6 @@ int AppUpdater::get_required_size(int &exclude_count)
 
         size += item_size;
     }
-
-    // if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-    // for (size_t i = 0; i < items_count; i++) {
-    // auto const item = m_dockitems[i];
-    // int item_size = item->get_width();
-
-    // if (item_size < 0) {
-    // exclude_count++;
-    // continue;
-    //}
-
-    // if (!item->is_resizable()) {
-    // exclude_count++;
-    //}
-
-    // size += item_size;
-    //}
-
-    //} else {
-    // for (size_t i = 0; i < items_count; i++) {
-    // auto const item = m_dockitems[i];
-    // int item_size = item->get_height();
-
-    // if (item_size < 0) {
-    // exclude_count++;
-    // continue;
-    //}
-
-    // if (!item->is_resizable()) {
-    // exclude_count++;
-    //}
-
-    // size += item_size;
-    //}
-    //}
 
     return size;
 }

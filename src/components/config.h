@@ -51,9 +51,9 @@ namespace config
           private:
             // defaults
             Color m_Fill = Color(0.0, 0.50, 0.66, 0.9);
-            Color m_Stroke = Color(1, 1, 1, 1);
+            Color m_Stroke = Color(1, 1, 1, 0);
             double m_LineWidth = 1.0;
-            double m_Ratio = 0;
+            double m_Ratio = 6;
             int m_Mask = 0;
         };
 
