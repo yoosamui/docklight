@@ -10,14 +10,11 @@ DL_NS_BEGIN
 #define DEF_AUTOHIDE_EASING_DURATION 5.0
 
 static_members_t Autohide::m_stm;
-WnckWindow* Autohide::m_active_window;
 
 Autohide::Autohide()
 {
     m_stm.m_this = static_cast<Autohide*>(this);
     m_stm.m_visible = true;
-
-    Autohide::m_active_window = nullptr;
 }
 
 void Autohide::init()
@@ -61,24 +58,20 @@ Autohide::type_signal_update Autohide::signal_update()
 void Autohide::on_active_window_changed(WnckScreen* screen, WnckWindow* previously_active_window,
                                         gpointer user_data)
 {
-    // if (!config::is_intelihide() || config::is_autohide()) {
-    // return;
-    //}
-
     WnckWindow* active_window = wnck_screen_get_active_window(screen);
     if (!active_window) {
         return;
     }
 
-    m_active_window = active_window;
+    m_stm.m_active_window = active_window;
 
-    if (config::is_autohide_none() == false) {
-        WnckWindowType wt = wnck_window_get_window_type(m_active_window);
-        if (wt == WNCK_WINDOW_DESKTOP || m_stm.m_mouse_inside) {
+    WnckWindowType wt = wnck_window_get_window_type(m_stm.m_active_window);
+    if (wt == WNCK_WINDOW_DESKTOP || m_stm.m_mouse_inside) {
+        if (!config::is_autohide()) {
             show();
-        } else {
-            intelihide();
         }
+    } else {
+        intelihide();
     }
 
     if (previously_active_window != nullptr) {
@@ -116,7 +109,7 @@ void Autohide::on_state_changed(WnckWindow* window, WnckWindowState changed_mask
 
 void Autohide::on_geometry_changed(WnckWindow* window, gpointer user_data)
 {
-    if (m_active_window == nullptr) {
+    if (m_stm.m_active_window == nullptr) {
         return;
     }
 
@@ -127,7 +120,7 @@ void Autohide::on_geometry_changed(WnckWindow* window, gpointer user_data)
 
     m_stm.m_last_window_geometry == rect_window;
 
-    WnckWindowType wt = wnck_window_get_window_type(m_active_window);
+    WnckWindowType wt = wnck_window_get_window_type(m_stm.m_active_window);
     if (wt == WNCK_WINDOW_DESKTOP) {
         return;
     }
@@ -137,11 +130,11 @@ void Autohide::on_geometry_changed(WnckWindow* window, gpointer user_data)
 
 int Autohide::get_windows_count()
 {
-    if (m_active_window == nullptr) {
+    if (m_stm.m_active_window == nullptr) {
         return -1;
     }
 
-    WnckScreen* screen = wnck_window_get_screen(m_active_window);
+    WnckScreen* screen = wnck_window_get_screen(m_stm.m_active_window);
     WnckWorkspace* workspace = wnck_screen_get_active_workspace(screen);
 
     if (workspace == nullptr) {
@@ -215,16 +208,19 @@ Gdk::Rectangle Autohide::get_window_geometry(WnckWindow* window)
 bool Autohide::is_intersection_detected()
 {
     auto screen = wnck_screen_get_default();
-    m_active_window = wnck_screen_get_active_window(screen);
+    m_stm.m_active_window = wnck_screen_get_active_window(screen);
 
-    if (m_active_window == nullptr) {
+    if (m_stm.m_active_window == nullptr) {
         return false;
     }
 
     int area = position_util::get_area();
-    Gdk::Rectangle workarea = device::monitor::get_current()->get_workarea();
+    Gdk::Rectangle workarea = config::is_autohide_none()
+                                  ? device::monitor::get_current()->get_geometry()
+                                  : device::monitor::get_current()->get_workarea();
+
     auto rect_dock = position_util::get_appwindow_geometry();
-    auto rect_window = Autohide::get_window_geometry(m_active_window);
+    auto rect_window = Autohide::get_window_geometry(m_stm.m_active_window);
     auto const location = config::get_dock_location();
 
     bool initial_size = false;
@@ -286,26 +282,40 @@ bool Autohide::is_intersection_detected()
 
 void Autohide::intelihide()
 {
-    if (m_active_window == nullptr) {
+    WnckScreen* screen = wnck_window_get_screen(m_stm.m_active_window);
+    m_stm.m_active_window = wnck_screen_get_active_window(screen);
+
+    if (m_stm.m_active_window == nullptr) {
         return;
     }
 
-    if (wnck_window_is_fullscreen(m_active_window)) {
+    // handle fullscreen on
+    if (wnck_window_is_fullscreen(m_stm.m_active_window) && m_stm.m_visible &&
+        !m_stm.m_fullscreen_window) {
+        m_stm.m_fullscreen_window = m_stm.m_active_window;
+
         hide();
         return;
     }
 
-    if (config::is_autohide_none()) {
-        show();
+    // handle fullscreen off
+    if (!is_visible() && m_stm.m_fullscreen_window) {
+        m_stm.m_fullscreen_window = nullptr;
+        if (config::is_intelihide() == false) {
+            show();
+            return;
+        }
+    }
+
+    if (config::is_autohide() || config::is_autohide_none()) {
         return;
     }
 
-    if (config::is_autohide()) {
-        return;
-    }
-
+    // handle intellihide only
     if (Autohide::is_intersection_detected()) {
-        if (Autohide::get_windows_count() == 0) {
+        WnckWindowType wt = wnck_window_get_window_type(m_stm.m_active_window);
+        if (wt == WNCK_WINDOW_DESKTOP) {
+            //        if (Autohide::get_windows_count() == 0) {
             return;
         }
 
@@ -325,18 +335,14 @@ bool Autohide::is_visible()
     return m_stm.m_visible;
 }
 
-int c_count = 0;
 void Autohide::hide()
 {
-    // if (config::is_autohide_none()) {
-    // return;
-    //}
     if (config::is_intelihide()) {
-        if (m_active_window == nullptr) {
+        if (m_stm.m_active_window == nullptr) {
             return;
         }
 
-        WnckWindowType wt = wnck_window_get_window_type(m_active_window);
+        WnckWindowType wt = wnck_window_get_window_type(m_stm.m_active_window);
         if (wt == WNCK_WINDOW_DESKTOP) {
             return;
         }
@@ -353,19 +359,17 @@ void Autohide::hide()
 }
 void Autohide::show()
 {
-    if (m_stm.m_visible || position_util::is_visible()) {
+    // if (m_stm.m_visible || position_util::is_visible()) {
+    // return;
+    //}
+
+    if (m_stm.m_active_window == nullptr) {
         return;
     }
 
-    auto screen = wnck_screen_get_default();
-    WnckWindow* m_active_window = wnck_screen_get_active_window(screen);
-    if (m_active_window == nullptr) {
-        return;
-    }
-
-    if (wnck_window_is_fullscreen(m_active_window)) {
-        return;
-    }
+    // if (wnck_window_is_fullscreen(m_stm.m_active_window)) {
+    // return;
+    //}
 
     m_stm.m_animation_state = DEF_AUTOHIDE_SHOW;
     connect_signal_handler(true);

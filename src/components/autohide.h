@@ -28,6 +28,8 @@ typedef struct {
     bool m_mouse_inside = false;
     bool m_animation_running = false;
     Gdk::Rectangle m_last_window_geometry;
+    WnckWindow* m_fullscreen_window = nullptr;
+    WnckWindow* m_active_window = nullptr;
 } static_members_t;
 
 class Autohide
@@ -43,14 +45,13 @@ class Autohide
     void set_hide_delay(float delay);
     void reset_timer();
     void set_mouse_inside(bool mouse_inside);
-    bool is_visible();
+    static bool is_visible();
 
     typedef sigc::signal<void, int, int> type_signal_update;
     type_signal_update signal_update();
 
   private:
     static static_members_t m_stm;
-    static WnckWindow* m_active_window;
 
     type_signal_update m_signal_update;
 
