@@ -24,6 +24,7 @@ typedef struct {
     unsigned long m_xid = 0;
     Glib::RefPtr<Gdk::Pixbuf> m_image = (Glib::RefPtr<Gdk::Pixbuf>)nullptr;
     int m_separator_length = 0;
+    bool m_separartor_expands = false;
     int m_width;
     int m_height;
 } appinfo_t;
@@ -54,6 +55,7 @@ class DockItem
     void set_x(int x);
     int get_y();
     int get_x();
+    bool is_expandable() const;
     void set_image(Glib::RefPtr<Gdk::Pixbuf> image);
     dock_item_type_t get_dock_item_type() const;
     string get_desktop_icon_name() const;

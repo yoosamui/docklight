@@ -103,6 +103,12 @@ void DockItem::swap_size()
     }
 }
 
+bool DockItem::is_expandable() const
+{
+    return m_app_info.m_dock_item_type == dock_item_type_t::separator &&
+           m_app_info.m_separartor_expands;
+}
+
 int DockItem::get_width()
 {
     if (m_app_info.m_dock_item_type == dock_item_type_t::separator) {
