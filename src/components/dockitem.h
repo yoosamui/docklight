@@ -24,7 +24,7 @@ typedef struct {
     unsigned long m_xid = 0;
     Glib::RefPtr<Gdk::Pixbuf> m_image = (Glib::RefPtr<Gdk::Pixbuf>)nullptr;
     int m_separator_length = 0;
-    bool m_separartor_expands = false;
+    bool m_separartor_expands = true;
     int m_width;
     int m_height;
 } appinfo_t;
@@ -47,8 +47,8 @@ class DockItem
     shared_ptr<DockItem> get_next() const;
     bool is_attached() const;
     bool is_resizable() const;
-    int get_width();
-    int get_height();
+    int get_width() const;
+    int get_height() const;
     void set_index(int index);
     int get_index() const;
     void set_y(int y);

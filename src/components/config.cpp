@@ -362,9 +362,9 @@ namespace config
 
             // separator size
             m_separator_size = get_separator_size(key_file);
-            if (m_separator_size < 0 || m_separator_size > 20) {
-                m_separator_size = DEF_DEFAULT_SEPARATOR_SIZE;
-            }
+            //            if (m_separator_size < 0 || m_separator_size > 20) {
+            // m_separator_size = DEF_DEFAULT_SEPARATOR_SIZE;
+            //          }
 
             // separator margin
             m_separator_margin = get_separator_margin(key_file);
@@ -485,7 +485,14 @@ namespace config
 
     void set_separator_line(bool value) { m_show_separator_line = value; }
 
-    int get_window_start_end_margin() { return 20; }
+    int get_window_start_end_margin()
+    {
+        if (get_dock_alignment() == dock_alignment_t::fill) {
+            return 10;
+        }
+
+        return 20;
+    }
 
     int get_separator_margin() { return m_separator_margin; }
 

@@ -2,6 +2,8 @@
 #include "components/config.h"
 #include "components/panel.h"
 
+//#include "utils/position.h"
+
 DL_NS_BEGIN
 
 DockItem::DockItem(appinfo_t app_info, dock_item_type_t item_type)
@@ -9,6 +11,10 @@ DockItem::DockItem(appinfo_t app_info, dock_item_type_t item_type)
     m_app_info = app_info;
     m_app_info.m_dock_item_type = item_type;
     m_app_info.m_width = m_app_info.m_height = config::get_dock_area();
+
+    if (m_app_info.m_dock_item_type == dock_item_type_t::separator) {
+        this->swap_size();
+    }
 }
 
 DockItem::~DockItem()
@@ -109,26 +115,23 @@ bool DockItem::is_expandable() const
            m_app_info.m_separartor_expands;
 }
 
-int DockItem::get_width()
+int DockItem::get_width() const
 {
-    if (m_app_info.m_dock_item_type == dock_item_type_t::separator) {
-        this->swap_size();
-        m_app_info.m_resizable = false;
-        return m_app_info.m_width;
+    int size = m_app_info.m_width - Panel::m_stm.m_decrease_factor;
+    if (size < 1) {
+        size = 1;
     }
 
-    return m_app_info.m_width - Panel::m_stm.m_decrease_factor;
+    return size;
 }
 
-int DockItem::get_height()
+int DockItem::get_height() const
 {
-    if (m_app_info.m_dock_item_type == dock_item_type_t::separator) {
-        this->swap_size();
-        m_app_info.m_resizable = false;
-        return m_app_info.m_height;
+    int size = m_app_info.m_height - Panel::m_stm.m_decrease_factor;
+    if (size < 1) {
+        size = 1;
     }
-
-    return m_app_info.m_height - Panel::m_stm.m_decrease_factor;
+    return size;
 }
 
 void DockItem::set_width(int value)

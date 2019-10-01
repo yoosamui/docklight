@@ -34,7 +34,6 @@ class AppUpdater
     bool save();
     bool load();
     int get_required_size();
-    int get_required_size(int& exclude_count);
     void swap_item(const int next_position);
 
   private:
@@ -48,10 +47,12 @@ class AppUpdater
         char comment[512];
         char desktop_file[512];
         char icon_name[128];
-        guint8 pixbuff[16384] = {0};  //  128 x 128 max
+        guint8 pixbuff[16384 * 3] = {0};  //  128 x 128 max
         int separator_length = 0;
         int resizable = 1;
     } attach_rec_t;
+
+    int get_required_expandable_size(int idx);
 
     static type_signal_update m_signal_update;
 

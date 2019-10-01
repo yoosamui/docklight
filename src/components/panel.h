@@ -77,7 +77,8 @@ class Panel : public Gtk::DrawingArea, DockMenu
 
     inline void draw_separator(const Cairo::RefPtr<Cairo::Context>& cr,
                                const shared_ptr<DockItem>& item, const int x, const int y,
-                               const int area, const Gtk::Orientation orientation);
+                               const int width, const int height,
+                               const Gtk::Orientation orientation);
 
     inline void draw_cell(const Cairo::RefPtr<Cairo::Context>& cr, const shared_ptr<DockItem>& item,
                           const int x, const int y, const int area,

@@ -161,43 +161,73 @@ void Panel::on_autohide_update(int x, int y)
 int Panel::get_required_size()
 {
     m_stm.m_decrease_factor = 0;
-    Gdk::Rectangle workarea = config::is_autohide_none()
-                                  ? device::monitor::get_current()->get_geometry()
-                                  : device::monitor::get_current()->get_workarea();
+    Gdk::Rectangle workarea =
+        config::is_autohide_none() && config::get_dock_alignment() == dock_alignment_t::fill
+            ? device::monitor::get_current()->get_geometry()
+            : device::monitor::get_current()->get_workarea();
 
-    // the required full size
+    // the required full siz
     int size = m_appupdater.get_required_size();
     int diff = 0;
-
+    int max_space = 0;
     // ajust new items size
     if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-        if (size >= workarea.get_width()) {
-            diff = (size - workarea.get_width()) + config::get_window_start_end_margin() / 2;
-        }
+        max_space = workarea.get_width() - config::get_window_start_end_margin();
+
     } else {
-        if (size >= workarea.get_height()) {
-            diff = (size - workarea.get_height()) + config::get_window_start_end_margin() / 2;
-        }
+        max_space = workarea.get_height() - config::get_window_start_end_margin();
+    }
+
+    if (size > max_space) {
+        diff = size - max_space;
     }
 
     if (diff > 0) {
-        m_stm.m_decrease_factor = diff / (m_appupdater.m_dockitems.size() - 0);
+        int count = 0;
+        // Vloop. count all items non resizable or with size < 0
+
+        m_stm.m_decrease_factor = (diff / (m_appupdater.m_dockitems.size() - 0));
         size = m_appupdater.get_required_size();
 
-        if ((size - workarea.get_height()) > 0) {
-            int count = 0;
+        // m_stm.m_decrease_factor = (diff / (m_appupdater.m_dockitems.size() - count));
+        // size = m_appupdater.get_required_size();
+        //    int max = workarea.get_height() - config::get_window_start_end_margin();
 
-            // loop. count all items non resizable or with size < 0
-            m_appupdater.get_required_size(count);
-
-            // calculat the new factor;
-            m_stm.m_decrease_factor = diff / (m_appupdater.m_dockitems.size() - count);
-
-            // loop to calculate the equired size depending of the factor
-            // size = m_appupdater.get_required_size();
+        while (size > max_space) {
+            m_stm.m_decrease_factor++;
+            size = m_appupdater.get_required_size();
+            count++;
         }
+
+        //   size = m_appupdater.get_required_size();
+
+        //  m_stm.m_decrease_factor += 1;
+        //   size = m_appupdater.get_required_size();
+
+        g_print("----diff:%d fac:%d size:%d count: %d\n", diff, m_stm.m_decrease_factor, size,
+                count);
+        // g_error("AAA");
+        //  m_stm.m_decrease_factor = (diff / (m_appupdater.m_dockitems.size() - count));
+        // m_stm.m_decrease_factor = diff / (m_appupdater.m_dockitems.size() - count);
+        // isize = m_appupdater.get_required_size(count);
+        // m_stm.m_decrease_factor = diff / (m_appupdater.m_dockitems.size() - count);
+
+        // g_print("Check %d count %d\n", (size - workarea.get_height()), count);
+        // if ((size - workarea.get_height()) > 0) {
+        // int count = 0;
+
+        //// loop. count all items non resizable or with size < 0
+        // m_appupdater.get_required_size(count);
+
+        //// calculat the new factor;
+        // m_stm.m_decrease_factor = diff / (m_appupdater.m_dockitems.size() - count);
+
+        //// loop to calculate the equired size depending of the factor
+        // size = m_appupdater.get_required_size();
+        // g_print("----dif:%d fac:%d count:%d\n", diff, m_stm.m_decrease_factor, count);
+        //}
     }
-    return size;
+    return size + config::get_window_start_end_margin();
 }
 
 bool Panel::on_timeout_draw()
@@ -869,7 +899,7 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
         }
 
         // separator
-        this->draw_separator(cr, item, x, y, area, orientation);
+        this->draw_separator(cr, item, x, y, width, height, orientation);
 
         // cell
         this->draw_cell(cr, item, x, y, area, orientation);
@@ -1037,7 +1067,8 @@ inline void Panel::draw_drag_indicator(const Cairo::RefPtr<Cairo::Context>& cr,
 
 inline void Panel::draw_separator(const Cairo::RefPtr<Cairo::Context>& cr,
                                   const shared_ptr<DockItem>& item, const int x, const int y,
-                                  const int area, const Gtk::Orientation orientation)
+                                  const int width, const int height,
+                                  const Gtk::Orientation orientation)
 
 {
     if (config::is_separator_line() && m_theme.PanelSeparator().Stroke().Color::alpha > 0.0 &&
@@ -1053,12 +1084,12 @@ inline void Panel::draw_separator(const Cairo::RefPtr<Cairo::Context>& cr,
             int center = item->get_width() / 2;
             cr->move_to(x + center, y + 6);
             cr->line_to(x + center, y + 6);
-            cr->line_to(x + center, y + area - 6);
+            cr->line_to(x + center, y + height - 6);
         } else {
             int center = item->get_height() / 2;
             cr->move_to(x + 6, y + center);
             cr->line_to(x + 6, y + center);
-            cr->line_to(x + area - 6, y + center);
+            cr->line_to(x + width - 6, y + center);
         }
 
         cr->stroke();
@@ -1117,7 +1148,7 @@ void Panel::draw_title()
     if (count > 1) {
         sprintf(title, "%s (%d)", item->get_title().c_str(), count);
     } else {
-        sprintf(title, "%s", item->get_title().c_str());
+        sprintf(title, "%s w:%d", item->get_title().c_str(), item->get_width());
     }
 
     m_titlewindow.set_text(title);

@@ -12,6 +12,7 @@
 #include "utils/desktopfile.h"
 #include "utils/launcher.h"
 #include "utils/pixbuf.h"
+#include "utils/position.h"
 #include "utils/system.h"
 
 #define DEF_ATTACHMENTS_FILENAME "docklight.dat"
@@ -394,7 +395,7 @@ bool AppUpdater::attach_item(int index)
         return false;
     }
 
-    item->set_index(index);
+    //  item->set_index(index);
     item->set_attach(true);
 
     if (!this->save()) {
@@ -411,7 +412,7 @@ bool AppUpdater::detach_item(const int index)
         return false;
     }
 
-    auto const item = this->m_dockitems[index];
+    auto const item = m_dockitems[index];
     item->set_attach(false);
 
     if (item->m_items.size() > 0) {
@@ -434,34 +435,49 @@ bool AppUpdater::remove_item(const int index)
     return true;
 }
 
-int AppUpdater::get_required_size()
+int AppUpdater::get_required_expandable_size(int idx)
 {
-    int dummy;
+    // int width = position_util::get_appwindow_geometry().get_width();
+    // if (width == 1) return 0;
 
-    return get_required_size(dummy);
+    //// Gdk::Rectangle workarea = config::is_autohide_none()
+    ////? device::monitor::get_current()->get_geometry()
+    ////: device::monitor::get_current()->get_workarea();
+
+    // auto const item = m_dockitems[(int)m_dockitems.size() - 1];
+
+    // g_print("w:%d\n", position_util::get_appwindow_geometry().get_width());
+    //// g_error("AAA");
+
+    //  int size = position_util::get_appwindow_geometry().get_width() - item->get_x();
+    return 100;  // size;
+
+    // for (size_t i = idx; i < items_count; i++) {
+    // auto const item = m_dockitems[i];
+    // if (!item->is_expandable()) {
+    // continue;
+    //}
+
+    // int item_size = config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL
+    //? item->get_width()
+    //: item->get_height();
+    //}
 }
 
-int AppUpdater::get_required_size(int &exclude_count)
+int AppUpdater::get_required_size()
 {
-    exclude_count = 0;
     size_t items_count = m_dockitems.size();
-    int size = config::get_window_start_end_margin() +
-               ((items_count - 1) * config::get_separator_margin());
+    int size = (items_count - 1) * config::get_separator_margin();
+    Gtk::Orientation orientation = config::get_dock_orientation();
 
     for (size_t i = 0; i < items_count; i++) {
         auto const item = m_dockitems[i];
 
-        int item_size = config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL
-                            ? item->get_width()
-                            : item->get_height();
+        int item_size =
+            orientation == Gtk::ORIENTATION_HORIZONTAL ? item->get_width() : item->get_height();
 
-        if (item_size < 0) {
-            exclude_count++;
+        if (item_size < 1) {
             continue;
-        }
-
-        if (!item->is_resizable()) {
-            exclude_count++;
         }
 
         size += item_size;
@@ -469,4 +485,5 @@ int AppUpdater::get_required_size(int &exclude_count)
 
     return size;
 }
+
 DL_NS_END
