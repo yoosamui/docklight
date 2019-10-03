@@ -14,6 +14,7 @@
 #include "utils/pixbuf.h"
 #include "utils/position.h"
 #include "utils/system.h"
+#include "utils/wnck.h"
 
 #define DEF_ATTACHMENTS_FILENAME "docklight.dat"
 
@@ -23,7 +24,6 @@ AppUpdater::type_signal_update AppUpdater::m_signal_update;
 vector<shared_ptr<DockItem>> AppUpdater::m_dockitems;
 
 AppUpdater::AppUpdater() {}
-
 void AppUpdater::init()
 {
     this->load();
@@ -67,6 +67,7 @@ void AppUpdater::on_theme_changed()
     }
 
     m_signal_update.emit();
+    g_print("Theme change\n");
 }
 
 void AppUpdater::on_active_window_changed_callback(WnckScreen *screen,
@@ -112,6 +113,7 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
 
     if (wt == WNCK_WINDOW_DESKTOP ||
         wt == WNCK_WINDOW_DOCK ||
+        wt == WNCK_WINDOW_TOOLBAR ||
         wt == WNCK_WINDOW_MENU ||
         wt == WNCK_WINDOW_SPLASHSCREEN) {
         return;
@@ -126,7 +128,7 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
     // clang-format on
     for (auto const instance : ignore_instances) {
         const char *instance_name = wnck_window_get_class_instance_name(window);
-        if (instance_name != nullptr && strcmp(instance_name, instance.c_str()) == 0) {
+        if (instance_name != nullptr && strcasecmp(instance_name, instance.c_str()) == 0) {
             return;
         }
     }
@@ -148,6 +150,7 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
         g_print("desktop-file: %s\n", info.m_desktop_file.c_str());
         g_print("locale: %s\n", info.m_locale.c_str());
         g_print("cache: %d\n", (int)info.m_cache);
+        g_print("items: %d\n", (int)m_dockitems.size());
         g_print("xid: %d\n", (int)info.m_xid);
 
         vector<shared_ptr<DockItem>>::iterator it;
@@ -182,10 +185,10 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
 
                 // Add child
                 new_item->m_items.push_back(shared_ptr<DockItem>(new DockItem(info)));
+                m_signal_update.emit();
             }
         }
 
-        m_signal_update.emit();
         return;
 
     } else {
@@ -199,8 +202,9 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
 
                     if (!item->is_attached() && item->m_items.size() == 0) {
                         m_dockitems.erase(m_dockitems.begin() + i);
+                        m_signal_update.emit();
                     }
-                    m_signal_update.emit();
+
                     return;
                 }
             }

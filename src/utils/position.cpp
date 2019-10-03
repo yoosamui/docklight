@@ -6,6 +6,7 @@ DL_NS_BEGIN
 namespace position_util
 {
     AppWindow* m_window;
+    long insets_cache[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
     void init(AppWindow* window) { m_window = window; }
 
@@ -198,6 +199,7 @@ namespace position_util
     void set_strut(bool reset)
     {
         long insets[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        bool equal = false;
         GtkWidget* toplevel = gtk_widget_get_toplevel(GTK_WIDGET(m_window->gobj()));
         auto gdk_window = gtk_widget_get_window(toplevel);
         if (gdk_window == nullptr) {
@@ -215,18 +217,33 @@ namespace position_util
             auto const location = config::get_dock_location();
             auto const screen = device::display::get_default_screen();
 
+            // clang-format off
             switch (location) {
                 case dock_location_t::top:
+
                     insets[struts_position_t::top] = workarea.get_y() + area;
                     insets[struts_position_t::top_start] = workarea.get_x();
                     insets[struts_position_t::top_end] = workarea.get_x() + workarea.get_width();
 
                     break;
                 case dock_location_t::bottom:
-                    insets[struts_position_t::bottom] =
-                        (area + screen->get_height()) - workarea.get_y() - workarea.get_height();
+
+                    // set the struts
+                    insets[struts_position_t::bottom] =(area + screen->get_height()) - workarea.get_y() - workarea.get_height();
                     insets[struts_position_t::bottom_start] = workarea.get_x();
                     insets[struts_position_t::bottom_end] = workarea.get_x() + workarea.get_width();
+
+                    // compare for equality with the current insets
+                    equal = insets_cache[struts_position_t::bottom] == insets[struts_position_t::bottom] &&
+                            insets_cache[struts_position_t::bottom_start] ==  insets[struts_position_t::bottom_start] &&
+                            insets_cache[struts_position_t::bottom_end] == insets[struts_position_t::bottom_end];
+
+                    if(!equal){
+                        // no equal. cache the struts for next call
+                        insets_cache[struts_position_t::bottom] = insets[struts_position_t::bottom];
+                        insets_cache[struts_position_t::bottom_start] = insets[struts_position_t::bottom_start];
+                        insets_cache[struts_position_t::bottom_end] = insets[struts_position_t::bottom_end];
+                    }
 
                     break;
                 case dock_location_t::left:
@@ -236,17 +253,35 @@ namespace position_util
                     break;
 
                 case dock_location_t::right:
-                    insets[struts_position_t::right] =
-                        (area + screen->get_width()) - workarea.get_x() - workarea.get_width();
+
+                    insets[struts_position_t::right] = (area + screen->get_width()) - workarea.get_x() - workarea.get_width();
                     insets[struts_position_t::right_start] = workarea.get_y();
                     insets[struts_position_t::right_end] = workarea.get_y() + workarea.get_height();
 
+                    // compare for equality with the current insets
+                    equal = insets_cache[struts_position_t::right] == insets[struts_position_t::right] &&
+                            insets_cache[struts_position_t::right_start] ==  insets[struts_position_t::right_start] &&
+                            insets_cache[struts_position_t::right_end] == insets[struts_position_t::right_end];
+
+                    if(!equal){
+                        // no equal. cache the struts for next call
+                        insets_cache[struts_position_t::right] = insets[struts_position_t::right];
+                        insets_cache[struts_position_t::right_start] = insets[struts_position_t::right_start];
+                        insets_cache[struts_position_t::right_end] = insets[struts_position_t::right_end];
+                    }
+
                     break;
                 default:
-                    return;
+                    break;
             }
+            // clang-format on
         }
 
+        // is equal nothing has changed
+        if (equal) {
+            return;
+        }
+        g_print("set struts................\n");
         gdk_property_change(gdk_window, gdk_atom_intern("_NET_WM_STRUT_PARTIAL", FALSE),
                             gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
                             (unsigned char*)&insets, 12);

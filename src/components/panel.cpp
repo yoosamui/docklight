@@ -160,6 +160,10 @@ void Panel::on_autohide_update(int x, int y)
 
 int Panel::get_required_size()
 {
+    static int cache_size = 0;
+    static int cache_factor = 0;
+    static long cache_compare = 0;
+
     m_stm.m_decrease_factor = 0;
     Gdk::Rectangle workarea =
         config::is_autohide_none() && config::get_dock_alignment() == dock_alignment_t::fill
@@ -170,6 +174,7 @@ int Panel::get_required_size()
     int size = m_appupdater.get_required_size();
     int diff = 0;
     int max_space = 0;
+
     // ajust new items size
     if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
         max_space = workarea.get_width() - config::get_window_start_end_margin();
@@ -183,50 +188,32 @@ int Panel::get_required_size()
     }
 
     if (diff > 0) {
-        int count = 0;
-        // Vloop. count all items non resizable or with size < 0
-
-        m_stm.m_decrease_factor = (diff / (m_appupdater.m_dockitems.size() - 0));
+        m_stm.m_decrease_factor = diff / m_appupdater.m_dockitems.size();
         size = m_appupdater.get_required_size();
 
-        // m_stm.m_decrease_factor = (diff / (m_appupdater.m_dockitems.size() - count));
-        // size = m_appupdater.get_required_size();
-        //    int max = workarea.get_height() - config::get_window_start_end_margin();
+        long compare = size * m_stm.m_decrease_factor;
+        if (compare == cache_compare) {
+            size = cache_size;
+            m_stm.m_decrease_factor = cache_factor;
+
+            goto realize;
+        }
+
+        cache_compare = compare;
 
         while (size > max_space) {
             m_stm.m_decrease_factor++;
             size = m_appupdater.get_required_size();
-            count++;
         }
 
-        //   size = m_appupdater.get_required_size();
+        cache_size = size;
+        cache_factor = m_stm.m_decrease_factor;
 
-        //  m_stm.m_decrease_factor += 1;
-        //   size = m_appupdater.get_required_size();
-
-        g_print("----diff:%d fac:%d size:%d count: %d\n", diff, m_stm.m_decrease_factor, size,
-                count);
-        // g_error("AAA");
-        //  m_stm.m_decrease_factor = (diff / (m_appupdater.m_dockitems.size() - count));
-        // m_stm.m_decrease_factor = diff / (m_appupdater.m_dockitems.size() - count);
-        // isize = m_appupdater.get_required_size(count);
-        // m_stm.m_decrease_factor = diff / (m_appupdater.m_dockitems.size() - count);
-
-        // g_print("Check %d count %d\n", (size - workarea.get_height()), count);
-        // if ((size - workarea.get_height()) > 0) {
-        // int count = 0;
-
-        //// loop. count all items non resizable or with size < 0
-        // m_appupdater.get_required_size(count);
-
-        //// calculat the new factor;
-        // m_stm.m_decrease_factor = diff / (m_appupdater.m_dockitems.size() - count);
-
-        //// loop to calculate the equired size depending of the factor
-        // size = m_appupdater.get_required_size();
-        // g_print("----dif:%d fac:%d count:%d\n", diff, m_stm.m_decrease_factor, count);
-        //}
+        g_print("------------------------------diff:%d fac:%d size:%d \n", diff,
+                m_stm.m_decrease_factor, size);
     }
+
+realize:
     return size + config::get_window_start_end_margin();
 }
 

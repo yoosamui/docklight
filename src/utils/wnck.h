@@ -17,6 +17,7 @@ namespace wnck_util
     void activate_window(WnckWindow* window);
     bool is_window_on_current_desktop(WnckWindow* window);
     string get_window_name(WnckWindow* window);
+    int get_windows_count();
 
     //
     // bool is_windowOnCurrentDesktop(WnckWindow* window);
