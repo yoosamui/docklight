@@ -8,11 +8,12 @@
 #include "utils/system.h"
 
 DL_NS_BEGIN
+
 namespace config
 {
 #define MARGIN 12
 #define DEF_CONFIG_FILENAME "docklight.config"
-#define DEF_DEFAULT_ICON_SIZE 48
+#define DEF_DEFAULT_ICON_SIZE 36
 #define DEF_DEFAULT_SEPARATOR_MARGIN 12
 #define DEF_DEFAULT_SEPARATOR_SIZE 8
 
@@ -35,7 +36,7 @@ namespace config
         string currentLocale = setlocale(LC_NUMERIC, NULL);
         setlocale(LC_NUMERIC, "C");
 
-        const int MAXBUFF = 50;
+        const int MAXBUFF = 64;
         int maxlength = s.size();
         std::string token = "";
         double values[MAXBUFF] = {0};
@@ -362,9 +363,9 @@ namespace config
 
             // separator size
             m_separator_size = get_separator_size(key_file);
-            //            if (m_separator_size < 0 || m_separator_size > 20) {
-            // m_separator_size = DEF_DEFAULT_SEPARATOR_SIZE;
-            //          }
+            if (m_separator_size < 0 || m_separator_size > 20) {
+                m_separator_size = DEF_DEFAULT_SEPARATOR_SIZE;
+            }
 
             // separator margin
             m_separator_margin = get_separator_margin(key_file);

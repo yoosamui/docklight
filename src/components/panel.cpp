@@ -849,7 +849,7 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
     int x = 0;
     int width = 0;
     int height = 0;
-    int center = 0;
+    //    int center = 0;
     int initial_icon_size = config::get_icon_size();
     int icon_size = initial_icon_size;
     Gtk::Orientation orientation = config::get_dock_orientation();
@@ -872,13 +872,13 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
         item->set_x(x);
         item->set_y(y);
 
-        if (orientation == Gtk::ORIENTATION_HORIZONTAL) {
-            center = (width / 2);
-            y = m_offset_y;
-        } else {
-            center = (height / 2);
-            x = m_offset_x;
-        }
+        // if (orientation == Gtk::ORIENTATION_HORIZONTAL) {
+        // center = (width / 2);
+        // y = m_offset_y;
+        //} else {
+        // center = (height / 2);
+        // x = m_offset_x;
+        //}
 
         icon_size = initial_icon_size;
         if (m_stm.m_decrease_factor > 0) {
@@ -953,45 +953,7 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
         }
 
         // draw indicator
-        if (m_theme.PanelIndicator().Fill().Color::alpha > 0.0) {
-            cr->set_source_rgba(m_theme.PanelIndicator().Fill().Color::red,
-                                m_theme.PanelIndicator().Fill().Color::green,
-                                m_theme.PanelIndicator().Fill().Color::blue,
-                                m_theme.PanelIndicator().Fill().Color::alpha);
-
-            if (config::get_indicator_type() == dock_indicator_type_t::dots) {
-                if (item->m_items.size() > 0) {
-                    if (item->m_items.size() == 1) {
-                        cr->arc(x + center, y + area - 4, 1.8, 0, 2 * M_PI);
-                    } else if (item->m_items.size() > 1) {
-                        cr->arc(x + center - 3, y + area - 4, 1.8, 0, 2 * M_PI);
-                        cr->arc(x + center + 3, y + area - 4, 1.8, 0, 2 * M_PI);
-                    }
-                    cr->fill();
-                }
-            } else if (config::get_indicator_type() == dock_indicator_type_t::lines) {
-                int marginY = area - 4;  // - m_stm.m_decrease_factor - 4;
-                if (item->m_items.size() > 0) {
-                    if (item->m_items.size() == 1) {
-                        cr->move_to(x + 4, y + marginY);
-                        cr->line_to(x + 4, y + marginY);
-                        cr->line_to(x + width - 4, y + marginY);
-
-                    } else if (item->m_items.size() > 1) {
-                        cr->move_to(x + 4, y + marginY);
-                        cr->line_to(x + 4, y + marginY);
-                        cr->line_to(x + center - 3, y + marginY);
-
-                        cr->move_to(x + center + 3, y + marginY);
-                        cr->line_to(x + center + 3, y + marginY);
-                        cr->line_to(x + width - 4, y + marginY);
-                    }
-                }
-
-                cr->set_line_width(2.0);
-                cr->stroke();
-            }
-        }
+        this->draw_indicator(cr, item, area, x, y, width, height);
     }
 }
 
@@ -1022,6 +984,66 @@ inline void Panel::draw_cell(const Cairo::RefPtr<Cairo::Context>& cr,
                                           m_theme.PanelCell().Ratio());
             cr->stroke();
         }
+    }
+}
+
+inline void Panel::draw_indicator(const Cairo::RefPtr<Cairo::Context>& cr,
+                                  const shared_ptr<DockItem>& item, int area, int x, int y,
+                                  int width, int height) const
+{
+    if (item->get_dock_item_type() != dock_item_type_t::launcher) {
+        return;
+    }
+
+    if (item->m_items.size() < 1) {
+        return;
+    }
+
+    auto const indicator_type = config::get_indicator_type();
+    int center = (width / 2);
+
+    if (indicator_type == dock_indicator_type_t::dots &&
+        m_theme.PanelIndicator().Fill().Color::alpha > 0.0) {
+        if (item->m_items.size() == 1) {
+            cr->arc(x + center, y + area - 4, 1.8, 0, 2 * M_PI);
+        } else if (item->m_items.size() > 1) {
+            cr->arc(x + center - 3, y + area - 4, 1.8, 0, 2 * M_PI);
+            cr->arc(x + center + 3, y + area - 4, 1.8, 0, 2 * M_PI);
+        }
+
+        cr->set_source_rgba(m_theme.PanelIndicator().Fill().Color::red,
+                            m_theme.PanelIndicator().Fill().Color::green,
+                            m_theme.PanelIndicator().Fill().Color::blue,
+                            m_theme.PanelIndicator().Fill().Color::alpha);
+        cr->fill();
+
+    } else if (indicator_type == dock_indicator_type_t::lines &&
+               m_theme.PanelIndicator().Stroke().Color::alpha > 0.0) {
+        int marginY = area - 4;
+        if (item->m_items.size() > 0) {
+            if (item->m_items.size() == 1) {
+                cr->move_to(x + 4, y + marginY);
+                cr->line_to(x + 4, y + marginY);
+                cr->line_to(x + width - 4, y + marginY);
+
+            } else if (item->m_items.size() > 1) {
+                cr->move_to(x + 4, y + marginY);
+                cr->line_to(x + 4, y + marginY);
+                cr->line_to(x + center - 3, y + marginY);
+
+                cr->move_to(x + center + 3, y + marginY);
+                cr->line_to(x + center + 3, y + marginY);
+                cr->line_to(x + width - 4, y + marginY);
+            }
+        }
+
+        cr->set_source_rgba(m_theme.PanelIndicator().Stroke().Color::red,
+                            m_theme.PanelIndicator().Stroke().Color::green,
+                            m_theme.PanelIndicator().Stroke().Color::blue,
+                            m_theme.PanelIndicator().Stroke().Color::alpha);
+
+        cr->set_line_width(2.0);
+        cr->stroke();
     }
 }
 

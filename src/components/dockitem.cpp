@@ -102,10 +102,10 @@ void DockItem::swap_size()
 
     if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
         m_app_info.m_height = area;
-        m_app_info.m_width = m_app_info.m_separator_length;
+        m_app_info.m_width = config::get_separator_size();  // m_app_info.m_separator_length;
     } else {
         m_app_info.m_width = area;
-        m_app_info.m_height = m_app_info.m_separator_length;
+        m_app_info.m_height = config::get_separator_size();  //)m_app_info.m_separator_length;
     }
 }
 

@@ -88,6 +88,10 @@ class Panel : public Gtk::DrawingArea, DockMenu
                                     const shared_ptr<DockItem>& item, int x, int y, int idx,
                                     int width, int height, Gtk::Orientation orientation) const;
 
+    inline void draw_indicator(const Cairo::RefPtr<Cairo::Context>& cr,
+                               const shared_ptr<DockItem>& item, int area, int x, int y, int width,
+                               int height) const;
+
     void draw_title();
     void draw();
 
