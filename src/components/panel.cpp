@@ -849,7 +849,7 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
     int x = 0;
     int width = 0;
     int height = 0;
-    //    int center = 0;
+    //  int center = 0;
     int initial_icon_size = config::get_icon_size();
     int icon_size = initial_icon_size;
     Gtk::Orientation orientation = config::get_dock_orientation();
@@ -872,13 +872,11 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
         item->set_x(x);
         item->set_y(y);
 
-        // if (orientation == Gtk::ORIENTATION_HORIZONTAL) {
-        // center = (width / 2);
-        // y = m_offset_y;
-        //} else {
-        // center = (height / 2);
-        // x = m_offset_x;
-        //}
+        if (orientation == Gtk::ORIENTATION_HORIZONTAL) {
+            y = m_offset_y;
+        } else {
+            x = m_offset_x;
+        }
 
         icon_size = initial_icon_size;
         if (m_stm.m_decrease_factor > 0) {
