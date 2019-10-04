@@ -119,7 +119,8 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
         return;
         }
 
-    const string ignore_instances[] =
+
+    static const string ignore_instances[] =
         {
             {DOCKLIGHT_INSTANCENAME},
             {"wrapper-2.0"}            //xcfe menu
@@ -325,7 +326,9 @@ bool AppUpdater::load()
         if (feof(file_reader) != 0) break;
         if (sn == 0) continue;
 
-        if (rec.pixbuff != nullptr) {
+        info.m_dock_item_type = static_cast<dock_item_type_t>(rec.dock_item_type);
+
+        if (rec.pixbuff != nullptr && info.m_dock_item_type == dock_item_type_t::launcher) {
             try {
                 auto loader = Gdk::PixbufLoader::create();
                 loader->write(rec.pixbuff, sizeof(rec.pixbuff));
@@ -337,9 +340,10 @@ bool AppUpdater::load()
                 info.m_image = (Glib::RefPtr<Gdk::Pixbuf>)nullptr;
             }
         }
-        info.m_dock_item_type = static_cast<dock_item_type_t>(rec.dock_item_type);
+
         info.m_wnckwindow = 0;
         info.m_xid = 0;
+
         info.m_name = rec.name;
         info.m_group = rec.group;
         info.m_instance = rec.instance;

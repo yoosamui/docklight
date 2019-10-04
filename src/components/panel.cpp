@@ -165,20 +165,19 @@ int Panel::get_required_size()
     static long cache_compare = 0;
 
     m_stm.m_decrease_factor = 0;
+
     Gdk::Rectangle workarea =
         config::is_autohide_none() && config::get_dock_alignment() == dock_alignment_t::fill
             ? device::monitor::get_current()->get_geometry()
             : device::monitor::get_current()->get_workarea();
 
-    // the required full siz
+    // the required full sizie
     int size = m_appupdater.get_required_size();
     int diff = 0;
     int max_space = 0;
 
-    // ajust new items size
     if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
         max_space = workarea.get_width() - config::get_window_start_end_margin();
-
     } else {
         max_space = workarea.get_height() - config::get_window_start_end_margin();
     }
@@ -208,9 +207,6 @@ int Panel::get_required_size()
 
         cache_size = size;
         cache_factor = m_stm.m_decrease_factor;
-
-        g_print("------------------------------diff:%d fac:%d size:%d \n", diff,
-                m_stm.m_decrease_factor, size);
     }
 
 realize:
@@ -849,7 +845,6 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
     int x = 0;
     int width = 0;
     int height = 0;
-    //  int center = 0;
     int initial_icon_size = config::get_icon_size();
     int icon_size = initial_icon_size;
     Gtk::Orientation orientation = config::get_dock_orientation();
@@ -878,11 +873,6 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
             x = m_offset_x;
         }
 
-        icon_size = initial_icon_size;
-        if (m_stm.m_decrease_factor > 0) {
-            icon_size -= m_stm.m_decrease_factor;
-        }
-
         // separator
         this->draw_separator(cr, item, x, y, width, height, orientation);
 
@@ -893,61 +883,17 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
         this->draw_drag_indicator(cr, item, x, y, idx, width, height, orientation);
 
         // draw active window selector
-        if (!m_stm.m_dragdrop_begin && idx > 0 && m_stm.m_active_window_index == (int)idx) {
-            if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-                cairo_util::rounded_rectangle(cr, x, m_offset_y, width, height, 0);
-            } else {
-                cairo_util::rounded_rectangle(cr, x, y, width, height, 0);
-            }
-
-            cr->set_source_rgba(1, 1, 1, 0.2);
-            cr->fill();
-        }
+        this->draw_active_window_indicator(cr, x, y, idx, width, height);
 
         // icon + selector
-        auto image = item->get_image();
-        if (image && item->get_dock_item_type() != dock_item_type_t::separator) {
-            // reload or scaled if needed if (image->get_width() != icon_size ||
-            if (image->get_height() != icon_size) {
-                // int icon_size =
-                // config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL ? height : width;
-                //
-                // load home icon
-                this->load_home_icon(icon_size);
-
-                auto const tmp_pixbuf = pixbuf_util::get_window_icon(
-                    item->get_wnckwindow(), item->get_desktop_icon_name(), icon_size);
-
-                if (!tmp_pixbuf) {
-                    item->set_image(
-                        image->scale_simple(icon_size, icon_size, Gdk::INTERP_BILINEAR));
-                } else {
-                    item->set_image(tmp_pixbuf);
-                }
+        auto const icon = item->get_image();
+        if (icon) {
+            icon_size = initial_icon_size;
+            if (m_stm.m_decrease_factor > 0) {
+                icon_size -= m_stm.m_decrease_factor;
             }
 
-            int center_pos_x = (position_util::get_area() / 2) - (icon_size / 2);
-            Gdk::Cairo::set_source_pixbuf(cr, item->get_image(), x + center_pos_x, y + 4);
-            cr->paint();
-
-            if (m_show_selector) {
-                //  draw selector
-                if ((int)idx == m_current_index && !m_context_menu_open && m_stm.m_mouse_inside &&
-                    (int)idx != m_inverted_index) {
-                    // create copy and invert image colors
-                    auto tmp = item->get_image()->copy();
-                    pixbuf_util::invert_pixels(tmp);
-                    Gdk::Cairo::set_source_pixbuf(cr, tmp, x + center_pos_x, y + 4);
-
-                    m_inverted_index = (int)m_current_index;
-                    cr->paint();
-
-                    // normal selector cell
-                    // cr->set_source_rgba(1, 1, 1, 0.2);
-                    // cairo_util::rounded_rectangle(cr, x, y, width, height, 0);
-                    // cr->fill();
-                }
-            }
+            this->draw_icon(cr, item, icon, icon_size, area, idx, x, y);
         }
 
         // draw indicator
@@ -1020,18 +966,18 @@ inline void Panel::draw_indicator(const Cairo::RefPtr<Cairo::Context>& cr,
         int marginY = area - 4;
         if (item->m_items.size() > 0) {
             if (item->m_items.size() == 1) {
-                cr->move_to(x + 4, y + marginY);
-                cr->line_to(x + 4, y + marginY);
-                cr->line_to(x + width - 4, y + marginY);
+                cr->move_to(x + 0, y + marginY);
+                cr->line_to(x + 0, y + marginY);
+                cr->line_to(x + width - 0, y + marginY);
 
             } else if (item->m_items.size() > 1) {
-                cr->move_to(x + 4, y + marginY);
-                cr->line_to(x + 4, y + marginY);
+                cr->move_to(x + 0, y + marginY);
+                cr->line_to(x + 0, y + marginY);
                 cr->line_to(x + center - 3, y + marginY);
 
                 cr->move_to(x + center + 3, y + marginY);
                 cr->line_to(x + center + 3, y + marginY);
-                cr->line_to(x + width - 4, y + marginY);
+                cr->line_to(x + width - 0, y + marginY);
             }
         }
 
@@ -1042,6 +988,16 @@ inline void Panel::draw_indicator(const Cairo::RefPtr<Cairo::Context>& cr,
 
         cr->set_line_width(2.0);
         cr->stroke();
+    }
+}
+
+inline void Panel::draw_active_window_indicator(const Cairo::RefPtr<Cairo::Context>& cr, int x,
+                                                int y, int idx, int width, int height) const
+{
+    if (!m_stm.m_dragdrop_begin && idx > 0 && m_stm.m_active_window_index == (int)idx) {
+        cairo_util::rounded_rectangle(cr, x, y, width, height, 0);
+        cr->set_source_rgba(1, 1, 1, 0.2);
+        cr->fill();
     }
 }
 
@@ -1102,6 +1058,54 @@ inline void Panel::draw_separator(const Cairo::RefPtr<Cairo::Context>& cr,
         cr->stroke();
     }
 }
+
+inline void Panel::draw_icon(const Cairo::RefPtr<Cairo::Context>& cr,
+                             const shared_ptr<DockItem>& item,
+                             const Glib::RefPtr<Gdk::Pixbuf>& icon, int icon_size, int area,
+                             int idx, int x, int y)
+{
+    if (icon && item->get_dock_item_type() == dock_item_type_t::launcher) {
+        // reload or scaled if needed
+        if (icon->get_height() != icon_size || icon->get_width() != icon_size) {
+            // load home icon
+            load_home_icon(icon_size);
+
+            // Get a fresh new icon
+            auto const tmp_pixbuf = pixbuf_util::get_window_icon(
+                item->get_wnckwindow(), item->get_desktop_icon_name(), icon_size);
+
+            if (!tmp_pixbuf) {
+                item->set_image(icon->scale_simple(icon_size, icon_size, Gdk::INTERP_BILINEAR));
+            } else {
+                item->set_image(tmp_pixbuf);
+            }
+        }
+
+        int center_pos_x = (area / 2) - (icon_size / 2);
+        Gdk::Cairo::set_source_pixbuf(cr, item->get_image(), x + center_pos_x, y + 4);
+        cr->paint();
+
+        if (m_show_selector) {
+            //  draw selector
+            if ((int)idx == m_current_index && !m_context_menu_open && m_stm.m_mouse_inside &&
+                (int)idx != m_inverted_index) {
+                // create copy and invert image colors
+                auto tmp = item->get_image()->copy();
+                pixbuf_util::invert_pixels(tmp);
+                Gdk::Cairo::set_source_pixbuf(cr, tmp, x + center_pos_x, y + 4);
+
+                m_inverted_index = (int)m_current_index;
+                cr->paint();
+
+                // normal selector cell
+                // cr->set_source_rgba(1, 1, 1, 0.2);
+                // cairo_util::rounded_rectangle(cr, x, y, width, height, 0);
+                // cr->fill();
+            }
+        }
+    }
+}
+
 void Panel::draw_title()
 {
     if (m_current_index < 0 || m_context_menu_open || !config::is_show_title() ||

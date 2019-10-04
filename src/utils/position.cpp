@@ -221,9 +221,22 @@ namespace position_util
             switch (location) {
                 case dock_location_t::top:
 
+                    // set the struts
                     insets[struts_position_t::top] = workarea.get_y() + area;
                     insets[struts_position_t::top_start] = workarea.get_x();
                     insets[struts_position_t::top_end] = workarea.get_x() + workarea.get_width();
+
+                    // compare for equality with the current insets
+                    equal = insets_cache[struts_position_t::top] == insets[struts_position_t::top] &&
+                            insets_cache[struts_position_t::top_start] ==  insets[struts_position_t::top_start] &&
+                            insets_cache[struts_position_t::top_end] == insets[struts_position_t::top_end];
+
+                    if(!equal){
+                        // no equal. cache the struts for next call
+                        insets_cache[struts_position_t::top] = insets[struts_position_t::top];
+                        insets_cache[struts_position_t::top_start] = insets[struts_position_t::top_start];
+                        insets_cache[struts_position_t::top_end] = insets[struts_position_t::top_end];
+                    }
 
                     break;
                 case dock_location_t::bottom:
@@ -247,13 +260,28 @@ namespace position_util
 
                     break;
                 case dock_location_t::left:
+
+                    // set the struts
                     insets[struts_position_t::left] = workarea.get_x() + area;
                     insets[struts_position_t::left_start] = workarea.get_y();
                     insets[struts_position_t::left_end] = workarea.get_y() + workarea.get_height();
+
+                    // compare for equality with the current insets
+                    equal = insets_cache[struts_position_t::left] == insets[struts_position_t::left] &&
+                            insets_cache[struts_position_t::left_start] ==  insets[struts_position_t::left_start] &&
+                            insets_cache[struts_position_t::left_end] == insets[struts_position_t::left_end];
+
+                    if(!equal){
+                        // no equal. cache the struts for next call
+                        insets_cache[struts_position_t::left] = insets[struts_position_t::left];
+                        insets_cache[struts_position_t::left_start] = insets[struts_position_t::left_start];
+                        insets_cache[struts_position_t::left_end] = insets[struts_position_t::left_end];
+                    }
                     break;
 
                 case dock_location_t::right:
 
+                    // set the struts
                     insets[struts_position_t::right] = (area + screen->get_width()) - workarea.get_x() - workarea.get_width();
                     insets[struts_position_t::right_start] = workarea.get_y();
                     insets[struts_position_t::right_end] = workarea.get_y() + workarea.get_height();
@@ -271,6 +299,7 @@ namespace position_util
                     }
 
                     break;
+
                 default:
                     break;
             }

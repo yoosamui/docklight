@@ -92,6 +92,12 @@ class Panel : public Gtk::DrawingArea, DockMenu
                                const shared_ptr<DockItem>& item, int area, int x, int y, int width,
                                int height) const;
 
+    inline void draw_active_window_indicator(const Cairo::RefPtr<Cairo::Context>& cr, int x, int y,
+                                             int idx, int width, int height) const;
+
+    inline void draw_icon(const Cairo::RefPtr<Cairo::Context>& cr, const shared_ptr<DockItem>& item,
+                          const Glib::RefPtr<Gdk::Pixbuf>& icon, int icon_size, int area, int idx,
+                          int x, int y);
     void draw_title();
     void draw();
 

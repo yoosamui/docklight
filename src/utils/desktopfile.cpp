@@ -162,7 +162,9 @@ namespace desktopfile_util
 
     bool get_app_info(appinfo_t& info)
     {
-        if (info.m_name.empty() || info.m_name == "Untitled window") return false;
+        if (info.m_name.empty() || strcasecmp(info.m_name.c_str(), "Untitled window") == 0) {
+            return false;
+        }
 
         if (cache.count(info.m_name) == 1) {
             auto const cache_info = cache[info.m_name];
