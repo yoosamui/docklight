@@ -17,13 +17,25 @@ namespace position_util
                    : m_window->get_width();
     }
 
+    Gdk::Rectangle get_workarea()
+    {
+        auto const alignment = config::get_dock_alignment();
+        return alignment == dock_alignment_t::fill ? device::monitor::get_current()->get_geometry()
+                                                   : device::monitor::get_current()->get_workarea();
+    }
+
+    int get_workarea_max_size()
+    {
+        auto const workarea = get_workarea();
+        return config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL
+                   ? workarea.get_width()
+                   : workarea.get_height();
+    }
+
     void set_window_position()
     {
         int area = config::get_dock_area();
-        Gdk::Rectangle workarea = config::is_autohide_none()
-                                      ? device::monitor::get_current()->get_geometry()
-                                      : device::monitor::get_current()->get_workarea();
-
+        auto const workarea = get_workarea();
         auto const alignment = config::get_dock_alignment();
         int xpos = 0, ypos = 0, center = 0;
 

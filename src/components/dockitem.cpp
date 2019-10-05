@@ -37,11 +37,6 @@ dock_item_type_t DockItem::get_dock_item_type() const
     return m_app_info.m_dock_item_type;
 }
 
-bool DockItem::is_resizable() const
-{
-    return m_app_info.m_resizable;
-}
-
 string DockItem::get_name() const
 {
     return m_app_info.m_name;
@@ -96,23 +91,36 @@ bool DockItem::is_attached() const
     return m_attached;
 }
 
-void DockItem::swap_size()
+void DockItem::set_expander_size(int size)
 {
-    int area = config::get_dock_area();
+    if (m_app_info.m_dock_item_type != dock_item_type_t::expander) {
+        return;
+    }
 
+    int area = config::get_dock_area();
     if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
         m_app_info.m_height = area;
-        m_app_info.m_width = config::get_separator_size();  // m_app_info.m_separator_length;
+        m_app_info.m_width = size;
     } else {
         m_app_info.m_width = area;
-        m_app_info.m_height = config::get_separator_size();  //)m_app_info.m_separator_length;
+        m_app_info.m_height = size;
     }
 }
 
-bool DockItem::is_expandable() const
+void DockItem::swap_size()
 {
-    return m_app_info.m_dock_item_type == dock_item_type_t::separator &&
-           m_app_info.m_separartor_expands;
+    if (m_app_info.m_dock_item_type != dock_item_type_t::separator) {
+        return;
+    }
+
+    int area = config::get_dock_area();
+    if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+        m_app_info.m_height = area;
+        m_app_info.m_width = config::get_separator_size();
+    } else {
+        m_app_info.m_width = area;
+        m_app_info.m_height = config::get_separator_size();
+    }
 }
 
 int DockItem::get_width() const

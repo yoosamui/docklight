@@ -120,7 +120,7 @@ int AppWindow::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine> &
         g_print("No parameters provided.\n");
     }
 
-    // Load config
+    // lOAD config
     config::load(list);
     g_print("load config done.\n");
 

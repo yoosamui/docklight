@@ -55,6 +55,7 @@ void Panel::init()
 
     m_home_menu_quit_item.signal_activate().connect(sigc::mem_fun(*this, &Panel::on_home_menu_quit_event));
     m_home_menu_addseparator_item.signal_activate().connect(sigc::mem_fun(*this, &Panel::on_home_menu_addseparator_event));
+    m_home_menu_addexpander_item.signal_activate().connect(sigc::mem_fun(*this, &Panel::on_home_menu_addexpander_event));
 
     // items menu
     m_item_menu.attach_to_widget(*this);
@@ -166,10 +167,7 @@ int Panel::get_required_size()
 
     m_stm.m_decrease_factor = 0;
 
-    Gdk::Rectangle workarea =
-        config::is_autohide_none() && config::get_dock_alignment() == dock_alignment_t::fill
-            ? device::monitor::get_current()->get_geometry()
-            : device::monitor::get_current()->get_workarea();
+    auto const workarea = position_util::get_workarea();
 
     // the required full sizie
     int size = m_appupdater.get_required_size();
@@ -340,13 +338,31 @@ void Panel::on_item_menu_windowlist_event(WnckWindow* window)
     wnck_util::activate_window(window);
 }
 
+void Panel::on_home_menu_addexpander_event()
+{
+    appinfo_t info;
+    info.m_resizable = true;
+    info.m_separator_length = config::get_separator_size();
+    info.m_name = "expander";
+    info.m_title = _("Expander");
+
+    m_appupdater.m_dockitems.push_back(
+        shared_ptr<DockItem>(new DockItem(info, dock_item_type_t::expander)));
+    auto const new_item = m_appupdater.m_dockitems.back();
+
+    new_item->set_attach(true);
+
+    m_appupdater.save();
+    this->on_appupdater_update();
+}
+
 void Panel::on_home_menu_addseparator_event()
 {
     appinfo_t info;
     info.m_resizable = false;
     info.m_separator_length = config::get_separator_size();
     info.m_name = "separator";
-    info.m_title = _("separator");
+    info.m_title = _("Separator");
 
     m_appupdater.m_dockitems.push_back(
         shared_ptr<DockItem>(new DockItem(info, dock_item_type_t::separator)));
@@ -482,6 +498,8 @@ bool Panel::on_button_release_event(GdkEventButton* event)
                 if (m_current_index == 0) {
                     m_home_menu.popup(sigc::mem_fun(*this, &Panel::on_home_menu_position), 1,
                                       event->time);
+
+                    m_home_menu_addexpander_item.set_sensitive(!m_appupdater.is_exists_expander());
                     return true;
                 }
                 if (m_current_index > 0 &&
@@ -492,7 +510,8 @@ bool Panel::on_button_release_event(GdkEventButton* event)
                     return true;
                 }
                 if (m_current_index > 0 &&
-                    item->get_dock_item_type() == dock_item_type_t::separator) {
+                    (item->get_dock_item_type() == dock_item_type_t::separator ||
+                     item->get_dock_item_type() == dock_item_type_t::expander)) {
                     m_separator_menu_attach.set_active(item->is_attached());
                     m_separator_menu.popup(sigc::mem_fun(*this, &Panel::on_separator_menu_position),
                                            1, event->time);
@@ -712,7 +731,7 @@ inline bool Panel::get_center_position(int& x, int& y, const int width, const in
 
     auto const item = AppUpdater::m_dockitems[m_current_index];
     auto const rect = position_util::get_appwindow_geometry();
-    //   auto const workarea = device::monitor::get_current()->get_workarea();
+    auto const workarea = position_util::get_workarea();
     auto const location = config::get_dock_location();
 
     x = rect.get_x();
@@ -732,6 +751,15 @@ inline bool Panel::get_center_position(int& x, int& y, const int width, const in
             if (citem == item) {
                 int center = (item_width / 2) - (width / 2);
                 x = (rect.get_x() + citem->get_x()) + center;
+
+                if (x + width > workarea.get_width()) {
+                    x = workarea.get_width() - width;
+                }
+
+                if (x < workarea.get_x()) {
+                    x = workarea.get_x();
+                }
+
                 return true;
             }
         }
@@ -751,6 +779,15 @@ inline bool Panel::get_center_position(int& x, int& y, const int width, const in
             if (citem == item) {
                 int center = (item_height / 2) - (height / 2);
                 y = (rect.get_y() + citem->get_y()) + center;
+
+                if (y + height > workarea.get_height()) {
+                    y = workarea.get_height() - height;
+                }
+
+                if (y < workarea.get_y()) {
+                    y = workarea.get_y();
+                }
+
                 return true;
             }
         }
@@ -877,7 +914,7 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
         this->draw_separator(cr, item, x, y, width, height, orientation);
 
         // cell
-        this->draw_cell(cr, item, x, y, area, orientation);
+        this->draw_cell(cr, item, x, y, width, height, area, orientation);
 
         // drag indicator
         this->draw_drag_indicator(cr, item, x, y, idx, width, height, orientation);
@@ -902,16 +939,16 @@ void Panel::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
 }
 
 inline void Panel::draw_cell(const Cairo::RefPtr<Cairo::Context>& cr,
-                             const shared_ptr<DockItem>& item, const int x, const int y,
-                             const int area, const Gtk::Orientation orientation)
+                             const shared_ptr<DockItem>& item, int x, int y, int width, int height,
+                             int area, Gtk::Orientation orientation) const
 {
-    if (item->get_dock_item_type() != dock_item_type_t::separator) {
+    if (item->get_dock_item_type() == dock_item_type_t::launcher) {
         if (m_theme.PanelCell().Fill().Color::alpha > 0.0) {
             cr->set_source_rgba(
                 m_theme.PanelCell().Fill().Color::red, m_theme.PanelCell().Fill().Color::green,
                 m_theme.PanelCell().Fill().Color::blue, m_theme.PanelCell().Fill().Color::alpha);
 
-            cairo_util::rounded_rectangle(cr, x, y + 1, area, area - 2,
+            cairo_util::rounded_rectangle(cr, x, y + 1, width, height - 2,
                                           m_theme.PanelCell().Ratio());
             cr->fill();
         }
@@ -924,7 +961,7 @@ inline void Panel::draw_cell(const Cairo::RefPtr<Cairo::Context>& cr,
 
             cr->set_line_width(m_theme.PanelCell().LineWidth());
 
-            cairo_util::rounded_rectangle(cr, x, y + 1, area, area - 2,
+            cairo_util::rounded_rectangle(cr, x, y + 1, width, height - 2,
                                           m_theme.PanelCell().Ratio());
             cr->stroke();
         }
@@ -1159,7 +1196,7 @@ void Panel::draw_title()
     if (count > 1) {
         sprintf(title, "%s (%d)", item->get_title().c_str(), count);
     } else {
-        sprintf(title, "%s w:%d", item->get_title().c_str(), item->get_width());
+        sprintf(title, "%s", item->get_title().c_str());
     }
 
     m_titlewindow.set_text(title);

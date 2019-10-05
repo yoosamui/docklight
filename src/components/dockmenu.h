@@ -16,8 +16,10 @@ class DockMenu
         m_home_menu.set_halign(Gtk::Align::ALIGN_CENTER);
         m_home_menu_quit_item.set_label(_("Quit"));
         m_home_menu_addseparator_item.set_label(_("Add separator"));
+        m_home_menu_addexpander_item.set_label(_("Add expander"));
 
         m_home_menu.append(m_separatorMenuHome1);
+        m_home_menu.append(m_home_menu_addexpander_item);
         m_home_menu.append(m_home_menu_addseparator_item);
         m_home_menu.append(m_separatorMenuHome0);
         m_home_menu.append(m_home_menu_quit_item);
@@ -106,6 +108,7 @@ class DockMenu
     Gtk::Menu m_home_menu;
     Gtk::MenuItem m_home_menu_quit_item;
     Gtk::MenuItem m_home_menu_addseparator_item;
+    Gtk::MenuItem m_home_menu_addexpander_item;
 
     // Item menu
     Gtk::Menu m_item_menu;

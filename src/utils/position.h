@@ -33,6 +33,8 @@ namespace position_util
     void set_window_position();
     const Gdk::Rectangle get_appwindow_geometry();
     void get_center_screen_position(int targetwidth, int targetheight, int &posx, int &posy);
+    Gdk::Rectangle get_workarea();
+    int get_workarea_max_size();
 
 }  // namespace position_util
 DL_NS_END

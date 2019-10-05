@@ -46,16 +46,15 @@ class DockItem
     unsigned long get_xid() const;
     shared_ptr<DockItem> get_next() const;
     bool is_attached() const;
-    bool is_resizable() const;
     int get_width() const;
     int get_height() const;
+    void set_expander_size(int size);
     void set_index(int index);
     int get_index() const;
     void set_y(int y);
     void set_x(int x);
     int get_y();
     int get_x();
-    bool is_expandable() const;
     void set_image(Glib::RefPtr<Gdk::Pixbuf> image);
     dock_item_type_t get_dock_item_type() const;
     string get_desktop_icon_name() const;

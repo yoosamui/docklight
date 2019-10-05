@@ -251,7 +251,7 @@ string AppUpdater::get_filepath()
 
 bool AppUpdater::save()
 {
-    string file_name = this->get_filepath();
+    string file_name = get_filepath();
     if (file_name == "") {
         return false;
     }
@@ -266,7 +266,7 @@ bool AppUpdater::save()
         return false;
     }
 
-    for (size_t idx = 1; idx < this->m_dockitems.size(); idx++) {
+    for (size_t idx = 1; idx < m_dockitems.size(); idx++) {
         auto const item = AppUpdater::m_dockitems[idx];
         if (!item->is_attached()) {
             continue;
@@ -295,8 +295,6 @@ bool AppUpdater::save()
         strncpy(rec.desktop_file, info->m_desktop_file.c_str(), sizeof(rec.desktop_file) - 1);
 
         rec.dock_item_type = info->m_dock_item_type;
-        rec.separator_length = info->m_separator_length;
-        rec.resizable = (int)info->m_resizable;
 
         size_t result = fwrite(&rec, sizeof(rec), 1, file_writer);
         if (result == 0) g_critical("Attachments::save:: Error writing file> fwrite\n");
@@ -352,15 +350,11 @@ bool AppUpdater::load()
         info.m_icon_name = rec.icon_name;
         info.m_locale = rec.locale;
         info.m_desktop_file = rec.desktop_file;
-        info.m_separator_length = rec.separator_length;
-        info.m_resizable = (bool)rec.resizable;
 
         // check if locale has been changed and desktop file still exists.
-        if (!info.m_desktop_file.empty()) {
-            // if the desktop file could not be found then the app has been removed
-            if (!desktopfile_util::get_app_info(info)) {
-                continue;
-            }
+        // if the desktop file could not be found then the app has been removed
+        if (!desktopfile_util::get_app_info(info)) {
+            continue;
         }
 
         // Add new
@@ -443,33 +437,17 @@ bool AppUpdater::remove_item(const int index)
     return true;
 }
 
-int AppUpdater::get_required_expandable_size(int idx)
+bool AppUpdater::is_exists_expander()
 {
-    // int width = position_util::get_appwindow_geometry().get_width();
-    // if (width == 1) return 0;
+    size_t items_count = m_dockitems.size();
+    for (size_t i = 0; i < items_count; i++) {
+        auto const item = m_dockitems[i];
+        if (item->get_dock_item_type() == dock_item_type_t::expander) {
+            return true;
+        }
+    }
 
-    //// Gdk::Rectangle workarea = config::is_autohide_none()
-    ////? device::monitor::get_current()->get_geometry()
-    ////: device::monitor::get_current()->get_workarea();
-
-    // auto const item = m_dockitems[(int)m_dockitems.size() - 1];
-
-    // g_print("w:%d\n", position_util::get_appwindow_geometry().get_width());
-    //// g_error("AAA");
-
-    //  int size = position_util::get_appwindow_geometry().get_width() - item->get_x();
-    return 100;  // size;
-
-    // for (size_t i = idx; i < items_count; i++) {
-    // auto const item = m_dockitems[i];
-    // if (!item->is_expandable()) {
-    // continue;
-    //}
-
-    // int item_size = config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL
-    //? item->get_width()
-    //: item->get_height();
-    //}
+    return false;
 }
 
 int AppUpdater::get_required_size()
@@ -477,6 +455,8 @@ int AppUpdater::get_required_size()
     size_t items_count = m_dockitems.size();
     int size = (items_count - 1) * config::get_separator_margin();
     Gtk::Orientation orientation = config::get_dock_orientation();
+
+    int expander_index = -1;
 
     for (size_t i = 0; i < items_count; i++) {
         auto const item = m_dockitems[i];
@@ -488,7 +468,27 @@ int AppUpdater::get_required_size()
             continue;
         }
 
+        if (item->get_dock_item_type() == dock_item_type_t::expander) {
+            expander_index = i;
+            continue;
+        }
+
         size += item_size;
+    }
+
+    if (expander_index != -1) {
+        int max_size = position_util::get_workarea_max_size();
+        int expander_size = max_size - size - config::get_window_start_end_margin();
+
+        auto const item = m_dockitems[expander_index];
+
+        if (expander_size > 1) {
+            item->set_expander_size(expander_size);
+            size += expander_size;
+        } else {
+            item->set_expander_size(1);
+            size += 1;
+        }
     }
 
     return size;

@@ -81,8 +81,8 @@ class Panel : public Gtk::DrawingArea, DockMenu
                                const Gtk::Orientation orientation);
 
     inline void draw_cell(const Cairo::RefPtr<Cairo::Context>& cr, const shared_ptr<DockItem>& item,
-                          const int x, const int y, const int area,
-                          const Gtk::Orientation orientation);
+                          int x, int y, int width, int height, int area,
+                          Gtk::Orientation orientation) const;
 
     inline void draw_drag_indicator(const Cairo::RefPtr<Cairo::Context>& cr,
                                     const shared_ptr<DockItem>& item, int x, int y, int idx,
@@ -131,6 +131,7 @@ class Panel : public Gtk::DrawingArea, DockMenu
     bool m_context_menu_open = false;
 
     void on_home_menu_addseparator_event();
+    void on_home_menu_addexpander_event();
     void on_home_menu_quit_event();
 
     void on_menu_hide_event();

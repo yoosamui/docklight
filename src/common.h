@@ -32,7 +32,8 @@ enum class dock_alignment_t : unsigned int {
 enum class dock_item_type_t : unsigned int {
     launcher = 0,
     group,
-    separator
+    separator,
+    expander
 
 };
 

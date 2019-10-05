@@ -217,6 +217,8 @@ namespace desktopfile_util
             for (auto const app_name : app_names) {
                 for (auto const directory : desktop_directories) {
                     string file_name(app_name + ".desktop");
+
+                    g_print("Desktop ..........................%s\n", file_name.c_str());
                     desktop_file = system_util::file_exists(directory, file_name);
 
                     if (!desktop_file.empty()) {

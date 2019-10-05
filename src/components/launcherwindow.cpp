@@ -292,6 +292,7 @@ void launcher_window::on_button_createLauncher_clicked()
 
     string desktop_filename = "/usr/share/applications/" + m_dockitem->get_name() + ".desktop";
     m_dockitem->set_desktop_filename(desktop_filename);
+    AppUpdater::save();
 
     // Gtk::MessageDialog dialog(*this, _("\n\nLauncher created successfully!\n\n"), false,
     // Gtk::MessageDialog dialog(*this, desktop_filename.c_str(), false, Gtk::MESSAGE_INFO);

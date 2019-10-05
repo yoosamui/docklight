@@ -31,10 +31,11 @@ class AppUpdater
     bool detach_item(const int index);
     bool attach_all();
     bool remove_item(const int index);
-    bool save();
+    static bool save();
     bool load();
     int get_required_size();
     void swap_item(const int next_position);
+    bool is_exists_expander();
 
   private:
     typedef struct {
@@ -48,11 +49,7 @@ class AppUpdater
         char desktop_file[512];
         char icon_name[128];
         guint8 pixbuff[16384 * 3] = {0};  //  128 x 128 max
-        int separator_length = 0;
-        int resizable = 1;
     } attach_rec_t;
-
-    int get_required_expandable_size(int idx);
 
     static type_signal_update m_signal_update;
 
@@ -66,7 +63,7 @@ class AppUpdater
 
     static void Update(WnckWindow* window, window_action_t actiontype);
 
-    string get_filepath();
+    static string get_filepath();
 };
 
 DL_NS_END
