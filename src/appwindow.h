@@ -32,9 +32,8 @@ class AppWindow : public Gtk::Window
 
     static void on_app_activated();
 
-    static int on_command_line(
-        const Glib::RefPtr<Gio::ApplicationCommandLine> &command_line,
-        Glib::RefPtr<Gtk::Application> &app);
+    static int on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine> &command_line,
+                               Glib::RefPtr<Gtk::Application> &app);
     static void monitor_changed_callback(GdkScreen *screen, gpointer gtkwindow);
 
     bool on_enter_notify_event(GdkEventCrossing *crossing_event);

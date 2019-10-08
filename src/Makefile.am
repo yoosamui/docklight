@@ -60,6 +60,10 @@ components/arguments.cpp \
 components/arguments.h \
 components/panel.cpp \
 components/panel.h \
+components/dockpanelbase.cpp \
+components/dockpanelbase.h \
+components/dockpanel.cpp \
+components/dockpanel.h \
 components/dockmenu.cpp \
 components/dockmenu.h \
 components/config.cpp \

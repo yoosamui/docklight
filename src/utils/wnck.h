@@ -18,6 +18,9 @@ namespace wnck_util
     bool is_window_on_current_desktop(WnckWindow* window);
     string get_window_name(WnckWindow* window);
     int get_windows_count();
+    void close_all_windows();
+    void close_window(WnckWindow* window);
+    void close_group_windows(int index);
 
     //
     // bool is_windowOnCurrentDesktop(WnckWindow* window);

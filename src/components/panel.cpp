@@ -43,40 +43,7 @@ void Panel::set_owner(Gtk::Window* window)
 
 void Panel::init()
 {
-    // clang-format off
-
     m_theme = config::get_theme();
-
-    // home menu
-    m_home_menu.attach_to_widget(*this);
-    m_home_menu.accelerate(*this);
-    m_home_menu.signal_show().connect(sigc::mem_fun(*this, &Panel::on_menu_show_event));
-    m_home_menu.signal_hide().connect(sigc::mem_fun(*this, &Panel::on_menu_hide_event));
-
-    m_home_menu_quit_item.signal_activate().connect(sigc::mem_fun(*this, &Panel::on_home_menu_quit_event));
-    m_home_menu_addseparator_item.signal_activate().connect(sigc::mem_fun(*this, &Panel::on_home_menu_addseparator_event));
-    m_home_menu_addexpander_item.signal_activate().connect(sigc::mem_fun(*this, &Panel::on_home_menu_addexpander_event));
-
-    // items menu
-    m_item_menu.attach_to_widget(*this);
-    m_item_menu.accelerate(*this);
-    m_item_menu.signal_show().connect(sigc::mem_fun(*this, &Panel::on_menu_show_event));
-    m_item_menu.signal_hide().connect(sigc::mem_fun(*this, &Panel::on_menu_hide_event));
-
-    m_item_menu_new.signal_activate().connect(sigc::mem_fun(*this, &Panel::on_item_menu_new_event));
-
-    m_item_menu_attach.set_active(false);
-    m_item_menu_attach.signal_toggled().connect(sigc::mem_fun(*this, &Panel::on_item_menu_attach_event));
-
-    // user separator
-    m_separator_menu.attach_to_widget(*this);
-    m_separator_menu.accelerate(*this);
-    m_separator_menu.signal_show().connect(sigc::mem_fun(*this, &Panel::on_menu_show_event));
-    m_separator_menu.signal_hide().connect(sigc::mem_fun(*this, &Panel::on_menu_hide_event));
-    m_separator_menu_attach.set_active(false);
-    m_separator_menu_attach.signal_toggled().connect(sigc::mem_fun(*this, &Panel::on_separator_menu_attach_event));
-
-    // clang-format on
 
     appinfo_t info;
 
@@ -216,7 +183,6 @@ bool Panel::on_timeout_draw()
     if (!m_stm.m_dragdrop_begin && m_mouse_left_down && m_current_index > 0 &&
         m_drop_index == m_current_index && m_dragdrop_timer.elapsed() > 0.50) {
         m_stm.m_dragdrop_begin = true;
-        m_drop_index = m_current_index;
 
         // start blink animation
         this->reset_flags();
@@ -312,27 +278,6 @@ void Panel::on_menu_hide_event()
     this->reset_flags();
 }
 
-void Panel::on_separator_menu_position(int& x, int& y, bool& push_in)
-{
-    this->get_center_position(x, y, m_separator_menu.get_width(), m_separator_menu.get_height());
-}
-
-void Panel::on_home_menu_position(int& x, int& y, bool& push_in)
-{
-    this->get_center_position(x, y, m_home_menu.get_width(), m_home_menu.get_height());
-}
-
-void Panel::on_item_menu_position(int& x, int& y, bool& push_in)
-{
-    this->get_center_position(x, y, m_item_menu.get_width(), m_item_menu.get_height());
-}
-
-void Panel::on_item_menu_windowlist_position(int& x, int& y, bool& push_in)
-{
-    this->get_center_position(x, y, m_item_menu_windowlist->get_width(),
-                              m_item_menu_windowlist->get_height());
-}
-
 void Panel::on_item_menu_windowlist_event(WnckWindow* window)
 {
     wnck_util::activate_window(window);
@@ -340,37 +285,13 @@ void Panel::on_item_menu_windowlist_event(WnckWindow* window)
 
 void Panel::on_home_menu_addexpander_event()
 {
-    appinfo_t info;
-    info.m_resizable = true;
-    info.m_separator_length = config::get_separator_size();
-    info.m_name = "expander";
-    info.m_title = _("Expander");
-
-    m_appupdater.m_dockitems.push_back(
-        shared_ptr<DockItem>(new DockItem(info, dock_item_type_t::expander)));
-    auto const new_item = m_appupdater.m_dockitems.back();
-
-    new_item->set_attach(true);
-
-    m_appupdater.save();
+    Dock_menu::on_home_menu_addexpander_event();
     this->on_appupdater_update();
 }
 
 void Panel::on_home_menu_addseparator_event()
 {
-    appinfo_t info;
-    info.m_resizable = false;
-    info.m_separator_length = config::get_separator_size();
-    info.m_name = "separator";
-    info.m_title = _("Separator");
-
-    m_appupdater.m_dockitems.push_back(
-        shared_ptr<DockItem>(new DockItem(info, dock_item_type_t::separator)));
-    auto const new_item = m_appupdater.m_dockitems.back();
-
-    new_item->set_attach(true);
-
-    m_appupdater.save();
+    Dock_menu::on_home_menu_addseparator_event();
     this->on_appupdater_update();
 }
 
@@ -378,40 +299,38 @@ void Panel::on_home_menu_quit_event()
 {
     m_owner->close();
 }
-void Panel::on_item_menu_attach_event()
-{
-    bool attached = m_item_menu_attach.get_active();
-    if (attached) {
-        m_appupdater.attach_item(m_current_index);
-    } else {
-        m_appupdater.detach_item(m_current_index);
-    }
-}
-void Panel::on_separator_menu_attach_event()
-{
-    bool attached = m_separator_menu_attach.get_active();
-    if (attached) {
-        m_appupdater.attach_item(m_current_index);
-    } else {
-        m_appupdater.detach_item(m_current_index);
-    }
-}
 
 void Panel::on_item_menu_new_event()
 {
     this->open_new();
 }
 
+bool Panel::on_motion_notify_event(GdkEventMotion* event)
+{
+    m_current_index = this->get_index(event->x, event->y);
+
+    if (m_stm.m_dragdrop_begin && m_current_index > 0) {
+        m_drop_index = m_current_index;
+
+        m_appupdater.swap_item(m_drop_index);
+    }
+
+    return false;
+}
 bool Panel::on_button_press_event(GdkEventButton* event)
 {
     if ((event->type == GDK_BUTTON_PRESS)) {
         m_current_index = this->get_index(event->x, event->y);
 
+        m_mouse_click_event_time = gtk_get_current_event_time();
+
         if (event->button == 1) {
             m_mouse_left_down = true;
-            m_drop_index = m_current_index;
-            m_dragdrop_timer.reset();
-            m_dragdrop_timer.start();
+            if (m_current_index > 0) {
+                m_drop_index = m_current_index;
+                m_dragdrop_timer.reset();
+                m_dragdrop_timer.start();
+            }
 
         } else if (event->button == 3) {
             m_mouse_right_down = true;
@@ -445,6 +364,10 @@ bool Panel::on_button_release_event(GdkEventButton* event)
     }
 
     if ((event->type == GDK_BUTTON_RELEASE) && m_current_index != -1) {
+        // Check for a valid Click.
+        if ((gtk_get_current_event_time() - m_mouse_click_event_time) > 200) {
+            return true;
+        }
         auto const item = AppUpdater::m_dockitems[m_current_index];
 
         if (event->button == 1 && m_mouse_left_down) {
@@ -535,18 +458,6 @@ bool Panel::on_scroll_event(GdkEventScroll* e)
     wnck_util::activate_window(window);
 
     return true;
-}
-
-bool Panel::on_motion_notify_event(GdkEventMotion* event)
-{
-    m_current_index = this->get_index(event->x, event->y);
-
-    if (m_stm.m_dragdrop_begin && m_current_index > 0) {
-        m_drop_index = m_current_index;
-        m_appupdater.swap_item(m_drop_index);
-    }
-
-    return false;
 }
 
 bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
@@ -723,7 +634,7 @@ void Panel::set_active_window_indexp(WnckWindow* window)
     m_stm.m_bck_thread_connect = true;
 }
 
-inline bool Panel::get_center_position(int& x, int& y, const int width, const int height)
+inline bool Panel::get_center_positionX(int& x, int& y, const int width, const int height)
 {
     if (m_current_index < 0 || m_current_index > (int)AppUpdater::m_dockitems.size()) {
         return false;
@@ -1178,7 +1089,7 @@ void Panel::draw_title()
         m_titlewindow.hide();
         m_titlewindow_visible = false;
         int y = 0, x = 0;
-        this->get_center_position(x, y, 140, 26);
+        position_util::get_center_position(m_current_index, x, y, 140, 26);
         m_titlewindow.move(x, y);
         return;
     }
@@ -1204,7 +1115,7 @@ void Panel::draw_title()
     int height = m_titlewindow.get_height();
     int width = m_titlewindow.get_width();
 
-    this->get_center_position(x, y, width, height);
+    position_util::get_center_position(m_current_index, x, y, width, height);
     m_titlewindow.move(x, y);
 }
 

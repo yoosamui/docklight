@@ -1,4 +1,5 @@
 #include "wnck.h"
+#include "components/appupdater.h"
 
 DL_NS_BEGIN
 
@@ -27,6 +28,52 @@ namespace wnck_util
         }
 
         wnck_window_activate(window, ct);
+    }
+
+    void close_group_windows(int index)
+    {
+        auto const item = AppUpdater::m_dockitems[index];
+
+        for (auto const citem : item->m_items) {
+            close_window(citem->get_wnckwindow());
+        }
+    }
+
+    void close_window(WnckWindow* window)
+    {
+        if (!window) return;
+
+        wnck_window_minimize(window);
+        wnck_window_close(window, gtk_get_current_event_time());
+    }
+
+    void close_all_windows()
+    {
+        WnckScreen* screen;
+        GList* window_l;
+
+        screen = wnck_screen_get_default();
+        wnck_screen_force_update(screen);
+
+        for (window_l = wnck_screen_get_windows(screen); window_l != NULL;
+             window_l = window_l->next) {
+            WnckWindow* window = WNCK_WINDOW(window_l->data);
+            if (window == NULL) continue;
+
+            WnckWindowType wt = wnck_window_get_window_type(window);
+
+            if (wt == WNCK_WINDOW_DESKTOP || wt == WNCK_WINDOW_DOCK || wt == WNCK_WINDOW_TOOLBAR ||
+                wt == WNCK_WINDOW_MENU) {
+                continue;
+            }
+
+            const char* instancename = wnck_window_get_class_instance_name(window);
+            if (instancename != NULL && strcasecmp(instancename, DOCKLIGHT_INSTANCENAME) == 0) {
+                continue;
+            }
+
+            wnck_window_close(window, gtk_get_current_event_time());
+        }
     }
 
     bool is_window_on_current_desktop(WnckWindow* window)

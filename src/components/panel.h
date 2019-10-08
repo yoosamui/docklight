@@ -28,11 +28,12 @@ typedef struct {
 
 } panel_static_members_t;
 
-class Panel : public Gtk::DrawingArea, DockMenu
+class Panel : public Gtk::DrawingArea, Dock_menu
 {
   public:
     Panel();
     ~Panel();
+
     void set_owner(Gtk::Window* window);
     void init();
     int get_required_size();
@@ -44,12 +45,12 @@ class Panel : public Gtk::DrawingArea, DockMenu
     thread* m_bck_thread = nullptr;
     static void connect_async();
     config::style::Theme m_theme;
-    AppUpdater m_appupdater;
     Autohide m_autohide;
     Gtk::Window* m_owner = nullptr;
     launcher_window m_launcherwindow;
     title_window m_titlewindow;
     void on_autohide_update(int x, int y);
+    float m_mouse_click_event_time = 0.0f;
     bool m_titlewindow_visible = false;
 
     int m_offset_x = 0;
@@ -63,7 +64,7 @@ class Panel : public Gtk::DrawingArea, DockMenu
 
     Glib::Timer m_dragdrop_timer;
 
-    int m_current_index = -1;
+    // s int m_current_index = -1;
     bool m_mouse_left_down = false;
     bool m_mouse_right_down = false;
     void open_new();
@@ -113,7 +114,7 @@ class Panel : public Gtk::DrawingArea, DockMenu
     void get_item_position(const dock_item_type_t item_type, int& x, int& y, int& width,
                            int& height);
 
-    bool get_center_position(int& x, int& y, const int width, const int height);
+    bool get_center_positionX(int& x, int& y, const int width, const int height);
 
     bool on_enter_notify_event(GdkEventCrossing* crossing_event);
     bool on_leave_notify_event(GdkEventCrossing* crossing_event);
@@ -130,20 +131,34 @@ class Panel : public Gtk::DrawingArea, DockMenu
     // Menus
     bool m_context_menu_open = false;
 
-    void on_home_menu_addseparator_event();
-    void on_home_menu_addexpander_event();
-    void on_home_menu_quit_event();
+    void on_home_menu_addseparator_event() override;
+    void on_home_menu_addexpander_event() override;
+    void on_home_menu_quit_event() override;
 
-    void on_menu_hide_event();
-    void on_menu_show_event();
+    void on_menu_hide_event() override;
+    void on_menu_show_event() override;
 
-    void on_home_menu_position(int& x, int& y, bool& push_in);
-    void on_item_menu_position(int& x, int& y, bool& push_in);
-    void on_separator_menu_position(int& x, int& y, bool& push_in);
-    void on_item_menu_windowlist_position(int& x, int& y, bool& push_in);
-    void on_item_menu_new_event();
-    void on_item_menu_attach_event();
-    void on_separator_menu_attach_event();
+    void on_home_menu_position(int& x, int& y, bool& push_in) override
+    {
+        Dock_menu::on_home_menu_position(x, y, push_in);
+    }
+
+    void on_item_menu_position(int& x, int& y, bool& push_in) override
+    {
+        Dock_menu::on_item_menu_position(x, y, push_in);
+    }
+    void on_separator_menu_position(int& x, int& y, bool& push_in) override
+    {
+        Dock_menu::on_separator_menu_position(x, y, push_in);
+    }
+    void on_item_menu_windowlist_position(int& x, int& y, bool& push_in) override
+    {
+        Dock_menu::on_item_menu_windowlist_position(x, y, push_in);
+    }
+
+    void on_item_menu_new_event() override;
+    //    void on_item_menu_attach_event();
+    // void on_separator_menu_attach_event();
     void on_item_menu_windowlist_event(WnckWindow* window);
 };
 

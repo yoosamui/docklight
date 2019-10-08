@@ -8,7 +8,6 @@
 DL_NS_BEGIN
 
 typedef struct {
-    bool m_resizable = true;
     string m_name;
     string m_instance;
     string m_group;

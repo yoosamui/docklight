@@ -37,10 +37,11 @@ namespace position_util
         int area = config::get_dock_area();
         auto const workarea = get_workarea();
         auto const alignment = config::get_dock_alignment();
+        auto const panel = m_window->get_panel();
         int xpos = 0, ypos = 0, center = 0;
 
         if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-            int width = m_window->get_panel()->get_required_size();
+            int width = panel->get_required_size();
             if (Panel::m_stm.m_decrease_factor > 0) {
                 area -= Panel::m_stm.m_decrease_factor;
             }
@@ -82,7 +83,7 @@ namespace position_util
             m_window->move(xpos, ypos);
 
         } else {
-            int height = m_window->get_panel()->get_required_size();
+            int height = panel->get_required_size();
             if (Panel::m_stm.m_decrease_factor > 0) {
                 area -= Panel::m_stm.m_decrease_factor;
             }
@@ -205,6 +206,58 @@ namespace position_util
 
         posx = monitorcenterWidth - (targetwidth / 2);
         posy = monitorcenterHeight - (targetheight / 2);
+    }
+
+    bool get_center_position(int index, int& x, int& y, const int width, const int height)
+    {
+        if (index < 0 || index > (int)AppUpdater::m_dockitems.size()) {
+            return false;
+        }
+
+        auto const item = AppUpdater::m_dockitems[index];
+        auto const rect = get_appwindow_geometry();
+        auto const workarea = device::monitor::get_current()->get_geometry();
+        auto const location = config::get_dock_location();
+
+        x = rect.get_x();
+        y = rect.get_y();
+
+        if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+            int center = (item->get_width() / 2) - (width / 2);
+            x += item->get_x() + center;
+            if (location == dock_location_t::bottom) {
+                y -= height;
+            } else {
+                y += rect.get_height();
+            }
+
+            if (x + width > workarea.get_width()) {
+                x = workarea.get_width() - width;
+            }
+
+            if (x < workarea.get_x()) {
+                x = workarea.get_x();
+            }
+        } else {
+            int center = (item->get_height() / 2) - (height / 2);
+            y += item->get_y() + center;
+
+            if (location == dock_location_t::right) {
+                x -= width;
+            } else {
+                x += rect.get_width();
+            }
+
+            if (y + height > workarea.get_height()) {
+                y = workarea.get_height() - height;
+            }
+
+            if (y < workarea.get_y()) {
+                y = workarea.get_y();
+            }
+        }
+
+        return true;
     }
 
     void reset_strut() { set_strut(true); }

@@ -44,6 +44,7 @@ namespace desktopfile_util
         // g_app_info_should_show().
 
         if (g_desktop_app_info_get_nodisplay(app_info)) {
+            g_warning("desktopfile:get_key_file: nodisplay %s", app_name.c_str());
             g_key_file_free(key_file);
             return nullptr;
         }
@@ -55,11 +56,13 @@ namespace desktopfile_util
         // user is concerned. This can also be used to "uninstall" existing files
         //(e.g. due to a renaming) - by letting make install install a file with Hidden=true in it.
         if (g_desktop_app_info_get_is_hidden(app_info)) {
+            g_warning("desktopfile:get_key_file: is hidden %s", app_name.c_str());
             g_key_file_free(key_file);
             return nullptr;
         }
 
         if (!g_desktop_app_info_has_key(app_info, "Exec")) {
+            g_warning("desktopfile:get_key_file: no exec %s", app_name.c_str());
             g_key_file_free(key_file);
             return nullptr;
         }
@@ -211,16 +214,14 @@ namespace desktopfile_util
             // clang-format off
         const string app_names[] = {
             {info.m_name},
+            {"org.gnome."+info.m_name},
             {noprefix_name}};
             // clang-format on
 
             for (auto const app_name : app_names) {
                 for (auto const directory : desktop_directories) {
                     string file_name(app_name + ".desktop");
-
-                    g_print("Desktop ..........................%s\n", file_name.c_str());
                     desktop_file = system_util::file_exists(directory, file_name);
-
                     if (!desktop_file.empty()) {
                         key_file = get_key_file(app_name, desktop_file);
                         if (key_file != nullptr) {
