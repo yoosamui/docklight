@@ -17,6 +17,7 @@ class Dock_menu : public Dock_panel_base
     Dock_menu();
 
   protected:
+    bool m_context_menu_open = false;
     // Home menu
     Gtk::Menu m_home_menu;
     Gtk::MenuItem m_home_menu_quit_item;

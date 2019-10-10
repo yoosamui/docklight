@@ -58,6 +58,8 @@ utils/desktopfile.cpp \
 utils/desktopfile.h \
 components/arguments.cpp \
 components/arguments.h \
+components/dockpanelrender.cpp \
+components/dockpanelrender.h \
 components/panel.cpp \
 components/panel.h \
 components/dockpanelbase.cpp \

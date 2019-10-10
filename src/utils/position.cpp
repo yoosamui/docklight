@@ -42,8 +42,8 @@ namespace position_util
 
         if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
             int width = panel->get_required_size();
-            if (Panel::m_stm.m_decrease_factor > 0) {
-                area -= Panel::m_stm.m_decrease_factor;
+            if (Dock_panel_render::m_stm.m_decrease_factor > 0) {
+                area -= Dock_panel_render::m_stm.m_decrease_factor;
             }
 
             if (width > workarea.get_width()) {
@@ -84,8 +84,8 @@ namespace position_util
 
         } else {
             int height = panel->get_required_size();
-            if (Panel::m_stm.m_decrease_factor > 0) {
-                area -= Panel::m_stm.m_decrease_factor;
+            if (Dock_panel_render::m_stm.m_decrease_factor > 0) {
+                area -= Dock_panel_render::m_stm.m_decrease_factor;
             }
 
             if (height > workarea.get_height()) {
@@ -274,8 +274,8 @@ namespace position_util
 
         if (!reset) {
             int area = config::get_dock_area();
-            if (Panel::m_stm.m_decrease_factor > 0) {
-                area -= Panel::m_stm.m_decrease_factor;
+            if (Dock_panel_render::m_stm.m_decrease_factor > 0) {
+                area -= Dock_panel_render::m_stm.m_decrease_factor;
             }
             // Gdk::Rectangle workarea = device::monitor::get_current()->get_workarea();
             Gdk::Rectangle workarea = device::monitor::get_current()->get_geometry();
