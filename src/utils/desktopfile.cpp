@@ -28,14 +28,14 @@ namespace desktopfile_util
         }
 
         if (!found && key_file != nullptr) {
-            g_warning("desktopfile:get_key_file: File not found: %s", app_name.c_str());
+            g_warning("desktopfile:get_key_file: File not found: %s", desktop_file.c_str());
             g_key_file_free(key_file);
             return nullptr;
         }
 
         GDesktopAppInfo* app_info = g_desktop_app_info_new_from_keyfile(key_file);
         if (app_info == nullptr) {
-            g_warning("desktopfile:get_key_file: GetDesktopInfo is NULL %s", app_name.c_str());
+            g_warning("desktopfile:get_key_file: GetDesktopInfo is NULL %s", desktop_file.c_str());
             g_key_file_free(key_file);
             return nullptr;
         }
@@ -44,7 +44,7 @@ namespace desktopfile_util
         // g_app_info_should_show().
 
         if (g_desktop_app_info_get_nodisplay(app_info)) {
-            g_warning("desktopfile:get_key_file: nodisplay %s", app_name.c_str());
+            g_warning("desktopfile:get_key_file: nodisplay %s", desktop_file.c_str());
             g_key_file_free(key_file);
             return nullptr;
         }
@@ -56,26 +56,15 @@ namespace desktopfile_util
         // user is concerned. This can also be used to "uninstall" existing files
         //(e.g. due to a renaming) - by letting make install install a file with Hidden=true in it.
         if (g_desktop_app_info_get_is_hidden(app_info)) {
-            g_warning("desktopfile:get_key_file: is hidden %s", app_name.c_str());
+            g_warning("desktopfile:get_key_file: is hidden %s", desktop_file.c_str());
             g_key_file_free(key_file);
             return nullptr;
         }
 
         if (!g_desktop_app_info_has_key(app_info, "Exec")) {
-            g_warning("desktopfile:get_key_file: no exec %s", app_name.c_str());
+            g_warning("desktopfile:get_key_file: no exec %s", desktop_file.c_str());
             g_key_file_free(key_file);
             return nullptr;
-        }
-
-        char* exec = g_desktop_app_info_get_string(app_info, "Exec");
-        if (exec) {
-            string exec_string(exec);
-
-            size_t idx = exec_string.find(app_name);
-            if (idx == string::npos) {
-                g_key_file_free(key_file);
-                return nullptr;
-            }
         }
 
         return key_file;
@@ -223,7 +212,7 @@ namespace desktopfile_util
                     string file_name(app_name + ".desktop");
                     desktop_file = system_util::file_exists(directory, file_name);
                     if (!desktop_file.empty()) {
-                        key_file = get_key_file(app_name, desktop_file);
+                        key_file = get_key_file(info.m_name, desktop_file);
                         if (key_file != nullptr) {
                             set_info(key_file, desktop_file, info);
                             found = true;

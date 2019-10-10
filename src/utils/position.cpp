@@ -208,7 +208,7 @@ namespace position_util
         posy = monitorcenterHeight - (targetheight / 2);
     }
 
-    bool get_center_position(int index, int& x, int& y, const int width, const int height)
+    bool get_center_position(int index, int& x, int& y, int width, int height)
     {
         if (index < 0 || index > (int)AppUpdater::m_dockitems.size()) {
             return false;

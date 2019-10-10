@@ -35,7 +35,7 @@ namespace position_util
     void get_center_screen_position(int targetwidth, int targetheight, int &posx, int &posy);
     Gdk::Rectangle get_workarea();
     int get_workarea_max_size();
-    bool get_center_position(int index, int &x, int &y, const int width, const int height);
+    bool get_center_position(int index, int &x, int &y, int width, int height);
 
 }  // namespace position_util
 DL_NS_END
