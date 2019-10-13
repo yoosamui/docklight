@@ -39,9 +39,8 @@ void Panel::set_owner(Gtk::Window* window)
 
 void Panel::init()
 {
-    m_theme = config::get_theme();
-
     appinfo_t info;
+    Dock_panel_render::init();
 
     info.m_name = "desktop";
     info.m_title = _("Desktop");

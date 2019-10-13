@@ -154,6 +154,10 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
         g_print("items: %d\n", (int)m_dockitems.size());
         g_print("xid: %d\n", (int)info.m_xid);
 
+        if (info.m_name == "Untitled-window") {
+            return;
+        }
+
         vector<shared_ptr<DockItem>>::iterator it;
         it = std::find_if(
             m_dockitems.begin(), m_dockitems.end(),

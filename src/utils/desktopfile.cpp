@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <sstream>
 #include "gio/gdesktopappinfo.h"
-#include "utils/moreader.h"
+//#include "utils/moreader.h"
 #include "utils/string.h"
 #include "utils/system.h"
 

@@ -11,6 +11,13 @@ DL_NS_BEGIN
 #define DEF_ICONNAME "data/images/docklight.home.ico"
 panel_static_members_t Dock_panel_render::m_stm;
 
+Dock_panel_render::Dock_panel_render() {}
+
+void Dock_panel_render::init()
+{
+    m_theme = config::get_theme();
+}
+
 void Dock_panel_render::draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
     this->draw_panel(cr);

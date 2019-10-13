@@ -29,6 +29,9 @@ typedef struct {
 class Dock_panel_render : public Dock_menu
 {
   public:
+    Dock_panel_render();
+    void init();
+
     static panel_static_members_t m_stm;
 
   protected:
