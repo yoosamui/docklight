@@ -64,6 +64,8 @@ class Panel : public Gtk::DrawingArea, public Dock_panel_render
     bool on_motion_notify_event(GdkEventMotion* event);
     bool on_scroll_event(GdkEventScroll* e);
 
+    void stop_dragdrop();
+
     static void set_active_window_indexp(WnckWindow* window);
     static void on_active_window_changed(WnckScreen* screen, WnckWindow* previously_active_window,
                                          gpointer user_data);

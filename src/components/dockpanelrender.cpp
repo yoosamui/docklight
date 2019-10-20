@@ -202,7 +202,7 @@ inline void Dock_panel_render::draw_indicator(const Cairo::RefPtr<Cairo::Context
 
     } else if (indicator_type == dock_indicator_type_t::lines &&
                m_theme.PanelIndicator().Stroke().Color::alpha > 0.0) {
-        int marginY = area - 4;
+        int marginY = area - 3;
         if (item->m_items.size() > 0) {
             if (item->m_items.size() == 1) {
                 cr->move_to(x + 0, y + marginY);
@@ -322,8 +322,8 @@ inline void Dock_panel_render::draw_icon(const Cairo::RefPtr<Cairo::Context>& cr
             }
         }
 
-        int center_pos_x = (area / 2) - (icon_size / 2);
-        Gdk::Cairo::set_source_pixbuf(cr, item->get_image(), x + center_pos_x, y + 4);
+        int center_pos = (area / 2) - (icon_size / 2);
+        Gdk::Cairo::set_source_pixbuf(cr, item->get_image(), x + center_pos, y + center_pos);
         cr->paint();
 
         if (m_show_selector) {
@@ -333,15 +333,15 @@ inline void Dock_panel_render::draw_icon(const Cairo::RefPtr<Cairo::Context>& cr
                 // create copy and invert image colors
                 auto tmp = item->get_image()->copy();
                 pixbuf_util::invert_pixels(tmp);
-                Gdk::Cairo::set_source_pixbuf(cr, tmp, x + center_pos_x, y + 4);
+                Gdk::Cairo::set_source_pixbuf(cr, tmp, x + center_pos, y + center_pos);
 
                 m_inverted_index = (int)m_current_index;
                 cr->paint();
 
                 // normal selector cell
-                // cr->set_source_rgba(1, 1, 1, 0.2);
-                // cairo_util::rounded_rectangle(cr, x, y, width, height, 0);
-                // cr->fill();
+                cr->set_source_rgba(1, 1, 1, 0.2);
+                cairo_util::rounded_rectangle(cr, x, y, area, area, 0);
+                cr->fill();
             }
         }
     }

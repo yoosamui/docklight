@@ -305,8 +305,12 @@ bool Panel::on_motion_notify_event(GdkEventMotion* event)
     m_current_index = this->get_index(event->x, event->y);
 
     if (m_stm.m_dragdrop_begin && m_current_index > 0) {
-        m_drop_index = m_current_index;
+        if (!m_stm.m_mouse_inside) {
+            this->stop_dragdrop();
+            return true;
+        }
 
+        m_drop_index = m_current_index;
         m_appupdater.swap_item(m_drop_index);
     }
 
@@ -333,18 +337,23 @@ bool Panel::on_button_press_event(GdkEventButton* event)
     }
     return true;
 }
+void Panel::stop_dragdrop()
+{
+    m_dragdrop_timer.stop();
+    m_dragdrop_timer.reset();
+
+    m_stm.m_dragdrop_begin = false;
+
+    // reset the swap item method and reset the index.
+    m_drop_index = -1;
+    m_appupdater.swap_item(0);
+}
+
 bool Panel::on_button_release_event(GdkEventButton* event)
 {
     // handle drop
     if (m_stm.m_dragdrop_begin && m_drop_index > 0) {
-        m_dragdrop_timer.stop();
-        m_dragdrop_timer.reset();
-
-        m_stm.m_dragdrop_begin = false;
-
-        // reset the swap item method and reset the index.
-        m_drop_index = -1;
-        m_appupdater.swap_item(0);
+        this->stop_dragdrop();
 
         // allways attach all after drop
         m_appupdater.attach_all();
@@ -479,6 +488,8 @@ bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
 
 bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
 {
+    this->stop_dragdrop();
+
     m_show_selector = false;
     if (!config::is_autohide_none()) {
         if (config::is_autohide() || config::is_intelihide()) {
