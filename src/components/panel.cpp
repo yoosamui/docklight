@@ -40,7 +40,7 @@ void Panel::set_owner(Gtk::Window* window)
 void Panel::init()
 {
     appinfo_t info;
-    Dock_panel_render::init();
+    Panel_render::init();
 
     info.m_name = "desktop";
     info.m_title = _("Desktop");
@@ -642,7 +642,7 @@ void Panel::set_active_window_indexp(WnckWindow* window)
 
 bool Panel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
-    Dock_panel_render::draw(cr);
+    Panel_render::draw(cr);
     return true;
 }
 

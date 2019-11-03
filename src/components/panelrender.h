@@ -26,10 +26,10 @@ typedef struct {
 
 } panel_static_members_t;
 
-class Dock_panel_render : public Dock_menu
+class Panel_render : public Dock_menu
 {
   public:
-    Dock_panel_render();
+    Panel_render();
     void init();
 
     static panel_static_members_t m_stm;

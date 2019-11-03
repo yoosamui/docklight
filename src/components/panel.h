@@ -1,20 +1,21 @@
 #pragma once
 
 #include <glibmm/timer.h>
-#include <gtkmm/drawingarea.h>
+//#include <gtkmm/drawingarea.h>
 #include <sigc++/sigc++.h>
 #include <thread>
 #include "common.h"
 //#include "components/appupdater.h"
 //#include "components/autohide.h"
 //#include "components/config.h"
-#include "components/dockpanelrender.h"
 #include "components/launcherwindow.h"
+#include "components/panelpreview.h"
+#include "components/panelrender.h"
 //#include "components/titlewindow.h"
 
 DL_NS_BEGIN
 
-class Panel : public Gtk::DrawingArea, public Dock_panel_render
+class Panel : public Gtk::DrawingArea, public Panel_render
 {
   public:
     Panel();
@@ -26,6 +27,8 @@ class Panel : public Gtk::DrawingArea, public Dock_panel_render
     void on_appupdater_update();
 
   private:
+    Panel_preview m_preview;
+
     thread* m_bck_thread = nullptr;
     static void connect_async();
     Gtk::Window* m_owner = nullptr;

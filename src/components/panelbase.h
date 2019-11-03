@@ -15,7 +15,7 @@
 
 DL_NS_BEGIN
 
-class Dock_panel_base  //: public Gtk::DrawingArea
+class Panel_base  //: public Gtk::DrawingArea
 {
   protected:
     int m_current_index = -1;

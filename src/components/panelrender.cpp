@@ -1,4 +1,4 @@
-#include "dockpanelrender.h"
+#include "panelrender.h"
 #include <gdkmm/general.h>  // set_source_pixbuf()
 #include "utils/cairo.h"
 #include "utils/position.h"
@@ -9,23 +9,23 @@
 DL_NS_BEGIN
 
 #define DEF_ICONNAME "data/images/docklight.home.ico"
-panel_static_members_t Dock_panel_render::m_stm;
+panel_static_members_t Panel_render::m_stm;
 
-Dock_panel_render::Dock_panel_render() {}
+Panel_render::Panel_render() {}
 
-void Dock_panel_render::init()
+void Panel_render::init()
 {
     m_theme = config::get_theme();
 }
 
-void Dock_panel_render::draw(const Cairo::RefPtr<Cairo::Context>& cr)
+void Panel_render::draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
     this->draw_panel(cr);
     this->draw_items(cr);
     this->draw_title();
 }
 
-void Dock_panel_render::load_home_icon(int icon_size)
+void Panel_render::load_home_icon(int icon_size)
 {
     string filename(system_util::get_current_path(DEF_ICONNAME));
     auto const home_pixbuf = pixbuf_util::get_from_file(filename, icon_size, icon_size);
@@ -34,7 +34,7 @@ void Dock_panel_render::load_home_icon(int icon_size)
     home_item->set_image(home_pixbuf);
 }
 
-void Dock_panel_render::draw_panel(const Cairo::RefPtr<Cairo::Context>& cr)
+void Panel_render::draw_panel(const Cairo::RefPtr<Cairo::Context>& cr)
 {
     Gdk::Rectangle rect = position_util::get_appwindow_geometry();
     rect.set_x(m_offset_x);
@@ -78,7 +78,7 @@ void Dock_panel_render::draw_panel(const Cairo::RefPtr<Cairo::Context>& cr)
     // clang-format on
 }
 
-void Dock_panel_render::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
+void Panel_render::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
 {
     int y = 0;
     int x = 0;
@@ -140,9 +140,9 @@ void Dock_panel_render::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)
     }
 }
 
-inline void Dock_panel_render::draw_cell(const Cairo::RefPtr<Cairo::Context>& cr,
-                                         const shared_ptr<DockItem>& item, int x, int y, int width,
-                                         int height, int area, Gtk::Orientation orientation) const
+inline void Panel_render::draw_cell(const Cairo::RefPtr<Cairo::Context>& cr,
+                                    const shared_ptr<DockItem>& item, int x, int y, int width,
+                                    int height, int area, Gtk::Orientation orientation) const
 {
     if (item->get_dock_item_type() == dock_item_type_t::launcher) {
         if (m_theme.PanelCell().Fill().Color::alpha > 0.0) {
@@ -170,9 +170,9 @@ inline void Dock_panel_render::draw_cell(const Cairo::RefPtr<Cairo::Context>& cr
     }
 }
 
-inline void Dock_panel_render::draw_indicator(const Cairo::RefPtr<Cairo::Context>& cr,
-                                              const shared_ptr<DockItem>& item, int area, int x,
-                                              int y, int width, int height) const
+inline void Panel_render::draw_indicator(const Cairo::RefPtr<Cairo::Context>& cr,
+                                         const shared_ptr<DockItem>& item, int area, int x, int y,
+                                         int width, int height) const
 {
     if (item->get_dock_item_type() != dock_item_type_t::launcher) {
         return;
@@ -230,9 +230,9 @@ inline void Dock_panel_render::draw_indicator(const Cairo::RefPtr<Cairo::Context
     }
 }
 
-inline void Dock_panel_render::draw_active_window_indicator(const Cairo::RefPtr<Cairo::Context>& cr,
-                                                            int x, int y, int idx, int width,
-                                                            int height) const
+inline void Panel_render::draw_active_window_indicator(const Cairo::RefPtr<Cairo::Context>& cr,
+                                                       int x, int y, int idx, int width,
+                                                       int height) const
 {
     if (!m_stm.m_dragdrop_begin && idx > 0 && m_stm.m_active_window_index == (int)idx) {
         cairo_util::rounded_rectangle(cr, x, y, width, height, 0);
@@ -241,10 +241,10 @@ inline void Dock_panel_render::draw_active_window_indicator(const Cairo::RefPtr<
     }
 }
 
-inline void Dock_panel_render::draw_drag_indicator(const Cairo::RefPtr<Cairo::Context>& cr,
-                                                   const shared_ptr<DockItem>& item, int x, int y,
-                                                   int idx, int width, int height,
-                                                   Gtk::Orientation orientation) const
+inline void Panel_render::draw_drag_indicator(const Cairo::RefPtr<Cairo::Context>& cr,
+                                              const shared_ptr<DockItem>& item, int x, int y,
+                                              int idx, int width, int height,
+                                              Gtk::Orientation orientation) const
 {
     if (m_stm.m_dragdrop_begin && idx == m_drop_index) {
         if (m_theme.PanelDrag().Fill().Color::alpha > 0.0) {
@@ -269,10 +269,10 @@ inline void Dock_panel_render::draw_drag_indicator(const Cairo::RefPtr<Cairo::Co
     }
 }
 
-inline void Dock_panel_render::draw_separator(const Cairo::RefPtr<Cairo::Context>& cr,
-                                              const shared_ptr<DockItem>& item, const int x,
-                                              const int y, const int width, const int height,
-                                              const Gtk::Orientation orientation)
+inline void Panel_render::draw_separator(const Cairo::RefPtr<Cairo::Context>& cr,
+                                         const shared_ptr<DockItem>& item, const int x, const int y,
+                                         const int width, const int height,
+                                         const Gtk::Orientation orientation)
 
 {
     if (config::is_separator_line() && m_theme.PanelSeparator().Stroke().Color::alpha > 0.0 &&
@@ -300,10 +300,10 @@ inline void Dock_panel_render::draw_separator(const Cairo::RefPtr<Cairo::Context
     }
 }
 
-inline void Dock_panel_render::draw_icon(const Cairo::RefPtr<Cairo::Context>& cr,
-                                         const shared_ptr<DockItem>& item,
-                                         const Glib::RefPtr<Gdk::Pixbuf>& icon, int icon_size,
-                                         int area, int idx, int x, int y)
+inline void Panel_render::draw_icon(const Cairo::RefPtr<Cairo::Context>& cr,
+                                    const shared_ptr<DockItem>& item,
+                                    const Glib::RefPtr<Gdk::Pixbuf>& icon, int icon_size, int area,
+                                    int idx, int x, int y)
 {
     if (icon && item->get_dock_item_type() == dock_item_type_t::launcher) {
         // reload or scaled if needed
@@ -346,7 +346,7 @@ inline void Dock_panel_render::draw_icon(const Cairo::RefPtr<Cairo::Context>& cr
         }
     }
 }
-void Dock_panel_render::draw_title()
+void Panel_render::draw_title()
 {
     if (m_current_index < 0 || m_context_menu_open || !config::is_show_title() ||
         !m_stm.m_connect_draw_signal_set || !m_autohide.is_visible()) {
@@ -411,8 +411,8 @@ void Dock_panel_render::draw_title()
     m_titlewindow.move(x, y);
 }
 
-inline void Dock_panel_render::get_item_position(const dock_item_type_t item_typ, int& x, int& y,
-                                                 int& width, int& height)
+inline void Panel_render::get_item_position(const dock_item_type_t item_typ, int& x, int& y,
+                                            int& width, int& height)
 {
     static int nextsize = 0;
 

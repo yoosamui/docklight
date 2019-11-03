@@ -6,12 +6,12 @@
 #include <gtkmm/menu.h>
 #include <gtkmm/separatormenuitem.h>
 #include "common.h"
-#include "components/dockpanelbase.h"
+#include "components/panelbase.h"
 //#include "utils/position.h"
 #include "utils/wnck.h"
 DL_NS_BEGIN
 
-class Dock_menu : public Dock_panel_base
+class Dock_menu : public Panel_base
 {
   public:
     Dock_menu();
