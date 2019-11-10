@@ -1,7 +1,14 @@
 #include "panelpreview.h"
+#include "components/appupdater.h"
+#include "utils/pixbuf.h"
+#include "utils/position.h"
+#include "utils/system.h"
+#include "utils/wnck.h"
 
+#include <gdkmm/general.h>  // set_source_pixbuf()
 DL_NS_BEGIN
 
+// vector<shared_ptr<DockItem>> Panel_preview::m_previewitems;
 Panel_preview::Panel_preview() : Gtk::Window(Gtk::WindowType::WINDOW_POPUP)
 {
     // Set up the top-level window.
@@ -23,8 +30,8 @@ Panel_preview::Panel_preview() : Gtk::Window(Gtk::WindowType::WINDOW_POPUP)
 
     // clang-format on
 
-    GdkScreen *screen;
-    GdkVisual *visual;
+    GdkScreen* screen;
+    GdkVisual* visual;
 
     gtk_widget_set_app_paintable(GTK_WIDGET(gobj()), TRUE);
     screen = gdk_screen_get_default();
@@ -34,12 +41,240 @@ Panel_preview::Panel_preview() : Gtk::Window(Gtk::WindowType::WINDOW_POPUP)
         gtk_widget_set_visual(GTK_WIDGET(gobj()), visual);
     }
 
+    WnckScreen* wnckscreen = wnck_screen_get_default();
+    g_signal_connect(wnckscreen, "active_window_changed",
+                     G_CALLBACK(Panel_preview::on_active_window_changed), nullptr);
+
     // m_font.set_family("System");
     // m_font.set_size(8 * PANGO_SCALE);
     // m_font.set_weight(Pango::WEIGHT_NORMAL);
 }
 
-Panel_preview::~Panel_preview() {}
+Panel_preview::~Panel_preview()
+{
+    // for (auto item : m_previewitems) {
+    // item->set_image(NULLPB);
+    // item.reset();
+    //}
+
+    // m_previewitems.clear();
+    g_print("Destroy preview\n");
+}
+
+Panel_preview::type_signal_close Panel_preview::signal_close()
+{
+    return m_signal_close;
+}
+
+bool initialized = false;
+void Panel_preview::init(int index)
+{
+    m_current_index = index;
+
+    // Using assignment operator to copy the items vector
+    m_previewitems = AppUpdater::m_dockitems[m_current_index]->m_items;
+
+    ////    auto const items = AppUpdater::m_dockitems[index];
+    for (auto item : m_previewitems) {
+        g_print("%d\n", (int)item->get_xid());
+        item->set_image(NULLPB);
+    }
+
+    //    vect = items;  // AppUpdater::m_dockitems[index];
+
+    // Using assignment operator to copy the items vector
+    //  m_previewitems.insert(m_previewitems.begin(), items.begin(), items.end());
+
+    //
+    //
+    initialized = true;
+}
+
+#define PREVIEW_WIDTH_EXTENDED_SIZE 40
+#define PREVIEW_SPARATOR_SIZE 8
+#define PREVIEW_START_END_MARGIN 20
+#define PREVIEW_TITLE_SIZE 26
+
+bool Panel_preview::show_preview()
+{
+    if (!initialized) {
+        return false;
+    }
+
+    int x = 0;
+    int y = 0;
+    int image_size = m_previewitems[0]->get_width() * 3;
+
+    if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+        m_width = image_size + PREVIEW_WIDTH_EXTENDED_SIZE;
+        m_height = image_size - PREVIEW_TITLE_SIZE;
+
+        m_window_width = (m_previewitems.size() * m_width) + PREVIEW_START_END_MARGIN +
+                         ((m_previewitems.size() - 1) * PREVIEW_SPARATOR_SIZE);
+        m_window_height = image_size + PREVIEW_START_END_MARGIN;
+    } else {
+        m_width = image_size;
+        m_height = image_size * 10;
+
+        m_window_width = (m_previewitems.size() * m_width) + 20;
+        m_window_height = m_width + 10;
+    }
+
+    this->resize(m_window_width, m_window_height);
+
+    position_util::get_center_position(m_current_index, x, y, m_window_width, m_window_height);
+    this->move(x, y);
+
+    this->show();
+
+    Glib::signal_timeout().connect(sigc::mem_fun(*this, &Panel_preview::on_timeout_draw), 1000 / 9);
+    return true;
+}
+void Panel_preview::on_active_window_changed(WnckScreen* screen,
+                                             WnckWindow* previously_active_window,
+                                             gpointer user_data)
+{
+    //  WnckWindow* active_window = wnck_screen_get_active_window(screen);
+    //    if (!active_window) {
+    //        return;
+    //    }
+
+    //    close_this = true;
+}
+
+bool Panel_preview::on_leave_notify_event(GdkEventCrossing* crossing_event)
+{
+    m_mouse_in = false;
+    return true;
+}
+bool Panel_preview::on_enter_notify_event(GdkEventCrossing* crossing_event)
+{
+    //
+    m_mouse_in = true;
+    return true;
+}
+
+bool Panel_preview::on_timeout_draw()
+{
+    if (!m_mouse_in) {
+        int mouse_x, mouse_y;
+        if (system_util::get_mouse_position(mouse_x, mouse_y)) {
+            int px, py;
+            this->get_position(px, py);
+            bool close = false;
+            if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+                close = mouse_y < py;
+
+                if (config::get_dock_location() == dock_location_t::top) {
+                    close = mouse_y > this->get_height() + py;
+                }
+
+            } else {
+                close = mouse_x < px;
+                if (config::get_dock_location() == dock_location_t::left) {
+                    close = mouse_x > this->get_width() + px;
+                }
+            }
+
+            if (close) {
+                m_signal_close.emit();
+                return false;
+            }
+        }
+    }
+
+    Gtk::Widget::queue_draw();
+    return true;
+}
+
+bool Panel_preview::on_button_press_event(GdkEventButton* event)
+{
+    if (m_current_index == -1) return;
+
+    auto const item = m_previewitems[m_current_index];
+    wnck_util::activate_window(item->get_wnckwindow());
+
+    return true;
+}
+
+bool Panel_preview::on_button_release_event(GdkEventButton* event)
+{
+    return true;
+}
+
+bool Panel_preview::on_motion_notify_event(GdkEventMotion* event)
+{
+    auto index = this->get_index(event->x, event->y);
+    if (index != -1) m_current_index = index;
+
+    return true;
+}
+
+inline int Panel_preview::get_index(const int& mouseX, const int& mouseY)
+{
+    Gdk::Point mouse(mouseX, mouseY);
+
+    int idx = 0;
+    int x = PREVIEW_START_END_MARGIN / 2;
+    int y = x;
+
+    if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+        for (auto item : m_previewitems) {
+            if (mouse.get_x() >= x && mouse.get_x() <= x + m_width) {
+                return idx;
+            }
+
+            x += m_width + PREVIEW_SPARATOR_SIZE;
+            idx++;
+        }
+    } else {
+        for (auto item : m_previewitems) {
+            if (mouse.get_y() >= y && mouse.get_y() <= y + m_height) {
+                return idx;
+            }
+
+            y += m_height + PREVIEW_SPARATOR_SIZE;
+            idx++;
+        }
+    }
+
+    return -1;
+}
+
+bool Panel_preview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
+{
+    cr->set_source_rgba(0, 0, 0, 1);
+    cairo_util::rounded_rectangle(cr, 0, 0, m_window_width, m_window_height, 0);
+    cr->fill();
+
+    int idx = 0;
+    int x = PREVIEW_START_END_MARGIN / 2;
+    int y = x + PREVIEW_TITLE_SIZE;
+
+    for (auto const item : m_previewitems) {
+        auto win_pixbuf = pixbuf_util::get_pixbuf_from_window(item->get_xid());
+
+        cr->set_source_rgba(0, 0, 1, 1);
+        cairo_util::rounded_rectangle(cr, x, y, m_width, m_height, 0);
+        cr->stroke();
+
+        if (win_pixbuf) {
+            guint scaled_width = 0;
+            guint scaled_height = 0;
+
+            item->set_image(pixbuf_util::get_pixbuf_scaled(win_pixbuf, m_width, m_height,
+                                                           scaled_width, scaled_height));
+            // g_object_unref(win_pixbuf->gobj());
+            Gdk::Cairo::set_source_pixbuf(cr, item->get_image() /*win_pixbuf*/, x, y);
+            cr->paint();
+        }
+
+        x += m_width + PREVIEW_SPARATOR_SIZE;
+        idx++;
+    }
+
+    return true;
+}
 
 DL_NS_END
 

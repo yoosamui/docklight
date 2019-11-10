@@ -1,8 +1,12 @@
 #include "utils/pixbuf.h"
+#include <gdk-pixbuf/gdk-pixbuf.h>
+#include <gdk/gdkx.h>
 #include <glibmm/fileutils.h>
 #include <gtkmm/iconinfo.h>
 #include <gtkmm/icontheme.h>
+#include "utils/position.h"
 #include "utils/system.h"
+
 DL_NS_BEGIN
 
 namespace pixbuf_util
@@ -102,6 +106,102 @@ namespace pixbuf_util
         }
 
         return Glib::wrap(pixbuf, true);
+    }
+
+    // https://developer.gnome.org/gdk3/stable/gdk3-X-Window-System-Interaction.html#gdk-x11-screen-get-number-of-desktops
+    // -----------------------------------------------------------------------------------------------------------------------------------------
+    // Wraps a native window in a GdkWindow. The function will try to look up the window using
+    // gdk_x11_window_lookup_for_display() first. If it does not find it there, it will create a new
+    // window. This may fail if the window has been destroyed. If the window was already known to
+    // GDK, a new reference to the existing GdkWindow is returned. Returns a GdkWindow wrapper for
+    // the native window, or NULL if the window has been destroyed. The wrapper will be newly
+    // created, if one doesn’t exist already.
+    const Glib::RefPtr<Gdk::Pixbuf> get_pixbuf_from_window(int xid)
+    {
+        Glib::RefPtr<Gdk::Pixbuf> result_pixbuf = NULLPB;
+
+        GdkDisplay* gdk_display = gdk_display_get_default();
+        if (gdk_display == nullptr) {
+            return NULLPB;
+        }
+
+        GdkWindow* gdk_window = gdk_x11_window_foreign_new_for_display(gdk_display, xid);
+        if (gdk_window == nullptr) {
+            return NULLPB;
+        }
+
+        // Gets the window size
+        guint winWidth = gdk_window_get_width(gdk_window);
+        guint winHeight = gdk_window_get_height(gdk_window);
+
+        // This function will create an RGB pixbuf with 8 bits per channel with the size specified
+        // by the width and height arguments scaled by the scale factor of window . The pixbuf will
+        // contain an alpha channel if the window contains one. If the window is off the screen,
+        // then there is no image data in the obscured/offscreen regions to be placed in the pixbuf.
+        // The contents of portions of the pixbuf corresponding to the offscreen region are
+        // undefined.
+        // ---------------------------------------------------------------------------------------------------------------------------
+        // If the window you’re obtaining data from is partially obscured by other windows, then the
+        // contents of the pixbuf areas corresponding to the obscured regions are undefined.
+        // ---------------------------------------------------------------------------------------------------------------------------
+        // If the window is not mapped (typically because it’s iconified/minimized or not on the
+        // current workspace), then NULL will be returned. If memory can’t be allocated for the
+        // return value, NULL will be returned instead. (In short, there are several ways this
+        // function can fail, and if it fails it returns NULL; so check the return value.)
+        // ---------------------------------------------------------------------------------------------------------------------------
+        // creates a newly pixbuf with a reference count of 1, or NULL on error.
+
+        GdkPixbuf* winPixbuf = gdk_pixbuf_get_from_window(gdk_window, 0, 0, winWidth, winHeight);
+        if (winPixbuf == nullptr) {
+            return NULLPB;
+        }
+
+        result_pixbuf = Glib::wrap(winPixbuf, true);
+        g_object_unref(winPixbuf);
+
+        return result_pixbuf;
+    }
+
+    Glib::RefPtr<Gdk::Pixbuf> get_pixbuf_scaled(const Glib::RefPtr<Gdk::Pixbuf>& pixbuf,
+                                                const guint destWidth, const guint destHeight,
+                                                guint& scaledWidth, guint& scaledHeight)
+    {
+        if (!pixbuf) {
+            return NULLPB;
+        }
+
+        // sets the source size
+        guint winWidth = pixbuf->get_width();
+        guint winHeight = pixbuf->get_height();
+
+        // sets the target size
+        guint width = destWidth;
+        guint height = destHeight;
+
+        // calculate aspect ratio
+        double minSize = std::min(width, height);
+        double maxSize = std::max(winWidth, winHeight);
+        double aspectRatio = minSize / maxSize;
+
+        scaledWidth = abs(winWidth * aspectRatio);
+        scaledHeight = abs(winHeight * aspectRatio);
+
+        auto const workarea = position_util::get_workarea();
+
+        guint half_WindowWidth = workarea.get_width() / 3;
+        guint half_WindowHeight = workarea.get_height() / 3;
+
+        // ajust width size to make it looks better
+        if (winWidth > half_WindowWidth) {
+            if (winHeight > half_WindowHeight) scaledWidth = width - 4;
+        }
+
+        // ajust height size to make it looks better
+        if (winHeight > half_WindowHeight) {
+            if (winWidth > half_WindowWidth) scaledHeight = height - 2;
+        }
+
+        return pixbuf->scale_simple(scaledWidth, scaledHeight, Gdk::INTERP_BILINEAR);
     }
 
     /**

@@ -115,6 +115,8 @@ void Panel::on_appupdater_update()
 
 void Panel::on_autohide_update(int x, int y)
 {
+    if (m_preview != nullptr) this->close_preview();
+
     m_offset_x = x;
     m_offset_y = y;
 
@@ -179,6 +181,7 @@ bool Panel::on_timeout_draw()
         m_drop_index == m_current_index && m_dragdrop_timer.elapsed() > 0.50) {
         m_stm.m_dragdrop_begin = true;
 
+        this->close_preview();
         // start blink animation
         this->reset_flags();
     }
@@ -300,9 +303,35 @@ void Panel::on_item_menu_new_event()
     this->open_new();
 }
 
+void Panel::close_preview()
+{
+    if (m_preview != nullptr) {
+        m_preview->close();
+
+        m_preview.reset();
+        m_preview = nullptr;
+
+        m_preview_index = -1;
+
+        if (!config::is_autohide_none()) {
+            m_autohide.reset_timer();
+            m_autohide.set_mouse_inside(false);
+            m_autohide.intelihide();
+        }
+    }
+}
+
 bool Panel::on_motion_notify_event(GdkEventMotion* event)
 {
     m_current_index = this->get_index(event->x, event->y);
+
+    // if (m_stm.m_dragdrop_begin || m_preview != nullptr) {
+    // if (m_stm.m_dragdrop_begin || m_preview != nullptr) {
+    // if (m_preview_index != m_current_index) {
+    // this->close_preview();
+    // return true;
+    //}
+    //}
 
     if (m_stm.m_dragdrop_begin && m_current_index > 0) {
         if (!m_stm.m_mouse_inside) {
@@ -380,15 +409,35 @@ bool Panel::on_button_release_event(GdkEventButton* event)
             if (m_current_index != -1) {
                 if (item->m_items.size() == 0 &&
                     item->get_dock_item_type() == dock_item_type_t::launcher) {
+                    this->close_preview();
                     this->open_new();
                 } else {
                     if ((int)item->m_items.size() == 1) {
+                        this->close_preview();
                         this->activate();
                     } else if (item->get_dock_item_type() == dock_item_type_t::launcher) {
                         // show preview if is compositite and not out of limits
+                        //
+                        if (m_preview != nullptr) {
+                            if (m_preview_index == m_current_index) {
+                                this->close_preview();
+                                return true;
+                            }
+                        }
+
+                        // if (m_preview == nullptr) {
+                        m_preview = unique_ptr<Panel_preview>(new Panel_preview());
+                        m_preview_index = m_current_index;
+                        m_preview->init(m_preview_index);
+
+                        m_preview->signal_close().connect(
+                            sigc::mem_fun(this, &Panel::close_preview));
+
+                        m_preview->show_preview();
+                        // }
 
                         // clang-format off
-
+/*
                         // build the window list menu
                         // delegate memory management to the container widget.
                         m_item_menu_windowlist = Gtk::manage(new Gtk::Menu());
@@ -414,7 +463,7 @@ bool Panel::on_button_release_event(GdkEventButton* event)
                         m_item_menu_windowlist->signal_show().connect(sigc::mem_fun(*this, &Panel::on_menu_show_event));
                         m_item_menu_windowlist->signal_hide().connect(sigc::mem_fun(*this, &Panel::on_menu_hide_event));
                         m_item_menu_windowlist->popup(sigc::mem_fun(*this,
-                                    &Panel::on_item_menu_windowlist_position),1, event->time);
+                                    &Panel::on_item_menu_windowlist_position),1, event->time);*/
 
                         // clang-format on
                     }
@@ -488,6 +537,11 @@ bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
 
 bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
 {
+    if (m_preview) {
+        this->connect_draw_signal(false);
+        return true;
+    }
+
     this->stop_dragdrop();
 
     m_show_selector = false;

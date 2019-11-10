@@ -6,6 +6,7 @@ DL_NS_BEGIN
 
 namespace system_util
 {
+    bool get_mouse_position(int& x, int& y);
     int execute(const string& command_string);
     bool file_exists(const std::string& name);
     string file_exists(const string& directory, string& file_name);
@@ -16,3 +17,4 @@ namespace system_util
 }  // namespace system_util
 
 DL_NS_END
+

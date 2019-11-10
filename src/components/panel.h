@@ -27,7 +27,9 @@ class Panel : public Gtk::DrawingArea, public Panel_render
     void on_appupdater_update();
 
   private:
-    Panel_preview m_preview;
+    //    Panel_preview m_preview;
+    unique_ptr<Panel_preview> m_preview;
+    int m_preview_index = -1;
 
     thread* m_bck_thread = nullptr;
     static void connect_async();
@@ -54,6 +56,7 @@ class Panel : public Gtk::DrawingArea, public Panel_render
 
     bool on_timeout_draw();
 
+    void close_preview();
     static void connect_draw_signal(bool connect);
 
     int get_index(const int& mouseX, const int& mouseY);
