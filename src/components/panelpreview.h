@@ -23,7 +23,7 @@ class Panel_preview : public Gtk::Window
 
   private:
     type_signal_close m_signal_close;
-
+    int m_static_count = 0;
     bool m_mouse_in = false;
 
     int m_window_width;
@@ -33,6 +33,8 @@ class Panel_preview : public Gtk::Window
     int m_height;
 
     int m_current_index = -1;
+    int m_old_index = -1;
+
     vector<shared_ptr<DockItem>> m_previewitems;
     bool on_timeout_draw();
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;

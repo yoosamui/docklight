@@ -26,6 +26,10 @@ namespace pixbuf_util
     Glib::RefPtr<Gdk::Pixbuf> get_pixbuf_scaled(const Glib::RefPtr<Gdk::Pixbuf>& pixbuf,
                                                 const guint destWidth, const guint destHeight,
                                                 guint& scaledWidth, guint& scaledHeight);
+
+    int compare_pixels(const Glib::RefPtr<Gdk::Pixbuf>& pixbuf_a,
+                       const Glib::RefPtr<Gdk::Pixbuf>& pixbuf_b);
+
 }  // namespace pixbuf_util
 
 DL_NS_END

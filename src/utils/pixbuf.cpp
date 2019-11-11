@@ -35,6 +35,47 @@ namespace pixbuf_util
         }
     }
 
+    int compare_pixels(const Glib::RefPtr<Gdk::Pixbuf>& pixbuf_a,
+                       const Glib::RefPtr<Gdk::Pixbuf>& pixbuf_b)
+    {
+        if (!pixbuf_b || !pixbuf_b) {
+            return -1;
+        }
+
+        if (pixbuf_a->get_bits_per_sample() != 8 ||
+            pixbuf_a->get_colorspace() != Gdk::COLORSPACE_RGB) {
+            return -1;
+        }
+
+        if (pixbuf_b->get_bits_per_sample() != 8 ||
+            pixbuf_b->get_colorspace() != Gdk::COLORSPACE_RGB) {
+            return -1;
+        }
+
+        int x, y;
+        int w = pixbuf_a->get_width();
+        int h = pixbuf_a->get_height();
+        int channels = pixbuf_a->get_n_channels();
+        gint rowstride = pixbuf_a->get_rowstride();
+        gint pixel_offset = 0;
+
+        for (y = 0; y < h; y++) {
+            for (x = 0; x < w; x++) {
+                pixel_offset = y * rowstride + x * channels;
+
+                guchar* firstPixel = &pixbuf_a->get_pixels()[pixel_offset];
+                guchar* currentPixel = &pixbuf_b->get_pixels()[pixel_offset];
+
+                if (firstPixel[0] != currentPixel[0] || firstPixel[1] != currentPixel[1] ||
+                    firstPixel[2] != currentPixel[2]) {
+                    return 1;
+                }
+            }
+        }
+
+        return 0;
+    }
+
     const Glib::RefPtr<Gdk::Pixbuf> get_from_file(const std::string& filename, int width,
                                                   int height)
     {

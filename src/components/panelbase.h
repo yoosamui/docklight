@@ -17,8 +17,11 @@ DL_NS_BEGIN
 
 class Panel_base  //: public Gtk::DrawingArea
 {
+  public:
+    Panel_base();
+
   protected:
-    int m_current_index = -1;
+    static int m_current_index;
     AppUpdater m_appupdater;
 };
 

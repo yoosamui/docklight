@@ -74,6 +74,20 @@ void AppUpdater::on_active_window_changed_callback(WnckScreen *screen,
                                                    WnckWindow *previously_active_window,
                                                    gpointer user_data)
 {
+    WnckWindow *window = wnck_screen_get_active_window(screen);
+    if (window == nullptr) {
+        return;
+    }
+
+    for (auto const item : AppUpdater::m_dockitems) {
+        for (auto const citem : item->m_items) {
+            if (citem->get_xid() == wnck_window_get_xid(window)) {
+                citem->m_preview_window_image =
+                    pixbuf_util::get_pixbuf_from_window(citem->get_xid());
+                break;
+            }
+        }
+    }
 }
 
 void AppUpdater::on_window_opened(WnckScreen *screen, WnckWindow *window, gpointer data)

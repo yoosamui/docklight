@@ -76,8 +76,10 @@ void Panel_preview::init(int index)
 
     ////    auto const items = AppUpdater::m_dockitems[index];
     for (auto item : m_previewitems) {
-        g_print("%d\n", (int)item->get_xid());
         item->set_image(NULLPB);
+        item->m_preview_first_image = NULLPB;
+        item->m_preview_frame_count = 0;
+        item->m_preview_image_is_dynamic = true;
     }
 
     //    vect = items;  // AppUpdater::m_dockitems[index];
@@ -183,13 +185,21 @@ bool Panel_preview::on_timeout_draw()
         }
     }
 
-    Gtk::Widget::queue_draw();
+    if (m_static_count != (int)m_previewitems.size()) {
+        Gtk::Widget::queue_draw();
+    } else {
+        if (m_old_index != m_current_index) {
+            m_old_index = m_current_index;
+            Gtk::Widget::queue_draw();
+        }
+    }
+
     return true;
 }
 
 bool Panel_preview::on_button_press_event(GdkEventButton* event)
 {
-    if (m_current_index == -1) return;
+    if (m_current_index == -1) return true;
 
     auto const item = m_previewitems[m_current_index];
     wnck_util::activate_window(item->get_wnckwindow());
@@ -252,21 +262,56 @@ bool Panel_preview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     int y = x + PREVIEW_TITLE_SIZE;
 
     for (auto const item : m_previewitems) {
-        auto win_pixbuf = pixbuf_util::get_pixbuf_from_window(item->get_xid());
+        auto image = item->get_image();
+
+        if (!image || item->m_preview_image_is_dynamic) {
+            Glib::RefPtr<Gdk::Pixbuf> win_pixbuf = item->m_preview_window_image;
+
+            if (!win_pixbuf) {
+                win_pixbuf = pixbuf_util::get_pixbuf_from_window(item->get_xid());
+            }
+
+            if (win_pixbuf) {
+                guint scaled_width = 0;
+                guint scaled_height = 0;
+
+                image = pixbuf_util::get_pixbuf_scaled(win_pixbuf, m_width, m_height, scaled_width,
+                                                       scaled_height);
+
+                if (item->m_preview_frame_count == 0) {
+                    item->m_preview_first_image = image;
+                }
+
+                item->set_image(image);
+            }
+        }
+
+        if (item->m_preview_frame_count != -1 && item->m_preview_image_is_dynamic &&
+            ++item->m_preview_frame_count > 18) {
+            // return 1 if the pixbuf data contains diferences, or 0 if the pixels are equal
+            // otherwise -1.
+            if (pixbuf_util::compare_pixels(item->m_preview_first_image, image) == 0) {
+                g_print("static %s %d\n", item->get_title().c_str(), (int)item->get_xid());
+                item->m_preview_image_is_dynamic = false;
+                m_static_count++;
+            }
+
+            item->m_preview_frame_count = -1;
+        }
+
+        if (image) {
+            Gdk::Cairo::set_source_pixbuf(cr, image, x, y);
+            cr->paint();
+        }
 
         cr->set_source_rgba(0, 0, 1, 1);
         cairo_util::rounded_rectangle(cr, x, y, m_width, m_height, 0);
         cr->stroke();
 
-        if (win_pixbuf) {
-            guint scaled_width = 0;
-            guint scaled_height = 0;
-
-            item->set_image(pixbuf_util::get_pixbuf_scaled(win_pixbuf, m_width, m_height,
-                                                           scaled_width, scaled_height));
-            // g_object_unref(win_pixbuf->gobj());
-            Gdk::Cairo::set_source_pixbuf(cr, item->get_image() /*win_pixbuf*/, x, y);
-            cr->paint();
+        if (idx == m_current_index) {
+            cr->set_source_rgba(1, 1, 1, 0.4);
+            cairo_util::rounded_rectangle(cr, x, y, m_width, m_height, 0);
+            cr->fill();
         }
 
         x += m_width + PREVIEW_SPARATOR_SIZE;

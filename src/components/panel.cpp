@@ -10,6 +10,7 @@
 //#include "utils/cairo.h"
 #include "utils/launcher.h"
 //#include "utils/pixbuf.h"
+#include "utils/pixbuf.h"
 #include "utils/position.h"
 #include "utils/system.h"
 #include "utils/wnck.h"

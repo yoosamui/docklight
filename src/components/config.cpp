@@ -13,7 +13,7 @@ namespace config
 {
 #define MARGIN 12
 #define DEF_CONFIG_FILENAME "docklight.config"
-#define DEF_DEFAULT_ICON_SIZE 42
+#define DEF_DEFAULT_ICON_SIZE 32
 #define DEF_DEFAULT_SEPARATOR_MARGIN 12
 #define DEF_DEFAULT_SEPARATOR_SIZE 8
 
