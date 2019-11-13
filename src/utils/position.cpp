@@ -216,9 +216,8 @@ namespace position_util
 
         auto const item = AppUpdater::m_dockitems[index];
         auto const rect = get_appwindow_geometry();
-        auto const workarea = device::monitor::get_current()->get_geometry();
+        auto const workarea = device::monitor::get_geometry();
         auto const location = config::get_dock_location();
-
         x = rect.get_x();
         y = rect.get_y();
 
@@ -231,8 +230,9 @@ namespace position_util
                 y += rect.get_height();
             }
 
-            if (x + width > workarea.get_width()) {
-                x = workarea.get_width() - width;
+            if (x + width > workarea.get_width() + workarea.get_x()) {
+                x = workarea.get_width() + workarea.get_x() - width;
+                return true;
             }
 
             if (x < workarea.get_x()) {
@@ -248,8 +248,8 @@ namespace position_util
                 x += rect.get_width();
             }
 
-            if (y + height > workarea.get_height()) {
-                y = workarea.get_height() - height;
+            if (y + height > workarea.get_height() + workarea.get_y()) {
+                y = workarea.get_height() + workarea.get_y() - height;
             }
 
             if (y < workarea.get_y()) {

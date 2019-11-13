@@ -107,6 +107,57 @@ void AppUpdater::on_active_window_changed_callback(WnckScreen *screen,
     set_image_cache(window);
 }
 
+static map<long, Glib::RefPtr<Gdk::Pixbuf>> image_cache;
+const Glib::RefPtr<Gdk::Pixbuf> AppUpdater::get_image_from_cache(long xid)
+{
+    if (image_cache.count(xid) == 1) {
+        return image_cache[xid];
+    }
+
+    Glib::RefPtr<Gdk::Pixbuf> image = (Glib::RefPtr<Gdk::Pixbuf>)nullptr;
+    DIR *dir = nullptr;
+    dir = opendir("/mnt/docklight_ramdisk/");
+    if (dir == 0) {
+        return NULLPB;
+    }
+
+    string result = {};
+
+    struct dirent *hFile;
+    while ((hFile = readdir(dir)) != nullptr) {
+        if (!strcmp(hFile->d_name, ".")) continue;
+        if (!strcmp(hFile->d_name, "..")) continue;
+
+        result = hFile->d_name;
+
+        size_t pos = result.find_last_of("#");
+        if (pos != string::npos) {
+            string sxid = result.substr(pos + 1, 9);
+            long lxid = std::stol(sxid);
+            int width = 0;
+            int height = 0;
+
+            if (lxid == xid) {
+                pos = result.find("_");
+                if (pos != string::npos) {
+                    width = stoi(result.substr(pos + 1, 8));
+                    height = stoi(result.substr(pos + 10, 8));
+                    string filename("/mnt/docklight_ramdisk/" + result);
+                    image = pixbuf_util::get_from_file(filename, width, height);
+
+                    image_cache[xid] = image;
+                    g_print("Found--------------------------------%d x %d %d \n", width, height,
+                            (int)lxid);
+                    break;
+                }
+            }
+        }
+    }
+
+    closedir(dir);
+    return image;
+}
+
 void AppUpdater::set_image_cache(WnckWindow *window)
 {
     if (!wnck_util::is_window_on_current_desktop(window)) {
@@ -118,6 +169,7 @@ void AppUpdater::set_image_cache(WnckWindow *window)
     }
 
     if (wnck_window_is_minimized(window)) {
+        //
         return;
     }
 
@@ -133,19 +185,27 @@ void AppUpdater::set_image_cache(WnckWindow *window)
         return;
     }
 
+    char filename[128];
+
     for (auto const item : AppUpdater::m_dockitems) {
         for (auto const citem : item->m_items) {
             if (citem->get_xid() == wnck_window_get_xid(window)) {
-                citem->m_preview_window_image =
-                    pixbuf_util::get_pixbuf_from_window(citem->get_xid());
-                // g_print("Cache %s %s\n", citem->get_name().c_str(), citem->get_title().c_str());
+                auto const image = pixbuf_util::get_pixbuf_from_window(citem->get_xid());
+                if (image) {
+                    // pixbuf_util::get_pixbuf_from_window(citem->get_xid());
+                    // g_print("Cache %s %s\n", citem->get_name().c_str(),
+                    // citem->get_title().c_str());
 
-                // char buf[512];
-                // sprintf(buf, "/home/yoo/%s-%s_%d.png", citem->get_name().c_str(),
-                // citem->get_title().c_str(), (int)citem->get_xid());
+                    sprintf(filename, "/mnt/docklight_ramdisk/%s_%08dx%08d#%09d.png",
+                            citem->get_name().c_str(), image->get_width(), image->get_height(),
+                            (unsigned int)citem->get_xid());
 
-                // citem->m_preview_window_image->save(buf, "png");
-                return;
+                    image->save(filename, "png");
+                    auto it = image_cache.find(citem->get_xid());
+                    image_cache.erase(it, image_cache.end());
+
+                    return;
+                }
             }
         }
     }

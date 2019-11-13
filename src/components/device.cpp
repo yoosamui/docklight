@@ -6,10 +6,7 @@ namespace device
 {
     namespace display
     {
-        const Glib::RefPtr<Gdk::Display> get_default()
-        {
-            return Gdk::Display::get_default();
-        }
+        const Glib::RefPtr<Gdk::Display> get_default() { return Gdk::Display::get_default(); }
 
         const Glib::RefPtr<Gdk::Screen> get_default_screen()
         {
@@ -21,15 +18,13 @@ namespace device
             return Gdk::Display::get_default()->get_screen(screen_num);
         }
 
-        int get_screen_count()
-        {
-            return display::get_default()->get_n_screens();
-        }
+        int get_screen_count() { return display::get_default()->get_n_screens(); }
 
     }  // namespace display
 
     namespace monitor
     {
+        int m_monitor_number = 0;
         unique_ptr<Current> m_current = nullptr;
 
         const Glib::RefPtr<Gdk::Monitor> get_primary()
@@ -42,10 +37,28 @@ namespace device
             return display::get_default()->get_monitor(monitor_num);
         }
 
-        int get_monitor_count()
+        const Glib::RefPtr<Gdk::Monitor> get_monitor()
         {
-            return display::get_default()->get_n_monitors();
+            return display::get_default()->get_monitor(m_monitor_number);
         }
+
+        Gdk::Rectangle get_workarea()
+        {
+            Gdk::Rectangle workarea;
+            get_monitor()->get_workarea(workarea);
+
+            return workarea;
+        }
+
+        Gdk::Rectangle get_geometry()
+        {
+            Gdk::Rectangle geometry;
+            get_monitor()->get_geometry(geometry);
+
+            return geometry;
+        }
+
+        int get_monitor_count() { return display::get_default()->get_n_monitors(); }
 
         void create_strut(dock_location_t location) {}
 
