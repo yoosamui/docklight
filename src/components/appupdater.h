@@ -51,6 +51,8 @@ class AppUpdater
         guint8 pixbuff[16384 * 3] = {0};  //  128 x 128 max
     } attach_rec_t;
 
+    static void set_image_cache(WnckWindow* window);
+
     static type_signal_update m_signal_update;
 
     static void on_window_opened(WnckScreen* screen, WnckWindow* window, gpointer data);
@@ -60,6 +62,10 @@ class AppUpdater
     static void on_active_window_changed_callback(WnckScreen* screen,
                                                   WnckWindow* previously_active_window,
                                                   gpointer user_data);
+
+    static void on_active_workspace_changed_callback(WnckScreen* screen,
+                                                     WnckWorkspace* previously_active_space,
+                                                     gpointer user_data);
 
     static void Update(WnckWindow* window, window_action_t actiontype);
 

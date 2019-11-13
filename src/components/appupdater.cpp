@@ -2,6 +2,7 @@
 #include <gdkmm/pixbufloader.h>
 #include <glibmm/fileutils.h>
 #include <gtkmm/icontheme.h>
+#include <stdio.h>
 #include <algorithm>
 #include <fstream>
 #include <functional>
@@ -31,18 +32,13 @@ void AppUpdater::init()
     WnckScreen *wnckscreen = wnck_screen_get_default();
 
     // clang-format off
-    g_signal_connect(G_OBJECT(wnckscreen), "window-opened",
-                     G_CALLBACK(AppUpdater::on_window_opened), nullptr);
+    g_signal_connect(G_OBJECT(wnckscreen), "window-opened", G_CALLBACK(AppUpdater::on_window_opened), nullptr);
+    g_signal_connect(wnckscreen, "window_closed", G_CALLBACK(AppUpdater::on_window_closed), nullptr);
+    g_signal_connect(wnckscreen, "active_window_changed", G_CALLBACK(AppUpdater::on_active_window_changed_callback), nullptr);
+    g_signal_connect(wnckscreen, "active-workspace-changed", G_CALLBACK(AppUpdater::on_active_workspace_changed_callback), nullptr);
 
-    g_signal_connect(wnckscreen, "window_closed",
-                     G_CALLBACK(AppUpdater::on_window_closed), nullptr);
-
-    g_signal_connect(wnckscreen, "active_window_changed",
-                     G_CALLBACK(AppUpdater::on_active_window_changed_callback),
-                     nullptr);
-
-     auto const icon_theme = Gtk::IconTheme::get_default();
-     icon_theme->signal_changed().connect(sigc::mem_fun(*this, &AppUpdater::on_theme_changed));
+    auto const icon_theme = Gtk::IconTheme::get_default();
+    icon_theme->signal_changed().connect(sigc::mem_fun(*this, &AppUpdater::on_theme_changed));
 
     // clang-format on
     g_print("AppUpdater init done.\n");
@@ -70,6 +66,35 @@ void AppUpdater::on_theme_changed()
     g_print("Theme change\n");
 }
 
+void AppUpdater::on_active_workspace_changed_callback(WnckScreen *screen,
+                                                      WnckWorkspace *previously_active_space,
+                                                      gpointer user_data)
+{
+    return;
+    g_print("WORSPACE CHANGE\n");
+
+    GList *window_l;
+    for (window_l = wnck_screen_get_windows(screen); window_l != NULL; window_l = window_l->next) {
+        WnckWindow *window = WNCK_WINDOW(window_l->data);
+
+        if (!wnck_util::is_window_on_current_desktop(window)) continue;
+
+        WnckWindowType wt = wnck_window_get_window_type(window);
+
+        if (wt == WNCK_WINDOW_DESKTOP || wt == WNCK_WINDOW_DOCK || wt == WNCK_WINDOW_TOOLBAR ||
+            wt == WNCK_WINDOW_MENU) {
+            continue;
+        }
+
+        const char *instancename = wnck_window_get_class_instance_name(window);
+        if (instancename != NULL && strcasecmp(instancename, DOCKLIGHT_INSTANCENAME) == 0) {
+            continue;
+        }
+
+        set_image_cache(window);
+    }
+}
+
 void AppUpdater::on_active_window_changed_callback(WnckScreen *screen,
                                                    WnckWindow *previously_active_window,
                                                    gpointer user_data)
@@ -79,12 +104,48 @@ void AppUpdater::on_active_window_changed_callback(WnckScreen *screen,
         return;
     }
 
+    set_image_cache(window);
+}
+
+void AppUpdater::set_image_cache(WnckWindow *window)
+{
+    if (!wnck_util::is_window_on_current_desktop(window)) {
+        return;
+    }
+
+    if (system_util::is_mutter_window_manager()) {
+        return;
+    }
+
+    if (wnck_window_is_minimized(window)) {
+        return;
+    }
+
+    WnckWindowType wt = wnck_window_get_window_type(window);
+
+    if (wt == WNCK_WINDOW_DESKTOP || wt == WNCK_WINDOW_DOCK || wt == WNCK_WINDOW_TOOLBAR ||
+        wt == WNCK_WINDOW_MENU) {
+        return;
+    }
+
+    const char *instancename = wnck_window_get_class_instance_name(window);
+    if (instancename != NULL && strcasecmp(instancename, DOCKLIGHT_INSTANCENAME) == 0) {
+        return;
+    }
+
     for (auto const item : AppUpdater::m_dockitems) {
         for (auto const citem : item->m_items) {
             if (citem->get_xid() == wnck_window_get_xid(window)) {
                 citem->m_preview_window_image =
                     pixbuf_util::get_pixbuf_from_window(citem->get_xid());
-                break;
+                // g_print("Cache %s %s\n", citem->get_name().c_str(), citem->get_title().c_str());
+
+                // char buf[512];
+                // sprintf(buf, "/home/yoo/%s-%s_%d.png", citem->get_name().c_str(),
+                // citem->get_title().c_str(), (int)citem->get_xid());
+
+                // citem->m_preview_window_image->save(buf, "png");
+                return;
             }
         }
     }
@@ -155,18 +216,18 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
         info.m_wnckwindow = window;
         info.m_xid = wnck_window_get_xid(window);
 
-        g_print("[------Application --------]\n");
-        g_print("app-name: %s\n", info.m_name.c_str());
-        g_print("instance-name: %s\n", info.m_instance.c_str());
-        g_print("group-name: %s\n", info.m_group.c_str());
-        g_print("title-name: %s\n", info.m_title.c_str());
-        g_print("comment: %s\n", info.m_comment.c_str());
-        g_print("desktop-icon-name: %s\n", info.m_icon_name.c_str());
-        g_print("desktop-file: %s\n", info.m_desktop_file.c_str());
-        g_print("locale: %s\n", info.m_locale.c_str());
-        g_print("cache: %d\n", (int)info.m_cache);
-        g_print("items: %d\n", (int)m_dockitems.size());
-        g_print("xid: %d\n", (int)info.m_xid);
+        // g_print("[------Application --------]\n");
+        // g_print("app-name: %s\n", info.m_name.c_str());
+        // g_print("instance-name: %s\n", info.m_instance.c_str());
+        // g_print("group-name: %s\n", info.m_group.c_str());
+        // g_print("title-name: %s\n", info.m_title.c_str());
+        // g_print("comment: %s\n", info.m_comment.c_str());
+        // g_print("desktop-icon-name: %s\n", info.m_icon_name.c_str());
+        // g_print("desktop-file: %s\n", info.m_desktop_file.c_str());
+        // g_print("locale: %s\n", info.m_locale.c_str());
+        // g_print("cache: %d\n", (int)info.m_cache);
+        // g_print("items: %d\n", (int)m_dockitems.size());
+        // g_print("xid: %d\n", (int)info.m_xid);
 
         if (info.m_name == "Untitled-window") {
             return;
@@ -191,6 +252,8 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
 
             item->m_items.push_back(shared_ptr<DockItem>(new DockItem(info)));
 
+            set_image_cache(window);
+
         } else {
             auto const first_item = m_dockitems[0];
 
@@ -205,6 +268,7 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
                 // Add child
                 new_item->m_items.push_back(shared_ptr<DockItem>(new DockItem(info)));
                 m_signal_update.emit();
+                set_image_cache(window);
             }
         }
 

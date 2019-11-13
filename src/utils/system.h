@@ -13,6 +13,8 @@ namespace system_util
     const string get_current_path(const string& str);
     bool create_directory_if_not_exitst(const char* directory_name);
     const string get_current_user();
+    bool is_mutter_window_manager();
+    string get_window_manager_name();
 
 }  // namespace system_util
 

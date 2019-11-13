@@ -202,6 +202,13 @@ bool Panel_preview::on_button_press_event(GdkEventButton* event)
     if (m_current_index == -1) return true;
 
     auto const item = m_previewitems[m_current_index];
+
+    // set image to null to force reload from cache
+    if (system_util::is_mutter_window_manager() == false) {
+        //        item->set_image(NULLPB);
+        item->m_preview_image_is_dynamic = true;
+        item->m_preview_frame_count = 0;
+    }
     wnck_util::activate_window(item->get_wnckwindow());
 
     return true;
@@ -265,7 +272,16 @@ bool Panel_preview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
         auto image = item->get_image();
 
         if (!image || item->m_preview_image_is_dynamic) {
-            Glib::RefPtr<Gdk::Pixbuf> win_pixbuf = item->m_preview_window_image;
+            Glib::RefPtr<Gdk::Pixbuf> win_pixbuf = NULLPB;
+
+            if (system_util::is_mutter_window_manager() == false) {
+                auto wnckwindow = item->get_wnckwindow();
+                bool in_current_desktop = wnck_util::is_window_on_current_desktop(wnckwindow);
+                if (!in_current_desktop ||
+                    (in_current_desktop && wnck_window_is_minimized(wnckwindow))) {
+                    win_pixbuf = item->m_preview_window_image;
+                }
+            }
 
             if (!win_pixbuf) {
                 win_pixbuf = pixbuf_util::get_pixbuf_from_window(item->get_xid());
@@ -274,6 +290,8 @@ bool Panel_preview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
             if (win_pixbuf) {
                 guint scaled_width = 0;
                 guint scaled_height = 0;
+
+                item->m_preview_window_image = win_pixbuf;
 
                 image = pixbuf_util::get_pixbuf_scaled(win_pixbuf, m_width, m_height, scaled_width,
                                                        scaled_height);

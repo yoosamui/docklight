@@ -15,10 +15,10 @@ namespace wnck_util
             return;
         }
 
-        if (wnck_window_is_active(window)) {
-            wnck_window_minimize(window);
-            return;
-        }
+        // if (wnck_window_is_active(window)) {
+        //   wnck_window_minimize(window);
+        // return;
+        //}
 
         if (!is_window_on_current_desktop(window)) {
             WnckWorkspace* ws = wnck_window_get_workspace(window);

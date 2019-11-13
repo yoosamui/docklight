@@ -14,7 +14,7 @@
 #include <string>
 
 #include <X11/Xlib.h>
-
+#include <gdk/gdkx.h>
 DL_NS_BEGIN
 
 namespace system_util
@@ -39,6 +39,25 @@ namespace system_util
 
         XCloseDisplay(display);
         return found;
+    }
+
+    string get_window_manager_name()
+    {
+        GdkScreen* screen = gdk_screen_get_default();
+        const char* wm = gdk_x11_screen_get_window_manager_name(screen);
+
+        return wm;
+    }
+
+    bool is_mutter_window_manager()
+    {
+        GdkScreen* screen = gdk_screen_get_default();
+        const char* wm = gdk_x11_screen_get_window_manager_name(screen);
+        if (wm && strncmp(wm, "Mutter", 5) == 0) {
+            return true;
+        }
+
+        return false;
     }
 
     string get_current_path()

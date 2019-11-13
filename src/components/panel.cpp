@@ -509,6 +509,7 @@ bool Panel::on_scroll_event(GdkEventScroll* e)
     if (item == nullptr) return true;
 
     WnckWindow* window = item->get_wnckwindow();
+
     wnck_util::activate_window(window);
 
     return true;

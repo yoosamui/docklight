@@ -8,6 +8,7 @@
 #include "utils/pixbuf.h"
 #include "utils/position.h"
 #include "utils/easing.h"
+#include "utils/system.h"
 // clang-format on
 
 DL_NS_BEGIN
@@ -140,6 +141,8 @@ int AppWindow::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine> &
 
     g_print("Default monitor: %d %s\n", device::monitor::get_current()->get_monitor_number(),
             device::monitor::get_current()->get_monitor_obj()->get_model().c_str());
+
+    g_print("window manager: %s\n", system_util::get_window_manager_name().c_str());
 
     // activate window
     app->activate();

@@ -215,9 +215,7 @@ bool Autohide::is_intersection_detected()
     }
 
     int area = position_util::get_area();
-    Gdk::Rectangle workarea = config::is_autohide_none()
-                                  ? device::monitor::get_current()->get_geometry()
-                                  : device::monitor::get_current()->get_workarea();
+    Gdk::Rectangle workarea = position_util::get_workarea();
 
     auto rect_dock = position_util::get_appwindow_geometry();
     auto rect_window = Autohide::get_window_geometry(m_stm.m_active_window);
