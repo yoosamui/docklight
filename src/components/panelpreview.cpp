@@ -257,6 +257,32 @@ inline int Panel_preview::get_index(const int& mouseX, const int& mouseY)
 
     return -1;
 }
+void Panel_preview::draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int x, int y,
+                              const string& text)
+{
+    // http://developer.gnome.org/pangomm/unstable/classPango_1_1FontDescription.html
+    Pango::FontDescription font;
+
+    font.set_family("Monospace");
+    font.set_weight(Pango::WEIGHT_BOLD);
+
+    // http://developer.gnome.org/pangomm/unstable/classPango_1_1Layout.html
+    auto layout = create_pango_layout(text);
+
+    layout->set_font_description(font);
+
+    int text_width;
+    int text_height;
+
+    // get the text dimensions (it updates the variables -- by reference)
+    layout->get_pixel_size(text_width, text_height);
+
+    // Position the text in the middle
+    // cr->move_to((rectangle_width-text_width)/2, (rectangle_height-text_height)/2);
+    cr->move_to(x, y);
+
+    layout->show_in_cairo_context(cr);
+}
 
 bool Panel_preview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
@@ -279,8 +305,7 @@ bool Panel_preview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
                 bool in_current_desktop = wnck_util::is_window_on_current_desktop(wnckwindow);
                 if (!in_current_desktop ||
                     (in_current_desktop && wnck_window_is_minimized(wnckwindow))) {
-                    win_pixbuf = AppUpdater::get_image_from_cache(item->get_xid());
-                    //                    win_pixbuf = item->m_preview_window_image;
+                    win_pixbuf = item->m_preview_window_image;
                 }
             }
 
@@ -292,7 +317,9 @@ bool Panel_preview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
                 guint scaled_width = 0;
                 guint scaled_height = 0;
 
-                //   item->m_preview_window_image = win_pixbuf;
+                if (system_util::is_mutter_window_manager() == false) {
+                    item->m_preview_window_image = win_pixbuf;
+                }
 
                 image = pixbuf_util::get_pixbuf_scaled(win_pixbuf, m_width, m_height, scaled_width,
                                                        scaled_height);
@@ -306,7 +333,7 @@ bool Panel_preview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
         }
 
         if (item->m_preview_frame_count != -1 && item->m_preview_image_is_dynamic &&
-            ++item->m_preview_frame_count > 18) {
+            ++item->m_preview_frame_count > 9) {
             // return 1 if the pixbuf data contains diferences, or 0 if the pixels are equal
             // otherwise -1.
             if (pixbuf_util::compare_pixels(item->m_preview_first_image, image) == 0) {
@@ -319,6 +346,11 @@ bool Panel_preview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
         }
 
         if (image) {
+            cr->set_source_rgb(1, 1, 1);
+            char bufer[64];
+            sprintf(bufer, "[%d]ปลอดภัย", (int)item->get_xid());
+            draw_text(cr, x, 1, bufer);
+
             Gdk::Cairo::set_source_pixbuf(cr, image, x, y);
             cr->paint();
         }

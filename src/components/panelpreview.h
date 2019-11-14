@@ -22,6 +22,8 @@ class Panel_preview : public Gtk::Window
     type_signal_close signal_close();
 
   private:
+    void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int x, int y, const string& text);
+
     type_signal_close m_signal_close;
     int m_static_count = 0;
     bool m_mouse_in = false;
