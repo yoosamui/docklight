@@ -25,9 +25,8 @@ class AppUpdater
     static vector<shared_ptr<DockItem>> m_dockitems;
 
     const vector<shared_ptr<DockItem>> get_dockitems() { return m_dockitems; }
-    static const Glib::RefPtr<Gdk::Pixbuf> get_image_from_cache(long xid);
-    static void set_image_cache(WnckWindow* window);
-    static void remove_image_cache(long xid);
+    //  static const Glib::RefPtr<Gdk::Pixbuf> get_image_from_cache(long xid);
+    //    static void remove_image_cache(long xid);
 
     void on_theme_changed();
     bool attach_item(int index);
@@ -53,6 +52,8 @@ class AppUpdater
         char icon_name[128];
         guint8 pixbuff[16384 * 3] = {0};  //  128 x 128 max
     } attach_rec_t;
+
+    static void set_image_cache(WnckWindow* window);
 
     static type_signal_update m_signal_update;
 
