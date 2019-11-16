@@ -23,7 +23,9 @@ DL_NS_BEGIN
 
 AppUpdater::type_signal_update AppUpdater::m_signal_update;
 vector<shared_ptr<DockItem>> AppUpdater::m_dockitems;
-static bool on_close = false;
+queue<WnckWindow *> AppUpdater::m_image_queue;
+bool AppUpdater::m_bck_thread_run;
+
 AppUpdater::AppUpdater() {}
 void AppUpdater::init()
 {
@@ -41,11 +43,27 @@ void AppUpdater::init()
     icon_theme->signal_changed().connect(sigc::mem_fun(*this, &AppUpdater::on_theme_changed));
 
     // clang-format on
+
+    AppUpdater::m_bck_thread_run = true;
+    m_bck_thread = new thread(cache_async);
+
     g_print("AppUpdater init done.\n");
 }
 
 AppUpdater::~AppUpdater()
 {
+    // tell the background thread to terminate.
+    m_bck_thread_run = false;
+
+    // Detach
+    m_bck_thread->detach();
+
+    // free memory
+    delete m_bck_thread;
+
+    // pointed dangling to ptr NULL
+    m_bck_thread = nullptr;
+
     g_print("Free AppUpdater\n");
 }
 void AppUpdater::on_theme_changed()
@@ -66,27 +84,39 @@ void AppUpdater::on_theme_changed()
     g_print("Theme change\n");
 }
 
-static bool on_active_workspace_changed_set = false;
+// static bool on_active_workspace_changed_set = false;
 void AppUpdater::on_active_workspace_changed_callback(WnckScreen *screen,
                                                       WnckWorkspace *previously_active_space,
                                                       gpointer user_data)
 {
-    return;
-    if (on_active_workspace_changed_set) {
+    // if (on_active_workspace_changed_set) {
+    // std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    //}
+
+    // on_active_workspace_changed_set = true;
+
+    // GList *window_l;
+    // for (window_l = wnck_screen_get_windows(screen); window_l != NULL; window_l = window_l->next)
+    // { WnckWindow *window = WNCK_WINDOW(window_l->data);
+
+    //// m_image_queue.push(window);
+    ////      set_image_cache(window);
+    //}
+}
+void AppUpdater::cache_async()
+{
+    while (m_bck_thread_run) {
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }
+        if (m_image_queue.empty()) continue;
 
-    on_active_workspace_changed_set = true;
-
-    GList *window_l;
-    for (window_l = wnck_screen_get_windows(screen); window_l != NULL; window_l = window_l->next) {
-        WnckWindow *window = WNCK_WINDOW(window_l->data);
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        auto const window = m_image_queue.front();
+        m_image_queue.pop();
 
         set_image_cache(window);
     }
 }
 
-static bool on_active_window_changed_set = false;
 void AppUpdater::on_active_window_changed_callback(WnckScreen *screen,
                                                    WnckWindow *previously_active_window,
                                                    gpointer user_data)
@@ -96,20 +126,7 @@ void AppUpdater::on_active_window_changed_callback(WnckScreen *screen,
         return;
     }
 
-    if (on_active_window_changed_set) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
-
-        if (on_close) {
-            on_close = false;
-
-            g_error("on close\n");
-            return;
-        }
-    }
-
-    on_active_window_changed_set = true;
-
-    set_image_cache(window);
+    m_image_queue.push(window);
 }
 
 void AppUpdater::set_image_cache(WnckWindow *window)
@@ -135,11 +152,6 @@ void AppUpdater::set_image_cache(WnckWindow *window)
             if (citem->get_xid() == wnck_window_get_xid(window)) {
                 citem->m_preview_window_image =
                     pixbuf_util::get_pixbuf_from_window(citem->get_xid());
-                // g_print("image in cache\n");
-
-                // char filename[60];
-                // sprintf(filename, "/home/yoo/%d.png", (int)citem->get_xid());
-                // citem->m_preview_window_image->save(filename, "png");
 
                 return;
             }
@@ -154,9 +166,7 @@ void AppUpdater::on_window_opened(WnckScreen *screen, WnckWindow *window, gpoint
 
 void AppUpdater::on_window_closed(WnckScreen *screen, WnckWindow *window, gpointer data)
 {
-    on_close = true;
     Update(window, window_action_t::CLOSE);
-    on_close = false;
 }
 
 AppUpdater::type_signal_update AppUpdater::signal_update()
@@ -167,7 +177,6 @@ AppUpdater::type_signal_update AppUpdater::signal_update()
 void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
 {
     // clang-format off
-    //
     /*
     enum WnckWindowType
 
@@ -182,15 +191,9 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
     */
 
 
-    WnckWindowType wt = wnck_window_get_window_type(window);
-
-    if (wt == WNCK_WINDOW_DESKTOP ||
-        wt == WNCK_WINDOW_DOCK ||
-        wt == WNCK_WINDOW_TOOLBAR ||
-        wt == WNCK_WINDOW_MENU ||
-        wt == WNCK_WINDOW_SPLASHSCREEN) {
-        return;
-        }
+    if(!wnck_util::is_valid_window_type(window)){
+    return;
+    }
 
 
     static const string ignore_instances[] =

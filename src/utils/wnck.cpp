@@ -7,19 +7,18 @@ namespace wnck_util
 {
     void activate_window(WnckWindow* window)
     {
-        int ct = gtk_get_current_event_time();
-
         if (window == nullptr) return;
 
         if (!WNCK_IS_WINDOW(window)) {
             return;
         }
 
-        // if (wnck_window_is_active(window)) {
-        //   wnck_window_minimize(window);
-        // return;
-        //}
+        if (wnck_window_is_active(window)) {
+            wnck_window_minimize(window);
+            return;
+        }
 
+        int ct = gtk_get_current_event_time();
         if (!is_window_on_current_desktop(window)) {
             WnckWorkspace* ws = wnck_window_get_workspace(window);
             if (ws != nullptr) {

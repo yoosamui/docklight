@@ -22,6 +22,11 @@ class Panel_preview : public Gtk::Window
     type_signal_close signal_close();
 
   private:
+    static constexpr const int PREVIEW_WIDTH_EXTENDED_SIZE = 60;
+    static constexpr const int PREVIEW_SPARATOR_SIZE = 8;
+    static constexpr const int PREVIEW_START_END_MARGIN = 20;
+    static constexpr const int PREVIEW_TITLE_SIZE = 26;
+
     void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int x, int y, const string& text);
 
     type_signal_close m_signal_close;

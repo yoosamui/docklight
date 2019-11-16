@@ -83,20 +83,25 @@ void Panel_preview::init(int index)
         item->m_preview_image_is_dynamic = true;
     }
 
-    //    vect = items;  // AppUpdater::m_dockitems[index];
+    // Buble sort by name
+    int size = (int)m_previewitems.size();
+    int i, m, j;
 
-    // Using assignment operator to copy the items vector
-    //  m_previewitems.insert(m_previewitems.begin(), items.begin(), items.end());
+    for (i = 0; i < size - 1; i = i + 1) {
+        m = i;
+        for (j = i + 1; j < size; j = j + 1) {
+            std::string s1 = m_previewitems.at(j)->get_windowname().c_str();
+            std::string s2 = m_previewitems.at(m)->get_windowname().c_str();
 
-    //
-    //
+            if (s1 < s2) {
+                m = j;
+            }
+        }
+        std::swap(m_previewitems[i], m_previewitems[m]);
+    }
+
     initialized = true;
 }
-
-#define PREVIEW_WIDTH_EXTENDED_SIZE 60
-#define PREVIEW_SPARATOR_SIZE 8
-#define PREVIEW_START_END_MARGIN 20
-#define PREVIEW_TITLE_SIZE 32
 
 bool Panel_preview::show_preview()
 {
@@ -107,21 +112,26 @@ bool Panel_preview::show_preview()
     int x = 0;
     int y = 0;
     int image_size = m_previewitems[0]->get_width() * 3;
+    int item_count = (int)m_previewitems.size();
 
+    m_width = image_size + PREVIEW_WIDTH_EXTENDED_SIZE;
+    m_height = image_size - PREVIEW_TITLE_SIZE;
+
+    // clang-format off
     if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-        m_width = image_size + PREVIEW_WIDTH_EXTENDED_SIZE;
-        m_height = image_size - PREVIEW_TITLE_SIZE;
-
         m_window_width = (m_previewitems.size() * m_width) + PREVIEW_START_END_MARGIN +
                          ((m_previewitems.size() - 1) * PREVIEW_SPARATOR_SIZE);
         m_window_height = image_size + PREVIEW_START_END_MARGIN;
     } else {
-        m_width = image_size;
-        m_height = image_size * 10;
+        m_window_height = (item_count * m_height) +
+                          (item_count - 1) * PREVIEW_SPARATOR_SIZE +
+                          (item_count ) * PREVIEW_TITLE_SIZE +
+                          PREVIEW_START_END_MARGIN;
 
-        m_window_width = (m_previewitems.size() * m_width) + 20;
-        m_window_height = m_width + 10;
+        m_window_width = m_width + PREVIEW_START_END_MARGIN;
     }
+
+    // clang-format on
 
     this->resize(m_window_width, m_window_height);
 
@@ -224,7 +234,7 @@ bool Panel_preview::on_button_release_event(GdkEventButton* event)
 bool Panel_preview::on_motion_notify_event(GdkEventMotion* event)
 {
     auto index = this->get_index(event->x, event->y);
-    if (index != -1) m_current_index = index;
+    m_current_index = index;
 
     return true;
 }
@@ -248,11 +258,11 @@ inline int Panel_preview::get_index(const int& mouseX, const int& mouseY)
         }
     } else {
         for (auto item : m_previewitems) {
-            if (mouse.get_y() >= y && mouse.get_y() <= y + m_height) {
+            if (mouse.get_y() >= y && mouse.get_y() <= y + m_height + PREVIEW_TITLE_SIZE) {
                 return idx;
             }
 
-            y += m_height + PREVIEW_SPARATOR_SIZE;
+            y += m_height + PREVIEW_SPARATOR_SIZE + PREVIEW_TITLE_SIZE;
             idx++;
         }
     }
@@ -289,7 +299,7 @@ void Panel_preview::draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int x, in
 
     // Position the text in the middle
     // cr->move_to((rectangle_width-text_width)/2, (rectangle_height-text_height)/2);
-    cr->move_to(x + 4, y + 16);
+    cr->move_to(x + 4, y + 4);
 
     layout->show_in_cairo_context(cr);
     cr->reset_clip();  // Reset the clipping
@@ -297,13 +307,17 @@ void Panel_preview::draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int x, in
 
 bool Panel_preview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
-    cr->set_source_rgba(0, 0, 0, 1);
+    // background
+    cr->set_source_rgba(0.250, 0.352, 0.407, 1.0);
     cairo_util::rounded_rectangle(cr, 0, 0, m_window_width, m_window_height, 0);
     cr->fill();
 
+    int image_center_x = 0;
+    int image_center_y = 0;
+
     int idx = 0;
     int x = PREVIEW_START_END_MARGIN / 2;
-    int y = x + PREVIEW_TITLE_SIZE;
+    int y = x;
 
     for (auto const item : m_previewitems) {
         auto image = item->get_image();
@@ -348,7 +362,8 @@ bool Panel_preview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
             // return 1 if the pixbuf data contains diferences, or 0 if the pixels are equal
             // otherwise -1.
             if (pixbuf_util::compare_pixels(item->m_preview_first_image, image) == 0) {
-                g_print("static %s %d\n", item->get_title().c_str(), (int)item->get_xid());
+                g_print("static detected: %s %d\n", item->get_title().c_str(),
+                        (int)item->get_xid());
                 item->m_preview_image_is_dynamic = false;
                 m_static_count++;
             }
@@ -356,22 +371,35 @@ bool Panel_preview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
             item->m_preview_frame_count = -1;
         }
 
+        // title selector
         if (idx == m_current_index) {
             cr->set_source_rgba(1, 1, 1, 0.4);
-            cairo_util::rounded_rectangle(cr, x, 6, m_width, PREVIEW_TITLE_SIZE, 0);
+            cairo_util::rounded_rectangle(cr, x, y, m_width, PREVIEW_TITLE_SIZE, 0);
             cr->fill();
         }
-        cr->set_source_rgba(1, 1, 1, 0.4);
-        cairo_util::rounded_rectangle(cr, x, y, m_width, m_height, 0);
-        cr->fill();
-        if (image) {
-            draw_text(cr, x, 1, item->get_windowname());
 
-            Gdk::Cairo::set_source_pixbuf(cr, image, x, y);
+        // Image and text
+        if (image) {
+            image_center_x = (m_width / 2) - (image->get_width() / 2);
+            image_center_y = ((m_height / 2) - (image->get_height() / 2)) + PREVIEW_TITLE_SIZE;
+
+            draw_text(cr, x, y, item->get_windowname());
+
+            Gdk::Cairo::set_source_pixbuf(cr, image, x + image_center_x, y + image_center_y);
             cr->paint();
         }
 
-        x += m_width + PREVIEW_SPARATOR_SIZE;
+        // Draw cell
+        cr->set_source_rgba(1, 1, 1, 0.4);
+        cairo_util::rounded_rectangle(cr, x, y, m_width, m_height + PREVIEW_TITLE_SIZE, 0);
+        cr->stroke();
+
+        if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+            x += m_width + PREVIEW_SPARATOR_SIZE;
+        } else {
+            y += m_height + PREVIEW_SPARATOR_SIZE + PREVIEW_TITLE_SIZE;
+        }
+
         idx++;
     }
 

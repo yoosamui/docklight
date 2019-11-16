@@ -3,6 +3,8 @@
 
 #include <libwnck/libwnck.h>
 #include <sigc++/sigc++.h>
+#include <queue>
+#include <thread>
 #include "common.h"
 #include "components/dockitem.h"
 
@@ -25,8 +27,6 @@ class AppUpdater
     static vector<shared_ptr<DockItem>> m_dockitems;
 
     const vector<shared_ptr<DockItem>> get_dockitems() { return m_dockitems; }
-    //  static const Glib::RefPtr<Gdk::Pixbuf> get_image_from_cache(long xid);
-    //    static void remove_image_cache(long xid);
 
     void on_theme_changed();
     bool attach_item(int index);
@@ -40,6 +40,10 @@ class AppUpdater
     bool is_exists_expander();
 
   private:
+    thread* m_bck_thread = nullptr;
+    static bool m_bck_thread_run;
+    static void cache_async();
+    static queue<WnckWindow*> m_image_queue;
     typedef struct {
         dock_item_type_t dock_item_type;
         char name[60];
