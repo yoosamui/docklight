@@ -8,7 +8,6 @@
 #include <gdkmm/general.h>  // set_source_pixbuf()
 DL_NS_BEGIN
 
-// vector<shared_ptr<DockItem>> Panel_preview::m_previewitems;
 Panel_preview::Panel_preview() : Gtk::Window(Gtk::WindowType::WINDOW_POPUP)
 {
     // Set up the top-level window.
@@ -119,10 +118,13 @@ bool Panel_preview::show_preview()
 
     // clang-format off
     if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-        m_window_width = (m_previewitems.size() * m_width) + PREVIEW_START_END_MARGIN +
-                         ((m_previewitems.size() - 1) * PREVIEW_SPARATOR_SIZE);
+        m_window_width = (item_count * m_width) + PREVIEW_START_END_MARGIN +
+                         ((item_count - 1) * PREVIEW_SPARATOR_SIZE);
+
         m_window_height = image_size + PREVIEW_START_END_MARGIN;
+
     } else {
+
         m_window_height = (item_count * m_height) +
                           (item_count - 1) * PREVIEW_SPARATOR_SIZE +
                           (item_count ) * PREVIEW_TITLE_SIZE +
@@ -134,7 +136,6 @@ bool Panel_preview::show_preview()
     // clang-format on
 
     this->resize(m_window_width, m_window_height);
-
     position_util::get_center_position(m_current_index, x, y, m_window_width, m_window_height);
     this->move(x, y);
 

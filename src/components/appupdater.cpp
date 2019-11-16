@@ -36,16 +36,22 @@ void AppUpdater::init()
     // clang-format off
     g_signal_connect(G_OBJECT(wnckscreen), "window-opened", G_CALLBACK(AppUpdater::on_window_opened), nullptr);
     g_signal_connect(wnckscreen, "window_closed", G_CALLBACK(AppUpdater::on_window_closed), nullptr);
-    g_signal_connect(wnckscreen, "active_window_changed", G_CALLBACK(AppUpdater::on_active_window_changed_callback), nullptr);
-    g_signal_connect(wnckscreen, "active-workspace-changed", G_CALLBACK(AppUpdater::on_active_workspace_changed_callback), nullptr);
+
 
     auto const icon_theme = Gtk::IconTheme::get_default();
     icon_theme->signal_changed().connect(sigc::mem_fun(*this, &AppUpdater::on_theme_changed));
 
     // clang-format on
 
-    AppUpdater::m_bck_thread_run = true;
-    m_bck_thread = new thread(cache_async);
+    if (!system_util::is_mutter_window_manager()) {
+        g_signal_connect(wnckscreen, "active_window_changed",
+                         G_CALLBACK(AppUpdater::on_active_window_changed_callback), nullptr);
+
+        g_signal_connect(wnckscreen, "active-workspace-changed",
+                         G_CALLBACK(AppUpdater::on_active_workspace_changed_callback), nullptr);
+        AppUpdater::m_bck_thread_run = true;
+        m_bck_thread = new thread(cache_async);
+    }
 
     g_print("AppUpdater init done.\n");
 }
@@ -53,16 +59,18 @@ void AppUpdater::init()
 AppUpdater::~AppUpdater()
 {
     // tell the background thread to terminate.
-    m_bck_thread_run = false;
+    if (m_bck_thread) {
+        m_bck_thread_run = false;
 
-    // Detach
-    m_bck_thread->detach();
+        // Detach
+        m_bck_thread->detach();
 
-    // free memory
-    delete m_bck_thread;
+        // free memory
+        delete m_bck_thread;
 
-    // pointed dangling to ptr NULL
-    m_bck_thread = nullptr;
+        // pointed dangling to ptr NULL
+        m_bck_thread = nullptr;
+    }
 
     g_print("Free AppUpdater\n");
 }
