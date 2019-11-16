@@ -21,6 +21,8 @@ namespace wnck_util
     void close_all_windows();
     void close_window(WnckWindow* window);
     void close_group_windows(int index);
+    void minimize_group(int index);
+    bool is_valid_window_type(WnckWindow* window);
 
     //
     // bool is_windowOnCurrentDesktop(WnckWindow* window);

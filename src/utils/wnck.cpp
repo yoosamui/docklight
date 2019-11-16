@@ -122,6 +122,42 @@ namespace wnck_util
         return count;
     }
 
+    bool is_valid_window_type(WnckWindow* window)
+    {
+        if (!WNCK_IS_WINDOW(window)) {
+            return false;
+        }
+
+        WnckWindowType wt = wnck_window_get_window_type(window);
+        // clang-format off
+            if (wt == WNCK_WINDOW_DESKTOP ||
+                wt == WNCK_WINDOW_DOCK ||
+                wt == WNCK_WINDOW_TOOLBAR ||
+                wt == WNCK_WINDOW_MENU ||
+                wt == WNCK_WINDOW_SPLASHSCREEN) {
+                return false;
+            }
+        // clang-format on
+
+        const char* instancename = wnck_window_get_class_instance_name(window);
+        if (instancename != nullptr && strcasecmp(instancename, DOCKLIGHT_INSTANCENAME) == 0) {
+            return false;
+        }
+
+        return true;
+    }
+
+    void minimize_group(int index)
+    {
+        if (index == -1) return;
+
+        auto const item = AppUpdater::m_dockitems[index];
+
+        for (auto const citem : item->m_items) {
+            WnckWindow* window = citem->get_wnckwindow();
+            wnck_window_minimize(window);
+        }
+    }
 }  // namespace wnck_util
 
 DL_NS_END

@@ -79,14 +79,7 @@ Panel::~Panel()
 
     g_print("Free Panel\n");
 }
-// void Panel::load_home_icon(int icon_size)
-//{
-// string filename(system_util::get_current_path(DEF_ICONNAME));
-// auto const home_pixbuf = pixbuf_util::get_from_file(filename, icon_size, icon_size);
 
-// auto const home_item = AppUpdater::m_dockitems[0];
-// home_item->set_image(home_pixbuf);
-//}
 void Panel::connect_draw_signal(bool connect)
 {
     if (connect) {
@@ -175,7 +168,6 @@ int Panel::get_required_size()
 realize:
     return size + config::get_window_start_end_margin();
 }
-
 bool Panel::on_timeout_draw()
 {
     if (!m_stm.m_dragdrop_begin && m_mouse_left_down && m_current_index > 0 &&
@@ -254,6 +246,8 @@ void Panel::reset_flags()
 
 void Panel::on_menu_show_event()
 {
+    this->close_preview();
+
     m_context_menu_open = true;
     this->connect_draw_signal(false);
 }
@@ -482,6 +476,7 @@ bool Panel::on_button_release_event(GdkEventButton* event)
                 if (m_current_index > 0 &&
                     item->get_dock_item_type() == dock_item_type_t::launcher) {
                     m_item_menu_attach.set_active(item->is_attached());
+
                     m_item_menu.popup(sigc::mem_fun(*this, &Panel::on_item_menu_position), 1,
                                       event->time);
                     return true;
@@ -645,7 +640,7 @@ void Panel::connect_async()
             if (m_stm.m_connect_draw_signal_set == false) {
                 m_stm.m_draw_required = true;
                 connect_draw_signal(true);
-                std::this_thread::sleep_for(std::chrono::milliseconds(200));
+                std::this_thread::sleep_for(std::chrono::milliseconds(600));
 
                 m_stm.m_draw_required = false;
                 connect_draw_signal(false);
@@ -662,7 +657,6 @@ void Panel::on_active_window_changed(WnckScreen* screen, WnckWindow* previously_
     if (window == nullptr) {
         return;
     }
-
     set_active_window_indexp(window);
 }
 

@@ -17,15 +17,9 @@ void Panel_render::init()
 {
     m_theme = config::get_theme();
 }
-// static bool cache_all = false;
 
 void Panel_render::draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
-    // if (!cache_all) {
-    // cache_all = true;
-    // AppUpdater::cache_all();
-    //}
-
     this->draw_panel(cr);
     this->draw_items(cr);
     this->draw_title();

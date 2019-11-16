@@ -73,6 +73,7 @@ Dock_menu::Dock_menu()
         m_item_menu.signal_hide().connect(sigc::mem_fun(*this, &Dock_menu::on_menu_hide_event));
 
         m_item_menu_new.signal_activate().connect(sigc::mem_fun(*this, &Dock_menu::on_item_menu_new_event));
+        m_item_menu_minimize_all.signal_activate().connect(sigc::mem_fun(*this, &Dock_menu::on_item_menu_minimize_all_event));
 
     // clang-format on
     //
@@ -81,7 +82,7 @@ Dock_menu::Dock_menu()
     /*m_HomeMenu.set_halign(Gtk::Align::ALIGN_CENTER);
     m_AboutMenuItem.set_label(_("About"));
     m_AutohideMenuItem.set_label(_("Autohide"));
-    m_HomeUnMinimizeAllWindowsMenuItem.set_label(_("Show all"));
+    m_HomeUnMinimizeAllWindowsMenuItemMinimizeAllWindowsMenuItem.set_label(_("Show all"));
     m_HomeMinimizeAllWindowsExceptActiveMenuItem.set_label(_("Minimize all
     except active")); m_HomeMinimizeAllWindowsMenuItem.set_label(_("Minimize
     all")); m_HomeCloseAllWindowsExceptActiveMenuItem.set_label(_("Close all
@@ -137,6 +138,16 @@ Dock_menu::Dock_menu()
 
 
     m_previewLimitMenu.set_halign(Gtk::Align::ALIGN_CENTER);*/
+}
+
+void Dock_menu::on_item_menu_minimize_all_event()
+{
+    int index = Panel_base::get_current_index();
+    if (index == -1) return;
+
+    wnck_util::minimize_group(index);
+
+    //    g_print("Mini %d\n", Panel_base::get_current_index());  //    wnck_util
 }
 
 void Dock_menu::on_separator_menu_position(int& x, int& y, bool& push_in)

@@ -23,7 +23,7 @@ DL_NS_BEGIN
 
 AppUpdater::type_signal_update AppUpdater::m_signal_update;
 vector<shared_ptr<DockItem>> AppUpdater::m_dockitems;
-
+static bool on_close = false;
 AppUpdater::AppUpdater() {}
 void AppUpdater::init()
 {
@@ -71,8 +71,9 @@ void AppUpdater::on_active_workspace_changed_callback(WnckScreen *screen,
                                                       WnckWorkspace *previously_active_space,
                                                       gpointer user_data)
 {
+    return;
     if (on_active_workspace_changed_set) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
     on_active_workspace_changed_set = true;
@@ -80,20 +81,6 @@ void AppUpdater::on_active_workspace_changed_callback(WnckScreen *screen,
     GList *window_l;
     for (window_l = wnck_screen_get_windows(screen); window_l != NULL; window_l = window_l->next) {
         WnckWindow *window = WNCK_WINDOW(window_l->data);
-
-        if (!wnck_util::is_window_on_current_desktop(window)) continue;
-
-        WnckWindowType wt = wnck_window_get_window_type(window);
-
-        if (wt == WNCK_WINDOW_DESKTOP || wt == WNCK_WINDOW_DOCK || wt == WNCK_WINDOW_TOOLBAR ||
-            wt == WNCK_WINDOW_MENU) {
-            continue;
-        }
-
-        const char *instancename = wnck_window_get_class_instance_name(window);
-        if (instancename != NULL && strcasecmp(instancename, DOCKLIGHT_INSTANCENAME) == 0) {
-            continue;
-        }
 
         set_image_cache(window);
     }
@@ -104,16 +91,23 @@ void AppUpdater::on_active_window_changed_callback(WnckScreen *screen,
                                                    WnckWindow *previously_active_window,
                                                    gpointer user_data)
 {
-    if (on_active_window_changed_set) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    }
-
-    on_active_window_changed_set = true;
-
     WnckWindow *window = wnck_screen_get_active_window(screen);
     if (window == nullptr) {
         return;
     }
+
+    if (on_active_window_changed_set) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+        if (on_close) {
+            on_close = false;
+
+            g_error("on close\n");
+            return;
+        }
+    }
+
+    on_active_window_changed_set = true;
 
     set_image_cache(window);
 }
@@ -132,10 +126,7 @@ void AppUpdater::set_image_cache(WnckWindow *window)
         return;
     }
 
-    WnckWindowType wt = wnck_window_get_window_type(window);
-
-    if (wt == WNCK_WINDOW_DESKTOP || wt == WNCK_WINDOW_DOCK || wt == WNCK_WINDOW_TOOLBAR ||
-        wt == WNCK_WINDOW_MENU) {
+    if (!wnck_util::is_valid_window_type(window)) {
         return;
     }
 
@@ -144,6 +135,12 @@ void AppUpdater::set_image_cache(WnckWindow *window)
             if (citem->get_xid() == wnck_window_get_xid(window)) {
                 citem->m_preview_window_image =
                     pixbuf_util::get_pixbuf_from_window(citem->get_xid());
+                // g_print("image in cache\n");
+
+                // char filename[60];
+                // sprintf(filename, "/home/yoo/%d.png", (int)citem->get_xid());
+                // citem->m_preview_window_image->save(filename, "png");
+
                 return;
             }
         }
@@ -157,7 +154,9 @@ void AppUpdater::on_window_opened(WnckScreen *screen, WnckWindow *window, gpoint
 
 void AppUpdater::on_window_closed(WnckScreen *screen, WnckWindow *window, gpointer data)
 {
+    on_close = true;
     Update(window, window_action_t::CLOSE);
+    on_close = false;
 }
 
 AppUpdater::type_signal_update AppUpdater::signal_update()
@@ -268,6 +267,7 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
             }
         }
 
+        // set_image_cache(window);
         return;
 
     } else {
@@ -281,9 +281,9 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
 
                     if (!item->is_attached() && item->m_items.size() == 0) {
                         m_dockitems.erase(m_dockitems.begin() + i);
-                        m_signal_update.emit();
                     }
 
+                    m_signal_update.emit();
                     return;
                 }
             }

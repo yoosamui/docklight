@@ -19,6 +19,7 @@ class Panel_base  //: public Gtk::DrawingArea
 {
   public:
     Panel_base();
+    static int get_current_index();
 
   protected:
     static int m_current_index;

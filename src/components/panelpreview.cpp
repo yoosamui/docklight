@@ -52,7 +52,8 @@ Panel_preview::Panel_preview() : Gtk::Window(Gtk::WindowType::WINDOW_POPUP)
 
 Panel_preview::~Panel_preview()
 {
-    // for (auto item : m_previewitems) {
+    // for (auto item : AppUpdater::m_dockitems[m_current_index]->m_items) {
+    // item->m_preview_first_image = NULLPB;
     // item->set_image(NULLPB);
     // item.reset();
     //}
@@ -92,10 +93,10 @@ void Panel_preview::init(int index)
     initialized = true;
 }
 
-#define PREVIEW_WIDTH_EXTENDED_SIZE 40
+#define PREVIEW_WIDTH_EXTENDED_SIZE 60
 #define PREVIEW_SPARATOR_SIZE 8
 #define PREVIEW_START_END_MARGIN 20
-#define PREVIEW_TITLE_SIZE 26
+#define PREVIEW_TITLE_SIZE 32
 
 bool Panel_preview::show_preview()
 {
@@ -190,6 +191,7 @@ bool Panel_preview::on_timeout_draw()
     } else {
         if (m_old_index != m_current_index) {
             m_old_index = m_current_index;
+
             Gtk::Widget::queue_draw();
         }
     }
@@ -260,11 +262,19 @@ inline int Panel_preview::get_index(const int& mouseX, const int& mouseY)
 void Panel_preview::draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int x, int y,
                               const string& text)
 {
+    cr->rectangle(x, y + 6, m_width - 6, PREVIEW_TITLE_SIZE);
+    cr->set_source_rgba(1, 1, 1, 0.f);  // for debuging set alpha to 1.f
+
+    cr->clip_preserve();
+    cr->stroke();
+
+    cr->set_source_rgba(1, 1, 1, 1.f);  // for debuging set alpha to 1.f
     // http://developer.gnome.org/pangomm/unstable/classPango_1_1FontDescription.html
     Pango::FontDescription font;
 
     font.set_family("Monospace");
-    font.set_weight(Pango::WEIGHT_BOLD);
+    font.set_weight(Pango::WEIGHT_NORMAL);
+    font.set_size(9 * PANGO_SCALE);
 
     // http://developer.gnome.org/pangomm/unstable/classPango_1_1Layout.html
     auto layout = create_pango_layout(text);
@@ -279,9 +289,10 @@ void Panel_preview::draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int x, in
 
     // Position the text in the middle
     // cr->move_to((rectangle_width-text_width)/2, (rectangle_height-text_height)/2);
-    cr->move_to(x, y);
+    cr->move_to(x + 4, y + 16);
 
     layout->show_in_cairo_context(cr);
+    cr->reset_clip();  // Reset the clipping
 }
 
 bool Panel_preview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
@@ -345,24 +356,19 @@ bool Panel_preview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
             item->m_preview_frame_count = -1;
         }
 
+        if (idx == m_current_index) {
+            cr->set_source_rgba(1, 1, 1, 0.4);
+            cairo_util::rounded_rectangle(cr, x, 6, m_width, PREVIEW_TITLE_SIZE, 0);
+            cr->fill();
+        }
+        cr->set_source_rgba(1, 1, 1, 0.4);
+        cairo_util::rounded_rectangle(cr, x, y, m_width, m_height, 0);
+        cr->fill();
         if (image) {
-            cr->set_source_rgb(1, 1, 1);
-            char bufer[64];
-            sprintf(bufer, "[%d]ปลอดภัย", (int)item->get_xid());
-            draw_text(cr, x, 1, bufer);
+            draw_text(cr, x, 1, item->get_windowname());
 
             Gdk::Cairo::set_source_pixbuf(cr, image, x, y);
             cr->paint();
-        }
-
-        cr->set_source_rgba(0, 0, 1, 1);
-        cairo_util::rounded_rectangle(cr, x, y, m_width, m_height, 0);
-        cr->stroke();
-
-        if (idx == m_current_index) {
-            cr->set_source_rgba(1, 1, 1, 0.4);
-            cairo_util::rounded_rectangle(cr, x, y, m_width, m_height, 0);
-            cr->fill();
         }
 
         x += m_width + PREVIEW_SPARATOR_SIZE;

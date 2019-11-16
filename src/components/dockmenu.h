@@ -113,6 +113,8 @@ class Dock_menu : public Panel_base
         wnck_util::close_group_windows(m_current_index);
     }
 
+    void on_item_menu_minimize_all_event();
+
     virtual void on_separator_menu_position(int& x, int& y, bool& push_in);
     virtual void on_home_menu_position(int& x, int& y, bool& push_in);
     virtual void on_item_menu_position(int& x, int& y, bool& push_in);
