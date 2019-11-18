@@ -420,7 +420,6 @@ bool Panel::on_button_release_event(GdkEventButton* event)
                             }
                         }
 
-                        // if (m_preview == nullptr) {
                         m_preview = unique_ptr<Panel_preview>(new Panel_preview());
                         m_preview_index = m_current_index;
                         m_preview->init(m_preview_index);
@@ -428,11 +427,10 @@ bool Panel::on_button_release_event(GdkEventButton* event)
                         m_preview->signal_close().connect(
                             sigc::mem_fun(this, &Panel::close_preview));
 
-                        m_preview->show_preview();
-                        // }
+                        bool can_show_preview = m_preview->show_preview();
+                        if (!can_show_preview) {
+                            // clang-format off
 
-                        // clang-format off
-/*
                         // build the window list menu
                         // delegate memory management to the container widget.
                         m_item_menu_windowlist = Gtk::manage(new Gtk::Menu());
@@ -458,9 +456,10 @@ bool Panel::on_button_release_event(GdkEventButton* event)
                         m_item_menu_windowlist->signal_show().connect(sigc::mem_fun(*this, &Panel::on_menu_show_event));
                         m_item_menu_windowlist->signal_hide().connect(sigc::mem_fun(*this, &Panel::on_menu_hide_event));
                         m_item_menu_windowlist->popup(sigc::mem_fun(*this,
-                                    &Panel::on_item_menu_windowlist_position),1, event->time);*/
+                                    &Panel::on_item_menu_windowlist_position),1, event->time);
 
-                        // clang-format on
+                            // clang-format on
+                        }
                     }
                 }
             }

@@ -40,9 +40,9 @@ Panel_preview::Panel_preview() : Gtk::Window(Gtk::WindowType::WINDOW_POPUP)
         gtk_widget_set_visual(GTK_WIDGET(gobj()), visual);
     }
 
-    WnckScreen* wnckscreen = wnck_screen_get_default();
-    g_signal_connect(wnckscreen, "active_window_changed",
-                     G_CALLBACK(Panel_preview::on_active_window_changed), nullptr);
+    // WnckScreen* wnckscreen = wnck_screen_get_default();
+    // g_signal_connect(wnckscreen, "active_window_changed",
+    // G_CALLBACK(Panel_preview::on_active_window_changed), nullptr);
 
     // m_font.set_family("System");
     // m_font.set_size(8 * PANGO_SCALE);
@@ -74,7 +74,6 @@ void Panel_preview::init(int index)
     // Using assignment operator to copy the items vector
     m_previewitems = AppUpdater::m_dockitems[m_current_index]->m_items;
 
-    ////    auto const items = AppUpdater::m_dockitems[index];
     for (auto item : m_previewitems) {
         item->set_image(NULLPB);
         item->m_preview_first_image = NULLPB;
@@ -110,30 +109,50 @@ bool Panel_preview::show_preview()
 
     int x = 0;
     int y = 0;
-    int image_size = m_previewitems[0]->get_width() * 3;
+    int image_size = (m_previewitems[0]->get_width() * 2) + 24;
     int item_count = (int)m_previewitems.size();
+    int separator_size = (item_count - 1) * PREVIEW_SPARATOR_SIZE;
 
     m_width = image_size + PREVIEW_WIDTH_EXTENDED_SIZE;
     m_height = image_size - PREVIEW_TITLE_SIZE;
 
-    // clang-format off
     if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-        m_window_width = (item_count * m_width) + PREVIEW_START_END_MARGIN +
-                         ((item_count - 1) * PREVIEW_SPARATOR_SIZE);
+        m_window_width = (item_count * m_width) + PREVIEW_START_END_MARGIN + separator_size;
 
-        m_window_height = image_size + PREVIEW_START_END_MARGIN;
+        int max_size = position_util::get_workarea().get_width();
+        if (m_window_width > max_size) {
+            m_width = (max_size - PREVIEW_START_END_MARGIN - separator_size) / item_count;
+
+            m_window_width = max_size;
+            m_height = m_width - PREVIEW_WIDTH_EXTENDED_SIZE - PREVIEW_START_END_MARGIN;
+
+            if (m_height <= PREVIEW_LIMIT_HEIGHT) {
+                return false;
+            }
+        }
+
+        m_window_height = m_height + PREVIEW_START_END_MARGIN + PREVIEW_TITLE_SIZE;
 
     } else {
+        m_window_height = (item_count * m_height) + separator_size +
+                          (item_count)*PREVIEW_TITLE_SIZE + PREVIEW_START_END_MARGIN;
 
-        m_window_height = (item_count * m_height) +
-                          (item_count - 1) * PREVIEW_SPARATOR_SIZE +
-                          (item_count ) * PREVIEW_TITLE_SIZE +
-                          PREVIEW_START_END_MARGIN;
+        int max_size = position_util::get_workarea().get_height();
+        if (m_window_height > max_size) {
+            m_height = (max_size - PREVIEW_START_END_MARGIN - separator_size -
+                        (PREVIEW_TITLE_SIZE * item_count)) /
+                       item_count;
+
+            m_window_height = max_size;
+            m_width = m_height + PREVIEW_WIDTH_EXTENDED_SIZE;
+
+            if (m_width <= PREVIEW_LIMIT_WIDTH) {
+                return false;
+            }
+        }
 
         m_window_width = m_width + PREVIEW_START_END_MARGIN;
     }
-
-    // clang-format on
 
     this->resize(m_window_width, m_window_height);
     position_util::get_center_position(m_current_index, x, y, m_window_width, m_window_height);
@@ -148,12 +167,6 @@ void Panel_preview::on_active_window_changed(WnckScreen* screen,
                                              WnckWindow* previously_active_window,
                                              gpointer user_data)
 {
-    //  WnckWindow* active_window = wnck_screen_get_active_window(screen);
-    //    if (!active_window) {
-    //        return;
-    //    }
-
-    //    close_this = true;
 }
 
 bool Panel_preview::on_leave_notify_event(GdkEventCrossing* crossing_event)

@@ -19,6 +19,19 @@ DockItem::DockItem(appinfo_t app_info, dock_item_type_t item_type)
 
 DockItem::~DockItem()
 {
+    if (m_preview_window_image) {
+        m_preview_first_image.reset();
+        m_preview_first_image = (Glib::RefPtr<Gdk::Pixbuf>)nullptr;
+
+        g_print("Free DockItem preview image\n");
+    }
+
+    if (m_app_info.m_image) {
+        m_app_info.m_image.reset();
+        m_app_info.m_image = (Glib::RefPtr<Gdk::Pixbuf>)nullptr;
+
+        g_print("Free DockItem image image\n");
+    }
     g_print("Free DockItem\n");
 }
 
