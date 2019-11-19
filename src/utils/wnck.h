@@ -23,6 +23,7 @@ namespace wnck_util
     void close_group_windows(int index);
     void minimize_group(int index);
     bool is_valid_window_type(WnckWindow* window);
+    int get_workspace_number(WnckWindow* window);
 
     //
     // bool is_windowOnCurrentDesktop(WnckWindow* window);

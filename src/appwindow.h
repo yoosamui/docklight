@@ -24,8 +24,11 @@ class AppWindow : public Gtk::Window
     static void update();
 
     Panel *get_panel() const;
+    static void send_message(const string &title, const string &text, const string &icon_name);
 
   private:
+    static Glib::RefPtr<Gtk::Application> m_application;
+
     static Panel *m_panel;
 
     bool m_mouse_in = false;

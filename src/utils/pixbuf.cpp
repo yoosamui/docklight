@@ -289,6 +289,46 @@ namespace pixbuf_util
         return winPixbuf;
     }
 
+    /*Glib::RefPtr<Gdk::Pixbuf> get_pixbuf_scaled(const Glib::RefPtr<Gdk::Pixbuf>& pixbuf,
+                                                const guint destWidth, const guint destHeight,
+                                                guint& scaledWidth, guint& scaledHeight)
+    {
+        if (!pixbuf) {
+            return NULLPB;
+        }
+
+        Glib::RefPtr<Gdk::Pixbuf> result =
+            calculate_aspect_ratio(pixbuf, destWidth, destHeight, scaledWidth, scaledHeight);
+
+        // guint winWidth = result->get_width();
+        // guint winHeight = result->get_height();
+
+        // double percent_w = (scaledWidth * 100) / destWidth;
+        // double percent_h = (scaledHeight * 100) / destHeight;
+
+        // if (percent_w < 90.f || percent_h < 90.f) {
+        // int factor = 10;  // destWidth + percent_w / 2;
+        // result = calculate_aspect_ratio(pixbuf, destWidth + factor, destHeight + factor,
+        // scaledWidth, scaledHeight);
+        //}
+
+        //        g_print("des %d x %d  res %d %d  p:%f\n", destWidth, destHeight, winWidth,
+        //        winHeight,
+        //              percent);
+
+        //// ajust width size to make it looks better
+        // if (winWidth > half_WindowWidth) {
+        // if (winHeight > half_WindowHeight) scaledWidth = width - 4;
+        //}
+
+        //// ajust height size to make it looks better
+        // if (winHeight > half_WindowHeight) {
+        // if (winWidth > half_WindowWidth) scaledHeight = height - 2;
+        //}
+
+        return result;  //->scale_simple(scaledWidth, scaledHeight, Gdk::INTERP_BILINEAR);
+    }*/
+
     Glib::RefPtr<Gdk::Pixbuf> get_pixbuf_scaled(const Glib::RefPtr<Gdk::Pixbuf>& pixbuf,
                                                 const guint destWidth, const guint destHeight,
                                                 guint& scaledWidth, guint& scaledHeight)
@@ -318,19 +358,18 @@ namespace pixbuf_util
         guint half_WindowWidth = workarea.get_width() / 3;
         guint half_WindowHeight = workarea.get_height() / 3;
 
-        // ajust width size to make it looks better
+        // ajust width size
         if (winWidth > half_WindowWidth) {
-            if (winHeight > half_WindowHeight) scaledWidth = width - 4;
+            scaledWidth = width - 6;
         }
 
-        // ajust height size to make it looks better
+        // ajust height size
         if (winHeight > half_WindowHeight) {
-            if (winWidth > half_WindowWidth) scaledHeight = height - 2;
+            scaledHeight = height - 4;
         }
 
         return pixbuf->scale_simple(scaledWidth, scaledHeight, Gdk::INTERP_BILINEAR);
     }
-
     /**
      * Converts a GdkPixbuf to a Glib::RefPtr<Gdk::Pixbuf>.
      * DEPRECATED

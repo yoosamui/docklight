@@ -9,11 +9,17 @@
 #include "utils/position.h"
 #include "utils/easing.h"
 #include "utils/system.h"
+
+#include <giomm/notification.h>
+#include <giomm/icon.h>
+#include <giomm/themedicon.h>
 // clang-format on
 
 DL_NS_BEGIN
 
 Panel *AppWindow::m_panel;
+Glib::RefPtr<Gtk::Application> AppWindow::m_application;
+
 AppWindow::AppWindow()
 {
     GdkScreen *screen;
@@ -104,11 +110,23 @@ void AppWindow::update()
     g_print("AppWindow updated.\n");
 }
 
+void AppWindow::send_message(const string &title, const string &text, const string &icon_name)
+{
+    auto Notification = Gio::Notification::create(title);
+    Notification->set_body(text);
+    auto Icon = Gio::ThemedIcon::create(icon_name);
+    Notification->set_icon(Icon);
+
+    m_application->send_notification(Notification);
+}
+
 int AppWindow::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine> &command_line,
                                Glib::RefPtr<Gtk::Application> &app)
 {
     int argc = 0;
     char **argv = command_line->get_arguments(argc);
+
+    AppWindow::m_application = app;
 
     cli::Arguments a(argc, argv);
     if (a.validate() == false) {
@@ -147,6 +165,7 @@ int AppWindow::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine> &
     // activate window
     app->activate();
 
+    send_message("Docklight", "Application start", "dialog-information");
     return argc;
 }
 

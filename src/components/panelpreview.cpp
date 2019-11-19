@@ -51,13 +51,6 @@ Panel_preview::Panel_preview() : Gtk::Window(Gtk::WindowType::WINDOW_POPUP)
 
 Panel_preview::~Panel_preview()
 {
-    // for (auto item : AppUpdater::m_dockitems[m_current_index]->m_items) {
-    // item->m_preview_first_image = NULLPB;
-    // item->set_image(NULLPB);
-    // item.reset();
-    //}
-
-    // m_previewitems.clear();
     g_print("Destroy preview\n");
 }
 
@@ -69,10 +62,10 @@ Panel_preview::type_signal_close Panel_preview::signal_close()
 bool initialized = false;
 void Panel_preview::init(int index)
 {
-    m_current_index = index;
+    m_dockitem_index = index;
 
     // Using assignment operator to copy the items vector
-    m_previewitems = AppUpdater::m_dockitems[m_current_index]->m_items;
+    m_previewitems = AppUpdater::m_dockitems[m_dockitem_index]->m_items;
 
     for (auto item : m_previewitems) {
         item->set_image(NULLPB);
@@ -116,13 +109,13 @@ bool Panel_preview::show_preview()
     m_width = image_size + PREVIEW_WIDTH_EXTENDED_SIZE;
     m_height = image_size - PREVIEW_TITLE_SIZE;
 
+    // clang-format off
     if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
         m_window_width = (item_count * m_width) + PREVIEW_START_END_MARGIN + separator_size;
-
         int max_size = position_util::get_workarea().get_width();
+
         if (m_window_width > max_size) {
             m_width = (max_size - PREVIEW_START_END_MARGIN - separator_size) / item_count;
-
             m_window_width = max_size;
             m_height = m_width - PREVIEW_WIDTH_EXTENDED_SIZE - PREVIEW_START_END_MARGIN;
 
@@ -138,6 +131,7 @@ bool Panel_preview::show_preview()
                           (item_count)*PREVIEW_TITLE_SIZE + PREVIEW_START_END_MARGIN;
 
         int max_size = position_util::get_workarea().get_height();
+
         if (m_window_height > max_size) {
             m_height = (max_size - PREVIEW_START_END_MARGIN - separator_size -
                         (PREVIEW_TITLE_SIZE * item_count)) /
@@ -153,9 +147,10 @@ bool Panel_preview::show_preview()
 
         m_window_width = m_width + PREVIEW_START_END_MARGIN;
     }
+    // clang-format on
 
     this->resize(m_window_width, m_window_height);
-    position_util::get_center_position(m_current_index, x, y, m_window_width, m_window_height);
+    position_util::get_center_position(m_dockitem_index, x, y, m_window_width, m_window_height);
     this->move(x, y);
 
     this->show();
@@ -163,6 +158,7 @@ bool Panel_preview::show_preview()
     Glib::signal_timeout().connect(sigc::mem_fun(*this, &Panel_preview::on_timeout_draw), 1000 / 9);
     return true;
 }
+
 void Panel_preview::on_active_window_changed(WnckScreen* screen,
                                              WnckWindow* previously_active_window,
                                              gpointer user_data)
@@ -227,7 +223,27 @@ bool Panel_preview::on_button_press_event(GdkEventButton* event)
 {
     if (m_current_index == -1) return true;
 
+    int mouse_x = (int)event->x;
+    int mouse_y = (int)event->y;
+
     auto const item = m_previewitems[m_current_index];
+
+    // check close button over
+    Gdk::Rectangle mouse_rect(mouse_x, mouse_y, 2, 2);
+    if (m_close_button_rectangle.intersects(mouse_rect)) {
+        wnck_util::close_window(item->get_wnckwindow());
+
+        m_previewitems.erase(m_previewitems.begin() + m_current_index);
+        m_current_index = 0;
+
+        if (m_previewitems.size() == 0) {
+            this->close();
+        }
+
+        this->show_preview();
+
+        return true;
+    }
 
     // set image to null to force reload from cache
     if (system_util::is_mutter_window_manager() == false) {
@@ -235,6 +251,7 @@ bool Panel_preview::on_button_press_event(GdkEventButton* event)
         item->m_preview_image_is_dynamic = true;
         item->m_preview_frame_count = 0;
     }
+
     wnck_util::activate_window(item->get_wnckwindow());
 
     return true;
@@ -247,7 +264,10 @@ bool Panel_preview::on_button_release_event(GdkEventButton* event)
 
 bool Panel_preview::on_motion_notify_event(GdkEventMotion* event)
 {
-    auto index = this->get_index(event->x, event->y);
+    int mouse_x = (int)event->x;
+    int mouse_y = (int)event->y;
+
+    auto index = this->get_index(mouse_x, mouse_y);
     m_current_index = index;
 
     return true;
@@ -398,6 +418,37 @@ bool Panel_preview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
             image_center_y = ((m_height / 2) - (image->get_height() / 2)) + PREVIEW_TITLE_SIZE;
 
             draw_text(cr, x, y, item->get_windowname());
+
+            // close selector
+            if (idx == m_current_index) {
+                cr->set_source_rgba(0.854, 0.062, 0.133, 1);
+                int x1 = x + m_width - PREVIEW_TITLE_SIZE;
+                int x2 = PREVIEW_TITLE_SIZE - 8;
+                int y1 = y;
+                int y2 = PREVIEW_TITLE_SIZE - 8;
+
+                m_close_button_rectangle =
+                    Gdk::Rectangle(x1, y1, PREVIEW_TITLE_SIZE, PREVIEW_TITLE_SIZE);
+
+                cr->rectangle(x1, y1, PREVIEW_TITLE_SIZE, PREVIEW_TITLE_SIZE);
+                cr->fill();
+
+                cr->set_line_width(2);
+                cr->set_source_rgba(1, 1, 1, 1);
+
+                x1 += 4;
+                y1 += 4;
+
+                cr->move_to(x1, y1);
+                cr->line_to(x1, y1);
+                cr->line_to(x1 + x2, y1 + y2);
+                cr->stroke();
+
+                cr->move_to(x1 + x2, y1);
+                cr->line_to(x1 + x2, y1);
+                cr->line_to(x1, y1 + y2);
+                cr->stroke();
+            }
 
             Gdk::Cairo::set_source_pixbuf(cr, image, x + image_center_x, y + image_center_y);
             cr->paint();

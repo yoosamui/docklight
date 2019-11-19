@@ -62,6 +62,10 @@ string DockItem::get_title() const
 
 string DockItem::get_windowname() const
 {
+    if (!WNCK_IS_WINDOW(m_app_info.m_wnckwindow)) {
+        return "invalid window";
+    }
+
     return wnck_window_get_name(m_app_info.m_wnckwindow);
 }
 

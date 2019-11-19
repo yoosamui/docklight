@@ -22,6 +22,8 @@ class Panel_preview : public Gtk::Window
     type_signal_close signal_close();
 
   private:
+    Gdk::Rectangle m_close_button_rectangle;
+
     static constexpr const int PREVIEW_WIDTH_EXTENDED_SIZE = 50;
     static constexpr const int PREVIEW_SPARATOR_SIZE = 8;
     static constexpr const int PREVIEW_START_END_MARGIN = 20;
@@ -41,7 +43,8 @@ class Panel_preview : public Gtk::Window
     int m_width;
     int m_height;
 
-    int m_current_index = -1;
+    int m_dockitem_index = -1;
+    int m_current_index = 0;
     int m_old_index = -1;
 
     vector<shared_ptr<DockItem>> m_previewitems;

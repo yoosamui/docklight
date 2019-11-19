@@ -7,8 +7,6 @@ namespace wnck_util
 {
     void activate_window(WnckWindow* window)
     {
-        if (window == nullptr) return;
-
         if (!WNCK_IS_WINDOW(window)) {
             return;
         }
@@ -40,9 +38,11 @@ namespace wnck_util
 
     void close_window(WnckWindow* window)
     {
-        if (!window) return;
+        if (!WNCK_IS_WINDOW(window)) {
+            return;
+        }
 
-        wnck_window_minimize(window);
+        //  wnck_window_minimize(window);
         wnck_window_close(window, gtk_get_current_event_time());
     }
 
@@ -57,17 +57,12 @@ namespace wnck_util
         for (window_l = wnck_screen_get_windows(screen); window_l != NULL;
              window_l = window_l->next) {
             WnckWindow* window = WNCK_WINDOW(window_l->data);
-            if (window == NULL) continue;
 
-            WnckWindowType wt = wnck_window_get_window_type(window);
-
-            if (wt == WNCK_WINDOW_DESKTOP || wt == WNCK_WINDOW_DOCK || wt == WNCK_WINDOW_TOOLBAR ||
-                wt == WNCK_WINDOW_MENU) {
+            if (!WNCK_IS_WINDOW(window)) {
                 continue;
             }
 
-            const char* instancename = wnck_window_get_class_instance_name(window);
-            if (instancename != NULL && strcasecmp(instancename, DOCKLIGHT_INSTANCENAME) == 0) {
+            if (!is_valid_window_type(window)) {
                 continue;
             }
 
@@ -75,8 +70,28 @@ namespace wnck_util
         }
     }
 
+    int get_workspace_number(WnckWindow* window)
+    {
+        if (!WNCK_IS_WINDOW(window)) {
+            return false;
+        }
+
+        GdkScreen* screen = gdk_screen_get_default();
+        guint32 current_ws_number = gdk_x11_screen_get_current_desktop(screen);
+        WnckWorkspace* ws = wnck_window_get_workspace(window);
+        if (ws == nullptr || wnck_workspace_get_number(ws) != (int)current_ws_number) {
+            return -1;
+        }
+
+        return current_ws_number;
+    }
+
     bool is_window_on_current_desktop(WnckWindow* window)
     {
+        if (!WNCK_IS_WINDOW(window)) {
+            return false;
+        }
+
         GdkScreen* screen = gdk_screen_get_default();
         guint32 current_ws_number = gdk_x11_screen_get_current_desktop(screen);
         WnckWorkspace* ws = wnck_window_get_workspace(window);
@@ -87,7 +102,15 @@ namespace wnck_util
         return true;
     }
 
-    string get_window_name(WnckWindow* window) { return string(wnck_window_get_name(window)); }
+    string get_window_name(WnckWindow* window)
+    {
+        if (!WNCK_IS_WINDOW(window)) {
+            return {};
+        }
+
+        return string(wnck_window_get_name(window));
+    }
+
     int get_windows_count()
     {
         int count = 0;
@@ -99,19 +122,16 @@ namespace wnck_util
         for (window_l = wnck_screen_get_windows(screen); window_l != nullptr;
              window_l = window_l->next) {
             WnckWindow* window = static_cast<WnckWindow*>(window_l->data);
+
+            if (!WNCK_IS_WINDOW(window)) {
+                continue;
+            }
+
             if (window == nullptr) {
                 continue;
             }
 
-            WnckWindowType wt = wnck_window_get_window_type(window);
-
-            if (wt == WNCK_WINDOW_DESKTOP || wt == WNCK_WINDOW_DOCK || wt == WNCK_WINDOW_TOOLBAR ||
-                wt == WNCK_WINDOW_MENU || wt == WNCK_WINDOW_SPLASHSCREEN) {
-                continue;
-            }
-
-            const char* instancename = wnck_window_get_class_instance_name(window);
-            if (instancename != nullptr && strcasecmp(instancename, DOCKLIGHT_INSTANCENAME) == 0) {
+            if (!is_valid_window_type(window)) {
                 continue;
             }
 
