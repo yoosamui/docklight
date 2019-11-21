@@ -296,15 +296,6 @@ bool Autohide::is_intersection_detected()
     }
 
     bool intersect = rect_window.intersects(rect_dock);
-
-    g_print("win %d x %d", rect_window.get_width(), rect_window.get_height());
-
-    if (intersect) {
-        g_print("Intersect\n");
-    } else {
-        g_print("NO Intersect\n");
-    }
-
     return intersect;
 }
 
@@ -343,14 +334,11 @@ void Autohide::intelihide()
     if (Autohide::is_intersection_detected()) {
         WnckWindowType wt = wnck_window_get_window_type(m_stm.m_active_window);
         if (wt == WNCK_WINDOW_DESKTOP) {
-            //        if (Autohide::get_windows_count() == 0) {
             return;
         }
-        g_print("Hide.\n");
         hide();
     } else {
         show();
-        g_print("Show.\n");
     }
 }
 
