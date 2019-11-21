@@ -43,9 +43,9 @@ class Panel_preview : public Gtk::Window
     int m_width;
     int m_height;
 
-    int m_dockitem_index = -1;
     int m_current_index = 0;
     int m_old_index = -1;
+    int m_dockitem_index = -1;
 
     vector<shared_ptr<DockItem>> m_previewitems;
     bool on_timeout_draw();

@@ -23,6 +23,9 @@ void Autohide::init()
     g_signal_connect(wnckscreen, "active_window_changed",
                      G_CALLBACK(Autohide::on_active_window_changed), nullptr);
 
+    g_signal_connect(wnckscreen, "active-workspace-changed",
+                     G_CALLBACK(Autohide::on_active_workspace_changed_callback), nullptr);
+
     if (config::is_autohide_none() == false) {
         this->reset_timer();
         connect_signal_handler(true);
@@ -95,6 +98,14 @@ void Autohide::on_active_window_changed(WnckScreen* screen, WnckWindow* previous
                 G_CALLBACK(Autohide::on_state_changed), nullptr);
     }
     // clang-format on
+}
+
+void Autohide::on_active_workspace_changed_callback(WnckScreen* screen,
+                                                    WnckWorkspace* previously_active_space,
+                                                    gpointer user_data)
+{
+    if (!config::is_intelihide()) return;
+    intelihide();
 }
 
 void Autohide::on_state_changed(WnckWindow* window, WnckWindowState changed_mask,
@@ -207,10 +218,19 @@ Gdk::Rectangle Autohide::get_window_geometry(WnckWindow* window)
 
 bool Autohide::is_intersection_detected()
 {
+    if (m_stm.m_active_window == nullptr) {
+        return false;
+    }
+
     auto screen = wnck_screen_get_default();
     m_stm.m_active_window = wnck_screen_get_active_window(screen);
 
-    if (m_stm.m_active_window == nullptr) {
+    if (!wnck_util::is_window_on_current_desktop(m_stm.m_active_window)) {
+        return false;
+    }
+
+    WnckWindowType wt = wnck_window_get_window_type(m_stm.m_active_window);
+    if (wt == WNCK_WINDOW_DESKTOP) {
         return false;
     }
 
@@ -275,7 +295,17 @@ bool Autohide::is_intersection_detected()
         }
     }
 
-    return rect_window.intersects(rect_dock);
+    bool intersect = rect_window.intersects(rect_dock);
+
+    g_print("win %d x %d", rect_window.get_width(), rect_window.get_height());
+
+    if (intersect) {
+        g_print("Intersect\n");
+    } else {
+        g_print("NO Intersect\n");
+    }
+
+    return intersect;
 }
 
 void Autohide::intelihide()
@@ -316,10 +346,11 @@ void Autohide::intelihide()
             //        if (Autohide::get_windows_count() == 0) {
             return;
         }
-
+        g_print("Hide.\n");
         hide();
     } else {
         show();
+        g_print("Show.\n");
     }
 }
 

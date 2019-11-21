@@ -11,6 +11,7 @@
 #include "components/config.h"
 //#include "components/dockmenu.h"
 
+#include "components/panelpreview.h"
 //#include "components/titlewindow.h"
 
 DL_NS_BEGIN
@@ -24,6 +25,9 @@ class Panel_base  //: public Gtk::DrawingArea
   protected:
     static int m_current_index;
     AppUpdater m_appupdater;
+
+    unique_ptr<Panel_preview> m_preview;
+    int m_preview_index = -1;
 };
 
 DL_NS_END

@@ -74,6 +74,10 @@ class Autohide
     static void on_geometry_changed(WnckWindow* window, gpointer user_data);
     static void on_state_changed(WnckWindow* window, WnckWindowState changed_mask,
                                  WnckWindowState new_state, gpointer user_data);
+
+    static void on_active_workspace_changed_callback(WnckScreen* screen,
+                                                     WnckWorkspace* previously_active_space,
+                                                     gpointer user_data);
 };
 
 DL_NS_END

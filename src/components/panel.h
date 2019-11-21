@@ -9,7 +9,6 @@
 //#include "components/autohide.h"
 //#include "components/config.h"
 #include "components/launcherwindow.h"
-#include "components/panelpreview.h"
 #include "components/panelrender.h"
 //#include "components/titlewindow.h"
 
@@ -27,10 +26,6 @@ class Panel : public Gtk::DrawingArea, public Panel_render
     void on_appupdater_update();
 
   private:
-    //    Panel_preview m_preview;
-    unique_ptr<Panel_preview> m_preview;
-    int m_preview_index = -1;
-
     thread* m_bck_thread = nullptr;
     static void connect_async();
     Gtk::Window* m_owner = nullptr;

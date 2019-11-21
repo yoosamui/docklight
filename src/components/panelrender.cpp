@@ -349,7 +349,7 @@ inline void Panel_render::draw_icon(const Cairo::RefPtr<Cairo::Context>& cr,
 void Panel_render::draw_title()
 {
     if (m_current_index < 0 || m_context_menu_open || !config::is_show_title() ||
-        !m_stm.m_connect_draw_signal_set || !m_autohide.is_visible()) {
+        !m_stm.m_connect_draw_signal_set || !m_autohide.is_visible() || m_preview) {
         m_titlewindow.hide();
         m_titlewindow_visible = false;
 
