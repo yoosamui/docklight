@@ -2,9 +2,9 @@
 Docklight 
 ---------
 
-a lightweight Dockbar for launch common applications add plugins and system try icons.
-Support several linux Window Managers. e.g Mutter, Fluxbox, Openbox xfce etc.
-Compton is recomendet for Window Managers without Compositor Manager e.g Fluxbox or Openbox.
+lightweight Dockbar for launch common applications. Contains with plugins and system try window.
+Support several linux Window Managers. e.g Mutter, Fluxbox, Openbox, xfce etc.
+Compton is recomendet for Window Managers without Compositor Manager e.g for Fluxbox or Openbox.
 
 
 Low CPU usage: 
