@@ -2,10 +2,11 @@
 Docklight 
 ---------
 
-lightweight Dockbar for launch common applications. Contains with plugins and system try window.
+lightweight Dockbar for launch common applications.
+Expandable with plugins. contains also an system try window.
+
 Support several linux Window Managers. e.g Mutter, Fluxbox, Openbox, xfce etc.
 Compton is recomendet for Window Managers without Compositor Manager e.g for Fluxbox or Openbox.
-
 
 Low CPU usage: 
 
@@ -17,30 +18,32 @@ IMAGE GROUP PREVIEW STATIC IMAGES ( Images without movement ) 0.0% after 1 secon
 
 
 - Multiple Monitors and multiple instance configurations.
-- Autohide, Intellihide and fixed mode.
-- Postioning top, right bottom left.
+- Autohide, Intellihide and none (strut) mode.
+- Postioning on top, right,  bottom  or left.
 
 
 Examples:
 
-Start docklight on the default location defined in the configuration on the primary monitor.
+Start docklight on the default location defined in the configuration.
+Use the primary monitor.
 Read the settings from the default configuration docklight.config located in:
  ~/.config/docklight folder 
 
 ./docklight 
 
-Start docklight with specific icon size  primary monitor.
+Start docklight with specific icon size.
+Use the primary monitor.
 This overrides the configuration value.
 
 ./docklight -r 64
 
 
-Start docklight on the left location on  monitor with the number 1.
+Start docklight on the left location
+Use the monitor with the number 1.
 Read the settings from the specific configuration config1.config located in :
 ~/.config/docklight folder.
 
 ./docklight -l left -m 1 -c config1.config 
-
 
 
 
