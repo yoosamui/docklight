@@ -188,10 +188,10 @@ inline void Panel_render::draw_indicator(const Cairo::RefPtr<Cairo::Context>& cr
     if (indicator_type == dock_indicator_type_t::dots &&
         m_theme.PanelIndicator().Fill().Color::alpha > 0.0) {
         if (item->m_items.size() == 1) {
-            cr->arc(x + center, y + area - 4, 1.8, 0, 2 * M_PI);
+            cr->arc(x + center, y + area - 3, 1.8, 0, 2 * M_PI);
         } else if (item->m_items.size() > 1) {
-            cr->arc(x + center - 3, y + area - 4, 1.8, 0, 2 * M_PI);
-            cr->arc(x + center + 3, y + area - 4, 1.8, 0, 2 * M_PI);
+            cr->arc(x + center - 3, y + area - 3, 1.8, 0, 2 * M_PI);
+            cr->arc(x + center + 3, y + area - 3, 1.8, 0, 2 * M_PI);
         }
 
         cr->set_source_rgba(m_theme.PanelIndicator().Fill().Color::red,
@@ -202,7 +202,7 @@ inline void Panel_render::draw_indicator(const Cairo::RefPtr<Cairo::Context>& cr
 
     } else if (indicator_type == dock_indicator_type_t::lines &&
                m_theme.PanelIndicator().Stroke().Color::alpha > 0.0) {
-        int marginY = area - 3;
+        int marginY = area - 2;
         if (item->m_items.size() > 0) {
             if (item->m_items.size() == 1) {
                 cr->move_to(x + 0, y + marginY);
@@ -225,7 +225,7 @@ inline void Panel_render::draw_indicator(const Cairo::RefPtr<Cairo::Context>& cr
                             m_theme.PanelIndicator().Stroke().Color::blue,
                             m_theme.PanelIndicator().Stroke().Color::alpha);
 
-        cr->set_line_width(2.0);
+        cr->set_line_width(m_theme.PanelIndicator().LineWidth());
         cr->stroke();
     }
 }

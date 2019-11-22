@@ -4,6 +4,7 @@
 #include <gtkmm/window.h>
 #include <sigc++/sigc++.h>
 #include "common.h"
+#include "components/config.h"
 #include "components/dockitem.h"
 #include "utils/cairo.h"
 
@@ -22,6 +23,9 @@ class Panel_preview : public Gtk::Window
     type_signal_close signal_close();
 
   private:
+    bool m_initialized = false;
+    config::style::Theme m_theme;
+
     Gdk::Rectangle m_close_button_rectangle;
 
     static constexpr const int PREVIEW_WIDTH_EXTENDED_SIZE = 50;

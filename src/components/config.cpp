@@ -100,25 +100,18 @@ namespace config
     void set_default_style()
     {
         // clang-format off
-        //
-        m_theme.set_Panel(new ColorWindow());
-        m_theme.set_PanelCell(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 1, 1, 1), 1.5, 3, 0));
+        m_theme.set_Panel(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 1, 1, 0), 0, 3, 0));
+        m_theme.set_PanelCell(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 1, 1, 1), 0.5, 3, 0));
         m_theme.set_PanelDrag(new ColorWindow(Color(1, 1, 1, 0.4), Color(1, 1, 1, 1), 2.5, 3, 0));
-        m_theme.set_PanelIndicator(new ColorWindow(Color(1, 1, 1, 1), Color(1, 1, 1, 1), 0, 0, 0));
+        m_theme.set_PanelIndicator(new ColorWindow(Color(1, 1, 1, 0.7), Color(1, 1, 1, 1), 2, 0, 0));
         m_theme.set_PanelSeparator(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 1, 1, 1.0), 1.0, 0, 0));
-
-/*
-        m_theme.set_Selector(new ColorWindow(Color(255, 255, 255, 0.3), Color(1, 1, 1, 1), 1.5, 3, 0));
-        m_theme.set_PanelTitle(new ColorWindow(Color(0, 0, 0, 1), Color(0, 0, 0, 1), 1, 6, 0));
-        m_theme.set_PanelTitleText(new ColorWindow(Color(), Color(1, 1, 1, 1), 1, 0, 0));
         m_theme.set_Preview(new ColorWindow());
-        m_theme.set_PreviewCell(new ColorWindow(Color(1, 1, 1, 0.2), Color(1, 1, 1, 0), 1.5, 3, 0));
-        m_theme.set_PreviewTitleText(new ColorWindow(Color(), Color(1, 1, 1, 1), 0, 0, 0));
-        m_theme.set_PreviewClose(new ColorWindow(Color(1, 0, 0, 1), Color(1, 1, 1, 1), 1.5, 0, 0));
-        m_theme.set_Separator(new ColorWindow(Color(), Color(1, 1, 1, 1), 1, 0, 0));
-*/
+        m_theme.set_PreviewCell(new ColorWindow(Color(1, 1, 1, 0.2), Color(1, 1, 1, 1), 1, 3, 0));
+        m_theme.set_PreviewTitleText(new ColorWindow(Color(1,1,1,0.4), Color(1, 1, 1, 1), 0, 0, 0));
+        m_theme.set_PreviewClose(new ColorWindow(Color(0.854, 0.062, 0.133, 1), Color(1, 1, 1, 1), 2.0, 0, 0));
         // clang-format on
     }
+
     GKeyFile *load_config_file()
     {
         set_default_style();
@@ -382,6 +375,7 @@ namespace config
                 double ratio;
                 int mask;
 
+                // clang-format off
                 const string panel = get_style_item(key_file, style_name, "panel");
                 if (!panel.empty()) {
                     get_color_from_string(panel.c_str(), fill, stroke, lineWidth, ratio, mask);
@@ -394,13 +388,16 @@ namespace config
                     m_theme.set_PanelCell(new ColorWindow(fill, stroke, lineWidth, ratio, mask));
                 }
 
-                const string panel_indicator =
-                    get_style_item(key_file, style_name, "panel_indicator");
+                const string panel_indicator = get_style_item(key_file, style_name, "panel_indicator");
                 if (!panel_cell.empty()) {
-                    get_color_from_string(panel_indicator.c_str(), fill, stroke, lineWidth, ratio,
-                                          mask);
-                    m_theme.set_PanelIndicator(
-                        new ColorWindow(fill, stroke, lineWidth, ratio, mask));
+                    get_color_from_string(panel_indicator.c_str(), fill, stroke, lineWidth, ratio, mask);
+                    m_theme.set_PanelIndicator(new ColorWindow(fill, stroke, lineWidth, ratio, mask));
+                }
+
+                const string panel_separator = get_style_item(key_file, style_name, "panel_separator");
+                if (!panel_cell.empty()) {
+                    get_color_from_string(panel_separator.c_str(), fill, stroke, lineWidth, ratio, mask);
+                    m_theme.set_PanelSeparator(new ColorWindow(fill, stroke, lineWidth, ratio, mask));
                 }
 
                 const string panel_drag = get_style_item(key_file, style_name, "panel_drag");
@@ -408,6 +405,34 @@ namespace config
                     get_color_from_string(panel_drag.c_str(), fill, stroke, lineWidth, ratio, mask);
                     m_theme.set_PanelDrag(new ColorWindow(fill, stroke, lineWidth, ratio, mask));
                 }
+
+                // preview
+                const string preview = get_style_item(key_file, style_name, "preview");
+                if (!preview.empty()) {
+                    get_color_from_string(preview.c_str(), fill, stroke, lineWidth, ratio, mask);
+                    m_theme.set_Preview(new ColorWindow(fill, stroke, lineWidth, ratio, mask));
+                }
+
+                const string preview_cell = get_style_item(key_file, style_name, "preview_cell");
+                if (!preview_cell.empty()) {
+                    get_color_from_string(preview_cell.c_str(), fill, stroke, lineWidth, ratio,  mask);
+                    m_theme.set_PreviewCell(new ColorWindow(fill, stroke, lineWidth, ratio, mask));
+                }
+
+                const string preview_title_text =  get_style_item(key_file, style_name, "preview_title_text");
+                if (!preview_title_text.empty()) {
+                    get_color_from_string(preview_title_text.c_str(), fill, stroke, lineWidth,  ratio, mask);
+                    m_theme.set_PreviewTitleText( new ColorWindow(fill, stroke, lineWidth, ratio, mask));
+                }
+
+                const string preview_close =  get_style_item(key_file, style_name, "preview_close");
+                if (!preview_close.empty()) {
+                    get_color_from_string(preview_close.c_str(), fill, stroke, lineWidth,  ratio, mask);
+                    m_theme.set_PreviewClose( new ColorWindow(fill, stroke, lineWidth, ratio, mask));
+                }
+
+                // clang-format on
+
             } else {  // use default theme
                 //    m_show_separator_line = false;
             }

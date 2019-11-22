@@ -39,14 +39,6 @@ Panel_preview::Panel_preview() : Gtk::Window(Gtk::WindowType::WINDOW_POPUP)
     if (visual != NULL && gdk_screen_is_composited(screen)) {
         gtk_widget_set_visual(GTK_WIDGET(gobj()), visual);
     }
-
-    // WnckScreen* wnckscreen = wnck_screen_get_default();
-    // g_signal_connect(wnckscreen, "active_window_changed",
-    // G_CALLBACK(Panel_preview::on_active_window_changed), nullptr);
-
-    // m_font.set_family("System");
-    // m_font.set_size(8 * PANGO_SCALE);
-    // m_font.set_weight(Pango::WEIGHT_NORMAL);
 }
 
 Panel_preview::~Panel_preview()
@@ -59,10 +51,11 @@ Panel_preview::type_signal_close Panel_preview::signal_close()
     return m_signal_close;
 }
 
-bool initialized = false;
 void Panel_preview::init(int index)
 {
     m_dockitem_index = index;
+
+    m_theme = config::get_theme();
 
     // Using assignment operator to copy the items vector
     m_previewitems = AppUpdater::m_dockitems[m_dockitem_index]->m_items;
@@ -91,12 +84,12 @@ void Panel_preview::init(int index)
         std::swap(m_previewitems[i], m_previewitems[m]);
     }
 
-    initialized = true;
+    m_initialized = true;
 }
 
 bool Panel_preview::show_preview()
 {
-    if (!initialized) {
+    if (!m_initialized) {
         return false;
     }
 
@@ -149,10 +142,10 @@ bool Panel_preview::show_preview()
     }
     // clang-format on
 
-    this->resize(m_window_width, m_window_height);
     position_util::get_center_position(m_dockitem_index, x, y, m_window_width, m_window_height);
-    this->move(x, y);
 
+    this->resize(m_window_width, m_window_height);
+    this->move(x, y);
     this->show();
 
     Glib::signal_timeout().connect(sigc::mem_fun(*this, &Panel_preview::on_timeout_draw), 1000 / 9);
@@ -172,7 +165,6 @@ bool Panel_preview::on_leave_notify_event(GdkEventCrossing* crossing_event)
 }
 bool Panel_preview::on_enter_notify_event(GdkEventCrossing* crossing_event)
 {
-    //
     m_mouse_in = true;
     return true;
 }
@@ -303,8 +295,9 @@ inline int Panel_preview::get_index(const int& mouseX, const int& mouseY)
 
     return -1;
 }
-void Panel_preview::draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int x, int y,
-                              const string& text)
+
+inline void Panel_preview::draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int x, int y,
+                                     const string& text)
 {
     cr->rectangle(x, y + 6, m_width - 6, PREVIEW_TITLE_SIZE);
     cr->set_source_rgba(1, 1, 1, 0.f);  // for debuging set alpha to 1.f
@@ -312,7 +305,15 @@ void Panel_preview::draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int x, in
     cr->clip_preserve();
     cr->stroke();
 
-    cr->set_source_rgba(1, 1, 1, 1.f);  // for debuging set alpha to 1.f
+    //    cr->set_source_rgba(1, 1, 1, 1.f);  // for debuging set alpha to 1.f
+    if (m_theme.PreviewTitleText().Stroke().Color::alpha != 0.0) {
+        cr->set_source_rgba(m_theme.PreviewTitleText().Stroke().Color::red,
+                            m_theme.PreviewTitleText().Stroke().Color::green,
+                            m_theme.PreviewTitleText().Stroke().Color::blue,
+                            m_theme.PreviewTitleText().Stroke().Color::alpha);
+
+        cr->stroke();
+    }
     // http://developer.gnome.org/pangomm/unstable/classPango_1_1FontDescription.html
     Pango::FontDescription font;
 
@@ -342,9 +343,30 @@ void Panel_preview::draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int x, in
 bool Panel_preview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
     // background
-    cr->set_source_rgba(0.250, 0.352, 0.407, 1.0);
-    cairo_util::rounded_rectangle(cr, 0, 0, m_window_width, m_window_height, 0);
-    cr->fill();
+
+    // clang-format off
+    if (m_theme.Preview().Fill().Color::alpha != 0.0) {
+        cr->set_source_rgba(m_theme.Preview().Fill().Color::red,
+                m_theme.Preview().Fill().Color::green,
+                m_theme.Preview().Fill().Color::blue,
+                m_theme.Preview().Fill().Color::alpha);
+
+        cairo_util::rounded_rectangle(cr, 0, 0, m_window_width, m_window_height, m_theme.Preview().Ratio());
+        cr->fill();
+    }
+
+    if (m_theme.Preview().Stroke().Color::alpha != 0.0) {
+        cr->set_source_rgba(m_theme.Preview().Stroke().Color::red,
+                m_theme.Preview().Stroke().Color::green,
+                m_theme.Preview().Stroke().Color::blue,
+                m_theme.Preview().Stroke().Color::alpha);
+
+        cr->set_line_width(m_theme.Preview().LineWidth());
+        cairo_util::rounded_rectangle(cr, 0, 0, m_window_width, m_window_height, m_theme.Preview().Ratio());
+        cr->stroke();
+    }
+
+    // clang-format on
 
     int image_center_x = 0;
     int image_center_y = 0;
@@ -405,12 +427,45 @@ bool Panel_preview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
             item->m_preview_frame_count = -1;
         }
 
-        // title selector
-        if (idx == m_current_index) {
-            cr->set_source_rgba(1, 1, 1, 0.4);
-            cairo_util::rounded_rectangle(cr, x, y, m_width, PREVIEW_TITLE_SIZE, 0);
+        // Draw cell
+        // clang-format off
+        if (m_theme.PreviewCell().Fill().Color::alpha != 0.0) {
+
+            cr->set_source_rgba(m_theme.PreviewCell().Fill().Color::red,
+                    m_theme.PreviewCell().Fill().Color::green,
+                    m_theme.PreviewCell().Fill().Color::blue,
+                    m_theme.PreviewCell().Fill().Color::alpha);
+
+            cairo_util::rounded_rectangle(cr, x, y, m_width, m_height + PREVIEW_TITLE_SIZE, m_theme.PreviewCell().Ratio());
             cr->fill();
         }
+        if (m_theme.PreviewCell().Stroke().Color::alpha != 0.0) {
+
+            cr->set_source_rgba(m_theme.PreviewCell().Stroke().Color::red,
+                    m_theme.PreviewCell().Stroke().Color::green,
+                    m_theme.PreviewCell().Stroke().Color::blue,
+                    m_theme.PreviewCell().Stroke().Color::alpha);
+
+
+            cr->set_line_width(m_theme.PreviewCell().LineWidth());
+            cairo_util::rounded_rectangle(cr, x, y, m_width, m_height + PREVIEW_TITLE_SIZE, m_theme.PreviewCell().Ratio());
+            cr->stroke();
+        }
+
+        // title selector
+        if (idx == m_current_index) {
+            if (m_theme.PreviewTitleText().Fill().Color::alpha != 0.0) {
+
+                cr->set_source_rgba(m_theme.PreviewTitleText().Fill().Color::red,
+                        m_theme.PreviewTitleText().Fill().Color::green,
+                        m_theme.PreviewTitleText().Fill().Color::blue,
+                        m_theme.PreviewTitleText().Fill().Color::alpha);
+
+                cairo_util::rounded_rectangle(cr, x, y, m_width, PREVIEW_TITLE_SIZE, 0);
+                cr->fill();
+            }
+        }
+        // clang-format on
 
         // Image and text
         if (image) {
@@ -421,7 +476,6 @@ bool Panel_preview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
             // close selector
             if (idx == m_current_index) {
-                cr->set_source_rgba(0.854, 0.062, 0.133, 1);
                 int x1 = x + m_width - PREVIEW_TITLE_SIZE;
                 int x2 = PREVIEW_TITLE_SIZE - 8;
                 int y1 = y;
@@ -430,34 +484,43 @@ bool Panel_preview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
                 m_close_button_rectangle =
                     Gdk::Rectangle(x1, y1, PREVIEW_TITLE_SIZE, PREVIEW_TITLE_SIZE);
 
-                cr->rectangle(x1, y1, PREVIEW_TITLE_SIZE, PREVIEW_TITLE_SIZE);
-                cr->fill();
+                if (m_theme.PreviewClose().Fill().Color::alpha != 0.0) {
+                    cr->set_source_rgba(m_theme.PreviewClose().Fill().Color::red,
+                                        m_theme.PreviewClose().Fill().Color::green,
+                                        m_theme.PreviewClose().Fill().Color::blue,
+                                        m_theme.PreviewClose().Fill().Color::alpha);
 
-                cr->set_line_width(2);
-                cr->set_source_rgba(1, 1, 1, 1);
+                    cr->rectangle(x1, y1, PREVIEW_TITLE_SIZE, PREVIEW_TITLE_SIZE);
+                    cr->fill();
+                }
 
-                x1 += 4;
-                y1 += 4;
+                if (m_theme.PreviewClose().Stroke().Color::alpha != 0.0) {
+                    cr->set_source_rgba(m_theme.PreviewClose().Stroke().Color::red,
+                                        m_theme.PreviewClose().Stroke().Color::green,
+                                        m_theme.PreviewClose().Stroke().Color::blue,
+                                        m_theme.PreviewClose().Stroke().Color::alpha);
 
-                cr->move_to(x1, y1);
-                cr->line_to(x1, y1);
-                cr->line_to(x1 + x2, y1 + y2);
-                cr->stroke();
+                    cr->set_line_width(m_theme.PreviewClose().LineWidth());
 
-                cr->move_to(x1 + x2, y1);
-                cr->line_to(x1 + x2, y1);
-                cr->line_to(x1, y1 + y2);
-                cr->stroke();
+                    x1 += 4;
+                    y1 += 4;
+
+                    cr->move_to(x1, y1);
+                    cr->line_to(x1, y1);
+                    cr->line_to(x1 + x2, y1 + y2);
+                    cr->stroke();
+
+                    cr->move_to(x1 + x2, y1);
+                    cr->line_to(x1 + x2, y1);
+                    cr->line_to(x1, y1 + y2);
+
+                    cr->stroke();
+                }
             }
 
             Gdk::Cairo::set_source_pixbuf(cr, image, x + image_center_x, y + image_center_y);
             cr->paint();
         }
-
-        // Draw cell
-        cr->set_source_rgba(1, 1, 1, 0.4);
-        cairo_util::rounded_rectangle(cr, x, y, m_width, m_height + PREVIEW_TITLE_SIZE, 0);
-        cr->stroke();
 
         if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
             x += m_width + PREVIEW_SPARATOR_SIZE;
