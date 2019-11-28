@@ -51,7 +51,7 @@ class Panel_preview : public Gtk::Window
     int m_old_index = -1;
     int m_dockitem_index = -1;
 
-    vector<shared_ptr<DockItem>> m_previewitems;
+    static vector<shared_ptr<DockItem>> m_previewitems;
     bool on_timeout_draw();
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 

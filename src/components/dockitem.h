@@ -28,7 +28,7 @@ typedef struct {
     int m_height;
 } appinfo_t;
 
-class DockItem
+class DockItem : public Glib::Object
 {
   public:
     DockItem(appinfo_t appinfo, dock_item_type_t itemtype = dock_item_type_t::launcher);

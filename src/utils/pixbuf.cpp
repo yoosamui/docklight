@@ -79,7 +79,7 @@ namespace pixbuf_util
     const Glib::RefPtr<Gdk::Pixbuf> get_from_file(const std::string& filename, int width,
                                                   int height)
     {
-        Glib::RefPtr<Gdk::Pixbuf> result;
+        Glib::RefPtr<Gdk::Pixbuf> result = NULLPB;
         if (system_util::file_exists(filename)) {
             try {
                 result = Gdk::Pixbuf::create_from_file(filename, width, height, true);
@@ -157,6 +157,10 @@ namespace pixbuf_util
     // GDK, a new reference to the existing GdkWindow is returned. Returns a GdkWindow wrapper for
     // the native window, or NULL if the window has been destroyed. The wrapper will be newly
     // created, if one doesn’t exist already.
+    //
+    // https://gist.github.com/mmozeiko/2401933b1fa89e5d5bd238b33eab0465
+    // https://developer.gnome.org/gdk-pixbuf/stable/gdk-pixbuf-File-saving.html#gdk-pixbuf-save
+    // https://mail.gnome.org/archives/gtk-list/2004-October/msg00186.html
     const Glib::RefPtr<Gdk::Pixbuf> get_pixbuf_from_window(int xid)
     {
         Glib::RefPtr<Gdk::Pixbuf> result_pixbuf = NULLPB;
@@ -201,6 +205,34 @@ namespace pixbuf_util
         g_object_unref(winPixbuf);
 
         return result_pixbuf;
+    }
+    GdkPixbuf* get_gdk_pixbuf_from_window(int xid)
+    {
+        GdkPixbuf* winPixbuf = nullptr;
+
+        GdkDisplay* gdk_display = gdk_display_get_default();
+        if (gdk_display == nullptr) {
+            return nullptr;
+        }
+
+        GdkWindow* gdk_window = gdk_x11_window_foreign_new_for_display(gdk_display, xid);
+        if (gdk_window == nullptr) {
+            return nullptr;
+        }
+
+        // Gets the window size
+        guint winWidth = gdk_window_get_width(gdk_window);
+        guint winHeight = gdk_window_get_height(gdk_window);
+
+        winPixbuf = gdk_pixbuf_get_from_window(gdk_window, 0, 0, winWidth, winHeight);
+        if (winPixbuf == nullptr) {
+            return nullptr;
+        }
+
+        //        result_pixbuf = Glib::wrap(winPixbuf, true);
+        //        g_object_unref(winPixbuf);
+
+        return winPixbuf;
     }
     const Glib::RefPtr<Gdk::Pixbuf> get_pixbuf_from_window(int xid, int width, int height)
     {

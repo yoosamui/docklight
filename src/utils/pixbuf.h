@@ -24,6 +24,7 @@ namespace pixbuf_util
     GdkPixbuf* get_pixbuf_from_window_raw(int xid);
     const Glib::RefPtr<Gdk::Pixbuf> get_pixbuf_from_window(int xid);
     const Glib::RefPtr<Gdk::Pixbuf> get_pixbuf_from_window(int xid, int width, int height);
+    GdkPixbuf* get_gdk_pixbuf_from_window(int xid);
 
     Glib::RefPtr<Gdk::Pixbuf> get_pixbuf_scaled(const Glib::RefPtr<Gdk::Pixbuf>& pixbuf,
                                                 const guint destWidth, const guint destHeight,

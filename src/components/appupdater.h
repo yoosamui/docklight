@@ -25,8 +25,7 @@ class AppUpdater
     type_signal_update signal_update();
 
     static vector<shared_ptr<DockItem>> m_dockitems;
-
-    const vector<shared_ptr<DockItem>> get_dockitems() { return m_dockitems; }
+    static const Glib::RefPtr<Gdk::Pixbuf> get_image_cache(long xid);
 
     void on_theme_changed();
     bool attach_item(int index);

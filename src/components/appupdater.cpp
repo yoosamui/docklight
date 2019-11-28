@@ -137,6 +137,47 @@ void AppUpdater::on_active_window_changed_callback(WnckScreen *screen,
     m_image_queue.push(window);
 }
 
+const Glib::RefPtr<Gdk::Pixbuf> AppUpdater::get_image_cache(long xid)
+{
+    DIR *dirFile = opendir("/tmp/docklight/");
+    if (dirFile == 0) {
+        if (ENOENT == errno) g_critical("Error loading image from ram disk.\n");
+
+        return NULLPB;
+    }
+
+    Glib::RefPtr<Gdk::Pixbuf> result = NULLPB;
+    struct dirent *hFile;
+    errno = 0;
+    while ((hFile = readdir(dirFile)) != nullptr) {
+        if (!strcmp(hFile->d_name, ".")) continue;
+        if (!strcmp(hFile->d_name, "..")) continue;
+        if ((hFile->d_name[0] == '.')) continue;
+
+        if (strstr(hFile->d_name, ".png")) {
+            std::string filename = hFile->d_name;
+            std::size_t pos = filename.find_last_of("_\\");
+            if (pos != string::npos) {
+                long cxid = stol(filename.substr(pos + 1, 8));
+                if (cxid != xid) continue;
+
+                // build the filename
+                int width = stoi(filename.substr(0, 6));
+                int height = stoi(filename.substr(8, 6));
+
+                char filename[128];
+                sprintf(filename, "/tmp/docklight/%06d_%06d_%08ld.png", width, height, cxid);
+                result = pixbuf_util::get_from_file(filename, width, height);
+                g_print("found in am %s\n", filename);
+                break;
+            }
+        }
+    }
+
+    closedir(dirFile);
+    return result;
+}
+
 void AppUpdater::set_image_cache(WnckWindow *window)
 {
     if (!wnck_util::is_window_on_current_desktop(window)) {
@@ -158,9 +199,20 @@ void AppUpdater::set_image_cache(WnckWindow *window)
     for (auto const item : AppUpdater::m_dockitems) {
         for (auto const citem : item->m_items) {
             if (citem->get_xid() == wnck_window_get_xid(window)) {
-                citem->m_preview_window_image =
-                    pixbuf_util::get_pixbuf_from_window(citem->get_xid());
+                //   citem->m_preview_window_image =
+                //        pixbuf_util::get_pixbuf_from_window(citem->get_xid());
+                /*g_print("cache\n");
 
+                auto const window_image = pixbuf_util::get_pixbuf_from_window(citem->get_xid());
+                if (window_image) {
+                    char filename[128];
+                    sprintf(filename, "/tmp/docklight/%06dx%06d_%08ld.png",
+                            window_image->get_width(), window_image->get_height(),
+                            citem->get_xid());
+
+                    window_image->save(filename, "png");
+                }
+*/
                 return;
             }
         }
