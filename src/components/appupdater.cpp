@@ -49,6 +49,8 @@ void AppUpdater::init()
 
         g_signal_connect(wnckscreen, "active-workspace-changed",
                          G_CALLBACK(AppUpdater::on_active_workspace_changed_callback), nullptr);
+
+        // start the thread
         AppUpdater::m_bck_thread_run = true;
         m_bck_thread = new thread(cache_async);
     }
@@ -92,25 +94,19 @@ void AppUpdater::on_theme_changed()
     g_print("Theme change\n");
 }
 
-// static bool on_active_workspace_changed_set = false;
 void AppUpdater::on_active_workspace_changed_callback(WnckScreen *screen,
                                                       WnckWorkspace *previously_active_space,
                                                       gpointer user_data)
 {
-    // if (on_active_workspace_changed_set) {
-    // std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    //}
+    GList *window_l;
+    for (window_l = wnck_screen_get_windows(screen); window_l != NULL; window_l = window_l->next) {
+        WnckWindow *window = WNCK_WINDOW(window_l->data);
+        if (!wnck_util::is_valid_window_type(window)) continue;
 
-    // on_active_workspace_changed_set = true;
-
-    // GList *window_l;
-    // for (window_l = wnck_screen_get_windows(screen); window_l != NULL; window_l = window_l->next)
-    // { WnckWindow *window = WNCK_WINDOW(window_l->data);
-
-    //// m_image_queue.push(window);
-    ////      set_image_cache(window);
-    //}
+        m_image_queue.push(window);
+    }
 }
+
 void AppUpdater::cache_async()
 {
     while (m_bck_thread_run) {
@@ -130,47 +126,42 @@ void AppUpdater::on_active_window_changed_callback(WnckScreen *screen,
                                                    gpointer user_data)
 {
     WnckWindow *window = wnck_screen_get_active_window(screen);
-    if (!WNCK_IS_WINDOW(window)) {
+    if (!window) {
         return;
     }
 
     m_image_queue.push(window);
+    m_image_queue.push(previously_active_window);
 }
 
-const Glib::RefPtr<Gdk::Pixbuf> AppUpdater::get_image_cache(long xid)
+GdkPixbuf *AppUpdater::get_image_from_cache(long xid)
 {
     DIR *dirFile = opendir("/tmp/docklight/");
     if (dirFile == 0) {
         if (ENOENT == errno) g_critical("Error loading image from ram disk.\n");
 
-        return NULLPB;
+        return nullptr;
     }
 
-    Glib::RefPtr<Gdk::Pixbuf> result = NULLPB;
+    GdkPixbuf *result = nullptr;
     struct dirent *hFile;
     errno = 0;
+    string filename = "";
     while ((hFile = readdir(dirFile)) != nullptr) {
         if (!strcmp(hFile->d_name, ".")) continue;
         if (!strcmp(hFile->d_name, "..")) continue;
         if ((hFile->d_name[0] == '.')) continue;
 
         if (strstr(hFile->d_name, ".png")) {
-            std::string filename = hFile->d_name;
-            std::size_t pos = filename.find_last_of("_\\");
-            if (pos != string::npos) {
-                long cxid = stol(filename.substr(pos + 1, 8));
-                if (cxid != xid) continue;
+            filename = hFile->d_name;
+            long cxid = stol(filename.substr(0, 10));
+            if (cxid != xid) continue;
 
-                // build the filename
-                int width = stoi(filename.substr(0, 6));
-                int height = stoi(filename.substr(8, 6));
+            GError **error = nullptr;
+            filename = get_ramdisk_filename(xid);
+            result = gdk_pixbuf_new_from_file(filename.c_str(), error);
 
-                char filename[128];
-                sprintf(filename, "/tmp/docklight/%06d_%06d_%08ld.png", width, height, cxid);
-                result = pixbuf_util::get_from_file(filename, width, height);
-                g_print("found in am %s\n", filename);
-                break;
-            }
+            break;
         }
     }
 
@@ -196,27 +187,24 @@ void AppUpdater::set_image_cache(WnckWindow *window)
         return;
     }
 
-    for (auto const item : AppUpdater::m_dockitems) {
-        for (auto const citem : item->m_items) {
-            if (citem->get_xid() == wnck_window_get_xid(window)) {
-                //   citem->m_preview_window_image =
-                //        pixbuf_util::get_pixbuf_from_window(citem->get_xid());
-                /*g_print("cache\n");
+    long xid = wnck_window_get_xid(window);
+    auto win_pixbuf = pixbuf_util::get_pixbuf_from_window_raw(xid);
+    if (win_pixbuf) {
+        string filename = get_ramdisk_filename(xid);
 
-                auto const window_image = pixbuf_util::get_pixbuf_from_window(citem->get_xid());
-                if (window_image) {
-                    char filename[128];
-                    sprintf(filename, "/tmp/docklight/%06dx%06d_%08ld.png",
-                            window_image->get_width(), window_image->get_height(),
-                            citem->get_xid());
-
-                    window_image->save(filename, "png");
-                }
-*/
-                return;
-            }
-        }
+        gdk_pixbuf_save(win_pixbuf, filename.c_str(), "png", NULL, NULL);
+        g_object_unref(win_pixbuf);
     }
+
+    return;
+}
+
+string AppUpdater::get_ramdisk_filename(long xid)
+{
+    char filename[128];
+    sprintf(filename, "/tmp/docklight/%010ld.png", xid);
+
+    return filename;
 }
 
 void AppUpdater::on_window_opened(WnckScreen *screen, WnckWindow *window, gpointer data)
@@ -341,6 +329,10 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
                 auto const citem = item->m_items[c];
                 if (citem->get_wnckwindow() == window) {
                     item->m_items.erase(item->m_items.begin() + c);
+
+                    long xid = wnck_window_get_xid(window);
+                    string filename = get_ramdisk_filename(xid);
+                    remove(filename.c_str());  // delete file
 
                     if (!item->is_attached() && item->m_items.size() == 0) {
                         m_dockitems.erase(m_dockitems.begin() + i);
@@ -633,6 +625,6 @@ int AppUpdater::get_required_size()
     }
 
     return size;
-}
 
-DL_NS_END
+    DL_NS_END
+}

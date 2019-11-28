@@ -25,7 +25,7 @@ class AppUpdater
     type_signal_update signal_update();
 
     static vector<shared_ptr<DockItem>> m_dockitems;
-    static const Glib::RefPtr<Gdk::Pixbuf> get_image_cache(long xid);
+    static GdkPixbuf* get_image_from_cache(long xid);
 
     void on_theme_changed();
     bool attach_item(int index);
@@ -43,6 +43,7 @@ class AppUpdater
     static bool m_bck_thread_run;
     static void cache_async();
     static queue<WnckWindow*> m_image_queue;
+
     typedef struct {
         dock_item_type_t dock_item_type;
         char name[60];
@@ -55,6 +56,8 @@ class AppUpdater
         char icon_name[128];
         guint8 pixbuff[16384 * 3] = {0};  //  128 x 128 max
     } attach_rec_t;
+
+    static string get_ramdisk_filename(long xid);
 
     static void set_image_cache(WnckWindow* window);
 

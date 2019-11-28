@@ -1,11 +1,11 @@
 #include "panelpreview.h"
+#include <gdkmm/general.h>  // set_source_pixbuf()
 #include "components/appupdater.h"
 #include "utils/pixbuf.h"
 #include "utils/position.h"
 #include "utils/system.h"
 #include "utils/wnck.h"
 
-#include <gdkmm/general.h>  // set_source_pixbuf()
 DL_NS_BEGIN
 
 vector<shared_ptr<DockItem>> Panel_preview::m_previewitems;
@@ -45,27 +45,9 @@ Panel_preview::Panel_preview() : Gtk::Window(Gtk::WindowType::WINDOW_POPUP)
 Panel_preview::~Panel_preview()
 {
     for (auto item : m_previewitems) {
-        // for (auto const ditem : AppUpdater::m_dockitems) {
-        // for (auto const citem : ditem->m_items) {
-        // if (citem->get_xid() == item->get_xid()) {
-        // g_print("Free\n");
-        // citem->set_image(NULLPB);
-        // citem->m_preview_first_image = NULLPB;
-        // citem->m_preview_window_image = NULLPB;
-        // break;
-        //}
-        //}
-        //}
         auto appinfo = item->get_appinfo();
-
-        g_print("Free preview image\n");
         appinfo->m_image.reset();
-        // item->set_image(NULLPB);
-
         item->m_preview_first_image.reset();
-        // item->m_preview_first_image = NULLPB;
-
-        item->m_preview_window_image = NULLPB;
         item->m_preview_frame_count = 0;
         item->m_preview_image_is_dynamic = true;
     }
@@ -91,7 +73,6 @@ void Panel_preview::init(int index)
     for (auto item : m_previewitems) {
         item->get_appinfo()->m_image.reset();
         item->m_preview_first_image.reset();
-
         item->m_preview_frame_count = 0;
         item->m_preview_image_is_dynamic = true;
     }
@@ -406,59 +387,39 @@ bool Panel_preview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
     for (auto const item : m_previewitems) {
         auto image = item->get_image();
-        //  Gtk::Image* image_obj = nullptr;
+        GdkPixbuf* win_pixbuf = nullptr;
 
         if (!image || item->m_preview_image_is_dynamic) {
-            // auto wnckwindow = item->get_wnckwindow();
-            // bool in_current_desktop = wnck_util::is_window_on_current_desktop(wnckwindow);
-            // if (in_current_desktop && !wnck_window_is_minimized(wnckwindow)) {
-            //// item->m_preview_window_image =
-            //// pixbuf_util::get_pixbuf_from_window(item->get_xid());
-            //}
-
-            //   item->m_preview_window_image =
-            //   pixbuf_util::get_pixbuf_from_window(item->get_xid());
-            // Gtk::Image* image = Gtk::manage(new Gtk::Image(pixbuf));
-            //            auto aimage =
-            //            Gtk::manage_ptr<Glib::RefPtr<Gdk::Pixbuf>>(item->m_preview_window_image);
-
-            // const Glib::RefPtr<Gdk::Pixbuf>& pixbuf =
-            // pixbuf_util::get_pixbuf_from_window(item->get_xid());
-            // image_obj = Gtk::manage(new Gtk::Image(pixbuf));
-            // item->m_preview_window_image = image_obj->get_pixbuf();
-
-            // image_obj->clear();
-            // Gtk::Image* image_obj = Gtk::manage(new Gtk::Image(pixbuf));
-            auto win_pixbuf = pixbuf_util::get_gdk_pixbuf_from_window(item->get_xid());
-
-            //    if (item->m_preview_window_image) {
-            //  guint scaled_width = 0;
-            //   guint scaled_height = 0;
-
-            // image = pixbuf_util::get_pixbuf_scaled(item->m_preview_window_image, m_width,
-            // m_height, scaled_width, scaled_height);
-
-            // image = pixbuf_util::get_pixbuf_scaled(image_obj->get_pixbuf(), m_width, m_height,
-            //                                        scaled_width, scaled_height);
-            auto scaled_pixbuf =
-                gdk_pixbuf_scale_simple(win_pixbuf, m_width, m_height, GDK_INTERP_BILINEAR);
-
-            g_object_unref(win_pixbuf);
-            image = Glib::wrap(scaled_pixbuf, true);
-            g_object_unref(scaled_pixbuf);
-
-            if (item->m_preview_frame_count == 0) {
-                item->m_preview_first_image = image;
+            if (system_util::is_mutter_window_manager() == false) {
+                auto wnckwindow = item->get_wnckwindow();
+                bool in_current_desktop = wnck_util::is_window_on_current_desktop(wnckwindow);
+                if (!in_current_desktop || wnck_window_is_minimized(wnckwindow)) {
+                    win_pixbuf = AppUpdater::get_image_from_cache(item->get_xid());
+                }
             }
 
-            item->set_image(image);
-            //  }
+            if (!win_pixbuf) {
+                win_pixbuf = pixbuf_util::get_gdk_pixbuf_from_window(item->get_xid());
+            }
+
+            if (win_pixbuf) {
+                auto scaled_pixbuf =
+                    gdk_pixbuf_scale_simple(win_pixbuf, m_width, m_height, GDK_INTERP_BILINEAR);
+
+                g_object_unref(win_pixbuf);
+                image = Glib::wrap(scaled_pixbuf, true);
+                g_object_unref(scaled_pixbuf);
+
+                if (item->m_preview_frame_count == 0) {
+                    item->m_preview_first_image = image;
+                }
+
+                item->set_image(image);
+            }
         }
 
         if (item->m_preview_frame_count != -1 && item->m_preview_image_is_dynamic &&
             ++item->m_preview_frame_count > 4) {
-            // return 1 if the pixbuf data contains diferences, or 0 if the pixels are equal
-            // otherwise -1.
             if (pixbuf_util::compare_pixels(item->m_preview_first_image, image) == 0) {
                 g_print("static detected: %s %d\n", item->get_title().c_str(),
                         (int)item->get_xid());
