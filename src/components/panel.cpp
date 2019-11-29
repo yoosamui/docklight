@@ -466,8 +466,19 @@ bool Panel::on_button_release_event(GdkEventButton* event)
         } else if (event->button == 3 && m_mouse_right_down) {
             if (m_current_index != -1) {
                 if (m_current_index == 0) {
+                    // https://developer.gnome.org/gtkmm/stable/classGtk_1_1Menu.html#a84f2f1e74ba1a6316077a4dcee13ed87
+                    //                https://developer.gnome.org/gtk3/stable/GtkMenu.html#GtkMenuPositionFunc
+                    // https://developer.gnome.org/gtkmm/stable/classGtk_1_1Menu.html#a4b5f00c1684891c1362c5c6f8eee3fd1
+                    //                    m_home_menu.set_monitor(0);
+                    // m_home_menu.reposition();
+                    //
+                    if (!m_home_menu.get_attach_widget()) {
+                        m_home_menu.attach_to_widget(*this);
+                    }
+
                     m_home_menu.popup(sigc::mem_fun(*this, &Panel::on_home_menu_position), 1,
                                       event->time);
+                    //
 
                     m_home_menu_addexpander_item.set_sensitive(!m_appupdater.is_exists_expander());
                     return true;

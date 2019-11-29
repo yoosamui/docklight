@@ -19,9 +19,16 @@ namespace position_util
 
     Gdk::Rectangle get_workarea()
     {
-        auto const alignment = config::get_dock_alignment();
-        return alignment == dock_alignment_t::fill ? device::monitor::get_current()->get_geometry()
-                                                   : device::monitor::get_current()->get_workarea();
+        Gdk::Rectangle workarea = config::is_autohide_none()
+                                      ? device::monitor::get_current()->get_geometry()
+                                      : device::monitor::get_current()->get_workarea();
+
+        // auto const alignment = config::get_dock_alignment();
+        // return alignment == dock_alignment_t::fill ?
+        // device::monitor::get_current()->get_geometry() :
+        // device::monitor::get_current()->get_workarea();
+
+        return workarea;
     }
 
     int get_workarea_max_size()
@@ -131,9 +138,7 @@ namespace position_util
     {
         auto const location = config::get_dock_location();
         int area = position_util::get_area();
-        Gdk::Rectangle workarea = config::is_autohide_none()
-                                      ? device::monitor::get_current()->get_geometry()
-                                      : device::monitor::get_current()->get_workarea();
+        Gdk::Rectangle workarea = get_workarea();
 
         int x = 0, y = 0;
         m_window->get_position(x, y);
@@ -161,9 +166,7 @@ namespace position_util
         int x = 0, y = 0;
         int area = get_area();
         auto const location = config::get_dock_location();
-        Gdk::Rectangle workarea = config::is_autohide_none()
-                                      ? device::monitor::get_current()->get_geometry()
-                                      : device::monitor::get_current()->get_workarea();
+        Gdk::Rectangle workarea = get_workarea();
 
         m_window->get_position(x, y);
 
@@ -216,7 +219,7 @@ namespace position_util
 
         auto const item = AppUpdater::m_dockitems[index];
         auto const rect = get_appwindow_geometry();
-        auto const workarea = device::monitor::get_geometry();
+        auto const workarea = get_workarea();
         auto const location = config::get_dock_location();
         x = rect.get_x();
         y = rect.get_y();

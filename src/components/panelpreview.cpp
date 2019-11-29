@@ -3,6 +3,7 @@
 #include "components/appupdater.h"
 #include "utils/pixbuf.h"
 #include "utils/position.h"
+#include "utils/string.h"
 #include "utils/system.h"
 #include "utils/wnck.h"
 
@@ -86,6 +87,9 @@ void Panel_preview::init(int index)
         for (j = i + 1; j < size; j = j + 1) {
             std::string s1 = m_previewitems.at(j)->get_windowname().c_str();
             std::string s2 = m_previewitems.at(m)->get_windowname().c_str();
+
+            s1 = string_util::string_to_lower(s1);
+            s2 = string_util::string_to_lower(s2);
 
             if (s1 < s2) {
                 m = j;
@@ -404,7 +408,9 @@ bool Panel_preview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
             if (win_pixbuf) {
                 auto scaled_pixbuf =
-                    gdk_pixbuf_scale_simple(win_pixbuf, m_width, m_height, GDK_INTERP_BILINEAR);
+                    pixbuf_util::get_gdk_pixbuf_scaled(win_pixbuf, m_width, m_height);
+                //                    gdk_pixbuf_scale_simple(win_pixbuf, m_width, m_height,
+                //                    GDK_INTERP_BILINEAR);
 
                 g_object_unref(win_pixbuf);
                 image = Glib::wrap(scaled_pixbuf, true);
@@ -420,7 +426,10 @@ bool Panel_preview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
         if (item->m_preview_frame_count != -1 && item->m_preview_image_is_dynamic &&
             ++item->m_preview_frame_count > 4) {
-            if (pixbuf_util::compare_pixels(item->m_preview_first_image, image) == 0) {
+            // g_print("%d\n", pixbuf_util::compare_pixels(item->m_preview_first_image, image,
+            // false));
+
+            if (pixbuf_util::compare_pixels(item->m_preview_first_image, image, false) == 1) {
                 g_print("static detected: %s %d\n", item->get_title().c_str(),
                         (int)item->get_xid());
                 item->m_preview_image_is_dynamic = false;

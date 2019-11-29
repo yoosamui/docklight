@@ -98,13 +98,21 @@ void AppUpdater::on_active_workspace_changed_callback(WnckScreen *screen,
                                                       WnckWorkspace *previously_active_space,
                                                       gpointer user_data)
 {
-    GList *window_l;
-    for (window_l = wnck_screen_get_windows(screen); window_l != NULL; window_l = window_l->next) {
+    WnckWindow *window = wnck_screen_get_active_window(screen);
+    if (!window) {
+        return;
+    }
+
+    m_image_queue.push(window);
+
+    /*GList *window_l;
+    for (window_l = wnck_screen_get_windows(screen); window_l != nullptr;
+         window_l = window_l->next) {
         WnckWindow *window = WNCK_WINDOW(window_l->data);
         if (!wnck_util::is_valid_window_type(window)) continue;
 
         m_image_queue.push(window);
-    }
+    }*/
 }
 
 void AppUpdater::cache_async()
@@ -136,37 +144,12 @@ void AppUpdater::on_active_window_changed_callback(WnckScreen *screen,
 
 GdkPixbuf *AppUpdater::get_image_from_cache(long xid)
 {
-    DIR *dirFile = opendir("/tmp/docklight/");
-    if (dirFile == 0) {
-        if (ENOENT == errno) g_critical("Error loading image from ram disk.\n");
+    GError **error = nullptr;
+    auto filename = get_ramdisk_filename(xid);
 
-        return nullptr;
-    }
+    if (!system_util::file_exists(filename)) return nullptr;
 
-    GdkPixbuf *result = nullptr;
-    struct dirent *hFile;
-    errno = 0;
-    string filename = "";
-    while ((hFile = readdir(dirFile)) != nullptr) {
-        if (!strcmp(hFile->d_name, ".")) continue;
-        if (!strcmp(hFile->d_name, "..")) continue;
-        if ((hFile->d_name[0] == '.')) continue;
-
-        if (strstr(hFile->d_name, ".png")) {
-            filename = hFile->d_name;
-            long cxid = stol(filename.substr(0, 10));
-            if (cxid != xid) continue;
-
-            GError **error = nullptr;
-            filename = get_ramdisk_filename(xid);
-            result = gdk_pixbuf_new_from_file(filename.c_str(), error);
-
-            break;
-        }
-    }
-
-    closedir(dirFile);
-    return result;
+    return gdk_pixbuf_new_from_file(filename.c_str(), error);
 }
 
 void AppUpdater::set_image_cache(WnckWindow *window)
@@ -192,8 +175,10 @@ void AppUpdater::set_image_cache(WnckWindow *window)
     if (win_pixbuf) {
         string filename = get_ramdisk_filename(xid);
 
-        gdk_pixbuf_save(win_pixbuf, filename.c_str(), "png", NULL, NULL);
+        gdk_pixbuf_save(win_pixbuf, filename.c_str(), "png", nullptr, nullptr);
         g_object_unref(win_pixbuf);
+
+        g_print("Create cache file for xid = %ld\n", xid);
     }
 
     return;
@@ -265,18 +250,18 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
         info.m_wnckwindow = window;
         info.m_xid = wnck_window_get_xid(window);
 
-        g_print("[------Application --------]\n");
-        g_print("app-name: %s\n", info.m_name.c_str());
-        g_print("instance-name: %s\n", info.m_instance.c_str());
-        g_print("group-name: %s\n", info.m_group.c_str());
-        g_print("title-name: %s\n", info.m_title.c_str());
-        g_print("comment: %s\n", info.m_comment.c_str());
-        g_print("desktop-icon-name: %s\n", info.m_icon_name.c_str());
-        g_print("desktop-file: %s\n", info.m_desktop_file.c_str());
-        g_print("locale: %s\n", info.m_locale.c_str());
-        g_print("cache: %d\n", (int)info.m_cache);
-        g_print("items: %d\n", (int)m_dockitems.size());
-        g_print("xid: %d\n", (int)info.m_xid);
+        // g_print("[------Application --------]\n");
+        // g_print("app-name: %s\n", info.m_name.c_str());
+        // g_print("instance-name: %s\n", info.m_instance.c_str());
+        // g_print("group-name: %s\n", info.m_group.c_str());
+        // g_print("title-name: %s\n", info.m_title.c_str());
+        // g_print("comment: %s\n", info.m_comment.c_str());
+        // g_print("desktop-icon-name: %s\n", info.m_icon_name.c_str());
+        // g_print("desktop-file: %s\n", info.m_desktop_file.c_str());
+        // g_print("locale: %s\n", info.m_locale.c_str());
+        // g_print("cache: %d\n", (int)info.m_cache);
+        // g_print("items: %d\n", (int)m_dockitems.size());
+        // g_print("xid: %d\n", (int)info.m_xid);
 
         if (info.m_name == "Untitled-window") {
             return;

@@ -63,7 +63,6 @@ class DockItem : public Glib::Object
     int m_preview_frame_count = 0;
     bool m_preview_image_is_dynamic = true;
     Glib::RefPtr<Gdk::Pixbuf> m_preview_first_image = (Glib::RefPtr<Gdk::Pixbuf>)nullptr;
-    // Glib::RefPtr<Gdk::Pixbuf> m_preview_window_image = (Glib::RefPtr<Gdk::Pixbuf>)nullptr;
 
   private:
     void set_height(int value);

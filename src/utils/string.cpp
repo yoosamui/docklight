@@ -85,11 +85,10 @@ namespace string_util
         return text;
     }
 
-    string string_to_lower(const char *strp)
+    string string_to_lower(const string &text)
     {
-        string str = strp;
+        string str = text;
         transform(str.begin(), str.end(), str.begin(), ::tolower);
-
         return str;
     }
 }  // namespace string_util

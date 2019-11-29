@@ -1,5 +1,5 @@
 #include "dockmenu.h"
-
+#include "components/device.h"
 #include "utils/position.h"
 DL_NS_BEGIN
 
@@ -146,30 +146,40 @@ void Dock_menu::on_item_menu_minimize_all_event()
     if (index == -1) return;
 
     wnck_util::minimize_group(index);
-
-    //    g_print("Mini %d\n", Panel_base::get_current_index());  //    wnck_util
 }
 
 void Dock_menu::on_separator_menu_position(int& x, int& y, bool& push_in)
 {
+    int monitor_number = device::monitor::get_current()->get_monitor_number();
+    m_home_menu.set_monitor(monitor_number);
+
     position_util::get_center_position(m_current_index, x, y, m_separator_menu.get_width(),
                                        m_separator_menu.get_height());
 }
 
 void Dock_menu::on_home_menu_position(int& x, int& y, bool& push_in)
 {
+    int monitor_number = device::monitor::get_current()->get_monitor_number();
+    m_home_menu.set_monitor(monitor_number);
+
     position_util::get_center_position(m_current_index, x, y, m_home_menu.get_width(),
                                        m_home_menu.get_height());
 }
 
 void Dock_menu::on_item_menu_position(int& x, int& y, bool& push_in)
 {
+    int monitor_number = device::monitor::get_current()->get_monitor_number();
+    m_item_menu.set_monitor(monitor_number);
+
     position_util::get_center_position(m_current_index, x, y, m_item_menu.get_width(),
                                        m_item_menu.get_height());
 }
 
 void Dock_menu::on_item_menu_windowlist_position(int& x, int& y, bool& push_in)
 {
+    int monitor_number = device::monitor::get_current()->get_monitor_number();
+    m_item_menu_windowlist->set_monitor(monitor_number);
+
     position_util::get_center_position(m_current_index, x, y, m_item_menu_windowlist->get_width(),
                                        m_item_menu_windowlist->get_height());
 }

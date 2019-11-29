@@ -35,21 +35,69 @@ namespace pixbuf_util
         }
     }
 
-    int compare_pixels(const Glib::RefPtr<Gdk::Pixbuf>& pixbuf_a,
-                       const Glib::RefPtr<Gdk::Pixbuf>& pixbuf_b)
+    int compare_pixels(const GdkPixbuf* pixbuf_a, const GdkPixbuf* pixbuf_b, bool validate = true)
     {
         if (!pixbuf_b || !pixbuf_b) {
             return -1;
         }
 
-        if (pixbuf_a->get_bits_per_sample() != 8 ||
-            pixbuf_a->get_colorspace() != Gdk::COLORSPACE_RGB) {
+        if (validate) {
+            if (gdk_pixbuf_get_bits_per_sample(pixbuf_a) != 8 ||
+                gdk_pixbuf_get_colorspace(pixbuf_a) != GDK_COLORSPACE_RGB) {
+                return -1;
+            }
+
+            if (gdk_pixbuf_get_bits_per_sample(pixbuf_b) != 8 ||
+                gdk_pixbuf_get_colorspace(pixbuf_b) != GDK_COLORSPACE_RGB) {
+                return -1;
+            }
+        }
+
+        int x, y;
+        int w = gdk_pixbuf_get_width(pixbuf_a);
+        int h = gdk_pixbuf_get_height(pixbuf_a);
+        int channels = gdk_pixbuf_get_n_channels(pixbuf_a);
+        gint rowstride = gdk_pixbuf_get_rowstride(pixbuf_a);
+        gint pixel_offset = 0;
+        guchar* pixels_a;
+        guchar* pixels_b;
+
+        for (y = 0; y < h; y++) {
+            for (x = 0; x < w; x++) {
+                pixel_offset = y * rowstride + x * channels;
+                pixels_a = &gdk_pixbuf_get_pixels(pixbuf_a)[pixel_offset];
+                pixels_b = &gdk_pixbuf_get_pixels(pixbuf_b)[pixel_offset];
+
+                // clang-format off
+                if (pixels_a[0] != pixels_b[0] ||
+                    pixels_a[1] != pixels_b[1] ||
+                    pixels_a[2] != pixels_b[2] ){
+                    return 0;
+                }
+                // clang-format on
+            }
+        }
+
+        return 1;
+    }
+
+    int compare_pixels(const Glib::RefPtr<Gdk::Pixbuf>& pixbuf_a,
+                       const Glib::RefPtr<Gdk::Pixbuf>& pixbuf_b, bool validate = true)
+    {
+        if (!pixbuf_b || !pixbuf_b) {
             return -1;
         }
 
-        if (pixbuf_b->get_bits_per_sample() != 8 ||
-            pixbuf_b->get_colorspace() != Gdk::COLORSPACE_RGB) {
-            return -1;
+        if (validate) {
+            if (pixbuf_a->get_bits_per_sample() != 8 ||
+                pixbuf_a->get_colorspace() != Gdk::COLORSPACE_RGB) {
+                return -1;
+            }
+
+            if (pixbuf_b->get_bits_per_sample() != 8 ||
+                pixbuf_b->get_colorspace() != Gdk::COLORSPACE_RGB) {
+                return -1;
+            }
         }
 
         int x, y;
@@ -63,17 +111,20 @@ namespace pixbuf_util
             for (x = 0; x < w; x++) {
                 pixel_offset = y * rowstride + x * channels;
 
-                guchar* firstPixel = &pixbuf_a->get_pixels()[pixel_offset];
-                guchar* currentPixel = &pixbuf_b->get_pixels()[pixel_offset];
+                guchar* pixels_a = &pixbuf_a->get_pixels()[pixel_offset];
+                guchar* pixels_b = &pixbuf_b->get_pixels()[pixel_offset];
 
-                if (firstPixel[0] != currentPixel[0] || firstPixel[1] != currentPixel[1] ||
-                    firstPixel[2] != currentPixel[2]) {
-                    return 1;
+                // clang-format off
+                if (pixels_a[0] != pixels_b[0] ||
+                    pixels_a[1] != pixels_b[1] ||
+                    pixels_a[2] != pixels_b[2]) {
+                    return 0;
                 }
+                // clang-format on
             }
         }
 
-        return 0;
+        return 1;
     }
 
     const Glib::RefPtr<Gdk::Pixbuf> get_from_file(const std::string& filename, int width,
@@ -402,6 +453,48 @@ namespace pixbuf_util
 
         return pixbuf->scale_simple(scaledWidth, scaledHeight, Gdk::INTERP_BILINEAR);
     }
+
+    GdkPixbuf* get_gdk_pixbuf_scaled(const GdkPixbuf* pixbuf, const guint destWidth,
+                                     const guint destHeight)
+    {
+        if (!pixbuf) {
+            return nullptr;
+        }
+
+        // sets the source size
+        guint winWidth = gdk_pixbuf_get_width(pixbuf);
+        guint winHeight = gdk_pixbuf_get_height(pixbuf);
+
+        // sets the target size
+        guint width = destWidth;
+        guint height = destHeight;
+
+        // calculate aspect ratio
+        double minSize = std::min(width, height);
+        double maxSize = std::max(winWidth, winHeight);
+        double aspectRatio = minSize / maxSize;
+
+        int scaledWidth = abs(winWidth * aspectRatio);
+        int scaledHeight = abs(winHeight * aspectRatio);
+
+        auto const workarea = position_util::get_workarea();
+
+        guint half_WindowWidth = workarea.get_width() / 3;
+        guint half_WindowHeight = workarea.get_height() / 3;
+
+        // ajust width size
+        if (winWidth > half_WindowWidth) {
+            scaledWidth = width - 6;
+        }
+
+        // ajust height size
+        if (winHeight > half_WindowHeight) {
+            scaledHeight = height - 4;
+        }
+
+        return gdk_pixbuf_scale_simple(pixbuf, scaledWidth, scaledHeight, GDK_INTERP_BILINEAR);
+    }
+
     /**
      * Converts a GdkPixbuf to a Glib::RefPtr<Gdk::Pixbuf>.
      * DEPRECATED
