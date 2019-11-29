@@ -447,7 +447,7 @@ namespace config
                 g_print("arguments: --%c %d %s\n", data->arg, data->int_value, data->string_value);
 
                 if (data->arg == (char)'m') {
-                    device::monitor::get_current()->set_current_monitor(data->int_value);
+                    device::monitor::set_current_monitor(data->int_value);
                     continue;
                 }
 

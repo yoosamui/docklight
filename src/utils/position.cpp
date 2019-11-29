@@ -19,14 +19,13 @@ namespace position_util
 
     Gdk::Rectangle get_workarea()
     {
-        Gdk::Rectangle workarea = config::is_autohide_none()
-                                      ? device::monitor::get_current()->get_geometry()
-                                      : device::monitor::get_current()->get_workarea();
+        Gdk::Rectangle workarea = config::is_autohide_none() ? device::monitor::get_geometry()
+                                                             : device::monitor::get_workarea();
 
         // auto const alignment = config::get_dock_alignment();
         // return alignment == dock_alignment_t::fill ?
-        // device::monitor::get_current()->get_geometry() :
-        // device::monitor::get_current()->get_workarea();
+        // device::monitor::get_current()->get_geometry()
+        //    : device::monitor::get_current()->get_workarea();
 
         return workarea;
     }
@@ -199,7 +198,7 @@ namespace position_util
 
     void get_center_screen_position(int targetwidth, int targetheight, int& posx, int& posy)
     {
-        Gdk::Rectangle workarea = device::monitor::get_current()->get_geometry();
+        Gdk::Rectangle workarea = device::monitor::get_geometry();
 
         int monitorWidth = workarea.get_width();
         int monitorHeight = workarea.get_height();
@@ -281,7 +280,7 @@ namespace position_util
                 area -= Panel_render::m_stm.m_decrease_factor;
             }
             // Gdk::Rectangle workarea = device::monitor::get_current()->get_workarea();
-            Gdk::Rectangle workarea = device::monitor::get_current()->get_geometry();
+            Gdk::Rectangle workarea = device::monitor::get_geometry();
             auto const location = config::get_dock_location();
             auto const screen = device::display::get_default_screen();
 

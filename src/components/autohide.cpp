@@ -301,7 +301,11 @@ bool Autohide::is_intersection_detected()
 
 void Autohide::intelihide()
 {
+    if (!WNCK_IS_WINDOW(m_stm.m_active_window)) return;
+
     WnckScreen* screen = wnck_window_get_screen(m_stm.m_active_window);
+    if (!WNCK_IS_SCREEN(screen)) return;
+
     m_stm.m_active_window = wnck_screen_get_active_window(screen);
 
     if (m_stm.m_active_window == nullptr) {

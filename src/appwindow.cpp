@@ -83,7 +83,7 @@ void AppWindow::on_app_activated()
 void AppWindow::monitor_changed_callback(GdkScreen *screen, gpointer gtkwindow)
 {
     g_print("Monitor changed event.\n");
-    device::monitor::get_current()->set_primary();
+    device::monitor::set_primary();
     update();
 }
 
@@ -157,8 +157,8 @@ int AppWindow::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine> &
                 workarea.get_height());
     }
 
-    g_print("Default monitor: %d %s\n", device::monitor::get_current()->get_monitor_number(),
-            device::monitor::get_current()->get_monitor_obj()->get_model().c_str());
+    g_print("Default monitor: %d %s\n", device::monitor::get_monitor_number(),
+            device::monitor::get_current()->get_model().c_str());
 
     g_print("window manager: %s\n", system_util::get_window_manager_name().c_str());
 

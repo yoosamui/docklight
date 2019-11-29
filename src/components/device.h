@@ -24,25 +24,28 @@ namespace device
         const Glib::RefPtr<Gdk::Monitor> get_primary();
         const Glib::RefPtr<Gdk::Monitor> get_monitor(int monitor_num);
         const Glib::RefPtr<Gdk::Monitor> get_monitor();
+        const Glib::RefPtr<Gdk::Monitor> get_current();
+        void set_current_monitor(int monitor_num);
+        int get_monitor_number();
         Gdk::Rectangle get_workarea();
         Gdk::Rectangle get_geometry();
-
         int get_monitor_count();
+        void set_primary();
 
-        class Current
-        {
-          public:
-            Current();
-            void set_current_monitor(int monitor_num);
+        // class Current
+        //{
+        // public:
+        // Current();
+        // void set_current_monitor(int monitor_num);
 
-            void set_primary();
-            Gdk::Rectangle get_workarea();
-            Gdk::Rectangle get_geometry();
-            const Glib::RefPtr<Gdk::Monitor> get_monitor_obj();
-            int get_monitor_number();
-        };
+        // void set_primary();
+        // Gdk::Rectangle get_workarea();
+        // Gdk::Rectangle get_geometry();
+        ////            const Glib::RefPtr<Gdk::Monitor> get_monitor_obj();
+        // int get_monitor_number();
+        //};
 
-        const unique_ptr<Current>& get_current();
+        // const unique_ptr<Current>& get_current();
 
     }  // namespace monitor
 }  // namespace device

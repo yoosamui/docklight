@@ -150,7 +150,7 @@ void Dock_menu::on_item_menu_minimize_all_event()
 
 void Dock_menu::on_separator_menu_position(int& x, int& y, bool& push_in)
 {
-    int monitor_number = device::monitor::get_current()->get_monitor_number();
+    int monitor_number = device::monitor::get_monitor_number();
     m_home_menu.set_monitor(monitor_number);
 
     position_util::get_center_position(m_current_index, x, y, m_separator_menu.get_width(),
@@ -159,7 +159,7 @@ void Dock_menu::on_separator_menu_position(int& x, int& y, bool& push_in)
 
 void Dock_menu::on_home_menu_position(int& x, int& y, bool& push_in)
 {
-    int monitor_number = device::monitor::get_current()->get_monitor_number();
+    int monitor_number = device::monitor::get_monitor_number();
     m_home_menu.set_monitor(monitor_number);
 
     position_util::get_center_position(m_current_index, x, y, m_home_menu.get_width(),
@@ -168,7 +168,7 @@ void Dock_menu::on_home_menu_position(int& x, int& y, bool& push_in)
 
 void Dock_menu::on_item_menu_position(int& x, int& y, bool& push_in)
 {
-    int monitor_number = device::monitor::get_current()->get_monitor_number();
+    int monitor_number = device::monitor::get_monitor_number();
     m_item_menu.set_monitor(monitor_number);
 
     position_util::get_center_position(m_current_index, x, y, m_item_menu.get_width(),
@@ -177,7 +177,7 @@ void Dock_menu::on_item_menu_position(int& x, int& y, bool& push_in)
 
 void Dock_menu::on_item_menu_windowlist_position(int& x, int& y, bool& push_in)
 {
-    int monitor_number = device::monitor::get_current()->get_monitor_number();
+    int monitor_number = device::monitor::get_monitor_number();
     m_item_menu_windowlist->set_monitor(monitor_number);
 
     position_util::get_center_position(m_current_index, x, y, m_item_menu_windowlist->get_width(),
