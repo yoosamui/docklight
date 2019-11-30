@@ -17,6 +17,7 @@ Autohide::Autohide()
     m_stm.m_visible = true;
 }
 
+bool m_initialized = false;
 void Autohide::init()
 {
     WnckScreen* wnckscreen = wnck_screen_get_default();
@@ -358,6 +359,12 @@ bool Autohide::is_visible()
 
 void Autohide::hide()
 {
+    // if (abs(m_stm.m_animation_timer.elapsed()) < 1.f && m_initialized) {
+    // g_print("elapsed %f", m_stm.m_animation_timer.elapsed());
+    // return;
+    //}
+
+    // m_initialized = true;
     if (config::is_intelihide()) {
         if (m_stm.m_active_window == nullptr) {
             return;
@@ -368,15 +375,15 @@ void Autohide::hide()
             return;
         }
     }
-
-    if (!m_stm.m_visible && position_util::is_visible()) {
-        m_stm.m_visible = true;
-    }
-
-    if (m_stm.m_visible && !m_stm.m_mouse_inside) {
-        m_stm.m_animation_state = DEF_AUTOHIDE_HIDE;
-        connect_signal_handler(true);
-    }
+    // JUAN
+    // if (!m_stm.m_visible && position_util::is_visible()) {
+    // m_stm.m_visible = true;
+    //}
+    //
+    //  if (m_stm.m_visible /* && !m_stm.m_mouse_inside*/) {
+    m_stm.m_animation_state = DEF_AUTOHIDE_HIDE;
+    connect_signal_handler(true);
+    //  }
 }
 void Autohide::show()
 {
@@ -412,10 +419,14 @@ void Autohide::reset_timer()
 
 bool Autohide::animation()
 {
+    g_print("Anim time............%f..\n", m_stm.m_animation_timer.elapsed());
+
     if (m_stm.m_animation_state == DEF_AUTOHIDE_HIDE && !m_stm.m_animation_running &&
-        abs(m_stm.m_animation_timer.elapsed()) > m_animation_hide_delay) {
+        m_stm.m_animation_timer.elapsed() > m_animation_hide_delay) {
         m_easing_duration = DEF_AUTOHIDE_EASING_DURATION;
-        m_stm.m_animation_running = true;
+        if (is_visible()) m_stm.m_animation_running = true;
+
+        g_print("Anim hide..............\n");
     }
 
     if (m_stm.m_animation_state == DEF_AUTOHIDE_SHOW && !m_stm.m_visible &&
@@ -423,6 +434,7 @@ bool Autohide::animation()
         m_easing_duration = DEF_AUTOHIDE_EASING_DURATION;
         m_stm.m_animation_running = true;
         position_util::set_window_position();
+        g_print("Anim Show..............\n");
     }
 
     if (m_stm.m_animation_running) {
@@ -459,7 +471,7 @@ bool Autohide::animation()
 
         float position =
             easing_util::map_clamp(m_animation_time, m_initTime, endTime, startPosition,
-                                   endPosition, &easing_util::linear::easeIn);
+                                   endPosition, &easing_util::bounce::easeInOut);
 
         if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
             m_offset_x = 0;
@@ -468,7 +480,7 @@ bool Autohide::animation()
             m_offset_x = (int)position;
             m_offset_y = 0;
         }
-
+        //  g_print("x= %d\n", m_offset_x);
         m_signal_update.emit(m_offset_x, m_offset_y);
         m_animation_time++;
 
@@ -480,10 +492,12 @@ bool Autohide::animation()
             m_stm.m_visible = (int)endPosition == 0;
             connect_signal_handler(false);
 
+            this->reset_timer();
             if (m_stm.m_visible) {
-                m_stm.m_animation_timer.start();
+                //        this->reset_timer();
+                //                m_stm.m_animation_timer.start();
             } else {
-                position_util::hide();
+                // position_util::hide();
             }
         }
     } else {

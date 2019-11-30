@@ -119,10 +119,6 @@ void Panel::on_autohide_update(int x, int y)
 
 int Panel::get_required_size()
 {
-    static int cache_size = 0;
-    static int cache_factor = 0;
-    static long cache_compare = 0;
-
     m_stm.m_decrease_factor = 0;
 
     auto const workarea = position_util::get_workarea();
@@ -146,26 +142,12 @@ int Panel::get_required_size()
         m_stm.m_decrease_factor = diff / m_appupdater.m_dockitems.size();
         size = m_appupdater.get_required_size();
 
-        long compare = size * m_stm.m_decrease_factor;
-        if (compare == cache_compare) {
-            size = cache_size;
-            m_stm.m_decrease_factor = cache_factor;
-
-            goto realize;
-        }
-
-        cache_compare = compare;
-
         while (size > max_space) {
             m_stm.m_decrease_factor++;
             size = m_appupdater.get_required_size();
         }
-
-        cache_size = size;
-        cache_factor = m_stm.m_decrease_factor;
     }
 
-realize:
     return size + config::get_window_start_end_margin();
 }
 bool Panel::on_timeout_draw()
@@ -326,19 +308,28 @@ void Panel::show()
 bool Panel::on_motion_notify_event(GdkEventMotion* event)
 {
     m_current_index = this->get_index(event->x, event->y);
-
+    int anchor_margin = 20;
     // detect anchor point
     if (!config::is_autohide_none() && !m_autohide.is_visible()) {
         auto const location = config::get_dock_location();
+        int area = config::get_dock_area();
         if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
             if (location == dock_location_t::top) {
-                if (event->y < 10 && event->y >= 0) {
+                if (event->y < anchor_margin && event->y >= 0) {
+                    this->show();
+                }
+            } else {
+                if (event->y > area - anchor_margin) {
                     this->show();
                 }
             }
         } else {
             if (location == dock_location_t::left) {
-                if (event->x < 10 && event->x >= 0) {
+                if (event->x < anchor_margin && event->x >= 0) {
+                    this->show();
+                }
+            } else {
+                if (event->x > area - anchor_margin) {
                     this->show();
                 }
             }
@@ -587,7 +578,7 @@ bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
             }
         } else {
             if ((int)crossing_event->y > area) {
-                return true;
+                //    return true;
             }
         }
     } else {
@@ -597,7 +588,7 @@ bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
             }
         } else {
             if ((int)crossing_event->x > area) {
-                return true;
+                //  return true;
             }
         }
     }
