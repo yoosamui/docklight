@@ -23,7 +23,7 @@ DockItem::~DockItem()
         m_app_info.m_image.reset();
         m_app_info.m_image = (Glib::RefPtr<Gdk::Pixbuf>)nullptr;
 
-        g_print("Free DockItem image image\n");
+        g_print("Free DockItem image\n");
     }
 
     g_print("Free DockItem\n");
