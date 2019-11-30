@@ -135,6 +135,7 @@ namespace position_util
 
     void hide()
     {
+        return;
         auto const location = config::get_dock_location();
         int area = position_util::get_area();
         Gdk::Rectangle workarea = get_workarea();
@@ -156,7 +157,7 @@ namespace position_util
             if (location == dock_location_t::right) {
                 m_window->move(workarea.get_width() + workarea.get_x() - 1, y);
             } else {
-                m_window->move(workarea.get_x() - area + 1, y);
+                // m_window->move(workarea.get_x() - area + 1, y);
             }
         }
     }

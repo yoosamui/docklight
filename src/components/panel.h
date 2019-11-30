@@ -48,7 +48,7 @@ class Panel : public Gtk::DrawingArea, public Panel_render
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
     void draw_title();
     void draw();
-
+    void show();
     bool on_timeout_draw();
 
     void close_preview();

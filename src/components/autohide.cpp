@@ -416,9 +416,10 @@ bool Autohide::animation()
         abs(m_stm.m_animation_timer.elapsed()) > m_animation_hide_delay) {
         m_easing_duration = DEF_AUTOHIDE_EASING_DURATION;
         m_stm.m_animation_running = true;
+    }
 
-    } else if (m_stm.m_animation_state == DEF_AUTOHIDE_SHOW && !m_stm.m_visible &&
-               !m_stm.m_animation_running) {
+    if (m_stm.m_animation_state == DEF_AUTOHIDE_SHOW && !m_stm.m_visible &&
+        !m_stm.m_animation_running) {
         m_easing_duration = DEF_AUTOHIDE_EASING_DURATION;
         m_stm.m_animation_running = true;
         position_util::set_window_position();

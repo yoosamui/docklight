@@ -86,7 +86,7 @@ void Panel::connect_draw_signal(bool connect)
         if (!m_stm.m_connect_draw_signal_set) {
             m_stm.m_sigc_draw = Glib::signal_timeout().connect(
                 sigc::mem_fun(static_cast<Panel*>(m_stm.m_this), &Panel::on_timeout_draw),
-                1000 / 8);
+                1000 / 12);
             m_stm.m_connect_draw_signal_set = true;
         }
     } else {
@@ -311,23 +311,41 @@ void Panel::close_preview()
         if (!config::is_autohide_none()) {
             m_autohide.reset_timer();
             m_autohide.set_mouse_inside(false);
-            m_autohide.intelihide();
+
+            m_autohide.hide();
         }
     }
 }
+void Panel::show()
+{
+    m_autohide.reset_timer();
+    m_autohide.set_mouse_inside(true);
 
+    m_autohide.show();
+}
 bool Panel::on_motion_notify_event(GdkEventMotion* event)
 {
     m_current_index = this->get_index(event->x, event->y);
 
-    // if (m_stm.m_dragdrop_begin || m_preview != nullptr) {
-    // if (m_stm.m_dragdrop_begin || m_preview != nullptr) {
-    // if (m_preview_index != m_current_index) {
-    // this->close_preview();
-    // return true;
-    //}
-    //}
+    // detect anchor point
+    if (!config::is_autohide_none() && !m_autohide.is_visible()) {
+        auto const location = config::get_dock_location();
+        if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+            if (location == dock_location_t::top) {
+                if (event->y < 10 && event->y >= 0) {
+                    this->show();
+                }
+            }
+        } else {
+            if (location == dock_location_t::left) {
+                if (event->x < 10 && event->x >= 0) {
+                    this->show();
+                }
+            }
+        }
+    }
 
+    // detect drag and drop
     if (m_stm.m_dragdrop_begin && m_current_index > 0) {
         if (!m_stm.m_mouse_inside) {
             this->stop_dragdrop();
@@ -416,6 +434,9 @@ bool Panel::on_button_release_event(GdkEventButton* event)
                         if (m_preview != nullptr) {
                             if (m_preview_index == m_current_index) {
                                 this->close_preview();
+
+                                // avoid panel hide
+                                this->show();
                                 return true;
                             }
                         }
@@ -526,18 +547,13 @@ bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
     m_stm.m_mouse_inside = true;
     this->connect_draw_signal(true);
 
-    if (!config::is_autohide_none()) {
+    // reset the timer on enter
+    if (!config::is_autohide_none() && m_autohide.is_visible()) {
         if (config::is_autohide() || config::is_intelihide()) {
             m_autohide.reset_timer();
             m_autohide.set_mouse_inside(true);
         }
-
-        if (config::is_autohide() || config::is_intelihide()) {
-            m_autohide.show();
-        }
     }
-    // m_HomeMenu.hide();
-    // m_ItemMenu.hide();
 
     return false;
 }
@@ -552,6 +568,8 @@ bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
     this->stop_dragdrop();
 
     m_show_selector = false;
+
+    // reset the timer on leave
     if (!config::is_autohide_none()) {
         if (config::is_autohide() || config::is_intelihide()) {
             m_autohide.reset_timer();
@@ -561,9 +579,10 @@ bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
 
     auto const location = config::get_dock_location();
     int area = position_util::get_area();
+    auto const workarea = position_util::get_workarea();
     if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
         if (location == dock_location_t::top) {
-            if ((int)crossing_event->y < 0) {
+            if ((int)crossing_event->y <= 0) {
                 return true;
             }
         } else {
@@ -573,7 +592,7 @@ bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
         }
     } else {
         if (location == dock_location_t::left) {
-            if ((int)crossing_event->x < 0) {
+            if ((int)crossing_event->x <= 0 && workarea.get_x() == 0) {
                 return true;
             }
         } else {
@@ -598,10 +617,10 @@ bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
         if (config::is_intelihide()) {
             m_autohide.intelihide();
         } else if (config::is_autohide()) {
+            g_print("leave.....\n");
             m_autohide.hide();
         }
     }
-
     this->connect_draw_signal(false);
     return true;
 }

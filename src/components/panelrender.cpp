@@ -55,8 +55,8 @@ void Panel_render::draw_panel(const Cairo::RefPtr<Cairo::Context>& cr)
                             m_theme.Panel().Fill().Color::blue,
                             m_theme.Panel().Fill().Color::alpha);
 
-      cr->fill();
-    // cr->paint();
+    // cr->fill();
+     cr->paint();
     }
 
     if (m_theme.Panel().Stroke().Color::alpha != 0.0) {
