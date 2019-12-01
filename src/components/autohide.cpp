@@ -356,7 +356,7 @@ bool Autohide::is_visible()
 {
     return m_stm.m_visible;
 }
-
+bool m_stop = false;
 void Autohide::hide()
 {
     // if (abs(m_stm.m_animation_timer.elapsed()) < 1.f && m_initialized) {
@@ -376,14 +376,34 @@ void Autohide::hide()
         }
     }
     // JUAN
-    // if (!m_stm.m_visible && position_util::is_visible()) {
-    // m_stm.m_visible = true;
-    //}
+    /*if (!m_stm.m_visible && position_util::is_visible()) {
+        m_stm.m_visible = true;
+    }
     //
-    //  if (m_stm.m_visible /* && !m_stm.m_mouse_inside*/) {
+    if (m_stm.m_visible && !m_stm.m_mouse_inside) {
+        m_stm.m_animation_state = DEF_AUTOHIDE_HIDE;
+        connect_signal_handler(true);
+    }*/
+
+    if (m_stm.m_animation_running) {
+        //..m_stm.m_animation_running = false;
+        m_stop = true;
+        g_print("force stop........\n");
+
+        m_stm.m_animation_state = DEF_AUTOHIDE_HIDE;
+        connect_signal_handler(true);
+        return;
+    }
+
+    if (position_util::is_visible()) {
+        //  m_stop = true;
+        //   m_stm.m_visible = true;
+    }
+    // if (m_stm.m_visible /* && !m_stm.m_mouse_inside*/) {
     m_stm.m_animation_state = DEF_AUTOHIDE_HIDE;
     connect_signal_handler(true);
-    //  }
+    // m_stm.m_animation_running = false;
+    // }
 }
 void Autohide::show()
 {
@@ -419,14 +439,19 @@ void Autohide::reset_timer()
 
 bool Autohide::animation()
 {
-    g_print("Anim time............%f..\n", m_stm.m_animation_timer.elapsed());
+    g_print("Anim time............%f.%d.\n", m_stm.m_animation_timer.elapsed(),
+            position_util::is_visible() /*is_visible()*/);
 
     if (m_stm.m_animation_state == DEF_AUTOHIDE_HIDE && !m_stm.m_animation_running &&
         m_stm.m_animation_timer.elapsed() > m_animation_hide_delay) {
         m_easing_duration = DEF_AUTOHIDE_EASING_DURATION;
         if (is_visible()) m_stm.m_animation_running = true;
 
-        g_print("Anim hide..............\n");
+        // if (position_util::is_visible()) {
+        // m_stm.m_animation_running = true;
+
+        // g_print("Anim hide..............\n");
+        //}
     }
 
     if (m_stm.m_animation_state == DEF_AUTOHIDE_SHOW && !m_stm.m_visible &&
@@ -480,11 +505,11 @@ bool Autohide::animation()
             m_offset_x = (int)position;
             m_offset_y = 0;
         }
-        //  g_print("x= %d\n", m_offset_x);
+        g_print("x= %d\n", m_offset_x);
         m_signal_update.emit(m_offset_x, m_offset_y);
         m_animation_time++;
 
-        if ((int)position == (int)endPosition) {
+        if ((int)position == (int)endPosition || m_stop) {
             this->reset_timer();
             m_stm.m_animation_running = false;
             m_animation_time = 0;
@@ -493,18 +518,27 @@ bool Autohide::animation()
             connect_signal_handler(false);
 
             this->reset_timer();
-            if (m_stm.m_visible) {
-                //        this->reset_timer();
-                //                m_stm.m_animation_timer.start();
-            } else {
-                // position_util::hide();
+            // if (m_stm.m_visible) {
+            ////    this->reset_timer();
+            ////    m_stm.m_animation_timer.start();
+            //} else {
+            //// position_util::hide();
+            //}
+            g_print("STOP\n");
+            if (m_stop) {
+                g_print("STOP FORCE\n");
+                m_stm.m_visible = true;
+                m_stm.m_animation_running = true;
+                connect_signal_handler(true);
             }
+            m_stop = false;
         }
     } else {
         // check if connected
         if (m_stm.m_connect_autohide_signal_set) {
             if (m_stm.m_animation_timer.elapsed() > m_animation_hide_delay) {
                 connect_signal_handler(false);
+                g_print("STOP-444\n");
             }
         }
     }
