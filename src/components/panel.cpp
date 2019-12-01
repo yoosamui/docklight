@@ -1,15 +1,7 @@
 #include "components/panel.h"
-//#include <gdkmm/general.h>  // set_source_pixbuf()
-//#include <glibmm/i18n.h>
-//#include <glibmm/main.h>
-#include <glibmm/timer.h>
-#include <gtkmm/image.h>
 #include <gtkmm/imagemenuitem.h>
-#include "appwindow.h"
 #include "components/device.h"
-//#include "utils/cairo.h"
 #include "utils/launcher.h"
-//#include "utils/pixbuf.h"
 #include "utils/pixbuf.h"
 #include "utils/position.h"
 #include "utils/system.h"
@@ -48,17 +40,15 @@ void Panel::init()
 
     m_appupdater.m_dockitems.insert(m_appupdater.m_dockitems.begin(),
                                     shared_ptr<DockItem>(new DockItem(info)));
-    //    auto const new_item = m_appupdater.m_dockitems.back();
+
     auto icon_size = config::get_icon_size();
     load_home_icon(icon_size);
 
     m_appupdater.signal_update().connect(sigc::mem_fun(this, &Panel::on_appupdater_update));
     m_appupdater.init();
 
-    // if (config::is_autohide_none() == false) {
     m_autohide.set_hide_delay(0.5);
     m_autohide.init();
-    //  }
 
     m_bck_thread = new thread(connect_async);
 }
@@ -300,11 +290,10 @@ void Panel::close_preview()
 }
 void Panel::show()
 {
-    m_autohide.reset_timer();
     m_autohide.set_mouse_inside(true);
-
     m_autohide.show();
 }
+
 bool Panel::on_motion_notify_event(GdkEventMotion* event)
 {
     m_current_index = this->get_index(event->x, event->y);
@@ -418,7 +407,11 @@ bool Panel::on_button_release_event(GdkEventButton* event)
                 } else {
                     if ((int)item->m_items.size() == 1) {
                         this->close_preview();
+
+                        // avoid panel hide
+                        this->show();
                         this->activate();
+
                     } else if (item->get_dock_item_type() == dock_item_type_t::launcher) {
                         // show preview if is compositite and not out of limits
                         //
@@ -522,11 +515,9 @@ bool Panel::on_scroll_event(GdkEventScroll* e)
     if (m_current_index < 1) return true;
 
     auto const item = AppUpdater::m_dockitems[m_current_index]->get_next();
-
     if (item == nullptr) return true;
 
     WnckWindow* window = item->get_wnckwindow();
-
     wnck_util::activate_window(window);
 
     return true;
@@ -541,7 +532,7 @@ bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
     // reset the timer on enter
     if (!config::is_autohide_none() && m_autohide.is_visible()) {
         if (config::is_autohide() || config::is_intelihide()) {
-            m_autohide.reset_timer();
+            // resets the timer and set the mouse flag;
             m_autohide.set_mouse_inside(true);
         }
     }
@@ -563,7 +554,7 @@ bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
     // reset the timer on leave
     if (!config::is_autohide_none()) {
         if (config::is_autohide() || config::is_intelihide()) {
-            m_autohide.reset_timer();
+            // resets the timer and set the mouse flag;
             m_autohide.set_mouse_inside(false);
         }
     }
@@ -608,10 +599,10 @@ bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
         if (config::is_intelihide()) {
             m_autohide.intelihide();
         } else if (config::is_autohide()) {
-            g_print("leave.....\n");
             m_autohide.hide();
         }
     }
+
     this->connect_draw_signal(false);
     return true;
 }
