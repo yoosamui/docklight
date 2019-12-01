@@ -439,19 +439,17 @@ void Autohide::reset_timer()
 
 bool Autohide::animation()
 {
-    g_print("Anim time............%f.%d.\n", m_stm.m_animation_timer.elapsed(),
-            position_util::is_visible() /*is_visible()*/);
+    //  g_print("Anim time............%f.%d.\n", m_stm.m_animation_timer.elapsed(),
+    //          position_util::is_visible() /*is_visible()*/);
 
-    if (m_stm.m_animation_state == DEF_AUTOHIDE_HIDE && !m_stm.m_animation_running &&
-        m_stm.m_animation_timer.elapsed() > m_animation_hide_delay) {
+    if (m_stm.m_visible && m_stm.m_animation_state == DEF_AUTOHIDE_HIDE &&
+        !m_stm.m_animation_running && m_stm.m_animation_timer.elapsed() > m_animation_hide_delay) {
         m_easing_duration = DEF_AUTOHIDE_EASING_DURATION;
-        if (is_visible()) m_stm.m_animation_running = true;
 
-        // if (position_util::is_visible()) {
-        // m_stm.m_animation_running = true;
+        // start animation
+        m_stm.m_animation_running = true;
 
-        // g_print("Anim hide..............\n");
-        //}
+        g_print("Anim hide..............\n");
     }
 
     if (m_stm.m_animation_state == DEF_AUTOHIDE_SHOW && !m_stm.m_visible &&
@@ -528,6 +526,7 @@ bool Autohide::animation()
             if (m_stop) {
                 g_print("STOP FORCE\n");
                 m_stm.m_visible = true;
+
                 m_stm.m_animation_running = true;
                 connect_signal_handler(true);
             }
