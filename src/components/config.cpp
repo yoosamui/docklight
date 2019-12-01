@@ -1,4 +1,3 @@
-
 #include "components/config.h"
 #include <string>
 #include "components/arguments.h"
@@ -11,24 +10,30 @@ DL_NS_BEGIN
 
 namespace config
 {
-#define MARGIN 12
-#define DEF_CONFIG_FILENAME "docklight.config"
-#define DEF_DEFAULT_ICON_SIZE 32
-#define DEF_DEFAULT_SEPARATOR_MARGIN 12
-#define DEF_DEFAULT_SEPARATOR_SIZE 8
+    static constexpr const int DEF_DOCKAREA_MARGIN = 12;
+    static constexpr const char *DEF_CONFIG_FILENAME = "docklight.config";
+    static constexpr const int DEF_ICON_SIZE = 36;
+    static constexpr const int DEF_SEPARATOR_MARGIN = 12;
+    static constexpr const int DEF_SEPARATOR_SIZE = 8;
+    static constexpr const double DEF_AUTOHIDE_ANIMATION_DELAY = 5.0;
+    static constexpr const int DEF_AUTOHIDE_ANCHORT_MARGIN = 20;
+    static constexpr const double DEF_AUTOHIDE_HIDE_DELAY = 0.5;
 
     using namespace style;
 
     Theme m_theme;
     dock_location_t m_location = dock_location_t::bottom;
-    int m_icon_size = DEF_DEFAULT_ICON_SIZE;
-    int m_separator_margin = DEF_DEFAULT_SEPARATOR_MARGIN;
-    int m_separator_size = DEF_DEFAULT_SEPARATOR_SIZE;
+    int m_icon_size = DEF_ICON_SIZE;
+    int m_separator_margin = DEF_SEPARATOR_MARGIN;
+    int m_separator_size = DEF_SEPARATOR_SIZE;
     dock_indicator_type_t m_indicator_type = dock_indicator_type_t::dots;
     bool m_show_title = true;
     bool m_show_separator_line = true;
     dock_alignment_t m_alignment = dock_alignment_t::center;
     dock_autohide_type_t m_autohide_type = dock_autohide_type_t::intelihide;
+    float m_animation_delay = DEF_AUTOHIDE_ANIMATION_DELAY;
+    int m_anchor_margin = DEF_AUTOHIDE_ANCHORT_MARGIN;
+    double m_hide_delay = DEF_AUTOHIDE_HIDE_DELAY;
 
     void get_color_from_string(const std::string &s, Color &fill, Color &stroke, double &lineWidth,
                                double &ratio, int &mask)
@@ -146,6 +151,48 @@ namespace config
             error = nullptr;
 
             return m_icon_size;
+        }
+
+        return value;
+    }
+
+    int get_anchor_margin(GKeyFile *key_file)
+    {
+        GError *error = nullptr;
+        int value = g_key_file_get_integer(key_file, "dock", "anchor_margin", &error);
+        if (error) {
+            g_error_free(error);
+            error = nullptr;
+
+            return m_anchor_margin;
+        }
+
+        return value;
+    }
+
+    float get_animation_delay(GKeyFile *key_file)
+    {
+        GError *error = nullptr;
+        double value = g_key_file_get_double(key_file, "dock", "animation_delay", &error);
+        if (error) {
+            g_error_free(error);
+            error = nullptr;
+
+            return m_animation_delay;
+        }
+
+        return value;
+    }
+
+    float get_hide_delay(GKeyFile *key_file)
+    {
+        GError *error = nullptr;
+        double value = g_key_file_get_double(key_file, "dock", "hide_delay", &error);
+        if (error) {
+            g_error_free(error);
+            error = nullptr;
+
+            return m_hide_delay;
         }
 
         return value;
@@ -292,7 +339,7 @@ namespace config
         if (key_file != nullptr) {
             m_icon_size = get_icon_size(key_file);
             if (m_icon_size < 24 || m_icon_size > 128) {
-                m_icon_size = DEF_DEFAULT_ICON_SIZE;
+                m_icon_size = DEF_ICON_SIZE;
             }
 
             // location
@@ -357,13 +404,28 @@ namespace config
             // separator size
             m_separator_size = get_separator_size(key_file);
             if (m_separator_size < 0 || m_separator_size > 20) {
-                m_separator_size = DEF_DEFAULT_SEPARATOR_SIZE;
+                m_separator_size = DEF_SEPARATOR_SIZE;
             }
 
             // separator margin
             m_separator_margin = get_separator_margin(key_file);
             if (m_separator_margin < 0 || m_separator_margin > 20) {
-                m_separator_margin = DEF_DEFAULT_ICON_SIZE;
+                m_separator_margin = DEF_ICON_SIZE;
+            }
+
+            m_anchor_margin = get_anchor_margin(key_file);
+            if (m_anchor_margin < 1 || m_anchor_margin > 20) {
+                m_anchor_margin = DEF_AUTOHIDE_ANCHORT_MARGIN;
+            }
+
+            m_animation_delay = get_animation_delay(key_file);
+            if (m_animation_delay < 0.0 || m_animation_delay > 20.0) {
+                m_animation_delay = DEF_AUTOHIDE_ANIMATION_DELAY;
+            }
+
+            m_hide_delay = get_hide_delay(key_file);
+            if (m_hide_delay < 0.0 || m_hide_delay > 4.0) {
+                m_hide_delay = DEF_AUTOHIDE_HIDE_DELAY;
             }
 
             // styles
@@ -520,6 +582,24 @@ namespace config
         return 20;
     }
 
+    float get_animation_delay()
+    {
+        //
+        return m_animation_delay;
+    }
+
+    float get_hide_delay()
+    {
+        //
+        return m_hide_delay;
+    }
+
+    int get_anchor_margin()
+    {
+        //
+        return m_anchor_margin;
+    }
+
     int get_separator_margin() { return m_separator_margin; }
 
     int get_separator_size() { return m_separator_size; }
@@ -530,7 +610,7 @@ namespace config
 
     int get_dock_area()
     {
-        int area = m_icon_size + MARGIN;
+        int area = m_icon_size + DEF_DOCKAREA_MARGIN;
         return area;
     }
 

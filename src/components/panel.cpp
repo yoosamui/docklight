@@ -47,7 +47,6 @@ void Panel::init()
     m_appupdater.signal_update().connect(sigc::mem_fun(this, &Panel::on_appupdater_update));
     m_appupdater.init();
 
-    m_autohide.set_hide_delay(0.5);
     m_autohide.init();
 
     m_bck_thread = new thread(connect_async);
@@ -296,8 +295,10 @@ void Panel::show()
 
 bool Panel::on_motion_notify_event(GdkEventMotion* event)
 {
+    // TODO: optimize for speed
     m_current_index = this->get_index(event->x, event->y);
-    int anchor_margin = 20;
+    int anchor_margin = config::get_anchor_margin();
+
     // detect anchor point
     if (!config::is_autohide_none() && !m_autohide.is_visible()) {
         auto const location = config::get_dock_location();
@@ -403,6 +404,9 @@ bool Panel::on_button_release_event(GdkEventButton* event)
                 if (item->m_items.size() == 0 &&
                     item->get_dock_item_type() == dock_item_type_t::launcher) {
                     this->close_preview();
+
+                    // avoid panel hide
+                    this->show();
                     this->open_new();
                 } else {
                     if ((int)item->m_items.size() == 1) {
@@ -623,6 +627,9 @@ void Panel::open_new()
         m_launcherwindow.init(item);
         m_launcherwindow.show_all();
     }
+
+    // avoid panel hide
+    this->show();
 }
 
 void Panel::activate()

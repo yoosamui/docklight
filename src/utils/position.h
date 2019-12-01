@@ -26,7 +26,7 @@ namespace position_util
 
     void set_strut(bool reset);
     void reset_strut();
-    void hide();
+    //    void hide();
     bool is_visible();
     int get_area();
     void init(AppWindow *window);

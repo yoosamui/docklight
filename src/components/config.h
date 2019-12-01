@@ -293,8 +293,10 @@ namespace config
     void set_separator_line(bool value);
     dock_alignment_t get_dock_alignment();
     void set_dock_alignment(dock_alignment_t value);
+    float get_animation_delay();
+    int get_anchor_margin();
+    float get_hide_delay();
     style::Theme get_theme();
-
 }  // namespace config
 
 DL_NS_END

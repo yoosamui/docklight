@@ -29,7 +29,8 @@ void Autohide::init()
                      G_CALLBACK(Autohide::on_active_workspace_changed_callback), nullptr);
 
     if (config::is_autohide_none() == false) {
-        m_easing_duration = 5.0;
+        m_easing_duration = config::get_animation_delay();
+        m_animation_hide_delay = config::get_hide_delay();
 
         this->reset_timer();
 
@@ -354,11 +355,6 @@ void Autohide::intelihide()
     }
 }
 
-void Autohide::set_hide_delay(float delay)
-{
-    m_animation_hide_delay = delay;
-}
-
 bool Autohide::is_visible()
 {
     return m_stm.m_visible;
@@ -399,7 +395,7 @@ void Autohide::show()
 
     // force stop if a show animation already runing
     if (m_stm.m_animation_running) {
-        //   m_stm.m_force_stop = true;
+        //    m_stm.m_force_stop = true;
     }
 
     m_stm.m_animation_state = DEF_AUTOHIDE_SHOW;
@@ -488,6 +484,7 @@ bool Autohide::animation()
             this->reset_timer();
 
             // reset flags
+            m_animation_time = 0;
             m_stm.m_animation_running = false;
             m_animation_time = 0;
             m_stm.m_visible = (int)endPosition == 0;

@@ -133,34 +133,34 @@ namespace position_util
         }
     }
 
-    void hide()
-    {
-        return;
-        auto const location = config::get_dock_location();
-        int area = position_util::get_area();
-        Gdk::Rectangle workarea = get_workarea();
+    // void hide()
+    //{
+    // return;
+    // auto const location = config::get_dock_location();
+    // int area = position_util::get_area();
+    // Gdk::Rectangle workarea = get_workarea();
 
-        int x = 0, y = 0;
-        m_window->get_position(x, y);
+    // int x = 0, y = 0;
+    // m_window->get_position(x, y);
 
-        if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-            // m_window->resize(m_window->get_width(), 1);
+    // if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+    //// m_window->resize(m_window->get_width(), 1);
 
-            if (location == dock_location_t::bottom) {
-                m_window->move(x, workarea.get_height() + workarea.get_y() - 1);
-            } else {
-                m_window->move(x, workarea.get_y() - area + 1);
-            }
-        } else {
-            // m_window->resize(1, m_window->get_height());
+    // if (location == dock_location_t::bottom) {
+    // m_window->move(x, workarea.get_height() + workarea.get_y() - 1);
+    //} else {
+    // m_window->move(x, workarea.get_y() - area + 1);
+    //}
+    //} else {
+    //// m_window->resize(1, m_window->get_height());
 
-            if (location == dock_location_t::right) {
-                m_window->move(workarea.get_width() + workarea.get_x() - 1, y);
-            } else {
-                // m_window->move(workarea.get_x() - area + 1, y);
-            }
-        }
-    }
+    // if (location == dock_location_t::right) {
+    // m_window->move(workarea.get_width() + workarea.get_x() - 1, y);
+    //} else {
+    //// m_window->move(workarea.get_x() - area + 1, y);
+    //}
+    //}
+    //}
     bool is_visible()
     {
         int x = 0, y = 0;
