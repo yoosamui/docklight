@@ -43,9 +43,30 @@ namespace device
             return display::get_default()->get_monitor(monitor_num);
         }
 
+        // get the current monitor
         const Glib::RefPtr<Gdk::Monitor> get_monitor()
         {
-            return display::get_default()->get_monitor(m_monitor_number);
+            auto monitor = display::get_default()->get_monitor(m_monitor_number);
+            if (monitor) {
+                return monitor;
+            }
+
+            for (int i = 0; i < get_monitor_count(); i++) {
+                monitor = get_monitor(i);
+                if (monitor) {
+                    set_current_monitor(i);
+                    return monitor;
+                }
+            }
+
+            monitor = display::get_default()->get_primary_monitor();
+            if (monitor) {
+                set_primary();
+                return monitor;
+            }
+
+            g_error("no monitor available %d\n", get_monitor_count());
+            return (Glib::RefPtr<Gdk::Monitor>)nullptr;
         }
 
         int get_monitor_number()

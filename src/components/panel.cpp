@@ -667,6 +667,7 @@ void Panel::connect_async()
     }
     connect_draw_signal(false);
 }
+
 void Panel::on_active_window_changed(WnckScreen* screen, WnckWindow* previously_active_window,
                                      gpointer user_data)
 {

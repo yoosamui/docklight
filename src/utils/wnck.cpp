@@ -13,6 +13,7 @@ namespace wnck_util
 
         if (wnck_window_is_active(window)) {
             wnck_window_minimize(window);
+
             return;
         }
 

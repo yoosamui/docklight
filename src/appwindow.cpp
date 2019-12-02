@@ -33,7 +33,7 @@ AppWindow::AppWindow()
         gtk_widget_set_visual(GTK_WIDGET(gobj()), visual);
     }
 
-    this->set_gravity(Gdk::Gravity::GRAVITY_STATIC);
+    //    this->set_gravity(Gdk::Gravity::GRAVITY_STATIC);
     this->set_size_request(1, 1);
 
     // A window to implement a docking bar used for creating the dock panel.
@@ -43,6 +43,7 @@ AppWindow::AppWindow()
     this->set_keep_above(true);
     this->set_decorated(false);
 
+    wnck_set_client_type(WNCK_CLIENT_TYPE_PAGER);
     m_panel = new Panel();
     this->add(*m_panel);
 
@@ -69,6 +70,9 @@ int AppWindow::init(Glib::RefPtr<Gtk::Application> &app)
     g_signal_connect(G_OBJECT(screen), "monitors-changed", G_CALLBACK(monitor_changed_callback),
                      (gpointer)this);
 
+    g_signal_connect(G_OBJECT(screen), "size-changed", G_CALLBACK(monitor_size_changed_callback),
+                     (gpointer)this);
+
     app->signal_activate().connect(sigc::ptr_fun(&AppWindow::on_app_activated));
 
     return 0;
@@ -80,12 +84,13 @@ void AppWindow::on_app_activated()
     m_panel->init();
 }
 
-void AppWindow::monitor_changed_callback(GdkScreen *screen, gpointer gtkwindow)
+void AppWindow::monitor_size_changed_callback(GdkScreen *screen, gpointer gtkwindow)
 {
-    g_print("Monitor changed event.\n");
-    device::monitor::set_primary();
+    g_print("Monitor size change\n");
     update();
 }
+
+void AppWindow::monitor_changed_callback(GdkScreen *screen, gpointer gtkwindow) {}
 
 Panel *AppWindow::get_panel() const
 {
@@ -157,7 +162,8 @@ int AppWindow::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine> &
                 workarea.get_height());
     }
 
-    g_print("Default monitor: %d %s\n", device::monitor::get_monitor_number(),
+    int monitor_number = device::monitor::get_monitor_number();
+    g_print("Default monitor: %d %s\n", monitor_number,
             device::monitor::get_current()->get_model().c_str());
 
     g_print("window manager: %s\n", system_util::get_window_manager_name().c_str());
