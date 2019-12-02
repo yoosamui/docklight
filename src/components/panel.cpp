@@ -596,7 +596,6 @@ bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
     m_current_index = -1;
     this->draw();
 
-    //  m_enter_anchor = false;
     m_stm.m_mouse_inside = false;
 
     if (!config::is_autohide_none()) {

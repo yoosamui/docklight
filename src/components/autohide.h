@@ -30,7 +30,6 @@ typedef struct {
     Gdk::Rectangle m_last_window_geometry;
     WnckWindow* m_fullscreen_window = nullptr;
     WnckWindow* m_active_window = nullptr;
-    bool m_force_stop = false;
 } static_members_t;
 
 class Autohide

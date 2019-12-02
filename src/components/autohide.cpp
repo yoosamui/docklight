@@ -251,9 +251,8 @@ bool Autohide::is_intersection_detected()
     auto const location = config::get_dock_location();
 
     bool initial_size = false;
-    // check the initial panel size. It can't deliver the width and height correctly.
-    // This should only happen on application startup where the size of the dock window is
-    // width = 1 and height = 1
+    // check the initial panel size.iThis should only happen on application startup where the size
+    // of the dock window is width = 1 and height = 1
     if (rect_dock.get_width() == 1 && rect_dock.get_height() == 1) {
         area = config::get_dock_area() - Panel::m_stm.m_decrease_factor;
         initial_size = true;
@@ -268,17 +267,12 @@ bool Autohide::is_intersection_detected()
                 }
             }
 
-            rect_dock.set_y(workarea.get_height() + workarea.get_y() - area);
-            rect_dock.set_height(area);
         } else {
             if (initial_size) {
                 if (rect_window.get_y() - workarea.get_y() < area) {
                     return true;
                 }
             }
-            rect_window.set_y(rect_window.get_y() + workarea.get_y());
-            rect_dock.set_y(workarea.get_y());
-            rect_dock.set_height(workarea.get_y() + area);
         }
     } else {
         if (location == dock_location_t::right) {
@@ -288,19 +282,12 @@ bool Autohide::is_intersection_detected()
                 }
             }
 
-            rect_dock.set_x(workarea.get_width() + workarea.get_x() - area);
-            rect_dock.set_width(area);
-
         } else {
             if (initial_size) {
                 if (rect_window.get_x() - workarea.get_x() < area) {
                     return true;
                 }
             }
-
-            rect_window.set_x(rect_window.get_x() + workarea.get_x());
-            rect_dock.set_x(workarea.get_x());
-            rect_dock.set_width(workarea.get_x() + area);
         }
     }
 
@@ -374,8 +361,8 @@ void Autohide::hide()
     }
 
     // force stop if a hide animation already runing
-    if (m_stm.m_animation_running) {
-        m_stm.m_force_stop = true;
+    if (m_stm.m_animation_running && !m_stm.m_visible) {
+        m_stm.m_visible = true;
     }
 
     // start hide animation
@@ -392,11 +379,6 @@ void Autohide::show()
     // if (wnck_window_is_fullscreen(m_stm.m_active_window)) {
     // return;
     //}
-
-    // force stop if a show animation already runing
-    if (m_stm.m_animation_running) {
-        //    m_stm.m_force_stop = true;
-    }
 
     m_stm.m_animation_state = DEF_AUTOHIDE_SHOW;
     connect_signal_handler(true);
@@ -423,10 +405,8 @@ bool Autohide::animation()
         !m_stm.m_animation_running && m_stm.m_animation_timer.elapsed() > m_animation_hide_delay) {
         // start hide animation
         m_stm.m_animation_running = true;
-    }
-
-    if (m_stm.m_animation_state == DEF_AUTOHIDE_SHOW && !m_stm.m_visible &&
-        !m_stm.m_animation_running) {
+    } else if (m_stm.m_animation_state == DEF_AUTOHIDE_SHOW && !m_stm.m_visible &&
+               !m_stm.m_animation_running) {
         // start show animation
         m_stm.m_animation_running = true;
     }
@@ -465,7 +445,7 @@ bool Autohide::animation()
 
         float position =
             easing_util::map_clamp(m_animation_time, m_initTime, endTime, startPosition,
-                                   endPosition, &easing_util::bounce::easeInOut);
+                                   endPosition, &easing_util::cubic::easeInOut);
 
         if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
             m_offset_x = 0;
@@ -479,7 +459,7 @@ bool Autohide::animation()
         m_signal_update.emit(m_offset_x, m_offset_y);
         m_animation_time++;
 
-        if ((int)position == (int)endPosition || m_stm.m_force_stop) {
+        if ((int)position == (int)endPosition) {
             // reset timer
             this->reset_timer();
 
@@ -489,20 +469,10 @@ bool Autohide::animation()
             m_animation_time = 0;
             m_stm.m_visible = (int)endPosition == 0;
 
-            // handle force stop
-            if (m_stm.m_force_stop) {
-                // reset and start animation again
-                m_stm.m_force_stop = false;
-                m_stm.m_visible = true;
-
-                m_stm.m_animation_running = true;
-            } else {
-                // stop the connection signal handler
-                connect_signal_handler(false);
-            }
+            connect_signal_handler(false);
         }
     } else {
-        // if a timeout stop the connection handler
+        // if timeout stop the signal handler
         if (m_stm.m_connect_autohide_signal_set) {
             if (m_stm.m_animation_timer.elapsed() > m_animation_hide_delay) {
                 connect_signal_handler(false);
