@@ -302,7 +302,7 @@ bool Panel::on_motion_notify_event(GdkEventMotion* event)
     // detect anchor point
     if (!config::is_autohide_none() && !m_autohide.is_visible()) {
         auto const location = config::get_dock_location();
-        int area = config::get_dock_area();
+        int area = position_util::get_area();
         if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
             if (location == dock_location_t::top) {
                 if (event->y < anchor_margin && event->y >= 0) {
