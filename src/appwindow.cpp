@@ -5,9 +5,7 @@
 #include "components/arguments.h"
 #include "components/config.h"
 #include "components/device.h"
-#include "utils/pixbuf.h"
 #include "utils/position.h"
-#include "utils/easing.h"
 #include "utils/system.h"
 
 #include <giomm/notification.h>
