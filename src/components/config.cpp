@@ -444,6 +444,12 @@ namespace config
                     m_theme.set_Panel(new ColorWindow(fill, stroke, lineWidth, ratio, mask));
                 }
 
+                const string panel_gradient = get_style_item(key_file, style_name, "panel_gradient");
+                if (!panel_gradient.empty()) {
+                    get_color_from_string(panel_gradient.c_str(), fill, stroke, lineWidth, ratio, mask);
+                    m_theme.set_PanelGradient(new ColorWindow(fill, stroke, lineWidth, ratio, mask));
+                }
+
                 const string panel_cell = get_style_item(key_file, style_name, "panel_cell");
                 if (!panel_cell.empty()) {
                     get_color_from_string(panel_cell.c_str(), fill, stroke, lineWidth, ratio, mask);

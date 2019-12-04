@@ -53,7 +53,7 @@ namespace config
             Color m_Fill = Color(0.0, 0.50, 0.66, 0.9);
             Color m_Stroke = Color(1, 1, 1, 0);
             double m_LineWidth = 1.0;
-            double m_Ratio = 3;
+            double m_Ratio = 0;
             int m_Mask = 0;
         };
 
@@ -62,6 +62,7 @@ namespace config
           public:
             Theme(){};
             ColorWindow& Panel() const { return *m_Panel; }
+            ColorWindow& PanelGradient() const { return *m_PanelGradient; }
             ColorWindow& PanelCell() const { return *m_PanelCell; }
             ColorWindow& PanelDrag() const { return *m_PanelDrag; }
             ColorWindow& PanelIndicator() const { return *m_PanelIndicator; }
@@ -87,6 +88,20 @@ namespace config
                 }
 
                 m_Panel = cw;
+            }
+
+            void set_PanelGradient(ColorWindow* cw)
+            {
+                if (cw == nullptr) {
+                    return;
+                }
+
+                if (m_PanelGradient != nullptr) {
+                    delete m_PanelGradient;
+                    m_PanelGradient = nullptr;
+                }
+
+                m_PanelGradient = cw;
             }
 
             void set_PanelDrag(ColorWindow* cw)
@@ -259,6 +274,7 @@ namespace config
 
           private:
             ColorWindow* m_Panel = new ColorWindow();
+            ColorWindow* m_PanelGradient = new ColorWindow();
             ColorWindow* m_PanelDrag = new ColorWindow();
             ColorWindow* m_PanelIndicator = new ColorWindow();
             ColorWindow* m_PanelSeparator = new ColorWindow();

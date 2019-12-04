@@ -282,8 +282,11 @@ void Panel::close_preview()
         if (!config::is_autohide_none()) {
             m_autohide.reset_timer();
             m_autohide.set_mouse_inside(false);
-
-            m_autohide.hide();
+            if (config::is_autohide()) {
+                m_autohide.hide();
+            } else {
+                m_autohide.intelihide();
+            }
         }
     }
 }

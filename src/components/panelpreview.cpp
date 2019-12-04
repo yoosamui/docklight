@@ -473,12 +473,22 @@ bool Panel_preview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
                         m_theme.PreviewTitleText().Fill().Color::blue,
                         m_theme.PreviewTitleText().Fill().Color::alpha);
 
-                cairo_util::rounded_rectangle(cr, x, y, m_width, PREVIEW_TITLE_SIZE, 0);
+                cairo_util::rounded_rectangle(cr, x+4, y+2, m_width-6, PREVIEW_TITLE_SIZE, 0);
                 cr->fill();
             }
         }
         // clang-format on
 
+        // cell selector
+        if (idx == m_current_index) {
+            if (m_theme.PreviewTitleText().Fill().Color::alpha != 0.0) {
+                cr->set_source_rgba(1, 1, 1, 0.4);
+
+                cairo_util::rounded_rectangle(cr, x, y, m_width, m_height + PREVIEW_TITLE_SIZE,
+                                              m_theme.PreviewCell().Ratio());
+                cr->fill();
+            }
+        }
         // Image and text
         if (image) {
             image_center_x = (m_width / 2) - (image->get_width() / 2);
@@ -488,10 +498,10 @@ bool Panel_preview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
             // close selector
             if (idx == m_current_index) {
-                int x1 = x + m_width - PREVIEW_TITLE_SIZE;
-                int x2 = PREVIEW_TITLE_SIZE - 8;
-                int y1 = y;
-                int y2 = PREVIEW_TITLE_SIZE - 8;
+                int x1 = x + m_width - PREVIEW_TITLE_SIZE - 2;
+                int x2 = PREVIEW_TITLE_SIZE - 10;
+                int y1 = y + 1;
+                int y2 = PREVIEW_TITLE_SIZE - 10;
 
                 m_close_button_rectangle =
                     Gdk::Rectangle(x1, y1, PREVIEW_TITLE_SIZE, PREVIEW_TITLE_SIZE);
@@ -502,7 +512,9 @@ bool Panel_preview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
                                         m_theme.PreviewClose().Fill().Color::blue,
                                         m_theme.PreviewClose().Fill().Color::alpha);
 
-                    cr->rectangle(x1, y1, PREVIEW_TITLE_SIZE, PREVIEW_TITLE_SIZE);
+                    cairo_util::rounded_rectangle(cr, x1, y1, PREVIEW_TITLE_SIZE,
+                                                  PREVIEW_TITLE_SIZE,
+                                                  m_theme.PreviewClose().Ratio());
                     cr->fill();
                 }
 
@@ -514,8 +526,8 @@ bool Panel_preview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 
                     cr->set_line_width(m_theme.PreviewClose().LineWidth());
 
-                    x1 += 4;
-                    y1 += 4;
+                    x1 += 5;
+                    y1 += 5;
 
                     cr->move_to(x1, y1);
                     cr->line_to(x1, y1);
