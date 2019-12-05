@@ -481,6 +481,12 @@ namespace config
                     m_theme.set_Preview(new ColorWindow(fill, stroke, lineWidth, ratio, mask));
                 }
 
+                const string preview_gradient = get_style_item(key_file, style_name, "preview_gradient");
+                if (!preview_gradient.empty()) {
+                    get_color_from_string(preview_gradient.c_str(), fill, stroke, lineWidth, ratio, mask);
+                    m_theme.set_PreviewGradient(new ColorWindow(fill, stroke, lineWidth, ratio, mask));
+                }
+
                 const string preview_cell = get_style_item(key_file, style_name, "preview_cell");
                 if (!preview_cell.empty()) {
                     get_color_from_string(preview_cell.c_str(), fill, stroke, lineWidth, ratio,  mask);

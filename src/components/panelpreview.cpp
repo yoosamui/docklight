@@ -357,30 +357,9 @@ inline void Panel_preview::draw_text(const Cairo::RefPtr<Cairo::Context>& cr, in
 bool Panel_preview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 {
     // background
-
-    // clang-format off
-    if (m_theme.Preview().Fill().Color::alpha != 0.0) {
-        cr->set_source_rgba(m_theme.Preview().Fill().Color::red,
-                m_theme.Preview().Fill().Color::green,
-                m_theme.Preview().Fill().Color::blue,
-                m_theme.Preview().Fill().Color::alpha);
-
-        cairo_util::rounded_rectangle(cr, 0, 0, m_window_width, m_window_height, m_theme.Preview().Ratio());
-        cr->fill();
-    }
-
-    if (m_theme.Preview().Stroke().Color::alpha != 0.0) {
-        cr->set_source_rgba(m_theme.Preview().Stroke().Color::red,
-                m_theme.Preview().Stroke().Color::green,
-                m_theme.Preview().Stroke().Color::blue,
-                m_theme.Preview().Stroke().Color::alpha);
-
-        cr->set_line_width(m_theme.Preview().LineWidth());
-        cairo_util::rounded_rectangle(cr, 0, 0, m_window_width, m_window_height, m_theme.Preview().Ratio());
-        cr->stroke();
-    }
-
-    // clang-format on
+    Gdk::Rectangle rect(0, 0, m_window_width, m_window_height);
+    cairo_util::fill(cr, m_theme.Preview(), m_theme.PreviewGradient(), rect);
+    cairo_util::stroke(cr, m_theme.Preview(), rect);
 
     int image_center_x = 0;
     int image_center_y = 0;

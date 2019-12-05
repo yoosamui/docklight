@@ -71,6 +71,7 @@ namespace config
             ColorWindow& PanelTitleText() const { return *m_PanelTitleText; }
             ColorWindow& Selector() const { return *m_Selector; }
             ColorWindow& Preview() const { return *m_Preview; }
+            ColorWindow& PreviewGradient() const { return *m_PreviewGradient; }
             ColorWindow& PreviewCell() const { return *m_PreviewCell; }
             ColorWindow& PreviewTitleText() const { return *m_PreviewTitleText; }
             ColorWindow& PreviewClose() const { return *m_PreviewClose; }
@@ -216,6 +217,19 @@ namespace config
                 m_Preview = cw;
             }
 
+            void set_PreviewGradient(ColorWindow* cw)
+            {
+                if (cw == nullptr) {
+                    return;
+                }
+
+                if (m_PreviewGradient != nullptr) {
+                    delete m_PreviewGradient;
+                    m_PreviewGradient = nullptr;
+                }
+
+                m_PreviewGradient = cw;
+            }
             void set_PreviewCell(ColorWindow* cw)
             {
                 if (cw == nullptr) {
@@ -283,6 +297,7 @@ namespace config
             ColorWindow* m_PanelCell = new ColorWindow();
             ColorWindow* m_Selector = new ColorWindow();
             ColorWindow* m_Preview = new ColorWindow();
+            ColorWindow* m_PreviewGradient = new ColorWindow();
             ColorWindow* m_PreviewCell = new ColorWindow();
             ColorWindow* m_PreviewTitleText = new ColorWindow();
             ColorWindow* m_PreviewClose = new ColorWindow();

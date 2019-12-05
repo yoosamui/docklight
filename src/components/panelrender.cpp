@@ -1,9 +1,8 @@
 #include "panelrender.h"
 #include <gdkmm/general.h>  // set_source_pixbuf()
 #include "utils/cairo.h"
-#include "utils/position.h"
-
 #include "utils/pixbuf.h"
+#include "utils/position.h"
 #include "utils/system.h"
 
 DL_NS_BEGIN
@@ -40,154 +39,13 @@ void Panel_render::draw_panel(const Cairo::RefPtr<Cairo::Context>& cr)
     rect.set_x(m_offset_x);
     rect.set_y(m_offset_y);
 
-    cairo_pattern_t* pattern = cairo_pattern_create_linear(0, 0, 0, 0);
+    // cairo_util::rounded_rectangle(cr, rect.get_x(), rect.get_y(), rect.get_width(),
+    // rect.get_height(), m_theme.Panel().Ratio());
 
-    // defines the offset for the solid color
-    double gradient_offset = m_theme.PanelGradient().Ratio();
+    cairo_util::fill(cr, m_theme.Panel(), m_theme.PanelGradient(), rect);
 
-    // clang-format off
-    if (gradient_offset > 0.f) {
+    cairo_util::stroke(cr, m_theme.Panel(), rect);
 
-        auto const location = config::get_dock_location();
-        if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-            switch((int) m_theme.PanelGradient().LineWidth())
-            {
-                // right to left
-                case 1: pattern = cairo_pattern_create_linear(rect.get_width(), rect.get_y(), rect.get_x(), rect.get_height());
-                        break;
-
-                case 2:if(location ==  dock_location_t::top) {
-                           pattern = cairo_pattern_create_linear(0, rect.get_height(), 0, rect.get_y());
-                       }
-                       else {
-                           pattern = cairo_pattern_create_linear(0, rect.get_y(), 0, rect.get_height());
-                       }
-
-                       break;
-
-                        // bottom to top
-                case 3:pattern = cairo_pattern_create_linear(0, rect.get_height(), 0, rect.get_y());
-                        //if(location ==  dock_location_t::top) {
-                           //pattern = cairo_pattern_create_linear(0, rect.get_y(), 0, rect.get_height());
-                       //}
-                       //else {
-                           //pattern = cairo_pattern_create_linear(0, rect.get_height(), 0, rect.get_y());
-                       //}
-                        break;
-
-                        // left to right
-                default: pattern = cairo_pattern_create_linear(rect.get_y(), rect.get_x(),rect.get_width(), rect.get_height());
-                         break;
-            }
-        }
-        else
-        {
-            switch((int) m_theme.PanelGradient().LineWidth())
-            {
-                // right to left
-                case 1: pattern = cairo_pattern_create_linear(0, rect.get_height(), 0, rect.get_y());
-                        break;
-
-                        // Left ( right  to left) Right ( left to right)
-                case 2: if(location ==  dock_location_t::left) {
-                            pattern = cairo_pattern_create_linear(rect.get_width(), 0, rect.get_x(), 0);
-                        }
-                        else {
-                            pattern = cairo_pattern_create_linear(rect.get_x(), 0, rect.get_width(), 0);
-                        }
-                        break;
-
-                        // Left ( left  to right) Right ( right  to left)
-                case 3: if(location ==  dock_location_t::left) {
-                            pattern = cairo_pattern_create_linear(rect.get_x(), 0, rect.get_width(), 0);
-                        }
-                        else {
-                            pattern = cairo_pattern_create_linear(rect.get_width(), 0, rect.get_x(), 0);
-                        }
-                        break;
-
-                        // left to right
-                default: pattern = cairo_pattern_create_linear(0, rect.get_y(), 0, rect.get_height());
-                         break;
-            }
-
-        }
-
-
-
-        // mandatory start color
-        cairo_pattern_add_color_stop_rgb(pattern,
-                m_theme.PanelGradient().Fill().Color::alpha,
-                m_theme.PanelGradient().Fill().Color::red,
-                m_theme.PanelGradient().Fill().Color::green,
-                m_theme.PanelGradient().Fill().Color::blue);
-
-        // mandatory base end from solid color
-        cairo_pattern_add_color_stop_rgb(pattern,
-                gradient_offset,
-                m_theme.Panel().Fill().Color::red,
-                m_theme.Panel().Fill().Color::green,
-                m_theme.Panel().Fill().Color::blue);
-
-        // optional last end get it from stroke colors make a 3D effect.
-        if( m_theme.PanelGradient().Stroke().Color::alpha > 0.0 ) {
-
-            cairo_pattern_add_color_stop_rgb(pattern,
-                    m_theme.PanelGradient().Stroke().Color::alpha,
-                    m_theme.PanelGradient().Stroke().Color::red,
-                    m_theme.PanelGradient().Stroke().Color::green,
-                    m_theme.PanelGradient().Stroke().Color::blue);
-        }
-
-    } else {
-        cr->set_source_rgba(m_theme.Panel().Fill().Color::red,
-                m_theme.Panel().Fill().Color::green,
-                m_theme.Panel().Fill().Color::blue,
-                m_theme.Panel().Fill().Color::alpha);
-    }
-
-
-    if (m_theme.Panel().Fill().Color::alpha != 0.0) {
-
-
-       cr->set_source_rgba(m_theme.Panel().Fill().Color::red,
-                            m_theme.Panel().Fill().Color::green,
-                            m_theme.Panel().Fill().Color::blue,
-                            m_theme.Panel().Fill().Color::alpha);
-
-
-    }
-
-    cairo_util::rounded_rectangle(cr, rect.get_x(),
-            rect.get_y(),
-            rect.get_width(),
-            rect.get_height(),
-            m_theme.Panel().Ratio());
-
-    if(gradient_offset > 0.0)cairo_set_source(cr->cobj(), pattern);
-    cr->fill();
-    // cr->paint();
-
-
-    cairo_pattern_destroy(pattern);
-
-    // start stroke
-    if (m_theme.Panel().Stroke().Color::alpha != 0.0) {
-
-        cairo_util::rounded_rectangle(cr, rect.get_x(),
-                                          rect.get_y(),
-                                          rect.get_width(),
-                                          rect.get_height(),
-                                          m_theme.Panel().Ratio());
-
-        cr->set_source_rgba(m_theme.Panel().Stroke().Color::red,
-                            m_theme.Panel().Stroke().Color::green,
-                            m_theme.Panel().Stroke().Color::blue,
-                            m_theme.Panel().Stroke().Color::alpha);
-
-
-        cr->stroke();
-    }
     // clang-format on
 }
 
