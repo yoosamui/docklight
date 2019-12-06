@@ -83,9 +83,13 @@ void Panel::connect_draw_signal(bool connect)
         m_stm.m_connect_draw_signal_set = false;
     }
 }
-
-void Panel::on_appupdater_update()
+void Panel::on_appupdater_update(window_action_t action, int index)
 {
+    // if window gets close put the index in a save position to avoid an segementation fault.
+    if (action == window_action_t::CLOSE) {
+        m_current_index = 0;
+    }
+
     if (!config::is_autohide_none()) {
         if (m_autohide.is_visible() == false) {
             return;
@@ -250,13 +254,13 @@ void Panel::on_item_menu_windowlist_event(WnckWindow* window)
 void Panel::on_home_menu_addexpander_event()
 {
     Dock_menu::on_home_menu_addexpander_event();
-    this->on_appupdater_update();
+    this->on_appupdater_update(window_action_t::UPDATE, 0);
 }
 
 void Panel::on_home_menu_addseparator_event()
 {
     Dock_menu::on_home_menu_addseparator_event();
-    this->on_appupdater_update();
+    this->on_appupdater_update(window_action_t::UPDATE, 0);
 }
 
 void Panel::on_home_menu_quit_event()

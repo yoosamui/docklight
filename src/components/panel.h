@@ -1,16 +1,11 @@
 #pragma once
 
 #include <glibmm/timer.h>
-//#include <gtkmm/drawingarea.h>
 #include <sigc++/sigc++.h>
 #include <thread>
 #include "common.h"
-//#include "components/appupdater.h"
-//#include "components/autohide.h"
-//#include "components/config.h"
 #include "components/launcherwindow.h"
 #include "components/panelrender.h"
-//#include "components/titlewindow.h"
 
 DL_NS_BEGIN
 
@@ -23,7 +18,7 @@ class Panel : public Gtk::DrawingArea, public Panel_render
     void set_owner(Gtk::Window* window);
     void init();
     int get_required_size();
-    void on_appupdater_update();
+    void on_appupdater_update(window_action_t action, int index);
 
   private:
     thread* m_bck_thread = nullptr;

@@ -39,14 +39,9 @@ void Panel_render::draw_panel(const Cairo::RefPtr<Cairo::Context>& cr)
     rect.set_x(m_offset_x);
     rect.set_y(m_offset_y);
 
-    // cairo_util::rounded_rectangle(cr, rect.get_x(), rect.get_y(), rect.get_width(),
-    // rect.get_height(), m_theme.Panel().Ratio());
-
     cairo_util::fill(cr, m_theme.Panel(), m_theme.PanelGradient(), rect);
 
     cairo_util::stroke(cr, m_theme.Panel(), rect);
-
-    // clang-format on
 }
 
 void Panel_render::draw_items(const Cairo::RefPtr<Cairo::Context>& cr)

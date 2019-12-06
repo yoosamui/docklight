@@ -31,6 +31,7 @@ namespace cairo_util
                                 solid_style.Stroke().Color::blue,
                                 solid_style.Stroke().Color::alpha);
 
+            cr->set_line_width(solid_style.LineWidth());
             cr->stroke();
         }
     }

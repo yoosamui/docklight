@@ -90,7 +90,7 @@ void AppUpdater::on_theme_changed()
         item->set_image(icon);
     }
 
-    m_signal_update.emit();
+    m_signal_update.emit(window_action_t::UPDATE, 0);
     g_print("Theme change\n");
 }
 
@@ -299,7 +299,8 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
 
                 // Add child
                 new_item->m_items.push_back(shared_ptr<DockItem>(new DockItem(info)));
-                m_signal_update.emit();
+
+                m_signal_update.emit(window_action_t::OPEN, (int)m_dockitems.size());
             }
         }
 
@@ -313,17 +314,20 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
             for (size_t c = 0; c < item->m_items.size(); c++) {
                 auto const citem = item->m_items[c];
                 if (citem->get_wnckwindow() == window) {
+                    // delete child
                     item->m_items.erase(item->m_items.begin() + c);
 
+                    // delete file
                     long xid = wnck_window_get_xid(window);
                     string filename = get_ramdisk_filename(xid);
-                    remove(filename.c_str());  // delete file
+                    remove(filename.c_str());
 
-                    if (!item->is_attached() && item->m_items.size() == 0) {
+                    // delete owner if is not attached
+                    if (!item->is_attached() && (int)item->m_items.size() == 0) {
                         m_dockitems.erase(m_dockitems.begin() + i);
                     }
 
-                    m_signal_update.emit();
+                    m_signal_update.emit(window_action_t::CLOSE, (int)m_dockitems.size());
                     return;
                 }
             }
@@ -551,7 +555,7 @@ bool AppUpdater::remove_item(const int index)
     m_dockitems.erase(m_dockitems.begin() + index);
     this->save();
 
-    m_signal_update.emit();
+    m_signal_update.emit(window_action_t::CLOSE, 0);
     return true;
 }
 

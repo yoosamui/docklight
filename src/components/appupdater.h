@@ -10,10 +10,10 @@
 
 DL_NS_BEGIN
 
+enum window_action_t { OPEN, CLOSE, UPDATE };
+
 class AppUpdater
 {
-    enum window_action_t { OPEN, CLOSE };
-
   public:
     AppUpdater();
     ~AppUpdater();
@@ -21,7 +21,7 @@ class AppUpdater
     void init();
 
     // signal accessor:
-    typedef sigc::signal<void> type_signal_update;
+    typedef sigc::signal<void, window_action_t, int> type_signal_update;
     type_signal_update signal_update();
 
     static vector<shared_ptr<DockItem>> m_dockitems;
