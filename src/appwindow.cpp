@@ -64,12 +64,20 @@ int AppWindow::init(Glib::RefPtr<Gtk::Application> &app)
 
     // The monitors-changed signal is emitted when the number,
     // size or position of the monitors attached to the screen change.
-    auto const screen = device::display::get_default_screen()->gobj();
+    /*auto const screen = device::display::get_default_screen()->gobj();
     g_signal_connect(G_OBJECT(screen), "monitors-changed", G_CALLBACK(monitor_changed_callback),
                      (gpointer)this);
 
     g_signal_connect(G_OBJECT(screen), "size-changed", G_CALLBACK(monitor_size_changed_callback),
-                     (gpointer)this);
+                     (gpointer)this);*/
+
+    // The signal_monitors_changed() signal is emitted when the number, size or position of the
+    // monitors attached to the screen change.
+    Gdk::Screen::get_default()->signal_monitors_changed().connect(
+        sigc::mem_fun(this, &AppWindow::on_monitors_changed));
+
+    Gdk::Display::get_default()->signal_monitor_added().connect(
+        sigc::mem_fun(this, &AppWindow::on_monitor_added));
 
     app->signal_activate().connect(sigc::ptr_fun(&AppWindow::on_app_activated));
 
@@ -82,11 +90,34 @@ void AppWindow::on_app_activated()
     m_panel->init();
 }
 
-void AppWindow::monitor_size_changed_callback(GdkScreen *screen, gpointer gtkwindow)
+// The signal_monitors_changed() signal is emitted when the number, size or position of the
+// monitors attached to the screen change.
+static int m_monitor_number = 0;
+
+void AppWindow::on_monitor_added(const Glib::RefPtr<Gdk::Monitor> &monitor)
 {
-    g_print("Monitor size change\n");
+    //
+    //  g_print("Monitors add %d %d\n", m_monitor_number, device::monitor::get_monitor_count());
+    //  device::monitor::set_current_monitor(m_monitor_number);
+
+    device::monitor::set_primary();
     update();
 }
+
+void AppWindow::on_monitors_changed()
+{
+    // g_print("Monitors changes %d %d\n", m_monitor_number, device::monitor::get_monitor_count());
+    // device::monitor::set_current_monitor(m_monitor_number);
+    //// auto const monitor = device::monitor::get_current();
+
+    // g_print("Default monitor: %d %s\n", m_monitor_number,
+    // device::monitor::get_current()->get_model().c_str());
+
+    device::monitor::set_primary();
+    update();
+}
+
+void AppWindow::monitor_size_changed_callback(GdkScreen *screen, gpointer gtkwindow) {}
 
 void AppWindow::monitor_changed_callback(GdkScreen *screen, gpointer gtkwindow) {}
 
@@ -160,8 +191,8 @@ int AppWindow::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine> &
                 workarea.get_height());
     }
 
-    int monitor_number = device::monitor::get_monitor_number();
-    g_print("Default monitor: %d %s\n", monitor_number,
+    m_monitor_number = device::monitor::get_monitor_number();
+    g_print("Default monitor: %d %s\n", m_monitor_number,
             device::monitor::get_current()->get_model().c_str());
 
     g_print("window manager: %s\n", system_util::get_window_manager_name().c_str());

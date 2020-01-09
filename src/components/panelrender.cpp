@@ -265,7 +265,6 @@ inline void Panel_render::draw_separator(const Cairo::RefPtr<Cairo::Context>& cr
         cr->stroke();
     }
 }
-
 inline void Panel_render::draw_icon(const Cairo::RefPtr<Cairo::Context>& cr,
                                     const shared_ptr<DockItem>& item,
                                     const Glib::RefPtr<Gdk::Pixbuf>& icon, int icon_size, int area,
@@ -274,17 +273,20 @@ inline void Panel_render::draw_icon(const Cairo::RefPtr<Cairo::Context>& cr,
     if (icon && item->get_dock_item_type() == dock_item_type_t::launcher) {
         // reload or scaled if needed
         if (icon->get_height() != icon_size || icon->get_width() != icon_size) {
-            // load home icon
-            load_home_icon(icon_size);
-
-            // Get a fresh new icon
-            auto const tmp_pixbuf = pixbuf_util::get_window_icon(
-                item->get_wnckwindow(), item->get_desktop_icon_name(), icon_size);
-
-            if (!tmp_pixbuf) {
-                item->set_image(icon->scale_simple(icon_size, icon_size, Gdk::INTERP_BILINEAR));
+            if (idx == 0) {
+                // load home icon
+                load_home_icon(icon_size);
             } else {
-                item->set_image(tmp_pixbuf);
+                // Get a fresh new icon
+                auto const tmp_pixbuf = pixbuf_util::get_window_icon(
+                    item->get_wnckwindow(), item->get_desktop_icon_name(), icon_size);
+
+                if (!tmp_pixbuf) {
+                    item->set_image(icon->scale_simple(icon_size, icon_size, Gdk::INTERP_BILINEAR));
+                } else {
+                    item->set_image(
+                        tmp_pixbuf->scale_simple(icon_size, icon_size, Gdk::INTERP_BILINEAR));
+                }
             }
         }
 

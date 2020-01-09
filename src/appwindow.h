@@ -10,6 +10,7 @@
 #include <sigc++/sigc++.h>
 #include "common.h"
 #include "components/panel.h"
+#include <gdkmm/monitor.h>
 // clang-format on
 
 DL_NS_BEGIN
@@ -39,6 +40,9 @@ class AppWindow : public Gtk::Window
                                Glib::RefPtr<Gtk::Application> &app);
     static void monitor_changed_callback(GdkScreen *screen, gpointer gtkwindow);
     static void monitor_size_changed_callback(GdkScreen *screen, gpointer gtkwindow);
+
+    void on_monitors_changed();
+    void on_monitor_added(const Glib::RefPtr<Gdk::Monitor> &monitor);
 
     bool on_enter_notify_event(GdkEventCrossing *crossing_event);
     bool on_leave_notify_event(GdkEventCrossing *crossing_event);
