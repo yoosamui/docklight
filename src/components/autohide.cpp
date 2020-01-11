@@ -371,7 +371,6 @@ void Autohide::hide()
     // start hide animation
     m_stm.m_animation_state = DEF_AUTOHIDE_HIDE;
     connect_signal_handler(true);
-    g_print("on Hide\n");
 }
 
 void Autohide::show()
@@ -386,7 +385,6 @@ void Autohide::show()
 
     m_stm.m_animation_state = DEF_AUTOHIDE_SHOW;
     connect_signal_handler(true);
-    g_print("on Show\n");
 }
 
 void Autohide::set_mouse_inside(bool mouse_inside)
