@@ -363,6 +363,10 @@ void Autohide::hide()
         }
     }
 
+    if (wnck_window_is_fullscreen(m_stm.m_active_window)) {
+        return;
+    }
+
     // force stop if a hide animation already runing
     if (m_stm.m_animation_running && !m_stm.m_visible) {
         m_stm.m_visible = true;
@@ -378,10 +382,6 @@ void Autohide::show()
     if (m_stm.m_active_window == nullptr || m_stm.m_animation_running) {
         return;
     }
-
-    // if (wnck_window_is_fullscreen(m_stm.m_active_window)) {
-    // return;
-    //}
 
     m_stm.m_animation_state = DEF_AUTOHIDE_SHOW;
     connect_signal_handler(true);
