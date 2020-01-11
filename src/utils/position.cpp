@@ -133,34 +133,34 @@ namespace position_util
         }
     }
 
-    // void hide()
-    //{
-    // return;
-    // auto const location = config::get_dock_location();
-    // int area = position_util::get_area();
-    // Gdk::Rectangle workarea = get_workarea();
+    void hide()
+    {
+        auto const location = config::get_dock_location();
+        //  int area = position_util::get_area();
+        Gdk::Rectangle workarea = get_workarea();
 
-    // int x = 0, y = 0;
-    // m_window->get_position(x, y);
+        int anchor_margin = config::get_anchor_margin();
 
-    // if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-    //// m_window->resize(m_window->get_width(), 1);
+        int x = 0, y = 0;
+        m_window->get_position(x, y);
 
-    // if (location == dock_location_t::bottom) {
-    // m_window->move(x, workarea.get_height() + workarea.get_y() - 1);
-    //} else {
-    // m_window->move(x, workarea.get_y() - area + 1);
-    //}
-    //} else {
-    //// m_window->resize(1, m_window->get_height());
+        if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+            m_window->resize(m_window->get_width(), anchor_margin);
+            if (location == dock_location_t::bottom) {
+                m_window->move(x, workarea.get_height() + (workarea.get_y() - anchor_margin));
+            } else {
+                m_window->move(x, workarea.get_y());
+            }
+        } else {
+            m_window->resize(anchor_margin, m_window->get_height());
 
-    // if (location == dock_location_t::right) {
-    // m_window->move(workarea.get_width() + workarea.get_x() - 1, y);
-    //} else {
-    //// m_window->move(workarea.get_x() - area + 1, y);
-    //}
-    //}
-    //}
+            if (location == dock_location_t::right) {
+                m_window->move(workarea.get_width() + (workarea.get_x() - anchor_margin), y);
+            } else {
+                m_window->move(workarea.get_x(), y);
+            }
+        }
+    }
     bool is_visible()
     {
         int x = 0, y = 0;

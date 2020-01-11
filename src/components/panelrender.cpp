@@ -40,7 +40,7 @@ void Panel_render::draw_panel(const Cairo::RefPtr<Cairo::Context>& cr)
     rect.set_y(m_offset_y);
 
     cairo_util::fill(cr, m_theme.Panel(), m_theme.PanelGradient(), rect);
-
+    // cr->paint();
     cairo_util::stroke(cr, m_theme.Panel(), rect);
 }
 

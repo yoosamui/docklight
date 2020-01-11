@@ -304,7 +304,7 @@ bool Panel::on_motion_notify_event(GdkEventMotion* event)
 {
     // TODO: optimize for speed
     m_current_index = this->get_index(event->x, event->y);
-    int anchor_margin = config::get_anchor_margin();
+    /*int anchor_margin = config::get_anchor_margin();
 
     // detect anchor point
     if (!config::is_autohide_none() && !m_autohide.is_visible()) {
@@ -331,7 +331,7 @@ bool Panel::on_motion_notify_event(GdkEventMotion* event)
                 }
             }
         }
-    }
+    }*/
 
     // detect drag and drop
     if (m_stm.m_dragdrop_begin && m_current_index > 0) {
@@ -541,10 +541,12 @@ bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
     this->connect_draw_signal(true);
 
     // reset the timer on enter
-    if (!config::is_autohide_none() && m_autohide.is_visible()) {
+    if (!config::is_autohide_none()) {
         if (config::is_autohide() || config::is_intelihide()) {
             // resets the timer and set the mouse flag;
-            m_autohide.set_mouse_inside(true);
+            //  m_autohide.set_mouse_inside(true);
+
+            m_autohide.show();
         }
     }
 

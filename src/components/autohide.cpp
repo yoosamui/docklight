@@ -349,6 +349,9 @@ bool Autohide::is_visible()
 
 void Autohide::hide()
 {
+    if (m_stm.m_animation_running) {
+        return;
+    }
     if (config::is_intelihide()) {
         if (m_stm.m_active_window == nullptr) {
             return;
@@ -368,11 +371,12 @@ void Autohide::hide()
     // start hide animation
     m_stm.m_animation_state = DEF_AUTOHIDE_HIDE;
     connect_signal_handler(true);
+    g_print("on Hide\n");
 }
 
 void Autohide::show()
 {
-    if (m_stm.m_active_window == nullptr) {
+    if (m_stm.m_active_window == nullptr || m_stm.m_animation_running) {
         return;
     }
 
@@ -382,6 +386,7 @@ void Autohide::show()
 
     m_stm.m_animation_state = DEF_AUTOHIDE_SHOW;
     connect_signal_handler(true);
+    g_print("on Show\n");
 }
 
 void Autohide::set_mouse_inside(bool mouse_inside)
@@ -392,7 +397,7 @@ void Autohide::set_mouse_inside(bool mouse_inside)
 
 void Autohide::reset_timer()
 {
-    m_stm.m_animation_state = DEF_AUTOHIDE_SHOW;
+    // m_stm.m_animation_state = DEF_AUTOHIDE_SHOW;
     m_stm.m_animation_timer.stop();
     m_stm.m_animation_timer.reset();
 
@@ -405,9 +410,12 @@ bool Autohide::animation()
         !m_stm.m_animation_running && m_stm.m_animation_timer.elapsed() > m_animation_hide_delay) {
         // start hide animation
         m_stm.m_animation_running = true;
-    } else if (m_stm.m_animation_state == DEF_AUTOHIDE_SHOW && !m_stm.m_visible &&
-               !m_stm.m_animation_running) {
+    }
+
+    if (m_stm.m_animation_state == DEF_AUTOHIDE_SHOW && !m_stm.m_visible &&
+        !m_stm.m_animation_running) {
         // start show animation
+        position_util::set_window_position();
         m_stm.m_animation_running = true;
     }
 
@@ -423,8 +431,9 @@ bool Autohide::animation()
                 if (m_stm.m_animation_state == DEF_AUTOHIDE_HIDE) {
                     startPosition = 0;
                     endPosition = -(position_util::get_area() + 1);
+
                 } else {
-                    startPosition = -(position_util::get_area() + 1);
+                    startPosition = -(position_util::get_area() + config::get_dock_area());
                     endPosition = 0;
                 }
                 break;
@@ -433,10 +442,10 @@ bool Autohide::animation()
             case dock_location_t::bottom: {
                 if (m_stm.m_visible) {
                     startPosition = 0;
-                    endPosition = position_util::get_area() + 1;
+                    endPosition = position_util::get_area();
 
                 } else {
-                    startPosition = position_util::get_area() + 1;
+                    startPosition = position_util::get_area() + config::get_dock_area();
                     endPosition = 0;
                 }
                 break;
@@ -445,7 +454,7 @@ bool Autohide::animation()
 
         float position =
             easing_util::map_clamp(m_animation_time, m_initTime, endTime, startPosition,
-                                   endPosition, &easing_util::cubic::easeInOut);
+                                   endPosition, &easing_util::linear::easeOut);
 
         if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
             m_offset_x = 0;
@@ -468,8 +477,9 @@ bool Autohide::animation()
             m_stm.m_animation_running = false;
             m_animation_time = 0;
             m_stm.m_visible = (int)endPosition == 0;
-
             connect_signal_handler(false);
+            if (m_stm.m_animation_state == DEF_AUTOHIDE_HIDE) position_util::hide();
+            // if (m_stm.m_visible == false) position_util::hide();
         }
     } else {
         // if timeout stop the signal handler
