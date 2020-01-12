@@ -161,6 +161,28 @@ namespace position_util
             }
         }
     }
+    void hide_full()
+    {
+        auto const location = config::get_dock_location();
+        Gdk::Rectangle workarea = get_workarea();
+
+        int x = 0, y = 0;
+        m_window->get_position(x, y);
+
+        if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+            if (location == dock_location_t::bottom) {
+                m_window->move(x, workarea.get_height() + workarea.get_y() + 1);
+            } else {
+                m_window->move(x, workarea.get_y() - 1);
+            }
+        } else {
+            if (location == dock_location_t::right) {
+                m_window->move(workarea.get_width() + workarea.get_x() + 1, y);
+            } else {
+                m_window->move(workarea.get_x() - 1, y);
+            }
+        }
+    }
     bool is_visible()
     {
         int x = 0, y = 0;

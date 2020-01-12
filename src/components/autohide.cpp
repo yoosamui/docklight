@@ -101,11 +101,9 @@ void Autohide::on_active_window_changed(WnckScreen* screen, WnckWindow* previous
         active_window, "geometry-changed",
         G_CALLBACK(Autohide::on_geometry_changed), nullptr);
 
-    if (config::is_autohide_none() == false) {
         m_stm.m_state_change_id =  g_signal_connect_after(
                 active_window, "state-changed",
                 G_CALLBACK(Autohide::on_state_changed), nullptr);
-    }
     // clang-format on
 }
 
@@ -120,13 +118,36 @@ void Autohide::on_active_workspace_changed_callback(WnckScreen* screen,
 void Autohide::on_state_changed(WnckWindow* window, WnckWindowState changed_mask,
                                 WnckWindowState new_state, gpointer user_data)
 {
-    if ((changed_mask & WNCK_WINDOW_STATE_MINIMIZED) == 0) {
+    if (wnck_window_is_fullscreen(m_stm.m_active_window) && !m_stm.m_fullscreen_window) {
+        // consider multiple monitors
+        if (is_intersection_detected() == false) {
+            return;
+        }
+
+        m_stm.m_fullscreen_window = true;
+        g_print("Fullscreen mode\n");
+        m_stm.m_animation_state = DEF_AUTOHIDE_HIDE;
+        position_util::hide_full();
+        return;
+
+    } else if (m_stm.m_fullscreen_window) {
+        g_print("Fullscreen restore\n");
+        m_stm.m_fullscreen_window = false;
+        m_stm.m_animation_state = DEF_AUTOHIDE_SHOW;
+        position_util::set_window_position();
+        return;
+    }
+
+    if (config::is_autohide_none()) {
+        return;
+    }
+
+    if ((changed_mask & WNCK_WINDOW_STATE_MINIMIZED)) {
         return;
     }
 
     intelihide();
 }
-
 void Autohide::on_geometry_changed(WnckWindow* window, gpointer user_data)
 {
     if (m_stm.m_active_window == nullptr) {
@@ -308,24 +329,6 @@ void Autohide::intelihide()
         return;
     }
 
-    // handle fullscreen on
-    if (wnck_window_is_fullscreen(m_stm.m_active_window) && m_stm.m_visible &&
-        !m_stm.m_fullscreen_window) {
-        m_stm.m_fullscreen_window = m_stm.m_active_window;
-
-        hide();
-        return;
-    }
-
-    // handle fullscreen off
-    if (!is_visible() && m_stm.m_fullscreen_window) {
-        m_stm.m_fullscreen_window = nullptr;
-        if (config::is_intelihide() == false) {
-            show();
-            return;
-        }
-    }
-
     if (config::is_autohide() || config::is_autohide_none()) {
         return;
     }
@@ -363,9 +366,9 @@ void Autohide::hide()
         }
     }
 
-    if (wnck_window_is_fullscreen(m_stm.m_active_window)) {
-        return;
-    }
+    // if (wnck_window_is_fullscreen(m_stm.m_active_window)) {
+    // return;
+    //}
 
     // force stop if a hide animation already runing
     if (m_stm.m_animation_running && !m_stm.m_visible) {
@@ -380,6 +383,10 @@ void Autohide::hide()
 void Autohide::show()
 {
     if (m_stm.m_active_window == nullptr || m_stm.m_animation_running) {
+        return;
+    }
+
+    if (wnck_window_is_fullscreen(m_stm.m_active_window)) {
         return;
     }
 

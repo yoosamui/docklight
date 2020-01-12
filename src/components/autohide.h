@@ -28,7 +28,7 @@ typedef struct {
     bool m_mouse_inside = false;
     bool m_animation_running = false;
     Gdk::Rectangle m_last_window_geometry;
-    WnckWindow* m_fullscreen_window = nullptr;
+    bool m_fullscreen_window = false;
     WnckWindow* m_active_window = nullptr;
 } static_members_t;
 
