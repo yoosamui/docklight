@@ -59,10 +59,6 @@ namespace wnck_util
              window_l = window_l->next) {
             WnckWindow* window = WNCK_WINDOW(window_l->data);
 
-            if (!WNCK_IS_WINDOW(window)) {
-                continue;
-            }
-
             if (!is_valid_window_type(window)) {
                 continue;
             }
@@ -176,6 +172,19 @@ namespace wnck_util
         for (auto const citem : item->m_items) {
             WnckWindow* window = citem->get_wnckwindow();
             wnck_window_minimize(window);
+        }
+    }
+
+    void unminimize_group(int index)
+    {
+        if (index == -1) return;
+
+        auto const item = AppUpdater::m_dockitems[index];
+
+        for (auto const citem : item->m_items) {
+            WnckWindow* window = citem->get_wnckwindow();
+            int ct = gtk_get_current_event_time();
+            wnck_window_unminimize(window, ct);
         }
     }
 }  // namespace wnck_util

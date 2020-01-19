@@ -23,6 +23,7 @@ class Dock_menu : public Panel_base
     Gtk::MenuItem m_home_menu_quit_item;
     Gtk::MenuItem m_home_menu_addseparator_item;
     Gtk::MenuItem m_home_menu_addexpander_item;
+    Gtk::MenuItem m_home_menu_close_all_item;
 
     // Item menu
     Gtk::Menu m_item_menu;
@@ -50,11 +51,7 @@ class Dock_menu : public Panel_base
     virtual void on_home_menu_quit_event() {}
     virtual void on_item_menu_new_event() {}
 
-    void on_home_menu_close_all_event()
-    {
-        // Home closse all
-        wnck_util::close_all_windows();
-    }
+    void on_home_menu_close_all_event();
 
     virtual void on_home_menu_addseparator_event()
     {
@@ -114,6 +111,7 @@ class Dock_menu : public Panel_base
     }
 
     void on_item_menu_minimize_all_event();
+    void on_item_menu_unminimize_all_event();
 
     virtual void on_separator_menu_position(int& x, int& y, bool& push_in);
     virtual void on_home_menu_position(int& x, int& y, bool& push_in);
@@ -159,7 +157,7 @@ class Dock_menu : public Panel_base
 
 
     Gtk::Menu m_previewLimitMenu;
-   // Gtk::MenuItem m_previewLimitMenuItem;*/
+    // Gtk::MenuItem m_previewLimitMenuItem;*/
 };
 
 DL_NS_END
