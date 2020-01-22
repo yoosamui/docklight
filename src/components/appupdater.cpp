@@ -146,7 +146,6 @@ GdkPixbuf *AppUpdater::get_image_from_cache(long xid)
 {
     GError **error = nullptr;
     auto filename = get_ramdisk_filename(xid);
-
     if (!system_util::file_exists(filename)) return nullptr;
 
     return gdk_pixbuf_new_from_file(filename.c_str(), error);

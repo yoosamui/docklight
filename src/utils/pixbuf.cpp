@@ -135,9 +135,10 @@ namespace pixbuf_util
             try {
                 result = Gdk::Pixbuf::create_from_file(filename, width, height, true);
             } catch (const Glib::FileError& ex) {
-                g_error("get_from file: %s FileError: %s", filename.c_str(), ex.what().c_str());
+                g_critical("get_from file: %s FileError: %s", filename.c_str(), ex.what().c_str());
             } catch (const Gdk::PixbufError& ex) {
-                g_error("get_from file: %s PixbufError: %s", filename.c_str(), ex.what().c_str());
+                g_critical("get_from file: %s PixbufError: %s", filename.c_str(),
+                           ex.what().c_str());
             }
         }
         return result;

@@ -395,11 +395,13 @@ bool Panel_preview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
                 image = Glib::wrap(scaled_pixbuf, true);
                 g_object_unref(scaled_pixbuf);
 
-                if (item->m_preview_frame_count == 0) {
-                    item->m_preview_first_image = image;
-                }
+                if (image) {
+                    if (item->m_preview_frame_count == 0) {
+                        item->m_preview_first_image = image;
+                    }
 
-                item->set_image(image);
+                    item->set_image(image);
+                }
             }
         }
 

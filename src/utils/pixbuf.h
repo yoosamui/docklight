@@ -7,10 +7,9 @@
 
 DL_NS_BEGIN
 
+#define NULLPB (Glib::RefPtr<Gdk::Pixbuf>)nullptr
 namespace pixbuf_util
 {
-#define NULLPB (Glib::RefPtr<Gdk::Pixbuf>)nullptr
-
     void invert_pixels(Glib::RefPtr<Gdk::Pixbuf> image);
 
     const Glib::RefPtr<Gdk::Pixbuf> get_from_file(const std::string& filename, int width,

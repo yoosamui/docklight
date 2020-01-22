@@ -26,6 +26,7 @@ class AppUpdater
 
     static vector<shared_ptr<DockItem>> m_dockitems;
     static GdkPixbuf* get_image_from_cache(long xid);
+    static void set_image_cache(WnckWindow* window);
 
     void on_theme_changed();
     bool attach_item(int index);
@@ -58,8 +59,6 @@ class AppUpdater
     } attach_rec_t;
 
     static string get_ramdisk_filename(long xid);
-
-    static void set_image_cache(WnckWindow* window);
 
     static type_signal_update m_signal_update;
 
