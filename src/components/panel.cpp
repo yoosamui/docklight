@@ -1,12 +1,12 @@
 #include "components/panel.h"
 #include <gtkmm/imagemenuitem.h>
+#include <gtkmm/menuitem.h>
 #include "components/device.h"
 #include "utils/launcher.h"
 #include "utils/pixbuf.h"
 #include "utils/position.h"
 #include "utils/system.h"
 #include "utils/wnck.h"
-
 DL_NS_BEGIN
 
 Panel::Panel()
@@ -379,6 +379,42 @@ void Panel::stop_dragdrop()
     m_appupdater.swap_item(0);
 }
 
+void Panel::build_windowlist_menu(GdkEventButton* event)
+{
+    // clang-format off
+
+    auto const item = AppUpdater::m_dockitems[m_current_index];
+
+    // build the window list menu
+    // delegate memory management to the container widget.
+    m_item_menu_windowlist = Gtk::manage(new Gtk::Menu());
+
+    for (size_t i = 0; i < item->m_items.size(); i++) {
+        auto const citem = item->m_items[(int)i];
+        Gtk::ImageMenuItem* menu_item = Gtk::manage(
+                new Gtk::ImageMenuItem(citem->get_windowname()));
+
+        const Glib::RefPtr<Gdk::Pixbuf>& pixbuf = item->get_image();
+        Gtk::Image* image = Gtk::manage(new Gtk::Image(pixbuf));
+        menu_item->set_image(*image);
+        menu_item->set_always_show_image(true);
+
+        menu_item->signal_activate().connect(
+                sigc::bind<WnckWindow*>(sigc::mem_fun(*this,
+                        &Panel::on_item_menu_windowlist_event),citem->get_wnckwindow()));
+
+        m_item_menu_windowlist->append(*menu_item);
+    }
+
+    m_item_menu_windowlist->show_all();
+    m_item_menu_windowlist->signal_show().connect(sigc::mem_fun(*this, &Panel::on_menu_show_event));
+    m_item_menu_windowlist->signal_hide().connect(sigc::mem_fun(*this, &Panel::on_menu_hide_event));
+    m_item_menu_windowlist->popup(sigc::mem_fun(*this,
+                &Panel::on_item_menu_windowlist_position),1, event->time);
+
+    // clang-format on
+}
+
 bool Panel::on_button_release_event(GdkEventButton* event)
 {
     // handle drop
@@ -439,42 +475,12 @@ bool Panel::on_button_release_event(GdkEventButton* event)
                         m_preview = unique_ptr<Panel_preview>(new Panel_preview());
                         m_preview_index = m_current_index;
                         m_preview->init(m_preview_index);
-
                         m_preview->signal_close().connect(
                             sigc::mem_fun(this, &Panel::close_preview));
 
                         bool can_show_preview = m_preview->show_preview();
                         if (!can_show_preview) {
-                            // clang-format off
-
-                        // build the window list menu
-                        // delegate memory management to the container widget.
-                        m_item_menu_windowlist = Gtk::manage(new Gtk::Menu());
-
-                        for (size_t i = 0; i < item->m_items.size(); i++) {
-                            auto const citem = item->m_items[(int)i];
-                            Gtk::ImageMenuItem* menu_item = Gtk::manage(
-                                    new Gtk::ImageMenuItem(citem->get_windowname()));
-
-                            const Glib::RefPtr<Gdk::Pixbuf>& pixbuf = item->get_image();
-                            Gtk::Image* image = Gtk::manage(new Gtk::Image(pixbuf));
-                            menu_item->set_image(*image);
-                            menu_item->set_always_show_image(true);
-
-                            menu_item->signal_activate().connect(
-                                    sigc::bind<WnckWindow*>(sigc::mem_fun(*this,
-                                            &Panel::on_item_menu_windowlist_event),citem->get_wnckwindow()));
-
-                            m_item_menu_windowlist->append(*menu_item);
-                        }
-
-                        m_item_menu_windowlist->show_all();
-                        m_item_menu_windowlist->signal_show().connect(sigc::mem_fun(*this, &Panel::on_menu_show_event));
-                        m_item_menu_windowlist->signal_hide().connect(sigc::mem_fun(*this, &Panel::on_menu_hide_event));
-                        m_item_menu_windowlist->popup(sigc::mem_fun(*this,
-                                    &Panel::on_item_menu_windowlist_position),1, event->time);
-
-                            // clang-format on
+                            build_windowlist_menu(event);
                         }
                     }
                 }
@@ -503,8 +509,42 @@ bool Panel::on_button_release_event(GdkEventButton* event)
                     item->get_dock_item_type() == dock_item_type_t::launcher) {
                     m_item_menu_attach.set_active(item->is_attached());
 
+                    /*// remove menu items
+                    for (auto itemMenu : m_item_menu.get_children()) {
+                        auto type = dynamic_cast<Gtk::ImageMenuItem*>(itemMenu);
+                        if (type) {
+                            m_item_menu.remove(*itemMenu);
+                        }
+                    }
+
+                    for (size_t i = 0; i < item->m_items.size(); i++) {
+                        auto const citem = item->m_items[(int)i];
+                        Gtk::ImageMenuItem* menu_item =
+                            Gtk::manage(new Gtk::ImageMenuItem(citem->get_windowname()));
+
+                        const Glib::RefPtr<Gdk::Pixbuf>& pixbuf = item->get_image();
+                        Gtk::Image* image = Gtk::manage(new Gtk::Image(pixbuf));
+                        menu_item->set_image(*image);
+                        menu_item->set_always_show_image(true);
+
+                        menu_item->signal_activate().connect(sigc::bind<WnckWindow*>(
+                            sigc::mem_fun(*this, &Panel::on_item_menu_windowlist_event),
+                            citem->get_wnckwindow()));
+
+                        m_item_menu.insert(*menu_item, 0);
+                    }
+
+                    m_item_menu.signal_show().connect(
+                        sigc::mem_fun(*this, &Panel::on_menu_show_event));
+                    m_item_menu.signal_hide().connect(
+                        sigc::mem_fun(*this, &Panel::on_menu_hide_event));
+
+                    m_item_menu.show_all_children(true);*/
+
+                    // m_item_menu.popup_at_pointer(NULL);
                     m_item_menu.popup(sigc::mem_fun(*this, &Panel::on_item_menu_position), 1,
                                       event->time);
+
                     return true;
                 }
                 if (m_current_index > 0 &&

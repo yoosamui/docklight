@@ -282,6 +282,7 @@ inline void Panel_render::draw_icon(const Cairo::RefPtr<Cairo::Context>& cr,
                     item->get_wnckwindow(), item->get_desktop_icon_name(), icon_size);
 
                 if (!tmp_pixbuf) {
+                    g_error("Load fresh %s\n", item->get_name().c_str());
                     item->set_image(icon->scale_simple(icon_size, icon_size, Gdk::INTERP_BILINEAR));
                 } else {
                     item->set_image(

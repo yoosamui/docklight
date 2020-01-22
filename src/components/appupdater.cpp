@@ -178,7 +178,7 @@ void AppUpdater::set_image_cache(WnckWindow *window)
         gdk_pixbuf_save(win_pixbuf, filename.c_str(), "png", nullptr, nullptr);
         g_object_unref(win_pixbuf);
 
-        g_print("Create cache file for xid = %ld\n", xid);
+        //  g_print("Create cache file for xid = %ld\n", xid);
     }
 
     return;

@@ -67,6 +67,8 @@ class Panel : public Gtk::DrawingArea, public Panel_render
                                          gpointer user_data);
     // Menus
 
+    void build_windowlist_menu(GdkEventButton* event);
+
     void on_home_menu_addseparator_event() override;
     void on_home_menu_addexpander_event() override;
     void on_home_menu_quit_event() override;

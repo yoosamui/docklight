@@ -1,14 +1,14 @@
 
-Docklight 
+Docklight
 ---------
 
 lightweight Dockbar for launch common applications.
-Expandable with plugins. contains also a system try window.
+Expandable with plugins.
 
 Support several linux Window Managers. e.g Mutter, Fluxbox, Openbox, xfce etc.
 Compton is recomendet for Window Managers without Compositor Manager e.g for Fluxbox or Openbox.
 
-Low CPU usage: 
+Low CPU usage:
 
 IDLE CPU 0.0%
 ACTIVITY CPU 2.0 - 4.0%
@@ -27,9 +27,9 @@ Examples:
 Start docklight on the default location defined in the configuration.
 Use the primary monitor.
 Read the settings from the default configuration docklight.config located in:
- ~/.config/docklight folder 
+ ~/.config/docklight folder
 
-./docklight 
+./docklight
 
 Start docklight with specific icon size.
 Use the primary monitor.
@@ -43,7 +43,7 @@ Use the monitor with the number 1.
 Read the settings from the specific configuration config1.config located in :
 ~/.config/docklight folder.
 
-./docklight -l left -m 1 -c config1.config 
+./docklight -l left -m 1 -c config1.config
 
 
 
