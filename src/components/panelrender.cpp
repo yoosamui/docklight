@@ -40,7 +40,7 @@ void Panel_render::draw_panel(const Cairo::RefPtr<Cairo::Context>& cr)
     rect.set_y(m_offset_y);
 
     cairo_util::fill(cr, m_theme.Panel(), m_theme.PanelGradient(), rect);
-    // cr->paint();
+    //    cr->paint();
     cairo_util::stroke(cr, m_theme.Panel(), rect);
 }
 
@@ -282,8 +282,11 @@ inline void Panel_render::draw_icon(const Cairo::RefPtr<Cairo::Context>& cr,
                     item->get_wnckwindow(), item->get_desktop_icon_name(), icon_size);
 
                 if (!tmp_pixbuf) {
-                    g_error("Load fresh %s\n", item->get_name().c_str());
+                    //                    g_error("Load fresh %s\n", item->get_name().c_str());
+                    //  auto winicon = wnck_window_get_icon(item->get_wnckwindow());
+                    //  auto cicon = Glib::wrap(winicon, true);
                     item->set_image(icon->scale_simple(icon_size, icon_size, Gdk::INTERP_BILINEAR));
+
                 } else {
                     item->set_image(
                         tmp_pixbuf->scale_simple(icon_size, icon_size, Gdk::INTERP_BILINEAR));

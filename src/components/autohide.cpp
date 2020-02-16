@@ -450,7 +450,7 @@ bool Autohide::animation()
                     endPosition = position_util::get_area();
 
                 } else {
-                    startPosition = position_util::get_area() + config::get_dock_area();
+                    startPosition = position_util::get_area();  // + config::get_dock_area();
                     endPosition = 0;
                 }
                 break;

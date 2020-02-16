@@ -136,7 +136,7 @@ namespace position_util
     void hide()
     {
         auto const location = config::get_dock_location();
-        //  int area = position_util::get_area();
+        int area = position_util::get_area();
         Gdk::Rectangle workarea = get_workarea();
 
         int anchor_margin = config::get_anchor_margin();
@@ -145,19 +145,22 @@ namespace position_util
         m_window->get_position(x, y);
 
         if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-            m_window->resize(m_window->get_width(), anchor_margin);
+            //            m_window->resize(m_window->get_width(), anchor_margin);
             if (location == dock_location_t::bottom) {
                 m_window->move(x, workarea.get_height() + (workarea.get_y() - anchor_margin));
             } else {
                 m_window->move(x, workarea.get_y());
             }
         } else {
-            m_window->resize(anchor_margin, m_window->get_height());
+            // m_window->resize(anchor_margin, m_window->get_height());
+
+            //            m_window->set_size_request(anchor_margin, m_window->get_height());
+            // m_window->set_opacity(0.0);
 
             if (location == dock_location_t::right) {
                 m_window->move(workarea.get_width() + (workarea.get_x() - anchor_margin), y);
             } else {
-                m_window->move(workarea.get_x(), y);
+                m_window->move(workarea.get_x() - area + anchor_margin, y);
             }
         }
     }

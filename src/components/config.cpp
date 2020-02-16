@@ -130,7 +130,8 @@ namespace config
 
         if (!found) {
             if (error) {
-                g_warning("Load: configuration could not be found. %s\n", error->message);
+                g_warning("Load: configuration could not be found. %s %s\n", error->message,
+                          filepath.c_str());
                 g_error_free(error);
                 error = nullptr;
             }
