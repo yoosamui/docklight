@@ -11,11 +11,11 @@ namespace wnck_util
             return;
         }
 
-        if (wnck_window_is_active(window)) {
-            wnck_window_minimize(window);
+        // if (wnck_window_is_active(window)) {
+        // wnck_window_minimize(window);
 
-            return;
-        }
+        // return;
+        //}
 
         int ct = gtk_get_current_event_time();
         if (!is_window_on_current_desktop(window)) {
