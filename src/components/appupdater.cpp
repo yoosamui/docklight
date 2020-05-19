@@ -471,12 +471,12 @@ bool AppUpdater::load()
         info.m_icon_name = rec.icon_name;
         info.m_locale = rec.locale;
         info.m_desktop_file = rec.desktop_file;
-
+        // TODO Wait until see if de color dgregation comming from here...
         // check if locale has been changed and desktop file still exists.
         // if the desktop file could not be found then the app has been removed
-        if (!desktopfile_util::get_app_info(info)) {
-            continue;
-        }
+        // if (!desktopfile_util::get_app_info(info)) {
+        //    continue;
+        // }
 
         // Add new
         auto item = new DockItem(info, info.m_dock_item_type);
