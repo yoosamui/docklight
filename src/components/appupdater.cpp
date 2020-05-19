@@ -249,18 +249,18 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
         info.m_wnckwindow = window;
         info.m_xid = wnck_window_get_xid(window);
 
-        // g_print("[------Application --------]\n");
-        // g_print("app-name: %s\n", info.m_name.c_str());
-        // g_print("instance-name: %s\n", info.m_instance.c_str());
-        // g_print("group-name: %s\n", info.m_group.c_str());
-        // g_print("title-name: %s\n", info.m_title.c_str());
-        // g_print("comment: %s\n", info.m_comment.c_str());
-        // g_print("desktop-icon-name: %s\n", info.m_icon_name.c_str());
-        // g_print("desktop-file: %s\n", info.m_desktop_file.c_str());
-        // g_print("locale: %s\n", info.m_locale.c_str());
-        // g_print("cache: %d\n", (int)info.m_cache);
-        // g_print("items: %d\n", (int)m_dockitems.size());
-        // g_print("xid: %d\n", (int)info.m_xid);
+        g_print("[------Application --------]\n");
+        g_print("app-name: %s\n", info.m_name.c_str());
+        g_print("instance-name: %s\n", info.m_instance.c_str());
+        g_print("group-name: %s\n", info.m_group.c_str());
+        g_print("title-name: %s\n", info.m_title.c_str());
+        g_print("comment: %s\n", info.m_comment.c_str());
+        g_print("desktop-icon-name: %s\n", info.m_icon_name.c_str());
+        g_print("desktop-file: %s\n", info.m_desktop_file.c_str());
+        g_print("locale: %s\n", info.m_locale.c_str());
+        g_print("cache: %d\n", (int)info.m_cache);
+        g_print("items: %d\n", (int)m_dockitems.size());
+        g_print("xid: %d\n", (int)info.m_xid);
 
         if (info.m_name == "Untitled-window") {
             return;

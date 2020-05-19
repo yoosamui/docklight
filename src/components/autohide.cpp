@@ -263,7 +263,6 @@ bool Autohide::is_intersection_detected()
     if (wt == WNCK_WINDOW_DESKTOP) {
         return false;
     }
-
     int area = position_util::get_area();
     Gdk::Rectangle workarea = position_util::get_workarea();
 
@@ -288,6 +287,8 @@ bool Autohide::is_intersection_detected()
                 }
             }
 
+            rect_dock.set_y(workarea.get_height() - area);
+
         } else {
             if (initial_size) {
                 if (rect_window.get_y() - workarea.get_y() < area) {
@@ -302,6 +303,7 @@ bool Autohide::is_intersection_detected()
                     return true;
                 }
             }
+            rect_dock.set_x(workarea.get_width() - area);
 
         } else {
             if (initial_size) {
