@@ -11,7 +11,7 @@ namespace cairo_util
             return;
         }
 
-        // radius can be no larger than half our height or width
+        // radius can be no larger than half, height or width
         radius = std::min(radius, std::min(width / 2, height / 2));
         cr->move_to(x + radius, y);
         cr->arc(x + width - radius, y + radius, radius, M_PI * 1.5, M_PI * 2);

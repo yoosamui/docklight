@@ -10,6 +10,8 @@ title_window::title_window()
       m_HBox(Gtk::ORIENTATION_HORIZONTAL, 5),
       m_Label("", false)
 {
+    m_theme = config::get_theme();
+
     GdkScreen *screen;
     GdkVisual *visual;
 
@@ -51,28 +53,37 @@ void title_window::set_text(const Glib::ustring text)
 }
 bool title_window::on_draw(const Cairo::RefPtr<Cairo::Context> &cr)
 {
-    // cr->set_source_rgba(m_Theme.PanelTitle().Fill().Color::red,
-    // m_Theme.PanelTitle().Fill().Color::green,
-    // m_Theme.PanelTitle().Fill().Color::blue,
-    // m_Theme.PanelTitle().Fill().Color::alpha);
-    cairo_util::rounded_rectangle(cr, 0, 0, this->get_width(),
-                                  this->get_height(),
-                                  3.0 /*  m_Theme.PanelTitle().Ratio()*/);
-    cr->fill();
+    Gdk::Rectangle rect = Gdk::Rectangle(0, 0, this->get_width(), this->get_height());
+    cairo_util::fill(cr, m_theme.PanelTitle(), m_theme.PanelGradient(), rect);
+    cr->paint();
 
-    // cr->set_source_rgba(m_Theme.PanelTitle().Stroke().Color::red,
+    cairo_util::stroke(cr, m_theme.PanelTitle(), rect);
+    cr->stroke();
+
+    // cr->paint();
+
+    // cr->set_source_rgba(
+    // m_Theme.PanelTitle().Fill().Color::red, m_Theme.PanelTitle().Fill().Color::green,
+    // m_Theme.PanelTitle().Fill().Color::blue, m_Theme.PanelTitle().Fill().Color::alpha);
+    //  cairo_util::rounded_rectangle(cr, 0, 0, this->get_width(), this->get_height(),
+    //                               m_theme.PanelTitle().Ratio());
+    //   cr->fill();
+
+    // cr->set_source_rgba(m_Theme.PanelTitle().Stroke().Color::red,:
     // m_Theme.PanelTitle().Stroke().Color::green,
     // m_Theme.PanelTitle().Stroke().Color::blue,
     // m_Theme.PanelTitle().Stroke().Color::alpha);
 
     cr->set_line_width(1.5 /*m_Theme.PanelTitle().LineWidth()*/);
-    cairo_util::rounded_rectangle(cr, 0, 0, this->get_width(),
-                                  this->get_height(),
-                                  3.0 /* m_Theme.PanelTitle().Ratio()*/);
-    cr->stroke();
+    //    cairo_util::rounded_rectangle(cr, 0, 0, this->get_width(),
+    //    this->get_height(),
+    //                                 3.0 /*
+    //                                 m_Theme.PanelTitle().Ratio()*/);
+    //  Gdk::Rectangle rect = Gdk::Rectangle(0, 0, this->get_width(),
+    //  this->get_height()); cairo_util::stroke(cr,
+    //  m_theme.PanelTitle(), rect);
 
-    Glib::RefPtr<Pango::Layout> layout =
-        m_Label.get_layout();  // pcreate_pango_layout(m_text);
+    Glib::RefPtr<Pango::Layout> layout = m_Label.get_layout();  // pcreate_pango_layout(m_text);
     pango_layout_set_alignment(layout->gobj(), PANGO_ALIGN_CENTER);
 
     // cr->set_source_rgba(m_Theme.PanelTitleText().Stroke().Color::red,

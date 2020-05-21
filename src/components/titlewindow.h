@@ -16,6 +16,7 @@ class title_window : public Gtk::Window
     void set_text(const Glib::ustring text);
 
   private:
+    config::style::Theme m_theme;
     // Configuration::Style::Theme m_Theme = Configuration::get_Theme();
     bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr);
     Pango::FontDescription font;
