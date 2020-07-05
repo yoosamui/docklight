@@ -298,11 +298,10 @@ void AppUpdater::Update(WnckWindow *window, window_action_t actiontype)
 
                 // Add child
                 new_item->m_items.push_back(shared_ptr<DockItem>(new DockItem(info)));
-
-                m_signal_update.emit(window_action_t::OPEN, (int)m_dockitems.size());
             }
         }
 
+        m_signal_update.emit(window_action_t::OPEN, (int)m_dockitems.size());
         // set_image_cache(window);
         return;
 
