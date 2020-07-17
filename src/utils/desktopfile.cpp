@@ -123,7 +123,7 @@ namespace desktopfile_util
                 info.m_title = group;
                 info.m_icon_name = wnck_window_get_icon_name(window);
 
-                return true;
+                return get_app_info(info);
             }
 
             g_critical("Application group not found!!!\n");
@@ -138,6 +138,7 @@ namespace desktopfile_util
             info.m_instance = instance_name;
             info.m_instance = string_util::remove_extension(info.m_instance, extensions);
         }
+        replace(info.m_name.begin(), info.m_name.end(), ' ', '-');
 
         // the main heuristic app name
         info.m_name = string_util::string_to_lower(info.m_group.c_str());
@@ -146,6 +147,7 @@ namespace desktopfile_util
             info.m_name = info.m_name.substr(0, idx);
         }
 
+        // replace(info.m_group.begin(), info.m_group.end(), ' ', '-');
         info.m_title = info.m_group;
         info.m_icon_name = info.m_name;
 

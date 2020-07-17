@@ -473,9 +473,9 @@ bool AppUpdater::load()
         // TODO Wait until see if de color dgregation comming from here...
         // check if locale has been changed and desktop file still exists.
         // if the desktop file could not be found then the app has been removed
-        // if (!desktopfile_util::get_app_info(info)) {
-        //    continue;
-        // }
+        if (!desktopfile_util::get_app_info(info)) {
+            continue;
+        }
 
         // Add new
         auto item = new DockItem(info, info.m_dock_item_type);
