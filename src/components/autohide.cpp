@@ -287,7 +287,7 @@ bool Autohide::is_intersection_detected()
                 }
             }
 
-            rect_dock.set_y(workarea.get_height() - area);
+            //   rect_dock.set_y(workarea.get_height() - area);
 
         } else {
             if (initial_size) {
@@ -303,7 +303,7 @@ bool Autohide::is_intersection_detected()
                     return true;
                 }
             }
-            rect_dock.set_x(workarea.get_width() - area);
+            //   rect_dock.set_x(workarea.get_width() - area);
 
         } else {
             if (initial_size) {
