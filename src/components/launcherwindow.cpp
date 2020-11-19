@@ -216,8 +216,18 @@ void launcher_window::on_button_createLauncher_clicked()
 
     // create a copy from template
     char command[NAME_MAX];
-    sprintf(command, "cp %s %s ", templatefileLocal.c_str(), desktopfileLocal.c_str());
+    sprintf(command, "pkexec cp %s %s ", templatefileLocal.c_str(), desktopfileLocal.c_str());
 
+    // test
+    //
+    //
+
+    //  Gtk::MessageDialog dialogX(*this, _("\n\nTEST!\n\n"), false,
+    //    Gtk::MessageDialog dialogX(*this, command, false, Gtk::MESSAGE_INFO);
+    //    dialogX.run();
+
+    // \\ test
+    //
     if (system(command) != 0) {
         Gtk::MessageDialog dialog(*this, _("\n\nCopy template Error!\n\n"), false,
                                   Gtk::MESSAGE_INFO);
