@@ -287,7 +287,7 @@ bool Autohide::is_intersection_detected()
                 }
             }
 
-            //   rect_dock.set_y(workarea.get_height() - area);
+            rect_dock.set_y(workarea.get_height() - area);
 
         } else {
             if (initial_size) {
@@ -303,7 +303,7 @@ bool Autohide::is_intersection_detected()
                     return true;
                 }
             }
-            //   rect_dock.set_x(workarea.get_width() - area);
+            rect_dock.set_x(workarea.get_width() - area);
 
         } else {
             if (initial_size) {
@@ -354,9 +354,11 @@ bool Autohide::is_visible()
 
 void Autohide::hide()
 {
-    if (m_stm.m_animation_running) {
-        return;
-    }
+    /*
+        if (m_stm.m_animation_running) {
+            return;
+        }
+        */
     if (config::is_intelihide()) {
         if (m_stm.m_active_window == nullptr) {
             return;
@@ -405,6 +407,8 @@ void Autohide::set_mouse_inside(bool mouse_inside)
 void Autohide::reset_timer()
 {
     // m_stm.m_animation_state = DEF_AUTOHIDE_SHOW;
+    // connect_signal_handler(true);
+
     m_stm.m_animation_timer.stop();
     m_stm.m_animation_timer.reset();
 
