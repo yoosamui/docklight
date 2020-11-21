@@ -452,14 +452,16 @@ bool Panel::on_button_release_event(GdkEventButton* event)
                     this->show();
                     this->open_new();
                 } else {
-                    if ((int)item->m_items.size() == 1) {
-                        this->close_preview();
+                    // if ((int)item->m_items.size() == 1) {
+                    // this->close_preview();
 
-                        // avoid panel hide
-                        this->show();
-                        this->activate();
+                    //// avoid panel hide
+                    // this->show();
+                    // this->activate();
 
-                    } else if (item->get_dock_item_type() == dock_item_type_t::launcher) {
+                    //} else
+
+                    if (item->get_dock_item_type() == dock_item_type_t::launcher) {
                         // show preview if is compositite and not out of limits
                         //
                         if (m_preview != nullptr) {
