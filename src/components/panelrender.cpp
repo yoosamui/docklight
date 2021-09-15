@@ -271,31 +271,51 @@ inline void Panel_render::draw_icon(const Cairo::RefPtr<Cairo::Context>& cr,
                                     int idx, int x, int y)
 {
     if (icon && item->get_dock_item_type() == dock_item_type_t::launcher) {
+        // Get a fresh new icon
+        auto const tmp_pixbuf = pixbuf_util::get_window_icon(
+            item->get_wnckwindow(), item->get_desktop_icon_name(), icon_size);
+
         // reload or scaled if needed
         if (icon->get_height() != icon_size || icon->get_width() != icon_size) {
-            if (idx == 0) {
-                // load home icon
-                load_home_icon(icon_size);
-            } else {
-                //  g_info("AAAAAAAAAAAAAAA\n");
-                //       item->set_image(icon->scale_simple(icon_size, icon_size,
-                //       Gdk::INTERP_BILINEAR));
+            load_home_icon(icon_size);
+            if (tmp_pixbuf)
+                item->set_image(
+                    tmp_pixbuf->scale_simple(icon_size, icon_size, Gdk::INTERP_BILINEAR));
 
-                // Get a fresh new icon
-                auto const tmp_pixbuf = pixbuf_util::get_window_icon(
-                    item->get_wnckwindow(), item->get_desktop_icon_name(), icon_size);
-
-                if (!tmp_pixbuf) {
-                    //     g_error("Load fresh %s\n", item->get_name().c_str());
-                    //  auto winicon = wnck_window_get_icon(item->get_wnckwindow());
-                    //  auto cicon = Glib::wrap(winicon, true);
-                    item->set_image(icon->scale_simple(icon_size, icon_size, Gdk::INTERP_BILINEAR));
-
-                } else {
-                    item->set_image(
-                        tmp_pixbuf->scale_simple(icon_size, icon_size, Gdk::INTERP_BILINEAR));
-                }
+            if (!tmp_pixbuf) {
+                //     g_error("Load fresh %s\n", item->get_name().c_str());
+                //  auto winicon = wnck_window_get_icon(item->get_wnckwindow());
+                //  auto cicon = Glib::wrap(winicon, true);
+                item->set_image(icon->scale_simple(icon_size, icon_size, Gdk::INTERP_BILINEAR));
             }
+            //        item->set_image(icon->scale_simple(icon_size, icon_size,
+            //        Gdk::INTERP_BILINEAR));
+            /*
+                if (idx == 0) {
+                    // load home icon
+                    load_home_icon(icon_size);
+                } else {
+                    //  g_info("AAAAAAAAAAAAAAA\n");
+                    //       item->set_image(icon->scale_simple(icon_size, icon_size,
+                    //       Gdk::INTERP_BILINEAR));
+
+                    // Get a fresh new icon
+                    auto const tmp_pixbuf = pixbuf_util::get_window_icon(
+                        item->get_wnckwindow(), item->get_desktop_icon_name(), icon_size);
+
+                    if (!tmp_pixbuf) {
+                        //     g_error("Load fresh %s\n", item->get_name().c_str());
+                        //  auto winicon = wnck_window_get_icon(item->get_wnckwindow());
+                        //  auto cicon = Glib::wrap(winicon, true);
+                        item->set_image(icon->scale_simple(icon_size, icon_size,
+               Gdk::INTERP_BILINEAR));
+
+                    } else {
+                        item->set_image(
+                            tmp_pixbuf->scale_simple(icon_size, icon_size, Gdk::INTERP_BILINEAR));
+                    }
+                }
+                */
         }
 
         int center_pos = (area / 2) - (icon_size / 2);
