@@ -14,7 +14,15 @@
 
 
 
-using namespace docklight;
+using namespace  docklight;
+//Gtk::ApplicationWindow *main;
+    //void on_activate() {
+        //// can't use Gtk::manage, so we have to keep
+        //// the reference or the main loop quits.
+        //main = new Gtk::ApplicationWindow();
+        //add_window(*main);
+        //main->show();
+    //}
 
 int main(int argc, char *argv[])
 {
@@ -32,7 +40,7 @@ int main(int argc, char *argv[])
     g_print("bindtextdomain: %s %s %s\n", domain, GETTEXT_PACKAGE,
             PROGRAMNAME_LOCALEDIR);
 
-    // bind_text domain_codeset - set encoding of message trans‐lations
+    // bind_text domain_codeset - set encoding of message translations
     char *btdcodeset = bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
     g_print("bind_textdomain_codeset: %s\n", btdcodeset);
 
@@ -43,15 +51,20 @@ int main(int argc, char *argv[])
 
 
     g_print("create application\n");
-    Glib::RefPtr<Gtk::Application> app = Gtk::Application::create(
-        argc, argv, "org.gtkmm.Appwindow",
+   Glib::RefPtr<Gtk::Application> app = Gtk::Application::create(
+        argc, argv, "org.gtkmm.AppWindow.base",
         Gio::APPLICATION_HANDLES_COMMAND_LINE | Gio::APPLICATION_NON_UNIQUE);
+
+/*Glib::RefPtr<Gtk::Application> app =
+    Gtk::Application::create(argc, argv,
+    "org.gtkmm.AppWindow.base");*/
+
 
     g_print("create window and init signals. evaluate parameters.\n");
     AppWindow win;
     int result = win.init(app);
- // activate window
-   
+
+
     if (result != 0) {
         g_error("AppWindow init error.\n");
         exit(result);
@@ -64,6 +77,6 @@ int main(int argc, char *argv[])
     g_print("Terminate with code %d \n", result);
 
     return result;
-    
-   
+
+
 }

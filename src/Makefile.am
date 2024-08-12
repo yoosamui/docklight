@@ -34,6 +34,8 @@ docklight_LDADD = $(ALLDADDLIBS)
 
 docklight_SOURCES =  \
 appwindow.cpp \
+appoptionsgroup.cpp \
+components/panel.cpp \
 main.cpp \
 $(NULL)
 
