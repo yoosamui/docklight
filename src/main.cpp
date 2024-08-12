@@ -1,4 +1,5 @@
 
+
 // clang-format off
 
 #include <gtkmm/application.h>
@@ -11,18 +12,7 @@
 
 #include "appwindow.h"
 
-
-
-
 using namespace  docklight;
-//Gtk::ApplicationWindow *main;
-    //void on_activate() {
-        //// can't use Gtk::manage, so we have to keep
-        //// the reference or the main loop quits.
-        //main = new Gtk::ApplicationWindow();
-        //add_window(*main);
-        //main->show();
-    //}
 
 int main(int argc, char *argv[])
 {
@@ -55,15 +45,9 @@ int main(int argc, char *argv[])
         argc, argv, "org.gtkmm.AppWindow.base",
         Gio::APPLICATION_HANDLES_COMMAND_LINE | Gio::APPLICATION_NON_UNIQUE);
 
-/*Glib::RefPtr<Gtk::Application> app =
-    Gtk::Application::create(argc, argv,
-    "org.gtkmm.AppWindow.base");*/
-
-
-    g_print("create window and init signals. evaluate parameters.\n");
+    g_print("create window and init signals and parse CLI arguments.\n");
     AppWindow win;
     int result = win.init(app);
-
 
     if (result != 0) {
         g_error("AppWindow init error.\n");
@@ -73,7 +57,6 @@ int main(int argc, char *argv[])
     // Shows the window and returns when it is closed.
     g_print("app running\n");
     result = app->run(win);
-
     g_print("Terminate with code %d \n", result);
 
     return result;
