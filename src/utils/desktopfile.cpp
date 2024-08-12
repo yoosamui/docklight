@@ -1,11 +1,13 @@
 #include "desktopfile.h"
+
 #include <algorithm>
 #include <sstream>
+
 #include "gio/gdesktopappinfo.h"
 //#include "utils/moreader.h"
+#include "utils/pixbuf.h"
 #include "utils/string.h"
 #include "utils/system.h"
-
 DL_NS_BEGIN
 // https://developer.gnome.org/gio/stable/gio-Desktop-file-based-GAppInfo.html#g-desktop-app-info-get-string
 namespace desktopfile_util
@@ -123,7 +125,14 @@ namespace desktopfile_util
                 info.m_title = group;
                 info.m_icon_name = wnck_window_get_icon_name(window);
 
-                return get_app_info(info);
+                bool result = get_app_info(info);
+
+                auto const _pixbuf =
+                    pixbuf_util::get_window_icon(window, info.m_icon_name, info.m_width);
+
+                //     item->get_wnckwindow(), item->get_desktop_icon_name(), icon_size);
+
+                return result;
             }
 
             g_critical("Application group not found!!!\n");

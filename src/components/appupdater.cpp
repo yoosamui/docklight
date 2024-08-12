@@ -1,12 +1,15 @@
 #include "components/appupdater.h"
+
 #include <gdkmm/pixbufloader.h>
 #include <glibmm/fileutils.h>
 #include <gtkmm/icontheme.h>
 #include <stdio.h>
+
 #include <algorithm>
 #include <fstream>
 #include <functional>
 #include <thread>
+
 #include "components/config.h"
 #include "components/device.h"
 #include "components/dockitem.h"

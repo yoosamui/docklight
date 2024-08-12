@@ -1,5 +1,7 @@
 #include "panelpreview.h"
+
 #include <gdkmm/general.h>  // set_source_pixbuf()
+
 #include "components/appupdater.h"
 #include "utils/pixbuf.h"
 #include "utils/position.h"
@@ -373,13 +375,13 @@ bool Panel_preview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
         GdkPixbuf* win_pixbuf = nullptr;
 
         if (!image || item->m_preview_image_is_dynamic) {
-            if (system_util::is_mutter_window_manager() == false) {
-                auto wnckwindow = item->get_wnckwindow();
-                bool in_current_desktop = wnck_util::is_window_on_current_desktop(wnckwindow);
-                if (!in_current_desktop || wnck_window_is_minimized(wnckwindow)) {
-                    win_pixbuf = AppUpdater::get_image_from_cache(item->get_xid());
-                }
-            }
+            // if (system_util::is_mutter_window_manager() == false) {
+            // auto wnckwindow = item->get_wnckwindow();
+            // bool in_current_desktop = wnck_util::is_window_on_current_desktop(wnckwindow);
+            // if (!in_current_desktop || wnck_window_is_minimized(wnckwindow)) {
+            // win_pixbuf = AppUpdater::get_image_from_cache(item->get_xid());
+            //}
+            //}
 
             if (!win_pixbuf) {
                 win_pixbuf = pixbuf_util::get_gdk_pixbuf_from_window(item->get_xid());

@@ -1,9 +1,11 @@
 #include "utils/pixbuf.h"
+
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <gdk/gdkx.h>
 #include <glibmm/fileutils.h>
 #include <gtkmm/iconinfo.h>
 #include <gtkmm/icontheme.h>
+
 #include "utils/position.h"
 #include "utils/system.h"
 
@@ -167,6 +169,9 @@ namespace pixbuf_util
             return empty;
         }
 
+        //    auto pixbuf = (Glib::RefPtr<Gdk::Pixbuf>)nullptr;
+        //      string error_message = "ERROR";
+
         GError* error = nullptr;
         GtkIconTheme* icon_theme = gtk_icon_theme_get_default();
         auto pixbuf = gtk_icon_theme_load_icon(icon_theme,
@@ -174,6 +179,7 @@ namespace pixbuf_util
                                                size,                        // icon size
                                                GTK_ICON_LOOKUP_FORCE_SIZE,  // flags //
                                                &error);
+
         if (error) {
             string error_message = error->message;
             g_error_free(error);

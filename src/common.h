@@ -1,5 +1,7 @@
 #pragma once
 
+//#define WNCK_I_KNOW_THIS_IS_UNSTABLE 1
+
 #include <functional>
 #include <map>
 #include <memory>

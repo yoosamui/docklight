@@ -33,57 +33,7 @@ docklight_LDADD = $(ALLDADDLIBS)
 
 
 docklight_SOURCES =  \
-common.h \
-utils/string.cpp \
-utils/string.h \
-utils/file.cpp \
-utils/file.h \
-utils/system.cpp \
-utils/system.h \
-utils/pixbuf.cpp \
-utils/pixbuf.h \
-utils/position.cpp \
-utils/position.h \
-utils/launcher.cpp \
-utils/launcher.h \
-utils/moreader.cpp \
-utils/moreader.h \
-utils/cairo.cpp \
-utils/cairo.h \
-utils/easing.cpp \
-utils/easing.h \
-utils/wnck.cpp \
-utils/wnck.h \
-utils/desktopfile.cpp \
-utils/desktopfile.h \
-components/arguments.cpp \
-components/arguments.h \
-components/panelrender.cpp \
-components/panelrender.h \
-components/panelbase.cpp \
-components/panelbase.h \
-components/panel.cpp \
-components/panel.h \
-components/panelpreview.cpp \
-components/panelpreview.h \
-components/dockmenu.cpp \
-components/dockmenu.h \
-components/config.cpp \
-components/config.h \
-components/device.cpp \
-components/device.h \
-components/appupdater.cpp \
-components/appupdater.h \
-components/dockitem.cpp \
-components/dockitem.h \
-components/autohide.cpp \
-components/autohide.h \
-components/launcherwindow.cpp \
-components/launcherwindow.h \
-components/titlewindow.cpp \
-components/titlewindow.h \
 appwindow.cpp \
-appwindow.h \
 main.cpp \
 $(NULL)
 

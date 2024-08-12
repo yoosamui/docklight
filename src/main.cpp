@@ -1,5 +1,6 @@
 
 // clang-format off
+
 #include <gtkmm/application.h>
 #include <config.h>
 #include <gdk/gdkx.h>
@@ -9,7 +10,9 @@
 #include <cstdlib>
 
 #include "appwindow.h"
-// clang-format on
+
+
+
 
 using namespace docklight;
 
@@ -38,6 +41,7 @@ int main(int argc, char *argv[])
     char *txtdomain = textdomain(GETTEXT_PACKAGE);
     g_print("textdomain: %s\n", txtdomain);
 
+
     g_print("create application\n");
     Glib::RefPtr<Gtk::Application> app = Gtk::Application::create(
         argc, argv, "org.gtkmm.Appwindow",
@@ -46,6 +50,8 @@ int main(int argc, char *argv[])
     g_print("create window and init signals. evaluate parameters.\n");
     AppWindow win;
     int result = win.init(app);
+ // activate window
+   
     if (result != 0) {
         g_error("AppWindow init error.\n");
         exit(result);
@@ -58,4 +64,6 @@ int main(int argc, char *argv[])
     g_print("Terminate with code %d \n", result);
 
     return result;
+    
+   
 }
