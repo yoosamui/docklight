@@ -9,13 +9,14 @@
 #include <vector>
 
 #define DOCKLIGHT_INSTANCENAME "docklight"
+#define DOCKLIGHT_APPNAME "Docklight 5"
 
-#define DL_NS_BEGIN     \
+/*#define DL_NS_BEGIN     \
     namespace docklight \
     {
 #define DL_NS_END }
-
-using namespace std;
+*/
+// using namespace std;
 
 enum class dock_location_t : unsigned int {
     bottom = 0,

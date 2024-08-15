@@ -14,16 +14,14 @@
 //
 //
 
-#include "common.h"
-
-DL_NS_BEGIN
-using namespace std;
-
-class Panel : public Gtk::DrawingArea
+namespace docklight
 {
-  public:
-    Panel();
-    ~Panel();
-};
 
-DL_NS_END
+    class Panel : public Gtk::DrawingArea
+    {
+      public:
+        Panel();
+        ~Panel();
+    };
+}  // namespace docklight
+

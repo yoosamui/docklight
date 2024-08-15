@@ -1,44 +1,69 @@
 #pragma once
 #define WNCK_I_KNOW_THIS_IS_UNSTABLE 1
-//#include <gtkmm.h>
 
-//#include <giomm/notification.h>
+// clang-format off
 #include <gtkmm/application.h>
-//#include <gtkmm/box.h>
-#include <gtkmm/label.h>
-//#include <gtkmm/drawingarea.h>
-//#include <gtkmm/enums.h>
-//#include <gtkmm/frame.h>
 #include <glibmm/main.h>
 #include <gtkmm/window.h>
-#include <libwnck/libwnck.h>
-#include <sigc++/sigc++.h>
 
 #include "common.h"
 #include "components/panel.h"
+#include "components/device.h"
+// clang-format on
 
-DL_NS_BEGIN
+//#include <gtkmm.h>
 
-class AppWindow : public Gtk::Window
+//#include <giomm/icon.h>
+//#include <giomm/notification.h>
+//#include <giomm/themedicon.h>
+//#include <giomm/notification.h>
+//#include <libwnck/libwnck.h>
+//#include <sigc++/sigc++.h>
+
+//#include "components/config.h"
+//#include "components/device.h"
+
+//##include "utils/position.h"
+//#include "utils/system.h"
+
+//#include <gtkmm/box.h>
+//#include <gtkmm/label.h>
+//#include <gtkmm/drawingarea.h>
+//#include <gtkmm/enums.h>
+//#include <gtkmm/frame.h>
+
+namespace docklight
 {
-    Panel m_panel;
 
-  protected:
-    void on_monitors_changed();
-    void on_monitor_added(const Glib::RefPtr<Gdk::Monitor>& monitor);
-    bool on_timeout_draw();
-    bool on_button_press_event(GdkEventButton* event) override;
+    class AppWindow : public Gtk::Window
+    {
+      private:
+        Panel m_panel;
+        static Glib::RefPtr<Gtk::Application> m_application;
 
-    static void send_Notify(const string& title, const string& text, const string& icon_name);
-    static int on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine>& command_line,
-                               Glib::RefPtr<Gtk::Application>& app);
+        void createWindow();
 
-    void createWindow();
+        bool on_timeout_draw();
+        bool on_button_press_event(GdkEventButton* event) override;
 
-  public:
-    AppWindow();
-    int init(Glib::RefPtr<Gtk::Application>& app);
-    void update_position();
-};
+        // Monitor related event
+        void on_monitor_changed();
+        void update_position();
 
-DL_NS_END
+        static void send_Notify(const std::string& title, const std::string& text,
+                                const std::string& icon_name);
+        static int on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine>& command_line,
+                                   Glib::RefPtr<Gtk::Application>& app);
+
+        static void on_app_activated();
+        static void send_notification(const std::string& title, const std::string& text,
+                                      const std::string& icon_name);
+
+      public:
+        AppWindow();
+        ~AppWindow();
+
+        int init(Glib::RefPtr<Gtk::Application>& app);
+    };
+
+}  // namespace docklight

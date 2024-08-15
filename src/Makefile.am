@@ -36,6 +36,7 @@ docklight_SOURCES =  \
 appwindow.cpp \
 appoptionsgroup.cpp \
 components/panel.cpp \
+components/device.cpp \
 main.cpp \
 $(NULL)
 
