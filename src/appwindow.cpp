@@ -114,6 +114,7 @@ namespace docklight
                 ctx.parse(argc, argv);
             } catch (const Glib::Error& ex) {
                 std::cout << "Exception: " << ex.what() << std::endl;
+                return EXIT_FAILURE;
             }
 
             try {
