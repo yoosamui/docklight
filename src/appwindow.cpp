@@ -81,8 +81,8 @@ namespace docklight
         return EXIT_SUCCESS;
     }
 
-    void AppWindow::send_notification(const std::string& title, const std::string& text,
-                                      const std::string& icon_name)
+    void AppWindow::send_notification(const Glib::ustring& title, const Glib::ustring& text,
+                                      const Glib::ustring& icon_name)
     {
         auto Notification = Gio::Notification::create(title);
         Notification->set_body(text);

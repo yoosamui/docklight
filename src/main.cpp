@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
     XInitThreads();
 
     // Set up the current locale.
-    setlocale(LC_ALL, "");
+    // setlocale(LC_ALL, "");
 
     g_print("Initialize gettext\n");
     char *domain = bindtextdomain(GETTEXT_PACKAGE, PROGRAMNAME_LOCALEDIR);

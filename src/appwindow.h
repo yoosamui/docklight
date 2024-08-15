@@ -50,14 +50,14 @@ namespace docklight
         void on_monitor_changed();
         void update_position();
 
-        static void send_Notify(const std::string& title, const std::string& text,
-                                const std::string& icon_name);
+        static void send_Notify(const Glib::ustring& title, const Glib::ustring& text,
+                                const Glib::ustring& icon_name);
         static int on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine>& command_line,
                                    Glib::RefPtr<Gtk::Application>& app);
 
         static void on_app_activated();
-        static void send_notification(const std::string& title, const std::string& text,
-                                      const std::string& icon_name);
+        static void send_notification(const Glib::ustring& title, const Glib::ustring& text,
+                                      const Glib::ustring& icon_name);
 
       public:
         AppWindow();
