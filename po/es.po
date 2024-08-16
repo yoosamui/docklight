@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Docklight-5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-16 11:00+0700\n"
+"POT-Creation-Date: 2024-08-16 14:00+0700\n"
 "PO-Revision-Date: 2024-08-16 11:24+0700\n"
 "Last-Translator: yoo <j-gonzalez@email.de>\n"
 "Language-Team: English - United States <j-gonzalez@email.de>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 3.2.2\n"
 
-#: ../src/appwindow.cpp:136
+#: ../src/appwindow.cpp:137
 msgid "Display detected monitors"
 msgstr "Mostrar monitores detectados"
 

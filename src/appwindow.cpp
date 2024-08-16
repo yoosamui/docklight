@@ -2,6 +2,7 @@
 #include <giomm/notification.h>
 #include <giomm/icon.h>
 #include <giomm/themedicon.h>
+#include <glibmm/i18n.h>
 
 #include "appwindow.h"
 #include "appoptionsgroup.h"

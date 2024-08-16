@@ -9,7 +9,7 @@
 #include <vector>
 
 #define DOCKLIGHT_INSTANCENAME "docklight"
-#define DOCKLIGHT_APPNAME "Docklight 5"
+#define DOCKLIGHT_APPNAME "Docklight-5"
 
 /*#define DL_NS_BEGIN     \
     namespace docklight \
