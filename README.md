@@ -27,3 +27,15 @@ intltool \
 gnupg \
 gnupg1 \
 gnupg2  -y
+
+
+// install
+1. autogen.sh
+2. createpo.sh
+3. configure.sh
+4. make 
+5. make install
+
+// remove
+5. make uninstall
+

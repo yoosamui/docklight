@@ -133,7 +133,7 @@ namespace docklight
             }
         }
 
-        std::cout << "\ndisplay detected monitors:" << std::endl;
+        std::cout << "\n" << _("Display detected monitors") << " :" << std::endl;
 
         for (int i = 0; i < device::monitor::get_monitor_count(); i++) {
             auto const m = device::monitor::get_monitor(i);

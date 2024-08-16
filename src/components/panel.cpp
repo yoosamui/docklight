@@ -1,5 +1,6 @@
 #include "components/panel.h"
 
+#include <glibmm/i18n.h>
 namespace docklight
 {
 
@@ -11,7 +12,7 @@ namespace docklight
 
     Panel::~Panel()
     {
-        g_print("Free the Panel object.\n");
+        g_print("Free the Panel object.");
     }
 }  // namespace docklight
 
