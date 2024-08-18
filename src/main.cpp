@@ -1,5 +1,5 @@
-// clang-format off
 
+// clang-format off
 #include <gtkmm/application.h>
 #include <config.h>
 #include <gdk/gdkx.h>
@@ -9,9 +9,8 @@
 #include <cstdlib>
 
 #include "appwindow.h"
-#include "appoptionsgroup.h"
-
 // clang-format on
+
 using namespace docklight;
 
 int main(int argc, char *argv[])
@@ -25,12 +24,13 @@ int main(int argc, char *argv[])
     // https://www.x.org/releases/X11R7.5/doc/man/man3/XInitThreads.3.html
     XInitThreads();
 
-    // Set up the current locale.
-     setlocale(LC_ALL, "");
+    // The initialization code:
 
+    // Set up the user current locale.
+    setlocale(LC_ALL, "");
     g_print("Initialize gettext\n");
     char *domain = bindtextdomain(GETTEXT_PACKAGE, PROGRAMNAME_LOCALEDIR);
-    g_print("bindtextdomain: %s %s %s\n", domain, GETTEXT_PACKAGE, PROGRAMNAME_LOCALEDIR);
+    g_print(("bindtextdomain: %s %s %s\n"), domain, GETTEXT_PACKAGE, PROGRAMNAME_LOCALEDIR);
 
     // bind_text domain_codeset - set encoding of message translations
     char *btdcodeset = bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
     }
 
     // Shows the window and returns when it is closed.
-    g_print("app running\n");
+    g_print("app running...\n\n");
     result = app->run(win);
     g_print("Terminate with code %d \n", result);
 

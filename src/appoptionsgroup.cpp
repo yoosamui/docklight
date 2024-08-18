@@ -1,26 +1,31 @@
-#include "appoptionsgroup.h"
 
+// clang-format off
 #include <glibmm/i18n.h>
+
+#include "appoptionsgroup.h"
+#include "translations.h"
+
+// clang-format on
+//
 namespace docklight
 {
 
     AppOptionsGroup::AppOptionsGroup()
-        : Glib::OptionGroup(_("Docklight"),
-                            _("Supports short and long commandline options for the group."),
-                            _("help - Options can be single letters, prefixed by a single dash.")),
+        : Glib::OptionGroup("Docklight",
+                            "Supports short and long commandline options for the group.",
+                            "help - Options can be single letters, prefixed by a single dash."),
           m_arg_monitor(0),
           m_arg_location("bottom"),
           m_arg_alignment("center")
     {
         m_entry_monitor.set_long_name("monitor");
         m_entry_monitor.set_short_name('m');
-        m_entry_monitor.set_description(_("Sets the primary Monitor."));
+        m_entry_monitor.set_description(MSG_SETS_THE_PRIMARY_MONITOR);
         add_entry(m_entry_monitor, m_arg_monitor);
 
         m_entry_location.set_long_name("location");
         m_entry_location.set_short_name('l');
-        m_entry_location.set_description(
-            _("Sets the Panel location: top, right, bottom or left. Default bottom"));
+        m_entry_location.set_description(MSG_SETS_THE_PANEL_LOCATION);
         add_entry(m_entry_location, m_arg_location);
 
         m_entry_alignment.set_long_name("alignment");
@@ -40,10 +45,13 @@ namespace docklight
     Glib::ustring AppOptionsGroup::toString() const
     {
         std::stringstream result;
-        result << _("parsed values") << " :" << std::endl
-               << _("  monitor") << " :" << m_arg_monitor << std::endl
-               << _("  location") << " :" << m_arg_location << std::endl
-               << _("  alignment") << " :" << m_arg_alignment << std::endl;
+        result << MSG_PARSED_VALUES << " :" << std::endl
+               << "  monitor"
+               << " :" << m_arg_monitor << std::endl
+               << "  location"
+               << " :" << m_arg_location << std::endl
+               << "  alignment"
+               << " :" << m_arg_alignment << std::endl;
 
         return result.str();
     }

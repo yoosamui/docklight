@@ -1,6 +1,10 @@
-#include "components/panel.h"
-
+// clang-format off
 #include <glibmm/i18n.h>
+
+#include "components/panel.h"
+#include "translations.h"
+// clang-format on
+
 namespace docklight
 {
 
@@ -12,7 +16,9 @@ namespace docklight
 
     Panel::~Panel()
     {
-        g_print("Free the Panel object.");
+        // std::cout << MSG_FREE_OBJECT << "\n" << std::endl;
+        g_print(MSG_FREE_OBJECT, "Panel");
+        g_print("\n");
     }
 }  // namespace docklight
 

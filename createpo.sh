@@ -2,7 +2,7 @@
 #
 # !!! WARNING !!!
 #
-# Use only to create po files for the first time.
+# Use only to create  empty po files.
 # Existing po files will be ignore.
 #
 # find . -type f \( -name '*.cpp' -or -name '*.c' \) -print > ../files.txt

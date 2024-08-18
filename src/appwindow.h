@@ -6,7 +6,7 @@
 #include <glibmm/main.h>
 #include <gtkmm/window.h>
 
-#include "common.h"
+#include "constants.h"
 #include "components/panel.h"
 #include "components/device.h"
 // clang-format on

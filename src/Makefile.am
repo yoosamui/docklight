@@ -11,11 +11,33 @@ ALLCPPFLAGS += $(WNCK_CFLAGS)
 #ALLCPPFLAGS += -DPROGRAMNAME_LOCALEDIR=\""$(prefix)/share/locale"\"
 ALLCPPFLAGS += -DPROGRAMNAME_LOCALEDIR=\""/usr/lib/docklight/share/locale"\"
 
+#  Adding -pedantic turns off more extensions and generates more warnings.
+#  For example, if you have a string literal longer than 509 characters,
+#  then -pedantic warns about that because it exceeds the minimum limit required by the C89 standard
+
+# Warn if a comparison is always true or always false due to the limited
+# range of the data type, but do not warn for constant expressions.
+# For example, warn if an unsigned variable is compared against zero
+# with '<' or '>='. This warning is also enabled by -Wextra.
+
+
+#ifeq ($(BUILD),debug)
+# "Debug" build - no optimization, and debugging symbols
+#CFLAGS += -O0 -g
+#else
+# "Release" build - optimization, and no debug symbols
+#CFLAGS += -O2 -s -DNDEBUG
+#endif
 
 docklight_CPPFLAGS = $(ALLCPPFLAGS)
-#docklight_CPPFLAGS += -Wall -Wextra -Werror -std=c++11 -pedantic
+# detailed
+docklight_CPPFLAGS += -Wall -Wextra -Werror -std=c++11 -pedantic
 
-docklight_CPPFLAGS += -Wall -std=c++11
+# release
+#docklight_CPPFLAGS += O2 -s -DNDEBUG -Wall -Wextra -Werror -std=c++11 -pedantic
+
+# standard
+#docklight_CPPFLAGS += -Wall -std=c++11
 
 ALLDADDLIBS = $(GTKMM_LIBS)
 #ALLDADDLIBS +=$(WNCK_LIBS)
@@ -37,6 +59,7 @@ appwindow.cpp \
 appoptionsgroup.cpp \
 components/panel.cpp \
 components/device.cpp \
+utils/logger.cpp \
 main.cpp \
 $(NULL)
 

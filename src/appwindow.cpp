@@ -6,6 +6,8 @@
 
 #include "appwindow.h"
 #include "appoptionsgroup.h"
+
+#include "translations.h"
 // clang-format on
 
 namespace docklight
@@ -24,7 +26,8 @@ namespace docklight
 
     AppWindow::~AppWindow()
     {
-        g_print("Free the AppWindow object.\n");
+        g_print(MSG_FREE_OBJECT, "AppWindow");
+        g_print("\n");
     }
 
     void AppWindow::createWindow()
@@ -95,8 +98,11 @@ namespace docklight
 
     void AppWindow::on_app_activated()
     {
-        g_print("Applcation activated. Initialize panel.\n");
-        AppWindow::send_notification(DOCKLIGHT_APPNAME, "Application start", "dialog-information");
+        g_print(MSG_APPLICATION_ACTIVATED);
+        std::cout << std::endl;
+        //        g_print(MSG_INITIALIZE_PANEL);
+        AppWindow::send_notification(DOCKLIGHT_APPNAME, MSG_APPLICATION_START,
+                                     "dialog-information");
     }
 
     int AppWindow::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine>& command_line,
