@@ -1,6 +1,7 @@
 #include "components/config.h"
+
 #include <string>
-#include "components/arguments.h"
+//#include "components/arguments.h"
 #include "components/device.h"
 #include "components/panel.h"
 #include "utils/string.h"
@@ -517,7 +518,7 @@ namespace config
         }
 
         // paramters override config settings
-        if (args_list) {
+        /*if (args_list) {
             for (const GSList *l = args_list; l; l = l->next) {
                 cli::result_t *data = static_cast<cli::result_t *>(l->data);
                 g_print("arguments: --%c %d %s\n", data->arg, data->int_value, data->string_value);
@@ -570,22 +571,43 @@ namespace config
                     }
                 }
             }
-        }
+        }*/
     }
 
-    Theme get_theme() { return m_theme; }
+    Theme get_theme()
+    {
+        return m_theme;
+    }
 
-    bool is_show_title() { return m_show_title; }
+    bool is_show_title()
+    {
+        return m_show_title;
+    }
 
-    bool is_autohide_none() { return m_autohide_type == dock_autohide_type_t::none; }
+    bool is_autohide_none()
+    {
+        return m_autohide_type == dock_autohide_type_t::none;
+    }
 
-    bool is_autohide() { return m_autohide_type == dock_autohide_type_t::autohide; }
+    bool is_autohide()
+    {
+        return m_autohide_type == dock_autohide_type_t::autohide;
+    }
 
-    bool is_intelihide() { return m_autohide_type == dock_autohide_type_t::intelihide; }
+    bool is_intelihide()
+    {
+        return m_autohide_type == dock_autohide_type_t::intelihide;
+    }
 
-    bool is_separator_line() { return m_show_separator_line; }
+    bool is_separator_line()
+    {
+        return m_show_separator_line;
+    }
 
-    void set_separator_line(bool value) { m_show_separator_line = value; }
+    void set_separator_line(bool value)
+    {
+        m_show_separator_line = value;
+    }
 
     int get_window_start_end_margin()
     {
@@ -614,13 +636,25 @@ namespace config
         return m_anchor_margin;
     }
 
-    int get_separator_margin() { return m_separator_margin; }
+    int get_separator_margin()
+    {
+        return m_separator_margin;
+    }
 
-    int get_separator_size() { return m_separator_size; }
+    int get_separator_size()
+    {
+        return m_separator_size;
+    }
 
-    dock_location_t get_dock_location() { return m_location; }
+    dock_location_t get_dock_location()
+    {
+        return m_location;
+    }
 
-    dock_indicator_type_t get_indicator_type() { return m_indicator_type; }
+    dock_indicator_type_t get_indicator_type()
+    {
+        return m_indicator_type;
+    }
 
     int get_dock_area()
     {
@@ -643,9 +677,15 @@ namespace config
         }
     }
 
-    dock_alignment_t get_dock_alignment() { return m_alignment; }
+    dock_alignment_t get_dock_alignment()
+    {
+        return m_alignment;
+    }
 
-    void set_dock_alignment(dock_alignment_t value) { m_alignment = value; }
+    void set_dock_alignment(dock_alignment_t value)
+    {
+        m_alignment = value;
+    }
 
     Gtk::Orientation get_dock_orientation()
     {

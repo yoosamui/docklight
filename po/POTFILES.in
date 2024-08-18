@@ -1,6 +1,4 @@
-src/About.cpp
-src/LauncherWindow.cpp
-src/DockPanel.cpp
-src/Launcher.cpp
-src/Preferences.cpp
-src/SessionWindow.cpp
+src/translations.h
+src/appwindow.cpp
+src/appoptionsgroup.cpp
+src/components/panel.cpp

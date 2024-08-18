@@ -11,11 +11,33 @@ ALLCPPFLAGS += $(WNCK_CFLAGS)
 #ALLCPPFLAGS += -DPROGRAMNAME_LOCALEDIR=\""$(prefix)/share/locale"\"
 ALLCPPFLAGS += -DPROGRAMNAME_LOCALEDIR=\""/usr/lib/docklight/share/locale"\"
 
+#  Adding -pedantic turns off more extensions and generates more warnings.
+#  For example, if you have a string literal longer than 509 characters,
+#  then -pedantic warns about that because it exceeds the minimum limit required by the C89 standard
+
+# Warn if a comparison is always true or always false due to the limited
+# range of the data type, but do not warn for constant expressions.
+# For example, warn if an unsigned variable is compared against zero
+# with '<' or '>='. This warning is also enabled by -Wextra.
+
+
+#ifeq ($(BUILD),debug)
+# "Debug" build - no optimization, and debugging symbols
+#CFLAGS += -O0 -g
+#else
+# "Release" build - optimization, and no debug symbols
+#CFLAGS += -O2 -s -DNDEBUG
+#endif
 
 docklight_CPPFLAGS = $(ALLCPPFLAGS)
-#docklight_CPPFLAGS += -Wall -Wextra -Werror -std=c++11 -pedantic
+# detailed
+docklight_CPPFLAGS += -Wall -Wextra -Werror -std=c++11 -pedantic
 
-docklight_CPPFLAGS += -Wall -std=c++11
+# release
+#docklight_CPPFLAGS += O2 -s -DNDEBUG -Wall -Wextra -Werror -std=c++11 -pedantic
+
+# standard
+#docklight_CPPFLAGS += -Wall -std=c++11
 
 ALLDADDLIBS = $(GTKMM_LIBS)
 #ALLDADDLIBS +=$(WNCK_LIBS)
@@ -33,57 +55,11 @@ docklight_LDADD = $(ALLDADDLIBS)
 
 
 docklight_SOURCES =  \
-common.h \
-utils/string.cpp \
-utils/string.h \
-utils/file.cpp \
-utils/file.h \
-utils/system.cpp \
-utils/system.h \
-utils/pixbuf.cpp \
-utils/pixbuf.h \
-utils/position.cpp \
-utils/position.h \
-utils/launcher.cpp \
-utils/launcher.h \
-utils/moreader.cpp \
-utils/moreader.h \
-utils/cairo.cpp \
-utils/cairo.h \
-utils/easing.cpp \
-utils/easing.h \
-utils/wnck.cpp \
-utils/wnck.h \
-utils/desktopfile.cpp \
-utils/desktopfile.h \
-components/arguments.cpp \
-components/arguments.h \
-components/panelrender.cpp \
-components/panelrender.h \
-components/panelbase.cpp \
-components/panelbase.h \
-components/panel.cpp \
-components/panel.h \
-components/panelpreview.cpp \
-components/panelpreview.h \
-components/dockmenu.cpp \
-components/dockmenu.h \
-components/config.cpp \
-components/config.h \
-components/device.cpp \
-components/device.h \
-components/appupdater.cpp \
-components/appupdater.h \
-components/dockitem.cpp \
-components/dockitem.h \
-components/autohide.cpp \
-components/autohide.h \
-components/launcherwindow.cpp \
-components/launcherwindow.h \
-components/titlewindow.cpp \
-components/titlewindow.h \
 appwindow.cpp \
-appwindow.h \
+appoptionsgroup.cpp \
+components/panel.cpp \
+components/device.cpp \
+utils/logger.cpp \
 main.cpp \
 $(NULL)
 
