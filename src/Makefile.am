@@ -60,6 +60,7 @@ appoptionsgroup.cpp \
 components/panel.cpp \
 components/device.cpp \
 components/config.cpp \
+utils/system.cpp \
 main.cpp \
 $(NULL)
 

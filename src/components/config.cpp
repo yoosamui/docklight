@@ -1,6 +1,11 @@
-#include "components/config.h"
+// clang-format off
 
 #include <iostream>
+
+#include "components/config.h"
+#include "utils/system.h"
+
+// clang-format on
 
 namespace docklight
 {
@@ -39,6 +44,47 @@ namespace docklight
         float m_animation_delay = DEF_AUTOHIDE_ANIMATION_DELAY;
         float m_hide_delay = DEF_AUTOHIDE_HIDE_DELAY;
 
+        std::string get_filepath()
+        {
+            std::string user_name = system_util::get_current_user();
+
+            char config_dir[120];
+            sprintf(config_dir, "/home/%s/.config/docklight", user_name.c_str());
+
+            system_util::create_directory_if_not_exitst(config_dir);
+
+            char buff[PATH_MAX];
+            sprintf(buff, "%s/%s", config_dir, DEF_CONFIG_FILENAME);
+
+            return buff;
+        }
+
+        GKeyFile* load_file()
+        {
+            set_default_style();
+
+            std::string filepath = get_filepath();
+            GError* error = nullptr;
+            GKeyFile* key_file = g_key_file_new();
+
+            auto found = g_key_file_load_from_file(key_file, filepath.c_str(),
+                                                   GKeyFileFlags::G_KEY_FILE_NONE, &error);
+
+            if (!found) {
+                if (error) {
+                    g_warning("Load: configuration could not be found. %s %s\n", error->message,
+                              filepath.c_str());
+                    g_error_free(error);
+                    error = nullptr;
+                }
+
+                g_key_file_free(key_file);
+                return nullptr;
+            }
+
+            return key_file;
+        }
+
         void AddArgs(const std::vector<std::tuple<gchar, int, Glib::ustring>>& args)
         {
             for (auto&& t : args) {
@@ -47,6 +93,21 @@ namespace docklight
             }
         }
 
+        void set_default_style()
+        {
+            // clang-format off
+        /*m_theme.set_Panel(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 1, 1, 0), 0, 3, 0));
+        m_theme.set_PanelCell(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 1, 1, 1), 0.5, 3, 0));
+        m_theme.set_PanelDrag(new ColorWindow(Color(1, 1, 1, 0.4), Color(1, 1, 1, 1), 2.5, 3, 0));
+        m_theme.set_PanelIndicator(new ColorWindow(Color(1, 1, 1, 0.7), Color(1, 1, 1, 1), 2, 0, 0));
+        m_theme.set_PanelSeparator(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 1, 1, 1.0), 1.0, 0, 0));
+        m_theme.set_PanelTitle(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 1, 1, 1.0), 1.0, 0, 0));
+        m_theme.set_Preview(new ColorWindow());
+        m_theme.set_PreviewCell(new ColorWindow(Color(1, 1, 1, 0.2), Color(1, 1, 1, 1), 1, 3, 0));
+        m_theme.set_PreviewTitleText(new ColorWindow(Color(1,1,1,0.4), Color(1, 1, 1, 1), 0, 0, 0));
+        m_theme.set_PreviewClose(new ColorWindow(Color(0.854, 0.062, 0.133, 1), Color(1, 1, 1, 1), 2.0, 0, 0));*/
+            // clang-format on
+        }
         // get/set location
         dock_location_t get_dock_location()
         {

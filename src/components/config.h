@@ -9,11 +9,14 @@ namespace docklight
 {
     namespace Config
     {
+        GKeyFile* load_file();
+
         void AddArgs(const std::vector<std::tuple<gchar, int, Glib::ustring>>& args);
         void set_dock_location(dock_location_t location);
         void set_icon_size(int value);
         void set_separator_line(bool value);
         void set_dock_alignment(dock_alignment_t value);
+        void set_default_style();
 
         int get_anchor_margin();
         int get_dock_area();
