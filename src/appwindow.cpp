@@ -133,14 +133,13 @@ namespace docklight
             };
 
             std::cout << group.toString() << std::endl;
+            auto const args_list = group.getList();
 
-            for (auto&& t : group.getList()) {
-                std::cout << "R:" << std::get<0>(t) << ", " << std::get<1>(t) << ", "
-                          << std::get<2>(t) << std::endl;
-            }
+            // iadd args to config
+            Config::AddArgs(args_list);
         }
 
-        std::cout << "\n" << _("Display detected monitors") << " :" << std::endl;
+        std::cout << "\n" << MSG_DISPLAY_DETECTED_MONITORS << " :" << std::endl;
 
         for (int i = 0; i < device::monitor::get_monitor_count(); i++) {
             auto const m = device::monitor::get_monitor(i);
@@ -150,13 +149,19 @@ namespace docklight
             m->get_geometry(geometry);
             m->get_workarea(workarea);
 
-            g_print("Monitor# %d %s g: %d x %d  w: %d x %d\n", i, m->get_model().c_str(),
-                    geometry.get_width(), geometry.get_height(), workarea.get_width(),
-                    workarea.get_height());
+            // clang-format off
+            std::cout << MSG_MONITOR  << " " <<  MSG_MODEL  << ":" << m->get_model() << std::endl
+                      << MSG_GEOMETRY << " " <<  MSG_WIDTH  << "=" << geometry.get_width() << std::endl
+                      << MSG_GEOMETRY << " " <<  MSG_HEIGHT << "=" << geometry.get_height() << std::endl
+                      << MSG_WORKAREA << " " <<  MSG_WIDTH  << "=" << workarea.get_width() << std::endl
+                      << MSG_WORKAREA << " " <<  MSG_HEIGHT << "=" << workarea.get_height() << std::endl
+                      << std::endl;
+
+            // clang-format on
         }
 
-        g_print("Default monitor: %d %s\n", device::monitor::get_monitor_number(),
-                device::monitor::get_current()->get_model().c_str());
+        std::cout << MSG_DEFAULT_MONITOR << ": " << device::monitor::get_monitor_number() << ", "
+                  << device::monitor::get_current()->get_model() << std::endl;
 
         app->activate();
         return EXIT_SUCCESS;

@@ -59,7 +59,7 @@ appwindow.cpp \
 appoptionsgroup.cpp \
 components/panel.cpp \
 components/device.cpp \
-utils/logger.cpp \
+components/config.cpp \
 main.cpp \
 $(NULL)
 

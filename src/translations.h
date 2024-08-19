@@ -33,4 +33,20 @@
     _("parsed values")
 #define MSG_FREE_OBJECT \
     _("Free the %s object.")
+#define MSG_DISPLAY_DETECTED_MONITORS \
+    _("Display detected monitors")
+#define MSG_DEFAULT_MONITOR \
+    _("Default monitor")
+#define MSG_MONITOR \
+    _("monitor")
+#define MSG_GEOMETRY \
+    _("Geometry")
+#define MSG_WORKAREA \
+    _("Workarea")
+#define MSG_WIDTH \
+    _("Width")
+#define MSG_HEIGHT \
+    _("Height")
+#define MSG_MODEL \
+    _("Model")
 // clang-format on

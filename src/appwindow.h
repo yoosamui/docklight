@@ -9,6 +9,8 @@
 #include "constants.h"
 #include "components/panel.h"
 #include "components/device.h"
+#include "components/config.h"
+
 // clang-format on
 
 //#include <gtkmm.h>
@@ -38,6 +40,8 @@ namespace docklight
     class AppWindow : public Gtk::Window
     {
       private:
+        // Config* m_config = Config::getInstance();
+
         Panel m_panel;
         static Glib::RefPtr<Gtk::Application> m_application;
 
