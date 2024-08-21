@@ -2,9 +2,9 @@
 #include <stdint.h>
 
 // Version:
-#define OF_VERSION_MAJOR 0
-#define OF_VERSION_MINOR 11
-#define OF_VERSION_PATCH 2
+#define DL_VERSION_MAJOR 0
+#define DL_VERSION_MINOR 5
+#define Dl_VERSION_PATCH 0
 #define DL_VERSION_PRE_RELEASE "master"
 
 // application
