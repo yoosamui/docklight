@@ -63,6 +63,22 @@ namespace docklight
             return false;
         }
 
+        Glib::ustring get_executable_path()
+        {
+            char path[PATH_MAX];
+            if (getcwd(path, sizeof(path)) == NULL) {
+                // Error getting current working directory
+                return "";
+            }
+
+            // Remove the filename
+            char* lastSlash = strrchr(path, '/');
+            if (lastSlash != NULL) {
+                *lastSlash = '\0';
+            }
+
+            return Glib::ustring(path);
+        }
         std::string get_current_path()
         {
             char szTmp[32];

@@ -11,6 +11,8 @@
 #include "components/device.h"
 #include "components/config.h"
 
+#include "components/CompositedWindow.h"
+#include "components/ExplodesWindow.h"
 // clang-format on
 
 //#include <gtkmm.h>
@@ -31,8 +33,7 @@
 //#include <gtkmm/box.h>
 //#include <gtkmm/label.h>
 //#include <gtkmm/drawingarea.h>
-//#include <gtkmm/enums.h>
-//#include <gtkmm/frame.h>
+//#include <gtkmm/enums.hExplodesWindowude <gtkmm/frame.h>
 
 namespace docklight
 {
@@ -41,6 +42,8 @@ namespace docklight
     {
       private:
         // Config* m_config = Config::getInstance();
+
+        Glib::RefPtr<ExplodesWindow> m_composite;
 
         Panel m_panel;
         static Glib::RefPtr<Gtk::Application> m_application;

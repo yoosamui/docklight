@@ -1,7 +1,8 @@
 #pragma once
 
-#include "constants.h"
+#include <glibmm/main.h>
 
+#include "constants.h"
 namespace docklight
 {
 
@@ -14,6 +15,7 @@ namespace docklight
 
         int execute(const std::string& command_string);
 
+        Glib::ustring get_executable_path();
         const std::string get_current_path(const std::string& str);
         const std::string get_current_user();
         std::string get_window_manager_name();

@@ -57,6 +57,8 @@ docklight_LDADD = $(ALLDADDLIBS)
 docklight_SOURCES =  \
 appwindow.cpp \
 appoptionsgroup.cpp \
+components/CompositedWindow.cpp \
+components/ExplodesWindow.cpp \
 components/panel.cpp \
 components/device.cpp \
 components/config.cpp \

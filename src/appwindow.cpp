@@ -181,6 +181,8 @@ namespace docklight
             //  this->update_position();
             g_print("Press\n");
 
+            m_composite = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
+            m_composite->show_at(800, 900);
             // shared_ptr<DockItem> item = shared_ptr<DockItem>(new DockItem());
             // shared_ptr<DockItem> item = shared_ptr<DockItem>(new DockItem());
 
