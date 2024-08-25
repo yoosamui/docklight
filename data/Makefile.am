@@ -45,7 +45,7 @@ docklightimages_DATA = 	\
 
 
 install-exec-hook:
-	mkdir -p $(bindir)/docklight-5; fi
+	mkdir -p $(bindir)/docklight-5; 
 	mv $(bindir)/docklight  $(bindir)/docklight-5
 #	chmod -R 0777 $(bindir)/DOCKLIGHT/data		
 	
