@@ -3,7 +3,8 @@ shopt -s extglob
 rm -rf debian/docklight
 rm -rf debian/.debhelper
 rm -f src/docklight
-rm -f src/*.o
+rm -rf src/*.o
+rm -f src/utils/*.o
 rm -rf src/*.swp
 rm -rf src/.*-
 rm -rf src/.*-
