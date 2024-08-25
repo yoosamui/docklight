@@ -8,8 +8,9 @@ ALLCPPFLAGS += $(WNCK_CFLAGS)
 
 #This macro will be used when you initialize gettext in your source code.
 #ALLCPPFLAGS += -DPROGRAMNAME_LOCALEDIR=\""$(datadir)/locale"\"
-#ALLCPPFLAGS += -DPROGRAMNAME_LOCALEDIR=\""$(prefix)/share/locale"\"
-ALLCPPFLAGS += -DPROGRAMNAME_LOCALEDIR=\""/usr/lib/docklight/share/locale"\"
+ALLCPPFLAGS += -DPROGRAMNAME_LOCALEDIR=\""$(prefix)/share/docklight/locale"\"
+
+#ALLCPPFLAGS += -DPROGRAMNAME_LOCALEDIR=\""/usr/share/docklight/locale"\"
 
 #  Adding -pedantic turns off more extensions and generates more warnings.
 #  For example, if you have a string literal longer than 509 characters,
@@ -57,9 +58,12 @@ docklight_LDADD = $(ALLDADDLIBS)
 docklight_SOURCES =  \
 appwindow.cpp \
 appoptionsgroup.cpp \
+components/TransparentWindow.cpp \
+components/ExplodesWindow.cpp \
 components/panel.cpp \
 components/device.cpp \
-utils/logger.cpp \
+components/config.cpp \
+utils/system.cpp \
 main.cpp \
 $(NULL)
 
