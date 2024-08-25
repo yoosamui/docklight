@@ -1,8 +1,0 @@
-docklight for Debian
--------------------
-This program shows a “Dock Panel” with window preview.
-“Docklight” is an easy “GNOME 3” Linux dock application for opening common applications.
-Is written in c++ with “gtk+ 3.0” and “libwnck”. Still in development but usable......
-
-
- -- Juan R. Gonzalez <j-gonzalez@email.de>  Wed, 04 Jan 2017 22:31:18 +0700
