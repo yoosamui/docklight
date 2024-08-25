@@ -14,7 +14,7 @@ do
     d=${i%.*}
 
     #path="/usr/lib/docklight/share/locale/$d/LC_MESSAGES"
-    path="/usr/local/bin/DOCKLIGHT/locale/$d/LC_MESSAGES"
+    path="/usr/local/bin/docklight-5/locale/$d/LC_MESSAGES"
     
     echo $path
     mkdir -p $path
@@ -28,4 +28,4 @@ do
 	fi
 	msgfmt -c $i -o $mofile
 done
-echo "send it!"
+echo "done!"

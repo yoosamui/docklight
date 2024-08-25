@@ -6,32 +6,10 @@ bin_PROGRAMS = docklight
 #ALLCPPFLAGS = -pthread -L /lib64
 ALLCPPFLAGS = $(GTKMM_CFLAGS)
 ALLCPPFLAGS += $(WNCK_CFLAGS)
-
-#This macro will be used when you initialize gettext in your source code.
-#ALLCPPFLAGS += -DPROGRAMNAME_LOCALEDIR=\""$(datadir)/locale"\"
-#ALLCPPFLAGS += -DPROGRAMNAME_LOCALEDIR=\""$(prefix)/share/docklight/locale"\"
-
 ALLCPPFLAGS += -DPROGRAMNAME_LOCALEDIR=\""$(bindir)/docklight-5/locale"\"
 
-#  Adding -pedantic turns off more extensions and generates more warnings.
-#  For example, if you have a string literal longer than 509 characters,
-#  then -pedantic warns about that because it exceeds the minimum limit required by the C89 standard
-
-# Warn if a comparison is always true or always false due to the limited
-# range of the data type, but do not warn for constant expressions.
-# For example, warn if an unsigned variable is compared against zero
-# with '<' or '>='. This warning is also enabled by -Wextra.
-
-
-#ifeq ($(BUILD),debug)
-# "Debug" build - no optimization, and debugging symbols
-#CFLAGS += -O0 -g
-#else
-# "Release" build - optimization, and no debug symbols
-#CFLAGS += -O2 -s -DNDEBUG
-#endif
-
 docklight_CPPFLAGS = $(ALLCPPFLAGS)
+
 # detailed
 docklight_CPPFLAGS += -Wall -Wextra -Werror -std=c++11 -pedantic
 

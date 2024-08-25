@@ -43,21 +43,14 @@ docklightimages_DATA = 	\
 
 @INTLTOOL_DESKTOP_RULE@
 
-#if test -f "/usr/local/bin/docklight"; then rm -f "/usr/local/bin/docklight"; fi
-#ln -s  $(bindir)/docklight "/usr/local/bin/docklight"
+
 install-exec-hook:
-	if test ! -d $(bindir)/docklight-5; then mkdir $(bindir)/docklight-5; fi
+	mkdir -p $(bindir)/docklight-5; fi
 	mv $(bindir)/docklight  $(bindir)/docklight-5
-	
-#	if test ! -d $(bindir)/DOCKLIGHT/data; then mkdir $(bindir)/DOCKLIGHT/data; fi
-#if test ! -d $(bindir)/DOCKLIGHT/data/attachments; then mkdir $(bindir)/DOCKLIGHT/data/attachments; fi
 #	chmod -R 0777 $(bindir)/DOCKLIGHT/data		
 	
 	
-	
 
-	
-#if test -d $(prefix); then rm -fr $(prefix); fi	
 uninstall-hook:
 	if test -d $(bindir)/docklight-5; then rm -fdr $(bindir)/docklight-5; fi
 # if test -d $(bindir)/DOCKLIGHT/data; then rm -fr $(bindir)/DOCKLIGHT/data; fi
