@@ -17,40 +17,18 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // clang-format off
+#include <gdkmm/general.h>
 #include <glibmm/main.h>
 #include <gtkmm/window.h>
-
-#include "components/TransparentWindow.h"
 // clang-format on
 
-#define DF_EXPLODES_FRAMESPERSECOND 30
-#define DF_EXPLODES_FRAMERATE double(1000 / DF_EXPLODES_FRAMESPERSECOND)
-#define DF_EXPLODES_TIMEMAX double(DF_EXPLODES_FRAMESPERSECOND * 10000)
-
-namespace docklight
+class TransparentWindow : public Gtk::Window
 {
-    class ExplodesWindow : public TransparentWindow
-    {
-      public:
-        ExplodesWindow();
-        ~ExplodesWindow();
+  public:
+    TransparentWindow();
 
-        void show_at(int x, int y);
-        bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
+  protected:
+    // Override default signal handler:
+    virtual bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr);
+};
 
-      private:
-        void ConnectSignal(bool connect);
-        bool on_timeout_draw();
-
-      private:
-        sigc::connection m_timeout_draw;
-        Glib::RefPtr<Gdk::Pixbuf> m_image;
-
-        long int m_start_time = 0;
-        long int m_frame_time = 0;
-
-        int m_size = 0;
-        int m_frames = 0;
-    };
-
-}  // namespace docklight

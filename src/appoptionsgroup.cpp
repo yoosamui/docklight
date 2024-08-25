@@ -1,7 +1,21 @@
+//  Copyright (c) 2018-2024 Juan R. González
+//
+//  This file is part of Docklight.
+//
+//  Docklight is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  Docklight is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // clang-format off
-#include <glibmm/i18n.h>
-
 #include "appoptionsgroup.h"
 #include "translations.h"
 
@@ -30,9 +44,14 @@ namespace docklight
 
         m_entry_alignment.set_long_name("alignment");
         m_entry_alignment.set_short_name('r');
-        m_entry_alignment.set_description(
-            _("The dock alignment settings are start, end, center or fill. Default center."));
+        m_entry_alignment.set_description(MSG_SETS_THE_DOCK_ALIGNMENT);
         add_entry(m_entry_alignment, m_arg_alignment);
+    }
+
+    AppOptionsGroup::~AppOptionsGroup()
+    {
+        g_print(MSG_FREE_OBJECT, "AppOptionsGroup");
+        g_print("\n");
     }
 
     void AppOptionsGroup::validate()

@@ -21,6 +21,7 @@ namespace docklight
 
         // m_panel.signal_update().connect(sigc::mem_fun(this, &AppWindow::on_update));
 
+        m_composite = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
         this->createWindow();
     }
 
@@ -181,7 +182,6 @@ namespace docklight
             //  this->update_position();
             g_print("Press\n");
 
-            m_composite = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
             m_composite->show_at(800, 900);
             // shared_ptr<DockItem> item = shared_ptr<DockItem>(new DockItem());
             // shared_ptr<DockItem> item = shared_ptr<DockItem>(new DockItem());
@@ -216,7 +216,6 @@ namespace docklight
         int xpos = 0, ypos = 0, center = 0;
 
         int width = m_panel.get_required_size();
-        //   g_print("---------- %d\n", width);
         center = workarea.get_width() / 2 - width / 2;
         xpos = workarea.get_x() + center;
 

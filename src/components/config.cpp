@@ -1,5 +1,4 @@
 // clang-format off
-
 #include <iostream>
 
 #include "components/config.h"
@@ -46,12 +45,12 @@ namespace docklight
 
         std::string get_filepath()
         {
-            std::string user_name = system_util::get_current_user();
+            std::string user_name = System::get_current_user();
 
             char config_dir[120];
             sprintf(config_dir, "/home/%s/.config/docklight", user_name.c_str());
 
-            system_util::create_directory_if_not_exitst(config_dir);
+            System::create_directory_if_not_exitst(config_dir);
 
             char buff[PATH_MAX];
             sprintf(buff, "%s/%s", config_dir, DEF_CONFIG_FILENAME);

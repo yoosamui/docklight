@@ -1,5 +1,21 @@
-#include "system.h"
+//  Copyright (c) 2018-2024 Juan R. González
+//
+//  This file is part of Docklight.
+//
+//  Docklight is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  Docklight is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+// clang-format off
 #include <X11/Xlib.h>
 #include <assert.h>
 #include <dirent.h>
@@ -9,18 +25,17 @@
 #include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <strings.h>
 #include <sys/stat.h>
 #include <unistd.h>
-
 #include <stdexcept>
 #include <string>
 
+#include "system.h"
+// clang-format on
+
 namespace docklight
 {
-
-    namespace system_util
+    namespace System
     {
         bool get_mouse_position(int& x, int& y)
         {
@@ -44,7 +59,7 @@ namespace docklight
             return found;
         }
 
-        std::string get_window_manager_name()
+        Glib::ustring get_window_manager_name()
         {
             GdkScreen* screen = gdk_screen_get_default();
             const char* wm = gdk_x11_screen_get_window_manager_name(screen);
@@ -63,80 +78,14 @@ namespace docklight
             return false;
         }
 
-        Glib::ustring get_executable_path()
+        Glib::ustring get_current_user()
         {
-            char path[PATH_MAX];
-            if (getcwd(path, sizeof(path)) == NULL) {
-                // Error getting current working directory
-                return "";
+            uid_t uid = geteuid();
+            struct passwd* pw = getpwuid(uid);
+            if (pw) {
+                return std::string(pw->pw_name);
             }
-
-            // Remove the filename
-            char* lastSlash = strrchr(path, '/');
-            if (lastSlash != NULL) {
-                *lastSlash = '\0';
-            }
-
-            return Glib::ustring(path);
-        }
-        std::string get_current_path()
-        {
-            char szTmp[32];
-            sprintf(szTmp, "/proc/%d/exe", getpid());
-
-            char buffer[PATH_MAX];
-            ssize_t count = readlink(szTmp, buffer, PATH_MAX);
-            std::string result = std::string(buffer, (count > 0) ? count : 0);
-            size_t found = result.find_last_of("/");
-            if (found != std::string::npos) result = result.substr(0, found);
-
-            return result;
-        }
-
-        int execute(const std::string& command_string)
-        {
-            char command[NAME_MAX];
-            sprintf(command, "%s &", command_string.c_str());
-            printf("COMMAND %s\n", command);
-            return std::system(command);
-        }
-
-        const std::string get_current_path(const std::string& str)
-        {
-            std::string path = get_current_path();
-            std::string result = path + "/" + str;
-            return result;
-        }
-
-        bool file_exists(const std::string& name)
-        {
-            struct stat buffer;
-            return (stat(name.c_str(), &buffer) == 0);
-        }
-
-        // ignore case
-        std::string file_exists(const std::string& directory, std::string& file_name)
-        {
-            DIR* dir = nullptr;
-            dir = opendir(directory.c_str());
-            if (dir == 0) {
-                return {};
-            }
-            std::string result = {};
-
-            struct dirent* hFile;
-            while ((hFile = readdir(dir)) != nullptr) {
-                if (!strcmp(hFile->d_name, ".")) continue;
-                if (!strcmp(hFile->d_name, "..")) continue;
-
-                if (strcasecmp(hFile->d_name, file_name.c_str()) == 0) {
-                    result = directory + hFile->d_name;
-                    break;
-                }
-            }
-
-            closedir(dir);
-            return result;
+            return {};
         }
 
         bool is_directory_exists(const char* directory_name)
@@ -175,14 +124,5 @@ namespace docklight
             return false;
         }
 
-        const std::string get_current_user()
-        {
-            uid_t uid = geteuid();
-            struct passwd* pw = getpwuid(uid);
-            if (pw) {
-                return std::string(pw->pw_name);
-            }
-            return {};
-        }
-    }  // namespace system_util
+    }  // namespace System
 }  // namespace docklight

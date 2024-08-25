@@ -1,9 +1,11 @@
 #pragma once
 
+// clang-format off
 #include <gmodule.h>
 #include <gtkmm/enums.h>
 
 #include "constants.h"
+// clang-format on
 
 namespace docklight
 {
