@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Docklight-5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-19 10:05+0700\n"
+"POT-Creation-Date: 2024-08-25 16:14+0700\n"
 "PO-Revision-Date: 2024-08-19 10:05+0700\n"
 "Last-Translator: yoo <j-gonzalez@email.de>\n"
 "Language-Team: English - United States <j-gonzalez@email.de>\n"
@@ -17,74 +17,73 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Gtranslator 42.0\n"
 
-#. clang-format off
-#: ../src/translations.h:21
+#: ../src/translations.h:36
 msgid "Application start."
 msgstr "Inicio de la aplicación."
 
-#: ../src/translations.h:23
+#: ../src/translations.h:38
 msgid "Application activated."
 msgstr "Aplicación activada."
 
-#: ../src/translations.h:25
+#: ../src/translations.h:40
 msgid "Initialize panel."
 msgstr "Inicializar panel."
 
-#: ../src/translations.h:27
+#: ../src/translations.h:42
 msgid "Sets the primary Monitor."
 msgstr "Establece el monitor principal."
 
-#: ../src/translations.h:29
+#: ../src/translations.h:44
 msgid "Sets the Panel location: top, right, bottom or left. Default bottom"
 msgstr ""
 "Establece la ubicación del panel: arriba, derecha, abajo o izquierda. Parte "
 "inferior predeterminada"
 
-#: ../src/translations.h:31
+#: ../src/translations.h:46
 msgid ""
 "The dock alignment settings are start, end, center or fill. Default center."
 msgstr ""
 "Los ajustes de alineación del muelle son inicio, fin, centro o relleno. "
 "Centro predeterminado."
 
-#: ../src/translations.h:33
+#: ../src/translations.h:48
 msgid "parsed values"
 msgstr "valores analizados"
 
-#: ../src/translations.h:35
+#: ../src/translations.h:50
 #, c-format
 msgid "Free the %s object."
 msgstr "Libere el objeto %s."
 
-#: ../src/translations.h:37
+#: ../src/translations.h:52
 msgid "Display detected monitors"
 msgstr "Mostrar monitores detectados"
 
-#: ../src/translations.h:39
+#: ../src/translations.h:54
 msgid "Default monitor"
 msgstr "Monitor predeterminado"
 
-#: ../src/translations.h:41
+#: ../src/translations.h:56
 msgid "monitor"
 msgstr "monitor"
 
-#: ../src/translations.h:43
+#: ../src/translations.h:58
 msgid "Geometry"
 msgstr "Geometría"
 
-#: ../src/translations.h:45
+#: ../src/translations.h:60
 msgid "Workarea"
 msgstr "Área de trabajo"
 
-#: ../src/translations.h:47
+#: ../src/translations.h:62
 msgid "Width"
 msgstr "Ancho"
 
-#: ../src/translations.h:49
+#: ../src/translations.h:64
 msgid "Height"
 msgstr "Altura"
 
-#: ../src/translations.h:51
+#: ../src/translations.h:66
 msgid "Model"
 msgstr "Modelo"
 

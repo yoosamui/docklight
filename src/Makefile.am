@@ -1,4 +1,5 @@
 ACLOCAL_AMFLAGS = -I m4 --install
+# program that will be installed in $bindir
 bin_PROGRAMS = docklight
 
 
@@ -10,7 +11,7 @@ ALLCPPFLAGS += $(WNCK_CFLAGS)
 #ALLCPPFLAGS += -DPROGRAMNAME_LOCALEDIR=\""$(datadir)/locale"\"
 #ALLCPPFLAGS += -DPROGRAMNAME_LOCALEDIR=\""$(prefix)/share/docklight/locale"\"
 
-ALLCPPFLAGS += -DPROGRAMNAME_LOCALEDIR=\""/usr/share/docklight/locale"\"
+ALLCPPFLAGS += -DPROGRAMNAME_LOCALEDIR=\""$(bindir)/docklight-5/locale"\"
 
 #  Adding -pedantic turns off more extensions and generates more warnings.
 #  For example, if you have a string literal longer than 509 characters,
@@ -80,11 +81,18 @@ $(NULL)
 
 
 install-exec-hook:
-	if test -f "/usr/local/bin/docklight"; then rm -f "/usr/local/bin/docklight"; fi
-	ln -s  $(bindir)/docklight "/usr/local/bin/docklight"
+# mkdir $(DESTDIR)$(bindir)/AAAAAAAAAA
+#mkdir -p  $(DESTDIR)$(bindir)/DOCKLIGHT
+
+#cp docklight $(bindir)/DOCKLIGHT/docklight
+
+#if test -f $(bindir)/DOCKLIGHT//usr/local/bin/docklight"; then rm -f "/usr/local/bin/docklight"; fi
+#	ln -s  $(bindir)/docklight "/usr/local/bin/docklight"
 
 uninstall-hook:
-	if test  -f "/usr/local/bin/docklight"; then rm -f "/usr/local/bin/docklight"; fi
+#if test ! -d $(bindir)/DOCKLIGHT; then mkdir $(bindir)/DOCKLIGHT; fi
+
+#	if test  -f "/usr/local/bin/docklight"; then rm -f "/usr/local/bin/docklight"; fi
 
 # this works
 #install-exec-hook:

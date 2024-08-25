@@ -26,7 +26,7 @@ applications_DATA = docklight.menu.desktop
 
 
 #/docklight.data
-docklightdatadir = $(bindir)/data
+docklightdatadir = $(bindir)/docklight-5/data
 docklightdata_DATA = \
 		docklight.ini \
 		docklight.launcher.sh \
@@ -34,8 +34,10 @@ docklightdata_DATA = \
 		$(NULL)
 
 
-docklightimagesdir = $(bindir)/data/images
-docklightimages_DATA = 	images/docklight.home.ico \
+docklightimagesdir = $(bindir)/docklight-5/data/images
+docklightimages_DATA = 	\
+			images/docklight.home.ico \
+			images/explodes.svg \
 			images/*.png \
 			$(NULL)
 
@@ -44,9 +46,12 @@ docklightimages_DATA = 	images/docklight.home.ico \
 #if test -f "/usr/local/bin/docklight"; then rm -f "/usr/local/bin/docklight"; fi
 #ln -s  $(bindir)/docklight "/usr/local/bin/docklight"
 install-exec-hook:
-	if test ! -d $(bindir)/data; then mkdir $(bindir)/data; fi
-	if test ! -d $(bindir)/data/attachments; then mkdir $(bindir)/data/attachments; fi
-	chmod -R 0777 $(bindir)/data		
+	if test ! -d $(bindir)/docklight-5; then mkdir $(bindir)/docklight-5; fi
+	mv $(bindir)/docklight  $(bindir)/docklight-5
+	
+#	if test ! -d $(bindir)/DOCKLIGHT/data; then mkdir $(bindir)/DOCKLIGHT/data; fi
+#if test ! -d $(bindir)/DOCKLIGHT/data/attachments; then mkdir $(bindir)/DOCKLIGHT/data/attachments; fi
+#	chmod -R 0777 $(bindir)/DOCKLIGHT/data		
 	
 	
 	
@@ -54,9 +59,9 @@ install-exec-hook:
 	
 #if test -d $(prefix); then rm -fr $(prefix); fi	
 uninstall-hook:
-	if test -L "/usr/local/bin/docklight"; then rm "/usr/local/bin/docklight"; fi
-	if test -d $(bindir)/data; then rm -fr $(bindir)/data; fi
-	if test -d "/usr/lib/docklight" ; then rm -fr "/usr/lib/docklight"; fi	
+	if test -d $(bindir)/docklight-5; then rm -fdr $(bindir)/docklight-5; fi
+# if test -d $(bindir)/DOCKLIGHT/data; then rm -fr $(bindir)/DOCKLIGHT/data; fi
+#	if test -d "/usr/lib/DOCKLIGHT" ; then rm -fr "/usr/lib/DOCKLIGHT"; fi	
 
 
 #desktopdir = $(datadir)/applications

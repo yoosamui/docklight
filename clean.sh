@@ -19,7 +19,7 @@ rm -f data/Makefile.in
 rm -f data/icons/Makefile
 rm -f data/icons/Makefile.in
 rm -f src/docklight.data/attachments/*
-rm -rf !(createpo.sh|clean.sh|autogen.sh|configure.ac|LICENSE|Makefile.am|README.md|data|debian|m4|nbproject|package|po|src)
+rm -rf !(reset.sh|install_dependencies.sh|createpo.sh|clean.sh|autogen.sh|configure.ac|LICENSE|Makefile.am|README.md|data|debian|m4|nbproject|package|po|src)
 cd m4
 rm -rf !(NOTES)
 cd ../po
