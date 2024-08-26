@@ -8,7 +8,9 @@ if [ $EUID != 0 ]; then
 	exit $exit_code
    exit 1
 fi
-
+./clean.sh
+./autogen.sh
+./configure
 make install
 cd po
 ./deploymo.sh

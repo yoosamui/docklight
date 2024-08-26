@@ -1,31 +1,16 @@
 SUBDIRS = icons	
 
-EXTRA_DIST = \
-	images/docklight.home.ico \
-	docklight.menu.desktop \
+policydir = /usr/share/polkit-1/actions
+policy_DATA = \
 	org.freedesktop.docklight.policy \
-	docklight.template.desktop \
-	docklight.ini \
-	docklight.launcher.sh \
 	$(NULL)
 
-#CLEANFILES = \
-#	docklight.menu.desktop \
-#	$(NULL)
-
-#/usr/share/polkit-1/actions
-policydir = /usr/share/polkit-1/actions
-policy_DATA = org.freedesktop.docklight.policy
-
-#/usr/local/share
-#applicationsdir = $(datadir)/applications
-#applications_DATA = 4autotools/docklight.menu.desktop
-
 applicationsdir = /usr/share/applications
-applications_DATA = docklight.menu.desktop
+applications_DATA = \
+	docklight.desktop \
+	$(NULL)
 
 
-#/docklight.data
 docklightdatadir = $(bindir)/docklight-5/data
 docklightdata_DATA = \
 		docklight.ini \
@@ -44,22 +29,22 @@ docklightimages_DATA = 	\
 @INTLTOOL_DESKTOP_RULE@
 
 
+install-data-local:
+	
+	if test -f $(srcdir)/docklight.sh; then cp $(srcdir)/docklight.sh $(bindir); fi
+	if test -f $(bindir)/docklight.sh; then chmod u+x $(bindir)/docklight.sh; fi
+	if test -f $(bindir)/docklight.sh; then mv $(bindir)/docklight.sh /bin; fi
+	if test -f /bin/docklight.sh && test ! -L /bin/docklight; then ln -s /bin/docklight.sh /bin/docklight; fi
+	
+
 install-exec-hook:
-	mkdir -p $(bindir)/docklight-5; 
-	mv $(bindir)/docklight  $(bindir)/docklight-5
-#	chmod -R 0777 $(bindir)/DOCKLIGHT/data		
-	
-	
 
+	mkdir -p $(bindir)/docklight-5 
+	if test -f $(bindir)/docklight; then mv $(bindir)/docklight  $(bindir)/docklight-5; fi
+	
 uninstall-hook:
+
 	if test -d $(bindir)/docklight-5; then rm -fdr $(bindir)/docklight-5; fi
-# if test -d $(bindir)/DOCKLIGHT/data; then rm -fr $(bindir)/DOCKLIGHT/data; fi
-#	if test -d "/usr/lib/DOCKLIGHT" ; then rm -fr "/usr/lib/DOCKLIGHT"; fi	
-
-
-#desktopdir = $(datadir)/applications
-#desktop_in_files = docklight.menu.desktop.in
-#desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
-#@INTLTOOL_DESKTOP_RULE@
-
+	if test -f /bin/docklight.sh; then rm -f /bin/docklight.sh; fi
+	if test	-L /bin/docklight; then rm /bin/docklight; fi
 
