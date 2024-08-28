@@ -30,6 +30,7 @@ components/panel.cpp \
 components/device.cpp \
 components/config.cpp \
 utils/system.cpp \
+utils/ofFileUtils.cpp \
 main.cpp \
 $(NULL)
 
