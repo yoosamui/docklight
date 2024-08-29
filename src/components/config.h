@@ -25,7 +25,7 @@
 
 namespace docklight
 {
-    namespace Config
+    namespace config
     {
         GKeyFile* load_file();
 
@@ -43,9 +43,6 @@ namespace docklight
         int get_icon_size();
         int get_separator_size();
 
-        dock_indicator_type_t get_indicator_type();
-        dock_alignment_t get_dock_alignment();
-
         bool is_autohide_none();
         bool is_autohide();
         bool is_intelihide();
@@ -54,6 +51,14 @@ namespace docklight
 
         float get_animation_delay();
         float get_hide_delay();
+
+        dock_alignment_t get_dock_alignment();
+        void set_dock_alignment(dock_alignment_t value);
+        dock_indicator_type_t get_indicator_type();
+        Gtk::Orientation get_dock_orientation();
+        dock_location_t get_dock_location();
+        void set_dock_location(dock_location_t location);
+
         //    Config* m_config = Config::getInstance();
-    }  // namespace Config
+    }  // namespace config
 }  // namespace docklight

@@ -9,7 +9,7 @@ docklight_CPPFLAGS = $(ALLCPPFLAGS)
 
 
 # detailed
-docklight_CPPFLAGS += -Wall -Wextra -Werror -std=c++11 -pedantic
+docklight_CPPFLAGS += -Wall -Wextra -Werror -std=c++20 -pedantic
 
 # release
 #docklight_CPPFLAGS += O2 -s -DNDEBUG -Wall -Wextra -Werror -std=c++11 -pedantic
@@ -29,8 +29,8 @@ components/ExplodesWindow.cpp \
 components/panel.cpp \
 components/device.cpp \
 components/config.cpp \
+components/position.cpp \
 utils/system.cpp \
-utils/ofFileUtils.cpp \
 main.cpp \
 $(NULL)
 

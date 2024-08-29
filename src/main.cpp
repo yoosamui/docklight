@@ -28,6 +28,19 @@
 // clang-format on
 
 using namespace docklight;
+//    Specifies the type of the print handler functions. These are called with the complete
+//    formatted string to output.
+void LogHandler(const gchar *log_domain, GLogLevelFlags log_level, const gchar *message,
+                gpointer user_data)
+{
+    exit(1);
+    if (user_data) {
+        //
+        user_data = NULL;
+    };
+
+    g_print("HANDLER %s %d %s\n", log_domain, log_level, message);
+}
 
 int main(int argc, char *argv[])
 {
@@ -39,6 +52,9 @@ int main(int argc, char *argv[])
     // function always returns zero.
     // https://www.x.org/releases/X11R7.5/doc/man/man3/XInitThreads.3.html
     XInitThreads();
+
+    // guint logset = g_log_set_handler("docklight", G_LOG_LEVEL_WARNING, &LogHandler, NULL);
+    // g_print("LOG %d\n", logset);
 
     // The initialization code:
     // Set up the user current locale.

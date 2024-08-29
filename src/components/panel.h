@@ -22,6 +22,10 @@ namespace docklight
       public:
         Panel();
         ~Panel();
+
+      private:
+        bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
+        //  bool on_timeout_draw();
     };
 }  // namespace docklight
 

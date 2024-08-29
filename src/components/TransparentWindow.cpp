@@ -34,15 +34,17 @@ TransparentWindow::TransparentWindow()
 
     set_decorated(false);
     set_resizable(false);
+    set_keep_above(true);
 }
 
-bool TransparentWindow::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
-{
-    cr->save();
-    // Clear destination layer (bounded)
-    cr->set_operator(Cairo::Operator::OPERATOR_CLEAR);
-    cr->paint();
-    cr->restore();
+// bool TransparentWindow::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
+//{
+// cr->save();
+////  Clear destination layer (bounded)
+// cr->set_operator(Cairo::Operator::OPERATOR_CLEAR);
+////   cr->set_operator(Cairo::Operator::OPERATOR_SOURCE);
+// cr->paint();
+// cr->restore();
 
-    return false;
-}
+// return false;
+//}

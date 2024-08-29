@@ -6,8 +6,10 @@
 
 #include "appwindow.h"
 #include "appoptionsgroup.h"
-
+#include "components/position.h"
 #include "translations.h"
+
+//#include <glib.h>
 // clang-format on
 
 namespace docklight
@@ -17,12 +19,18 @@ namespace docklight
 
     AppWindow::AppWindow()
     {
-        this->set_title(DOCKLIGHT_APPNAME);
-
-        // m_panel.signal_update().connect(sigc::mem_fun(this, &AppWindow::on_update));
-
         m_composite = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
-        this->createWindow();
+
+        // A window to implement a docking bar used for creating the dock panel.
+        set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
+        set_resizable(true);
+        set_skip_taskbar_hint(true);
+        set_skip_pager_hint(true);
+
+        set_decorated(true);
+
+        add(m_panel);
+        show_all();
     }
 
     AppWindow::~AppWindow()
@@ -31,51 +39,16 @@ namespace docklight
         g_print("\n");
     }
 
-    void AppWindow::createWindow()
-    {
-        GdkScreen* screen;
-        GdkVisual* visual;
-
-        gtk_widget_set_app_paintable(GTK_WIDGET(gobj()), TRUE);
-        screen = gdk_screen_get_default();
-        visual = gdk_screen_get_rgba_visual(screen);
-
-        if (visual != nullptr && gdk_screen_is_composited(screen)) {
-            gtk_widget_set_visual(GTK_WIDGET(gobj()), visual);
-        }
-
-        // A window to implement a docking bar used for creating the dock panel.
-        //    this->set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
-        this->set_skip_taskbar_hint(true);
-        this->set_skip_pager_hint(true);
-        //    this->set_keep_above(true);
-        //    this->set_decorated(false);
-        // wnck_set_client_type(WNCK_CLIENT_TYPE_PAGER);
-
-        // this->set_default_size(1, 1);
-
-        // this->set_gravity(Gdk::Gravity::GRAVITY_STATIC);
-        // this->set_size_request(10, 10);
-
-        // A window to implement a docking bar used for creating the dock panel.
-        //    this->set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
-        // this->set_skip_taskbar_hint(true);
-        // this->set_skip_pager_hint(true);
-        // this->set_keep_above(true);
-        // this->set_decorated(false);
-        // wnck_handle_new(WNCK_CLIENT_TYPE_PAGER);
-
-        Glib::signal_timeout().connect(
-            sigc::mem_fun(static_cast<AppWindow*>(this), &AppWindow::on_timeout_draw), 100);
-
-        this->add(m_panel);
-        this->show_all();
-
-        //  device::monitor::
-    }
-
+    // void AppWindow::createWindow()
+    //{
+    ////  device::monitor::
+    //}
     int AppWindow::init(Glib::RefPtr<Gtk::Application>& app)
     {
+        // initializes the position namespace
+        position::init(*(this));
+        position::set_window_position();
+
         app->signal_activate().connect(sigc::ptr_fun(&AppWindow::on_app_activated));
         app->signal_command_line().connect(
             sigc::bind(sigc::ptr_fun(&AppWindow::on_command_line), app), false);
@@ -99,9 +72,8 @@ namespace docklight
 
     void AppWindow::on_app_activated()
     {
-        g_print(MSG_APPLICATION_ACTIVATED);
+        g_message(MSG_APPLICATION_ACTIVATED);
         std::cout << std::endl;
-        //        g_print(MSG_INITIALIZE_PANEL);
         AppWindow::send_notification(DOCKLIGHT_APPNAME, MSG_APPLICATION_START,
                                      "dialog-information");
     }
@@ -137,7 +109,7 @@ namespace docklight
             auto const args_list = group.getList();
 
             // iadd args to config
-            Config::AddArgs(args_list);
+            config::AddArgs(args_list);
         }
 
         std::cout << "\n" << MSG_DISPLAY_DETECTED_MONITORS << " :" << std::endl;
@@ -168,14 +140,25 @@ namespace docklight
         return EXIT_SUCCESS;
     }
 
-    bool AppWindow::on_timeout_draw()
-    {
-        //    if (isset) return false;
-        //   isset = true;
-        //    this->update_position();
-        return true;
-    }
+    // bool AppWindow::on_timeout_draw()
+    //{
+    ////    if (isset) return false;
+    ////   isset = true;
+    ////    this->update_position();
+    // return true;
+    //}
 
+    /*bool AppWindow::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
+    {
+        // Replace destination layer (bounded)
+        //  cr->set_operator(Cairo::Operator::OPERATOR_SOURCE);
+        cr->set_source_rgba(0, 0, 0, 0.8);
+        //  cr->fill();
+        cr->paint();
+
+        return false;
+    }
+*/
     bool AppWindow::on_button_press_event(GdkEventButton* event)
     {
         if ((event->type == GDK_BUTTON_PRESS)) {
@@ -205,6 +188,8 @@ namespace docklight
 
     void AppWindow::update_position()
     {
+        position::set_window_position();
+
         // position_util::set_window_position();
         // g_print("AppWindow updated.\n");
 

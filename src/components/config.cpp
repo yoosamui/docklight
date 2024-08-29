@@ -24,7 +24,7 @@
 
 namespace docklight
 {
-    namespace Config
+    namespace config
     {
         // parsed and optimized at compile time
         static constexpr const int DEF_MIN_ITEM_SIZE = 26;
@@ -44,20 +44,25 @@ namespace docklight
         int m_separator_size = DEF_SEPARATOR_SIZE;
         int m_anchor_margin = DEF_AUTOHIDE_ANCHORT_MARGIN;
 
-        Gtk::Orientation get_dock_orientation();
-        dock_location_t get_dock_location();
-        dock_alignment_t get_dock_alignment();
-        dock_indicator_type_t get_indicator_type();
-        dock_alignment_t m_alignment = dock_alignment_t::center;
-        dock_autohide_type_t m_autohide_type = dock_autohide_type_t::intelihide;
-        dock_location_t m_location = dock_location_t::bottom;
-        dock_indicator_type_t m_indicator_type = dock_indicator_type_t::dots;
-
         bool m_show_title = true;
         bool m_show_separator_line = true;
 
         float m_animation_delay = DEF_AUTOHIDE_ANIMATION_DELAY;
         float m_hide_delay = DEF_AUTOHIDE_HIDE_DELAY;
+
+        // dock_indicator_type_t get_indicator_type();
+        //  dock_location_t get_dock_location();
+        //  dock_alignment_t get_dock_alignment();
+        //  dock_indicator_type_t get_indicator_type();
+
+        dock_alignment_t m_alignment = dock_alignment_t::center;
+        // dock_autohide_type_t m_autohide_type = dock_autohide_type_t::intelihide;
+        dock_autohide_type_t m_autohide_type = dock_autohide_type_t::autohide;  // TODO; remove this
+                                                                                // test
+
+        // dock_location_t m_location = dock_location_t::bottom;
+        dock_location_t m_location = dock_location_t::bottom;  // TODO remove this after testing
+        dock_indicator_type_t m_indicator_type = dock_indicator_type_t::dots;
 
         std::string get_filepath()
         {
@@ -247,5 +252,5 @@ namespace docklight
             return m_anchor_margin;
         }
 
-    }  // namespace Config
+    }  // namespace config
 }  // namespace docklight

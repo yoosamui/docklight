@@ -13,6 +13,7 @@
 
 #include "components/TransparentWindow.h"
 #include "components/ExplodesWindow.h"
+
 // clang-format on
 
 //#include <gtkmm.h>
@@ -38,22 +39,20 @@
 namespace docklight
 {
 
-    class AppWindow : public Gtk::Window
+    class AppWindow : public TransparentWindow
     {
-      private:
+      public:
+        AppWindow();
+        ~AppWindow();
+
+        int init(Glib::RefPtr<Gtk::Application>& app);
         // Config* m_config = Config::getInstance();
-
-        Glib::RefPtr<ExplodesWindow> m_composite;
-
-        Panel m_panel;
-        static Glib::RefPtr<Gtk::Application> m_application;
-
-        void createWindow();
-
-        bool on_timeout_draw();
+      private:
+        //    bool on_timeout_draw();
         bool on_button_press_event(GdkEventButton* event) override;
+        // bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
-        // Monitor related event
+        //  void createWindow();
         void on_monitor_changed();
         void update_position();
 
@@ -66,11 +65,10 @@ namespace docklight
         static void send_notification(const Glib::ustring& title, const Glib::ustring& text,
                                       const Glib::ustring& icon_name);
 
-      public:
-        AppWindow();
-        ~AppWindow();
-
-        int init(Glib::RefPtr<Gtk::Application>& app);
+      private:
+        Glib::RefPtr<ExplodesWindow> m_composite;
+        Panel m_panel;
+        static Glib::RefPtr<Gtk::Application> m_application;
     };
 
 }  // namespace docklight

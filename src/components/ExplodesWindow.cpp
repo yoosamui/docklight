@@ -30,7 +30,6 @@ namespace docklight
     {
         set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
         set_can_focus(false);
-        set_keep_above(true);
 
         auto filename = "data/images/explodes.svg";
 
