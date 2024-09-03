@@ -30,7 +30,7 @@ namespace docklight
         static constexpr const int DEF_MIN_ITEM_SIZE = 26;
         static constexpr const int DEF_DOCKAREA_MARGIN = 12;
         static constexpr const char* DEF_CONFIG_FILENAME = "docklight.config";
-        static constexpr const int DEF_ICON_SIZE = 36;
+        static constexpr const int DEF_ICON_SIZE = 64;  // 36;
         static constexpr const int DEF_ICON_MAXSIZE = 128;
         static constexpr const int DEF_SEPARATOR_MARGIN = 12;
         static constexpr const int DEF_SEPARATOR_SIZE = 8;
@@ -50,18 +50,9 @@ namespace docklight
         float m_animation_delay = DEF_AUTOHIDE_ANIMATION_DELAY;
         float m_hide_delay = DEF_AUTOHIDE_HIDE_DELAY;
 
-        // dock_indicator_type_t get_indicator_type();
-        //  dock_location_t get_dock_location();
-        //  dock_alignment_t get_dock_alignment();
-        //  dock_indicator_type_t get_indicator_type();
-
         dock_alignment_t m_alignment = dock_alignment_t::center;
-        // dock_autohide_type_t m_autohide_type = dock_autohide_type_t::intelihide;
-        dock_autohide_type_t m_autohide_type = dock_autohide_type_t::autohide;  // TODO; remove this
-                                                                                // test
-
-        // dock_location_t m_location = dock_location_t::bottom;
-        dock_location_t m_location = dock_location_t::bottom;  // TODO remove this after testing
+        dock_autohide_type_t m_autohide_type = dock_autohide_type_t::intelihide;
+        dock_location_t m_location = dock_location_t::bottom;
         dock_indicator_type_t m_indicator_type = dock_indicator_type_t::dots;
 
         std::string get_filepath()
@@ -110,6 +101,50 @@ namespace docklight
             for (auto&& t : args) {
                 std::cout << "R:" << std::get<0>(t) << ", " << std::get<1>(t) << ", "
                           << std::get<2>(t) << std::endl;
+
+                if (std::get<0>(t) == (char)'l') {
+                    if (std::get<2>(t) == "bottom") {
+                        m_location = dock_location_t::bottom;
+                        continue;
+                    }
+
+                    if (std::get<2>(t) == "left") {
+                        m_location = dock_location_t::left;
+                        continue;
+                    }
+
+                    if (std::get<2>(t) == "top") {
+                        m_location = dock_location_t::top;
+                        continue;
+                    }
+
+                    if (std::get<2>(t) == "right") {
+                        m_location = dock_location_t::right;
+                        continue;
+                    }
+                }
+
+                if (std::get<0>(t) == (char)'a') {
+                    if (std::get<2>(t) == "start") {
+                        m_alignment = dock_alignment_t::start;
+                        continue;
+                    }
+
+                    if (std::get<2>(t) == "end") {
+                        m_alignment = dock_alignment_t::end;
+                        continue;
+                    }
+
+                    if (std::get<2>(t) == "center") {
+                        m_alignment = dock_alignment_t::center;
+                        continue;
+                    }
+
+                    if (std::get<2>(t) == "fill") {
+                        m_alignment = dock_alignment_t::fill;
+                        continue;
+                    }
+                }
             }
         }
 

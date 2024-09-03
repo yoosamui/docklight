@@ -9,7 +9,6 @@
 #include "components/position.h"
 #include "translations.h"
 
-//#include <glib.h>
 // clang-format on
 
 namespace docklight
@@ -19,10 +18,8 @@ namespace docklight
 
     AppWindow::AppWindow()
     {
-        m_composite = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
-
         // A window to implement a docking bar used for creating the dock panel.
-        set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
+        //  set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
         set_resizable(true);
         set_skip_taskbar_hint(true);
         set_skip_pager_hint(true);
@@ -39,22 +36,17 @@ namespace docklight
         g_print("\n");
     }
 
-    // void AppWindow::createWindow()
-    //{
-    ////  device::monitor::
-    //}
     int AppWindow::init(Glib::RefPtr<Gtk::Application>& app)
     {
-        // initializes the position namespace
-        position::init(*(this));
-        position::set_window_position();
-
         app->signal_activate().connect(sigc::ptr_fun(&AppWindow::on_app_activated));
         app->signal_command_line().connect(
             sigc::bind(sigc::ptr_fun(&AppWindow::on_command_line), app), false);
 
         Gdk::Screen::get_default()->signal_monitors_changed().connect(
             sigc::mem_fun(this, &AppWindow::on_monitor_changed));
+
+        config::load_file();
+        position::init(*(this));
 
         return EXIT_SUCCESS;
     }
@@ -72,6 +64,9 @@ namespace docklight
 
     void AppWindow::on_app_activated()
     {
+        // initializes the position namespace
+        position::set_window_position();
+
         g_message(MSG_APPLICATION_ACTIVATED);
         std::cout << std::endl;
         AppWindow::send_notification(DOCKLIGHT_APPNAME, MSG_APPLICATION_START,
@@ -140,31 +135,13 @@ namespace docklight
         return EXIT_SUCCESS;
     }
 
-    // bool AppWindow::on_timeout_draw()
-    //{
-    ////    if (isset) return false;
-    ////   isset = true;
-    ////    this->update_position();
-    // return true;
-    //}
-
-    /*bool AppWindow::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
-    {
-        // Replace destination layer (bounded)
-        //  cr->set_operator(Cairo::Operator::OPERATOR_SOURCE);
-        cr->set_source_rgba(0, 0, 0, 0.8);
-        //  cr->fill();
-        cr->paint();
-
-        return false;
-    }
-*/
     bool AppWindow::on_button_press_event(GdkEventButton* event)
     {
         if ((event->type == GDK_BUTTON_PRESS)) {
             //  this->update_position();
             g_print("Press\n");
 
+            m_composite = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
             m_composite->show_at(800, 900);
             // shared_ptr<DockItem> item = shared_ptr<DockItem>(new DockItem());
             // shared_ptr<DockItem> item = shared_ptr<DockItem>(new DockItem());

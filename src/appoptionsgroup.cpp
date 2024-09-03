@@ -43,7 +43,7 @@ namespace docklight
         add_entry(m_entry_location, m_arg_location);
 
         m_entry_alignment.set_long_name("alignment");
-        m_entry_alignment.set_short_name('r');
+        m_entry_alignment.set_short_name('a');
         m_entry_alignment.set_description(MSG_SETS_THE_DOCK_ALIGNMENT);
         add_entry(m_entry_alignment, m_arg_alignment);
     }

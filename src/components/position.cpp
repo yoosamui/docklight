@@ -19,9 +19,7 @@ namespace docklight
         void set_window_position()
         {
             int area = config::get_dock_area();
-            // auto const alignment = config::get_dock_alignment();
-            auto const alignment = dock_alignment_t::center;  // TODO  remove this after TESTING
-
+            dock_alignment_t alignment = config::get_dock_alignment();
             Gdk::Rectangle workarea = get_workarea();
             ///////////////// auto const panel = m_window->get_panel();
             int xpos = 0, ypos = 0, center = 0;
@@ -35,20 +33,24 @@ namespace docklight
                 switch (alignment) {
                     case dock_alignment_t::start:
                         xpos = workarea.get_x();
+                        g_message("1111111111111111");
                         break;
 
                     case dock_alignment_t::end:
                         xpos = workarea.get_x() + workarea.get_width() - width;
+                        g_message("2222222222222222222222");
                         break;
 
                     case dock_alignment_t::center:
                         center = workarea.get_width() / 2 - width / 2;
                         xpos = workarea.get_x() + center;
+                        g_message("3333333333333333333333");
                         break;
 
                     default:  // fill
                         xpos = workarea.get_x();
                         width = workarea.get_width();
+                        g_message("FILLLLLLLLLLLLLLLLLL");
                 }
 
                 if (config::get_dock_location() == dock_location_t::bottom) {
