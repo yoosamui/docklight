@@ -16,6 +16,17 @@ namespace docklight
             m_window = &(window);
         }
 
+        const Gtk::Window* get_window()
+        {
+            return m_window;
+        }
+
+        Gdk::Rectangle get_background_region()
+        {
+            Gdk::Rectangle result(0, 0, m_window->get_width(), m_window->get_height());
+            return result;
+        }
+
         void set_window_position()
         {
             int area = config::get_dock_area();

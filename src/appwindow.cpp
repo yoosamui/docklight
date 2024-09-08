@@ -19,7 +19,7 @@ namespace docklight
     AppWindow::AppWindow()
     {
         // A window to implement a docking bar used for creating the dock panel.
-        //  set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
+        // set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
         set_resizable(true);
         set_skip_taskbar_hint(true);
         set_skip_pager_hint(true);
@@ -47,7 +47,9 @@ namespace docklight
 
         config::load_file();
         position::init(*(this));
+        m_panel.init();
 
+        m_composite = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
         return EXIT_SUCCESS;
     }
 
@@ -141,7 +143,6 @@ namespace docklight
             //  this->update_position();
             g_print("Press\n");
 
-            m_composite = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
             m_composite->show_at(800, 900);
             // shared_ptr<DockItem> item = shared_ptr<DockItem>(new DockItem());
             // shared_ptr<DockItem> item = shared_ptr<DockItem>(new DockItem());
@@ -162,7 +163,17 @@ namespace docklight
         g_warning("!!!!!!!!!!!!!! on_monitor_change.\n");
         update_position();
     }
+    // bool AppWindow::on_enter_notify_event(GdkEventCrossing* crossing_event)
+    //{
+    //// m_mouse_in = true;
+    // return true;
+    //}
 
+    // bool AppWindow::on_leave_notify_event(GdkEventCrossing* crossing_event)
+    //{
+    ////   m_mouse_in = false;
+    // return true;
+    //}
     void AppWindow::update_position()
     {
         position::set_window_position();

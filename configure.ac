@@ -23,6 +23,13 @@ AM_GNU_GETTEXT([external])
 AM_GNU_GETTEXT_VERSION([0.19])
 PROGRAMNAME_LOCALEDIR=$LOCALEDIR
 AC_SUBST(PROGRAMNAME_LOCALEDIR)
+
+#------
+AC_SUBST(LIBBAMF_VER, 3)
+PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.38.0 gio-2.0 >= 2.30.0 gio-unix-2.0 gobject-2.0 gmodule-2.0)
+AC_CHECK_LIB([bamf3], [main])
+#----
+#
 AC_CONFIG_MACRO_DIR([m4])
 # This checks for the presence of gtkmm-3.0 and defines
 # GTKMM_LIBS and GTKMM_CFLAGS for use in Makefile.am files.
@@ -62,5 +69,5 @@ echo "
     Prefix......................:  ${prefix}
     Compiler....................:  ${CXX}
     C++ Compiler Flags..........:  ${CFLAGS}
-    Libs........................:  ${LIBS} 
+    Libs........................:  ${LIBS}
 "

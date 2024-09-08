@@ -65,6 +65,9 @@ namespace docklight
         static void send_notification(const Glib::ustring& title, const Glib::ustring& text,
                                       const Glib::ustring& icon_name);
 
+        // bool on_enter_notify_event(GdkEventCrossing* crossing_event);
+        // bool on_leave_notify_event(GdkEventCrossing* crossing_event);
+
       private:
         Glib::RefPtr<ExplodesWindow> m_composite;
         Panel m_panel;
