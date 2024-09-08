@@ -30,7 +30,9 @@ namespace docklight
 {
     std::vector<appinfo_t> m_applist;
     appinfo_t m_appinfo;
-    std::map<char*, char*> m_wnck_names;
+
+    // xid, title , desktop
+    std::map<unsigned long, Glib::ustring> m_app_map;
 
     BamfMatcher* m_matcher = nullptr;
     void on_window_opened(WnckScreen* screen, WnckWindow* window, gpointer data)
@@ -78,6 +80,7 @@ namespace docklight
                 if (gio_app) {
                     m_appinfo.m_title = gio_app->get_name();
 
+                    m_map.insert({m_appinfo.m_xid, m_appinfo.m_title});
                     g_print("(%lu)\n%s\n%s\n\n", m_appinfo.m_xid, m_appinfo.m_title.c_str(),
                             m_appinfo.m_desktop_file);
                 }
