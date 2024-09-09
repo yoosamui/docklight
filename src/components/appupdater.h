@@ -65,17 +65,16 @@ namespace docklight
             virtual void set_xid(gint32 xid) = 0;
             virtual bool is_exist(gint32 xid) = 0;
 
-            // clang-format off
-        //virtual void add_entry(gint32 xid,
-        //const Glib::ustring& title,
-        //const Glib::ustring& window_name,
-        //const Glib::ustring& instance_name,
-        //const Glib::ustring& group,
-        //const Glib::ustring& desktop_file
-        //[> const Glib::RefPtr<Gdk::Pixbuf> icon<] ) = 0;
+            // clang - format off
+                virtual void  add_entry(gint32 xid,
+                            const Glib::ustring& title,
+                            const Glib::ustring& window_name,
+                            const Glib::ustring& instance_name,
+                            const Glib::ustring& group,
+                            const Glib::ustring& desktop_file,
+                            const Glib::RefPtr<Gdk::Pixbuf> icon < ]) = 0;
 
-            // clang-format on
-            //            virtual bool is_exist(gint32 xid) = 0;
+                // clang-format on
         };
 
         class DockItem : public IDockItem
