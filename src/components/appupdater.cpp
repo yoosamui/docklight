@@ -28,19 +28,50 @@
 
 namespace docklight
 {
-    std::vector<appinfo_t> m_applist;
+    namespace DockItemProvider
+    {
+
+        Glib::RefPtr<DockItem> m_dockitems;
+
+        const Glib::RefPtr<DockItem> create()
+        {
+            return Glib::RefPtr<DockItem>(new DockItem());
+        }
+
+    }  // namespace DockItemProvider
+
     appinfo_t m_appinfo;
 
-    // xid, title , desktop
-    std::map<unsigned long, Glib::ustring> m_app_map;
-
+    std::map<int, Glib::ustring> m_appmap;
     BamfMatcher* m_matcher = nullptr;
+
+    const std::map<int, Glib::ustring>& get_appmap()
+    {
+        return m_appmap;
+    }
+    void on_window_closed(WnckScreen* screen, WnckWindow* window, gpointer data)
+    {
+        auto xid = wnck_window_get_xid(window);
+        if (m_appmap.count(m_appinfo.m_xid)) return;
+
+        m_appmap.erase(xid);
+
+        //
+    }
+
     void on_window_opened(WnckScreen* screen, WnckWindow* window, gpointer data)
     {
         if (!window) {
             g_warning("wck-window is null.\n");
             return;
         }
+
+        //    auto dockItem = DockItemProvider::create();
+
+        //        dockItem->set_name(wnck_window_get_name(window));
+
+        return;
+
         /*
 
         For int %d
@@ -65,29 +96,35 @@ namespace docklight
             m_appinfo.m_group = "unknown";
         }
 
-        g_print("(%lu)\n)[%s](%s)\n%s\n", m_appinfo.m_xid, m_appinfo.m_instance_name,
-                m_appinfo.m_window_name, m_appinfo.m_group);
+        //  g_print("%d -> %s\n%s\n\n", m_appinfo.m_xid, m_appinfo.m_instance_name,
+        //  m_appinfo.m_group); return;
 
-        // return;
+        // g_print("(%lu)\n)[%s](%s)\n%s\n", m_appinfo.m_xid, m_appinfo.m_instance_name,
+        // m_appinfo.m_window_name, m_appinfo.m_group);
+
+        if (m_appmap.count(m_appinfo.m_xid)) {
+            return;
+        }
+
         BamfApplication* bamf_app =
             bamf_matcher_get_application_for_xid(m_matcher, m_appinfo.m_xid);
-
-        if (bamf_app) {
-            m_appinfo.m_desktop_file = bamf_application_get_desktop_file(bamf_app);
-            if (m_appinfo.m_desktop_file) {
-                Glib::RefPtr<Gio::DesktopAppInfo> gio_app =
-                    Gio::DesktopAppInfo::create_from_filename(m_appinfo.m_desktop_file);
-                if (gio_app) {
-                    m_appinfo.m_title = gio_app->get_name();
-
-                    m_map.insert({m_appinfo.m_xid, m_appinfo.m_title});
-                    g_print("(%lu)\n%s\n%s\n\n", m_appinfo.m_xid, m_appinfo.m_title.c_str(),
-                            m_appinfo.m_desktop_file);
-                }
-            } else {
-                g_message("NO DESKTOP %lu - %s\n", m_appinfo.m_xid, m_appinfo.m_window_name);
-            }
+        if (!bamf_app) {
+            return;
         }
+
+        m_appinfo.m_desktop_file = bamf_application_get_desktop_file(bamf_app);
+        if (m_appinfo.m_desktop_file) {
+            Glib::RefPtr<Gio::DesktopAppInfo> gio_app =
+                Gio::DesktopAppInfo::create_from_filename(m_appinfo.m_desktop_file);
+            if (gio_app) {
+                m_appinfo.m_title = gio_app->get_name();
+                m_appmap[m_appinfo.m_xid] = m_appinfo.m_title;
+            }
+        } else {
+            // g_message("NO DESKTOP %lu - %s\n", m_appinfo.m_xid, m_appinfo.m_window_name);
+            m_appmap.insert({m_appinfo.m_xid, m_appinfo.m_instance_name});
+        }
+
         return;
         /*DIR* dir;
 
@@ -202,14 +239,20 @@ namespace docklight
     {
         // WnckHandle *handle = ;  // wnck_get_handle();
         // auto a = wnck_handle_get_default_screen(handle);
-
+        auto m = get_appmap();
         // deprecated
         WnckScreen* wnckscreen = wnck_screen_get_default();
+
+        // instatiate bamf  matcher
         m_matcher = bamf_matcher_get_default();
         g_assert(BAMF_IS_MATCHER(m_matcher));
 
         g_signal_connect(G_OBJECT(wnckscreen), "window-opened", G_CALLBACK(&on_window_opened),
                          nullptr);
+
+        g_signal_connect(G_OBJECT(wnckscreen), "window-closed", G_CALLBACK(&on_window_closed),
+                         nullptr);
+
         return;
         // test BAMF allocaion
         BamfMatcher* matcher;
@@ -227,7 +270,7 @@ namespace docklight
         return;
         // for (list = bamf_matcher_get_applications(matcher); list != nullptr; list =
         // list->next) {
-        for (list = bamf_matcher_get_running_applications(matcher); list != nullptr;
+        /*for (list = bamf_matcher_get_running_applications(matcher); list != nullptr;
              list = list->next) {
             app = (BamfApplication*)list->data;
             if (!app) continue;
@@ -253,7 +296,7 @@ namespace docklight
                 g_print("XID %d = %lu\n", i, (unsigned long)*xid);
             }
             g_array_free(xids, TRUE);
-        }
+        }*/
         /*for (elem = list; elem; elem = elem->next) {
             item = elem->data;
             [> do something with item <]

@@ -1,5 +1,4 @@
 #pragma once
-#define WNCK_I_KNOW_THIS_IS_UNSTABLE 1
 
 // clang-format off
 #include <gtkmm/application.h>

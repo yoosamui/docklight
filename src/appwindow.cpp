@@ -143,6 +143,10 @@ namespace docklight
             //  this->update_position();
             g_print("Press\n");
 
+            for (auto item : get_appmap()) {
+                std::cout << item.first << " : " << item.second << std::endl;
+            }
+
             m_composite->show_at(800, 900);
             // shared_ptr<DockItem> item = shared_ptr<DockItem>(new DockItem());
             // shared_ptr<DockItem> item = shared_ptr<DockItem>(new DockItem());
