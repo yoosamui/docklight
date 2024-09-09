@@ -19,7 +19,6 @@
 
 namespace docklight
 {
-
     class Panel : public Gtk::DrawingArea
     {
       public:

@@ -4,6 +4,7 @@
 #include <giomm/appinfo.h>
 #include <giomm/desktopappinfo.h>
 #include <giomm/liststore.h>
+
 //#include <glib-object.h>
 #include <iostream>
 #include <sstream>
@@ -31,12 +32,12 @@ namespace docklight
     namespace DockItemProvider
     {
 
-        Glib::RefPtr<DockItem> m_dockitems;
+        /*Glib::RefPtr<DockItem> m_dockitems;
 
         const Glib::RefPtr<DockItem> create()
         {
             return Glib::RefPtr<DockItem>(new DockItem());
-        }
+        }*/
 
     }  // namespace DockItemProvider
 
@@ -60,6 +61,32 @@ namespace docklight
     }
 
     void on_window_opened(WnckScreen* screen, WnckWindow* window, gpointer data)
+    {
+        if (!window) {
+            g_warning("wck-window is null.\n");
+            return;
+        }
+
+        DockItemControler* dc = DockItemControler::getInstance();
+        gint32 xid = wnck_window_get_xid(window);
+
+        if (dc->is_exist(xid)) return;
+
+        // clang-format off
+         dc->add_entry(xid,
+            wnck_window_get_class_group_name(window),
+            wnck_window_get_class_instance_name(window),
+            wnck_window_get_class_group_name(window));
+
+
+
+ // m_appinfo.m_window_name = wnck_window_get_name(window);
+         // m_appinfo.m_group = wnck_window_get_class_group_name(window);
+         // m_appinfo.m_instance_name = wnck_window_get_class_instance_name(window);
+         // m_appinfo.m_xid = wnck_window_get_xid(window);
+    }
+
+    void on_window_openedX(WnckScreen* screen, WnckWindow* window, gpointer data)
     {
         if (!window) {
             g_warning("wck-window is null.\n");
@@ -237,8 +264,17 @@ namespace docklight
 
     AppProvider::AppProvider()
     {
-        // WnckHandle *handle = ;  // wnck_get_handle();
-        // auto a = wnck_handle_get_default_screen(handle);
+        // SingletonBase<MyType>* mySingleton = SingletonBase<MyType>::getInstance();
+        // MyClass& instance1 = MyClass::getInstance();
+        //   MyClass*V instance = MyClass::getInstance();
+
+        // d->setTest();
+        //  d->was();
+
+        // MyClass<Test>& d = MyClass::getInstance();
+        // getInstance
+        //  WnckHandle *handle = ;  // wnck_get_handle();
+        //  auto a = wnck_handle_get_default_screen(handle);
         auto m = get_appmap();
         // deprecated
         WnckScreen* wnckscreen = wnck_screen_get_default();

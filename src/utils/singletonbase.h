@@ -60,5 +60,6 @@ namespace docklight
     template <typename T>
     std::once_flag SingletonBase<T>::m_once;
 
+    // i  MyClass& ins = MyClass::getInstance();
 }  // namespace docklight
 

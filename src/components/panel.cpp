@@ -14,9 +14,12 @@ namespace docklight
 
     Panel::Panel()
     {
-        //    m_appupdater.signal_update().connect(sigc::mem_fun(this, &Panel::on_update));
-        //    Glib::signal_timeout().connect(sigc::mem_fun(*this, &Panel::on_timeout), 1000 / 12);
-        // size(1o00, 100);
+        // MyClass* d = MyClass::getInstance();
+        // d->doSomething();
+        //       m_appupdater.signal_update().connect(sigc::mem_fun(this, &Panel::on_update));
+        //       Glib::signal_timeout().connect(sigc::mem_fun(*this, &Panel::on_timeout), 1000 /
+        //       12);
+        //    size(1o00, 100);
 
         //
         //
@@ -38,7 +41,9 @@ namespace docklight
         // frame_time = GLib.get_monotonic_time();
         m_app_provider = Glib::RefPtr<AppProvider>(new AppProvider());
 
-        const auto dockitem = DockItemProvider::create();
+        // DockItem* m_dockitem = DockItem::getInstance();
+
+        //..const auto dockitem = DockItemProvider::create();
         //  dockitem->get_childrens();
     }
 

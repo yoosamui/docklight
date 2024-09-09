@@ -10,11 +10,17 @@
 #include <X11/X.h>
 #include <gdk/gdkx.h>
 
+#include <memory>
 #include <vector>
 //#include "/usr/include/libbamf3/libbamf/libbamf.h"
 #include <glib.h>
 #include <glib-object.h>
 #include <libbamf/libbamf.h>
+
+#include "utils/singletonbase.h"
+#include <iostream>
+
+
 //#include "bamf-view.h"
 //#include <libbamf/bamf-view-private.h>
 //#include <libbamf/bamf-application.h>
@@ -29,77 +35,112 @@
 //#include <string.h>
 //#include <gio/gdesktopappinfo.h>
 // clang-format on
+//
+#define NULLPB (Glib::RefPtr<Gdk::Pixbuf>)nullptr
+
+/*template <typename T>
+class Singleton
+{
+  public:
+    static T& getInstance()
+    {
+        static std::unique_ptr<T> instance;
+        if (!instance) {
+            instance.reset(new T());
+        }
+        return *instance;
+    }
+
+  protected:
+    Singleton() {}
+    ~Singleton() {}
+
+  private:
+    Singleton(const Singleton&) = delete;
+    Singleton& operator=(const Singleton&) = delete;
+
+};  // namespace Singleton
+*/
+
 namespace docklight
 {
 
-    namespace DockItemProvider
+    class DockItem;
+
+    class IDockItem : public Glib::Object
     {
-
-        class DockItem;
-        // static
-        const Glib::RefPtr<DockItem> create();
-
-        class IDockItem : public Glib::Object
+      public:
+        IDockItem()
         {
-          public:
-            IDockItem()
-            {
-                //
-                g_print("Construct\n");
-            }
+            //
+            g_print("Construct\n");
+        }
 
-            virtual ~IDockItem()
-            {
-                //
-                g_print("Free\n");
-            }
-
-          protected:
-            gint32 m_xid = 0;  // 32-bit identification number,
-            Glib::ustring m_name = {};
-            Glib::ustring m_instance_name = {};
-
-            std::map<int, Glib::RefPtr<DockItem>> m_appmap;
-
-          protected:
-            virtual void set_xid(gint32 xid) = 0;
-            virtual bool is_exist(gint32 xid) = 0;
-
-            // clang - format off
-                virtual void  add_entry(gint32 xid,
-                            const Glib::ustring& title,
-                            const Glib::ustring& window_name,
-                            const Glib::ustring& instance_name,
-                            const Glib::ustring& group,
-                            const Glib::ustring& desktop_file,
-                            const Glib::RefPtr<Gdk::Pixbuf> icon < ]) = 0;
-
-                // clang-format on
-        };
-
-        class DockItem : public IDockItem
+        virtual ~IDockItem()
         {
-          public:
-            DockItem() {}
+            //
+            g_print("Free\n");
+        }
 
-            void set_xid(gint32 xid)
-            {
-                //
-                m_xid = xid;
-            };
+      protected:
+        gint32 m_xid = 0;  // 32-bit identification number,
+        Glib::ustring m_window_name = {};
+        Glib::ustring m_instance_name = {};
+        Glib::ustring m_group_name = {};
 
-            bool is_exist(gint32 xid)
-            {
-                //
-                return m_appmap.count(xid) > 0;
-            }
+      protected:
+        virtual void set_xid(gint32 xid) = 0;
 
-            // implementation of the pure virtual functions
-        };
+        virtual void set_window_name(Glib::ustring& window_name) = 0;
+        virtual void set_instance_name(Glib::ustring& instance_name) = 0;
+        virtual void set_group_name(Glib ::ustring& group_name) = 0;
+    };
 
-    }  // namespace DockItemProvider
+    class DockItem : public IDockItem
+    {
+      public:
+        DockItem() {}
+
+        void set_xid(gint32 xid) { m_xid = xid; };
+        void set_window_name(Glib::ustring& window_name) { m_window_name = window_name; };
+        void set_instance_name(Glib::ustring& instance_name) { m_instance_name = instance_name; };
+        void set_group_name(Glib ::ustring& group_name) { m_group_name = group_name; }
+
+        // void add_entry(gint32 xid, const Glib::ustring& title, const Glib::ustring& window_name,
+        // const Glib::ustring& instance_name, const Glib::ustring& group,
+        // const Glib::ustring& desktop_file = {},
+        // const Glib::RefPtr<Gdk::Pixbuf> icon = {}){
+
+        //};
+
+        // implementation of the pure virtual functions
+    };
+
+    class DockItemControler : public SingletonBase<DockItemControler>
+    {
+      public:
+        bool is_exist(gint32 xid) { return m_appmap.count(xid) > 0; }
+
+        bool add_entry(gint32 xid, Glib::ustring window_name, Glib::ustring instance_name,
+                       Glib::ustring group_name)
+        {
+            if (is_exist(xid)) return false;
+
+            const Glib::RefPtr<DockItem> dockitem = Glib::RefPtr<DockItem>(new DockItem());
+            dockitem->set_xid(xid);
+            dockitem->set_window_name(window_name);
+            dockitem->set_instance_name(instance_name);
+            dockitem->set_group_name(group_name);
+
+            return true;
+        }
+
+      private:
+        std::map<int, Glib::RefPtr<DockItem>> m_appmap;
+    };
 
     ////////////////////////////////////////////////////
+
     const std::map<int, Glib::ustring>& get_appmap();
 
     typedef struct {
