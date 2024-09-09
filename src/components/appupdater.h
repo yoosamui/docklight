@@ -130,8 +130,18 @@ namespace docklight
             dockitem->set_xid(xid);
             dockitem->set_window_name(window_name);
             dockitem->set_instance_name(instance_name);
-            dockitem->set_group_name(group_name);
+            dockitem->set_group_name(gnnnroup_name);
 
+            BamfMatcher* matcher;
+            matcher = bamf_matcher_get_default();
+            g_assert(BAMF_IS_MATCHER(matcher));
+
+            BamfMatcher* matcher = nullptr;
+            BamfApplication* bamf_app = bamf_matcher_get_application_for_xid(matcher, xid);
+
+            if (!bamf_app) {
+                return;
+            }
             return true;
         }
 
