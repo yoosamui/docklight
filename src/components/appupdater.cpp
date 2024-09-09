@@ -52,12 +52,14 @@ namespace docklight
     }
     void on_window_closed(WnckScreen* screen, WnckWindow* window, gpointer data)
     {
+        if (!window) {
+            g_warning("wck-window is null.\n");
+            return;
+        }
+
         auto xid = wnck_window_get_xid(window);
-        if (m_appmap.count(m_appinfo.m_xid)) return;
-
-        m_appmap.erase(xid);
-
-        //
+        auto* dc = DockItemControler::getInstance();
+        dc->remove_entry(xid);
     }
 
     void on_window_opened(WnckScreen* screen, WnckWindow* window, gpointer data)
@@ -74,10 +76,9 @@ namespace docklight
 
         // clang-format off
          dc->add_entry(xid,
-            wnck_window_get_class_group_name(window),
+            wnck_window_get_name(window),
             wnck_window_get_class_instance_name(window),
             wnck_window_get_class_group_name(window));
-
 
 
  // m_appinfo.m_window_name = wnck_window_get_name(window);
