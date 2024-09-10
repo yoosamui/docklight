@@ -40,7 +40,9 @@ components/ExplodesWindow.cpp \
 components/panel.cpp \
 components/device.cpp \
 components/config.cpp \
+components/dockitemcontainer.cpp \
 components/appupdater.cpp \
+components/dockitem.cpp \
 components/position.cpp \
 utils/system.cpp \
 main.cpp \

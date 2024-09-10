@@ -68,7 +68,7 @@ namespace docklight
 {
 
     class DockItem;
-
+    class DockItemControler;
     class IDockItem : public Glib::Object
     {
       public:
@@ -87,6 +87,7 @@ namespace docklight
       protected:
         gint32 m_xid = 0;     // 32-bit identification number,
         gint32 m_refxid = 0;  // the xid for group reference.,
+
         bool m_has_desktop_file = true;
 
         Glib::ustring m_title = {};
@@ -95,17 +96,24 @@ namespace docklight
         Glib::ustring m_group_name = {};
         Glib::ustring m_desktop_file = {};
 
-      protected:
-        virtual void set_xid(gint32 xid) = 0;
+        Glib::RefPtr<Gdk::Pixbuf> m_icon = NULLPB;
 
+      protected:
+        // setters
+        virtual void set_xid(gint32 xid) = 0;
         virtual void set_title(const Glib::ustring& title) = 0;
         virtual void set_window_name(const Glib::ustring& window_name) = 0;
         virtual void set_instance_name(const Glib::ustring& instance_name) = 0;
         virtual void set_group_name(const Glib ::ustring& group_name) = 0;
         virtual void set_desktop_file(const Glib ::ustring& m_desktop_file) = 0;
-
+        // getters
+        virtual const Glib::ustring& get_window_name() const = 0;
         virtual const Glib::ustring& get_title() const = 0;
+        virtual const Glib::ustring& get_instance_name() const = 0;
+        virtual const Glib::ustring& get_group_name() const = 0;
         virtual const Glib::ustring& get_desktop_file() const = 0;
+
+        virtual const Glib::RefPtr<Gdk::Pixbuf>& get_icon() const = 0;
     };
 
     class DockItem : public IDockItem
@@ -113,6 +121,7 @@ namespace docklight
       public:
         DockItem() {}
 
+        // implementation of the pure virtual functions
         bool has_desktop_file() { return m_has_desktop_file; }
 
         void set_has_dsktop_file(bool has) { m_has_desktop_file = has; }
@@ -134,21 +143,23 @@ namespace docklight
         };
 
         // Getters
+        const Glib::ustring& get_window_name() const { return m_window_name; }
         const Glib::ustring& get_title() const { return m_title; }
-
-        const Glib::ustring& get_desktop_file() const
+        const Glib::ustring& get_group_name() const { return m_group_name; }
+        const Glib::ustring& get_instance_name() const { return m_instance_name; }
+        const Glib::ustring& get_desktop_file() const { return m_desktop_file; };
+        const Glib::RefPtr<Gdk::Pixbuf>& get_icon() const
         {
-            //
-            return m_desktop_file;
+            if (m_refxid != 0) {
+                // DockItemControler* dc = DockItemControler::getInstance();
+                // Glib::RefPtr<Gdk::Pixbuf> icon = NULLPB;
+                // get_dock_item_by_xid(m_refxid);
+
+                // dc->get_dock_containe
+            }
+
+            return m_icon;
         };
-        // void add_entry(gint32 xid, const Glib::ustring& title, const Glib::ustring& window_name,
-        // const Glib::ustring& instance_name, const Glib::ustring& group,
-        // const Glib::ustring& desktop_file = {},
-        // const Glib::RefPtr<Gdk::Pixbuf> icon = {}){
-
-        //};
-
-        // implementation of the pure virtual functions
     };
 
     class DockItemControler : public SingletonBase<DockItemControler>
@@ -168,18 +179,6 @@ namespace docklight
         {
             return m_appmap.erase(xid);
             //
-        }
-
-        inline int count_items_by_title(Glib::ustring& title)
-        {
-            int count = 0;
-
-            for (auto& kp : m_appmap) {
-                Glib::RefPtr<DockItem> item = kp.second;
-                if (item->get_title() == title) count++;
-            }
-
-            return count;
         }
 
         bool add_entry(gint32 xid, Glib::ustring window_name, Glib::ustring instance_name,
@@ -246,47 +245,37 @@ namespace docklight
 
             return true;
         }
+
+        const Glib::RefPtr<DockItem>& get_dock_item_by_xid(gint32 xid)
+        {
+            bool found = is_exist(xid);
+            if (!found) {
+                //  return nullptr;
+            }
+            //            g_assert(is_exist(xid));
+
+            return m_appmap[xid];
+        }
         const std::map<int, Glib::RefPtr<DockItem>>& get_appmap() const { return m_appmap; }
+        const std::map<int, Glib::RefPtr<DockItem>>& get_appmap_group() const { return m_appmap; }
+
+      private:
+        inline int count_items_by_title(Glib::ustring& title)
+        {
+            int count = 0;
+
+            for (auto& kp : m_appmap) {
+                Glib::RefPtr<DockItem> item = kp.second;
+                if (item->get_title() == title) count++;
+            }
+
+            return count;
+        }
 
       private:
         std::map<int, Glib::RefPtr<DockItem>> m_appmap;
         BamfMatcher* m_matcher = nullptr;
     };
-
-    ////////////////////////////////////////////////////
-
-    const std::map<int, Glib::ustring>& get_appmap();
-
-    typedef struct {
-        // Glib::ustring m_name;
-        // Glib::ustring m_group;
-        Glib::ustring m_title;
-        const gchar* m_window_name = nullptr;
-        const gchar* m_group = nullptr;
-        const gchar* m_instance_name = nullptr;
-        const gchar* m_desktop_file = nullptr;
-        int m_xid = 0;
-
-        // std::string m_name;
-        // std::string m_group;
-        //  string m_group;
-        //  string m_instance;
-        //  string m_title;
-        //  string m_comment;
-        //  string m_locale;
-        //   bool m_error = false;
-        //   string m_desktop_file;
-        //   string m_icon_name;
-        //   bool m_cache = false;
-        //   WnckWindow* m_wnckwindow = nullptr;
-        //   dock_item_type_t m_dock_item_type;
-        //   unsigned long m_xid = 0;
-        //   Glib::RefPtr<Gdk::Pixbuf> m_image = (Glib::RefPtr<Gdk::Pixbuf>)nullptr;
-        //   int m_separator_length = 0;
-        //   bool m_separartor_expands = true;
-        //   int m_width;
-        //   int m_height;
-    } appinfo_t;
 
     class AppProvider : public Glib::Object
     {
