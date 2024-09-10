@@ -96,10 +96,6 @@ namespace docklight
 
             if (appinfo) {
                 Glib::ustring title = appinfo->get_name();
-                // TODO handle Pixbuff;
-                //     Glib::RefPtr<Gtk::IconTheme> theme = Gtk::IconTheme::create();
-                //
-
                 // TOD test USE THIS TO CREATE GROUPS
                 if (count_items_by_title(title) > 1) {
                     // TODO add xid from first;;

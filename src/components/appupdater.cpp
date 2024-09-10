@@ -1,8 +1,8 @@
 #include "appupdater.h"
 
 //#include <dirent.h>
-#include <giomm/appinfo.h>
-#include <giomm/desktopappinfo.h>
+//#include <giomm/appinfo.h>
+//#include <giomm/desktopappinfo.h>
 //#include <giomm/liststore.h>
 
 //#include <glib-object.h>
