@@ -37,7 +37,7 @@ namespace docklight
         }
 
         auto xid = wnck_window_get_xid(window);
-        auto* dc = DockItemControler::getInstance();
+        auto* dc = DockItemContainer::getInstance();
         dc->remove_entry(xid);
     }
 
@@ -48,9 +48,8 @@ namespace docklight
             return;
         }
 
-        DockItemControler* dc = DockItemControler::getInstance();
+        DockItemContainer* dc = DockItemContainer::getInstance();
         gint32 xid = wnck_window_get_xid(window);
-
         if (dc->is_exist(xid)) return;
 
         dc->add_entry(xid, wnck_window_get_name(window),

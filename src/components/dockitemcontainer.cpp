@@ -1,5 +1,7 @@
 #include "components/dockitemcontainer.h"
 
+#include "gio/gdesktopappinfo.h"
+
 namespace docklight
 {
 
@@ -28,12 +30,12 @@ namespace docklight
         g_object_unref(m_matcher);
     }
 
-    inline bool DockItemContainer::is_exist(gint32 xid) const
+    bool DockItemContainer::is_exist(gint32 xid) const
     {
         return m_appmap.count(xid) > 0;
     }
 
-    inline const std::map<int, Glib::RefPtr<DockItem>>& DockItemContainer::get_appmap() const
+    const std::map<int, Glib::RefPtr<DockItem>> DockItemContainer::get_appmap() const
     {
         //
         return m_appmap;
@@ -83,7 +85,7 @@ namespace docklight
 
         BamfApplication* bamfapp = bamf_matcher_get_application_for_xid(m_matcher, xid);
         if (!bamfapp) {
-            g_object_unref(bamfapp);
+            g_warning("DockItemContainer BamfApplication bamfapp is null. %s\n", instance_name);
             return false;
         }
 
@@ -103,17 +105,23 @@ namespace docklight
                     dockitem->set_icon(pixbuf::convert_gioicon(appinfo->get_icon()));
                 }
 
+                char* iconname = g_desktop_app_info_get_string(appinfo->gobj(), "Icon");
+                if (iconname) {
+                    dockitem->set_icon_name(iconname);
+                }
+
                 dockitem->set_title(title);
+
                 m_appmap.insert({xid, dockitem});
             }
         } else {
             dockitem->set_title(window_name);
-            dockitem->set_desktop_file("n/a");
             dockitem->set_has_desktop_file(false);
+
             m_appmap.insert({xid, dockitem});
         }
 
-        g_object_unref(bamfapp);
+        //  g_object_unref(bamfapp);
         return true;
     }
 

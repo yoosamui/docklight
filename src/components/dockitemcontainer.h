@@ -27,7 +27,7 @@ namespace docklight
         DockItemContainer();
         virtual ~DockItemContainer();
 
-        const std::map<int, Glib::RefPtr<DockItem>>& get_appmap() const;
+        const std::map<int, Glib::RefPtr<DockItem>> get_appmap() const;
 
         int remove_entry(gint32 xid);
         int count_items_by_title(const Glib::ustring& title);

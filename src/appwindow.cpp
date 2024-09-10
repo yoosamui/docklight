@@ -143,12 +143,14 @@ namespace docklight
             //  this->update_position();
             g_print("Press\n");
 
-            DockItemControler* ct = DockItemControler::getInstance();
-            for (auto& item : ct->get_appmap()) {
-                // std::cout << item.first << " : " << item.second << std::endl;
+            DockItemContainer* ct = DockItemContainer::getInstance();
+            for (const auto& item : ct->get_appmap()) {
                 const Glib::RefPtr<DockItem> dockitem = item.second;
-                std::cout << item.first << " : " << dockitem->get_title() << "\n"
-                          << dockitem->get_desktop_file() << std::endl;
+                g_print("%s\n", dockitem->to_string().c_str());
+                //// std::cout << item.first << " : " << item.second << std::endl;
+                // const Glib::RefPtr<DockItem> dockitem = item.second;
+                // std::cout << item.first << " : " << dockitem->get_title() << "\n"
+                //<< dockitem->get_desktop_file() << std::endl;
             }
 
             m_composite->show_at(800, 900);

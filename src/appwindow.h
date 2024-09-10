@@ -10,6 +10,9 @@
 #include "components/device.h"
 #include "components/config.h"
 
+
+
+#include "components/dockitemcontainer.h"
 #include "components/TransparentWindow.h"
 #include "components/ExplodesWindow.h"
 

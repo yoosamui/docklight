@@ -5,6 +5,9 @@
 #include <gdkmm/pixbuf.h>
 #include <libwnck/libwnck.h>
 #include <sigc++/sigc++.h>
+
+#include "components/dockitemcontainer.h"
+
 ////#include "constants.h"
 //#include <X11/X.h>
 //#include <gdk/gdkx.h>
@@ -37,10 +40,13 @@
 //#include <gio/gdesktopappinfo.h>
 
 // clang-format on
-class AppProvider : public Glib::Object
+namespace docklight
 {
-  public:
-    AppProvider();
-};
+
+    class AppProvider : public Glib::Object
+    {
+      public:
+        AppProvider();
+    };
 
 }  // namespace docklight
