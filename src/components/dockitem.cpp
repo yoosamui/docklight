@@ -19,6 +19,16 @@ namespace docklight
     }
 
     // Setters
+    inline void DockItem::set_xid(gint32 xid)
+    {
+        m_xid = xid;
+    }
+
+    inline void DockItem::set_refxid(gint32 refxid)
+    {
+        m_refxid = refxid;
+    }
+
     inline void DockItem::set_has_desktop_file(bool has)
     {
         m_has_desktop_file = has;
@@ -32,11 +42,6 @@ namespace docklight
     inline void DockItem::set_icon(Glib::RefPtr<Gdk::Pixbuf> icon)
     {
         m_icon = icon;
-    }
-
-    inline void DockItem::set_xid(gint32 xid)
-    {
-        m_xid = xid;
     }
 
     inline void DockItem::set_title(Glib::ustring title)
@@ -65,9 +70,13 @@ namespace docklight
     }
 
     // Getters
-    inline const gint32 DockItem::get_xid(gint32& refxid) const
+    inline const gint32 DockItem::get_refxid() const
     {
-        refxid = m_refxid;
+        return m_refxid;
+    }
+
+    inline const gint32 DockItem::get_xid() const
+    {
         return m_xid;
     }
 

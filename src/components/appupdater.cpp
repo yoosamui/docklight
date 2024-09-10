@@ -48,13 +48,19 @@ namespace docklight
             return;
         }
 
-        DockItemContainer* dc = DockItemContainer::getInstance();
+        DockItemContainer* dc = get_dockcontainer();
         gint32 xid = wnck_window_get_xid(window);
         if (dc->is_exist(xid)) return;
 
+        // Gets the icon to be used for window. If no icon was found, a fallback icon is used
+        // Returns :
+        // the icon for window. The caller should reference the returned GdkPixbuf if it needs to
+        // keep the icon around.
+        GdkPixbuf* window_icon = wnck_window_get_icon(window);
+
         dc->add_entry(xid, wnck_window_get_name(window),
                       wnck_window_get_class_instance_name(window),
-                      wnck_window_get_class_group_name(window));
+                      wnck_window_get_class_group_name(window), window_icon);
     }
 
     AppProvider::AppProvider()

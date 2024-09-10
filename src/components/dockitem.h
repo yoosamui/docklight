@@ -32,6 +32,7 @@ namespace docklight
       protected:
         // setters
         virtual void set_xid(gint32 xid) = 0;
+        virtual void set_refxid(gint32 refxid) = 0;
         virtual void set_title(Glib::ustring title) = 0;
         virtual void set_window_name(Glib::ustring window_name) = 0;
         virtual void set_instance_name(Glib::ustring instance_name) = 0;
@@ -42,7 +43,8 @@ namespace docklight
         virtual void set_has_desktop_file(bool has) = 0;
 
         // getters
-        virtual const gint32 get_xid(gint32& refxid) const = 0;
+        virtual const gint32 get_xid() const = 0;
+        virtual const gint32 get_refxid() const = 0;
         virtual const Glib::ustring& get_window_name() const = 0;
         virtual const Glib::ustring& get_title() const = 0;
         virtual const Glib::ustring& get_instance_name() const = 0;
@@ -62,10 +64,11 @@ namespace docklight
         bool const has_desktop_file() const;
 
         // setters
+        void set_refxid(gint32 refxid);
+        void set_xid(gint32 xid);
         void set_icon_name(Glib::ustring icon_name);
         void set_icon(Glib::RefPtr<Gdk::Pixbuf> icon);
         void set_has_desktop_file(bool has);
-        void set_xid(gint32 xid);
         void set_title(Glib::ustring title);
         void set_window_name(Glib::ustring window_name);
         void set_instance_name(Glib::ustring instance_name);
@@ -73,7 +76,8 @@ namespace docklight
         void set_desktop_file(Glib::ustring desktop_file);
 
         // Getters
-        const gint32 get_xid(gint32& refxid) const;
+        const gint32 get_xid() const;
+        const gint32 get_refxid() const;
         const Glib::ustring& get_window_name() const;
         const Glib::ustring& get_title() const;
         const Glib::ustring& get_group_name() const;

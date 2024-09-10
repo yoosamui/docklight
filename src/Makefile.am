@@ -35,6 +35,7 @@ docklight_LDADD = $(ALLDADDLIBS)
 docklight_SOURCES =  \
 appwindow.cpp \
 appoptionsgroup.cpp \
+utils/pixbuf.cpp \
 components/TransparentWindow.cpp \
 components/ExplodesWindow.cpp \
 components/panel.cpp \
