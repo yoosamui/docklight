@@ -32,6 +32,11 @@ namespace docklight
         m_xid = xid;
     }
 
+    inline void DockItem::set_attached(bool attached)
+    {
+        m_attached = attached;
+    }
+
     inline void DockItem::set_has_desktop_file(bool has)
     {
         m_has_desktop_file = has;
@@ -86,6 +91,11 @@ namespace docklight
     inline const guint32 DockItem::get_xid() const
     {
         return m_xid;
+    }
+
+    inline const bool DockItem::get_is_attached() const
+    {
+        return m_attached;
     }
 
     inline const Glib::ustring& DockItem::get_window_name() const
