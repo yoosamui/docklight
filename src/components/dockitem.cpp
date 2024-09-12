@@ -24,11 +24,6 @@ namespace docklight
         m_xid = xid;
     }
 
-    inline void DockItem::set_refxid(gint32 refxid)
-    {
-        m_refxid = refxid;
-    }
-
     inline void DockItem::set_has_desktop_file(bool has)
     {
         m_has_desktop_file = has;
@@ -39,10 +34,10 @@ namespace docklight
         m_icon_name = icon_name;
     }
 
-    inline void DockItem::set_icon(Glib::RefPtr<Gdk::Pixbuf> icon)
-    {
-        m_icon = icon;
-    }
+    // inline void DockItem::set_icon(Glib::RefPtr<Gdk::Pixbuf> icon)
+    //{
+    // m_icon = icon;
+    //}
 
     inline void DockItem::set_title(Glib::ustring title)
     {
@@ -64,16 +59,17 @@ namespace docklight
         m_group_name = group_name;
     }
 
+    inline void DockItem::set_description(Glib::ustring description)
+    {
+        m_description = description;
+    }
+
     inline void DockItem::set_desktop_file(Glib::ustring desktop_file)
     {
         m_desktop_file = desktop_file;
     }
 
     // Getters
-    inline const gint32 DockItem::get_refxid() const
-    {
-        return m_refxid;
-    }
 
     inline const gint32 DockItem::get_xid() const
     {
@@ -95,6 +91,11 @@ namespace docklight
         return m_group_name;
     }
 
+    inline const Glib::ustring& DockItem::get_description() const
+    {
+        return m_description;
+    }
+
     inline const Glib::ustring& DockItem::get_instance_name() const
     {
         return m_instance_name;
@@ -110,23 +111,25 @@ namespace docklight
         return m_icon_name;
     }
 
-    inline const Glib::RefPtr<Gdk::Pixbuf>& DockItem::get_icon() const
-    {
-        return m_icon;
-    };
+    // inline const Glib::RefPtr<Gdk::Pixbuf>& DockItem::get_icon() const
+    //{
+    // return m_icon;
+    //};
 
     const Glib::ustring DockItem::to_string() const
     {
+        return "";
+
         // clang-format off
             std::stringstream ss;
             ss << "xid: " << m_xid << std::endl
-               << "refxid: " << m_refxid << std::endl
                << "title: " << m_title << std::endl
                << "group: " << m_group_name << std::endl
                << "instance: " << m_instance_name << std::endl
                << "icon_name: " << m_icon_name << std::endl
                << "deaktop_file: " << m_desktop_file << std::endl
                << "window_name: " << m_window_name<< std::endl
+               << "description: " << m_description<< std::endl
                << std::endl;
 
         // clang-format on

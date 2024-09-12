@@ -8,16 +8,13 @@
 
 // clang-format on
 
-#define NULLPB (Glib::RefPtr<Gdk::Pixbuf>)nullptr
-
 namespace docklight
 {
     class DockItem;
     class IDockItem : public Glib::Object
     {
       protected:
-        gint32 m_xid = 0;     // 32-bit identification number,
-        gint32 m_refxid = 0;  // the xid for group reference.,
+        gint32 m_xid = 0;  // 32-bit identification number,
 
         bool m_has_desktop_file = true;
 
@@ -27,31 +24,31 @@ namespace docklight
         Glib::ustring m_group_name = {};
         Glib::ustring m_desktop_file = {};
         Glib::ustring m_icon_name = {};
-        Glib::RefPtr<Gdk::Pixbuf> m_icon = NULLPB;  // TODO remove this macro;
+        Glib::ustring m_description = {};
 
       protected:
         // setters
         virtual void set_xid(gint32 xid) = 0;
-        virtual void set_refxid(gint32 refxid) = 0;
         virtual void set_title(Glib::ustring title) = 0;
         virtual void set_window_name(Glib::ustring window_name) = 0;
         virtual void set_instance_name(Glib::ustring instance_name) = 0;
         virtual void set_group_name(Glib ::ustring group_name) = 0;
         virtual void set_desktop_file(Glib ::ustring m_desktop_file) = 0;
         virtual void set_icon_name(Glib::ustring icon_name) = 0;
-        virtual void set_icon(Glib::RefPtr<Gdk::Pixbuf> icon) = 0;
+        virtual void set_description(Glib::ustring icon_name) = 0;
+        //  virtual void set_icon(Glib::RefPtr<Gdk::Pixbuf> icon) = 0;
         virtual void set_has_desktop_file(bool has) = 0;
 
         // getters
         virtual const gint32 get_xid() const = 0;
-        virtual const gint32 get_refxid() const = 0;
         virtual const Glib::ustring& get_window_name() const = 0;
         virtual const Glib::ustring& get_title() const = 0;
         virtual const Glib::ustring& get_instance_name() const = 0;
         virtual const Glib::ustring& get_group_name() const = 0;
+        virtual const Glib::ustring& get_description() const = 0;
         virtual const Glib::ustring& get_desktop_file() const = 0;
         virtual const Glib::ustring& get_icon_name() const = 0;
-        virtual const Glib::RefPtr<Gdk::Pixbuf>& get_icon() const = 0;
+        // virtual const Glib::RefPtr<Gdk::Pixbuf>& get_icon() const = 0;
     };
 
     class DockItem : public IDockItem
@@ -64,23 +61,23 @@ namespace docklight
         bool const has_desktop_file() const;
 
         // setters
-        void set_refxid(gint32 refxid);
         void set_xid(gint32 xid);
         void set_icon_name(Glib::ustring icon_name);
-        void set_icon(Glib::RefPtr<Gdk::Pixbuf> icon);
+        //     void set_icon(Glib::RefPtr<Gdk::Pixbuf> icon);
         void set_has_desktop_file(bool has);
         void set_title(Glib::ustring title);
         void set_window_name(Glib::ustring window_name);
         void set_instance_name(Glib::ustring instance_name);
         void set_group_name(Glib::ustring group_name);
+        void set_description(Glib::ustring description);
         void set_desktop_file(Glib::ustring desktop_file);
 
         // Getters
         const gint32 get_xid() const;
-        const gint32 get_refxid() const;
         const Glib::ustring& get_window_name() const;
         const Glib::ustring& get_title() const;
         const Glib::ustring& get_group_name() const;
+        const Glib::ustring& get_description() const;
         const Glib::ustring& get_instance_name() const;
         const Glib::ustring& get_desktop_file() const;
         const Glib::ustring& get_icon_name() const;

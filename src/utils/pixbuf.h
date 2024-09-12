@@ -13,9 +13,12 @@ namespace docklight
 {
     namespace pixbuf
     {
-        const Glib::RefPtr<Gdk::Pixbuf> convert_window_icon(GdkPixbuf* icon, guint size = 128);
-        const Glib::RefPtr<Gdk::Pixbuf> convert_gioicon(const Glib::RefPtr<Gio::Icon>& icon,
-                                                        guint size = 128);
+        const Glib::RefPtr<Gdk::Pixbuf> get_icon(const gchar* icon_name, GdkPixbuf* window_icon,
+                                                 guint size = 128);
+
+        const Glib::RefPtr<Gdk::Pixbuf> get_window_icon(GdkPixbuf* icon, guint size = 128);
+        // const Glib::RefPtr<Gdk::Pixbuf> convert_gioicon(const Glib::RefPtr<Gio::Icon>& icon,
+        // guint size = 128);
 
     }  // namespace pixbuf
 }  // namespace docklight

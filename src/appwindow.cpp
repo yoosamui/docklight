@@ -56,12 +56,12 @@ namespace docklight
     void AppWindow::send_notification(const Glib::ustring& title, const Glib::ustring& text,
                                       const Glib::ustring& icon_name)
     {
-        auto Notification = Gio::Notification::create(title);
+        /*auto Notification = Gio::Notification::create(title);
         Notification->set_body(text);
         auto Icon = Gio::ThemedIcon::create(icon_name);
         Notification->set_icon(Icon);
 
-        m_application->send_notification(Notification);
+        m_application->send_notification(Notification);*/
     }
 
     void AppWindow::on_app_activated()
@@ -143,27 +143,28 @@ namespace docklight
             //  this->update_position();
             g_print("Press\n");
 
-            DockItemContainer* ct = get_dockcontainer();
+            /*DockItemContainer* container = get_dockcontainer();
 
-            /*for (const auto& item : ct->get_appmap()) {
-                const Glib::RefPtr<DockItem> dockitem = item.second;
-                g_print("%s\n", dockitem->to_string().c_str());
-                //// std::cout << item.first << " : " << item.second << std::endl;
-                // const Glib::RefPtr<DockItem> dockitem = item.second;
-                // std::cout << item.first << " : " << dockitem->get_title() << "\n"
-                //<< dockitem->get_desktop_file() << std::endl;
-            }
-*/
-            for (const auto& item : ct->get_iconmap()) {
-                const Glib::ustring iconname = item.first;
-                const Glib::RefPtr<Gdk::Pixbuf> icon = item.second;
-                if (icon) {
-                    g_print("%s\n", iconname.c_str());
-                    icon->save("/home/yoo/TEMP/" + iconname, "png");
+            for (const auto& item : container->get_appmap()) {
+                // Glib::RefPtr<DockItem> dockitem = item.second;
+                //     g_print("%s\n", dockitem->to_string().c_str());
+            }*/
+
+            /*for (const auto& item : ct->get_iconmap()) {
+                const Glib::ustring instance_name = item.first;
+                const Glib::RefPtr<DockIcon> dockicon = item.second;
+
+                if (dockicon->get_icon()) {
+                    //                    g_print("->>%s\n", instance_name.c_str());
+                    dockicon->get_icon()->save("/home/yoo/TEMP/" + instance_name, "png");
+                } else {
+                    g_critical("dockicon m_icon is NULL\n");
                 }
-            }
+            }*/
 
-            m_composite->show_at(800, 900);
+            //            m_composite = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
+            m_composite->show_at(0, 0);
+
             // shared_ptr<DockItem> item = shared_ptr<DockItem>(new DockItem());
             // shared_ptr<DockItem> item = shared_ptr<DockItem>(new DockItem());
 

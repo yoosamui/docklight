@@ -178,18 +178,6 @@ namespace docklight
                     insets[struts_position_t::top_start] = workarea.get_x();
                     insets[struts_position_t::top_end] = workarea.get_x() + workarea.get_width();
 
-                    // compare for equality with the current insets
-                    /*equal = insets_cache[struts_position_t::top] == insets[struts_position_t::top] &&
-                            insets_cache[struts_position_t::top_start] ==  insets[struts_position_t::top_start] &&
-                            insets_cache[struts_position_t::top_end] == insets[struts_position_t::top_end];
-
-                    if(!equal){
-                        // no equal. cache the struts for next call
-                        insets_cache[struts_position_t::top] = insets[struts_position_t::top];
-                        insets_cache[struts_position_t::top_start] = insets[struts_position_t::top_start];
-                        insets_cache[struts_position_t::top_end] = insets[struts_position_t::top_end];
-                    }
-*/
                     break;
                 case dock_location_t::bottom:
 
@@ -197,18 +185,6 @@ namespace docklight
                     insets[struts_position_t::bottom] =(area + screen->get_height()) - workarea.get_y() - workarea.get_height();
                     insets[struts_position_t::bottom_start] = workarea.get_x();
                     insets[struts_position_t::bottom_end] = workarea.get_x() + workarea.get_width();
-
-                    /*// compare for equality with the current insets
-                    equal = insets_cache[struts_position_t::bottom] == insets[struts_position_t::bottom] &&
-                            insets_cache[struts_position_t::bottom_start] ==  insets[struts_position_t::bottom_start] &&
-                            insets_cache[struts_position_t::bottom_end] == insets[struts_position_t::bottom_end];
-
-                    if(!equal){
-                        // no equal. cache the struts for next call
-                        insets_cache[struts_position_t::bottom] = insets[struts_position_t::bottom];
-                        insets_cache[struts_position_t::bottom_start] = insets[struts_position_t::bottom_start];
-                        insets_cache[struts_position_t::bottom_end] = insets[struts_position_t::bottom_end];
-                    }*/
 
                     break;
                 case dock_location_t::left:
@@ -218,17 +194,6 @@ namespace docklight
                     insets[struts_position_t::left_start] = workarea.get_y();
                     insets[struts_position_t::left_end] = workarea.get_y() + workarea.get_height();
 
-                    /*// compare for equality with the current insets
-                    equal = insets_cache[struts_position_t::left] == insets[struts_position_t::left] &&
-                            insets_cache[struts_position_t::left_start] ==  insets[struts_position_t::left_start] &&
-                            insets_cache[struts_position_t::left_end] == insets[struts_position_t::left_end];
-
-                    if(!equal){
-                        // no equal. cache the struts for next call
-                        insets_cache[struts_position_t::left] = insets[struts_position_t::left];
-                        insets_cache[struts_position_t::left_start] = insets[struts_position_t::left_start];
-                        insets_cache[struts_position_t::left_end] = insets[struts_position_t::left_end];
-                    }*/
                     break;
 
                 case dock_location_t::right:
@@ -238,17 +203,6 @@ namespace docklight
                     insets[struts_position_t::right_start] = workarea.get_y();
                     insets[struts_position_t::right_end] = workarea.get_y() + workarea.get_height();
 
-                    /*// compare for equality with the current insets
-                    equal = insets_cache[struts_position_t::right] == insets[struts_position_t::right] &&
-                            insets_cache[struts_position_t::right_start] ==  insets[struts_position_t::right_start] &&
-                            insets_cache[struts_position_t::right_end] == insets[struts_position_t::right_end];
-
-                    if(!equal){
-                        // no equal. cache the struts for next call
-                        insets_cache[struts_position_t::right] = insets[struts_position_t::right];
-                        insets_cache[struts_position_t::right_start] = insets[struts_position_t::right_start];
-                        insets_cache[struts_position_t::right_end] = insets[struts_position_t::right_end];
-                    }*/
 
                     break;
 

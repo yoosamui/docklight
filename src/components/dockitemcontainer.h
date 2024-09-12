@@ -16,6 +16,29 @@
 namespace docklight
 {
 
+    class DockIcon : public Glib::Object
+    {
+      public:
+        DockIcon(Glib::RefPtr<Gdk::Pixbuf> icon, Glib::ustring desktop_file)
+        {
+            m_icon = icon;
+            m_desktop_file = desktop_file;
+        }
+
+        const Glib::RefPtr<Gdk::Pixbuf>& get_icon() const { return m_icon; }
+        const Glib::ustring& get_desktop_file() const { return m_desktop_file; }
+
+        const void set_icon(Glib::RefPtr<Gdk::Pixbuf> icon)
+        {
+            //
+            m_icon = icon;
+        }
+
+      private:
+        Glib::RefPtr<Gdk::Pixbuf> m_icon;
+        Glib::ustring m_desktop_file = {};
+    };
+
     class DockItemContainer : public SingletonBase<DockItemContainer>
     {
       public:
@@ -23,22 +46,30 @@ namespace docklight
         virtual ~DockItemContainer();
 
         const std::map<int, Glib::RefPtr<DockItem>> get_appmap() const;
-        const std::map<Glib::ustring, Glib::RefPtr<Gdk::Pixbuf>> get_iconmap() const;
+        const std::map<Glib::ustring, Glib::RefPtr<DockIcon>> get_iconmap() const;
 
         int remove_entry(gint32 xid);
 
         bool is_exist(gint32 xid) const;
         bool get_dockitem_by_xid(gint32 xid, Glib::RefPtr<DockItem>& item);
-        bool add_entry(gint32 xid, const Glib::ustring& window_name,
-                       const Glib::ustring& instance_name, const Glib::ustring& group_name,
-                       GdkPixbuf* window_icon);
+        // clang-format off
+        bool insert(gint32 xid,
+                const Glib::ustring& window_name,
+                const Glib::ustring& instance_name,
+                const Glib::ustring& group_name,
+                const gchar* window_icon_name,
+                GdkPixbuf* window_icon,
+                const Glib::RefPtr<Gdk::Pixbuf> window_icon_pixbuf);
+
+        // clang-format on
 
       private:
         int count_items_by_title(const Glib::ustring& title);
+        void on_theme_changed();
 
       private:
         std::map<gint32, Glib::RefPtr<DockItem>> m_appmap;
-        std::map<Glib::ustring, Glib::RefPtr<Gdk::Pixbuf>> m_iconmap;
+        std::map<Glib::ustring, Glib::RefPtr<DockIcon>> m_iconmap;
 
         BamfMatcher* m_matcher = nullptr;
     };

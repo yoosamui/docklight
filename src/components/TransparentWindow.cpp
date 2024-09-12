@@ -34,7 +34,17 @@ TransparentWindow::TransparentWindow()
 
     set_decorated(false);
     set_resizable(false);
-    set_keep_above(true);
+    /*
+     Asks to keep window above, so that it stays on top.
+     Note that you shouldn’t assume the window is definitely
+     above afterward, because other entities (e.g. the user or
+     [window manager][gtk-X11-arch]) could not keep it above,
+     and not all window managers support keeping windows above.
+     But normally the window will end kept above.
+
+     Just don’t write code that crashes if not.
+     */
+    //  set_keep_above(true);
 }
 
 // bool TransparentWindow::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)

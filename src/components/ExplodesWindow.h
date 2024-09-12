@@ -39,11 +39,11 @@ namespace docklight
         bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
       private:
-        void ConnectSignal(bool connect);
+        void connect_signal(bool connect);
         bool on_timeout_draw();
 
       private:
-        sigc::connection m_timeout_draw;
+        sigc::connection m_sigc_connection;
         Glib::RefPtr<Gdk::Pixbuf> m_image;
 
         long int m_start_time = 0;

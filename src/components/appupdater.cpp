@@ -1,32 +1,5 @@
 #include "appupdater.h"
 
-//#include <dirent.h>
-//#include <giomm/appinfo.h>
-//#include <giomm/desktopappinfo.h>
-//#include <giomm/liststore.h>
-
-//#include <glib-object.h>
-//#include <iostream>
-//#include <sstream>
-//#include <thread>
-
-//#include "gio/gdesktopappinfo.h"
-/*Thanks, but I couldn't create a working solution so I came up with this one: Code :
-
-    Glib::RefPtr<Gdk::Pixbuf> Info::getPixbuf(File* f)
-{
-    // File is a custom class
-    static Glib::RefPtr<Gtk::IconTheme> iconTheme = Gtk::IconTheme::get_default();
-    Glib::ustring sPath = Glib::build_filename(f->getDirPath(), f->getName());
-    Glib::RefPtr<Gio::File> gioFile = Gio::File::create_for_path(sPath);
-    Glib::RefPtr<Gio::FileInfo> info = gioFile->query_info();
-    Glib::RefPtr<Gio::Icon> icon = info->get_icon();
-    // getIconSize() a custom function returning the desired size
-    Gtk::IconInfo iconInfo =
-        iconTheme->lookup_icon(icon, getIconSize(), Gtk::ICON_LOOKUP_USE_BUILTIN);
-    return iconInfo.load_icon();
-}*/
-
 namespace docklight
 {
     void on_window_closed(WnckScreen* screen, WnckWindow* window, gpointer data)
@@ -36,9 +9,9 @@ namespace docklight
             return;
         }
 
-        auto xid = wnck_window_get_xid(window);
-        auto* dc = DockItemContainer::getInstance();
-        dc->remove_entry(xid);
+        gint32 xid = wnck_window_get_xid(window);
+        DockItemContainer* container = get_dockcontainer();
+        container->remove_entry(xid);
     }
 
     void on_window_opened(WnckScreen* screen, WnckWindow* window, gpointer data)
@@ -48,19 +21,34 @@ namespace docklight
             return;
         }
 
-        DockItemContainer* dc = get_dockcontainer();
+        DockItemContainer* container = get_dockcontainer();
+
         gint32 xid = wnck_window_get_xid(window);
-        if (dc->is_exist(xid)) return;
+        if (get_dockcontainer()->is_exist(xid)) return;
 
-        // Gets the icon to be used for window. If no icon was found, a fallback icon is used
-        // Returns :
-        // the icon for window. The caller should reference the returned GdkPixbuf if it needs to
-        // keep the icon around.
         GdkPixbuf* window_icon = wnck_window_get_icon(window);
+        const char* window_icon_name = wnck_window_get_icon_name(window);
+        Glib::RefPtr<Gdk::Pixbuf> window_icon_pixbuf = pixbuf::get_window_icon(window_icon);
 
-        dc->add_entry(xid, wnck_window_get_name(window),
-                      wnck_window_get_class_instance_name(window),
-                      wnck_window_get_class_group_name(window), window_icon);
+        // avoid dots in instance names
+        std::string instance_name(wnck_window_get_class_instance_name(window));
+        std::replace(instance_name.begin(), instance_name.end(), '.', '-');
+
+        // clang-format off
+        container->insert(
+            xid,
+            wnck_window_get_name(window),
+            instance_name,
+            wnck_window_get_class_group_name(window),
+            window_icon_name,
+            window_icon,
+            window_icon_pixbuf);
+        // clang-format on
+
+        // GdkPixbuf* window_icon, when it no longer needs the pixbuf, it should release the
+        // reference it acquired by calling g_object_unref(). The resources associated with a
+        // GdkPixbuf will be freed when its reference count drops to zero.
+        if (G_IS_OBJECT(window_icon)) g_object_unref(window_icon);
     }
 
     AppProvider::AppProvider()
