@@ -22,6 +22,7 @@ libtool \
 gettext \
 autopoint \
 intltool \
+libbamf3-dev \
 gnupg -y
 
 echo "done."
