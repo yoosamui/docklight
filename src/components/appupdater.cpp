@@ -42,6 +42,7 @@ namespace docklight
             window_icon);
         // clang-format on
 
+        // TODO causes Gelib Errors
         // GdkPixbuf* window_icon, when it no longer needs the pixbuf, it should release the
         // reference it acquired by calling g_object_unref(). The resources associated with a
         // GdkPixbuf will be freed when its reference count drops to zero.
