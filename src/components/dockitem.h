@@ -14,7 +14,8 @@ namespace docklight
     class IDockItem : public Glib::Object
     {
       protected:
-        gint32 m_xid = 0;  // 32-bit identification number,
+        guint32 m_xid = 0;  // 32-bit identification number,
+        guint32 m_hash = 0;
 
         bool m_has_desktop_file = true;
 
@@ -28,7 +29,7 @@ namespace docklight
 
       protected:
         // setters
-        virtual void set_xid(gint32 xid) = 0;
+        virtual void set_xid(guint32 xid) = 0;
         virtual void set_title(Glib::ustring title) = 0;
         virtual void set_window_name(Glib::ustring window_name) = 0;
         virtual void set_instance_name(Glib::ustring instance_name) = 0;
@@ -40,7 +41,8 @@ namespace docklight
         virtual void set_has_desktop_file(bool has) = 0;
 
         // getters
-        virtual const gint32 get_xid() const = 0;
+        virtual const guint32 get_xid() const = 0;
+        virtual const guint32 get_hash() const = 0;
         virtual const Glib::ustring& get_window_name() const = 0;
         virtual const Glib::ustring& get_title() const = 0;
         virtual const Glib::ustring& get_instance_name() const = 0;
@@ -54,14 +56,14 @@ namespace docklight
     class DockItem : public IDockItem
     {
       public:
-        DockItem();
+        DockItem(const Glib::ustring& instance_name, const Glib::ustring& group_name);
         ~DockItem();
 
         // implementations
         bool const has_desktop_file() const;
 
         // setters
-        void set_xid(gint32 xid);
+        void set_xid(guint32 xid);
         void set_icon_name(Glib::ustring icon_name);
         //     void set_icon(Glib::RefPtr<Gdk::Pixbuf> icon);
         void set_has_desktop_file(bool has);
@@ -73,7 +75,8 @@ namespace docklight
         void set_desktop_file(Glib::ustring desktop_file);
 
         // Getters
-        const gint32 get_xid() const;
+        const guint32 get_xid() const;
+        const guint32 get_hash() const;
         const Glib::ustring& get_window_name() const;
         const Glib::ustring& get_title() const;
         const Glib::ustring& get_group_name() const;

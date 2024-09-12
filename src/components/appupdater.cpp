@@ -28,15 +28,11 @@ namespace docklight
         GdkPixbuf* window_icon = wnck_window_get_icon(window);
         const char* window_icon_name = wnck_window_get_icon_name(window);
 
-        // avoid dots in instance names
-        std::string instance_name(wnck_window_get_class_instance_name(window));
-        std::replace(instance_name.begin(), instance_name.end(), '.', '-');
-
         // clang-format off
         container->insert(
             xid,
             wnck_window_get_name(window),
-            instance_name,
+            wnck_window_get_class_instance_name(window),
             wnck_window_get_class_group_name(window),
             window_icon_name,
             window_icon);
