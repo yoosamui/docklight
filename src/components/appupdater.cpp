@@ -10,8 +10,7 @@ namespace docklight
         }
 
         gint32 xid = wnck_window_get_xid(window);
-        DockItemContainer* container = get_dockcontainer();
-        container->remove_entry(xid);
+        get_dockcontainer()->remove(xid);
     }
 
     void on_window_opened(WnckScreen* screen, WnckWindow* window, gpointer data)

@@ -24,19 +24,11 @@ namespace docklight
                 // try to load from window;
                 if (window_icon) {
                     pixbuf = get_window_icon(window_icon, size);
-                    // pixbuf->save("/home/yoo/TEMP/JUAN", "png");
-                    // return pixbuf;
                 }
 
                 if (!pixbuf) {
                     g_warning("(pixbuf::get_icon) icon '%s' cannot be found!.\n", icon_name);
                 }
-
-                // if (pixbuf) {
-                // g_print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAi\n");
-                // pixbuf->save("/home/yoo/TEMP/JUAN", "png");
-                //} else {
-                //}
 
             } else {
                 if (icon) {
@@ -44,7 +36,7 @@ namespace docklight
                 }
             }
 
-            //  if (G_IS_OBJECT(icon)) g_object_unref(icon);
+            // if (G_IS_OBJECT(icon)) g_object_unref(icon);
             return pixbuf;
         }
 

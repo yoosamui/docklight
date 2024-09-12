@@ -19,7 +19,7 @@ namespace docklight
     AppWindow::AppWindow()
     {
         // A window to implement a docking bar used for creating the dock panel.
-        // set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
+        set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
         set_resizable(true);
         set_skip_taskbar_hint(true);
         set_skip_pager_hint(true);
@@ -165,8 +165,8 @@ namespace docklight
                 }
             }
 
-            //            m_composite = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
-            m_composite.show_at(800, 800);
+            m_composite = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
+            m_composite->show_at(800, 800);
 
             // shared_ptr<DockItem> item = shared_ptr<DockItem>(new DockItem());
             // shared_ptr<DockItem> item = shared_ptr<DockItem>(new DockItem());

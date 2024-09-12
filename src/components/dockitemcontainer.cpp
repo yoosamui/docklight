@@ -43,7 +43,7 @@ namespace docklight
     }
 
     // TODO make it thread save
-    int DockItemContainer::remove_entry(guint32 xid)
+    int DockItemContainer::remove(guint32 xid)
     {
         return m_appmap.erase(xid);
     }
@@ -102,13 +102,6 @@ namespace docklight
         }
     }
 
-    bool DockItemContainer::insertX(gint32 xid, const Glib::ustring& window_name,
-                                    const Glib::ustring& instance_name,
-                                    const Glib::ustring& group_name, const gchar* window_icon_name,
-                                    GdkPixbuf* window_icon)
-    {
-        return false;
-    }
     // clang-format off
     bool DockItemContainer::insert(guint32 xid,
                       const Glib::ustring& window_name,
@@ -124,7 +117,7 @@ namespace docklight
         const Glib::RefPtr<DockItem> dockitem =
             Glib::RefPtr<DockItem>(new DockItem(instance_name, group_name));
 
-        gint32 instance_hash = dockitem->get_hash();
+        guint32 instance_hash = dockitem->get_hash();
         dockitem->set_xid(xid);
         dockitem->set_window_name(window_name);
         // dockitem->set_instance_name(instance_name);

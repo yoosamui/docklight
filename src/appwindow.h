@@ -71,8 +71,8 @@ namespace docklight
         // bool on_leave_notify_event(GdkEventCrossing* crossing_event);
 
       private:
-        // Glib::RefPtr<ExplodesWindow> m_composite;
-        ExplodesWindow m_composite;
+        Glib::RefPtr<ExplodesWindow> m_composite;
+        // ExplodesWindow m_composite;
         Panel m_panel;
         static Glib::RefPtr<Gtk::Application> m_application;
     };
