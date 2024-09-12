@@ -101,18 +101,24 @@ namespace docklight
         }
     }
 
+    bool DockItemContainer::insertX(gint32 xid, const Glib::ustring& window_name,
+                                    const Glib::ustring& instance_name,
+                                    const Glib::ustring& group_name, const gchar* window_icon_name,
+                                    GdkPixbuf* window_icon)
+    {
+        return false;
+    }
     // clang-format off
     bool DockItemContainer::insert(gint32 xid,
                       const Glib::ustring& window_name,
                       const Glib::ustring& instance_name,
                       const Glib::ustring& group_name,
                       const gchar* window_icon_name,
-                      GdkPixbuf* window_icon,
-                      const Glib::RefPtr<Gdk::Pixbuf> window_icon_pixbuf)
+                      GdkPixbuf* window_icon)
     {
         // clang-format on
         if (is_exist(xid)) return false;
-
+        //#ifdef ENTRY
         // set the members values in DockItem
         const Glib::RefPtr<DockItem> dockitem = Glib::RefPtr<DockItem>(new DockItem());
         dockitem->set_xid(xid);
@@ -130,8 +136,9 @@ namespace docklight
         // Get the desktop app file.
         // We handle here only apps with desktop files.
         const gchar* desktop_file = bamf_application_get_desktop_file(bamfapp);
+        //#endif
+        //#ifdef TESTING
         if (desktop_file) {
-#ifdef TESTING
             dockitem->set_desktop_file(desktop_file);
 
             Glib::RefPtr<Gio::DesktopAppInfo> appinfo =
@@ -152,6 +159,7 @@ namespace docklight
             // Insert the new app DockItem object.
             m_appmap.insert({xid, dockitem});
 
+            //#endif
             // insert the desktop icon to the iconmap only if not already exist.
             // The scope finish hre return true if already exist.
             if (m_iconmap.count(instance_name) != 0) return true;
@@ -165,26 +173,26 @@ namespace docklight
                 // add the DockIcon object with the new icon.
                 m_iconmap.insert({instance_name, dockicon});
             }
-#endif
-        } else {
-#ifdef TEST2
-            dockitem->set_has_desktop_file(false);
-            dockitem->set_title(window_icon_name);
-            dockitem->set_icon_name(instance_name);
 
-            m_appmap.insert({xid, dockitem});
-
-            // insert the window icon if not already exist.
-            if (m_iconmap.count(instance_name) != 0) return false;
-
-            //    const Glib::RefPtr<Gdk::Pixbuf> icon = pixbuf::get_window_icon(window_icon);
-            Glib::RefPtr<DockIcon> dockicon =
-                Glib::RefPtr<DockIcon>(new DockIcon(window_icon_pixbuf /*icon*/, ""));
-
-            // insert the new DockIcon to the map.
-            m_iconmap.insert({instance_name, dockicon});
-#endif
+            return true;
         }
+
+        dockitem->set_has_desktop_file(false);
+        dockitem->set_title(window_icon_name);
+        dockitem->set_icon_name(instance_name);
+
+        m_appmap.insert({xid, dockitem});
+
+        // insert the window icon if not already exist.
+        if (m_iconmap.count(instance_name) != 0) return false;
+
+        const Glib::RefPtr<Gdk::Pixbuf> icon = pixbuf::get_window_icon(window_icon);
+        Glib::RefPtr<DockIcon> dockicon = Glib::RefPtr<DockIcon>(new DockIcon(icon, ""));
+
+        // insert the new DockIcon to the map.
+        m_iconmap.insert({instance_name, dockicon});
+
+        //#endif
         return true;
     }
 

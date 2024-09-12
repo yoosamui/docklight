@@ -83,6 +83,6 @@ namespace docklight
         const Glib::ustring& get_icon_name() const;
         const Glib::RefPtr<Gdk::Pixbuf>& get_icon() const;
 
-        const Glib::ustring to_string() const;
+        const Glib::ustring to_string();
     };
 }  // namespace docklight

@@ -39,7 +39,7 @@ namespace docklight
     void Panel::init()
     {
         // frame_time = GLib.get_monotonic_time();
-        m_app_provider = Glib::RefPtr<AppProvider>(new AppProvider());
+        // m_app_provider = Glib::RefPtr<AppProvider>(new AppProvider());
 
         // DockItem* m_dockitem = DockItem::getInstance();
 

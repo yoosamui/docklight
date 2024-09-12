@@ -29,7 +29,8 @@ namespace docklight
       private:
         sigc::connection m_sigc_draw;
 
-        Glib::RefPtr<AppProvider> m_app_provider;
+        //        Glib::RefPtr<AppProvider> m_app_provider;
+        AppProvider m_app_provider;
 
         bool on_drawX(const Cairo::RefPtr<Cairo::Context>& cr);
         bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;

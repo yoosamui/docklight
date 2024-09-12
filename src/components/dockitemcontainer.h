@@ -58,11 +58,19 @@ namespace docklight
                 const Glib::ustring& instance_name,
                 const Glib::ustring& group_name,
                 const gchar* window_icon_name,
-                GdkPixbuf* window_icon,
-                const Glib::RefPtr<Gdk::Pixbuf> window_icon_pixbuf);
+                GdkPixbuf* window_icon);
 
         // clang-format on
 
+        // clang-format off
+        bool insertX(gint32 xid,
+                const Glib::ustring& window_name,
+                const Glib::ustring& instance_name,
+                const Glib::ustring& group_name,
+                const gchar* window_icon_name,
+                GdkPixbuf* window_icon);
+
+        // clang-format on
       private:
         int count_items_by_title(const Glib::ustring& title);
         void on_theme_changed();

@@ -49,7 +49,6 @@ namespace docklight
         position::init(*(this));
         m_panel.init();
 
-        m_composite = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
         return EXIT_SUCCESS;
     }
 
@@ -143,12 +142,12 @@ namespace docklight
             //  this->update_position();
             g_print("Press\n");
 
-            /*DockItemContainer* container = get_dockcontainer();
+            DockItemContainer* container = get_dockcontainer();
 
             for (const auto& item : container->get_appmap()) {
-                // Glib::RefPtr<DockItem> dockitem = item.second;
-                //     g_print("%s\n", dockitem->to_string().c_str());
-            }*/
+                const Glib::RefPtr<DockItem> dockitem = item.second;
+                g_print("%s\n", dockitem->to_string().c_str());
+            }
 
             /*for (const auto& item : ct->get_iconmap()) {
                 const Glib::ustring instance_name = item.first;
@@ -163,7 +162,7 @@ namespace docklight
             }*/
 
             //            m_composite = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
-            m_composite->show_at(0, 0);
+            m_composite.show_at(800, 800);
 
             // shared_ptr<DockItem> item = shared_ptr<DockItem>(new DockItem());
             // shared_ptr<DockItem> item = shared_ptr<DockItem>(new DockItem());

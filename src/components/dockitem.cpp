@@ -116,10 +116,8 @@ namespace docklight
     // return m_icon;
     //};
 
-    const Glib::ustring DockItem::to_string() const
+    const Glib::ustring DockItem::to_string()
     {
-        return "";
-
         // clang-format off
             std::stringstream ss;
             ss << "xid: " << m_xid << std::endl

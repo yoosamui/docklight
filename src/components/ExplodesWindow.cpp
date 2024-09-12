@@ -30,10 +30,10 @@ namespace docklight
     {
         set_skip_taskbar_hint(true);
         set_skip_pager_hint(true);
+        set_resizable(false);
+        set_can_focus(false);
+        set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
 
-        // TODO GLib-GObject-CRITICAL **: 09:05:26.447: g_object_ref: assertion
-        // 'G_IS_OBJECT (object)' failedthis cause a Glib Critical assertion
-        // set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
         auto filename = "data/images/explodes.svg";
 
         try {
@@ -48,9 +48,6 @@ namespace docklight
                 "Exception 'ExplodesWindow'. Unable to load the desired image: %s, type: %s";
             g_critical(message, filename, p ? p.__cxa_exception_type()->name() : "unknown type");
         }
-
-        set_resizable(false);
-        set_can_focus(false);
 
         m_size = m_image->get_width();
         set_size_request(m_size, m_size);
@@ -74,44 +71,30 @@ namespace docklight
         }
     }
 
+    //  hide();  cause  GLib-GObject-CRITICAL **: 09:33:13.256: g_object_unref: assertion
+    //  'G_IS_OBJECT (object)' failed
+    // TODO Work around
+    /*
+     Asks to keep window above, so that it stays on top.
+     Note that you shouldn’t assume the window is definitely
+     above afterward, because other entities (e.g. the user or
+     [window manager][gtk-X11-arch]) could not keep it above,
+     and not all window managers support keeping windows above.
+     But normally the window will end kept above.
+
+     Just don’t write code that crashes if not.
+     */
+    // set_keep_above();
     bool ExplodesWindow::on_timeout_draw()
 
     {
         m_frame_time = g_get_real_time();
         if (m_frame_time - m_start_time <= DF_EXPLODES_TIMEMAX) {
-            //  hide();  cause  GLib-GObject-CRITICAL **: 09:33:13.256: g_object_unref: assertion
-            //  'G_IS_OBJECT (object)' failed
-            // TODO Work around
-            /*
-             Asks to keep window above, so that it stays on top.
-             Note that you shouldn’t assume the window is definitely
-             above afterward, because other entities (e.g. the user or
-             [window manager][gtk-X11-arch]) could not keep it above,
-             and not all window managers support keeping windows above.
-             But normally the window will end kept above.
-
-             Just don’t write code that crashes if not.
-             */
-            set_keep_above();
-
             Gtk::Widget::queue_draw();
             return true;
         }
 
-        //  hide();  cause  GLib-GObject-CRITICAL **: 09:33:13.256: g_object_unref: assertion
-        //  'G_IS_OBJECT (object)' failed
-        // TODO Work around
-        /*
-         Asks to keep window below, so that it stays on top.
-         Note that you shouldn’t assume the window is definitely
-         below afterward, because other entities (e.g. the user or
-         [window manager][gtk-X11-arch]) could not keep it below,
-         and not all window managers support keeping windows below.
-         But normally the window will end kept below.
-
-         Just don’t write code that crashes if not.
-         */
-        set_keep_below();
+        hide();
         return true;
     }
     void ExplodesWindow::show_at(int x, int y)
