@@ -78,8 +78,8 @@ namespace docklight
       private:
         int count_items_by_title(const Glib::ustring& title);
         void on_theme_changed();
-        bool get_theme_icon(guint xid, Glib::RefPtr<Gdk::Pixbuf>& pixbuf,
-                            Glib::ustring& title_name);
+        bool get_theme_icon(guint xid, Glib::RefPtr<Gdk::Pixbuf>& pixbuf, Glib::ustring& title_name,
+                            Glib::ustring& desktop_file);
 
       private:
         std::map<guint32, Glib::RefPtr<DockItem>> m_appmap;

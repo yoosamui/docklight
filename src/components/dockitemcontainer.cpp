@@ -103,7 +103,7 @@ namespace docklight
     }
 
     bool DockItemContainer::get_theme_icon(guint xid, Glib::RefPtr<Gdk::Pixbuf>& pixbuf,
-                                           Glib::ustring& title_name)
+                                           Glib::ustring& title_name, Glib::ustring& desktop_file)
     {
         // This matcher is owned by bamf and shared between other callers.
         BamfMatcher* matcher = bamf_matcher_get_default();
@@ -118,12 +118,14 @@ namespace docklight
             return false;
         }
 
-        const char* desktop_file = bamf_application_get_desktop_file(bamfapp);
-        if (!desktop_file) {
+        const char* desktopfile = bamf_application_get_desktop_file(bamfapp);
+        if (!desktopfile) {
             g_warning("get_theme_icon::desktop_file: the object has not been created.");
 
             return false;
         }
+        // set the output parameter.
+        desktop_file = desktop_file;
 
         Glib::RefPtr<Gio::DesktopAppInfo> appinfo =
             Gio::DesktopAppInfo::create_from_filename(desktop_file);
@@ -188,7 +190,8 @@ namespace docklight
         Glib::RefPtr<Gdk::Pixbuf> pixbuf;
 
         Glib::ustring title_name;
-        if (get_theme_icon(xid, pixbuf, title_name)) {
+        Glib::ustring desktop_file;
+        if (get_theme_icon(xid, pixbuf, title_name, desktop_file)) {
             dockitem->set_title(title_name);
             dockitem->set_icon(pixbuf);
             // Insert the new app DockItem object.

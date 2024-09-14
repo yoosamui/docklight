@@ -149,21 +149,21 @@ namespace docklight
                 g_print("%s\n", dockitem->to_string().c_str());
             }
 
-            for (const auto& item : container->get_iconmap()) {
-                gint32 instance_hash = item.first;
-                const Glib::RefPtr<DockIcon> dockicon = item.second;
+            // for (const auto& item : container->get_iconmap()) {
+            // gint32 instance_hash = item.first;
+            // const Glib::RefPtr<DockIcon> dockicon = item.second;
 
-                if (dockicon->get_icon()) {
-                    g_print("->>[%u] %s\n", instance_hash, dockicon->get_title().c_str());
-                    try {
-                        dockicon->get_icon()->save("/home/yoo/TEMP/" + dockicon->get_title(),
-                                                   "png");
-                    } catch (...) {
-                    }
-                } else {
-                    g_critical("dockicon m_icon is NULL\n");
-                }
-            }
+            // if (dockicon->get_icon()) {
+            // g_print("->>[%u] %s\n", instance_hash, dockicon->get_title().c_str());
+            // try {
+            // dockicon->get_icon()->save("/home/yoo/TEMP/" + dockicon->get_title(),
+            //"png");
+            //} catch (...) {
+            //}
+            //} else {
+            // g_critical("dockicon m_icon is NULL\n");
+            //}
+            //}
 
             m_composite = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
             m_composite->show_at(800, 800);
