@@ -145,6 +145,7 @@ namespace docklight
 
             // get the icon name from the desktop file.
             char* icon_name = g_desktop_app_info_get_string(appinfo->gobj(), "Icon");
+
             if (!icon_name) return false;
 
             // add fields to the DockItem object.
@@ -162,7 +163,7 @@ namespace docklight
             if (m_iconmap.count(instance_hash) != 0) return true;
 
             // Get the Pixbuf from the default theme or from window_icon
-            Glib::RefPtr<Gdk::Pixbuf> icon = pixbuf::get_icon(icon_name, window_icon);
+            Glib::RefPtr<Gdk::Pixbuf> icon = pixbuf::get_theme_icon(icon_name, window_icon);
             if (icon) {
                 const Glib::RefPtr<DockIcon> dockicon =
                     Glib::RefPtr<DockIcon>(new DockIcon(icon, title, desktop_file));
