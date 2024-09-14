@@ -42,15 +42,15 @@ namespace docklight
         m_has_desktop_file = has;
     }
 
+    inline void DockItem::set_icon(Glib::RefPtr<Gdk::Pixbuf> icon)
+    {
+        m_icon = icon;
+    }
+
     inline void DockItem::set_icon_name(Glib::ustring icon_name)
     {
         m_icon_name = icon_name;
     }
-
-    // inline void DockItem::set_icon(Glib::RefPtr<Gdk::Pixbuf> icon)
-    //{
-    // m_icon = icon;
-    //}
 
     inline void DockItem::set_title(Glib::ustring title)
     {
@@ -127,6 +127,11 @@ namespace docklight
     {
         return m_desktop_file;
     };
+
+    inline const Glib::RefPtr<Gdk::Pixbuf>& DockItem::get_icon() const
+    {
+        return m_icon;
+    }
 
     inline const Glib::ustring& DockItem::get_icon_name() const
     {

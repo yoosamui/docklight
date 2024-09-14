@@ -28,9 +28,13 @@ namespace docklight
         Glib::ustring m_icon_name = {};
         Glib::ustring m_description = {};
 
+        Glib::RefPtr<Gdk::Pixbuf> m_icon;
+        std::map<guint32, Glib::RefPtr<DockItem>> m_members;
+
       protected:
         // setters
         virtual void set_xid(guint32 xid) = 0;
+        virtual void set_icon(Glib::RefPtr<Gdk::Pixbuf> icon) = 0;
         virtual void set_attached(bool attached) = 0;
         virtual void set_title(Glib::ustring title) = 0;
         virtual void set_window_name(Glib::ustring window_name) = 0;
@@ -39,7 +43,6 @@ namespace docklight
         virtual void set_desktop_file(Glib ::ustring m_desktop_file) = 0;
         virtual void set_icon_name(Glib::ustring icon_name) = 0;
         virtual void set_description(Glib::ustring icon_name) = 0;
-        //  virtual void set_icon(Glib::RefPtr<Gdk::Pixbuf> icon) = 0;
         virtual void set_has_desktop_file(bool has) = 0;
 
         // getters
@@ -47,6 +50,8 @@ namespace docklight
 
         virtual const guint32 get_xid() const = 0;
         virtual const guint32 get_hash() const = 0;
+
+        virtual const Glib::RefPtr<Gdk::Pixbuf>& get_icon() const = 0;
 
         virtual const Glib::ustring& get_window_name() const = 0;
         virtual const Glib::ustring& get_title() const = 0;
@@ -70,6 +75,7 @@ namespace docklight
         void set_xid(guint32 xid);
         void set_attached(bool attached);
 
+        void set_icon(Glib::RefPtr<Gdk::Pixbuf> icon);
         void set_icon_name(Glib::ustring icon_name);
         void set_has_desktop_file(bool has);
         void set_title(Glib::ustring title);
@@ -81,8 +87,10 @@ namespace docklight
 
         // Getters
         const bool get_is_attached() const;
+
         const guint32 get_xid() const;
         const guint32 get_hash() const;
+
         const Glib::ustring& get_window_name() const;
         const Glib::ustring& get_title() const;
         const Glib::ustring& get_group_name() const;
@@ -90,8 +98,8 @@ namespace docklight
         const Glib::ustring& get_instance_name() const;
         const Glib::ustring& get_desktop_file() const;
         const Glib::ustring& get_icon_name() const;
-        const Glib::RefPtr<Gdk::Pixbuf>& get_icon() const;
-
         const Glib::ustring to_string();
+
+        const Glib::RefPtr<Gdk::Pixbuf>& get_icon() const;
     };
 }  // namespace docklight

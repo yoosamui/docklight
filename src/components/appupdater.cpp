@@ -72,7 +72,7 @@ namespace docklight
         }
         //	Looks up a string value in the keyfile backing info.
         // this method deliver non group names. Don't used.
-        // Glib::ustring icon_name = appinfo->get_string("Icon");
+        //        Glib::ustring icon_name = appinfo->get_string("Icon");
 
         char* icon_name = g_desktop_app_info_get_string(appinfo->gobj(), "Icon");
         if (!icon_name) {
@@ -97,7 +97,7 @@ namespace docklight
             return false;
         }
 
-        delete desktop_file;
+        //       delete desktop_file;
         delete icon_name;
 
         return pixbuf ? true : false;

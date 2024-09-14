@@ -63,8 +63,11 @@ namespace docklight
         bool is_exist(guint32 xid) const;
         bool get_dockitem_by_xid(gint32 xid, Glib::RefPtr<DockItem>& item);
 
+        bool insert(guint32 xid, const Glib::ustring& instance_name,
+                    const Glib::ustring& group_name, const Glib::ustring& window_name);
+
         // clang-format off
-        bool insert(guint32 xid,
+        bool insertX(guint32 xid,
                 const Glib::ustring& window_name,
                 const Glib::ustring& instance_name,
                 const Glib::ustring& group_name,
@@ -75,6 +78,8 @@ namespace docklight
       private:
         int count_items_by_title(const Glib::ustring& title);
         void on_theme_changed();
+        bool get_theme_icon(guint xid, Glib::RefPtr<Gdk::Pixbuf>& pixbuf,
+                            Glib::ustring& title_name);
 
       private:
         std::map<guint32, Glib::RefPtr<DockItem>> m_appmap;

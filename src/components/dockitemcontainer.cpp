@@ -102,8 +102,103 @@ namespace docklight
         }
     }
 
+    bool DockItemContainer::get_theme_icon(guint xid, Glib::RefPtr<Gdk::Pixbuf>& pixbuf,
+                                           Glib::ustring& title_name)
+    {
+        // This matcher is owned by bamf and shared between other callers.
+        BamfMatcher* matcher = bamf_matcher_get_default();
+        if (!matcher) {
+            g_warning("get_theme_icon::(amfMatcher: the object has not been created.");
+            return false;
+        }
+
+        BamfApplication* bamfapp = bamf_matcher_get_application_for_xid(matcher, xid);
+        if (!bamfapp) {
+            g_warning("get_theme_icon::BamfApplication: the object has not been created.");
+            return false;
+        }
+
+        const char* desktop_file = bamf_application_get_desktop_file(bamfapp);
+        if (!desktop_file) {
+            g_warning("get_theme_icon::desktop_file: the object has not been created.");
+
+            return false;
+        }
+
+        Glib::RefPtr<Gio::DesktopAppInfo> appinfo =
+            Gio::DesktopAppInfo::create_from_filename(desktop_file);
+
+        if (!appinfo) {
+            g_warning("get_theme_icon::Gio::DesktopAppInfo: the object has not been created.");
+            return false;
+        }
+        //	Looks up a string value in the keyfile backing info.
+        // this method deliver non group names. Don't used.
+        //        Glib::ustring icon_name = appinfo->get_string("Icon");
+
+        char* icon_name = g_desktop_app_info_get_string(appinfo->gobj(), "Icon");
+        if (!icon_name) {
+            g_warning(
+                "get_theme_icon::g_desktop_app_info_get_string, icon_name : the object has not "
+                "been created.");
+
+            return false;
+        }
+
+        // set the out parameter.
+        // This is the name taken from the desktop file.
+        title_name = appinfo->get_string("Name");
+
+        // get the default theme
+        Glib::RefPtr<Gtk::IconTheme> theme = Gtk::IconTheme::get_default();
+        if (!theme) {
+            g_warning("get_theme_icon::Gtk::IconTheme: the object has not been created.");
+            return false;
+        }
+        try {
+            // Always get the icon scaled to the
+            // requested size.
+            pixbuf = theme->load_icon(icon_name, 128, Gtk::IconLookupFlags::ICON_LOOKUP_FORCE_SIZE);
+        } catch (...) {
+            g_warning("get_theme_icon::pixbuf: Exception the object has not been created. (%s)",
+                      icon_name);
+            return false;
+        }
+
+        delete icon_name;
+
+        return pixbuf ? true : false;
+    }
+
+    bool DockItemContainer::insert(guint32 xid, const Glib::ustring& instance_name,
+                                   const Glib::ustring& group_name,
+                                   const Glib::ustring& window_name)
+    {
+        if (is_exist(xid)) return false;
+
+        // set the members values in DockItem
+        const Glib::RefPtr<DockItem> dockitem =
+            Glib::RefPtr<DockItem>(new DockItem(instance_name, group_name));
+
+        guint32 instance_hash = dockitem->get_hash();
+
+        dockitem->set_xid(xid);
+        dockitem->set_window_name(window_name);
+
+        Glib::RefPtr<Gdk::Pixbuf> pixbuf;
+
+        Glib::ustring title_name;
+        if (get_theme_icon(xid, pixbuf, title_name)) {
+            dockitem->set_title(title_name);
+
+            // Insert the new app DockItem object.
+            m_appmap.insert({xid, dockitem});
+        }
+
+        return true;
+    }
     // clang-format off
-    bool DockItemContainer::insert(guint32 xid,
+    bool DockItemContainer::insertX(guint32 xid,
                       const Glib::ustring& window_name,
                       const Glib::ustring& instance_name,
                       const Glib::ustring& group_name,
