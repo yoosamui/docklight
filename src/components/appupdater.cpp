@@ -109,6 +109,15 @@ namespace docklight
             g_warning("wck-window is null.\n");
             return;
         }
+
+        gint32 xid = wnck_window_get_xid(window);
+        DockItemContainer* container = get_dockcontainer();
+        if (get_dockcontainer()->is_exist(xid)) return;
+
+        container->insert(xid, wnck_window_get_class_instance_name(window),
+                          wnck_window_get_class_group_name(window), wnck_window_get_name(window));
+
+#ifdef TEST1
         //  desktop file
         Glib::RefPtr<Gdk::Pixbuf> pixbuf;
         gint32 xid = wnck_window_get_xid(window);
@@ -147,6 +156,7 @@ namespace docklight
         // }
 
         return;
+#endif
         // Glib::RefPtr<Gdk::Pixbuf> icon = theme->load_icon(window_icon_name, 128);
 
         // std::vector<Glib::ustring> icon_names = theme->list_icons();

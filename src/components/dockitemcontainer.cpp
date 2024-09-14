@@ -190,7 +190,7 @@ namespace docklight
         Glib::ustring title_name;
         if (get_theme_icon(xid, pixbuf, title_name)) {
             dockitem->set_title(title_name);
-
+            dockitem->set_icon(pixbuf);
             // Insert the new app DockItem object.
             m_appmap.insert({xid, dockitem});
         }
