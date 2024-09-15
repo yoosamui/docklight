@@ -3,8 +3,10 @@
 namespace docklight
 {
 
-    DockItem::DockItem(const Glib::ustring& instance_name, const Glib::ustring& group_name)
+    DockItem::DockItem(guint32 xid, const Glib::ustring& instance_name,
+                       const Glib::ustring& group_name)
     {
+        m_xid = xid;
         m_instance_name = instance_name;
         m_group_name = group_name;
 
@@ -27,6 +29,13 @@ namespace docklight
     }
 
     // Setters
+    inline const void DockItem::add_child(Glib::RefPtr<DockItem> child)
+    {
+        m_childmap.insert({child->get_xid(), child});
+        g_print("-----------------------------------%d [%d]\n", child->get_xid(),
+                (int)m_childmap.size());
+    }
+
     inline void DockItem::set_xid(guint32 xid)
     {
         m_xid = xid;
@@ -45,6 +54,11 @@ namespace docklight
     inline void DockItem::set_icon(Glib::RefPtr<Gdk::Pixbuf> icon)
     {
         m_icon = icon;
+    }
+
+    inline const std::map<guint32, Glib::RefPtr<DockItem>>& DockItem::get_childmap() const
+    {
+        return m_childmap;
     }
 
     inline void DockItem::set_icon_name(Glib::ustring icon_name)
@@ -133,6 +147,14 @@ namespace docklight
         return m_icon;
     }
 
+    inline const DockItem* DockItem::get(guint32 xid) const
+    {
+        if (xid == m_xid) {
+            return this;
+        }
+
+        return nullptr;
+    }
     inline const Glib::ustring& DockItem::get_icon_name() const
     {
         return m_icon_name;

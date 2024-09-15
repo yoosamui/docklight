@@ -146,7 +146,21 @@ namespace docklight
 
             for (const auto& item : container->get_appmap()) {
                 const Glib::RefPtr<DockItem> dockitem = item.second;
-                g_print("%s\n", dockitem->to_string().c_str());
+                //     g_print("%s\n", dockitem->to_string().c_str());
+
+                try {
+                    auto pixbuf = dockitem->get_icon();
+                    char filepath[512];
+                    sprintf(filepath, "/home/yoo/TEMP/%d-%s-%s-[%d]", dockitem->get_xid(),
+                            dockitem->get_title().c_str(), dockitem->get_group_name().c_str(),
+                            (int)dockitem->get_childmap().size());
+                    if (pixbuf) {
+                        g_print("%s\n", filepath);
+
+                        pixbuf->save(filepath, "png");
+                    }
+                } catch (...) {
+                }
             }
 
             // for (const auto& item : container->get_iconmap()) {

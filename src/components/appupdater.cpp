@@ -116,11 +116,11 @@ namespace docklight
 
         container->insert(xid, wnck_window_get_class_instance_name(window),
                           wnck_window_get_class_group_name(window), wnck_window_get_name(window));
-
+#define TEST1
 #ifdef TEST1
         //  desktop file
         Glib::RefPtr<Gdk::Pixbuf> pixbuf;
-        gint32 xid = wnck_window_get_xid(window);
+        xid = wnck_window_get_xid(window);
         const char* group_name = wnck_window_get_class_group_name(window);
 
         g_message("APP OPENED!!!!!!!!!!!!");
@@ -129,7 +129,7 @@ namespace docklight
         // g_message("NOTHING");
         //}
         //  if (!get_window_icon(window, pixbuf)) {
-        if (get_theme_icon(window, pixbuf)) {
+        /*if (get_theme_icon(window, pixbuf)) {
             try {
                 char filepath[512];
                 sprintf(filepath, "/home/yoo/TEMP/theme/%d-%s(%s)-THEME", xid,
@@ -138,7 +138,7 @@ namespace docklight
             } catch (...) {
                 // swallow
             }
-        }
+        }*/
         // get member icons if any.
         if (get_window_icon(window, pixbuf)) {
             try {
