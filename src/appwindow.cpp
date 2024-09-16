@@ -161,21 +161,21 @@ namespace docklight
                         dockitem->get_group_name().c_str(), dockitem->get_xid(),
                         (int)dockitem->get_childmap().size());
 
-                // if (pixbuf) {
-                // pixbuf->save(filepath, "png");
-                //}
+                if (pixbuf) {
+                    pixbuf->save(filepath, "png");
+                }
                 g_print("%s\n", filepath);
                 for (const auto& it : dockitem->get_childmap()) {
                     const Glib::RefPtr<DockItem> dockitem = it.second;
 
-                    sprintf(filepath, "/home/yoo/TEMP/---%s-%s-( %d ) ",
+                    sprintf(filepath, "/home/yoo/TEMP/---%s-%s-( %d )",
                             dockitem->get_title().c_str(), dockitem->get_group_name().c_str(),
                             dockitem->get_xid());
                     g_print("---%s\n", filepath);
-                    // pixbuf = dockitem->get_icon();
-                    // if (pixbuf) {
-                    // pixbuf->save(filepath, "png");
-                    //}
+                    pixbuf = dockitem->get_icon();
+                    if (pixbuf) {
+                        pixbuf->save(filepath, "png");
+                    }
                 }
             }
 

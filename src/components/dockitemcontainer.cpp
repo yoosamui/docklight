@@ -27,42 +27,30 @@ namespace docklight
         g_object_unref(m_matcher);
     }
 
-    bool DockItemContainer::is_exist(guint32 xid) const
+    bool DockItemContainer::exist(guint32 xid) const
     {
-        return m_appmap.count(xid) > 0;
+        if (m_appmap.count(xid)) return true;
+
+        for (auto it = m_appmap.begin(); it != m_appmap.end(); it++) {
+            auto dockitem = it->second;
+
+            if (dockitem->get_childmap().count(xid)) return true;
+        }
+
+        return false;
     }
 
-    guint32 DockItemContainer::is_exist(guint32 xid, const Glib::ustring& group) const
+    /**
+     *
+     * returns the xid of the first DockItem group found.
+     */
+    guint32 DockItemContainer::exist(const Glib::ustring& group) const
     {
-        guint32 oxid = 0;
         for (const auto& it : m_appmap) {
             Glib::RefPtr<DockItem> dockitem = it.second;
-            guint32 cxid = dockitem->get_xid();
+            guint32 xid = dockitem->get_xid();
 
-            if (oxid == 0 && dockitem->get_group_name() == group) {
-                oxid = cxid;
-
-                // if (m_appmap.at(cxid)->get_childmap().count(xid) > 0) return 0;
-
-                return cxid;
-            }
-
-            /*if (oxid != dockitem->get_xid() && dockitem->get_group_name() == group) {
-                // item found
-
-                // check if owner already have this child item.
-
-                // if (m_appmap.count(xid) > 0) continue;
-                // auto nxid = dockitem->get_xid();
-                // for (auto& item : m_appmap.at(oxid)->get_childmap()) {
-                // auto child = item.second;
-
-                // if (child->get_xid() != nxid) {
-                // return child->get_xid();
-                //}
-                //}
-                //// }
-            }*/
+            if (dockitem->get_group_name() == group) return xid;
         }
         return 0;
     }
@@ -70,11 +58,6 @@ namespace docklight
     {
         return m_appmap;
     }
-
-    // const std::map<guint32, Glib::RefPtr<DockIcon>> DockItemContainer::get_iconmap() const
-    //{
-    // return m_iconmap;
-    //}
 
     int DockItemContainer::remove(guint32 xid)
     {
@@ -87,7 +70,6 @@ namespace docklight
             auto result = dockitem->remove_child(xid);
 
             if (result) return result;
-            ++it;
         }
 
         return 0;
@@ -97,7 +79,7 @@ namespace docklight
     // That is the case ot at.
     bool DockItemContainer::get_dockitem_by_xid(gint32 xid, Glib::RefPtr<DockItem>& item)
     {
-        if (!is_exist(xid)) return false;
+        if (!exist(xid)) return false;
 
         item = m_appmap.at(xid);
 
@@ -126,7 +108,7 @@ namespace docklight
     void DockItemContainer::on_theme_changed()
     {
         return;
-        for (const auto& item : m_iconmap) {
+        /*for (const auto& item : m_iconmap) {
             Glib::RefPtr<DockIcon> dockicon = item.second;
             Glib::RefPtr<Gio::DesktopAppInfo> appinfo =
                 Gio::DesktopAppInfo::create_from_filename(dockicon->get_desktop_file());
@@ -144,9 +126,17 @@ namespace docklight
 
             // dockicon->set_icon(icon);
             // m_iconmap.at(icon_name) = dockicon;
-        }
+        }*/
     }
 
+    bool DockItemContainer::get_window_icon(GdkPixbuf* gdkpixbuf, Glib::RefPtr<Gdk::Pixbuf>& pixbuf)
+    {
+        if (!gdkpixbuf) return false;
+
+        pixbuf = Glib::wrap(gdkpixbuf, true)->scale_simple(128, 128, Gdk::INTERP_BILINEAR);
+
+        return pixbuf ? true : false;
+    }
     bool DockItemContainer::get_theme_icon(guint xid, Glib::RefPtr<Gdk::Pixbuf>& pixbuf,
                                            Glib::ustring& title_name, Glib::ustring& desktop_file,
                                            Glib::ustring& icon_name)
@@ -215,11 +205,12 @@ namespace docklight
         return pixbuf ? true : false;
     }
 
-    bool DockItemContainer::insert(guint32 xid, const Glib::ustring& instance_name,
+    bool DockItemContainer::insert(guint32 xid, GdkPixbuf* gdkpixbuf,
+                                   const Glib::ustring& instance_name,
                                    const Glib::ustring& group_name,
                                    const Glib::ustring& window_name)
     {
-        if (is_exist(xid)) return false;
+        if (exist(xid)) return false;
 
         // set the members values in DockItem
         const Glib::RefPtr<DockItem> dockitem =
@@ -235,29 +226,36 @@ namespace docklight
         Glib::ustring title_name;
         Glib::ustring desktop_file;
         Glib::ustring icon_name;
-
+        // Handles desktop files icons and Name for the app.
         if (get_theme_icon(xid, pixbuf, title_name, desktop_file, icon_name)) {
-            //  if (!pixbuf) return true;
             dockitem->set_title(title_name);
             dockitem->set_desktop_file(desktop_file);
             dockitem->set_icon_name(icon_name);
             dockitem->set_icon(pixbuf);
 
-            auto cxid = is_exist(xid, group_name);
+            // Group the items by group_name.
+            auto cxid = exist(group_name);
             if (cxid) {
-                auto target = m_appmap.at(cxid);
-                target->add_child(dockitem);
-                //
-                //  g_print("FOUND %s --add %d to owner %d\n", group_name.c_str(), xid, cxid);
+                auto owner = m_appmap.at(cxid);
+                owner->add_child(dockitem);
 
             } else {
+                // Adds a new item.
                 m_appmap.insert({xid, dockitem});
             }
-
-            // g_print("owner --%d %s\n", xid, group_name.c_str());
-            //     m_appmap.insert({xid, dockitem});
         }
 
+        // Handles the window icons
+        if (get_window_icon(gdkpixbuf, pixbuf)) {
+            //// if not exist, we need to add this DockItem.
+            // if (!exist(xid)) {
+            // dockitem->set_title(group_name);
+            // dockitem->set_icon_name(icon_name);
+            // dockitem->set_icon(pixbuf);
+            // g_print("-------------%s %s\n", icon_name.c_str(), group_name.c_str());
+            // m_appmap.insert({xid, dockitem});
+            //}
+        }
         return true;
     }
 
