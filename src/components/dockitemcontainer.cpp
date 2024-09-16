@@ -247,14 +247,14 @@ namespace docklight
 
         // Handles the window icons
         if (get_window_icon(gdkpixbuf, pixbuf)) {
-            //// if not exist, we need to add this DockItem.
-            // if (!exist(xid)) {
-            // dockitem->set_title(group_name);
-            // dockitem->set_icon_name(icon_name);
-            // dockitem->set_icon(pixbuf);
-            // g_print("-------------%s %s\n", icon_name.c_str(), group_name.c_str());
-            // m_appmap.insert({xid, dockitem});
-            //}
+            // if not exist, we need to add this DockItem.
+            if (!exist(xid)) {
+                dockitem->set_title(group_name);
+                dockitem->set_icon_name(icon_name);
+                dockitem->set_icon(pixbuf);
+                g_print("-------------%s %s\n", icon_name.c_str(), group_name.c_str());
+                m_appmap.insert({xid, dockitem});
+            }
         }
         return true;
     }
