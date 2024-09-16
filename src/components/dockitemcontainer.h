@@ -56,12 +56,12 @@ namespace docklight
         virtual ~DockItemContainer();
 
         const std::map<guint32, Glib::RefPtr<DockItem>> get_appmap() const;
-        const std::map<guint32, Glib::RefPtr<DockIcon>> get_iconmap() const;
+        //   const std::map<guint32, Glib::RefPtr<DockIcon>> get_iconmap() const;
 
         int remove(guint32 xid);
 
         bool is_exist(guint32 xid) const;
-        bool is_exist(guint32 xid, const Glib::ustring& group) const;
+        guint32 is_exist(guint32 xid, const Glib::ustring& group) const;
 
         bool get_dockitem_by_xid(gint32 xid, Glib::RefPtr<DockItem>& item);
 
@@ -79,6 +79,14 @@ namespace docklight
         std::map<guint32, Glib::RefPtr<DockIcon>> m_iconmap;
 
         BamfMatcher* m_matcher = nullptr;
+        // void keep_alnum(std::string& s)
+        //{
+        // std::stringstream ss;
+        // int i = 0;
+        // for (i = 0; i < s.length(); i++)
+        // if (isalnum(s[i])) ss << s[i];
+        // s = ss.str();
+        //}
     };
 
     DockItemContainer* get_dockcontainer();

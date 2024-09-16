@@ -20,7 +20,7 @@ namespace docklight
 
     DockItem::~DockItem()
     {
-        //
+        g_print("DESTRUCTOR Dockitem removed  %s %d\n", m_title.c_str(), m_xid);
     }
 
     inline const bool DockItem::has_desktop_file() const
@@ -32,8 +32,6 @@ namespace docklight
     inline const void DockItem::add_child(Glib::RefPtr<DockItem> child)
     {
         m_childmap.insert({child->get_xid(), child});
-        g_print("-----------------------------------%d [%d]\n", child->get_xid(),
-                (int)m_childmap.size());
     }
 
     inline void DockItem::set_xid(guint32 xid)
@@ -160,10 +158,10 @@ namespace docklight
         return m_icon_name;
     }
 
-    // inline const Glib::RefPtr<Gdk::Pixbuf>& DockItem::get_icon() const
-    //{
-    // return m_icon;
-    //};
+    inline const int DockItem::remove_child(guint32 xid)
+    {
+        return m_childmap.erase(xid);
+    }
 
     const Glib::ustring DockItem::to_string()
     {

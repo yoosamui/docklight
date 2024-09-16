@@ -32,32 +32,65 @@ namespace docklight
         return m_appmap.count(xid) > 0;
     }
 
-    bool DockItemContainer::is_exist(guint32 xid, const Glib::ustring& group) const
+    guint32 DockItemContainer::is_exist(guint32 xid, const Glib::ustring& group) const
     {
+        guint32 oxid = 0;
         for (const auto& it : m_appmap) {
             Glib::RefPtr<DockItem> dockitem = it.second;
-            if (xid != dockitem->get_xid() && dockitem->get_group_name() == group) {
-                return true;
+            guint32 cxid = dockitem->get_xid();
+
+            if (oxid == 0 && dockitem->get_group_name() == group) {
+                oxid = cxid;
+
+                // if (m_appmap.at(cxid)->get_childmap().count(xid) > 0) return 0;
+
+                return cxid;
             }
+
+            /*if (oxid != dockitem->get_xid() && dockitem->get_group_name() == group) {
+                // item found
+
+                // check if owner already have this child item.
+
+                // if (m_appmap.count(xid) > 0) continue;
+                // auto nxid = dockitem->get_xid();
+                // for (auto& item : m_appmap.at(oxid)->get_childmap()) {
+                // auto child = item.second;
+
+                // if (child->get_xid() != nxid) {
+                // return child->get_xid();
+                //}
+                //}
+                //// }
+            }*/
         }
-
-        return false;
+        return 0;
     }
-
     const std::map<guint32, Glib::RefPtr<DockItem>> DockItemContainer::get_appmap() const
     {
         return m_appmap;
     }
 
-    const std::map<guint32, Glib::RefPtr<DockIcon>> DockItemContainer::get_iconmap() const
-    {
-        return m_iconmap;
-    }
+    // const std::map<guint32, Glib::RefPtr<DockIcon>> DockItemContainer::get_iconmap() const
+    //{
+    // return m_iconmap;
+    //}
 
-    // TODO make it thread save
     int DockItemContainer::remove(guint32 xid)
     {
-        return m_appmap.erase(xid);
+        if (m_appmap.count(xid) == 1) {
+            return m_appmap.erase(xid);
+        }
+
+        for (auto it = m_appmap.begin(); it != m_appmap.end();) {
+            auto dockitem = it->second;
+            auto result = dockitem->remove_child(xid);
+
+            if (result) return result;
+            ++it;
+        }
+
+        return 0;
     }
 
     // As long as only const operations are used on the container the execution is thread-safe.
@@ -105,8 +138,8 @@ namespace docklight
 
             // ..if (m_iconmap.count(icon_name) != 1) continue;
 
-            // TODO fix this GtkWindow* need to opass            Glib::RefPtr<Gdk::Pixbuf> icon =
-            // pixbuf::get_icon(icon_name);
+            // TODO fix this GtkWindow* need to opass            Glib::RefPtr<Gdk::Pixbuf> icon
+            // = pixbuf::get_icon(icon_name);
             //             if (!icon) continue;
 
             // dockicon->set_icon(icon);
@@ -204,16 +237,25 @@ namespace docklight
         Glib::ustring icon_name;
 
         if (get_theme_icon(xid, pixbuf, title_name, desktop_file, icon_name)) {
+            //  if (!pixbuf) return true;
             dockitem->set_title(title_name);
             dockitem->set_desktop_file(desktop_file);
             dockitem->set_icon_name(icon_name);
             dockitem->set_icon(pixbuf);
 
-            if (is_exist(xid, group_name)) {
-                dockitem->add_child(dockitem);
+            auto cxid = is_exist(xid, group_name);
+            if (cxid) {
+                auto target = m_appmap.at(cxid);
+                target->add_child(dockitem);
+                //
+                //  g_print("FOUND %s --add %d to owner %d\n", group_name.c_str(), xid, cxid);
+
             } else {
                 m_appmap.insert({xid, dockitem});
             }
+
+            // g_print("owner --%d %s\n", xid, group_name.c_str());
+            //     m_appmap.insert({xid, dockitem});
         }
 
         return true;

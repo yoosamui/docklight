@@ -143,23 +143,39 @@ namespace docklight
             g_print("Press\n");
 
             DockItemContainer* container = get_dockcontainer();
+            // g_print("Owner %d %s\n", dockitem->to_string().c_str());
+            //               g_print("Owner %d %s\n", dockitem->get_xid(),
+            //               dockitem->get_group_name().c_str());
+            // for (const auto& it : dockitem->get_childmap()) {
+            // const Glib::RefPtr<DockItem> dockitem = item.second;
+            // g_print("    Child %d %s\n", dockitem->get_xid(),
+            // dockitem->get_group_name().c_str());
+            //}
 
             for (const auto& item : container->get_appmap()) {
                 const Glib::RefPtr<DockItem> dockitem = item.second;
-                //     g_print("%s\n", dockitem->to_string().c_str());
 
-                try {
-                    auto pixbuf = dockitem->get_icon();
-                    char filepath[512];
-                    sprintf(filepath, "/home/yoo/TEMP/%d-%s-%s-[%d]", dockitem->get_xid(),
+                auto pixbuf = dockitem->get_icon();
+                char filepath[512];
+                sprintf(filepath, "/home/yoo/TEMP/%s-%s-%d ( %d )", dockitem->get_title().c_str(),
+                        dockitem->get_group_name().c_str(), dockitem->get_xid(),
+                        (int)dockitem->get_childmap().size());
+
+                // if (pixbuf) {
+                // pixbuf->save(filepath, "png");
+                //}
+                g_print("%s\n", filepath);
+                for (const auto& it : dockitem->get_childmap()) {
+                    const Glib::RefPtr<DockItem> dockitem = it.second;
+
+                    sprintf(filepath, "/home/yoo/TEMP/---%s-%s-( %d ) ",
                             dockitem->get_title().c_str(), dockitem->get_group_name().c_str(),
-                            (int)dockitem->get_childmap().size());
-                    if (pixbuf) {
-                        g_print("%s\n", filepath);
-
-                        pixbuf->save(filepath, "png");
-                    }
-                } catch (...) {
+                            dockitem->get_xid());
+                    g_print("---%s\n", filepath);
+                    // pixbuf = dockitem->get_icon();
+                    // if (pixbuf) {
+                    // pixbuf->save(filepath, "png");
+                    //}
                 }
             }
 
@@ -179,8 +195,8 @@ namespace docklight
             //}
             //}
 
-            m_composite = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
-            m_composite->show_at(800, 800);
+            // m_composite = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
+            // m_composite->show_at(800, 800);
 
             // shared_ptr<DockItem> item = shared_ptr<DockItem>(new DockItem());
             // shared_ptr<DockItem> item = shared_ptr<DockItem>(new DockItem());

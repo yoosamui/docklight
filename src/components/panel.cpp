@@ -58,7 +58,7 @@ namespace docklight
         m_sigc_draw =
             Glib::signal_timeout().connect(sigc::mem_fun(this, &Panel::on_timeout_draw), 1000 / 15);
         m_mouse_enter = true;
-        g_print("On Enter\n");
+        //   g_print("On Enter\n");
         // m_mouse_in = true;
         return true;
     }
@@ -67,7 +67,7 @@ namespace docklight
     {
         m_sigc_draw.disconnect();
         m_mouse_enter = false;
-        g_print("On leave\n");
+        // g_print("On leave\n");
         // m_mouse_in = false;
         return true;
     }
