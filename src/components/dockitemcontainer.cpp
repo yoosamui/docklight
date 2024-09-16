@@ -82,7 +82,7 @@ namespace docklight
             return m_appmap.erase(xid);
         }
 
-        for (auto it = m_appmap.begin(); it != m_appmap.end();) {
+        for (auto it = m_appmap.begin(); it != m_appmap.end(); it++) {
             auto dockitem = it->second;
             auto result = dockitem->remove_child(xid);
 
