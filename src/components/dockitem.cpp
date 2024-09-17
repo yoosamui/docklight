@@ -54,7 +54,7 @@ namespace docklight
         m_icon = icon;
     }
 
-    inline const std::multimap<guint32, Glib::RefPtr<DockItem>>& DockItem::get_childmap() const
+    inline const std::map<guint32, Glib::RefPtr<DockItem>>& DockItem::get_childmap() const
     {
         return m_childmap;
     }
@@ -96,6 +96,7 @@ namespace docklight
 
     // Getters
 
+    //   Glib::RefPtr<DockItem>& get_mutable()
     inline const guint32 DockItem::get_hash() const
     {
         return m_hash;

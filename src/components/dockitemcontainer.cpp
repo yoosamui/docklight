@@ -54,6 +54,11 @@ namespace docklight
         }
         return 0;
     }
+
+    // const void modify_dockitem(guint xid, DockItem& dockitem) {
+
+    //}
+
     const std::map<guint32, Glib::RefPtr<DockItem>> DockItemContainer::get_appmap() const
     {
         return m_appmap;
@@ -227,6 +232,7 @@ namespace docklight
         Glib::ustring title_name;
         Glib::ustring desktop_file;
         Glib::ustring icon_name;
+
         // Handles desktop files icons and Name for the app.
         if (get_theme_icon(xid, pixbuf, title_name, desktop_file, icon_name)) {
             dockitem->set_title(title_name);
@@ -250,25 +256,85 @@ namespace docklight
         if (get_window_icon(gdkpixbuf, pixbuf)) {
             // if not exist, we need to add this DockItem.
             // if (exist(xid)) {
-            if (group_name == "Xfce4-settings-manager") {
-                auto cxid = exist(group_name);
-                if (cxid /*&& cxid != xid*/) {
-                    //  dockitem->set_title(group_name);
+            //  if (group_name == "Xfce4-settings-manager" || group_name == "thunderbird-default") {
+            auto cxid = exist(group_name);
+            if (cxid /*&& cxid != xid*/) {
+                // dockitem->set_title(window_icon_name);
+                // dockitem->set_icon_name(icon_name);
+                // dockitem->set_group_name(group_name);
+                // dockitem->set_icon(pixbuf);
+                auto owner = m_appmap.at(cxid);
+                // checks if the child item allready exist.
+                if (owner->get_childmap().count(xid)) {
+                    remove(xid);  // remove the currenti child.
+
+                    const Glib::RefPtr<DockItem> dockitem =
+                        Glib::RefPtr<DockItem>(new DockItem(xid, instance_name, group_name));
                     dockitem->set_title(window_icon_name);
                     dockitem->set_icon_name(icon_name);
                     dockitem->set_group_name(group_name);
                     dockitem->set_icon(pixbuf);
-                    auto owner = m_appmap.at(cxid);
-                    owner->add_child(dockitem);
 
-                    g_print("X---------------------------%s--%d\n", window_icon_name.c_str(), xid);
+                    owner->add_child(dockitem);  // add the new child
+
+                    //      g_print("X------------------%s--%d\n", window_icon_name.c_str(),
+                    //      xid);
+
+                    // for (const auto& it : dockitem->get_childmap()) {
+                    // auto child = it.second;
+                    // if (child->get_xid() != cxid) continue;
+
+                    // child->set_icon(pixbuf);
+                    // dockitem->set_title(window_icon_name);
+                    // g_print("X------------------%s--%d\n", window_icon_name.c_str(), xid);
+                    // break;
+                    //}
+                    // for (auto it = m_appmap.begin(); it != m_appmap.end(); it++) {
+                    // auto dockitem = it->second;
+
+                    // for (const auto$ item : dockitem->get_childmap)
+                    //{
+
+                    //}
+                    // i// if (dockitem->get_childmap().count(xid)) return true;
+                    //}
                 } else {
-                    g_print("----------------------------%s--%d\n", window_icon_name.c_str(), xid);
-                    // Adds a new item.
-                    m_appmap.insert({xid, dockitem});
+                    const Glib::RefPtr<DockItem> dockitem =
+                        Glib::RefPtr<DockItem>(new DockItem(xid, instance_name, group_name));
+
+                    dockitem->set_title(window_icon_name);
+                    dockitem->set_icon_name(icon_name);
+                    dockitem->set_group_name(group_name);
+                    dockitem->set_icon(pixbuf);
+                    owner->add_child(dockitem);  // add the new child
+
+                    //..        g_print("NO CHILD FOUND  ADD NEW CHILD--%s--%d\n",
+                    // window_icon_name.c_str(),
+                    //                xid);
                 }
             }
-            //  }
+            //}
+            //} else {
+            // g_print("NO GROUP ADD NEW------%s--%d\n", window_icon_name.c_str(), xid);
+            //// Adds a new item.
+            ////  m_appmap.insert({xid, dockitem});
+            //}
+
+            if (!exist(xid)) {
+                g_print("-->>NO ITEM ADD NEW-%s--%s--%d\n", group_name.c_str(),
+                        window_icon_name.c_str(), xid);
+
+                const Glib::RefPtr<DockItem> dockitem =
+                    Glib::RefPtr<DockItem>(new DockItem(xid, instance_name, group_name));
+
+                dockitem->set_title(window_icon_name);
+                dockitem->set_icon_name(icon_name);
+                dockitem->set_group_name(group_name);
+                dockitem->set_icon(pixbuf);
+
+                m_appmap.insert({xid, dockitem});
+                ///
+            }
 
             //   } else {
             /*dockitem->set_title(group_name);
