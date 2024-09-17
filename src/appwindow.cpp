@@ -179,8 +179,9 @@ namespace docklight
                     // dockitem->get_group_name().c_str(), dockitem->get_icon_name().c_str(),
                     // dockitem->get_title().c_str(), dockitem->get_xid());
 
-                    g_print("*****%s - %s %s [%s]\n", filepath, dockitem->get_group_name().c_str(),
-                            dockitem->get_icon_name().c_str(), dockitem->get_title().c_str());
+                    g_print("*****%s - %s %s [%s] %s\n", filepath,
+                            dockitem->get_group_name().c_str(), dockitem->get_icon_name().c_str(),
+                            dockitem->get_title().c_str(), dockitem->get_window_name().c_str());
 
                     pixbuf = dockitem->get_icon();
                     if (pixbuf) {

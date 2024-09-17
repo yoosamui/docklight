@@ -60,6 +60,7 @@ namespace docklight
 
         int remove(guint32 xid);
 
+        //   bool exist_child(guint32 xid) const;
         bool exist(guint32 xid) const;
         guint32 exist(const Glib::ustring& group) const;
 
