@@ -66,7 +66,8 @@ namespace docklight
         bool get_dockitem_by_xid(gint32 xid, Glib::RefPtr<DockItem>& item);
 
         bool insert(guint32 xid, GdkPixbuf* gdkpixbuf, const Glib::ustring& instance_name,
-                    const Glib::ustring& group_name, const Glib::ustring& window_name);
+                    const Glib::ustring& group_name, const Glib::ustring& window_name,
+                    const Glib::ustring& window_icon_name);
         void test(guint32 xid)
         {
             //

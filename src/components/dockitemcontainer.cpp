@@ -208,7 +208,8 @@ namespace docklight
     bool DockItemContainer::insert(guint32 xid, GdkPixbuf* gdkpixbuf,
                                    const Glib::ustring& instance_name,
                                    const Glib::ustring& group_name,
-                                   const Glib::ustring& window_name)
+                                   const Glib::ustring& window_name,
+                                   const Glib::ustring& window_icon_name)
     {
         if (exist(xid)) return false;
 
@@ -248,14 +249,37 @@ namespace docklight
         // Handles the window icons
         if (get_window_icon(gdkpixbuf, pixbuf)) {
             // if not exist, we need to add this DockItem.
-            if (!exist(xid)) {
-                dockitem->set_title(group_name);
-                dockitem->set_icon_name(icon_name);
-                dockitem->set_icon(pixbuf);
-                g_print("-------------%s %s\n", icon_name.c_str(), group_name.c_str());
-                m_appmap.insert({xid, dockitem});
+            // if (exist(xid)) {
+            if (group_name == "Xfce4-settings-manager") {
+                auto cxid = exist(group_name);
+                if (cxid /*&& cxid != xid*/) {
+                    //  dockitem->set_title(group_name);
+                    dockitem->set_title(window_icon_name);
+                    dockitem->set_icon_name(icon_name);
+                    dockitem->set_group_name(group_name);
+                    dockitem->set_icon(pixbuf);
+                    auto owner = m_appmap.at(cxid);
+                    owner->add_child(dockitem);
+
+                    g_print("X---------------------------%s--%d\n", window_icon_name.c_str(), xid);
+                } else {
+                    g_print("----------------------------%s--%d\n", window_icon_name.c_str(), xid);
+                    // Adds a new item.
+                    m_appmap.insert({xid, dockitem});
+                }
             }
+            //  }
+
+            //   } else {
+            /*dockitem->set_title(group_name);
+            dockitem->set_icon_name(icon_name);
+            dockitem->set_group_name(group_name);
+            dockitem->set_icon(pixbuf);
+            //
+            //  g_print("-------------%s %s\n", icon_name.c_str(), group_name.c_str());
+            m_appmap.insert({xid, dockitem});*/
         }
+
         return true;
     }
 

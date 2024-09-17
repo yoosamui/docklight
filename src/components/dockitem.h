@@ -29,7 +29,7 @@ namespace docklight
         Glib::ustring m_description = {};
 
         Glib::RefPtr<Gdk::Pixbuf> m_icon;
-        std::map<guint32, Glib::RefPtr<DockItem>> m_childmap;
+        std::multimap<guint32, Glib::RefPtr<DockItem>> m_childmap;
 
       protected:
         // setters
@@ -62,7 +62,7 @@ namespace docklight
         virtual const Glib::ustring& get_icon_name() const = 0;
         virtual const Glib::RefPtr<Gdk::Pixbuf>& get_icon() const = 0;
 
-        virtual const std::map<guint32, Glib::RefPtr<DockItem>>& get_childmap() const = 0;
+        virtual const std::multimap<guint32, Glib::RefPtr<DockItem>>& get_childmap() const = 0;
         virtual const DockItem* get(guint32 xid) const = 0;
         virtual const int remove_child(guint32 xid) = 0;
     };
@@ -94,7 +94,7 @@ namespace docklight
 
         // Getters
         const DockItem* get(guint32 xid) const;
-        const std::map<guint32, Glib::RefPtr<DockItem>>& get_childmap() const;
+        const std::multimap<guint32, Glib::RefPtr<DockItem>>& get_childmap() const;
 
         const bool get_is_attached() const;
 

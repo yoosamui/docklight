@@ -157,8 +157,9 @@ namespace docklight
 
                 auto pixbuf = dockitem->get_icon();
                 char filepath[512];
-                sprintf(filepath, "/home/yoo/TEMP/%s-%s-%d ( %d )", dockitem->get_title().c_str(),
-                        dockitem->get_group_name().c_str(), dockitem->get_xid(),
+                sprintf(filepath, "/home/yoo/TEMP/%s-(%s)-%s [%d]( %d )",
+                        dockitem->get_group_name().c_str(), dockitem->get_icon_name().c_str(),
+                        dockitem->get_title().c_str(), dockitem->get_xid(),
                         (int)dockitem->get_childmap().size());
 
                 if (pixbuf) {
@@ -168,10 +169,11 @@ namespace docklight
                 for (const auto& it : dockitem->get_childmap()) {
                     const Glib::RefPtr<DockItem> dockitem = it.second;
 
-                    sprintf(filepath, "/home/yoo/TEMP/---%s-%s-( %d )",
-                            dockitem->get_title().c_str(), dockitem->get_group_name().c_str(),
-                            dockitem->get_xid());
-                    g_print("---%s\n", filepath);
+                    sprintf(filepath, "/home/yoo/TEMP/*****%s-(%s)-%s [%d]( 0 )",
+                            dockitem->get_group_name().c_str(), dockitem->get_icon_name().c_str(),
+                            dockitem->get_title().c_str(), dockitem->get_xid());
+
+                    g_print("*****%s\n", filepath);
                     pixbuf = dockitem->get_icon();
                     if (pixbuf) {
                         pixbuf->save(filepath, "png");

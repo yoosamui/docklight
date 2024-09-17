@@ -22,7 +22,7 @@ namespace docklight
             return false;
         }
 
-        pixbuf = Glib::wrap(gdkpixbuf)->scale_simple(128, 128, Gdk::INTERP_BILINEAR);
+        pixbuf = Glib::wrap(gdkpixbuf, true)->scale_simple(128, 128, Gdk::INTERP_BILINEAR);
 
         return pixbuf ? true : false;
     }
@@ -130,11 +130,27 @@ namespace docklight
         // wnck_window_get_class_group_name(window), wnck_window_get_name(window));
 
         container->insert(xid, gdkpixbuf, wnck_window_get_class_instance_name(window),
-                          wnck_window_get_class_group_name(window), wnck_window_get_name(window));
+                          wnck_window_get_class_group_name(window), wnck_window_get_name(window),
+                          wnck_window_get_icon_name(window));
         // if (G_IS_OBJECT(gdkpixbuf)) g_object_unref(gdkpixbuf);
+        // i/////////////////// TEST
+        Glib::RefPtr<Gdk::Pixbuf> pixbuf;
+        const char* group_name = wnck_window_get_class_group_name(window);
+
+        if (get_window_icon(window, pixbuf)) {
+            try {
+                char filepath[512];
+                sprintf(filepath, "/home/yoo/TEMP/window/%d-%s(%s)-%s", xid,
+                        wnck_window_get_class_instance_name(window), group_name,
+                        wnck_window_get_icon_name(window));
+                pixbuf->save(filepath, "png");
+            } catch (...) {
+                //  swallow
+            }
+        }
         return;
 
-#define TEST1
+//#define TEST1
 #ifdef TEST1
         //  desktop file
         Glib::RefPtr<Gdk::Pixbuf> pixbuf;
