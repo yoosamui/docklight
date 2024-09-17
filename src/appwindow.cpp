@@ -172,16 +172,23 @@ namespace docklight
                 for (const auto& it : dockitem->get_childmap()) {
                     const Glib::RefPtr<DockItem> dockitem = it.second;
 
+                    std::string title(dockitem->get_window_name());
+                    std::replace(title.begin(), title.end(), ' ', '-');
+
                     sprintf(filepath, "/home/yoo/TEMP/*****%s-(%s) [%d]",
                             dockitem->get_group_name().c_str(),
-                            dockitem->get_instance_name().c_str(), dockitem->get_xid());
+                            dockitem->get_instance_name().c_str(), dockitem->get_xid(),
+                            title.c_str());
 
                     // dockitem->get_group_name().c_str(), dockitem->get_icon_name().c_str(),
                     // dockitem->get_title().c_str(), dockitem->get_xid());
 
-                    g_print("*****%s - %s %s [%s] %s\n", filepath,
-                            dockitem->get_group_name().c_str(), dockitem->get_icon_name().c_str(),
-                            dockitem->get_title().c_str(), dockitem->get_window_name().c_str());
+                    // g_print("*****%s-%s %s [%s] %s\n", filepath,
+                    // dockitem->get_group_name().c_str(), dockitem->get_icon_name().c_str(),
+                    // dockitem->get_title().c_str(), dockitem->get_window_name().c_str());
+                    g_print("*****%s-(%s)%s{%d}\n", dockitem->get_icon_name().c_str(),
+                            dockitem->get_title().c_str(), dockitem->get_window_name().c_str(),
+                            dockitem->get_xid());
 
                     pixbuf = dockitem->get_icon();
                     if (pixbuf) {
