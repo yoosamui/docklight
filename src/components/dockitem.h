@@ -14,8 +14,8 @@ namespace docklight
     class IDockItem : public Glib::Object
     {
       protected:
-        guint32 m_xid = 0;  // 32-bit identification number,
-                            //   guint32 m_hash = 0;
+        // 32-bit window identification number,
+        guint32 m_xid = 0;
 
         bool m_has_desktop_file = true;
         bool m_attached = false;
@@ -34,8 +34,6 @@ namespace docklight
       protected:
         // setters
 
-        // virtual void set_xid(guint32 xid) = 0;
-
         virtual void set_icon(Glib::RefPtr<Gdk::Pixbuf> icon) = 0;
         virtual void set_attached(bool attached) = 0;
         virtual void set_title(Glib::ustring title) = 0;
@@ -50,10 +48,8 @@ namespace docklight
         virtual const void add_child(Glib::RefPtr<DockItem> child) = 0;
 
         // getters
-
         virtual const bool get_is_attached() const = 0;
-        //   virtual const guint32 get_xid() const = 0;
-        // virtual const guint32 get_hash() const = 0;
+        virtual const guint32 get_xid() const = 0;
         virtual const Glib::ustring& get_window_name() const = 0;
         virtual const Glib::ustring& get_title() const = 0;
         virtual const Glib::ustring& get_instance_name() const = 0;
@@ -64,7 +60,7 @@ namespace docklight
         virtual const Glib::RefPtr<Gdk::Pixbuf>& get_icon() const = 0;
 
         virtual const std::map<guint32, Glib::RefPtr<DockItem>>& get_childmap() const = 0;
-        virtual const DockItem* get(guint32 xid) const = 0;
+        virtual const DockItem* get() const = 0;
         virtual const int remove_child(guint32 xid) = 0;
     };
 
@@ -78,7 +74,7 @@ namespace docklight
         bool const has_desktop_file() const;
 
         // setters
-        void set_xid(guint32 xid);
+        //    void set_xid(guint32 xid);
         void set_attached(bool attached);
 
         void set_icon(Glib::RefPtr<Gdk::Pixbuf> icon);
@@ -96,7 +92,7 @@ namespace docklight
         //  Glib::RefPtr<DockItem>& get_mutable();
 
         // Getters
-        const DockItem* get(guint32 xid) const;
+        const DockItem* get() const;
         const std::map<guint32, Glib::RefPtr<DockItem>>& get_childmap() const;
 
         const bool get_is_attached() const;

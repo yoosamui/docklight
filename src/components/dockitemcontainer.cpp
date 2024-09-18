@@ -16,10 +16,6 @@ namespace docklight
     {
         m_matcher = bamf_matcher_get_default();
         g_assert(BAMF_IS_MATCHER(m_matcher));
-
-        // Glib::RefPtr<Gtk::IconTheme> theme = Gtk::IconTheme::get_default();
-        // theme->signal_changed().connect(sigc::mem_fun(*this,
-        // &DockItemContainer::on_theme_changed));
     }
 
     DockItemContainer::~DockItemContainer()
@@ -40,10 +36,6 @@ namespace docklight
         return false;
     }
 
-    /**
-     *
-     * returns the xid of the first DockItem group found.
-     */
     guint32 DockItemContainer::exist(const Glib::ustring& group) const
     {
         for (const auto& it : m_appmap) {
@@ -54,10 +46,6 @@ namespace docklight
         }
         return 0;
     }
-
-    // const void modify_dockitem(guint xid, DockItem& dockitem) {
-
-    //}
 
     const std::map<guint32, Glib::RefPtr<DockItem>> DockItemContainer::get_appmap() const
     {
@@ -82,16 +70,16 @@ namespace docklight
 
     // As long as only const operations are used on the container the execution is thread-safe.
     // That is the case ot at.
-    bool DockItemContainer::get_dockitem_by_xid(gint32 xid, Glib::RefPtr<DockItem>& item)
-    {
-        if (!exist(xid)) return false;
+    // bool DockItemContainer::get_dockitem_by_xid(gint32 xid, Glib::RefPtr<DockItem>& item)
+    //{
+    // if (!exist(xid)) return false;
 
-        item = m_appmap.at(xid);
+    // item = m_appmap.at(xid);
 
-        return true;
-    }
+    // return true;
+    //}
 
-    int DockItemContainer::count_items_by_title(const Glib::ustring& title)
+    /*int DockItemContainer::count_items_by_title(const Glib::ustring& title)
     {
         int count = 0;
         // int refxid = 0;
@@ -109,7 +97,7 @@ namespace docklight
         //}
 
         return count;
-    }
+    }*/
     void DockItemContainer::on_theme_changed()
     {
         return;
@@ -222,11 +210,9 @@ namespace docklight
         const Glib::RefPtr<DockItem> dockitem =
             Glib::RefPtr<DockItem>(new DockItem(xid, instance_name, group_name));
 
-        dockitem->set_xid(xid);
         dockitem->set_window_name(window_name);
 
         Glib::RefPtr<Gdk::Pixbuf> pixbuf;
-
         Glib::ustring title_name;
         Glib::ustring desktop_file;
         Glib::ustring icon_name;
@@ -254,59 +240,53 @@ namespace docklight
 
         // Handles the window icons
         if (get_window_icon(gdkpixbuf, pixbuf)) {
-            // if not exist, we need to add this DockItem.
-            // if (exist(xid))
-            //  if (group_name == "Xfce4-settings-manager" || group_name == "thunderbird-default")
+            // create groups setion.
+            //
             auto cxid = exist(group_name);
-            if (cxid /*&& cxid != xid*/) {
-                //
-                // gets the owner and add missing childs
-                //
+            if (cxid) {
                 auto owner = m_appmap.at(cxid);
 
                 const auto dockitem =
                     Glib::RefPtr<DockItem>(new DockItem(xid, instance_name, group_name));
                 dockitem->set_title(window_icon_name);
                 dockitem->set_icon_name(icon_name);
-                dockitem->set_group_name(group_name);
                 dockitem->set_icon(pixbuf);
 
+                // if a child exist then remove it and
+                // add a new child. Is icon is fallback the
+                // set the icon from owner.
+                // finally add the child item.
                 if (owner->get_childmap().count(xid)) {
-                    remove(xid);  // remove the currenti child.
+                    remove(xid);
                     if (icon_is_fallback) {
                         dockitem->set_icon(owner->get_icon());
                     }
-                    owner->add_child(dockitem);  // add the new child
-                } else {
-                    /*
-                     * here we add duplicate keys.
-                     * This allow us to add dialog members.
-                     *
-                     */
-                    if (icon_is_fallback) {
-                        dockitem->set_icon(owner->get_icon());
-                    }
-                    owner->add_child(dockitem);  // add the new child
 
-                    //  g_print("NO CHILD FOUND  ADD NEW CHILD--%s--%d\n", window_icon_name.c_str(),
-                    //          xid);
-                    // }
+                    // add the new child icon to the owner.
+                    owner->add_child(dockitem);
+                } else {
+                    // if the icon is fallback
+                    // replace the icon with the owner icon.
+                    if (icon_is_fallback) {
+                        dockitem->set_icon(owner->get_icon());
+                    }
+
+                    // add the new child icon to the owner.
+                    owner->add_child(dockitem);
                 }
             } else if (!exist(xid)) {
-                //  } else if (!m_appmap.count(xid)) {
-                g_print("------------------>>NO ITEM ADD NEW-%s--%s--%d\n", group_name.c_str(),
-                        window_icon_name.c_str(), xid);
-
                 const Glib::RefPtr<DockItem> dockitem =
                     Glib::RefPtr<DockItem>(new DockItem(xid, instance_name, group_name));
 
                 dockitem->set_title(window_icon_name);
                 dockitem->set_icon_name(icon_name);
-                dockitem->set_group_name(group_name);
                 dockitem->set_icon(pixbuf);
 
                 if (!icon_is_fallback) {
+                    // add a new owner icon
                     m_appmap.insert({xid, dockitem});
+
+                    // add the new child icon to the owner.
                     auto owner = m_appmap.at(xid);
                     owner->add_child(dockitem);  // add the new child
                 }

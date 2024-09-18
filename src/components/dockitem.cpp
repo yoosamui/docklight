@@ -9,18 +9,11 @@ namespace docklight
         m_xid = xid;
         m_instance_name = instance_name;
         m_group_name = group_name;
-
-        // Create an unique instance name.
-        // Avoid dots and spaces in instance names,
-        /*std::string unique_instance(instance_name + group_name);
-        std::replace(unique_instance.begin(), unique_instance.end(), ' ', '-');
-        std::replace(unique_instance.begin(), unique_instance.end(), '.', '-');
-        m_hash = static_cast<guint32>(std::hash<std::string>{}(unique_instance));*/
     }
 
     DockItem::~DockItem()
     {
-        g_print("DESTRUCTOR Dockitem removed  %s %d\n", m_title.c_str(), m_xid);
+        g_print("Dockitem removed  %s %d\n", m_title.c_str(), m_xid);
     }
 
     inline const bool DockItem::has_desktop_file() const
@@ -33,11 +26,6 @@ namespace docklight
     {
         m_childmap.insert({child->get_xid(), child});
     }
-
-    // inline void DockItem::set_xid(guint32 xid)
-    //{
-    // m_xid = xid;
-    //}
 
     inline void DockItem::set_attached(bool attached)
     {
@@ -95,12 +83,6 @@ namespace docklight
     }
 
     // Getters
-
-    //   Glib::RefPtr<DockItem>& get_mutable()
-    // inline const guint32 DockItem::get_hash() const
-    //{
-    // return m_hash;
-    //}
     inline const guint32 DockItem::get_xid() const
     {
         return m_xid;
@@ -146,14 +128,11 @@ namespace docklight
         return m_icon;
     }
 
-    inline const DockItem* DockItem::get(guint32 xid) const
+    inline const DockItem* DockItem::get() const
     {
-        if (xid == m_xid) {
-            return this;
-        }
-
-        return nullptr;
+        return this;
     }
+
     inline const Glib::ustring& DockItem::get_icon_name() const
     {
         return m_icon_name;
@@ -169,7 +148,7 @@ namespace docklight
         // clang-format off
             std::stringstream ss;
             ss << "xid: " << m_xid << std::endl
-//               << "hash: " << std::to_string(m_hash) << std::endl
+               << "childrens: " << m_childmap.size()<< std::endl
                << "title: " << m_title << std::endl
                << "group: " << m_group_name << std::endl
                << "instance: " << m_instance_name << std::endl
