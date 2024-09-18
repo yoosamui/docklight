@@ -68,7 +68,7 @@ namespace docklight
 
         bool insert(guint32 xid, GdkPixbuf* gdkpixbuf, const Glib::ustring& instance_name,
                     const Glib::ustring& group_name, const Glib::ustring& window_name,
-                    const Glib::ustring& window_icon_name);
+                    const Glib::ustring& window_icon_name, bool icon_is_fallback);
         void test(guint32 xid)
         {
             //

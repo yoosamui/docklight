@@ -26,7 +26,7 @@ namespace docklight
 
         return pixbuf ? true : false;
     }
-/*
+
     bool get_theme_icon(WnckWindow* window, Glib::RefPtr<Gdk::Pixbuf>& pixbuf)
     {
         gint32 xid = wnck_window_get_xid(window);
@@ -58,9 +58,9 @@ namespace docklight
             g_warning("Gio::DesktopAppInfo: the object has not been created.");
             return false;
         }
-        //	Looks up a string value in the keyfile backing info.
-        // this method deliver non group names. Don't used.
-        //        Glib::ustring icon_name = appinfo->get_string("Icon");
+
+        Glib::ustring title = appinfo->get_string("Name");
+        g_print("%s\n", title.c_str());
 
         char* icon_name = g_desktop_app_info_get_string(appinfo->gobj(), "Icon");
         if (!icon_name) {
@@ -89,7 +89,7 @@ namespace docklight
         delete icon_name;
 
         return pixbuf ? true : false;
-    }*/
+    }
 #endif
 
     void AppProvider::on_window_closed(WnckScreen* screen, WnckWindow* window, gpointer data)
@@ -111,14 +111,17 @@ namespace docklight
         }
 
         gint32 xid = wnck_window_get_xid(window);
+
+#define TESTCINA
+#ifdef TESTCINA
         DockItemContainer* container = get_dockcontainer();
         if (get_dockcontainer()->exist(xid)) return;
-
         // reurn if the window don't  has a name or the icon is a fallback icon.
         if (!wnck_window_has_name(window)) return;
 
         // Not fallback icon desired.
-        if (wnck_window_get_icon_is_fallback(window)) return;
+        // DISABLE FOR MUTER
+        //        if (wnck_window_get_icon_is_fallback(window)) return;
 
         // Gets the icon to be used for window. If no icon was found, a fallback icon is
         // used. wnck_window_get_icon_is_fallback() can be used to tell if the icon is the
@@ -131,7 +134,9 @@ namespace docklight
 
         container->insert(xid, gdkpixbuf, wnck_window_get_class_instance_name(window),
                           wnck_window_get_class_group_name(window), wnck_window_get_name(window),
-                          wnck_window_get_icon_name(window));
+                          wnck_window_get_icon_name(window),
+                          wnck_window_get_icon_is_fallback(window));
+#endif
         // if (G_IS_OBJECT(gdkpixbuf)) g_object_unref(gdkpixbuf);
         // i/////////////////// TEST
         Glib::RefPtr<Gdk::Pixbuf> pixbuf;
@@ -145,7 +150,7 @@ namespace docklight
                         wnck_window_get_icon_name(window));
                 pixbuf->save(filepath, "png");
             } catch (...) {
-                //  swallow
+                // swallow
             }
         }
         return;

@@ -214,9 +214,10 @@ namespace docklight
                                    const Glib::ustring& instance_name,
                                    const Glib::ustring& group_name,
                                    const Glib::ustring& window_name,
-                                   const Glib::ustring& window_icon_name)
+                                   const Glib::ustring& window_icon_name, bool icon_is_fallback)
     {
         if (exist(xid)) return false;
+        //  if (group_name != "Firefox-esr") return false;
 
         // set the members values in DockItem
         const Glib::RefPtr<DockItem> dockitem =
@@ -248,7 +249,9 @@ namespace docklight
 
             } else {
                 // Adds a new item.
+                //   if (!icon_is_fallback) {
                 m_appmap.insert({xid, dockitem});
+                //  }
             }
         }
 
@@ -272,7 +275,10 @@ namespace docklight
                 dockitem->set_icon(pixbuf);
 
                 if (owner->get_childmap().count(xid)) {
-                    remove(xid);                 // remove the currenti child.
+                    remove(xid);  // remove the currenti child.
+                    if (icon_is_fallback) {
+                        dockitem->set_icon(owner->get_icon());
+                    }
                     owner->add_child(dockitem);  // add the new child
                 } else {
                     /*
@@ -280,15 +286,18 @@ namespace docklight
                      * This allow us to add dialog members.
                      *
                      */
-                    //  if (!m_appmap.count(xid)) {
+                    if (icon_is_fallback) {
+                        dockitem->set_icon(owner->get_icon());
+                    }
                     owner->add_child(dockitem);  // add the new child
 
-                    g_print("NO CHILD FOUND  ADD NEW CHILD--%s--%d\n", window_icon_name.c_str(),
-                            xid);
+                    //  g_print("NO CHILD FOUND  ADD NEW CHILD--%s--%d\n", window_icon_name.c_str(),
+                    //          xid);
                     // }
                 }
             } else if (!exist(xid)) {
-                g_print("-->>NO ITEM ADD NEW-%s--%s--%d\n", group_name.c_str(),
+                //  } else if (!m_appmap.count(xid)) {
+                g_print("------------------>>NO ITEM ADD NEW-%s--%s--%d\n", group_name.c_str(),
                         window_icon_name.c_str(), xid);
 
                 const Glib::RefPtr<DockItem> dockitem =
@@ -299,7 +308,11 @@ namespace docklight
                 dockitem->set_group_name(group_name);
                 dockitem->set_icon(pixbuf);
 
-                m_appmap.insert({xid, dockitem});
+                if (!icon_is_fallback) {
+                    m_appmap.insert({xid, dockitem});
+                    auto owner = m_appmap.at(xid);
+                    owner->add_child(dockitem);  // add the new child
+                }
             }
         }
         return true;
