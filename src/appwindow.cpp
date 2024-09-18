@@ -156,19 +156,17 @@ namespace docklight
                 const Glib::RefPtr<DockItem> dockitem = item.second;
 
                 auto pixbuf = dockitem->get_icon();
+
                 char filepath[512];
                 sprintf(filepath, "/home/yoo/TEMP/%s-(%s) [%d] {%d}",
                         dockitem->get_group_name().c_str(), dockitem->get_instance_name().c_str(),
                         dockitem->get_xid(), (int)dockitem->get_childmap().size());
-                // sprintf(filepath, "/home/yoo/TEMP/%s-(%s)-%s [%d]( %d )",
-                // dockitem->get_group_name().c_str(), dockitem->get_icon_name().c_str(),
-                // dockitem->get_title().c_str(), dockitem->get_xid(),
-                //(int)dockitem->get_childmap().size());
 
                 if (pixbuf) {
                     pixbuf->save(filepath, "png");
                 }
-                g_print("%s\n", filepath);
+                g_print("------------------------------\n%s\n", dockitem->to_string().c_str());
+                //  g_print("%s\n", filepath);
                 for (const auto& it : dockitem->get_childmap()) {
                     const Glib::RefPtr<DockItem> dockitem = it.second;
 
@@ -177,18 +175,13 @@ namespace docklight
 
                     sprintf(filepath, "/home/yoo/TEMP/*****%s-(%s) [%d]",
                             dockitem->get_group_name().c_str(),
-                            dockitem->get_instance_name().c_str(), dockitem->get_xid(),
-                            title.c_str());
+                            dockitem->get_instance_name().c_str(), dockitem->get_xid());
 
-                    // dockitem->get_group_name().c_str(), dockitem->get_icon_name().c_str(),
-                    // dockitem->get_title().c_str(), dockitem->get_xid());
+                    // g_print("*****%s-(%s)%s{%d}\n", dockitem->get_icon_name().c_str(),
+                    // dockitem->get_title().c_str(), dockitem->get_window_name().c_str(),
+                    // dockitem->get_xid());
 
-                    // g_print("*****%s-%s %s [%s] %s\n", filepath,
-                    // dockitem->get_group_name().c_str(), dockitem->get_icon_name().c_str(),
-                    // dockitem->get_title().c_str(), dockitem->get_window_name().c_str());
-                    g_print("*****%s-(%s)%s{%d}\n", dockitem->get_icon_name().c_str(),
-                            dockitem->get_title().c_str(), dockitem->get_window_name().c_str(),
-                            dockitem->get_xid());
+                    g_print("****%s\n", dockitem->to_string().c_str());
 
                     pixbuf = dockitem->get_icon();
                     if (pixbuf) {
@@ -197,34 +190,9 @@ namespace docklight
                 }
             }
 
-            // for (const auto& item : container->get_iconmap()) {
-            // gint32 instance_hash = item.first;
-            // const Glib::RefPtr<DockIcon> dockicon = item.second;
-
-            // if (dockicon->get_icon()) {
-            // g_print("->>[%u] %s\n", instance_hash, dockicon->get_title().c_str());
-            // try {
-            // dockicon->get_icon()->save("/home/yoo/TEMP/" + dockicon->get_title(),
-            //"png");
-            //} catch (...) {
-            //}
-            //} else {
-            // g_critical("dockicon m_icon is NULL\n");
-            //}
-            //}
-
             m_composite = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
             m_composite->show_at(800, 800);
-
-            // shared_ptr<DockItem> item = shared_ptr<DockItem>(new DockItem());
-            // shared_ptr<DockItem> item = shared_ptr<DockItem>(new DockItem());
-
-            // Glib::RefPtr<DockItem> item = Glib::RefPtr<DockItem>(new DockItem());
-            // item->m_image = m_icon;
-
-            // m_panel.add(item);
         }
-        //  std::cout << m_display.get_screen_count() << std::endl;
 
         return true;
     }

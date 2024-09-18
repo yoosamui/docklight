@@ -191,7 +191,7 @@ namespace docklight
             pixbuf = theme->load_icon(icon_name, 128, Gtk::IconLookupFlags::ICON_LOOKUP_FORCE_SIZE);
         } catch (...) {
             g_warning("get_theme_icon::pixbuf: Exception the object has not been created. (%s)",
-                      icon_name);
+                      icon_name.c_str());
             return false;
         }
 
@@ -205,22 +205,25 @@ namespace docklight
                                    const Glib::ustring& window_icon_name, bool icon_is_fallback)
     {
         if (exist(xid)) return false;
-
-        // create the DockItem.
-        const Glib::RefPtr<DockItem> dockitem =
-            Glib::RefPtr<DockItem>(new DockItem(xid, instance_name, group_name));
-
-        dockitem->set_window_name(window_name);
+        // if (group_name != "Xlet-settings.py" && group_name != "Firefox-esr") return false;
+        // if (group_name != "Geany" && group_name != "Gedit" && group_name !=
+        // "Nm-connection-editor")
+        //    return false;
 
         Glib::RefPtr<Gdk::Pixbuf> pixbuf;
         Glib::ustring title_name;
         Glib::ustring desktop_file;
         Glib::ustring icon_name;
 
-        // Handles desktop files icons and Name for the app.
+        // Handles desktop files icons and Names for the app.
         if (get_theme_icon(xid, pixbuf, title_name, desktop_file, icon_name)) {
-            dockitem->set_title(title_name);
+            // create the DockItem.
+            const Glib::RefPtr<DockItem> dockitem =
+                Glib::RefPtr<DockItem>(new DockItem(xid, instance_name, group_name));
+
             dockitem->set_desktop_file(desktop_file);
+            // TODO: handle by app TYPE
+            //  dockitem->set_window_name(window_name);
             dockitem->set_icon_name(icon_name);
             dockitem->set_icon(pixbuf);
 
@@ -228,67 +231,89 @@ namespace docklight
             auto cxid = exist(group_name);
             if (cxid) {
                 auto owner = m_appmap.at(cxid);
+                dockitem->set_title(window_name);
                 owner->add_child(dockitem);
 
             } else {
-                // Adds a new item.
-                //   if (!icon_is_fallback) {
+                // add a new DockItem
+                dockitem->set_title(title_name);
                 m_appmap.insert({xid, dockitem});
-                //  }
+
+                // always add a replica Dockitem child clone
+                const Glib::RefPtr<DockItem> child = dockitem->clone();
+                dockitem->add_child(child);
             }
-        }
-
-        // Handles the window icons
-        if (get_window_icon(gdkpixbuf, pixbuf)) {
-            // create groups setion.
-            //
-            auto cxid = exist(group_name);
-            if (cxid) {
-                auto owner = m_appmap.at(cxid);
-
-                const auto dockitem =
-                    Glib::RefPtr<DockItem>(new DockItem(xid, instance_name, group_name));
-                dockitem->set_title(window_icon_name);
-                dockitem->set_icon_name(icon_name);
-                dockitem->set_icon(pixbuf);
-
-                // if a child exist then remove it and
-                // add a new child. Is icon is fallback the
-                // set the icon from owner.
-                // finally add the child item.
-                if (owner->get_childmap().count(xid)) {
-                    remove(xid);
-                    if (icon_is_fallback) {
-                        dockitem->set_icon(owner->get_icon());
-                    }
-
-                    // add the new child icon to the owner.
-                    owner->add_child(dockitem);
-                } else {
-                    // if the icon is fallback
-                    // replace the icon with the owner icon.
-                    if (icon_is_fallback) {
-                        dockitem->set_icon(owner->get_icon());
-                    }
-
-                    // add the new child icon to the owner.
-                    owner->add_child(dockitem);
-                }
-            } else if (!exist(xid)) {
+        } else {
+            // Handles the window icons
+            if (get_window_icon(gdkpixbuf, pixbuf)) {
                 const Glib::RefPtr<DockItem> dockitem =
                     Glib::RefPtr<DockItem>(new DockItem(xid, instance_name, group_name));
+                // create groups setion.
+                //
+                auto cxid = exist(group_name);
+                if (cxid) {
+                    const auto dockitem =
+                        Glib::RefPtr<DockItem>(new DockItem(xid, instance_name, group_name));
+                    dockitem->set_title(window_icon_name);
+                    //                dockitem->set_window_name(window_name);
+                    dockitem->set_icon_name(icon_name);
+                    dockitem->set_icon(pixbuf);
 
-                dockitem->set_title(window_icon_name);
-                dockitem->set_icon_name(icon_name);
-                dockitem->set_icon(pixbuf);
+                    // if a child exist then remove it and
+                    // add a new child. Is the icon is fallback the
+                    // set the icon from owner.
+                    // finally add the child item.
+                    auto owner = m_appmap.at(cxid);
+                    if (icon_is_fallback) {
+                        dockitem->set_icon(owner->get_icon());
+                    }
 
-                if (!icon_is_fallback) {
-                    // add a new owner icon
+                    if (owner->get_childmap().count(xid)) {
+                        remove(xid);
+                        owner->add_child(dockitem);
+                    } else {
+                        // if the icon is fallback
+                        // replace the icon with the owner icon.
+                        dockitem->set_icon(owner->get_icon());
+
+                        // add the new child icon to the owner.
+                        owner->add_child(dockitem);
+                    }
+                } else if (!exist(xid) && !icon_is_fallback) {
+                    const Glib::RefPtr<DockItem> dockitem =
+                        Glib::RefPtr<DockItem>(new DockItem(xid, instance_name, group_name));
+
+                    // TODO fix with window type
+                    // group_name or  windown name
+                    std::string group(group_name);
+                    if (group.find('.') != std::string::npos) {
+                        group = window_icon_name;
+                    }
+
+                    dockitem->set_title(group);
+                    dockitem->set_icon_name(icon_name);
+                    dockitem->set_icon_name(window_icon_name);
+                    dockitem->set_icon(pixbuf);
+
+                    // add a new DockItem
                     m_appmap.insert({xid, dockitem});
+
+                    // always add a replica Dockitem child clone
+                    Glib::RefPtr<DockItem> child = dockitem->clone();
+                    dockitem->set_title(window_name);
+                    dockitem->add_child(child);  // add the new child*/
+
+                    /*dockitem = Glib::RefPtr<DockItem>(new DockItem(xid, instance_name,
+                    group_name));
+
+                    dockitem->set_title(window_name);
+                    dockitem->set_icon_name(window_icon_name);
+                    //   dockitem->set_window_name("");
+                    dockitem->set_icon(pixbuf);
 
                     // add the new child icon to the owner.
                     auto owner = m_appmap.at(xid);
-                    owner->add_child(dockitem);  // add the new child
+                    owner->add_child(dockitem);  // add the new child*/
                 }
             }
         }

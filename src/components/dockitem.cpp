@@ -16,6 +16,23 @@ namespace docklight
         g_print("Dockitem removed  %s %d\n", m_title.c_str(), m_xid);
     }
 
+    inline const Glib::RefPtr<DockItem> DockItem::clone()
+    {
+        //
+        auto clone = Glib::RefPtr<DockItem>(new DockItem(m_xid, m_instance_name, m_group_name));
+        clone->m_has_desktop_file = m_has_desktop_file;
+        clone->m_attached = m_attached;
+        clone->m_title = "clone";  // m_title;
+        clone->m_window_name = m_window_name;
+        clone->m_desktop_file = m_desktop_file;
+        clone->m_icon_name = m_icon_name;
+        clone->m_description = m_description;
+        clone->m_icon = m_icon;
+
+        // covariant return type.
+        return clone;
+    }
+
     inline const bool DockItem::has_desktop_file() const
     {
         return m_has_desktop_file;

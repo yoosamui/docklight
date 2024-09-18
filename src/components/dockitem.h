@@ -32,6 +32,8 @@ namespace docklight
         std::map<guint32, Glib::RefPtr<DockItem>> m_childmap;
 
       protected:
+        virtual const Glib::RefPtr<DockItem> clone() = 0;
+
         // setters
 
         virtual void set_icon(Glib::RefPtr<Gdk::Pixbuf> icon) = 0;
@@ -73,6 +75,7 @@ namespace docklight
         // implementations
         bool const has_desktop_file() const;
 
+        const Glib::RefPtr<DockItem> clone();
         // setters
         //    void set_xid(guint32 xid);
         void set_attached(bool attached);
