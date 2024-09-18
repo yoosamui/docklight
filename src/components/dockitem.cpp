@@ -1,3 +1,21 @@
+//  Copyright (c) 2018-2024 Juan R. González
+//
+//
+//  This file is part of Docklight.
+//
+//  Docklight is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  Docklight is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  public Glib::Object GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  identification number, along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 #include "components/dockitem.h"
 
 namespace docklight
@@ -18,11 +36,10 @@ namespace docklight
 
     inline const Glib::RefPtr<DockItem> DockItem::clone()
     {
-        //
         auto clone = Glib::RefPtr<DockItem>(new DockItem(m_xid, m_instance_name, m_group_name));
         clone->m_has_desktop_file = m_has_desktop_file;
         clone->m_attached = m_attached;
-        clone->m_title = "clone";  // m_title;
+        clone->m_title = m_title;
         clone->m_window_name = m_window_name;
         clone->m_desktop_file = m_desktop_file;
         clone->m_icon_name = m_icon_name;
@@ -174,7 +191,6 @@ namespace docklight
                << "window_name: " << m_window_name<< std::endl
                << "description: " << m_description<< std::endl
                << std::endl;
-
         // clang-format on
 
         return ss.str();

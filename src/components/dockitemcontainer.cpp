@@ -1,6 +1,6 @@
 
 // clang-format off
-#include "gio/gdesktopappinfo.h"
+//#include "gio/gdesktopappinfo.h"
 #include "components/dockitemcontainer.h"
 // clang-format on
 
