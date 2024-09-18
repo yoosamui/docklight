@@ -27,45 +27,10 @@
 #include "components/dockitem.h"
 #include "utils/singletonbase.h"
 #include "utils/pixbuf.h"
-
 // clang-format on
 
 namespace docklight
 {
-
-    class DockIcon : public Glib::Object
-    {
-      public:
-        DockIcon(Glib::RefPtr<Gdk::Pixbuf> icon, Glib::ustring title, Glib::ustring desktop_file)
-        {
-            std::string thetitle(title);
-            std::replace(thetitle.begin(), thetitle.end(), '.', '-');
-            m_icon = icon;
-            m_title = thetitle;
-            m_desktop_file = desktop_file;
-        }
-
-        const Glib::RefPtr<Gdk::Pixbuf>& get_icon() const { return m_icon; }
-        const Glib::ustring& get_desktop_file() const { return m_desktop_file; }
-
-        const void set_icon(Glib::RefPtr<Gdk::Pixbuf> icon)
-        {
-            //
-            m_icon = icon;
-        }
-
-        const Glib::ustring& get_title() const
-        {
-            //
-            return m_title;
-        }
-
-      private:
-        Glib::RefPtr<Gdk::Pixbuf> m_icon;
-        Glib::ustring m_desktop_file = {};
-        Glib::ustring m_title = {};
-    };
-
     class DockItemContainer : public SingletonBase<DockItemContainer>
     {
       public:
@@ -73,16 +38,10 @@ namespace docklight
         virtual ~DockItemContainer();
 
         const std::map<guint32, Glib::RefPtr<DockItem>> get_appmap() const;
-        //   const std::map<guint32, Glib::RefPtr<DockIcon>> get_iconmap() const;
-
         int remove(guint32 xid);
-
-        //   bool exist_child(guint32 xid) const;
-        bool exist(guint32 xid) const;
         guint32 exist(const Glib::ustring& group) const;
 
-        // bool get_dockitem_by_xid(gint32 xid, Glib::RefPtr<DockItem>& item);
-
+        bool exist(guint32 xid) const;
         bool insert(guint32 xid, GdkPixbuf* gdkpixbuf, const Glib::ustring& instance_name,
                     const Glib::ustring& group_name, const Glib::ustring& window_name,
                     const Glib::ustring& window_icon_name, bool icon_is_fallback);

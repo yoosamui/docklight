@@ -1,12 +1,9 @@
-
 // clang-format off
-//#include "gio/gdesktopappinfo.h"
 #include "components/dockitemcontainer.h"
 // clang-format on
 
 namespace docklight
 {
-
     DockItemContainer* get_dockcontainer()
     {
         return DockItemContainer::getInstance();
@@ -44,6 +41,7 @@ namespace docklight
 
             if (dockitem->get_group_name() == group) return xid;
         }
+
         return 0;
     }
 
@@ -59,7 +57,7 @@ namespace docklight
         }
 
         for (auto it = m_appmap.begin(); it != m_appmap.end(); it++) {
-            auto dockitem = it->second;
+            Glib::RefPtr<DockItem> dockitem = it->second;
             auto result = dockitem->remove_child(xid);
 
             if (result) return result;
@@ -68,36 +66,6 @@ namespace docklight
         return 0;
     }
 
-    // As long as only const operations are used on the container the execution is thread-safe.
-    // That is the case ot at.
-    // bool DockItemContainer::get_dockitem_by_xid(gint32 xid, Glib::RefPtr<DockItem>& item)
-    //{
-    // if (!exist(xid)) return false;
-
-    // item = m_appmap.at(xid);
-
-    // return true;
-    //}
-
-    /*int DockItemContainer::count_items_by_title(const Glib::ustring& title)
-    {
-        int count = 0;
-        // int refxid = 0;
-
-        // for (auto& kp : m_appmap) {
-        // Glib::RefPtr<DockItem> item = kp.second;
-        // if (item->get_title() == title) {
-        // count++;
-        // if (count == 1 && item->get_refxid() == 0) {
-        // refxid = item->get_xid();
-        //} else if (item->get_refxid() > 0) {
-        // item->set_refxid(refxid);
-        //}
-        //}
-        //}
-
-        return count;
-    }*/
     void DockItemContainer::on_theme_changed()
     {
         return;
@@ -130,6 +98,7 @@ namespace docklight
 
         return pixbuf ? true : false;
     }
+
     bool DockItemContainer::get_theme_icon(guint xid, Glib::RefPtr<Gdk::Pixbuf>& pixbuf,
                                            Glib::ustring& title_name, Glib::ustring& desktop_file,
                                            Glib::ustring& icon_name)
@@ -240,22 +209,20 @@ namespace docklight
                 m_appmap.insert({xid, dockitem});
 
                 // always add a replica Dockitem child clone
-                const Glib::RefPtr<DockItem> child = dockitem->clone();
-                dockitem->add_child(child);
+                dockitem->add_child(dockitem->clone());
             }
         } else {
             // Handles the window icons
             if (get_window_icon(gdkpixbuf, pixbuf)) {
-                const Glib::RefPtr<DockItem> dockitem =
+                const auto dockitem =
                     Glib::RefPtr<DockItem>(new DockItem(xid, instance_name, group_name));
+
                 // create groups setion.
-                //
                 auto cxid = exist(group_name);
                 if (cxid) {
                     const auto dockitem =
                         Glib::RefPtr<DockItem>(new DockItem(xid, instance_name, group_name));
                     dockitem->set_title(window_icon_name);
-                    //                dockitem->set_window_name(window_name);
                     dockitem->set_icon_name(icon_name);
                     dockitem->set_icon(pixbuf);
 
@@ -280,7 +247,7 @@ namespace docklight
                         owner->add_child(dockitem);
                     }
                 } else if (!exist(xid) && !icon_is_fallback) {
-                    const Glib::RefPtr<DockItem> dockitem =
+                    const auto dockitem =
                         Glib::RefPtr<DockItem>(new DockItem(xid, instance_name, group_name));
 
                     // TODO fix with window type
@@ -298,22 +265,9 @@ namespace docklight
                     // add a new DockItem
                     m_appmap.insert({xid, dockitem});
 
-                    // always add a replica Dockitem child clone
-                    Glib::RefPtr<DockItem> child = dockitem->clone();
+                    // always add a replica DockTtem child clone
                     dockitem->set_title(window_name);
-                    dockitem->add_child(child);  // add the new child*/
-
-                    /*dockitem = Glib::RefPtr<DockItem>(new DockItem(xid, instance_name,
-                    group_name));
-
-                    dockitem->set_title(window_name);
-                    dockitem->set_icon_name(window_icon_name);
-                    //   dockitem->set_window_name("");
-                    dockitem->set_icon(pixbuf);
-
-                    // add the new child icon to the owner.
-                    auto owner = m_appmap.at(xid);
-                    owner->add_child(dockitem);  // add the new child*/
+                    dockitem->add_child(dockitem->clone());
                 }
             }
         }
