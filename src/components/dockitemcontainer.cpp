@@ -217,13 +217,12 @@ namespace docklight
                                    const Glib::ustring& window_icon_name, bool icon_is_fallback)
     {
         if (exist(xid)) return false;
-        //  if (group_name != "Firefox-esr") return false;
 
         // set the members values in DockItem
         const Glib::RefPtr<DockItem> dockitem =
             Glib::RefPtr<DockItem>(new DockItem(xid, instance_name, group_name));
 
-        guint32 instance_hash = dockitem->get_hash();
+        //        guint32 instance_hash = dockitem->get_hash();
 
         dockitem->set_xid(xid);
         dockitem->set_window_name(window_name);

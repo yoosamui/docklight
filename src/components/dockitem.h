@@ -15,7 +15,7 @@ namespace docklight
     {
       protected:
         guint32 m_xid = 0;  // 32-bit identification number,
-        guint32 m_hash = 0;
+                            //   guint32 m_hash = 0;
 
         bool m_has_desktop_file = true;
         bool m_attached = false;
@@ -34,7 +34,7 @@ namespace docklight
       protected:
         // setters
 
-        virtual void set_xid(guint32 xid) = 0;
+        // virtual void set_xid(guint32 xid) = 0;
 
         virtual void set_icon(Glib::RefPtr<Gdk::Pixbuf> icon) = 0;
         virtual void set_attached(bool attached) = 0;
@@ -52,8 +52,8 @@ namespace docklight
         // getters
 
         virtual const bool get_is_attached() const = 0;
-        virtual const guint32 get_xid() const = 0;
-        virtual const guint32 get_hash() const = 0;
+        //   virtual const guint32 get_xid() const = 0;
+        // virtual const guint32 get_hash() const = 0;
         virtual const Glib::ustring& get_window_name() const = 0;
         virtual const Glib::ustring& get_title() const = 0;
         virtual const Glib::ustring& get_instance_name() const = 0;
@@ -102,7 +102,7 @@ namespace docklight
         const bool get_is_attached() const;
 
         const guint32 get_xid() const;
-        const guint32 get_hash() const;
+        // const guint32 get_hash() const;
 
         const Glib::ustring& get_window_name() const;
         const Glib::ustring& get_title() const;

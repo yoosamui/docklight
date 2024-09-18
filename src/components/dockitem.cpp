@@ -12,10 +12,10 @@ namespace docklight
 
         // Create an unique instance name.
         // Avoid dots and spaces in instance names,
-        std::string unique_instance(instance_name + group_name);
+        /*std::string unique_instance(instance_name + group_name);
         std::replace(unique_instance.begin(), unique_instance.end(), ' ', '-');
         std::replace(unique_instance.begin(), unique_instance.end(), '.', '-');
-        m_hash = static_cast<guint32>(std::hash<std::string>{}(unique_instance));
+        m_hash = static_cast<guint32>(std::hash<std::string>{}(unique_instance));*/
     }
 
     DockItem::~DockItem()
@@ -34,10 +34,10 @@ namespace docklight
         m_childmap.insert({child->get_xid(), child});
     }
 
-    inline void DockItem::set_xid(guint32 xid)
-    {
-        m_xid = xid;
-    }
+    // inline void DockItem::set_xid(guint32 xid)
+    //{
+    // m_xid = xid;
+    //}
 
     inline void DockItem::set_attached(bool attached)
     {
@@ -97,10 +97,10 @@ namespace docklight
     // Getters
 
     //   Glib::RefPtr<DockItem>& get_mutable()
-    inline const guint32 DockItem::get_hash() const
-    {
-        return m_hash;
-    }
+    // inline const guint32 DockItem::get_hash() const
+    //{
+    // return m_hash;
+    //}
     inline const guint32 DockItem::get_xid() const
     {
         return m_xid;
@@ -169,7 +169,7 @@ namespace docklight
         // clang-format off
             std::stringstream ss;
             ss << "xid: " << m_xid << std::endl
-               << "hash: " << std::to_string(m_hash) << std::endl
+//               << "hash: " << std::to_string(m_hash) << std::endl
                << "title: " << m_title << std::endl
                << "group: " << m_group_name << std::endl
                << "instance: " << m_instance_name << std::endl
