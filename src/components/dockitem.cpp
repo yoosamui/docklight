@@ -22,9 +22,10 @@ namespace docklight
 {
 
     DockItem::DockItem(guint32 xid, const Glib::ustring& instance_name,
-                       const Glib::ustring& group_name)
+                       const Glib::ustring& group_name, guint wintype)
     {
         m_xid = xid;
+        m_wintype = wintype;
         m_instance_name = instance_name;
         m_group_name = group_name;
     }
@@ -36,7 +37,9 @@ namespace docklight
 
     inline const Glib::RefPtr<DockItem> DockItem::clone()
     {
-        auto clone = Glib::RefPtr<DockItem>(new DockItem(m_xid, m_instance_name, m_group_name));
+        auto clone =
+            Glib::RefPtr<DockItem>(new DockItem(m_xid, m_instance_name, m_group_name, m_wintype));
+
         clone->m_has_desktop_file = m_has_desktop_file;
         clone->m_attached = m_attached;
         clone->m_title = m_title;
@@ -45,6 +48,7 @@ namespace docklight
         clone->m_icon_name = m_icon_name;
         clone->m_description = m_description;
         clone->m_icon = m_icon;
+        clone->m_wintype = m_wintype;
 
         // covariant return type.
         return clone;
@@ -122,6 +126,11 @@ namespace docklight
         return m_xid;
     }
 
+    inline const guint DockItem::get_wintype() const
+    {
+        return m_wintype;
+    }
+
     inline const bool DockItem::get_is_attached() const
     {
         return m_attached;
@@ -182,6 +191,7 @@ namespace docklight
         // clang-format off
             std::stringstream ss;
             ss << "xid: " << m_xid << std::endl
+               << "wintype: " << std::to_string(m_wintype)<< std::endl
                << "childrens: " << m_childmap.size()<< std::endl
                << "title: " << m_title << std::endl
                << "group: " << m_group_name << std::endl

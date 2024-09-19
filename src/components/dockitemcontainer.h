@@ -21,9 +21,10 @@
 #include <gdkmm/pixbuf.h>
 #include <sigc++/sigc++.h>
 #include <libbamf/libbamf.h>
-
+#include <libwnck/libwnck.h>
 #include <giomm/desktopappinfo.h>
 #include <gtkmm/icontheme.h>
+
 #include "components/dockitem.h"
 #include "utils/singletonbase.h"
 #include "utils/pixbuf.h"
@@ -31,6 +32,18 @@
 
 namespace docklight
 {
+
+    /*typedef enum {
+        WNCK_WINDOW_NORMAL,      [> document/app window <]
+        WNCK_WINDOW_DESKTOP,     [> desktop background <]
+        WNCK_WINDOW_DOCK,        [> panel <]
+        WNCK_WINDOW_DIALOG,      [> dialog <]
+        WNCK_WINDOW_TOOLBAR,     [> tearoff toolbar <]
+        WNCK_WINDOW_MENU,        [> tearoff menu <]
+        WNCK_WINDOW_UTILITY,     [> palette/toolbox window <]
+        WNCK_WINDOW_SPLASHSCREEN [> splash screen <]
+    } WnckWindowType;*/
+
     class DockItemContainer : public SingletonBase<DockItemContainer>
     {
       public:
@@ -42,15 +55,18 @@ namespace docklight
         guint32 exist(const Glib::ustring& group) const;
 
         bool exist(guint32 xid) const;
-        bool insert(guint32 xid, GdkPixbuf* gdkpixbuf, const Glib::ustring& instance_name,
-                    const Glib::ustring& group_name, const Glib::ustring& window_name,
-                    const Glib::ustring& window_icon_name, bool icon_is_fallback);
+        bool insert(WnckWindow* window);
 
       private:
         void on_theme_changed();
         bool get_window_icon(GdkPixbuf* gdkpixbuf, Glib::RefPtr<Gdk::Pixbuf>& pixbuf);
         bool get_theme_icon(guint xid, Glib::RefPtr<Gdk::Pixbuf>& pixbuf, Glib::ustring& title_name,
                             Glib::ustring& desktop_file, Glib::ustring& icon_name);
+
+        bool insert(guint32 xid, GdkPixbuf* gdkpixbuf, const Glib::ustring instance_name,
+                    const Glib::ustring group_name, const Glib::ustring window_name,
+                    const Glib::ustring window_icon_name, bool icon_is_fallback,
+                    WnckWindowType wintype);
 
       private:
         std::map<guint32, Glib::RefPtr<DockItem>> m_appmap;
