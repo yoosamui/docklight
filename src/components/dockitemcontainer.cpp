@@ -209,12 +209,6 @@ namespace docklight
                                    const Glib::ustring window_icon_name, bool icon_is_fallback,
                                    WnckWindowType wintype)
     {
-        //   if (group_name != "Xfce4-settings-manager") return false;
-        //        if (group_name != "Xlet-settings.py" && group_name != "Firefox-esr") return false;
-        // if (group_name != "Geany" && group_name != "Gedit" && group_name !=
-        // "Nm-connection-editor")
-        //    return false;
-
         Glib::RefPtr<Gdk::Pixbuf> pixbuf;
         Glib::ustring title_name;
         Glib::ustring desktop_file;
@@ -227,8 +221,6 @@ namespace docklight
                 Glib::RefPtr<DockItem>(new DockItem(xid, instance_name, group_name, wintype));
 
             dockitem->set_desktop_file(desktop_file);
-            // TODO: handle by app TYPE
-            //  dockitem->set_window_name(window_name);
             dockitem->set_icon_name(icon_name);
             dockitem->set_icon(pixbuf);
 
@@ -239,10 +231,6 @@ namespace docklight
                 dockitem->set_title(window_name);
                 if (wintype == WnckWindowType::WNCK_WINDOW_DIALOG) {
                     dockitem->set_title(window_icon_name);
-
-                    // if (get_window_icon(gdkpixbuf, pixbuf)) {
-                    // dockitem->set_icon(pixbuf);
-                    //}
                 }
 
                 if (icon_is_fallback) {
@@ -265,10 +253,6 @@ namespace docklight
                 child->set_title(window_name);
                 if (wintype == WnckWindowType::WNCK_WINDOW_DIALOG) {
                     child->set_title(window_icon_name);
-
-                    // if (get_window_icon(gdkpixbuf, pixbuf)) {
-                    // child->set_icon(pixbuf);
-                    //}
                 }
 
                 if (icon_is_fallback) {
@@ -307,7 +291,7 @@ namespace docklight
 
                     if (owner->get_childmap().count(xid)) {
                         remove(xid);
-                        if (wintype == 3) dockitem->set_title(window_icon_name);  // wintype 3
+                        if (wintype == 3) dockitem->set_title(window_icon_name);
                         owner->add_child(dockitem);
                     } else {
                         // if the icon is fallback
@@ -315,19 +299,13 @@ namespace docklight
                         dockitem->set_icon(owner->get_icon());
 
                         // add the new child icon to the owner.
-                        if (wintype == 3) dockitem->set_title(window_icon_name);  // wintype 3
+                        if (wintype == 3) dockitem->set_title(window_icon_name);
                         owner->add_child(dockitem);
                     }
                 } else if (!exist(xid) && !icon_is_fallback) {
                     const auto dockitem = Glib::RefPtr<DockItem>(
                         new DockItem(xid, instance_name, group_name, wintype));
 
-                    // TODO fix with window type
-                    // group_name or  windown name
-                    /*std::string group(group_name);
-                    if (group.find('.') != std::string::npos) {
-                        group = window_icon_name;
-                    }*/
                     dockitem->set_title(group_name);
                     dockitem->set_icon_name(icon_name);
                     dockitem->set_icon_name(window_icon_name);
@@ -338,7 +316,7 @@ namespace docklight
 
                     // always add a replica DockTtem child clone
                     dockitem->set_title(window_name);
-                    if (wintype == 3) dockitem->set_title(window_icon_name);  // wintype 3
+                    if (wintype == 3) dockitem->set_title(window_icon_name);
                     dockitem->add_child(dockitem->clone());
                 }
             }
