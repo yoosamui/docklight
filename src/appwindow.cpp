@@ -173,7 +173,7 @@ namespace docklight
                     std::string title(dockitem->get_window_name());
                     std::replace(title.begin(), title.end(), ' ', '-');
 
-                    sprintf(filepath, "/home/yoo/TEMP/*****%s-(%s) [%d]",
+                    sprintf(filepath, "/home/yoo/TEMP/  *****%s-(%s) [%d]",
                             dockitem->get_group_name().c_str(),
                             dockitem->get_instance_name().c_str(), dockitem->get_xid());
 
@@ -181,7 +181,7 @@ namespace docklight
                     // dockitem->get_title().c_str(), dockitem->get_window_name().c_str(),
                     // dockitem->get_xid());
 
-                    g_print("  %s\n", dockitem->to_string().c_str());
+                    g_print("*****%s\n", dockitem->to_string().c_str());
 
                     pixbuf = dockitem->get_icon();
                     if (pixbuf) {
