@@ -239,14 +239,18 @@ namespace docklight
                 dockitem->set_title(window_name);
                 if (wintype == WnckWindowType::WNCK_WINDOW_DIALOG) {
                     dockitem->set_title(window_icon_name);
-                }
 
-                if (get_window_icon(gdkpixbuf, pixbuf)) {
-                    dockitem->set_icon(pixbuf);
+                    // if (get_window_icon(gdkpixbuf, pixbuf)) {
+                    // dockitem->set_icon(pixbuf);
+                    //}
                 }
 
                 if (icon_is_fallback) {
                     dockitem->set_icon(owner->get_icon());
+                }
+
+                if (get_window_icon(gdkpixbuf, pixbuf)) {
+                    dockitem->set_icon(pixbuf);
                 }
 
                 owner->add_child(dockitem);
@@ -261,14 +265,18 @@ namespace docklight
                 child->set_title(window_name);
                 if (wintype == WnckWindowType::WNCK_WINDOW_DIALOG) {
                     child->set_title(window_icon_name);
-                }
 
-                if (get_window_icon(gdkpixbuf, pixbuf)) {
-                    child->set_icon(pixbuf);
+                    // if (get_window_icon(gdkpixbuf, pixbuf)) {
+                    // child->set_icon(pixbuf);
+                    //}
                 }
 
                 if (icon_is_fallback) {
                     child->set_icon(dockitem->get_icon());
+                }
+
+                if (get_window_icon(gdkpixbuf, pixbuf)) {
+                    child->set_icon(pixbuf);
                 }
 
                 dockitem->add_child(child);
