@@ -36,6 +36,7 @@ docklight_SOURCES =  \
 appwindow.cpp \
 appoptionsgroup.cpp \
 utils/pixbuf.cpp \
+utils/factory.cpp \
 components/TransparentWindow.cpp \
 components/ExplodesWindow.cpp \
 components/panel.cpp \

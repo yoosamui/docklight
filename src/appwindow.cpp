@@ -152,8 +152,11 @@ namespace docklight
             // dockitem->get_group_name().c_str());
             //}
 
-            for (const auto& item : container->get_appmap()) {
-                const Glib::RefPtr<DockItem> dockitem = item.second;
+            //    Glib::RefPtr<Gtk::IconTheme> theme = Gtk::IconTheme::get_default();
+            auto m_appmap = container->get_appmap();
+            for (auto it = m_appmap.begin(); it != m_appmap.end(); it++) {
+                //  for (const auto& item : container->get_appmap()) {
+                const Glib::RefPtr<DockItem> dockitem = it->second;
 
                 auto pixbuf = dockitem->get_icon();
 
@@ -165,8 +168,8 @@ namespace docklight
                 if (pixbuf) {
                     pixbuf->save(filepath, "png");
                 }
-                g_print("------------------------------\n%s\n", dockitem->to_string().c_str());
-                //  g_print("%s\n", filepath);
+                g_print("%s\n", dockitem->to_string().c_str());
+
                 for (const auto& it : dockitem->get_childmap()) {
                     const Glib::RefPtr<DockItem> dockitem = it.second;
 

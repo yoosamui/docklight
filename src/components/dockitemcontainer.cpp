@@ -13,6 +13,15 @@ namespace docklight
     {
         m_matcher = bamf_matcher_get_default();
         g_assert(BAMF_IS_MATCHER(m_matcher));
+
+        auto const icon_theme = Gtk::IconTheme::get_default();
+        icon_theme->signal_changed().connect(
+            sigc::mem_fun(*this, &DockItemContainer ::on_theme_changed));
+    }
+
+    type_signal_update DockItemContainer::signal_update()
+    {
+        return m_signal_update;
     }
 
     DockItemContainer::~DockItemContainer()
@@ -68,26 +77,23 @@ namespace docklight
 
     void DockItemContainer::on_theme_changed()
     {
-        return;
-        /*for (const auto& item : m_iconmap) {
-            Glib::RefPtr<DockIcon> dockicon = item.second;
-            Glib::RefPtr<Gio::DesktopAppInfo> appinfo =
-                Gio::DesktopAppInfo::create_from_filename(dockicon->get_desktop_file());
+        bool updated = false;
+        Glib::RefPtr<Gdk::Pixbuf> pixbuf;
 
-            if (!appinfo) continue;
+        for (auto it = m_appmap.begin(); it != m_appmap.end(); it++) {
+            auto dockitem = it->second;
 
-            char* icon_name = g_desktop_app_info_get_string(appinfo->gobj(), "Icon");
-            if (!icon_name) continue;
+            auto xid = dockitem->get_xid();
+            if (get_theme_icon(xid, pixbuf)) {
+                dockitem->set_icon(pixbuf);
+                if (!updated) updated = true;
+            }
+        }
 
-            // ..if (m_iconmap.count(icon_name) != 1) continue;
-
-            // TODO fix this GtkWindow* need to opass            Glib::RefPtr<Gdk::Pixbuf> icon
-            // = pixbuf::get_icon(icon_name);
-            //             if (!icon) continue;
-
-            // dockicon->set_icon(icon);
-            // m_iconmap.at(icon_name) = dockicon;
-        }*/
+        if (updated) {
+            g_message("Icon theme updated.");
+            m_signal_update.emit(window_action_t::UPDATE, 0);
+        }
     }
 
     bool DockItemContainer::get_window_icon(GdkPixbuf* gdkpixbuf, Glib::RefPtr<Gdk::Pixbuf>& pixbuf)
@@ -97,6 +103,15 @@ namespace docklight
         pixbuf = Glib::wrap(gdkpixbuf, true)->scale_simple(128, 128, Gdk::INTERP_BILINEAR);
 
         return pixbuf ? true : false;
+    }
+
+    bool DockItemContainer::get_theme_icon(guint xid, Glib::RefPtr<Gdk::Pixbuf>& pixbuf)
+    {
+        Glib::ustring title_name;
+        Glib::ustring desktop_file;
+        Glib::ustring icon_name;
+
+        return get_theme_icon(xid, pixbuf, title_name, desktop_file, icon_name);
     }
 
     bool DockItemContainer::get_theme_icon(guint xid, Glib::RefPtr<Gdk::Pixbuf>& pixbuf,
@@ -209,6 +224,7 @@ namespace docklight
                                    const Glib::ustring window_icon_name, bool icon_is_fallback,
                                    WnckWindowType wintype)
     {
+        //  if (group_name != "Geany" && group_name != "Xfce4-settings-manager") return true;
         Glib::RefPtr<Gdk::Pixbuf> pixbuf;
         Glib::ustring title_name;
         Glib::ustring desktop_file;
@@ -229,6 +245,7 @@ namespace docklight
             if (cxid) {
                 auto owner = m_appmap.at(cxid);
                 dockitem->set_title(window_name);
+
                 if (wintype == WnckWindowType::WNCK_WINDOW_DIALOG) {
                     dockitem->set_title(window_icon_name);
                 }
@@ -250,6 +267,7 @@ namespace docklight
 
                 // always add a replica Dockitem child clone
                 auto child = dockitem->clone();
+
                 child->set_title(window_name);
                 if (wintype == WnckWindowType::WNCK_WINDOW_DIALOG) {
                     child->set_title(window_icon_name);
@@ -257,9 +275,7 @@ namespace docklight
 
                 if (icon_is_fallback) {
                     child->set_icon(dockitem->get_icon());
-                }
-
-                if (get_window_icon(gdkpixbuf, pixbuf)) {
+                } else if (get_window_icon(gdkpixbuf, pixbuf)) {
                     child->set_icon(pixbuf);
                 }
 

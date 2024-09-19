@@ -33,16 +33,8 @@
 namespace docklight
 {
 
-    /*typedef enum {
-        WNCK_WINDOW_NORMAL,      [> document/app window <]
-        WNCK_WINDOW_DESKTOP,     [> desktop background <]
-        WNCK_WINDOW_DOCK,        [> panel <]
-        WNCK_WINDOW_DIALOG,      [> dialog <]
-        WNCK_WINDOW_TOOLBAR,     [> tearoff toolbar <]
-        WNCK_WINDOW_MENU,        [> tearoff menu <]
-        WNCK_WINDOW_UTILITY,     [> palette/toolbox window <]
-        WNCK_WINDOW_SPLASHSCREEN [> splash screen <]
-    } WnckWindowType;*/
+    enum window_action_t { OPEN, CLOSE, UPDATE };
+    typedef sigc::signal<void, window_action_t, int> type_signal_update;
 
     class DockItemContainer : public SingletonBase<DockItemContainer>
     {
@@ -58,8 +50,11 @@ namespace docklight
         bool insert(WnckWindow* window);
 
       private:
+        // signal accessor:
+        type_signal_update signal_update();
         void on_theme_changed();
         bool get_window_icon(GdkPixbuf* gdkpixbuf, Glib::RefPtr<Gdk::Pixbuf>& pixbuf);
+        bool get_theme_icon(guint xid, Glib::RefPtr<Gdk::Pixbuf>& pixbuf);
         bool get_theme_icon(guint xid, Glib::RefPtr<Gdk::Pixbuf>& pixbuf, Glib::ustring& title_name,
                             Glib::ustring& desktop_file, Glib::ustring& icon_name);
 
@@ -70,6 +65,7 @@ namespace docklight
 
       private:
         std::map<guint32, Glib::RefPtr<DockItem>> m_appmap;
+        type_signal_update m_signal_update;
         BamfMatcher* m_matcher = nullptr;
     };
 

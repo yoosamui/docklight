@@ -45,11 +45,12 @@ namespace docklight
 
     class AppProvider : public Glib::Object
     {
-        static void on_window_closed(WnckScreen* screen, WnckWindow* window, gpointer data);
-        static void on_window_opened(WnckScreen* screen, WnckWindow* window, gpointer data);
-
       public:
         AppProvider();
+
+      private:
+        static void on_window_closed(WnckScreen* screen, WnckWindow* window, gpointer data);
+        static void on_window_opened(WnckScreen* screen, WnckWindow* window, gpointer data);
     };
 
 }  // namespace docklight

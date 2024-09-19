@@ -91,6 +91,23 @@ namespace docklight
         return pixbuf ? true : false;
     }
 #endif
+    // void AppProvider::on_theme_changed()
+    //{
+    //// int icon_size = config::get_icon_size();
+    //// for (size_t i = 1; i < m_dockitems.size(); i++) {
+    //// auto const item = m_dockitems[i];
+    //// auto icon = pixbuf_util::get_window_icon(item->get_wnckwindow(),
+    //// item->get_desktop_icon_name(), icon_size);
+
+    //// if (icon == (Glib::RefPtr<Gdk::Pixbuf>)nullptr) {
+    //// continue;
+    ////}
+    //// item->set_image(icon);
+    ////}
+
+    //// m_signal_update.emit(window_action_t::UPDATE, 0);
+    // g_print("Theme change\n");
+    //}
 
     void AppProvider::on_window_closed(WnckScreen* screen, WnckWindow* window, gpointer data)
     {
@@ -155,6 +172,10 @@ namespace docklight
     AppProvider::AppProvider()
     {
         WnckScreen* wnckscreen = wnck_screen_get_default();
+
+        // auto const icon_theme = Gtk::IconTheme::get_default();
+        // icon_theme->signal_changed().connect(sigc::mem_fun(*this,
+        // &AppProvider::on_theme_changed));
 
         g_signal_connect(G_OBJECT(wnckscreen), "window-opened",
                          G_CALLBACK(&AppProvider::on_window_opened), nullptr);
