@@ -27,87 +27,7 @@ namespace docklight
         return pixbuf ? true : false;
     }
 
-    bool get_theme_icon(WnckWindow* window, Glib::RefPtr<Gdk::Pixbuf>& pixbuf)
-    {
-        gint32 xid = wnck_window_get_xid(window);
-
-        // This matcher is owned by bamf and shared between other callers.
-        BamfMatcher* matcher = bamf_matcher_get_default();
-        if (!matcher) {
-            g_warning("BamfMatcher: the object has not been created.");
-            return false;
-        }
-
-        BamfApplication* bamfapp = bamf_matcher_get_application_for_xid(matcher, xid);
-        if (!bamfapp) {
-            g_warning("BamfApplication: the object has not been created.");
-            return false;
-        }
-
-        const char* desktop_file = bamf_application_get_desktop_file(bamfapp);
-        if (!desktop_file) {
-            g_warning("desktop_file: the object has not been created.");
-
-            return false;
-        }
-
-        Glib::RefPtr<Gio::DesktopAppInfo> appinfo =
-            Gio::DesktopAppInfo::create_from_filename(desktop_file);
-
-        if (!appinfo) {
-            g_warning("Gio::DesktopAppInfo: the object has not been created.");
-            return false;
-        }
-
-        Glib::ustring title = appinfo->get_string("Name");
-        g_print("%s\n", title.c_str());
-
-        char* icon_name = g_desktop_app_info_get_string(appinfo->gobj(), "Icon");
-        if (!icon_name) {
-            g_warning(
-                "g_desktop_app_info_get_string, icon_name : the object has not been created.");
-
-            return false;
-        }
-
-        // get the default theme
-        Glib::RefPtr<Gtk::IconTheme> theme = Gtk::IconTheme::get_default();
-        if (!theme) {
-            g_warning("Gtk::IconTheme: the object has not been created.");
-            return false;
-        }
-        try {
-            // Always get the icon scaled to the
-            // requested size.
-            pixbuf = theme->load_icon(icon_name, 128, Gtk::IconLookupFlags::ICON_LOOKUP_FORCE_SIZE);
-        } catch (...) {
-            g_warning("pixbuf: Exception the object has not been created. (%s)", icon_name);
-            return false;
-        }
-
-        //       delete desktop_file;
-        delete icon_name;
-
-        return pixbuf ? true : false;
-    }
 #endif
-    // void AppProvider::on_theme_changed()
-    //{
-    //// int icon_size = config::get_icon_size();
-    //// for (size_t i = 1; i < m_dockitems.size(); i++) {
-    //// auto const item = m_dockitems[i];
-    //// auto icon = pixbuf_util::get_window_icon(item->get_wnckwindow(),
-    //// item->get_desktop_icon_name(), icon_size);
-
-    //// if (icon == (Glib::RefPtr<Gdk::Pixbuf>)nullptr) {
-    //// continue;
-    ////}
-    //// item->set_image(icon);
-    ////}
-
-    //// m_signal_update.emit(window_action_t::UPDATE, 0);
-    // g_print("Theme change\n");
-    //}
 
     void AppProvider::on_window_closed(WnckScreen* screen, WnckWindow* window, gpointer data)
     {
@@ -127,11 +47,6 @@ namespace docklight
             return;
         }
 
-        gint32 xid = wnck_window_get_xid(window);
-
-        auto container = get_dockcontainer();
-        if (get_dockcontainer()->exist(xid)) return;
-
         WnckWindowType wt = wnck_window_get_window_type(window);
 
         // clang-format off
@@ -141,15 +56,18 @@ namespace docklight
                 wt == WNCK_WINDOW_MENU ||
                 wt == WNCK_WINDOW_SPLASHSCREEN){
 
-
                 return ;
             }
-
         // clang-format on
+
+        gint32 xid = wnck_window_get_xid(window);
+
+        auto container = get_dockcontainer();
+        if (get_dockcontainer()->exist(xid)) return;
 
         container->insert(window);
 
-        // i/////////////////// TEST
+        /*// i/////////////////// TEST
         Glib::RefPtr<Gdk::Pixbuf> pixbuf;
         const char* group_name = wnck_window_get_class_group_name(window);
 
@@ -165,17 +83,13 @@ namespace docklight
             } catch (...) {
                 // swallow
             }
-        }
+        }*/
         return;
     }
 
     AppProvider::AppProvider()
     {
         WnckScreen* wnckscreen = wnck_screen_get_default();
-
-        // auto const icon_theme = Gtk::IconTheme::get_default();
-        // icon_theme->signal_changed().connect(sigc::mem_fun(*this,
-        // &AppProvider::on_theme_changed));
 
         g_signal_connect(G_OBJECT(wnckscreen), "window-opened",
                          G_CALLBACK(&AppProvider::on_window_opened), nullptr);

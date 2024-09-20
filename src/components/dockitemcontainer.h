@@ -50,8 +50,11 @@ namespace docklight
         bool insert(WnckWindow* window);
 
       private:
+        sigc::connection m_sigc;
+
         // signal accessor:
         type_signal_update signal_update();
+
         void on_theme_changed();
         bool get_window_icon(GdkPixbuf* gdkpixbuf, Glib::RefPtr<Gdk::Pixbuf>& pixbuf);
         bool get_theme_icon(guint xid, Glib::RefPtr<Gdk::Pixbuf>& pixbuf);

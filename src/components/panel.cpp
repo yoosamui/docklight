@@ -142,7 +142,7 @@ namespace docklight
             m_surfaceIcon = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, size, size);
         }
         std::string iconname("data/images/docklight.home.ico");
-        auto home_pixbuf = Gdk::Pixbuf::create_from_file(iconname, size, size);
+        auto home_pixbuf = Gdk::Pixbuf::create_from_file(iconname, size, size);\h
         Cairo::RefPtr<Cairo::Context> ctx = Cairo::Context::create(m_surfaceIcon);
 
         Gdk::Cairo::set_source_pixbuf(ctx, home_pixbuf, 0, 0);

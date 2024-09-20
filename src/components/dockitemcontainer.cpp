@@ -1,3 +1,21 @@
+//  Copyright (c) 2018-2024 Juan R. González
+//
+//
+//  This file is part of Docklight.
+//
+//  Docklight is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  Docklight is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  public Glib::Object GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  identification number, along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 // clang-format off
 #include "components/dockitemcontainer.h"
 // clang-format on
@@ -15,7 +33,8 @@ namespace docklight
         g_assert(BAMF_IS_MATCHER(m_matcher));
 
         auto const icon_theme = Gtk::IconTheme::get_default();
-        icon_theme->signal_changed().connect(
+
+        m_sigc = icon_theme->signal_changed().connect(
             sigc::mem_fun(*this, &DockItemContainer ::on_theme_changed));
     }
 
@@ -27,6 +46,8 @@ namespace docklight
     DockItemContainer::~DockItemContainer()
     {
         g_object_unref(m_matcher);
+
+        m_sigc.disconnect();
     }
 
     bool DockItemContainer::exist(guint32 xid) const
