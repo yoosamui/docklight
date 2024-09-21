@@ -381,7 +381,7 @@ namespace docklight
         ctx->save();
         ctx->set_source_rgba(0.0, 0.0, 0.0, 0.0);
         ctx->set_operator(Cairo::Operator::OPERATOR_SOURCE);
-        ctx->rectangle(0, 0, 64, 64);
+        //... ctx->rectangle(0, 0, 64, 64);
         ctx->paint_with_alpha(1.0);
         // TODO check scale if do when no sizes changed. take care of speed
         auto icon = item->get_icon()->scale_simple(size, size, Gdk::INTERP_BILINEAR);
@@ -401,11 +401,12 @@ namespace docklight
         Gdk::Cairo::set_source_pixbuf(ctx, icon, 0, 0);
         ctx->paint();
 
-        ctx->set_line_width(2.0);
+        // paint surface rec
+        /*ctx->set_line_width(2.0);
         ctx->set_source_rgb(0.0, 0.0, 0.0);
         ctx->rectangle(0, 0, m_surfaceIcon->get_width(), m_surfaceIcon->get_height());
         ctx->stroke();
-
+*/
         ctx->restore();
 
         // add to back surface
@@ -421,7 +422,7 @@ namespace docklight
     {
         g_assert(m_background);
 
-        int size = config::get_icon_size() / 8;
+        int size = config::get_dock_area() - config::get_icon_size();
         int area = config::get_icon_size();
 
         if (!m_indicator) {
@@ -436,24 +437,36 @@ namespace docklight
         ctx->set_operator(Cairo::Operator::OPERATOR_SOURCE);
         ctx->paint_with_alpha(1.0);
 
-        ctx->set_line_width(2.0);
-        ctx->set_source_rgba(1.0, 1.0, 1.0, 1.0);
-        //  ctx->fill();
+        // Surface rect TEST
+        // ctx->set_line_width(2.0);
+        // ctx->set_source_rgba(1.0, 1.0, 1.0, 1.0);
+        // ctx->rectangle(0, 0, area, size);
         // ctx->stroke();
 
-        ctx->rectangle(0, 0, area, size);
-        ctx->paint();
-
         ctx->restore();
-        /*ctx->set_line_width(2.0);
-        ctx->set_source_rgba(0.0, 0.0, 0.0, 1.0);
+        // ctx->set_line_width(2.0);
+        ctx->set_source_rgba(1.0, 1.0, 1.0, 1.0);
+        int resize_factor = config::get_dock_area() / 16;
         if (item->get_childmap().size() == 1) {
-            ctx->rectangle(0, 2, 64, 2);
+            //           .. ctx->rectangle(0, 0, m_indicator->get_height(),
+            //           m_indicator->get_width());
+            // ctx->rectangle(0, m_indicator->get_height() - 4, m_indicator->get_width(),
+            // resize_factor);
+
+            ctx->rectangle(0, m_indicator->get_height() - resize_factor, m_indicator->get_width(),
+                           resize_factor);
+
         } else {
-            ctx->rectangle(0, 2, (64 / 2) - 4, 2);
-            ctx->rectangle((64 / 2) + 4, 2, (64 / 2) - 4, 2);
+            ctx->rectangle(0, m_indicator->get_height() - resize_factor,
+                           m_indicator->get_width() / 2 - 4, resize_factor);
+
+            ctx->rectangle(m_indicator->get_width() / 2 + 4,
+                           m_indicator->get_height() - resize_factor, m_indicator->get_width() / 2,
+                           4);
+            // ctx->rectangle(0, 2, (64 / 2) - 4, 2);
+            // ctx->rectangle((64 / 2) + 4, 2, (64 / 2) - 4, 2);
         }
-        ctx->stroke();*/
+        ctx->fill();
 
         // add to back surface
         Cairo::RefPtr<Cairo::Context> bck_ctx = Cairo::Context::create(m_background);
@@ -529,7 +542,10 @@ namespace docklight
 
             draw_icon(dockitem);
             draw_indicator(dockitem);
-            // TODO: fix this
+
+            // TODO: apply
+
+            //  TODO: fix this
             if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
                 // m_posX += DOCK_iCON_SIZE + DOCK_MARGIN_SPACE;  // separator;
                 m_posX += config::get_icon_size() + config::get_separator_margin();

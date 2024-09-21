@@ -27,16 +27,16 @@ namespace docklight
     namespace config
     {
         // parsed and optimized at compile time
-        static constexpr const int DEF_MIN_ITEM_SIZE = 26;
-        static constexpr const int DEF_DOCKAREA_MARGIN = 12;
-        static constexpr const char* DEF_CONFIG_FILENAME = "docklight.config";
-        static constexpr const int DEF_ICON_SIZE = 64;  // 36;
-        static constexpr const int DEF_ICON_MAXSIZE = 128;
-        static constexpr const int DEF_SEPARATOR_MARGIN = 12;
-        static constexpr const int DEF_SEPARATOR_SIZE = 8;
-        static constexpr const double DEF_AUTOHIDE_ANIMATION_DELAY = 5.0;
-        static constexpr const int DEF_AUTOHIDE_ANCHORT_MARGIN = 20;
-        static constexpr const double DEF_AUTOHIDE_HIDE_DELAY = 0.5;
+        constexpr const int DEF_MIN_ITEM_SIZE = 26;
+        constexpr const int DEF_DOCKAREA_MARGIN = 8;
+        constexpr const char* DEF_CONFIG_FILENAME = "docklight.config";
+        constexpr const int DEF_ICON_SIZE = 64;
+        constexpr const int DEF_ICON_MAXSIZE = 128;
+        constexpr const int DEF_SEPARATOR_MARGIN = 12;
+        constexpr const int DEF_SEPARATOR_SIZE = 8;
+        constexpr const double DEF_AUTOHIDE_ANIMATION_DELAY = 5.0;
+        constexpr const int DEF_AUTOHIDE_ANCHORT_MARGIN = 20;
+        constexpr const double DEF_AUTOHIDE_HIDE_DELAY = 0.5;
 
         // Initializers
         int m_icon_size = DEF_ICON_SIZE;
