@@ -49,11 +49,12 @@ namespace docklight
         bool exist(guint32 xid) const;
         bool insert(WnckWindow* window);
 
-      private:
-        sigc::connection m_sigc;
-
+        guint items_count() const;
         // signal accessor:
         type_signal_update signal_update();
+
+      private:
+        sigc::connection m_sigc;
 
         void on_theme_changed();
         bool get_window_icon(GdkPixbuf* gdkpixbuf, Glib::RefPtr<Gdk::Pixbuf>& pixbuf);

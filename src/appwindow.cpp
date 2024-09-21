@@ -136,6 +136,7 @@ namespace docklight
         return EXIT_SUCCESS;
     }
 
+#ifdef ONPRESS
     bool AppWindow::on_button_press_event(GdkEventButton* event)
     {
         if ((event->type == GDK_BUTTON_PRESS)) {
@@ -199,7 +200,7 @@ namespace docklight
 
         return true;
     }
-
+#endif
     void AppWindow::on_monitor_changed()
     {
         //     device::monitor::set_primary();

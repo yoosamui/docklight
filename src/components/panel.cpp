@@ -12,6 +12,30 @@
 namespace docklight
 {
 
+    namespace cairo
+    {
+
+        /* Glib::RefPtr<Surface>*/ void CreateSurface(int width, int height)
+
+        {
+            Surface obj;
+            //   Glib::RefPtr<Surface> ss = Glib::RefPtr<Surface>(new Surface());
+
+            // obj->value = 2l;
+            // auto c = ss->get_width();
+
+            // auto a = obj->get_width();
+
+            ////  cairo_surface_t * cobject);  //: Cairo::ImageSurface(cobject)
+            //   auto t = Glib::RefPtr<Surface>(new Surface(ck));
+            //   t->get_width();
+            //   int a = t.value;
+
+            //// return Glib::RefPtr<Surface>(new Surface(width, height));
+        }
+
+    }  // namespace cairo
+
     Panel::Panel()
     {
         // MyClass* d = MyClass::getInstance();
@@ -38,6 +62,9 @@ namespace docklight
 
     void Panel::init()
     {
+        m_sigc_updated = get_dockcontainer()->signal_update().connect(
+            sigc::mem_fun(this, &Panel::on_container_updated));
+
         // frame_time = GLib.get_monotonic_time();
         // m_app_provider = Glib::RefPtr<AppProvider>(new AppProvider());
 
@@ -49,6 +76,8 @@ namespace docklight
 
     Panel::~Panel()
     {
+        m_sigc_updated.disconnect();
+
         // std::cout << MSG_FREE_OBJECT << "\n" << std::endl;
         g_print(MSG_FREE_OBJECT, "Panel");
         g_print("\n");
@@ -160,6 +189,69 @@ namespace docklight
         return m_surfaceIcon;
     }*/
 
+    const Cairo::RefPtr<Cairo::ImageSurface> Panel::create_iconX(const Glib::RefPtr<DockItem>& item)
+    {
+        if (!m_icon_obj->surface) {
+            m_icon_obj.create(64, 64);
+        }
+        auto ctx = m_icon_obj.ctx();  // )context;
+        ctx->set_operator(Cairo::Operator::OPERATOR_CLEAR);
+        // ctx->save();
+        auto icon = item->get_icon()->scale_simple(64, 64, Gdk::INTERP_BILINEAR);
+        Gdk::Cairo::set_source_pixbuf(ctx, icon, 0, 0);
+
+        //   ctx->set_operator(Cairo::Operator::OPERATOR_CLEAR);
+        ctx->paint();
+        // ctx->restore();
+
+        // iCairo::RefPtr<Cairo::Context> bck_ctx = Cairo::Context::create(m_background);
+        auto bck_ctx = m_back_obj.ctx();  // context;
+        //.Cairo::Context::create(m_background);
+        bck_ctx->set_source(m_icon_obj->surface, 0, 0);
+        bck_ctx->paint();
+
+        return m_icon_obj->surface;
+    }
+
+    void Panel::draw_background()
+
+    {
+        /*// if (!m_back_obj) {
+        if (!m_back_obj->surface) {
+            auto win = position::get_window();
+            Gdk::Rectangle rect = position::get_background_region();
+            m_back_obj.create(rect.get_width(), rect.get_height());
+
+            g_print("create::\n");
+        }
+
+        auto ctx = m_back_obj.ctx();  // context;
+        auto sur = m_back_obj->surface;
+        ;
+
+        //    auto a = m_back_obj->flush();  // get_width();
+        // auto a = m_back_obj->surface()->get_width();
+
+        ctx->rectangle(0, 0, sur->get_width(), sur->get_height());
+        ctx->set_source_rgba(0.521, 0.6, 0, 1.0);
+        ctx->fill();
+*/
+
+        Gdk::Rectangle bckrect = position::get_background_region();
+        if (!m_background) {
+            m_background = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, bckrect.get_width(),
+                                                       bckrect.get_height());
+        }
+
+        Cairo::RefPtr<Cairo::Context> ctx = Cairo::Context::create(m_background);
+        // ctx->rectangle(0, 0, m_back_objground->get_width(), m_background->get_height());
+        /////  ctx->set_source_rgba(0, 0, 0, draw_value_darken);
+        ctx->set_source_rgba(0.521, 0.6, 0, 1.0);
+        //   ctx->fill();
+        ctx->paint();
+        //  ctx->set_operator(Cairo::Operator::OPERATOR_ATOP);
+    }
+
     void Panel::draw_icon()
     {
         int size = 64;
@@ -174,31 +266,14 @@ namespace docklight
         Gdk::Cairo::set_source_pixbuf(ctx, home_pixbuf, 0, 0);
         ctx->paint();
 
-        double draw_value_darken = 0.8;
+        /*double draw_value_darken = 0.8;
         ctx->rectangle(0, 0, m_surfaceIcon->get_width(), m_surfaceIcon->get_height());
         ctx->set_source_rgba(0, 0, 0, draw_value_darken);
         ctx->set_operator(Cairo::Operator::OPERATOR_ATOP);
         // icon_cr.set_source_rgba(0, 0, 0, draw_value.darken);
         //   icon_cr.set_operator(Cairo.Operator.ATOP);
         ctx->fill();
-        ctx->set_operator(Cairo::Operator::OPERATOR_OVER);
-    }
-
-    void Panel::draw_background()
-    {
-        // auto win = position::get_window();
-        Gdk::Rectangle bckrect = position::get_background_region();
-
-        if (!m_background) {
-            m_background = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, bckrect.get_width(),
-                                                       bckrect.get_height());
-        }
-        Cairo::RefPtr<Cairo::Context> ctx = Cairo::Context::create(m_background);
-        ctx->rectangle(0, 0, m_background->get_width(), m_background->get_height());
-        ///  ctx->set_source_rgba(0, 0, 0, draw_value_darken);
-        ctx->set_source_rgba(0.521, 0.6, 0, 1.0);
-        ctx->fill();
-        // ctx->set_operator(Cairo::Operator::OPERATOR_ATOP);
+        ctx->set_operator(Cairo::Operator::OPERATOR_OVER);*/
     }
 
     void Panel::draw_background(const Cairo::RefPtr<Cairo::Context>& cr,
@@ -213,8 +288,8 @@ namespace docklight
             m_background->get_height() != background_rect.get_height()) {
             // create a new surface;
             g_error("CREATE A NEW SUTFACE");
-            // m_background = theme.create_background(background_rect.width, background_rect.height,
-            // position_manager.Position, main_buffer);
+            // m_background = theme.create_background(background_rect.width,
+            // background_rect.height, position_manager.Position, main_buffer);
         }
 
         cr->set_source(m_background, background_rect.get_x() + x_offset,
@@ -253,25 +328,216 @@ namespace docklight
         g_print("%lu\n", diff);
     }
 
-    bool Panel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
+    void Panel::on_container_updated(window_action_t action, int index)
     {
-        if (!m_background) {
-            auto win = position::get_window();
-            m_background = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, win->get_width(),
-                                                       win->get_height());
+        g_message("container Updated\n");
 
-            // g_message("%d x %d \n", win->get_width(), win->get_height());
+        Gtk::Widget::queue_draw();
+    }
+
+    bool Panel::on_button_press_event(GdkEventButton* event)
+    {
+        if ((event->type == GDK_BUTTON_PRESS)) {
+            g_print("on press %d x %d\n", (int)event->x, (int)event->y);
+        }
+        return true;
+    }
+
+    const Cairo::RefPtr<Cairo::ImageSurface> Panel::draw_icon(const Glib::RefPtr<DockItem>& item)
+    {
+        int size = 64;
+        if (!m_surfaceIcon) {
+            m_surfaceIcon = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, size, size);
         }
 
-        auto background_rect = position::get_background_region();
-        draw_background(cr, background_rect, 0, m_posY);
-        // int x_offset = 0, y_offset = 0;
-        // Cairo::RefPtr<Cairo::Context> ctx = Cairo::Context::create(m_background);
+        Cairo::RefPtr<Cairo::Context> ctx = Cairo::Context::create(m_surfaceIcon);
+        ctx->set_source_rgba(0.0, 0.0, 0.0, 0.0);
+        ctx->set_operator(Cairo::Operator::OPERATOR_SOURCE);
+        ctx->rectangle(0, 0, 64, 64);
+        ctx->paint_with_alpha(1.0);
+        // ctx->save();
+        //
+        auto icon = item->get_icon()->scale_simple(size, size, Gdk::INTERP_BILINEAR);
+        Gdk::Cairo::set_source_pixbuf(ctx, icon, 0, 0);
+        ctx->paint();
+        // ctx->restore();
+
+        // add to back surface
+        Cairo::RefPtr<Cairo::Context> bck_ctx = Cairo::Context::create(m_background);
+        bck_ctx->set_source(m_surfaceIcon, m_posX, 0);
+        bck_ctx->paint();
+
+        return m_surfaceIcon;
+    }
+
+    const Cairo::RefPtr<Cairo::ImageSurface> Panel::draw_indicator(
+        const Glib::RefPtr<DockItem>& item)
+    {
+        int size = 8;
+        if (!m_indicator) {
+            m_indicator = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, 64, size);
+        }
+
+        Cairo::RefPtr<Cairo::Context> ctx = Cairo::Context::create(m_indicator);
+        // clear
+        ctx->save();
+        ctx->set_source_rgba(0.0, 0.0, 0.0, 0.0);
+        ctx->set_operator(Cairo::Operator::OPERATOR_SOURCE);
+        ctx->rectangle(0, 0, 64, size);
+        ctx->paint_with_alpha(1.0);
+
+        ctx->set_source_rgba(1.0, 1.0, 1.0, 1.0);
+        ctx->fill();
+
+        // ctx->set_line_width(2.0);
+        ctx->set_source_rgba(0.0, 0.0, 0.0, 1.0);
+        if (item->get_childmap().size() == 1) {
+            ctx->rectangle(0, 2, 64, 2);
+        } else {
+            ctx->rectangle(0, 2, (64 / 2) - 4, 2);
+            ctx->rectangle((64 / 2) + 4, 2, (64 / 2) - 4, 2);
+        }
+        ctx->stroke();
+        ctx->restore();
+
+        // add to back surface
+        Cairo::RefPtr<Cairo::Context> bck_ctx = Cairo::Context::create(m_background);
+        bck_ctx->set_source(m_indicator, m_posX, 64);
+        bck_ctx->paint();
+
+        return m_indicator;
+    }
+
+    bool Panel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
+    {
+        // if (!m_back_obj->surface) {
+        // draw_background();
+        //}
+        if (!m_background) {
+            draw_background();
+        }
+
+        //  m_back_obj->context->set_operator(Cairo::Operator::OPERATOR_CLEAR);
+        auto container = get_dockcontainer();
+        auto appmap = container->get_appmap();
+
+        m_posX = 0;
+        m_posY = 0;
+
+        Cairo::RefPtr<Cairo::Context> bck_ctx = Cairo::Context::create(m_background);
+
+        // clean bck
+        // bck_ctx->set_source_rgba(0.0, 0.0, 0.0, 1.0);
+        bck_ctx->set_source_rgba(0.521, 0.6, 0, 1.0);
+        //  bck_ctx->set_operator(Cairo::Operator::OPERATOR_CLEAR);
+        //  bck_ctx->rectangle(0, 0, m_background->get_width(), m_background->get_height());
+        //  bck_ctx->paint_with_alpha(1.0);
+        bck_ctx->paint();
+
+        // bck_ctx->set_operator(Cairo::Operator::OPERATOR_DEST);
+        //  bck_ctx->set_operator(Cairo::Operator::OPERATOR_IN);
+        //  bck_ctx->set_operator(Cairo::Operator::OPERATOR_SOURCE);
+
+        for (auto it = appmap.begin(); it != appmap.end(); it++) {
+            auto dockitem = it->second;
+
+            draw_icon(dockitem);
+            draw_indicator(dockitem);
+
+            //      Cairo::RefPtr<Cairo::Context> bck_ctx = Cairo::Context::create(m_background);
+            //  Cairo::RefPtr<Cairo::Context> bck_ctx = Cairo::Context::create(icon_surface);
+            //            bck_ctx->set_source(icon_surface, m_posX, m_posY);
+            //            bck_ctx->paint();
+
+            // bck_ctx->set_operator(Cairo::Operator::OPERATOR_IN);
+            // cr->set_source(m_background, 0, 0);
+            // cr->paint();
+            //            Cairo::RefPtr<Cairo::Context> ico_ctx =
+            //            Cairo::Context::create(m_surfaceIcon);
+            //            ico_ctx->setoperator(Cairo::Operator::OPERATOR_CLEAR);
+
+            /*Cairo::RefPtr<Cairo::Context> bck_ctx = m_back_obj->context;
+            //  bck_ctx->set_operator(Cairo::Operator::OPERATOR_CLEAR);
+            //
+            //            Cairo::RefPtr<Cairo::Context> bck_ctx =
+            //            Cairo::Context::create(m_background);
+            bck_ctx->set_source(icon_surface, m_posX, m_posY);
+            bck_ctx->paint();*/
+            ////
+
+            m_posX += 64 + 12;  // separator;
+
+            //    g_print(" posX = %d\n", m_posX);
+        }
+
+        // b]ck_ctx->paint();
+        cr->set_source(m_background, 0, 0);
+        cr->paint();
+
+        return false;
+
+#ifdef DRAWX
+        ;
+        if (!m_background) {
+            // auto win = position::get_window();
+            // m_background = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32,
+            // win->get_width(), win->get_height()); draw_icon(); aplay_layers();
+            //  g_message("%d x %d \n", win->get_width(), win->get_height());
+
+            // create the surface;
+            draw_background();
+
+            // draw_icon();
+
+            // draw_glow();
+
+            // aplay_layers();
+        }
+
+        Cairo::RefPtr<Cairo::Context> ctx = Cairo::Context::create(m_background);
+        ctx->rectangle(0, 0, m_background->get_width(), m_background->get_height());
+        ctx->set_source_rgba(0.521, 0.6, 0, 1.0);
+        // ctx->rectangle(0, 0, 64,
+        //                64);  // m_background->get_width(), m_background->get_height());
+        //  ctx->set_operator(Cairo::Operator::OPERATOR_CLEAR);
+        ctx->fill();
+
+        //  ctx->paint);
+
+        auto container = get_dockcontainer();
+        auto appmap = container->get_appmap();
+
+        m_posX = 0;
+        m_posY = 0;
+        //        g_print("Draw!!!!!!!!!! count %d \n", (int)appmap.size());
+
+        for (auto it = appmap.begin(); it != appmap.end(); it++) {
+            auto dockitem = it->second;
+            auto icon_surface = create_icon(dockitem);
+
+            Cairo::RefPtr<Cairo::Context> bck_ctx = Cairo::Context::create(m_background);
+            bck_ctx->set_source(icon_surface, m_posX, m_posY);
+            bck_ctx->paint();
+            //
+
+            m_posX += 64 + 8;  // separator;
+
+            //    g_print(" posX = %d\n", m_posX);
+        }
+
+        cr->set_source(m_background, 0, 0);
+        cr->paint();
+        return true;
+
+        // auto background_rect = position::get_background_region();
+        // draw_background(cr, background_rect, 0, m_posY);
+        //  int x_offset = 0, y_offset = 0;
+        //  Cairo::RefPtr<Cairo::Context> ctx = Cairo::Context::create(m_background);
 
         // ctx->set_source_rgba(1, 1, 1, 1.0);
         // ctx->paint();
 
-        // cr->set_source(m_background, 0, 0);
+        cr->set_source(m_background, 0, 30);
         // cr->fill();
         // cr->paint();
 
@@ -415,6 +681,7 @@ namespace docklight
 
         #endif*/
         return false;
+#endif
     }
 
     bool Panel::on_drawX(const Cairo::RefPtr<Cairo::Context>& cr)

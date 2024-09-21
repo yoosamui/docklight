@@ -82,18 +82,26 @@ namespace docklight
 
     int DockItemContainer::remove(guint32 xid)
     {
-        if (m_appmap.count(xid) == 1) {
-            return m_appmap.erase(xid);
-        }
+        int result = 0;
 
         for (auto it = m_appmap.begin(); it != m_appmap.end(); it++) {
             Glib::RefPtr<DockItem> dockitem = it->second;
-            auto result = dockitem->remove_child(xid);
+            auto cmap = dockitem->get_childmap();
 
-            if (result) return result;
+            if (cmap.size() && m_appmap.count(xid)) {
+                result = m_appmap.erase(xid);
+            } else {
+                result = dockitem->remove_child(xid);
+            }
+
+            if (result) break;
         }
 
-        return 0;
+        if (result) {
+            m_signal_update.emit(window_action_t::UPDATE, 0);
+        }
+
+        return result;
     }
 
     void DockItemContainer::on_theme_changed()
@@ -203,6 +211,18 @@ namespace docklight
         return pixbuf ? true : false;
     }
 
+    inline guint DockItemContainer::items_count() const
+    {
+        guint count = 0;
+        for (auto it = m_appmap.begin(); it != m_appmap.end(); it++) {
+            auto dockitem = it->second;
+
+            count += dockitem->get_childmap().size() + 1;
+        }
+
+        return count;
+    }
+
     bool DockItemContainer::insert(WnckWindow* window)
     {
         // reurn if the window don't has a name.
@@ -250,6 +270,8 @@ namespace docklight
         Glib::ustring title_name;
         Glib::ustring desktop_file;
         Glib::ustring icon_name;
+
+        int count = items_count();
 
         // Handles desktop files icons and Names for the app.
         if (get_theme_icon(xid, pixbuf, title_name, desktop_file, icon_name)) {
@@ -358,6 +380,14 @@ namespace docklight
                 }
             }
         }
+
+        // TODO remove this.check it by map count
+        // observer patter
+
+        if (count != items_count()) {
+            m_signal_update.emit(window_action_t::UPDATE, (int)m_appmap.size());
+        }
+
         return true;
     }
 
