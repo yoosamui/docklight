@@ -49,9 +49,15 @@ namespace docklight
         clone->m_description = m_description;
         clone->m_icon = m_icon;
         clone->m_wintype = m_wintype;
+        clone->m_tag = m_tag;
 
         // covariant return type.
         return clone;
+    }
+
+    inline void DockItem::set_tag(guint tag)
+    {
+        m_tag = tag;
     }
 
     inline const bool DockItem::has_desktop_file() const
@@ -121,6 +127,11 @@ namespace docklight
     }
 
     // Getters
+    inline const guint DockItem::get_tag() const
+    {
+        return m_tag;
+    }
+
     inline const guint32 DockItem::get_xid() const
     {
         return m_xid;

@@ -9,6 +9,10 @@
 //#include <gtkmm/drawingarea.h>
 // clang-format on
 #include <cmath>
+
+#define DOCK_MARGIN_SPACE 12
+#define DOCK_iCON_SIZE 64
+
 namespace docklight
 {
 
@@ -36,6 +40,27 @@ namespace docklight
 
     }  // namespace cairo
 
+    gdouble rotation = 0;
+    double DegreesToRadians(int degrees);
+
+    double DegreesToRadians(int degrees)
+    {
+        return ((double)((double)degrees * (M_PI / 180)));
+    }
+
+    gboolean rotate_cb(void* degrees)
+    {
+        // Any rotation applied to cr here will be lost, as we create
+        // a new cairo context on every expose event
+        // cairo_rotate (cr, 4);
+        rotation += DegreesToRadians((*(int*)(degrees)));
+        // cairo_paint(cr);
+        //       printf("rotating\n");
+        //  Tell our window that it should repaint itself (ie. emit an expose event)
+        //  gtk_widget_queue_draw(window);
+
+        return (TRUE);
+    }
     Panel::Panel()
     {
         // MyClass* d = MyClass::getInstance();
@@ -213,48 +238,10 @@ namespace docklight
         return m_icon_obj->surface;
     }
 
-    void Panel::draw_background()
-
-    {
-        /*// if (!m_back_obj) {
-        if (!m_back_obj->surface) {
-            auto win = position::get_window();
-            Gdk::Rectangle rect = position::get_background_region();
-            m_back_obj.create(rect.get_width(), rect.get_height());
-
-            g_print("create::\n");
-        }
-
-        auto ctx = m_back_obj.ctx();  // context;
-        auto sur = m_back_obj->surface;
-        ;
-
-        //    auto a = m_back_obj->flush();  // get_width();
-        // auto a = m_back_obj->surface()->get_width();
-
-        ctx->rectangle(0, 0, sur->get_width(), sur->get_height());
-        ctx->set_source_rgba(0.521, 0.6, 0, 1.0);
-        ctx->fill();
-*/
-
-        Gdk::Rectangle bckrect = position::get_background_region();
-        if (!m_background) {
-            m_background = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, bckrect.get_width(),
-                                                       bckrect.get_height());
-        }
-
-        Cairo::RefPtr<Cairo::Context> ctx = Cairo::Context::create(m_background);
-        // ctx->rectangle(0, 0, m_back_objground->get_width(), m_background->get_height());
-        /////  ctx->set_source_rgba(0, 0, 0, draw_value_darken);
-        ctx->set_source_rgba(0.521, 0.6, 0, 1.0);
-        //   ctx->fill();
-        ctx->paint();
-        //  ctx->set_operator(Cairo::Operator::OPERATOR_ATOP);
-    }
-
     void Panel::draw_icon()
     {
-        int size = 64;
+        int size = config::get_icon_size();
+
         if (!m_surfaceIcon) {
             //
             m_surfaceIcon = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, size, size);
@@ -335,36 +322,95 @@ namespace docklight
         Gtk::Widget::queue_draw();
     }
 
+    bool Panel::on_motion_notify_event(GdkEventMotion* event)
+    {
+        //   g_print("motion %d x %d\n", (int)event->x, (int)event->y);
+
+        return false;
+    }
+
     bool Panel::on_button_press_event(GdkEventButton* event)
     {
         if ((event->type == GDK_BUTTON_PRESS)) {
-            g_print("on press %d x %d\n", (int)event->x, (int)event->y);
+            //  g_print("on press %d x %d\n", (int)event->x, (int)event->y);
+
+            /*Cairo::RefPtr<Cairo::Context> ctx = Cairo::Context::create(m_background);
+            // ctx->cairo_translate(64, 64);
+            ctx->translate(64, 64);
+            // cairo_rotate(cr, rotation);
+            //
+            rotation = DegreesToRadians(0);
+            // rotate_cb(90);
+            ctx->rotate(rotation);
+            Gtk::Widget::queue_draw();
+
+            g_print("rotate\n");*/
+            return false;
+
+            m_cell = Glib::RefPtr<DockCell>(new DockCell());
+            m_cell->set_name("DOCKCELL");
+            m_cell->set_size_request(200, 200);
+            m_cell->show();
+
+            /*m_cell->set_visible(true);
+            m_cell->activate();
+            int width, height;
+
+            auto parent = m_cell->get_parent();
+            if (parent) g_print("NAME %s\n", parent->get_name().c_str());
+
+            m_cell->get_size_request(width, height);
+            g_print("SIZE %d x %d\n", width, height);
+            //  m_cell->move(800, 600);
+            m_cell->show();*/
         }
         return true;
     }
 
     const Cairo::RefPtr<Cairo::ImageSurface> Panel::draw_icon(const Glib::RefPtr<DockItem>& item)
     {
-        int size = 64;
+        int size = config::get_icon_size();
+        g_assert(m_background);
+
         if (!m_surfaceIcon) {
             m_surfaceIcon = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, size, size);
         }
 
         Cairo::RefPtr<Cairo::Context> ctx = Cairo::Context::create(m_surfaceIcon);
+        // clear
+        ctx->save();
         ctx->set_source_rgba(0.0, 0.0, 0.0, 0.0);
         ctx->set_operator(Cairo::Operator::OPERATOR_SOURCE);
         ctx->rectangle(0, 0, 64, 64);
         ctx->paint_with_alpha(1.0);
-        // ctx->save();
-        //
+        // TODO check scale if do when no sizes changed. take care of speed
         auto icon = item->get_icon()->scale_simple(size, size, Gdk::INTERP_BILINEAR);
+
+        // Cairo::RefPtr<Cairo::Context> ctx = Cairo::Context::create(m_background);
+        //  ctx->cairo_translate(64, 64);
+
+        // rotation test
+        // ctx->translate(0, 64);
+        // rotation = DegreesToRadians(90);
+        // ctx->rotate(rotation);
+
+        // Gtk::Widget::queue_draw();
+        // int y = (64/2))
+        //  int x = 0
+
         Gdk::Cairo::set_source_pixbuf(ctx, icon, 0, 0);
         ctx->paint();
-        // ctx->restore();
+
+        ctx->set_line_width(2.0);
+        ctx->set_source_rgb(0.0, 0.0, 0.0);
+        ctx->rectangle(0, 0, m_surfaceIcon->get_width(), m_surfaceIcon->get_height());
+        ctx->stroke();
+
+        ctx->restore();
 
         // add to back surface
         Cairo::RefPtr<Cairo::Context> bck_ctx = Cairo::Context::create(m_background);
-        bck_ctx->set_source(m_surfaceIcon, m_posX, 0);
+        bck_ctx->set_source(m_surfaceIcon, m_posX, m_posY);
         bck_ctx->paint();
 
         return m_surfaceIcon;
@@ -373,9 +419,14 @@ namespace docklight
     const Cairo::RefPtr<Cairo::ImageSurface> Panel::draw_indicator(
         const Glib::RefPtr<DockItem>& item)
     {
-        int size = 8;
+        g_assert(m_background);
+
+        int size = config::get_icon_size() / 8;
+        int area = config::get_icon_size();
+
         if (!m_indicator) {
-            m_indicator = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, 64, size);
+            m_indicator = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, area,
+                                                      size);  // TODO: fix this think!
         }
 
         Cairo::RefPtr<Cairo::Context> ctx = Cairo::Context::create(m_indicator);
@@ -383,13 +434,18 @@ namespace docklight
         ctx->save();
         ctx->set_source_rgba(0.0, 0.0, 0.0, 0.0);
         ctx->set_operator(Cairo::Operator::OPERATOR_SOURCE);
-        ctx->rectangle(0, 0, 64, size);
         ctx->paint_with_alpha(1.0);
 
+        ctx->set_line_width(2.0);
         ctx->set_source_rgba(1.0, 1.0, 1.0, 1.0);
-        ctx->fill();
+        //  ctx->fill();
+        // ctx->stroke();
 
-        // ctx->set_line_width(2.0);
+        ctx->rectangle(0, 0, area, size);
+        ctx->paint();
+
+        ctx->restore();
+        /*ctx->set_line_width(2.0);
         ctx->set_source_rgba(0.0, 0.0, 0.0, 1.0);
         if (item->get_childmap().size() == 1) {
             ctx->rectangle(0, 2, 64, 2);
@@ -397,15 +453,42 @@ namespace docklight
             ctx->rectangle(0, 2, (64 / 2) - 4, 2);
             ctx->rectangle((64 / 2) + 4, 2, (64 / 2) - 4, 2);
         }
-        ctx->stroke();
-        ctx->restore();
+        ctx->stroke();*/
 
         // add to back surface
         Cairo::RefPtr<Cairo::Context> bck_ctx = Cairo::Context::create(m_background);
-        bck_ctx->set_source(m_indicator, m_posX, 64);
+
+        // bck_ctx->set_source(m_indicator, m_posX, config::get_dock_area() - size);
+
+        if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+            bck_ctx->set_source(m_indicator, m_posX, config::get_dock_area() - size);
+            //    bck_ctx->set_source(m_indicator, m_posX, m_surfaceIcon->get_width());
+            // bck_ctx->set_source(m_indicator, m_posX, config::get_dock_area() - size);
+
+            // m_posY += config::get_icon_size() + config::get_separator_margin();
+
+        } else {
+            bck_ctx->set_source(m_indicator, 0, config::get_dock_area() - size + m_posY);
+            // bck_ctx->set_source(m_indicator, m_posX, m_surfaceIcon->get_width());
+            //  bck_ctx->set_source(m_indicator, 0, (config::get_dock_area() + (m_posY - 8)));
+            //  bck_ctx->set_source(m_indicator, 0, config::get_dock_area() + (m_posY - 8));
+        }
         bck_ctx->paint();
 
         return m_indicator;
+    }
+
+    void Panel::draw_background()
+    {
+        if (!m_background) {
+            Gdk::Rectangle bckrect = position::get_background_region();
+            m_background = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, bckrect.get_width(),
+                                                       bckrect.get_height());
+        }
+
+        Cairo::RefPtr<Cairo::Context> ctx = Cairo::Context::create(m_background);
+        ctx->set_source_rgba(0.521, 0.6, 0, 1.0);
+        ctx->paint();
     }
 
     bool Panel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
@@ -427,45 +510,36 @@ namespace docklight
         Cairo::RefPtr<Cairo::Context> bck_ctx = Cairo::Context::create(m_background);
 
         // clean bck
-        // bck_ctx->set_source_rgba(0.0, 0.0, 0.0, 1.0);
         bck_ctx->set_source_rgba(0.521, 0.6, 0, 1.0);
-        //  bck_ctx->set_operator(Cairo::Operator::OPERATOR_CLEAR);
-        //  bck_ctx->rectangle(0, 0, m_background->get_width(), m_background->get_height());
-        //  bck_ctx->paint_with_alpha(1.0);
+
+        // rotation test
+        // bck_ctx->translate(40, 64);
+        // rotation = DegreesToRadians(90);
+        // bck_ctx->rotate(rotation);
+
         bck_ctx->paint();
 
         // bck_ctx->set_operator(Cairo::Operator::OPERATOR_DEST);
         //  bck_ctx->set_operator(Cairo::Operator::OPERATOR_IN);
         //  bck_ctx->set_operator(Cairo::Operator::OPERATOR_SOURCE);
-
+        guint tag = 0;
         for (auto it = appmap.begin(); it != appmap.end(); it++) {
             auto dockitem = it->second;
+            dockitem->set_tag(tag++);
 
             draw_icon(dockitem);
             draw_indicator(dockitem);
+            // TODO: fix this
+            if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+                // m_posX += DOCK_iCON_SIZE + DOCK_MARGIN_SPACE;  // separator;
+                m_posX += config::get_icon_size() + config::get_separator_margin();
+                // separator;
+            } else {
+                m_posY += config::get_icon_size() + config::get_separator_margin() +
+                          config::get_separator_margin();
 
-            //      Cairo::RefPtr<Cairo::Context> bck_ctx = Cairo::Context::create(m_background);
-            //  Cairo::RefPtr<Cairo::Context> bck_ctx = Cairo::Context::create(icon_surface);
-            //            bck_ctx->set_source(icon_surface, m_posX, m_posY);
-            //            bck_ctx->paint();
-
-            // bck_ctx->set_operator(Cairo::Operator::OPERATOR_IN);
-            // cr->set_source(m_background, 0, 0);
-            // cr->paint();
-            //            Cairo::RefPtr<Cairo::Context> ico_ctx =
-            //            Cairo::Context::create(m_surfaceIcon);
-            //            ico_ctx->setoperator(Cairo::Operator::OPERATOR_CLEAR);
-
-            /*Cairo::RefPtr<Cairo::Context> bck_ctx = m_back_obj->context;
-            //  bck_ctx->set_operator(Cairo::Operator::OPERATOR_CLEAR);
-            //
-            //            Cairo::RefPtr<Cairo::Context> bck_ctx =
-            //            Cairo::Context::create(m_background);
-            bck_ctx->set_source(icon_surface, m_posX, m_posY);
-            bck_ctx->paint();*/
-            ////
-
-            m_posX += 64 + 12;  // separator;
+                // m_posY += DOCK_iCON_SIZE + DOCK_MARGIN_SPACE;  // separator;
+            }
 
             //    g_print(" posX = %d\n", m_posX);
         }

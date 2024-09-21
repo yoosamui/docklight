@@ -7,6 +7,7 @@
 #include <glibmm/main.h>
 #include <gtkmm/drawingarea.h>
 
+#include "components/config.h"
 
 #include <gtkmm/widget.h>
 #include "utils/easing.h"
@@ -16,12 +17,44 @@
 #include <math.h>
 #include "appupdater.h"
 #include "dockitemcontainer.h"
+//#include <gtkmm/widget.h>
+//#include <gtkmm/frame.h>
 // clang-format on
 //
 //
 
+#include "components/TransparentWindow.h"
+
 namespace docklight
 {
+
+    class DockCell : public TransparentWindow
+    {
+      public:
+        DockCell()
+        {
+            add_events(Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::SCROLL_MASK |
+                       Gdk::SMOOTH_SCROLL_MASK | Gdk::POINTER_MOTION_HINT_MASK |
+                       Gdk::FOCUS_CHANGE_MASK | Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK |
+                       Gdk::POINTER_MOTION_HINT_MASK | Gdk::POINTER_MOTION_MASK);
+        }
+
+        bool on_button_press_event(GdkEventButton* event)
+        {
+            //
+            g_print("WIDGET PRESS\n");
+        }
+
+        bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override
+        {
+            g_print("CELL DRAW\n");
+            cr->set_source_rgba(1.0, 1.0, 1.0, 1.0);
+            cr->paint();
+            return false;
+        }
+
+      public:
+    };
 
     namespace cairo
     {
@@ -183,8 +216,9 @@ namespace docklight
         //        Glib::RefPtr<AppProvider> m_app_provider;
         AppProvider m_app_provider;
 
+        Glib::RefPtr<DockCell> m_cell;
         bool on_button_press_event(GdkEventButton* event);
-
+        bool on_motion_notify_event(GdkEventMotion* event);
         void on_container_updated(window_action_t action, int index);
 
         bool on_drawX(const Cairo::RefPtr<Cairo::Context>& cr);
