@@ -550,9 +550,8 @@ namespace docklight
         m_posX = 0;
         m_posY = 0;
 
-        draw_cell();
-        Cairo::RefPtr<Cairo::Context> bck_ctx = Cairo::Context::create(m_background);
-        Cairo::RefPtr<Cairo::Context> cell_ctx = Cairo::Context::create(m_cell);
+        //        draw_cell();
+
         // bck_ctx->set_operator(Cairo::Operator::OPERATOR_DEST);
         //  bck_ctx->set_operator(Cairo::Operator::OPERATOR_IN);
         //  bck_ctx->set_operator(Cairo::Operator::OPERATOR_SOURCE);
@@ -565,8 +564,8 @@ namespace docklight
             dockitem->set_tag(tag++);
 
             // g_print("%d\n", m_posX);
-            // Cairo::RefPtr<Cairo::Context> cell_ctx = Cairo::Context::create(m_cell);
-            // cell_ctx->set_source_rgba(0.0, 0.0, 0.0, 0.0);
+            // bck_ctx->set_source_rgba(0.0, 0.0, 0.0, 0.0);
+
             ////  cell_ctx->set_operator(Cairo::Operator::OPERATOR_SOURCE);
             ////... ctx->rectangle(0, 0, 64, 64);
             // cell_ctx->paint_with_alpha(1.0);
@@ -575,9 +574,11 @@ namespace docklight
             draw_icon(dockitem);
             //  draw_indicator(dockitem);
 
+            // bck_ctx = Cairo::Context::create(m_background);
+            Cairo::RefPtr<Cairo::Context> bck_ctx = Cairo::Context::create(m_background);
+            bck_ctx->set_source(m_cell, m_posX, m_posY);
+            bck_ctx->paint();
             // add surfaceicon to the cell surface
-            cell_ctx->set_source(m_surfaceIcon, m_posX, m_posY);
-            cell_ctx->paint();
 
             if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
                 m_posX += config::get_icon_size() + config::get_separator_margin();
@@ -588,8 +589,8 @@ namespace docklight
         }
 
         // add cell surfaceicon to the background surface
-        bck_ctx->set_source(m_cell, m_posX, m_posY);
-        bck_ctx->paint();
+        // bck_ctx->set_source(m_cell, m_posX, m_posY);
+        // bck_ctx->paint();
 
         cr->set_source(m_background, 0, 0);
         cr->paint();
