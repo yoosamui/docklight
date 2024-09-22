@@ -216,7 +216,7 @@ namespace docklight
         //        Glib::RefPtr<AppProvider> m_app_provider;
         AppProvider m_app_provider;
 
-        Glib::RefPtr<DockCell> m_cell;
+        //  Glib::RefPtr<DockCell> m_cell;
         bool on_button_press_event(GdkEventButton* event);
         bool on_motion_notify_event(GdkEventMotion* event);
         void on_container_updated(window_action_t action, int index);
@@ -259,10 +259,12 @@ namespace docklight
         Cairo::RefPtr<Cairo::ImageSurface> m_surface;
         Cairo::RefPtr<Cairo::ImageSurface> m_background;
         Cairo::RefPtr<Cairo::ImageSurface> m_main_surface;
+        Cairo::RefPtr<Cairo::ImageSurface> m_cell;
 
         cairo::Surface m_back_obj;
         cairo::Surface m_icon_obj;
 
+        void draw_cell();
         void draw_glow();
         void draw_icon();
         void draw_background();
