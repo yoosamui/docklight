@@ -266,7 +266,7 @@ namespace docklight
     {
         //        if (group_name != "Geany" && group_name != "Xfce4-settings-manager") return
         //        true;
-        // if (group_name != "Gedit" && group_name != "Geany") return true;
+        if (group_name != "Gedit" && group_name != "Geany") return true;
         Glib::RefPtr<Gdk::Pixbuf> pixbuf;
         Glib::ustring title_name;
         Glib::ustring desktop_file;
