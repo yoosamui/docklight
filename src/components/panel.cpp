@@ -436,7 +436,8 @@ namespace docklight
         Cairo::RefPtr<Cairo::Context> cell_ctx = Cairo::Context::create(m_cell);
         // ctx->set_operator(Cairo::Operator::OPERATOR_SOURCE);
         // cell_ctx->set_operator(Cairo::Operator::OPERATOR_DEST);
-        cell_ctx->set_source(m_surfaceIcon, 0, 0);
+        int centerX = (config::get_dock_area() / 2) - (m_surfaceIcon->get_width() / 2);
+        cell_ctx->set_source(m_surfaceIcon, centerX, 0);
         cell_ctx->paint();
 
         // add to back surface
@@ -556,6 +557,7 @@ namespace docklight
         //  bck_ctx->set_operator(Cairo::Operator::OPERATOR_IN);
         //  bck_ctx->set_operator(Cairo::Operator::OPERATOR_SOURCE);
         draw_background();
+        Cairo::RefPtr<Cairo::Context> bck_ctx = Cairo::Context::create(m_background);
 
         guint tag = 0;
         g_print("LOOP %ld \n", appmap.size());
@@ -575,7 +577,6 @@ namespace docklight
             //  draw_indicator(dockitem);
 
             // bck_ctx = Cairo::Context::create(m_background);
-            Cairo::RefPtr<Cairo::Context> bck_ctx = Cairo::Context::create(m_background);
             bck_ctx->set_source(m_cell, m_posX, m_posY);
             bck_ctx->paint();
             // add surfaceicon to the cell surface
