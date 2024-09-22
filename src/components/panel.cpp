@@ -437,7 +437,7 @@ namespace docklight
         // ctx->set_operator(Cairo::Operator::OPERATOR_SOURCE);
         // cell_ctx->set_operator(Cairo::Operator::OPERATOR_DEST);
         int centerX = (config::get_dock_area() / 2) - (m_surfaceIcon->get_width() / 2);
-        cell_ctx->set_source(m_surfaceIcon, centerX, 0);
+        cell_ctx->set_source(m_surfaceIcon, centerX, config::get_dock_area_margin());
         cell_ctx->paint();
 
         // add to back surface
@@ -504,14 +504,15 @@ namespace docklight
         // bck_ctx->set_source(m_indicator, m_posX, config::get_dock_area() - size);
 
         if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-            bck_ctx->set_source(m_indicator, m_posX, config::get_dock_area() - size);
+            int centerX = (config::get_dock_area() / 2) - (m_indicator->get_width() / 2);
+            bck_ctx->set_source(m_indicator, centerX + m_posX, config::get_dock_area() - size);
             //    bck_ctx->set_source(m_indicator, m_posX, m_surfaceIcon->get_width());
             // bck_ctx->set_source(m_indicator, m_posX, config::get_dock_area() - size);
 
             // m_posY += config::get_icon_size() + config::get_separator_margin();
 
         } else {
-            bck_ctx->set_source(m_indicator, 0, config::get_dock_area() - size + m_posY);
+            // bck_ctx->set_source(m_indicator, 0, config::get_dock_area() - size + m_posY);
             // bck_ctx->set_source(m_indicator, m_posX, m_surfaceIcon->get_width());
             //  bck_ctx->set_source(m_indicator, 0, (config::get_dock_area() + (m_posY - 8)));
             //  bck_ctx->set_source(m_indicator, 0, config::get_dock_area() + (m_posY - 8));
@@ -574,7 +575,7 @@ namespace docklight
             //
             draw_cell();
             draw_icon(dockitem);
-            //  draw_indicator(dockitem);
+            draw_indicator(dockitem);
 
             // bck_ctx = Cairo::Context::create(m_background);
             bck_ctx->set_source(m_cell, m_posX, m_posY);
