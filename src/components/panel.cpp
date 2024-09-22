@@ -575,30 +575,22 @@ namespace docklight
             draw_icon(dockitem);
             //  draw_indicator(dockitem);
 
+            // add surfaceicon to the cell surface
             cell_ctx->set_source(m_surfaceIcon, m_posX, m_posY);
             cell_ctx->paint();
-            // clean bck
-            // bck_ctx->paint();
-            bck_ctx->set_source(m_cell, m_posX, m_posY);
-            bck_ctx->paint();
-            // TODO: apply
 
-            //  TODO: fix this
             if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-                // m_posX += DOCK_iCON_SIZE + DOCK_MARGIN_SPACE;  // separator;
                 m_posX += config::get_icon_size() + config::get_separator_margin();
-                //  separator;
             } else {
                 m_posY += config::get_icon_size() + config::get_separator_margin() +
                           config::get_separator_margin();
-
-                // m_posY += DOCK_iCON_SIZE + DOCK_MARGIN_SPACE;  // separator;
             }
-
-            //    g_print(" posX = %d\n", m_posX);
         }
 
-        // b]ck_ctx->paint();
+        // add cell surfaceicon to the background surface
+        bck_ctx->set_source(m_cell, m_posX, m_posY);
+        bck_ctx->paint();
+
         cr->set_source(m_background, 0, 0);
         cr->paint();
 
