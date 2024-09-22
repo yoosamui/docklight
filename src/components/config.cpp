@@ -28,9 +28,9 @@ namespace docklight
     {
         // parsed and optimized at compile time
         constexpr const int DEF_MIN_ITEM_SIZE = 26;
-        constexpr const int DEF_DOCKAREA_MARGIN = 4;
+        constexpr const int DEF_DOCKAREA_MARGIN = 3;
         constexpr const char* DEF_CONFIG_FILENAME = "docklight.config";
-        constexpr const int DEF_ICON_SIZE = 48;
+        constexpr const int DEF_ICON_SIZE = 64;
         constexpr const int DEF_ICON_MAXSIZE = 128;
         constexpr const int DEF_SEPARATOR_MARGIN = 12;
         constexpr const int DEF_SEPARATOR_SIZE = 8;
@@ -182,7 +182,7 @@ namespace docklight
         }
         int get_dock_area()
         {
-            int area = m_icon_size + (DEF_DOCKAREA_MARGIN * 3) - (DEF_DOCKAREA_MARGIN / 2);
+            int area = m_icon_size + (DEF_DOCKAREA_MARGIN * 3) +  DEF_DOCKAREA_MARGIN/2 ;
 
             return area;
         }

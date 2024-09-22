@@ -425,7 +425,8 @@ namespace docklight
         ctx->set_line_width(2.0);
         ctx->set_source_rgb(0.0, 0.0, 0.0);
         ctx->rectangle(0, 0, m_surfaceIcon->get_width(), m_surfaceIcon->get_height());
-        ctx->stroke();
+        ctx->fill();//
+       // ctx->troke();
 
         Gdk::Cairo::set_source_pixbuf(ctx, icon, 0, 0);
         ctx->paint();
@@ -452,12 +453,15 @@ namespace docklight
     {
         g_assert(m_background);
 
-        int size = config::get_dock_area() - config::get_icon_size();
-        int area = config::get_icon_size();
 
         if (!m_indicator) {
-            m_indicator = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, area,
-                                                      size);  // TODO: fix this think!
+//clang-format on 
+//
+//      // TODO 4  put it in config
+        int height = 4 ;//config::get_dock_area() - config::get_icon_size();
+        int width = config::get_icon_size();
+
+            m_indicator = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, width,height);
         }
 
         Cairo::RefPtr<Cairo::Context> ctx = Cairo::Context::create(m_indicator);
@@ -468,50 +472,57 @@ namespace docklight
         ctx->paint_with_alpha(1.0);
 
         // Surface rect TEST
-        // ctx->set_line_width(2.0);
-        // ctx->set_source_rgba(1.0, 1.0, 1.0, 1.0);
-        // ctx->rectangle(0, 0, area, size);
-        // ctx->stroke();
+         ctx->set_line_width(2.0);
+         ctx->set_source_rgba(1.0, 1.0, 1.0, 1.0);
 
-        ctx->restore();
         // ctx->set_line_width(2.0);
         ctx->set_source_rgba(1.0, 1.0, 1.0, 1.0);
         int resize_factor = config::get_dock_area() / 16;
         if (item->get_childmap().size() == 1) {
+         ctx->rectangle(0, 0, m_indicator->get_width(), m_indicator->get_height());
+         ctx->stroke();
             //           .. ctx->rectangle(0, 0, m_indicator->get_height(),
             //           m_indicator->get_width());
             // ctx->rectangle(0, m_indicator->get_height() - 4, m_indicator->get_width(),
             // resize_factor);
 
-            ctx->rectangle(0, m_indicator->get_height() - resize_factor, m_indicator->get_width(),
-                           resize_factor);
+      //      ctx->rectangle(0,0, m_indicator->get_width() , m_indicator->get_height());
+            //ctx->rectangle(0, m_indicator->get_height() - resize_factor, m_indicator->get_width(),
+                           //resize_factor);
 
         } else {
-            ctx->rectangle(0, m_indicator->get_height() - resize_factor,
-                           m_indicator->get_width() / 2 - 4, resize_factor);
-
-            ctx->rectangle(m_indicator->get_width() / 2 + 4,
-                           m_indicator->get_height() - resize_factor, m_indicator->get_width() / 2,
-                           4);
+            ctx->rectangle(0, m_indicator->get_height(), m_indicator->get_width(),
+                           m_indicator->get_height());
+            /*
+                        ctx->rectangle(m_indicator->get_width() / 2 + 4,
+                                       m_indicator->get_height() - resize_factor,
+               m_indicator->get_width() / 2, 4);*/
             // ctx->rectangle(0, 2, (64 / 2) - 4, 2);
             // ctx->rectangle((64 / 2) + 4, 2, (64 / 2) - 4, 2);
         }
         ctx->fill();
 
+        ctx->restore();
         // add to back surface
-        Cairo::RefPtr<Cairo::Context> bck_ctx = Cairo::Context::create(m_background);
+        Cairo::RefPtr<Cairo::Context> bck_ctx = Cairo::Context::create(m_cell);
 
         // bck_ctx->set_source(m_indicator, m_posX, config::get_dock_area() - size);
 
         if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
             int centerX = (config::get_dock_area() / 2) - (m_indicator->get_width() / 2);
-            bck_ctx->set_source(m_indicator, centerX + m_posX, config::get_dock_area() - size);
+            bck_ctx->set_source(m_indicator, centerX , m_cell->get_height() - m_indicator->get_height());
             //    bck_ctx->set_source(m_indicator, m_posX, m_surfaceIcon->get_width());
             // bck_ctx->set_source(m_indicator, m_posX, config::get_dock_area() - size);
 
             // m_posY += config::get_icon_size() + config::get_separator_margin();
 
         } else {
+            int centerX = (config::get_dock_area() / 2) - (m_indicator->get_width() / 2);
+            bck_ctx->set_source(m_indicator, centerX, m_cell->get_height()- m_indicator->get_height());
+            /*bck_ctx->set_source(m_indicator, centerX,
+                                (m_background->get_height() - m_indicator->get_height()) +
+               m_posY);*/
+
             // bck_ctx->set_source(m_indicator, 0, config::get_dock_area() - size + m_posY);
             // bck_ctx->set_source(m_indicator, m_posX, m_surfaceIcon->get_width());
             //  bck_ctx->set_source(m_indicator, 0, (config::get_dock_area() + (m_posY - 8)));
@@ -561,7 +572,6 @@ namespace docklight
         Cairo::RefPtr<Cairo::Context> bck_ctx = Cairo::Context::create(m_background);
 
         guint tag = 0;
-        g_print("LOOP %ld \n", appmap.size());
         for (auto it = appmap.begin(); it != appmap.end(); it++) {
             auto dockitem = it->second;
             dockitem->set_tag(tag++);
@@ -583,10 +593,13 @@ namespace docklight
             // add surfaceicon to the cell surface
 
             if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-                m_posX += config::get_icon_size() + config::get_separator_margin();
+                m_posX += config::get_dock_area() + config::get_separator_margin();
             } else {
-                m_posY += config::get_icon_size() + config::get_separator_margin() +
-                          config::get_separator_margin();
+                //m_posY += config::get_icon_size() + config::get_separator_margin() +
+                          //config::get_separator_margin();
+
+                m_posY += config::get_dock_area() + config::get_separator_margin(); 
+                       //   config::get_separator_margin();
             }
         }
 
