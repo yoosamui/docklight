@@ -36,6 +36,7 @@ namespace docklight
         void set_dock_alignment(dock_alignment_t value);
         void set_default_style();
 
+        int get_dock_area_margin();
         int get_anchor_margin();
         int get_dock_area();
         int get_separator_margin();

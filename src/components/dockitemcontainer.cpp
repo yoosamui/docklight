@@ -83,15 +83,15 @@ namespace docklight
     int DockItemContainer::remove(guint32 xid)
     {
         int result = 0;
-
         for (auto it = m_appmap.begin(); it != m_appmap.end(); it++) {
             Glib::RefPtr<DockItem> dockitem = it->second;
-            auto cmap = dockitem->get_childmap();
 
-            if (cmap.size() && m_appmap.count(xid)) {
-                result = m_appmap.erase(xid);
-            } else {
-                result = dockitem->remove_child(xid);
+            if (dockitem->get_childmap().count(xid)) {
+                result += dockitem->remove_child(xid);
+            }
+
+            if (dockitem->get_childmap().size() == 0) {
+                result += m_appmap.erase(dockitem->get_xid());
             }
 
             if (result) break;
@@ -103,7 +103,6 @@ namespace docklight
 
         return result;
     }
-
     void DockItemContainer::on_theme_changed()
     {
         bool updated = false;
@@ -265,7 +264,9 @@ namespace docklight
                                    const Glib::ustring window_icon_name, bool icon_is_fallback,
                                    WnckWindowType wintype)
     {
-        //  if (group_name != "Geany" && group_name != "Xfce4-settings-manager") return true;
+        //        if (group_name != "Geany" && group_name != "Xfce4-settings-manager") return
+        //        true;
+        if (group_name != "Gedit" && group_name != "Geany") return true;
         Glib::RefPtr<Gdk::Pixbuf> pixbuf;
         Glib::ustring title_name;
         Glib::ustring desktop_file;
@@ -310,8 +311,8 @@ namespace docklight
 
                 // always add a replica Dockitem child clone
                 auto child = dockitem->clone();
+                child->set_title(window_icon_name);
 
-                child->set_title(window_name);
                 if (wintype == WnckWindowType::WNCK_WINDOW_DIALOG) {
                     child->set_title(window_icon_name);
                 }

@@ -135,7 +135,7 @@ namespace docklight
         app->activate();
         return EXIT_SUCCESS;
     }
-
+#define ONPRESS
 #ifdef ONPRESS
     bool AppWindow::on_button_press_event(GdkEventButton* event)
     {

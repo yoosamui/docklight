@@ -51,7 +51,7 @@ namespace docklight
         // Config* m_config = Config::getInstance();
       private:
         //    bool on_timeout_draw();
-        // bool on_button_press_event(GdkEventButton* event) override;
+        bool on_button_press_event(GdkEventButton* event) override;
         // bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
         //  void createWindow();
