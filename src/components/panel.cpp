@@ -16,30 +16,6 @@
 namespace docklight
 {
 
-    namespace cairo
-    {
-
-        /* Glib::RefPtr<Surface>*/ void CreateSurface(int width, int height)
-
-        {
-            Surface obj;
-            //   Glib::RefPtr<Surface> ss = Glib::RefPtr<Surface>(new Surface());
-
-            // obj->value = 2l;
-            // auto c = ss->get_width();
-
-            // auto a = obj->get_width();
-
-            ////  cairo_surface_t * cobject);  //: Cairo::ImageSurface(cobject)
-            //   auto t = Glib::RefPtr<Surface>(new Surface(ck));
-            //   t->get_width();
-            //   int a = t.value;
-
-            //// return Glib::RefPtr<Surface>(new Surface(width, height));
-        }
-
-    }  // namespace cairo
-
     gdouble rotation = 0;
     double DegreesToRadians(int degrees);
 
@@ -425,8 +401,8 @@ namespace docklight
         ctx->set_line_width(2.0);
         ctx->set_source_rgb(0.0, 0.0, 0.0);
         ctx->rectangle(0, 0, m_surfaceIcon->get_width(), m_surfaceIcon->get_height());
-        ctx->fill();//
-       // ctx->troke();
+        ctx->fill();  //
+                      // ctx->troke();
 
         Gdk::Cairo::set_source_pixbuf(ctx, icon, 0, 0);
         ctx->paint();
@@ -453,15 +429,14 @@ namespace docklight
     {
         g_assert(m_background);
 
-
         if (!m_indicator) {
-//clang-format on 
-//
-//      // TODO 4  put it in config
-        int height = 4 ;//config::get_dock_area() - config::get_icon_size();
-        int width = config::get_icon_size();
+            //clang-format on
+            //
+            //      // TODO 4  put it in config
+            int height = 3;  // config::get_dock_area() - config::get_icon_size();
+            int width = config::get_icon_size();
 
-            m_indicator = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, width,height);
+            m_indicator = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, width, height);
         }
 
         Cairo::RefPtr<Cairo::Context> ctx = Cairo::Context::create(m_indicator);
@@ -472,26 +447,18 @@ namespace docklight
         ctx->paint_with_alpha(1.0);
 
         // Surface rect TEST
-         ctx->set_line_width(2.0);
-         ctx->set_source_rgba(1.0, 1.0, 1.0, 1.0);
+        ctx->set_line_width(2.0);
+        ctx->set_source_rgba(1.0, 1.0, 1.0, 1.0);
 
         // ctx->set_line_width(2.0);
-        ctx->set_source_rgba(1.0, 1.0, 1.0, 1.0);
-        int resize_factor = config::get_dock_area() / 16;
+        ctx->set_source_rgba(0.0, 0.0, 0.0, 1.0);
+        //        int resize_factor = config::get_dock_area() / 16;
         if (item->get_childmap().size() == 1) {
-         ctx->rectangle(0, 0, m_indicator->get_width(), m_indicator->get_height());
-         ctx->stroke();
-            //           .. ctx->rectangle(0, 0, m_indicator->get_height(),
-            //           m_indicator->get_width());
-            // ctx->rectangle(0, m_indicator->get_height() - 4, m_indicator->get_width(),
-            // resize_factor);
-
-      //      ctx->rectangle(0,0, m_indicator->get_width() , m_indicator->get_height());
-            //ctx->rectangle(0, m_indicator->get_height() - resize_factor, m_indicator->get_width(),
-                           //resize_factor);
+            ctx->rectangle(0, 0, m_indicator->get_width(), m_indicator->get_height());
 
         } else {
-            ctx->rectangle(0, m_indicator->get_height(), m_indicator->get_width(),
+            ctx->rectangle(0, 0, m_indicator->get_width() / 2 - 4, m_indicator->get_height());
+            ctx->rectangle(m_indicator->get_width() / 2 + 4, 0, m_indicator->get_width() - 8,
                            m_indicator->get_height());
             /*
                         ctx->rectangle(m_indicator->get_width() / 2 + 4,
@@ -510,7 +477,8 @@ namespace docklight
 
         if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
             int centerX = (config::get_dock_area() / 2) - (m_indicator->get_width() / 2);
-            bck_ctx->set_source(m_indicator, centerX , m_cell->get_height() - m_indicator->get_height());
+            bck_ctx->set_source(m_indicator, centerX,
+                                m_cell->get_height() - m_indicator->get_height());
             //    bck_ctx->set_source(m_indicator, m_posX, m_surfaceIcon->get_width());
             // bck_ctx->set_source(m_indicator, m_posX, config::get_dock_area() - size);
 
@@ -518,7 +486,8 @@ namespace docklight
 
         } else {
             int centerX = (config::get_dock_area() / 2) - (m_indicator->get_width() / 2);
-            bck_ctx->set_source(m_indicator, centerX, m_cell->get_height()- m_indicator->get_height());
+            bck_ctx->set_source(m_indicator, centerX,
+                                m_cell->get_height() - m_indicator->get_height());
             /*bck_ctx->set_source(m_indicator, centerX,
                                 (m_background->get_height() - m_indicator->get_height()) +
                m_posY);*/
@@ -595,11 +564,11 @@ namespace docklight
             if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
                 m_posX += config::get_dock_area() + config::get_separator_margin();
             } else {
-                //m_posY += config::get_icon_size() + config::get_separator_margin() +
-                          //config::get_separator_margin();
+                // m_posY += config::get_icon_size() + config::get_separator_margin() +
+                // config::get_separator_margin();
 
-                m_posY += config::get_dock_area() + config::get_separator_margin(); 
-                       //   config::get_separator_margin();
+                m_posY += config::get_dock_area() + config::get_separator_margin();
+                //   config::get_separator_margin();
             }
         }
 
