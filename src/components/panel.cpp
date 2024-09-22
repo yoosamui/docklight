@@ -550,12 +550,13 @@ namespace docklight
         m_posX = 0;
         m_posY = 0;
 
+        draw_cell();
         Cairo::RefPtr<Cairo::Context> bck_ctx = Cairo::Context::create(m_background);
+        Cairo::RefPtr<Cairo::Context> cell_ctx = Cairo::Context::create(m_cell);
         // bck_ctx->set_operator(Cairo::Operator::OPERATOR_DEST);
         //  bck_ctx->set_operator(Cairo::Operator::OPERATOR_IN);
         //  bck_ctx->set_operator(Cairo::Operator::OPERATOR_SOURCE);
         draw_background();
-        // draw_cell();
 
         guint tag = 0;
         g_print("LOOP %ld \n", appmap.size());
@@ -563,7 +564,7 @@ namespace docklight
             auto dockitem = it->second;
             dockitem->set_tag(tag++);
 
-            g_print("%d\n", m_posX);
+            // g_print("%d\n", m_posX);
             // Cairo::RefPtr<Cairo::Context> cell_ctx = Cairo::Context::create(m_cell);
             // cell_ctx->set_source_rgba(0.0, 0.0, 0.0, 0.0);
             ////  cell_ctx->set_operator(Cairo::Operator::OPERATOR_SOURCE);
@@ -574,7 +575,6 @@ namespace docklight
             draw_icon(dockitem);
             //  draw_indicator(dockitem);
 
-            Cairo::RefPtr<Cairo::Context> cell_ctx = Cairo::Context::create(m_cell);
             cell_ctx->set_source(m_surfaceIcon, m_posX, m_posY);
             cell_ctx->paint();
             // clean bck
