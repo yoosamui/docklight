@@ -26,6 +26,7 @@
 #include <gtkmm/icontheme.h>
 
 #include "components/dockitem.h"
+#include "components/config.h"
 #include "utils/singletonbase.h"
 #include "utils/pixbuf.h"
 // clang-format on
@@ -36,6 +37,8 @@ namespace docklight
     enum window_action_t { OPEN, CLOSE, UPDATE };
     typedef sigc::signal<void, window_action_t, gint> type_signal_update;
 
+    constexpr const guint DEF_MAX_ICON_SIZE = 128;
+
     class DockItemContainer : public SingletonBase<DockItemContainer>
     {
       public:
@@ -43,7 +46,7 @@ namespace docklight
         virtual ~DockItemContainer();
 
         //    guint count(guint additional_size) const
-        guint items_sum_width(guint additional_size) const;
+        guint required_size(guint additional_size) const;
         const std::map<guint32, Glib::RefPtr<DockItem>> get_appmap() const;
         int remove(guint32 xid);
         guint32 exist(const Glib::ustring& group) const;

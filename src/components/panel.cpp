@@ -322,11 +322,11 @@ namespace docklight
     void Panel::container_updated() const
     {
         DockItemContainer* container = get_dockcontainer();
-        int size = container->get_appmap().size();
+        int size = container->get_appmap().size() + 1;
         int separator_size = config::get_separator_size();
-        int separators_count = (size * separator_size) + (separator_size * 4);
-
-        position::set_window_position(container->items_sum_width(separators_count));
+        int separators_count = 0;  // (size * separator_size) + separator_size;
+        g_print(" PANEL required position ------%d------container_updated\n", separators_count);
+        position::set_window_position(container->required_size(separators_count));
     }
 
     void Panel::on_container_updated(window_action_t action, int index)
@@ -399,7 +399,10 @@ namespace docklight
         //... ctx->rectangle(0, 0, 64, 64);
         ctx->paint_with_alpha(1.0);
         // TODO check scale if do when no sizes changed. take care of speed
-        auto icon = item->get_icon()->scale_simple(size, size, Gdk::INTERP_BILINEAR);
+        // auto icon = item->get_icon(/*size*/);  //->scale_simple(size, size,
+        // Gdk::INTERP_BILINEAR);
+        // auto icon = item->get_icon()->scale_simple(size, size, Gdk::INTERP_BILINEAR);
+        auto icon = item->get_icon(size);  //->scale_simple(size, size,
 
         // Cairo::RefPtr<Cairo::Context> ctx = Cairo::Context::create(m_background);
         //  ctx->cairo_translate(64, 64);

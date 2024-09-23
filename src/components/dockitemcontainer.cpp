@@ -77,12 +77,21 @@ namespace docklight
         return 0;
     }
 
-    guint DockItemContainer::items_sum_width(guint additional_size) const
+    guint DockItemContainer::required_size(guint additional_size) const
     {
         guint count = additional_size;
         for (auto it = m_appmap.begin(); it != m_appmap.end(); it++) {
             Glib::RefPtr<DockItem> dockitem = it->second;
-            count += dockitem->get_width();
+            // count += dockitem->get_width();
+
+            // TODO don't whant config here
+            //        count += config::get_icon_size();
+            // TODO: use the area of the window for now.
+            // instead use the value from a DockItemCell IDockItem.
+            // This should implemented after the architecture is done
+            // use the area as value of m_cell cairo::surface
+            count += config::get_dock_area();
+            g_print("count : %d\n", count);
         }
 
         return count;
@@ -140,7 +149,8 @@ namespace docklight
     {
         if (!gdkpixbuf) return false;
 
-        pixbuf = Glib::wrap(gdkpixbuf, true)->scale_simple(128, 128, Gdk::INTERP_BILINEAR);
+        pixbuf = Glib::wrap(gdkpixbuf, true)
+                     ->scale_simple(DEF_MAX_ICON_SIZE, DEF_MAX_ICON_SIZE, Gdk::INTERP_BILINEAR);
 
         return pixbuf ? true : false;
     }
@@ -212,7 +222,8 @@ namespace docklight
         try {
             // Always get the icon scaled to the
             // requested size.
-            pixbuf = theme->load_icon(icon_name, 128, Gtk::IconLookupFlags::ICON_LOOKUP_FORCE_SIZE);
+            pixbuf = theme->load_icon(icon_name, DEF_MAX_ICON_SIZE,
+                                      Gtk::IconLookupFlags::ICON_LOOKUP_FORCE_SIZE);
         } catch (...) {
             g_warning("get_theme_icon::pixbuf: Exception the object has not been created. (%s)",
                       icon_name.c_str());

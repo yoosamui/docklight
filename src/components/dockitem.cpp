@@ -184,7 +184,21 @@ namespace docklight
 
     inline const Glib::RefPtr<Gdk::Pixbuf>& DockItem::get_icon() const
     {
+        g_assert(m_icon);
         return m_icon;
+    }
+
+    const Glib::RefPtr<Gdk::Pixbuf> DockItem::get_icon(guint size)
+    {
+        auto pixbuf =
+            Glib::wrap(m_icon->gobj(), true)->scale_simple(size, size, Gdk::INTERP_BILINEAR);
+
+        g_assert(pixbuf);
+
+        m_width = size;
+        m_height = size;
+
+        return pixbuf;
     }
 
     inline const DockItem* DockItem::get() const

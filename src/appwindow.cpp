@@ -14,14 +14,22 @@
 namespace docklight
 {
 
+    // static members declaration
+    Panel* AppWindow::m_panel;
     Glib::RefPtr<Gtk::Application> AppWindow::m_application;
 
     AppWindow::AppWindow()
     {
         // A window to implement a docking bar used for creating the dock panel.
-        //        set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
+
+//#define DOCK_WINDOW 1
+#ifdef DOCK_WINDOW
+        set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
+        set_decorated(false);
+#else
         set_decorated(true);
 
+#endif
         set_resizable(true);
         set_skip_taskbar_hint(true);
         set_skip_pager_hint(true);
@@ -49,13 +57,18 @@ namespace docklight
         this->set_keep_above(true);
         // this->set_decorated(false);*/
 
-        add(m_panel);
+        // m_panel = Glib::RefPtr<Panel>(new Panel());
+        //        m_panel = new m_panelGlib::RefPtr<Panel>(new Panel());
+        //      add(*m_ppanel);
+        m_panel = new Panel();
+        this->add(*m_panel);
         show_all();
     }
 
     AppWindow::~AppWindow()
     {
         // release the current stryt if any
+        delete m_panel;
         position::struts::set_strut(true);
 
         g_print(MSG_FREE_OBJECT, "AppWindow");
@@ -76,7 +89,7 @@ namespace docklight
 
         config::load_file();
         position::init(*(this));
-        m_panel.init();
+        m_panel->init();
 
         return EXIT_SUCCESS;
     }
@@ -252,11 +265,7 @@ namespace docklight
     //}
     void AppWindow::update_position()
     {
-        DockItemContainer* container = get_dockcontainer();
-        int size = container->get_appmap().size();
-        int separators_count = size * config::get_separator_size();
-
-        position::set_window_position(container->items_sum_width(separators_count));
+        m_panel->container_updated();
 
         // position_util::set_window_position();
         // g_print("AppWindow updated.\n");

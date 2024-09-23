@@ -82,6 +82,7 @@ namespace docklight
         virtual const Glib::ustring& get_desktop_file() const = 0;
         virtual const Glib::ustring& get_icon_name() const = 0;
         virtual const Glib::RefPtr<Gdk::Pixbuf>& get_icon() const = 0;
+        virtual const Glib::RefPtr<Gdk::Pixbuf> get_icon(guint size) = 0;
 
         virtual const Glib::RefPtr<DockItem> clone() = 0;
         virtual const std::map<guint32, Glib::RefPtr<DockItem>>& get_childmap() const = 0;
@@ -129,6 +130,7 @@ namespace docklight
         const Glib::ustring& get_desktop_file() const;
         const Glib::ustring& get_icon_name() const;
         const Glib::RefPtr<Gdk::Pixbuf>& get_icon() const;
+        const Glib::RefPtr<Gdk::Pixbuf> get_icon(guint size);
         const guint get_width() const;
         const guint get_height() const;
         const int remove_child(guint32 xid);
