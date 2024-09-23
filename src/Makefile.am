@@ -40,6 +40,7 @@ utils/factory.cpp \
 components/TransparentWindow.cpp \
 components/ExplodesWindow.cpp \
 components/panel.cpp \
+components/dockrender.cpp \
 components/device.cpp \
 components/config.cpp \
 components/dockitemcontainer.cpp \
