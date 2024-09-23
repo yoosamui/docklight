@@ -13,7 +13,7 @@ namespace docklight
     {
 
         void init(Gtk::Window& window);
-        void set_window_position();
+        void set_window_position(guint required_size);
 
         Gdk::Rectangle get_background_region();
         const Gtk::Window* get_window();

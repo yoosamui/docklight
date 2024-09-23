@@ -319,9 +319,20 @@ namespace docklight
         g_print("%lu\n", diff);
     }
 
+    void Panel::container_updated() const
+    {
+        DockItemContainer* container = get_dockcontainer();
+        int size = container->get_appmap().size();
+        int separator_size = config::get_separator_size();
+        int separators_count = (size * separator_size) + (separator_size * 4);
+
+        position::set_window_position(container->items_sum_width(separators_count));
+    }
+
     void Panel::on_container_updated(window_action_t action, int index)
     {
-        g_message("container Updated\n");
+        container_updated();
+        g_message("dockappcontainer updated\n");
 
         Gtk::Widget::queue_draw();
     }
@@ -507,11 +518,12 @@ namespace docklight
 
     void Panel::draw_background()
     {
-        if (!m_background) {
-            Gdk::Rectangle bckrect = position::get_background_region();
-            m_background = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, bckrect.get_width(),
-                                                       bckrect.get_height());
-        }
+        // TODO:: in neue DockSurface object
+        // if (!m_background) {
+        Gdk::Rectangle bckrect = position::get_background_region();
+        m_background = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, bckrect.get_width(),
+                                                   bckrect.get_height());
+        // }
 
         Cairo::RefPtr<Cairo::Context> ctx = Cairo::Context::create(m_background);
         ctx->set_source_rgba(0.521, 0.6, 0, 1.0);

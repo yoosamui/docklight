@@ -19,12 +19,35 @@ namespace docklight
     AppWindow::AppWindow()
     {
         // A window to implement a docking bar used for creating the dock panel.
-        set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
+        //        set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
+        set_decorated(true);
+
         set_resizable(true);
         set_skip_taskbar_hint(true);
         set_skip_pager_hint(true);
+        set_keep_above(true);
 
-        set_decorated(true);
+        set_size_request(1, 1);
+        /*GdkScreen* screen;
+        GdkVisual* visual;
+
+        gtk_widget_set_app_paintable(GTK_WIDGET(gobj()), TRUE);
+        screen = gdk_screen_get_default();
+        visual = gdk_screen_get_rgba_visual(screen);
+
+        if (visual != NULL && gdk_screen_is_composited(screen)) {
+            gtk_widget_set_visual(GTK_WIDGET(gobj()), visual);
+        }
+
+        //    this->set_gravity(Gdk::Gravity::GRAVITY_STATIC);
+        this->set_size_request(1, 1);
+
+        // A window to implement a docking bar used for creating the dock panel.
+        //  this->set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
+        this->set_skip_taskbar_hint(true);
+        this->set_skip_pager_hint(true);
+        this->set_keep_above(true);
+        // this->set_decorated(false);*/
 
         add(m_panel);
         show_all();
@@ -32,6 +55,9 @@ namespace docklight
 
     AppWindow::~AppWindow()
     {
+        // release the current stryt if any
+        position::struts::set_strut(true);
+
         g_print(MSG_FREE_OBJECT, "AppWindow");
         g_print("\n");
     }
@@ -44,6 +70,9 @@ namespace docklight
 
         Gdk::Screen::get_default()->signal_monitors_changed().connect(
             sigc::mem_fun(this, &AppWindow::on_monitor_changed));
+
+        // m_sigc_updated = get_dockcontainer()->signal_update().connect(
+        // sigc::mem_fun(this, &AppWindow::on_container_updated));
 
         config::load_file();
         position::init(*(this));
@@ -62,12 +91,15 @@ namespace docklight
 
         m_application->send_notification(Notification);*/
     }
-
+    // TODO dont work when already used from a client
+    // void AppWindow::on_container_updated(window_action_t action, gint index)
+    //{
+    // g_print("AppWindow container updated");
+    //}
     void AppWindow::on_app_activated()
     {
         // initializes the position namespace
-        position::set_window_position();
-
+        // position::set_window_position();
         g_message(MSG_APPLICATION_ACTIVATED);
         std::cout << std::endl;
         AppWindow::send_notification(DOCKLIGHT_APPNAME, MSG_APPLICATION_START,
@@ -220,7 +252,11 @@ namespace docklight
     //}
     void AppWindow::update_position()
     {
-        position::set_window_position();
+        DockItemContainer* container = get_dockcontainer();
+        int size = container->get_appmap().size();
+        int separators_count = size * config::get_separator_size();
+
+        position::set_window_position(container->items_sum_width(separators_count));
 
         // position_util::set_window_position();
         // g_print("AppWindow updated.\n");

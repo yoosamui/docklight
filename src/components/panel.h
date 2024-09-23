@@ -43,6 +43,7 @@ namespace docklight
         {
             //
             g_print("WIDGET PRESS\n");
+            return false;
         }
 
         bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override
@@ -203,6 +204,7 @@ namespace docklight
         Panel();
         ~Panel();
         void init();
+        void container_updated() const;
 
         // signal_button_press_event().connect([this](GdkEventButton* p_event) {
         // return OnButtonPressed(p_event);

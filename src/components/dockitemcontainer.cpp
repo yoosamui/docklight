@@ -36,6 +36,8 @@ namespace docklight
 
         m_sigc = icon_theme->signal_changed().connect(
             sigc::mem_fun(*this, &DockItemContainer ::on_theme_changed));
+
+        g_message("DockItemContainer instantiated.");
     }
 
     type_signal_update DockItemContainer::signal_update()
@@ -75,13 +77,12 @@ namespace docklight
         return 0;
     }
 
-    inline guint DockItemContainer::count(guint additional_size) const
+    guint DockItemContainer::items_sum_width(guint additional_size) const
     {
         guint count = additional_size;
         for (auto it = m_appmap.begin(); it != m_appmap.end(); it++) {
             Glib::RefPtr<DockItem> dockitem = it->second;
-            // TODO pending
-            // count += dockitem->get_width();
+            count += dockitem->get_width();
         }
 
         return count;
@@ -397,7 +398,7 @@ namespace docklight
         // observer patter
 
         if (count != items_count()) {
-            m_signal_update.emit(window_action_t::UPDATE, (int)m_appmap.size());
+            m_signal_update.emit(window_action_t::UPDATE, (gint)m_appmap.size());
         }
 
         return true;

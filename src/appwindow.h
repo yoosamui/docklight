@@ -41,6 +41,7 @@
 namespace docklight
 {
 
+    // class AppWindow : public Gtk::Window  // ublic TransparentWindow
     class AppWindow : public TransparentWindow
     {
       public:
@@ -56,13 +57,14 @@ namespace docklight
 
         //  void createWindow();
         void on_monitor_changed();
-        void update_position();
+        static void update_position();
 
         static void send_Notify(const Glib::ustring& title, const Glib::ustring& text,
                                 const Glib::ustring& icon_name);
         static int on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine>& command_line,
                                    Glib::RefPtr<Gtk::Application>& app);
 
+        //  void on_container_updated(window_action_t action, gint index);
         static void on_app_activated();
         static void send_notification(const Glib::ustring& title, const Glib::ustring& text,
                                       const Glib::ustring& icon_name);
@@ -71,6 +73,7 @@ namespace docklight
         // bool on_leave_notify_event(GdkEventCrossing* crossing_event);
 
       private:
+        // sigc::connection m_sigc_updated;
         Glib::RefPtr<ExplodesWindow> m_composite;
         // ExplodesWindow m_composite;
         Panel m_panel;

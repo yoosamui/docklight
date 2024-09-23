@@ -9,6 +9,8 @@ namespace docklight
     namespace position
     {
         Gtk::Window* m_window = nullptr;
+        int m_last_width = 0;
+        int m_last_height = 0;
 
         void init(Gtk::Window& window)
         {
@@ -27,7 +29,7 @@ namespace docklight
             return result;
         }
 
-        void set_window_position()
+        void set_window_position(guint required_size)
         {
             int area = config::get_dock_area();
             dock_alignment_t alignment = config::get_dock_alignment();
@@ -36,7 +38,12 @@ namespace docklight
             int xpos = 0, ypos = 0, center = 0;
 
             if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-                int width = 1000;  /////panel->get_required_size();//TODO remove after testing
+                int width = required_size;
+                if (m_last_width == width) return;
+
+                m_last_width = width;
+
+                g_print(" required position ------------------------------%d\n", required_size);
                 if (width > workarea.get_width()) {
                     width = workarea.get_width();
                 }
@@ -72,14 +79,16 @@ namespace docklight
 
                 if (config::is_autohide_none()) {
                     struts::set_strut(false);
-                    g_message("SET STRUT");
                 }
 
-                g_message("AREA %d w:%d h%d\n", area, width, area);
+                g_message("AREA = %d w:%d h:%d\n", area, width, area);
                 m_window->resize(width, area);
                 m_window->move(xpos, ypos);
             } else {
-                int height = 1000;  // panel->get_required_size(); //TODO remove after testing
+                int height = required_size;
+                if (m_last_height == height) return;
+
+                m_last_height = height;
                 // if (Panel_render::m_stm.m_decrease_factor > 0) {
                 // area -= Panel_render::m_stm.m_decrease_factor;
                 //}
@@ -166,7 +175,8 @@ namespace docklight
                     /*if (Panel_render::m_stm.m_decrease_factor > 0) {
                         area -= Panel_render::m_stm.m_decrease_factor;
                     }*/
-                    // Gdk::Rectangle workarea = device::monitor::get_current()->get_workarea();
+                    // Gdk::Rectangle workarea =
+                    // device::monitor::get_current()->get_workarea();
                     Gdk::Rectangle workarea = device::monitor::get_geometry();
                     auto const location = config::get_dock_location();
                     auto const screen = device::display::get_default_screen();

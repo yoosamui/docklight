@@ -34,7 +34,7 @@ namespace docklight
 {
 
     enum window_action_t { OPEN, CLOSE, UPDATE };
-    typedef sigc::signal<void, window_action_t, int> type_signal_update;
+    typedef sigc::signal<void, window_action_t, gint> type_signal_update;
 
     class DockItemContainer : public SingletonBase<DockItemContainer>
     {
@@ -42,7 +42,8 @@ namespace docklight
         DockItemContainer();
         virtual ~DockItemContainer();
 
-        guint count(guint additional_size) const;
+        //    guint count(guint additional_size) const
+        guint items_sum_width(guint additional_size) const;
         const std::map<guint32, Glib::RefPtr<DockItem>> get_appmap() const;
         int remove(guint32 xid);
         guint32 exist(const Glib::ustring& group) const;

@@ -50,6 +50,8 @@ namespace docklight
         clone->m_icon = m_icon;
         clone->m_wintype = m_wintype;
         clone->m_tag = m_tag;
+        clone->m_width = m_width;
+        clone->m_height = m_height;
 
         // covariant return type.
         return clone;
@@ -83,6 +85,9 @@ namespace docklight
 
     inline void DockItem::set_icon(Glib::RefPtr<Gdk::Pixbuf> icon)
     {
+        g_assert(icon);
+        m_width = icon->get_width();
+        m_height = icon->get_height();
         m_icon = icon;
     }
 
@@ -220,6 +225,8 @@ namespace docklight
                << "deaktop_file: " << m_desktop_file << std::endl
                << "window_name: " << m_window_name<< std::endl
                << "description: " << m_description<< std::endl
+               << "width: " << m_width<< std::endl
+               << "height: " << m_height<< std::endl
                << std::endl;
         // clang-format on
 
