@@ -186,6 +186,15 @@ namespace docklight
     {
         return this;
     }
+    inline const guint DockItem::get_width() const
+    {
+        return m_width;
+    }
+
+    inline const guint DockItem::get_height() const
+    {
+        return m_height;
+    }
 
     inline const Glib::ustring& DockItem::get_icon_name() const
     {

@@ -226,13 +226,14 @@ namespace docklight
         ctx->save();
         ctx->set_source_rgba(0.0, 0.0, 0.0, 0.0);
         ctx->set_operator(Cairo::Operator::OPERATOR_SOURCE);
-        ctx->paint_with_alpha(1.0);
+        //       ctx->paint_with_alpha(1.0);
+        ctx->paint();
 
         // Surface rect TEST
-        ctx->set_line_width(2.0);
-        ctx->set_source_rgba(1.0, 1.0, 1.0, 1.0);
-        ctx->rectangle(0, 0, m_cell->get_width(), m_cell->get_height());
-        ctx->stroke();
+        // ctx->set_line_width(2.0);
+        // ctx->set_source_rgba(1.0, 1.0, 1.0, 1.0);
+        // ctx->rectangle(0, 0, m_cell->get_width(), m_cell->get_height());
+        // ctx->stroke();
 
         ctx->restore();
 
@@ -433,7 +434,7 @@ namespace docklight
             //clang-format on
             //
             //      // TODO 4  put it in config
-            int height = 3;  // config::get_dock_area() - config::get_icon_size();
+            int height = 4;  // config::get_dock_area() - config::get_icon_size();
             int width = config::get_icon_size();
 
             m_indicator = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, width, height);
@@ -448,18 +449,20 @@ namespace docklight
 
         // Surface rect TEST
         ctx->set_line_width(2.0);
-        ctx->set_source_rgba(1.0, 1.0, 1.0, 1.0);
+        //        ctx->set_source_rgba(1.0, 1.0, 1.0, 1.0);
 
         // ctx->set_line_width(2.0);
-        ctx->set_source_rgba(0.0, 0.0, 0.0, 1.0);
+        //
+
+        ctx->set_source_rgba(0, 0.243, 0.541, 1.0);
         //        int resize_factor = config::get_dock_area() / 16;
         if (item->get_childmap().size() == 1) {
-            ctx->rectangle(0, 0, m_indicator->get_width(), m_indicator->get_height());
+            ctx->rectangle(0, 0, m_indicator->get_width(), m_indicator->get_height() - 1);
 
         } else {
-            ctx->rectangle(0, 0, m_indicator->get_width() / 2 - 4, m_indicator->get_height());
+            ctx->rectangle(0, 0, m_indicator->get_width() / 2 - 4, m_indicator->get_height() - 1);
             ctx->rectangle(m_indicator->get_width() / 2 + 4, 0, m_indicator->get_width() - 8,
-                           m_indicator->get_height());
+                           m_indicator->get_height() - 1);
             /*
                         ctx->rectangle(m_indicator->get_width() / 2 + 4,
                                        m_indicator->get_height() - resize_factor,

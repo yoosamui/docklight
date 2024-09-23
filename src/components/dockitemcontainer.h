@@ -42,6 +42,7 @@ namespace docklight
         DockItemContainer();
         virtual ~DockItemContainer();
 
+        guint count(guint additional_size) const;
         const std::map<guint32, Glib::RefPtr<DockItem>> get_appmap() const;
         int remove(guint32 xid);
         guint32 exist(const Glib::ustring& group) const;

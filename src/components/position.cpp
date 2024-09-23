@@ -150,6 +150,8 @@ namespace docklight
 
             void set_strut(bool reset)
             {
+                g_print("------- STRUT %d\n", (int)reset);
+
                 long insets[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
                 bool equal = false;
                 GtkWidget* toplevel = gtk_widget_get_toplevel(GTK_WIDGET(m_window->gobj()));

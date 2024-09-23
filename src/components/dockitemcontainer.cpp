@@ -75,6 +75,17 @@ namespace docklight
         return 0;
     }
 
+    inline guint DockItemContainer::count(guint additional_size) const
+    {
+        guint count = additional_size;
+        for (auto it = m_appmap.begin(); it != m_appmap.end(); it++) {
+            Glib::RefPtr<DockItem> dockitem = it->second;
+            // TODO pending
+            // count += dockitem->get_width();
+        }
+
+        return count;
+    }
     const std::map<guint32, Glib::RefPtr<DockItem>> DockItemContainer::get_appmap() const
     {
         return m_appmap;
