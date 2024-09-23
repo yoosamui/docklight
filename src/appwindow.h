@@ -74,8 +74,8 @@ namespace docklight
 
       private:
         // sigc::connection m_sigc_updated;
-        Glib::RefPtr<ExplodesWindow> m_composite;
-        // ExplodesWindow m_composite;
+        // Glib::RefPtr<ExplodesWindow> m_composite;
+        ExplodesWindow m_composite;
         //  Glib::RefPtr<Panel> m_panel;
         static Panel* m_panel;
         static Glib::RefPtr<Gtk::Application> m_application;

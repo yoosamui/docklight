@@ -239,8 +239,8 @@ namespace docklight
                 }
             }
 
-            m_composite = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
-            m_composite->show_at(800, 800);
+            //  m_composite = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
+            m_composite.show_at(800, 800);
         }
 
         return true;
