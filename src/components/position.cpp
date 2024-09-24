@@ -43,7 +43,6 @@ namespace docklight
 
                 m_last_width = width;
 
-                g_print(" required position ------------------------------%d\n", required_size);
                 if (width > workarea.get_width()) {
                     width = workarea.get_width();
                 }
@@ -51,24 +50,20 @@ namespace docklight
                 switch (alignment) {
                     case dock_alignment_t::start:
                         xpos = workarea.get_x();
-                        g_message("1111111111111111");
                         break;
 
                     case dock_alignment_t::end:
                         xpos = workarea.get_x() + workarea.get_width() - width;
-                        g_message("2222222222222222222222");
                         break;
 
                     case dock_alignment_t::center:
                         center = workarea.get_width() / 2 - width / 2;
                         xpos = workarea.get_x() + center;
-                        g_message("3333333333333333333333");
                         break;
 
                     default:  // fill
                         xpos = workarea.get_x();
                         width = workarea.get_width();
-                        g_message("FILLLLLLLLLLLLLLLLLL");
                 }
 
                 if (config::get_dock_location() == dock_location_t::bottom) {
@@ -81,7 +76,6 @@ namespace docklight
                     struts::set_strut(false);
                 }
 
-                g_message("AREA = %d w:%d h:%d\n", area, width, area);
                 m_window->resize(width, area);
                 m_window->move(xpos, ypos);
             } else {
@@ -159,8 +153,6 @@ namespace docklight
 
             void set_strut(bool reset)
             {
-                g_print("------- STRUT %d\n", (int)reset);
-
                 long insets[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
                 bool equal = false;
                 GtkWidget* toplevel = gtk_widget_get_toplevel(GTK_WIDGET(m_window->gobj()));
@@ -228,7 +220,7 @@ namespace docklight
                 if (equal) {
                     return;
                 }
-                g_print("set struts................\n");
+
                 gdk_property_change(gdk_window, gdk_atom_intern("_NET_WM_STRUT_PARTIAL", FALSE),
                                     gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
                                     (unsigned char*)&insets, 12);

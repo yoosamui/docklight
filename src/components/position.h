@@ -16,9 +16,9 @@ namespace docklight
         void set_window_position(guint required_size);
 
         Gdk::Rectangle get_background_region();
-        const Gtk::Window* get_window();
         Gdk::Rectangle get_workarea();
-        // void set_strut(bool reset);
+
+        const Gtk::Window* get_window();
 
         namespace struts
         {

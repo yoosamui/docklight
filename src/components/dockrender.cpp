@@ -1,6 +1,24 @@
-//  clang-format off
+//  Copyright (c) 2018-2024 Juan R. González
+//
+//
+//  This file is part of Docklight.
+//
+//  Docklight is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  Docklight is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  public Glib::Object GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  identification number, along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+// clang-format off
 #include "dockrender.h"
-//  clang-format on
+// clang-format on
 
 namespace docklight
 {
@@ -8,10 +26,12 @@ namespace docklight
     DockRender::DockRender()
     {
         g_message("DockRender instantiated");
-        //
     }
 
-    DockRender::~DockRender() {}
+    DockRender::~DockRender()
+    {
+        g_message("DockRender destructed.");
+    }
 
     void DockRender::create_surface_background()
     {
@@ -21,8 +41,9 @@ namespace docklight
 
         m_bck_ctx = Cairo::Context::create(m_background);
     }
-    void DockRender::draw_background()
+    void DockRender::draw_surface_background()
     {
+        // recreate necessery.
         create_surface_background();
 
         Cairo::RefPtr<Cairo::Context> ctx = Cairo::Context::create(m_background);
@@ -66,16 +87,18 @@ namespace docklight
     {
         int size = config::get_icon_size();
 
-        m_surface_icon = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, size, size);
-        m_icon_ctx = Cairo::Context::create(m_surface_icon);
+        m_icon = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, size, size);
+        m_icon_ctx = Cairo::Context::create(m_icon);
     }
 
     void DockRender::draw_surface_icon(const Glib::RefPtr<DockItem>& item)
     {
+        g_assert(m_cell);
+
         int size = config::get_icon_size();
         g_assert(m_background);
 
-        if (!m_surface_icon) {
+        if (!m_icon) {
             create_surface_icon();
         }
 
@@ -94,7 +117,7 @@ namespace docklight
         m_icon_ctx->set_operator(Cairo::Operator::OPERATOR_SOURCE);
         m_icon_ctx->set_line_width(2.0);
         m_icon_ctx->set_source_rgb(0.0, 0.0, 0.0);
-        m_icon_ctx->rectangle(0, 0, m_surface_icon->get_width(), m_surface_icon->get_height());
+        m_icon_ctx->rectangle(0, 0, m_icon->get_width(), m_icon->get_height());
         m_icon_ctx->fill();
 
         Gdk::Cairo::set_source_pixbuf(m_icon_ctx, icon, 0, 0);
@@ -102,8 +125,63 @@ namespace docklight
 
         m_icon_ctx->restore();
 
-        int centerX = (config::get_dock_area() / 2) - (m_surface_icon->get_width() / 2);
-        m_cell_ctx->set_source(m_surface_icon, centerX, config::get_dock_area_margin());
+        guint centerX = (config::get_dock_area() / 2) - (m_icon->get_width() / 2);
+        m_cell_ctx->set_source(m_icon, centerX, config::get_dock_area_margin());
+        m_cell_ctx->paint();
+    }
+
+    void DockRender::create_surface_indicator(const Glib::RefPtr<DockItem>& item)
+    {
+        // TODO 4  put it in config
+        int height = 4;
+        int width = config::get_icon_size();
+
+        m_indicator = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, width, height);
+        m_indicator_ctx = Cairo::Context::create(m_indicator);
+    }
+
+    void DockRender::draw_surface_indicator(const Glib::RefPtr<DockItem>& item)
+    {
+        g_assert(m_cell);
+
+        if (!m_indicator) {
+            create_surface_indicator(item);
+        }
+        // clear
+        m_indicator_ctx->save();
+        m_indicator_ctx->set_source_rgba(0.0, 0.0, 0.0, 0.0);
+        m_indicator_ctx->set_operator(Cairo::Operator::OPERATOR_SOURCE);
+        m_indicator_ctx->paint_with_alpha(1.0);
+
+        // draw indicators
+        m_indicator_ctx->set_line_width(2.0);
+        m_indicator_ctx->set_source_rgba(0, 0.243, 0.541, 1.0);
+
+        if (item->get_childmap().size() == 1) {
+            m_indicator_ctx->rectangle(0, 0, m_indicator->get_width(),
+                                       m_indicator->get_height() - 1);
+
+        } else {
+            m_indicator_ctx->rectangle(0, 0, m_indicator->get_width() / 2 - 4,
+                                       m_indicator->get_height() - 1);
+            m_indicator_ctx->rectangle(m_indicator->get_width() / 2 + 4, 0,
+                                       m_indicator->get_width() - 8, m_indicator->get_height() - 1);
+        }
+        m_indicator_ctx->fill();
+        m_indicator_ctx->restore();
+
+        // add to cell surface
+        if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+            int centerX = (config::get_dock_area() / 2) - (m_indicator->get_width() / 2);
+            m_cell_ctx->set_source(m_indicator, centerX,
+                                   m_cell->get_height() - m_indicator->get_height());
+
+        } else {
+            int centerX = (config::get_dock_area() / 2) - (m_indicator->get_width() / 2);
+            m_cell_ctx->set_source(m_indicator, centerX,
+                                   m_cell->get_height() - m_indicator->get_height());
+        }
+
         m_cell_ctx->paint();
     }
 
@@ -115,9 +193,7 @@ namespace docklight
         m_posX = 0;
         m_posY = 0;
 
-        draw_background();
-
-        // m_bck_ctx = Cairo::Context::create(m_background);
+        draw_surface_background();
 
         guint tag = 0;
         for (auto it = appmap.begin(); it != appmap.end(); it++) {
@@ -126,21 +202,15 @@ namespace docklight
 
             draw_surface_cell();
             draw_surface_icon(dockitem);
-            //          draw_indicator(dockitem);
+            draw_surface_indicator(dockitem);
 
-            // bck_ctx = Cairo::Context::create(m_background);
             m_bck_ctx->set_source(m_cell, m_posX, m_posY);
             m_bck_ctx->paint();
-            // add surfaceicon to the cell surface
 
             if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
                 m_posX += config::get_dock_area() + config::get_separator_margin();
             } else {
-                // m_posY += config::get_icon_size() + config::get_separator_margin() +
-                // config::get_separator_margin();
-
                 m_posY += config::get_dock_area() + config::get_separator_margin();
-                //   config::get_separator_margin();
             }
         }
 

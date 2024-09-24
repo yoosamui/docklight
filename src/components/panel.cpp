@@ -332,7 +332,7 @@ namespace docklight
     void Panel::on_container_updated(window_action_t action, int index)
     {
         container_updated();
-        g_message("dockappcontainer updated\n");
+        // g_message("dockappcontainer updated\n");
 
         Gtk::Widget::queue_draw();
     }
