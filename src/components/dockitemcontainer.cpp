@@ -254,9 +254,8 @@ namespace docklight
         // reurn if the window don't has a name.
         if (!wnck_window_has_name(window)) return false;
 
-        gint32 xid = wnck_window_get_xid(window);
-
         // return if the DockItem exist.
+        gint32 xid = wnck_window_get_xid(window);
         if (exist(xid)) return false;
 
         const char* window_name = wnck_window_get_name(window);
@@ -286,12 +285,22 @@ namespace docklight
     }
 
     bool DockItemContainer::insert(guint32 xid, GdkPixbuf* gdkpixbuf,
-                                   const Glib::ustring instance_name,
-                                   const Glib::ustring group_name, const Glib::ustring window_name,
+                                   const Glib::ustring instance_name, Glib::ustring group_name,
+                                   const Glib::ustring window_name,
                                    const Glib::ustring window_icon_name, bool icon_is_fallback,
                                    WnckWindowType wintype)
     {
-        //        if (group_name != "Geany" && group_name != "Xfce4-settings-manager") return
+        // TODO maybe move to strings utils...
+        std::string lowercase_group_name(group_name);
+        std::transform(lowercase_group_name.begin(), lowercase_group_name.end(),
+                       lowercase_group_name.begin(), ::tolower);
+
+        group_name = lowercase_group_name;
+
+        // if (group_name != "bleachbit") return false;
+        //  g_print(">>>>>>>>>>>>>>>>>>>>>>>>INSERT TOP %d %s\n", xid, group_name.c_str());
+        // TODO xid muss be ulong
+        ///*wnck_window_get_xid(window), wnck_window_get_class_group_name(window)*/);
         //        true;
         //        if (group_name != "Gedit" && group_name != "Geany") return true;
         Glib::RefPtr<Gdk::Pixbuf> pixbuf;
@@ -299,7 +308,7 @@ namespace docklight
         Glib::ustring desktop_file;
         Glib::ustring icon_name;
 
-        int count = items_count();
+        guint count = items_count();
 
         // Handles desktop files icons and Names for the app.
         if (get_theme_icon(xid, pixbuf, title_name, desktop_file, icon_name)) {
@@ -329,6 +338,7 @@ namespace docklight
                     dockitem->set_icon(pixbuf);
                 }
 
+                g_print("-----------ADD IN GROUP %d %s\n", xid, window_icon_name.c_str());
                 owner->add_child(dockitem);
 
             } else {
@@ -349,7 +359,8 @@ namespace docklight
                 } else if (get_window_icon(gdkpixbuf, pixbuf)) {
                     child->set_icon(pixbuf);
                 }
-
+                //   g_print("-----------ADD CHILD NOT IN GROUP %d %s\n", xid,
+                //   window_icon_name.c_str());
                 dockitem->add_child(child);
             }
         } else {
