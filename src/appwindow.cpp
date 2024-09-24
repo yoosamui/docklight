@@ -22,7 +22,7 @@ namespace docklight
     {
         // A window to implement a docking bar used for creating the dock panel.
 
-//#define DOCK_WINDOW 1
+#define DOCK_WINDOW 1
 #ifdef DOCK_WINDOW
         set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
         set_decorated(false);

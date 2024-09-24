@@ -7,6 +7,7 @@
 #include <sigc++/sigc++.h>
 
 #include "components/dockitemcontainer.h"
+#include "components/position.h"
 
 ////#include "constants.h"
 //#include <X11/X.h>

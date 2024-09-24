@@ -40,6 +40,11 @@ namespace docklight
         g_message("DockItemContainer instantiated.");
     }
 
+    void DockItemContainer::request_update_signal()
+    {
+        m_signal_update.emit(window_action_t::UPDATE, 0);
+    }
+
     type_signal_update DockItemContainer::signal_update()
     {
         return m_signal_update;

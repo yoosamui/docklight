@@ -33,7 +33,7 @@ namespace docklight
         constexpr const int DEF_ICON_SIZE = 46;
         constexpr const int DEF_ICON_MAXSIZE = 128;
         constexpr const int DEF_SEPARATOR_MARGIN = 0;
-        constexpr const int DEF_SEPARATOR_SIZE = 0;
+        constexpr const int DEF_SEPARATOR_SIZE = 2;
         constexpr const double DEF_AUTOHIDE_ANIMATION_DELAY = 5.0;
         constexpr const int DEF_AUTOHIDE_ANCHORT_MARGIN = 20;
         constexpr const double DEF_AUTOHIDE_HIDE_DELAY = 0.5;

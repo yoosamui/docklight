@@ -39,7 +39,7 @@ namespace docklight
 
             if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
                 int width = required_size;
-                if (m_last_width == width) return;
+                // if (m_last_width == width) return;
 
                 m_last_width = width;
 

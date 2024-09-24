@@ -163,9 +163,12 @@ namespace docklight
     void Panel::container_updated() const
     {
         DockItemContainer* container = get_dockcontainer();
-        gint size = container->get_appmap().size() + 1;
+        // TODO change after home icon is insertet, will be == 1
+        if (container->get_appmap().size() == 0) return;
+
+        gint size = container->get_appmap().size() - 1;
         gint separator_size = config::get_separator_size();
-        gint separators_count = (size * separator_size) + separator_size;
+        gint separators_count = (size * separator_size);
 
         position::set_window_position(container->required_size(separators_count));
     }

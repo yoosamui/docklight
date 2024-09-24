@@ -36,6 +36,18 @@ namespace docklight
             return;
         }
 
+        WnckWindowType wt = wnck_window_get_window_type(window);
+        // clang-format off
+            if (wt == WNCK_WINDOW_DESKTOP ||
+                wt == WNCK_WINDOW_DOCK ||
+                wt == WNCK_WINDOW_TOOLBAR ||
+                wt == WNCK_WINDOW_MENU ||
+                wt == WNCK_WINDOW_SPLASHSCREEN){
+
+                return ;
+            }
+        // clang-format on
+
         gint32 xid = wnck_window_get_xid(window);
         get_dockcontainer()->remove(xid);
     }

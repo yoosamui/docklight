@@ -207,10 +207,11 @@ namespace docklight
             m_bck_ctx->set_source(m_cell, m_posX, m_posY);
             m_bck_ctx->paint();
 
+            guint separator_size = config::get_separator_size();
             if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-                m_posX += config::get_dock_area() + config::get_separator_margin();
+                m_posX += config::get_dock_area() + separator_size;
             } else {
-                m_posY += config::get_dock_area() + config::get_separator_margin();
+                m_posY += config::get_dock_area() + separator_size;
             }
         }
 
