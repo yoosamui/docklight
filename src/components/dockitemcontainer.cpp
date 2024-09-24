@@ -290,6 +290,12 @@ namespace docklight
                                    const Glib::ustring window_icon_name, bool icon_is_fallback,
                                    WnckWindowType wintype)
     {
+        //        Glib::RefPtr<IDockItem> shapes;
+        // std::vector<Glib::RefPtr<IDockItem>> shapes;
+        // Glib::RefPtr<IDockItem>(new DockItem(xid, instance_name, group_name, wintype));
+        // shapes.push_back(std::make_unique<DockItem>());
+        //     shapes.push_back(std::make_unique<Polygon>());
+        //     shapes.push_back(std::make_unique<Rectangle>());
         // TODO maybe move to strings utils...
         std::string lowercase_group_name(group_name);
         std::transform(lowercase_group_name.begin(), lowercase_group_name.end(),
@@ -338,7 +344,6 @@ namespace docklight
                     dockitem->set_icon(pixbuf);
                 }
 
-                g_print("-----------ADD IN GROUP %d %s\n", xid, window_icon_name.c_str());
                 owner->add_child(dockitem);
 
             } else {
