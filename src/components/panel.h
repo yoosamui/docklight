@@ -24,38 +24,39 @@
 //
 
 #include "components/TransparentWindow.h"
+#include "components/dockrender.h"
 
 namespace docklight
 {
 
-    class DockCell : public TransparentWindow
-    {
-      public:
-        DockCell()
-        {
-            add_events(Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::SCROLL_MASK |
-                       Gdk::SMOOTH_SCROLL_MASK | Gdk::POINTER_MOTION_HINT_MASK |
-                       Gdk::FOCUS_CHANGE_MASK | Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK |
-                       Gdk::POINTER_MOTION_HINT_MASK | Gdk::POINTER_MOTION_MASK);
-        }
+    // class DockCell : public TransparentWindow
+    //{
+    // public:
+    // DockCell()
+    //{
+    // add_events(Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::SCROLL_MASK |
+    // Gdk::SMOOTH_SCROLL_MASK | Gdk::POINTER_MOTION_HINT_MASK |
+    // Gdk::FOCUS_CHANGE_MASK | Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK |
+    // Gdk::POINTER_MOTION_HINT_MASK | Gdk::POINTER_MOTION_MASK);
+    //}
 
-        bool on_button_press_event(GdkEventButton* event)
-        {
-            //
-            g_print("WIDGET PRESS\n");
-            return false;
-        }
+    // bool on_button_press_event(GdkEventButton* event)
+    //{
+    ////
+    // g_print("WIDGET PRESS\n");
+    // return false;
+    //}
 
-        bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override
-        {
-            g_print("CELL DRAW\n");
-            cr->set_source_rgba(1.0, 1.0, 1.0, 1.0);
-            cr->paint();
-            return false;
-        }
+    // bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override
+    //{
+    // g_print("CELL DRAW\n");
+    // cr->set_source_rgba(1.0, 1.0, 1.0, 1.0);
+    // cr->paint();
+    // return false;
+    //}
 
-      public:
-    };
+    // public:
+    //};
 
     namespace cairo
     {
@@ -198,7 +199,7 @@ namespace docklight
        }*/
     }  // namespace cairo
 
-    class Panel : public Gtk::DrawingArea
+    class Panel : public DockRender
     {
       public:
         Panel();
@@ -224,7 +225,7 @@ namespace docklight
         void on_container_updated(window_action_t action, int index);
 
         bool on_drawX(const Cairo::RefPtr<Cairo::Context>& cr);
-        bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
+        // bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
         double easing_bounce(double t, double d, double n)
         {
             auto p = t / d;

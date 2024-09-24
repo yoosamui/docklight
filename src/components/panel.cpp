@@ -242,7 +242,7 @@ namespace docklight
         // bck_ctx->set_source(m_cell, m_posX, m_posY);
         // bck_ctx->paint();
     }
-    void Panel::draw_icon()
+    /*void Panel::draw_icon()
     {
         int size = config::get_icon_size();
 
@@ -257,15 +257,15 @@ namespace docklight
         Gdk::Cairo::set_source_pixbuf(ctx, home_pixbuf, 0, 0);
         ctx->paint();
 
-        /*double draw_value_darken = 0.8;
+        [>double draw_value_darken = 0.8;
         ctx->rectangle(0, 0, m_surfaceIcon->get_width(), m_surfaceIcon->get_height());
         ctx->set_source_rgba(0, 0, 0, draw_value_darken);
         ctx->set_operator(Cairo::Operator::OPERATOR_ATOP);
         // icon_cr.set_source_rgba(0, 0, 0, draw_value.darken);
         //   icon_cr.set_operator(Cairo.Operator.ATOP);
         ctx->fill();
-        ctx->set_operator(Cairo::Operator::OPERATOR_OVER);*/
-    }
+        ctx->set_operator(Cairo::Operator::OPERATOR_OVER);<]
+    }*/
 
     void Panel::draw_background(const Cairo::RefPtr<Cairo::Context>& cr,
                                 Gdk::Rectangle background_rect, int x_offset, int y_offset)
@@ -322,10 +322,10 @@ namespace docklight
     void Panel::container_updated() const
     {
         DockItemContainer* container = get_dockcontainer();
-        int size = container->get_appmap().size() + 1;
-        int separator_size = config::get_separator_size();
-        int separators_count = 0;  // (size * separator_size) + separator_size;
-        g_print(" PANEL required position ------%d------container_updated\n", separators_count);
+        gint size = container->get_appmap().size() + 1;
+        gint separator_size = config::get_separator_size();
+        gint separators_count = (size * separator_size) + separator_size;
+
         position::set_window_position(container->required_size(separators_count));
     }
 
@@ -534,7 +534,7 @@ namespace docklight
     }
 
     //  bck_ctx->set_source_rgba(0.521, 0.6, 0, 1.0);
-    bool Panel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
+    /*bool Panel::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     {
         // if (!m_back_obj->surface) {
         // draw_background();
@@ -675,7 +675,7 @@ namespace docklight
         // new Surface.with_cairo_surface(win_rect.width, win_rect.height, cr.get_target());
         // main_buffer.Internal.set_device_scale(window_scale_factor, window_scale_factor);
 
-        /*///   if (!m_background) return false;
+        [>///   if (!m_background) return false;
         //        if (!m_background) {
         draw_background();
         draw_icon();
@@ -698,7 +698,7 @@ namespace docklight
         //}
 
         cr->set_source(m_background, x_offset, y_offset);
-    */
+    <]
         // cairo_surface_t* m_target = nullptr;
         // cairo_surface_t* result =
         // cairo_surface_create_for_rectangle(m_target, 10.0, 10.0, 100.0, 100.0);
@@ -715,17 +715,17 @@ namespace docklight
         //
         //
 
-        /*
+        [>
         cr->rectangle(0, 0, 64, 64);
         cr->fill();
 
         cr->move_to(0, 0);
         cr->set_source_rgb(0, 1, 0);
         cr->line_to(0, 10);
-        c r->stroke();*/
+        c r->stroke();<]
 
         // Create Cairo context for the image surface.
-        /*Cairo::RefPtr<Cairo::Context> refContext = Cairo::Context::create(m_surface);
+        [>Cairo::RefPtr<Cairo::Context> refContext = Cairo::Context::create(m_surface);
 
         // Create a radial gradient (pattern)
         int x_off = 1;
@@ -733,7 +733,7 @@ namespace docklight
         int cent_point_radius = 4;
 
         Cairo::RefPtr<Cairo::RadialGradient> refPattern =
-            Cairo::RadialGradient::create(x_off, y_off, 0, x_off, y_off, cent_point_radius);*/
+            Cairo::RadialGradient::create(x_off, y_off, 0, x_off, y_off, cent_point_radius);<]
 
         // Set the pattern as the source for the context.
         //  refContext->set_source(refPattern);
@@ -750,7 +750,7 @@ namespace docklight
         // https://www.cairographics.org/documentation/cairomm/reference/examples.html
         //
         //////////////////////////////////////////////////////////////////////////////////
-        /*cr->set_source(m_surface, 0, 0);
+        [>cr->set_source(m_surface, 0, 0);
 
         // cr->set_source_pixbuf(home_pixbuf, 0, 0);
 
@@ -787,10 +787,10 @@ namespace docklight
         std::string iconname("data/images/docklight.home.ico");
         auto home_pixbuf = Gdk::Pixbuf::create_from_file(iconname, 32, 32);
         Gdk::Cairo::set_source_pixbuf(ctx, home_pixbuf, 40, 0);
-        ctx->paint();*/
+        ctx->paint();<]
         /////////////////////////////////////////////////////////////////////////////////////////
         // x->restore();  // color is back to black now
-        /*#ifdef CAIRO_HAS_PNG_FUNCTIONS
+        [>#ifdef CAIRO_HAS_PNG_FUNCTIONS
 
                 std::string filename = "image.png";
                 m_surface->write_to_png(filename);
@@ -802,10 +802,10 @@ namespace docklight
                 std::cout << "You must compile cairo with PNG support for this example to work."
                           << std::endl;
 
-        #endif*/
+        #endif<]
         return false;
 #endif
-    }
+    }*/
 
     bool Panel::on_drawX(const Cairo::RefPtr<Cairo::Context>& cr)
     {

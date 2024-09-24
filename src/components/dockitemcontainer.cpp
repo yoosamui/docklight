@@ -91,7 +91,6 @@ namespace docklight
             // This should implemented after the architecture is done
             // use the area as value of m_cell cairo::surface
             count += config::get_dock_area();
-            g_print("count : %d\n", count);
         }
 
         return count;
