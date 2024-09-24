@@ -11,6 +11,7 @@
 #include "components/config.h"
 
 
+#include "components/appupdater.h" //AppProvider
 
 #include "components/dockitemcontainer.h"
 #include "components/TransparentWindow.h"
@@ -51,6 +52,9 @@ namespace docklight
         int init(Glib::RefPtr<Gtk::Application>& app);
         // Config* m_config = Config::getInstance();
       private:
+        // instantiate DockItemContainer.
+        AppProvider m_app_provider;
+
         //    bool on_timeout_draw();
         bool on_button_press_event(GdkEventButton* event) override;
         // bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
