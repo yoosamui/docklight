@@ -25,7 +25,8 @@
 #include <giomm/desktopappinfo.h>
 #include <gtkmm/icontheme.h>
 
-#include "components/dockitem.h"
+//#include "components/dockitem.h"
+#include "components/dockitemicon.h"
 #include "components/config.h"
 #include "utils/singletonbase.h"
 #include "utils/pixbuf.h"
@@ -48,11 +49,11 @@ namespace docklight
         void request_update_signal();
         //    guint count(guint additional_size) const
         guint required_size(guint additional_size) const;
-        const std::map<guint32, Glib::RefPtr<DockItem>> get_appmap() const;
-        int remove(guint32 xid);
-        guint32 exist(const Glib::ustring& group) const;
+        const std::map<gulong, Glib::RefPtr<DockItemIcon>> get_appmap() const;
+        int remove(gulong xid);
+        gulong exist(const Glib::ustring& group) const;
 
-        bool exist(guint32 xid) const;
+        bool exist(gulong xid) const;
         bool insert(WnckWindow* window);
 
         guint items_count() const;
@@ -68,13 +69,13 @@ namespace docklight
         bool get_theme_icon(guint xid, Glib::RefPtr<Gdk::Pixbuf>& pixbuf, Glib::ustring& title_name,
                             Glib::ustring& desktop_file, Glib::ustring& icon_name);
 
-        bool insert(guint32 xid, GdkPixbuf* gdkpixbuf, const Glib::ustring instance_name,
+        bool insert(gulong xid, GdkPixbuf* gdkpixbuf, const Glib::ustring instance_name,
                     Glib::ustring group_name, const Glib::ustring window_name,
                     const Glib::ustring window_icon_name, bool icon_is_fallback,
                     WnckWindowType wintype);
 
       private:
-        std::map<guint32, Glib::RefPtr<DockItem>> m_appmap;
+        std::map<gulong, Glib::RefPtr<DockItemIcon>> m_appmap;
         type_signal_update m_signal_update;
         BamfMatcher* m_matcher = nullptr;
     };

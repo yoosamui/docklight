@@ -180,8 +180,7 @@ namespace docklight
         app->activate();
         return EXIT_SUCCESS;
     }
-#define ONPRESS
-#ifdef ONPRESS
+
     bool AppWindow::on_button_press_event(GdkEventButton* event)
     {
         if ((event->type == GDK_BUTTON_PRESS)) {
@@ -200,14 +199,14 @@ namespace docklight
 
             //    Glib::RefPtr<Gtk::IconTheme> theme = Gtk::IconTheme::get_default();
             auto m_appmap = container->get_appmap();
-            for (auto it = m_appmap.begin(); it != m_appmap.end(); it++) {
+            /*for (auto it = m_appmap.begin(); it != m_appmap.end(); it++) {
                 //  for (const auto& item : container->get_appmap()) {
-                const Glib::RefPtr<DockItem> dockitem = it->second;
+                const Glib::RefPtr<DockItemIcon> dockitem = it->second;
 
                 auto pixbuf = dockitem->get_icon();
 
                 char filepath[512];
-                sprintf(filepath, "/home/yoo/TEMP/%s-(%s) [%d] {%d}",
+                sprintf(filepath, "/home/yoo/TEMP/%s-(%s) [%lu] {%d}",
                         dockitem->get_group_name().c_str(), dockitem->get_instance_name().c_str(),
                         dockitem->get_xid(), (int)dockitem->get_childmap().size());
 
@@ -217,12 +216,12 @@ namespace docklight
                 g_print("%s\n", dockitem->to_string().c_str());
 
                 for (const auto& it : dockitem->get_childmap()) {
-                    const Glib::RefPtr<DockItem> dockitem = it.second;
+                    const Glib::RefPtr<DockItemIcon> dockitem = it.second;
 
                     std::string title(dockitem->get_window_name());
                     std::replace(title.begin(), title.end(), ' ', '-');
 
-                    sprintf(filepath, "/home/yoo/TEMP/  *****%s-(%s) [%d]",
+                    sprintf(filepath, "/home/yoo/TEMP/  *****%s-(%s) [%lu]",
                             dockitem->get_group_name().c_str(),
                             dockitem->get_instance_name().c_str(), dockitem->get_xid());
 
@@ -241,11 +240,11 @@ namespace docklight
 
             //  m_composite = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
             m_composite.show_at(800, 800);
+        }*/
         }
-
         return true;
     }
-#endif
+
     void AppWindow::on_monitor_changed()
     {
         //     device::monitor::set_primary();
@@ -286,4 +285,5 @@ namespace docklight
         this->resize(width, area);
         this->move(xpos, ypos);*/
     }
+
 }  // namespace docklight

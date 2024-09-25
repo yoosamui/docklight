@@ -20,8 +20,7 @@
 
 namespace docklight
 {
-
-    DockItem::DockItem(guint32 xid, const Glib::ustring& instance_name,
+    DockItem::DockItem(gulong xid, const Glib::ustring& instance_name,
                        const Glib::ustring& group_name, guint wintype)
     {
         m_xid = xid;
@@ -32,29 +31,7 @@ namespace docklight
 
     DockItem::~DockItem()
     {
-        g_print("Dockitem removed  %s %d\n", m_title.c_str(), m_xid);
-    }
-
-    inline const Glib::RefPtr<DockItem> DockItem::clone()
-    {
-        auto clone =
-            Glib::RefPtr<DockItem>(new DockItem(m_xid, m_instance_name, m_group_name, m_wintype));
-
-        clone->m_has_desktop_file = m_has_desktop_file;
-        clone->m_attached = m_attached;
-        clone->m_title = m_title;
-        clone->m_window_name = m_window_name;
-        clone->m_desktop_file = m_desktop_file;
-        clone->m_icon_name = m_icon_name;
-        clone->m_description = m_description;
-        clone->m_icon = m_icon;
-        clone->m_wintype = m_wintype;
-        clone->m_tag = m_tag;
-        clone->m_width = m_width;
-        clone->m_height = m_height;
-
-        // covariant return type.
-        return clone;
+        g_print("Dockitem removed  %s %lu\n", m_title.c_str(), m_xid);
     }
 
     inline void DockItem::set_tag(guint tag)
@@ -68,10 +45,10 @@ namespace docklight
     }
 
     // Setters
-    inline const void DockItem::add_child(Glib::RefPtr<DockItem> child)
-    {
-        m_childmap.insert({child->get_xid(), child});
-    }
+    // inline const void DockItem::add_child(Glib::RefPtr<DockItem> child)
+    //{
+    // m_childmap.insert({child->get_xid(), child});
+    //}
 
     inline void DockItem::set_attached(bool attached)
     {
@@ -83,18 +60,18 @@ namespace docklight
         m_has_desktop_file = has;
     }
 
-    inline void DockItem::set_icon(Glib::RefPtr<Gdk::Pixbuf> icon)
-    {
-        g_assert(icon);
-        m_width = icon->get_width();
-        m_height = icon->get_height();
-        m_icon = icon;
-    }
+    // inline void DockItem::set_icon(Glib::RefPtr<Gdk::Pixbuf> icon)
+    //{
+    // g_assert(icon);
+    // m_width = icon->get_width();
+    // m_height = icon->get_height();
+    // m_icon = icon;
+    //}
 
-    inline const std::map<guint32, Glib::RefPtr<DockItem>>& DockItem::get_childmap() const
-    {
-        return m_childmap;
-    }
+    // inline const std::map<guint32, Glib::RefPtr<DockItem>>& DockItem::get_childmap() const
+    //{
+    // return m_childmap;
+    //}
 
     inline void DockItem::set_icon_name(Glib::ustring icon_name)
     {
@@ -137,7 +114,7 @@ namespace docklight
         return m_tag;
     }
 
-    inline const guint32 DockItem::get_xid() const
+    inline const gulong DockItem::get_xid() const
     {
         return m_xid;
     }
@@ -182,29 +159,6 @@ namespace docklight
         return m_desktop_file;
     };
 
-    inline const Glib::RefPtr<Gdk::Pixbuf>& DockItem::get_icon() const
-    {
-        g_assert(m_icon);
-        return m_icon;
-    }
-
-    const Glib::RefPtr<Gdk::Pixbuf> DockItem::get_icon(guint size)
-    {
-        auto pixbuf =
-            Glib::wrap(m_icon->gobj(), true)->scale_simple(size, size, Gdk::INTERP_BILINEAR);
-
-        g_assert(pixbuf);
-
-        m_width = size;
-        m_height = size;
-
-        return pixbuf;
-    }
-
-    inline const DockItem* DockItem::get() const
-    {
-        return this;
-    }
     inline const guint DockItem::get_width() const
     {
         return m_width;
@@ -220,18 +174,13 @@ namespace docklight
         return m_icon_name;
     }
 
-    inline const int DockItem::remove_child(guint32 xid)
-    {
-        return m_childmap.erase(xid);
-    }
-
     const Glib::ustring DockItem::to_string()
     {
         // clang-format off
             std::stringstream ss;
             ss << "xid: " << m_xid << std::endl
                << "wintype: " << std::to_string(m_wintype)<< std::endl
-               << "childrens: " << m_childmap.size()<< std::endl
+//               << "childrens: " << m_childmap.size()<< std::endl
                << "title: " << m_title << std::endl
                << "group: " << m_group_name << std::endl
                << "instance: " << m_instance_name << std::endl

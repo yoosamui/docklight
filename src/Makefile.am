@@ -33,10 +33,11 @@ ALLDADDLIBS = $(GTKMM_LIBS)
 docklight_LDADD = $(ALLDADDLIBS)
 
 docklight_SOURCES =  \
-appwindow.cpp \
-appoptionsgroup.cpp \
+utils/system.cpp \
 utils/pixbuf.cpp \
 utils/factory.cpp \
+appwindow.cpp \
+appoptionsgroup.cpp \
 components/TransparentWindow.cpp \
 components/ExplodesWindow.cpp \
 components/panel.cpp \
@@ -46,8 +47,8 @@ components/config.cpp \
 components/dockitemcontainer.cpp \
 components/appupdater.cpp \
 components/dockitem.cpp \
+components/dockitemicon.cpp \
 components/position.cpp \
-utils/system.cpp \
 main.cpp \
 $(NULL)
 

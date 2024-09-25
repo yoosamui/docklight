@@ -43,10 +43,10 @@ namespace docklight
         void draw_surface_cell();
 
         void create_surface_icon();
-        void draw_surface_icon(const Glib::RefPtr<DockItem>& item);
+        void draw_surface_icon(const Glib::RefPtr<DockItemIcon>& item);
 
-        void create_surface_indicator(const Glib::RefPtr<DockItem>& item);
-        void draw_surface_indicator(const Glib::RefPtr<DockItem>& item);
+        void create_surface_indicator(const Glib::RefPtr<DockItemIcon>& item);
+        void draw_surface_indicator(const Glib::RefPtr<DockItemIcon>& item);
 
         bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 

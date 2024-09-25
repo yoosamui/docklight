@@ -57,7 +57,7 @@ namespace docklight
         m_sigc.disconnect();
     }
 
-    bool DockItemContainer::exist(guint32 xid) const
+    bool DockItemContainer::exist(gulong xid) const
     {
         if (m_appmap.count(xid)) return true;
 
@@ -70,11 +70,11 @@ namespace docklight
         return false;
     }
 
-    guint32 DockItemContainer::exist(const Glib::ustring& group) const
+    gulong DockItemContainer::exist(const Glib::ustring& group) const
     {
         for (const auto& it : m_appmap) {
-            Glib::RefPtr<DockItem> dockitem = it.second;
-            guint32 xid = dockitem->get_xid();
+            Glib::RefPtr<DockItemIcon> dockitem = it.second;
+            gulong xid = dockitem->get_xid();
 
             if (dockitem->get_group_name() == group) return xid;
         }
@@ -86,7 +86,7 @@ namespace docklight
     {
         guint count = additional_size;
         for (auto it = m_appmap.begin(); it != m_appmap.end(); it++) {
-            Glib::RefPtr<DockItem> dockitem = it->second;
+            Glib::RefPtr<DockItemIcon> dockitem = it->second;
             // count += dockitem->get_width();
 
             // TODO don't whant config here
@@ -100,16 +100,16 @@ namespace docklight
 
         return count;
     }
-    const std::map<guint32, Glib::RefPtr<DockItem>> DockItemContainer::get_appmap() const
+    const std::map<gulong, Glib::RefPtr<DockItemIcon>> DockItemContainer::get_appmap() const
     {
         return m_appmap;
     }
 
-    int DockItemContainer::remove(guint32 xid)
+    int DockItemContainer::remove(gulong xid)
     {
         int result = 0;
         for (auto it = m_appmap.begin(); it != m_appmap.end(); it++) {
-            Glib::RefPtr<DockItem> dockitem = it->second;
+            Glib::RefPtr<DockItemIcon> dockitem = it->second;
 
             if (dockitem->get_childmap().count(xid)) {
                 result += dockitem->remove_child(xid);
@@ -284,7 +284,7 @@ namespace docklight
                       icon_is_fallback, wintype);
     }
 
-    bool DockItemContainer::insert(guint32 xid, GdkPixbuf* gdkpixbuf,
+    bool DockItemContainer::insert(gulong xid, GdkPixbuf* gdkpixbuf,
                                    const Glib::ustring instance_name, Glib::ustring group_name,
                                    const Glib::ustring window_name,
                                    const Glib::ustring window_icon_name, bool icon_is_fallback,
@@ -319,8 +319,8 @@ namespace docklight
         // Handles desktop files icons and Names for the app.
         if (get_theme_icon(xid, pixbuf, title_name, desktop_file, icon_name)) {
             // create the DockItem.
-            const auto dockitem =
-                Glib::RefPtr<DockItem>(new DockItem(xid, instance_name, group_name, wintype));
+            const auto dockitem = Glib::RefPtr<DockItemIcon>(
+                new DockItemIcon(xid, instance_name, group_name, wintype));
 
             dockitem->set_desktop_file(desktop_file);
             dockitem->set_icon_name(icon_name);
@@ -371,14 +371,14 @@ namespace docklight
         } else {
             // Handles the window icons
             if (get_window_icon(gdkpixbuf, pixbuf)) {
-                const auto dockitem =
-                    Glib::RefPtr<DockItem>(new DockItem(xid, instance_name, group_name, wintype));
+                const auto dockitem = Glib::RefPtr<DockItemIcon>(
+                    new DockItemIcon(xid, instance_name, group_name, wintype));
 
                 // create groups setion.
                 auto cxid = exist(group_name);
                 if (cxid) {
-                    const auto dockitem = Glib::RefPtr<DockItem>(
-                        new DockItem(xid, instance_name, group_name, wintype));
+                    const auto dockitem = Glib::RefPtr<DockItemIcon>(
+                        new DockItemIcon(xid, instance_name, group_name, wintype));
                     dockitem->set_title(window_icon_name);
                     dockitem->set_icon_name(icon_name);
                     dockitem->set_icon(pixbuf);
@@ -406,8 +406,8 @@ namespace docklight
                         owner->add_child(dockitem);
                     }
                 } else if (!exist(xid) && !icon_is_fallback) {
-                    const auto dockitem = Glib::RefPtr<DockItem>(
-                        new DockItem(xid, instance_name, group_name, wintype));
+                    const auto dockitem = Glib::RefPtr<DockItemIcon>(
+                        new DockItemIcon(xid, instance_name, group_name, wintype));
 
                     dockitem->set_title(group_name);
                     dockitem->set_icon_name(icon_name);
