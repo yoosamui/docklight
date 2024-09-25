@@ -33,9 +33,12 @@ namespace docklight
         // m_height = icon->get_height();
     }
 
-    const Glib::RefPtr<DockItemIcon> DockItemIcon::clone()
+    std::shared_ptr<DockItemIcon> DockItemIcon::clone()
     {
-        auto clone = Glib::RefPtr<DockItemIcon>(
+        // auto clone = std::shared_ptr<DockItemIcon>(
+        // new DockItemIcon(m_xid, m_instance_name, m_group_name, m_wintype));
+
+        auto clone = std::shared_ptr<DockItemIcon>(
             new DockItemIcon(m_xid, m_instance_name, m_group_name, m_wintype));
 
         clone->m_has_desktop_file = m_has_desktop_file;
@@ -63,7 +66,7 @@ namespace docklight
         m_icon = icon;
     }
 
-    const void DockItemIcon::add_child(Glib::RefPtr<DockItemIcon> child)
+    void DockItemIcon::add_child(std::shared_ptr<DockItemIcon> child)
     {
         m_map.insert({child->get_xid(), child});
     }
@@ -88,7 +91,7 @@ namespace docklight
         return pixbuf;
     }
 
-    const std::map<gulong, Glib::RefPtr<DockItemIcon>>& DockItemIcon::get_childmap() const
+    const std::map<gulong, std::shared_ptr<DockItemIcon>>& DockItemIcon::get_childmap() const
     {
         return m_map;
     }

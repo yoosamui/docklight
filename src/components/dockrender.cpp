@@ -91,7 +91,7 @@ namespace docklight
         m_icon_ctx = Cairo::Context::create(m_icon);
     }
 
-    void DockRender::draw_surface_icon(const Glib::RefPtr<DockItemIcon>& item)
+    void DockRender::draw_surface_icon(std::shared_ptr<DockItemIcon>& item)
     {
         g_assert(m_cell);
 
@@ -130,7 +130,7 @@ namespace docklight
         m_cell_ctx->paint();
     }
 
-    void DockRender::create_surface_indicator(const Glib::RefPtr<DockItemIcon>& item)
+    void DockRender::create_surface_indicator(std::shared_ptr<DockItemIcon>& item)
     {
         // TODO 4  put it in config
         int height = 4;
@@ -140,7 +140,7 @@ namespace docklight
         m_indicator_ctx = Cairo::Context::create(m_indicator);
     }
 
-    void DockRender::draw_surface_indicator(const Glib::RefPtr<DockItemIcon>& item)
+    void DockRender::draw_surface_indicator(std::shared_ptr<DockItemIcon>& item)
     {
         g_assert(m_cell);
 
@@ -197,7 +197,10 @@ namespace docklight
 
         guint tag = 0;
         for (auto it = appmap.begin(); it != appmap.end(); it++) {
-            auto dockitem = it->second;
+            // auto dockitem = it->second;
+            std::shared_ptr<DockItemIcon> dockitem;
+            dockitem_any_cast<std::shared_ptr<DockItemIcon>>(it->second, dockitem);
+
             dockitem->set_tag(tag++);
 
             draw_surface_cell();

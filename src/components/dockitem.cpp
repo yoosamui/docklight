@@ -34,7 +34,7 @@ namespace docklight
         g_print("Dockitem removed  %s %lu\n", m_title.c_str(), m_xid);
     }
 
-    inline void DockItem::set_tag(guint tag)
+    void DockItem::set_tag(guint tag)
     {
         m_tag = tag;
     }

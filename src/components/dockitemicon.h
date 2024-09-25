@@ -37,13 +37,14 @@ namespace docklight
         const Glib::RefPtr<Gdk::Pixbuf>& get_icon() const;
         const Glib::RefPtr<Gdk::Pixbuf> get_icon(guint size);
 
-        const std::map<gulong, Glib::RefPtr<DockItemIcon>>& get_childmap() const;
-        const void add_child(Glib::RefPtr<DockItemIcon> child);
+        const std::map<gulong, std::shared_ptr<DockItemIcon>>& get_childmap() const;
+        void add_child(std::shared_ptr<DockItemIcon> child);
         int remove_child(gulong xid);
-        const Glib::RefPtr<DockItemIcon> clone();
+        //    const std::shared_ptr<DockItemIcon> clone();
+        std::shared_ptr<DockItemIcon> clone();
 
       private:
         Glib::RefPtr<Gdk::Pixbuf> m_icon;
-        std::map<gulong, Glib::RefPtr<DockItemIcon>> m_map;
+        std::map<gulong, std::shared_ptr<DockItemIcon>> m_map;
     };
 }  // namespace docklight
