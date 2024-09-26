@@ -218,10 +218,9 @@ namespace docklight
         }
 
         template <typename T>
-        void get(gulong xid)
+        bool get(gulong xid, std::any& a)
         {
-            std::shared_ptr<T> dockitem;  // = get_map().at(cxid);
-            std::any a;                   // std::shared_ptr<T> dockitem;  // = get_map().at(cxid);
+            //   std::shared_ptr<T> dockitem;  // = get_map().at(cxid);
             auto byxid = [&xid, &a](std::pair<gulong, std::any> p) {
                 if (p.first != xid) return false;
 
@@ -232,17 +231,38 @@ namespace docklight
 
             if (auto it = std::find_if(begin(m_dockitems), end(m_dockitems), byxid);
                 it != std::end(m_dockitems)) {
-                std::cout << " FOUNDS !!!!!!!!!!!dn get oes contain  the xid   \n" << std::endl;
-                return;
-            } else {
-                g_print("NOT FOUND \n");
+                return true;
             }
+
+            return false;
         }
 
         void add(gulong xid, std::any a)
         {
             // creates the pair and the insert it to the list.
             m_dockitems.push_back(std::make_pair(xid, a));
+        }
+
+        template <typename T>
+        bool exist(const Glib::ustring& group_name, std::shared_ptr<T>& dockitem)
+        {
+            // std::shared_ptr<T> dockitem;
+
+            auto byxid = [&dockitem, &group_name](std::pair<gulong, std::any> p) {
+                std::any a = p.second;
+
+                if (!factory::any_cast<std::shared_ptr<T>>(a, dockitem)) return false;
+                if (dockitem->get_group_name() != group_name) return false;
+
+                return true;
+            };
+
+            if (auto it = std::find_if(begin(m_dockitems), end(m_dockitems), byxid);
+                it != std::end(m_dockitems)) {
+                return true;
+            }
+
+            return false;
         }
 
         bool exist(gulong xid)

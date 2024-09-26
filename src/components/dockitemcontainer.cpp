@@ -374,8 +374,8 @@ namespace docklight
         // group_name = lowercase_group_name;
         //  g_message("GROUP::----->[%s]\n", group_name.c_str());
         // exit(1);
-        if (group_name != "bleachbit") return false;
-        g_print("---------IN------ %lu\n", xid);
+        //  if (group_name != "bleachbit" ) return false;
+        // g_print("---------IN------ %lu\n", xid);
 
         // TODO xid muss be ulong
         ///*wnck_window_get_xid(window), wnck_window_get_class_group_name(window)*/);
@@ -401,27 +401,13 @@ namespace docklight
             dockitem->set_icon(pixbuf);
 
             // Group the items by group_name.
-            auto cxid = exist(group_name);
-            g_print("----------GRUP OWNER ID------ %lu\n", cxid);
-            if (cxid) {
-                g_print(">>START IN GROUPW  %lu %s\n", xid, group_name.c_str());
-                // create the DockItem.
-                std::shared_ptr<DockItemIcon> owner;  // = get_map().at(cxid);
-                dockitem_any_cast<std::shared_ptr<DockItemIcon>>(get_map().at(cxid), owner);
+            // auto cxid = exist(group_name);
+            std::shared_ptr<DockItemIcon> owner;
+            if (m_container.exist<DockItemIcon>(group_name, owner)) {
+                g_print("***GROUP FOUND  %lu %s\n", owner->get_xid(), group_name.c_str());
 
-                m_container.get<DockItemIcon>(cxid);
-                exit(1);
-
-                std::any a = get_map().at(cxid);
-
-                if (a.type() == typeid(std::shared_ptr<DockItemIcon>)) {
-                    g_print("-------- is good !!!!!!!!!!!!!!!!!!!!!! VNUUUUUUUUUUL\n");
-                    owner = std::any_cast<std::shared_ptr<DockItemIcon>>(a);
-                }
-                if (!owner) {
-                    g_critical("any is null");
-                    return false;
-                }
+                // g_print("----------GRUP OWNER ID------ %lu\n", owner->get_xid());
+                // g_print(">>START IN GROUPW  %lu %s\n", xid, group_name.c_str());
 
                 dockitem->set_title(window_name);
 
@@ -437,23 +423,22 @@ namespace docklight
                     dockitem->set_icon(pixbuf);
                 }
 
-                g_print(">>>>>>>>>>>>>>>>>>>>>>>>ADD IN GROUP %lu %s\n", xid, group_name.c_str());
-                if (!owner) {
-                    g_critical("owner  is null");
-                    exit(1);
-                }
+                // g_print(">>>>>>>>>>>>>>>>>>>>>>>>ADD IN GROUP %lu %s\n", xid,
+                // group_name.c_str());
                 owner->add_child(dockitem);
-                g_print("TOTAL:: %d\n", (int)get_map().size());
+                auto total = m_container.count<DockItemIcon>();
+                // g_print("Total %lu\n", owner->get_childmap().size());
 
             } else {
+                g_print(">>INSERT NEW  %lu %s\n", xid, group_name.c_str());
                 dockitem->set_title(title_name);
-                g_print(">>START INSERT NEW  %lu %s\n", xid, group_name.c_str());
+                // g_print(">>START INSERT NEW  %lu %s\n", xid, group_name.c_str());
 
                 m_container.add(xid, dockitem);
                 m_container.exist(xid);
-                auto total = m_container.count<DockItemIcon>();
-                // auto total = m_container.count();
-                g_print("Total %d\n", total);
+                // auto total = m_container.count<DockItemIcon>();
+                //  auto total = m_container.count();
+                // g_print("Total %d\n", total);
 
                 // always add a replica Dockitem child clone
                 std::shared_ptr<DockItemIcon> child = dockitem->clone();
@@ -472,11 +457,11 @@ namespace docklight
                 }
                 //   g_print("-----------ADD CHILD NOT IN GROUP %d %s\n", xid,
                 //   window_icon_name.c_str());
-                g_print(">>START INSERT NEW CHILD REPLICA %lu %s\n", xid, group_name.c_str());
+                // g_print(">>START INSERT NEW CHILD REPLICA %lu %s\n", xid, group_name.c_str());
                 dockitem->add_child(child);
-                total = m_container.count<DockItemIcon>();
-                g_print("Total %d\n", total);
-                g_print(">>ENDT INSERT %lu %s\n", xid, group_name.c_str());
+                // total = m_container.count<DockItemIcon>();
+                // g_print("Total %d\n", total);
+                // g_print(">>ENDT INSERT %lu %s\n", xid, group_name.c_str());
             }
         } else {
             return false;
