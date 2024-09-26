@@ -188,7 +188,7 @@ namespace docklight
     bool DockRender::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     {
         auto container = get_dockcontainer();
-        auto appmap = container->get_appmap();
+        auto appmap = container->get_map();
 
         m_posX = 0;
         m_posY = 0;

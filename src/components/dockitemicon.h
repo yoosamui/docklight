@@ -43,6 +43,12 @@ namespace docklight
         //    const std::shared_ptr<DockItemIcon> clone();
         std::shared_ptr<DockItemIcon> clone();
 
+        guint get_container_size() override
+        {
+            //
+            return m_map.size();
+        };
+
       private:
         Glib::RefPtr<Gdk::Pixbuf> m_icon;
         std::map<gulong, std::shared_ptr<DockItemIcon>> m_map;

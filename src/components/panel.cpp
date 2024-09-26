@@ -164,9 +164,9 @@ namespace docklight
     {
         auto container = get_dockcontainer();
         // TODO change after home icon is insertet, will be == 1
-        if (container->get_appmap().size() == 0) return;
+        if (container->get_map().size() == 0) return;
 
-        gint size = container->get_appmap().size() - 1;
+        gint size = container->get_map().size() - 1;
         gint separator_size = config::get_separator_size();
         gint separators_count = (size * separator_size);
 

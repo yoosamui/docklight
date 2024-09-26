@@ -1,22 +1,27 @@
 #pragma once
 
 #include <glibmm/main.h>
-#include <libwnck/libwnck.h>
 
+#include <any>
 #include <memory>
 
-template <typename T>
-class Factory
+namespace docklight
 {
-  public:
-    //  static std::unique_ptr<T> create() { return std::make_unique<T>(); }
-    // static Glib::RefPtr<T> create(guint xid, Glib::ustring& instance_name, Glib::ustring
-    // group_name, WnckWindowType wintype)
-    //{
-    ////  return Glib::RefPtr<T>(new DockItem(xid, instance_name, group_name, WnckWindowType
-    ///wintype));
-    //}
-};
+    namespace factory
+    {
+        // TODO: lo message in case of error
+        template <typename T>
+        bool any_cast(std::any a, T& target)
+        {
+            if (!a.has_value()) return false;
 
-// static const auto dockitem =
-//     Glib::RefPtr<DockItem>(new DockItem(xid, instance_name, group_name, WnckWindowType wintype));
+            if (a.type() == typeid(T)) {
+                target = std::any_cast<T>(a);  // we not catch any excepion because of speed...
+
+                return target ? true : false;
+            }
+            return false;
+        }
+
+    }  // namespace factory
+}  // namespace docklight

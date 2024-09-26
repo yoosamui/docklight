@@ -93,11 +93,24 @@ namespace docklight
 
     gulong DockItemContainer::exist(const Glib::ustring& group)
     {
-        std::shared_ptr<DockItemIcon> dockitem;
-
-        for (auto it = get_map().begin(); it != get_map().end(); it++) {
+        auto m = get_map();
+        g_print("START LOOP[ %lu  ]\n", m.size());
+        for (auto it = m.begin(); it != m.end(); it++) {
+            std::shared_ptr<DockItemIcon> dockitem;
             dockitem_any_cast<std::shared_ptr<DockItemIcon>>(it->second, dockitem);
-            if (!dockitem) continue;
+            std::any a = it->second;
+
+            if (a.type() == typeid(std::shared_ptr<DockItemIcon>)) {
+                g_print("-------- is good !!!!!!!!!!!!!!!!!!!!!! VNUUUUUUUUUUL\n");
+                dockitem = std::any_cast<std::shared_ptr<DockItemIcon>>(a);
+            }
+            //            g_print(" xxxxxxxxxxxxxxxxx -----LOOP \n");
+            if (!dockitem) {
+                g_print("--------  GROUP VNUUUUUUUUUUL\n");
+                exit(1);
+                continue;
+            }
+
             // std::any a = it->second;
             // if (a.type() == typeid(std::shared_ptr<DockItemIcon>)) {
             // dockitem = std::any_cast<std::shared_ptr<DockItemIcon>>(a);
@@ -105,7 +118,7 @@ namespace docklight
             //}
 
             gulong xid = dockitem->get_xid();
-
+            g_print("-------- FOUND A GROUP \n");
             if (dockitem->get_group_name() == group) return xid;
         }
 
@@ -131,11 +144,10 @@ namespace docklight
 
         return count;
     }
-    // TODO: i don't like to give access to the map
-    const std::map<gulong, std::any> DockItemContainer::get_appmap()
-    {
-        return get_map();
-    }
+    // const std::unordered_map<gulong, std::any> DockItemContainer::get_appmap()
+    //{
+    // return get_map();
+    //}
 
     int DockItemContainer::remove(gulong xid)
     {
@@ -296,12 +308,10 @@ namespace docklight
 
         // return if the DockItem exist.
         gint32 xid = wnck_window_get_xid(window);
+
+        // TODO should i goo traversal or acheck the main map only
         // if (get_map().count(xid)) return false;
         if (exist(xid)) return false;
-
-        //// std::any a = 10;  // new DockItemIcon(xid, instance_name, group_name, wintype);
-        // if (get_map().count(xid) == 0) get_map().insert({xid, 10});
-        // return false;
 
         const char* window_name = wnck_window_get_name(window);
         if (!window_name) return false;
@@ -320,21 +330,36 @@ namespace docklight
             group_name = window_name;
         }
 
+        // gorup name mus by in lower case.
+        std::string groupname(group_name);
+
+        std::locale loc("en_US.UTF-8");
+        for (auto& c : groupname) {
+            c = std::tolower(c, loc);
+        }
+
         auto window_icon_name = wnck_window_get_icon_name(window);
         if (!window_icon_name) {
             window_icon_name = window_name;
         }
 
-        return insert(xid, gdkpixbuf, instance_name, group_name, window_name, window_icon_name,
+        return insert(xid, gdkpixbuf, instance_name, groupname, window_name, window_icon_name,
                       icon_is_fallback, wintype);
     }
+    bool IsOdd(std::pair<gulong, std::any> p)
+    {
+        g_print("%lu\n", p.first);
+        return true;  //]p.first == xid;
 
+        // return ((i%2)==1);
+    }
     bool DockItemContainer::insert(gulong xid, GdkPixbuf* gdkpixbuf,
-                                   const Glib::ustring instance_name, Glib::ustring group_name,
+                                   const Glib::ustring instance_name, std::string group_name,
                                    const Glib::ustring window_name,
                                    const Glib::ustring window_icon_name, bool icon_is_fallback,
                                    WnckWindowType wintype)
     {
+        // g_print("---------S T A R T -  I N S E R T D -TOP----- %lu\n", xid);
         //        Glib::RefPtr<IDockItem> shapes;
         // std::vector<Glib::RefPtr<IDockItem>> shapes;
         // Glib::RefPtr<IDockItem>(new DockItem(xid, instance_name, group_name, wintype));
@@ -342,13 +367,16 @@ namespace docklight
         //     shapes.push_back(std::make_unique<Polygon>());
         //     shapes.push_back(std::make_unique<Rectangle>());
         // TODO maybe move to strings utils...
-        std::string lowercase_group_name(group_name);
-        std::transform(lowercase_group_name.begin(), lowercase_group_name.end(),
-                       lowercase_group_name.begin(), ::tolower);
+        // std::string lowercase_group_name(group_name);
+        // std::transform(lowercase_group_name.begin(), lowercase_group_name.end(),
+        // lowercase_group_name.begin(), ::tolower);
 
-        group_name = lowercase_group_name;
+        // group_name = lowercase_group_name;
+        //  g_message("GROUP::----->[%s]\n", group_name.c_str());
+        // exit(1);
+        if (group_name != "bleachbit") return false;
+        g_print("---------IN------ %lu\n", xid);
 
-        // if (group_name != "bleachbit") return false;
         // TODO xid muss be ulong
         ///*wnck_window_get_xid(window), wnck_window_get_class_group_name(window)*/);
         //        true;
@@ -365,9 +393,6 @@ namespace docklight
         // Handles desktop files icons and Names for the app.
         if (get_theme_icon(xid, pixbuf, title_name, desktop_file, icon_name)) {
             // create the DockItem.
-            // const auto dockitem = Glib::RefPtr<DockItemIcon>(
-            // new DockItemIcon(xid, instance_name, group_name, wintype));
-
             std::shared_ptr<DockItemIcon> dockitem = std::shared_ptr<DockItemIcon>(
                 new DockItemIcon(xid, instance_name, group_name, wintype));
 
@@ -377,13 +402,26 @@ namespace docklight
 
             // Group the items by group_name.
             auto cxid = exist(group_name);
+            g_print("----------GRUP OWNER ID------ %lu\n", cxid);
             if (cxid) {
-                //..        auto owner = get_map().at(cxid);
-                //    Glib::RefPtr<DockItemIcon> owner;
-                std::shared_ptr<DockItemIcon> owner;  //,dockitem = Glib::RefPtr<DockItemIcon>(
+                g_print(">>START IN GROUPW  %lu %s\n", xid, group_name.c_str());
+                // create the DockItem.
+                std::shared_ptr<DockItemIcon> owner;  // = get_map().at(cxid);
                 dockitem_any_cast<std::shared_ptr<DockItemIcon>>(get_map().at(cxid), owner);
 
-                if (dockitem) return false;
+                m_container.get<DockItemIcon>(cxid);
+                exit(1);
+
+                std::any a = get_map().at(cxid);
+
+                if (a.type() == typeid(std::shared_ptr<DockItemIcon>)) {
+                    g_print("-------- is good !!!!!!!!!!!!!!!!!!!!!! VNUUUUUUUUUUL\n");
+                    owner = std::any_cast<std::shared_ptr<DockItemIcon>>(a);
+                }
+                if (!owner) {
+                    g_critical("any is null");
+                    return false;
+                }
 
                 dockitem->set_title(window_name);
 
@@ -399,16 +437,26 @@ namespace docklight
                     dockitem->set_icon(pixbuf);
                 }
 
+                g_print(">>>>>>>>>>>>>>>>>>>>>>>>ADD IN GROUP %lu %s\n", xid, group_name.c_str());
+                if (!owner) {
+                    g_critical("owner  is null");
+                    exit(1);
+                }
                 owner->add_child(dockitem);
+                g_print("TOTAL:: %d\n", (int)get_map().size());
 
             } else {
-                g_print(">>>>>>>>>>>>>>>>>>>>>>>>INSERT TOP %lu %s\n", xid, group_name.c_str());
-                // add a new DockItem
                 dockitem->set_title(title_name);
+                g_print(">>START INSERT NEW  %lu %s\n", xid, group_name.c_str());
+
+                m_container.add(xid, dockitem);
+                m_container.exist(xid);
+                auto total = m_container.count<DockItemIcon>();
+                // auto total = m_container.count();
+                g_print("Total %d\n", total);
 
                 // always add a replica Dockitem child clone
                 std::shared_ptr<DockItemIcon> child = dockitem->clone();
-
                 child->set_title(window_icon_name);
 
                 if (wintype == WnckWindowType::WNCK_WINDOW_DIALOG) {
@@ -424,9 +472,15 @@ namespace docklight
                 }
                 //   g_print("-----------ADD CHILD NOT IN GROUP %d %s\n", xid,
                 //   window_icon_name.c_str());
+                g_print(">>START INSERT NEW CHILD REPLICA %lu %s\n", xid, group_name.c_str());
                 dockitem->add_child(child);
+                total = m_container.count<DockItemIcon>();
+                g_print("Total %d\n", total);
+                g_print(">>ENDT INSERT %lu %s\n", xid, group_name.c_str());
             }
         } else {
+            return false;
+            g_print(">>>>>>>>>>>>>>>>>>>>>>>>INSERT NEW!!!! %lu %s\n", xid, group_name.c_str());
             // Handles the window icons
             if (get_window_icon(gdkpixbuf, pixbuf)) {
                 const auto dockitem = Glib::RefPtr<DockItemIcon>(

@@ -65,6 +65,8 @@ namespace docklight
         // virtual const void add_child(Glib::RefPtr<DockItem> child) = 0;
 
         //// getters
+        virtual guint get_container_size() = 0;
+
         virtual const guint get_tag() const = 0;
         virtual const bool get_is_attached() const = 0;
         virtual const gulong get_xid() const = 0;
@@ -112,6 +114,8 @@ namespace docklight
         //      const void add_child(Glib::RefPtr<DockItem> child);
 
         // Getters
+        virtual guint get_container_size() { return 0; };
+
         const guint get_tag() const;
         bool const has_desktop_file() const;
         //     const DockItem* get() const;

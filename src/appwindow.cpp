@@ -198,7 +198,7 @@ namespace docklight
             //}
 
             //    Glib::RefPtr<Gtk::IconTheme> theme = Gtk::IconTheme::get_default();
-            auto m_appmap = container->get_appmap();
+            auto m_appmap = container->get_map();
             /*for (auto it = m_appmap.begin(); it != m_appmap.end(); it++) {
                 //  for (const auto& item : container->get_appmap()) {
                 const Glib::RefPtr<DockItemIcon> dockitem = it->second;
