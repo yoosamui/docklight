@@ -162,7 +162,7 @@ namespace docklight
 
     void Panel::container_updated() const
     {
-        DockItemContainer* container = get_dockcontainer();
+        auto container = get_dockcontainer();
         // TODO change after home icon is insertet, will be == 1
         if (container->get_appmap().size() == 0) return;
 

@@ -94,6 +94,7 @@ namespace docklight
                 g_critical("  in side: \n");
                 target = std::any_cast<std::shared_ptr<DockItemIcon>>(a);
                 //       target = std::any_cast<std::shared_ptr<docklight::MyClass>>(a);
+            A
             } else {
                 // Handle non-pointer types
                 target = std::any_cast<T>(a);
@@ -179,7 +180,13 @@ namespace docklight
 
     constexpr const guint DEF_MAX_ICON_SIZE = 128;
 
-    class DockItemContainer : public SingletonBase<DockItemContainer>
+    class Container : public SingletonBase<Container>
+    {
+      public:
+        std::map<gulong, std::any> m_map;
+    };
+
+    class DockItemContainer : public Glib::Object  //: public SingletonBase<DockItemContainer>
     {
       public:
         DockItemContainer();
@@ -187,16 +194,16 @@ namespace docklight
 
         void request_update_signal();
         //    guint count(guint additional_size) const
-        guint required_size(guint additional_size) const;
+        guint required_size(guint additional_size);
         // const std::map<gulong, Glib::RefPtr<DockItemIcon>> get_appmap() const;
-        const std::map<gulong, std::any> get_appmap() const;
+        const std::map<gulong, std::any> get_appmap();
         int remove(gulong xid);
         gulong exist(const Glib::ustring& group);
 
         bool exist(gulong xid);
         bool insert(WnckWindow* window);
 
-        guint items_count() const;
+        guint items_count();
         // signal accessor:
         type_signal_update signal_update();
 
@@ -214,13 +221,21 @@ namespace docklight
                     const Glib::ustring window_icon_name, bool icon_is_fallback,
                     WnckWindowType wintype);
 
+        std::map<gulong, std::any> get_map()
+        {
+            //
+            return Container::getInstance()->m_map;
+        }
+
       private:
-        //     std::map<gulong, Glib::RefPtr<DockItemIcon>> m_appmap;
-        std::map<gulong, std::any> m_appmap;
+        //   std::map<gulong, std::any> m_map;
+        //        std::map<gulong, std::any> m_appmap;
         type_signal_update m_signal_update;
         BamfMatcher* m_matcher = nullptr;
     };
 
-    DockItemContainer* get_dockcontainer();
+    Glib::RefPtr<DockItemContainer> get_dockcontainer();
+
+    //    DockItemContainer* get_dockcontainer();
 
 }  // namespace docklight

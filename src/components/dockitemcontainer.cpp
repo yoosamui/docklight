@@ -22,13 +22,25 @@
 
 namespace docklight
 {
-    DockItemContainer* get_dockcontainer()
+    // DockItemContainer* get_dockcontainer()
+    //{
+    // return DockItemContainer::getInstance();
+    //}
+
+    Glib::RefPtr<DockItemContainer> m_container;
+    Glib::RefPtr<DockItemContainer> get_dockcontainer()
     {
-        return DockItemContainer::getInstance();
+        if (!m_container) {
+            m_container = Glib::RefPtr<DockItemContainer>(new DockItemContainer());
+        }
+        return m_container;
     }
 
     DockItemContainer::DockItemContainer()
     {
+        //        Glib::RefPtr<Container> m_container = Glib::RefPtr<Contcainer>( new
+        //        Glib::RefPtr<Container>
+
         m_matcher = bamf_matcher_get_default();
         g_assert(BAMF_IS_MATCHER(m_matcher));
 
@@ -59,7 +71,7 @@ namespace docklight
 
     bool DockItemContainer::exist(gulong xid)
     {
-        if (m_appmap.count(xid)) return true;
+        if (get_map().count(xid)) return true;
 
         // std::any a = std::make_shared<MyClass>(new MyClass());
 
@@ -68,7 +80,7 @@ namespace docklight
 
         // Glib::RefPtr<DockItemIcon> dockitem;
 
-        for (auto it = m_appmap.begin(); it != m_appmap.end(); it++) {
+        for (auto it = get_map().begin(); it != get_map().end(); it++) {
             std::shared_ptr<DockItemIcon> dockitem;
             dockitem_any_cast<std::shared_ptr<DockItemIcon>>(it->second, dockitem);
 
@@ -83,7 +95,7 @@ namespace docklight
     {
         std::shared_ptr<DockItemIcon> dockitem;
 
-        for (auto it = m_appmap.begin(); it != m_appmap.end(); it++) {
+        for (auto it = get_map().begin(); it != get_map().end(); it++) {
             dockitem_any_cast<std::shared_ptr<DockItemIcon>>(it->second, dockitem);
             if (!dockitem) continue;
             // std::any a = it->second;
@@ -100,10 +112,11 @@ namespace docklight
         return 0;
     }
 
-    guint DockItemContainer::required_size(guint additional_size) const
+    guint DockItemContainer::required_size(guint additional_size)
     {
         guint count = additional_size;
-        for (auto it = m_appmap.begin(); it != m_appmap.end(); it++) {
+        auto appmap = get_map();
+        for (auto it = appmap.begin(); it != appmap.end(); it++) {
             std::shared_ptr<DockItemIcon> dockitem;
             dockitem_any_cast<std::shared_ptr<DockItemIcon>>(it->second, dockitem);
 
@@ -119,15 +132,15 @@ namespace docklight
         return count;
     }
     // TODO: i don't like to give access to the map
-    const std::map<gulong, std::any> DockItemContainer::get_appmap() const
+    const std::map<gulong, std::any> DockItemContainer::get_appmap()
     {
-        return m_appmap;
+        return get_map();
     }
 
     int DockItemContainer::remove(gulong xid)
     {
         int result = 0;
-        for (auto it = m_appmap.begin(); it != m_appmap.end(); it++) {
+        for (auto it = get_map().begin(); it != get_map().end(); it++) {
             std::shared_ptr<DockItemIcon> dockitem;
             dockitem_any_cast<std::shared_ptr<DockItemIcon>>(it->second, dockitem);
 
@@ -138,7 +151,7 @@ namespace docklight
             }
 
             if (dockitem->get_childmap().size() == 0) {
-                result += m_appmap.erase(dockitem->get_xid());
+                result += get_map().erase(dockitem->get_xid());
             }
 
             if (result) break;
@@ -155,7 +168,7 @@ namespace docklight
         bool updated = false;
         Glib::RefPtr<Gdk::Pixbuf> pixbuf;
 
-        for (auto it = m_appmap.begin(); it != m_appmap.end(); it++) {
+        for (auto it = get_map().begin(); it != get_map().end(); it++) {
             std::shared_ptr<DockItemIcon> dockitem;
             dockitem_any_cast<std::shared_ptr<DockItemIcon>>(it->second, dockitem);
             if (!dockitem) continue;
@@ -261,10 +274,10 @@ namespace docklight
         return pixbuf ? true : false;
     }
 
-    inline guint DockItemContainer::items_count() const
+    inline guint DockItemContainer::items_count()
     {
         guint count = 0;
-        for (auto it = m_appmap.begin(); it != m_appmap.end(); it++) {
+        for (auto it = get_map().begin(); it != get_map().end(); it++) {
             std::shared_ptr<DockItemIcon> dockitem;
             dockitem_any_cast<std::shared_ptr<DockItemIcon>>(it->second, dockitem);
 
@@ -283,7 +296,12 @@ namespace docklight
 
         // return if the DockItem exist.
         gint32 xid = wnck_window_get_xid(window);
+        // if (get_map().count(xid)) return false;
         if (exist(xid)) return false;
+
+        //// std::any a = 10;  // new DockItemIcon(xid, instance_name, group_name, wintype);
+        // if (get_map().count(xid) == 0) get_map().insert({xid, 10});
+        // return false;
 
         const char* window_name = wnck_window_get_name(window);
         if (!window_name) return false;
@@ -331,7 +349,6 @@ namespace docklight
         group_name = lowercase_group_name;
 
         // if (group_name != "bleachbit") return false;
-        //  g_print(">>>>>>>>>>>>>>>>>>>>>>>>INSERT TOP %d %s\n", xid, group_name.c_str());
         // TODO xid muss be ulong
         ///*wnck_window_get_xid(window), wnck_window_get_class_group_name(window)*/);
         //        true;
@@ -342,6 +359,8 @@ namespace docklight
         Glib::ustring icon_name;
 
         guint count = items_count();
+
+        // get_map().emplace(xid, a);
 
         // Handles desktop files icons and Names for the app.
         if (get_theme_icon(xid, pixbuf, title_name, desktop_file, icon_name)) {
@@ -359,10 +378,10 @@ namespace docklight
             // Group the items by group_name.
             auto cxid = exist(group_name);
             if (cxid) {
-                //..        auto owner = m_appmap.at(cxid);
+                //..        auto owner = get_map().at(cxid);
                 //    Glib::RefPtr<DockItemIcon> owner;
                 std::shared_ptr<DockItemIcon> owner;  //,dockitem = Glib::RefPtr<DockItemIcon>(
-                dockitem_any_cast<std::shared_ptr<DockItemIcon>>(m_appmap.at(cxid), owner);
+                dockitem_any_cast<std::shared_ptr<DockItemIcon>>(get_map().at(cxid), owner);
 
                 if (dockitem) return false;
 
@@ -383,15 +402,12 @@ namespace docklight
                 owner->add_child(dockitem);
 
             } else {
+                g_print(">>>>>>>>>>>>>>>>>>>>>>>>INSERT TOP %lu %s\n", xid, group_name.c_str());
                 // add a new DockItem
                 dockitem->set_title(title_name);
-                m_appmap.insert({xid, dockitem});
 
                 // always add a replica Dockitem child clone
                 std::shared_ptr<DockItemIcon> child = dockitem->clone();
-                // Glib::RefPtr<DockItemIcon> owner;  //,dockitem =
-                // Glib::RefPtr<DockItemIcon>( dockitem_any_cast<DockItemIcon>(m_appmap.at(cxid),
-                // owner);
 
                 child->set_title(window_icon_name);
 
@@ -401,7 +417,9 @@ namespace docklight
 
                 if (icon_is_fallback) {
                     child->set_icon(dockitem->get_icon());
-                } else if (get_window_icon(gdkpixbuf, pixbuf)) {
+                }
+
+                if (get_window_icon(gdkpixbuf, pixbuf)) {
                     child->set_icon(pixbuf);
                 }
                 //   g_print("-----------ADD CHILD NOT IN GROUP %d %s\n", xid,
@@ -430,7 +448,7 @@ namespace docklight
                     // finally add the child item.
                     //
                     std::shared_ptr<DockItemIcon> owner;
-                    dockitem_any_cast<std::shared_ptr<DockItemIcon>>(m_appmap.at(cxid), owner);
+                    dockitem_any_cast<std::shared_ptr<DockItemIcon>>(get_map().at(cxid), owner);
 
                     if (!owner) return false;
 
@@ -461,7 +479,7 @@ namespace docklight
                     dockitem->set_icon(pixbuf);
 
                     // add a new DockItem
-                    m_appmap.insert({xid, dockitem});
+                    get_map().insert({xid, dockitem});
 
                     // always add a replica DockTtem child clone
                     dockitem->set_title(window_name);
@@ -475,7 +493,7 @@ namespace docklight
         // observer patter
 
         if (count != items_count()) {
-            m_signal_update.emit(window_action_t::UPDATE, (gint)m_appmap.size());
+            m_signal_update.emit(window_action_t::UPDATE, (gint)get_map().size());
         }
 
         return true;

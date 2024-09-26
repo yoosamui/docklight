@@ -15,7 +15,7 @@ docklight_CPPFLAGS = $(ALLCPPFLAGS)
 #docklight_CPPFLAGS += O2 -s -DNDEBUG -Wall -Wextra -Werror -std=c++11 -pedantic
 
 # standard
-docklight_CPPFLAGS += -Wall -std=c++20
+docklight_CPPFLAGS += -Wall -std=c++17
 #-Lbamf3 -I/usr/include/libbamf3/
 #docklight_CPPFLAGS += $(pkg-config --libs libbamf3)
 

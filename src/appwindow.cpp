@@ -187,7 +187,7 @@ namespace docklight
             //  this->update_position();
             g_print("Press\n");
 
-            DockItemContainer* container = get_dockcontainer();
+            auto container = get_dockcontainer();
             // g_print("Owner %d %s\n", dockitem->to_string().c_str());
             //               g_print("Owner %d %s\n", dockitem->get_xid(),
             //               dockitem->get_group_name().c_str());
