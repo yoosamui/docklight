@@ -151,29 +151,28 @@ namespace docklight
 
     int DockItemContainer::remove(gulong xid)
     {
-        int result = 0;
-        for (auto it = get_map().begin(); it != get_map().end(); it++) {
-            std::shared_ptr<DockItemIcon> dockitem;
-            dockitem_any_cast<std::shared_ptr<DockItemIcon>>(it->second, dockitem);
+        return m_container.remove<DockItemIcon>(xid);
 
-            if (!dockitem) continue;
+        // for (auto it = get_map().begin(); it != get_map().end(); it++) {
+        // std::shared_ptr<DockItemIcon> dockitem;
+        // dockitem_any_cast<std::shared_ptr<DockItemIcon>>(it->second, dockitem);
 
-            if (dockitem->get_childmap().count(xid)) {
-                result += dockitem->remove_child(xid);
-            }
+        // if (!dockitem) continue;
 
-            if (dockitem->get_childmap().size() == 0) {
-                result += get_map().erase(dockitem->get_xid());
-            }
+        // if (dockitem->get_childmap().count(xid)) {
+        // result += dockitem->remove_child(xid);
+        //}
 
-            if (result) break;
-        }
+        // if (dockitem->get_childmap().size() == 0) {
+        // result += get_map().erase(dockitem->get_xid());
+        //}
 
-        if (result) {
-            m_signal_update.emit(window_action_t::UPDATE, 0);
-        }
+        // if (result) break;
+        //}
 
-        return result;
+        // if (result) {
+        // m_signal_update.emit(window_action_t::UPDATE, 0);
+        //}
     }
     void DockItemContainer::on_theme_changed()
     {
@@ -286,20 +285,20 @@ namespace docklight
         return pixbuf ? true : false;
     }
 
-    inline guint DockItemContainer::items_count()
-    {
-        guint count = 0;
-        for (auto it = get_map().begin(); it != get_map().end(); it++) {
-            std::shared_ptr<DockItemIcon> dockitem;
-            dockitem_any_cast<std::shared_ptr<DockItemIcon>>(it->second, dockitem);
+    // inline guint DockItemContainer::items_count()
+    //{
+    // guint count = 0;
+    // for (auto it = get_map().begin(); it != get_map().end(); it++) {
+    // std::shared_ptr<DockItemIcon> dockitem;
+    // dockitem_any_cast<std::shared_ptr<DockItemIcon>>(it->second, dockitem);
 
-            if (!dockitem) continue;
+    // if (!dockitem) continue;
 
-            count += dockitem->get_childmap().size() + 1;
-        }
+    // count += dockitem->get_childmap().size() + 1;
+    //}
 
-        return count;
-    }
+    // return count;
+    //}
 
     bool DockItemContainer::insert(WnckWindow* window)
     {
@@ -343,72 +342,51 @@ namespace docklight
             window_icon_name = window_name;
         }
 
-        return insert(xid, gdkpixbuf, instance_name, groupname, window_name, window_icon_name,
-                      icon_is_fallback, wintype);
+        // if (groupname != "bleachbit") return false;
+        // oi
+        bool result = createFromDesktopFile(xid, gdkpixbuf, instance_name, groupname, window_name,
+                                            window_icon_name, icon_is_fallback, wintype);
+
+        //        if (!result) {
+        if (!result)
+            result = createFromWindow(xid, gdkpixbuf, instance_name, groupname, window_name,
+                                      window_icon_name, icon_is_fallback, wintype);
+        //      }
+
+        // int count = m_container.size();
+        // g_print("container %d %s\n", count, groupname.c_str());
+        //   g_print("childs %d %s\n",  count, groupname.c_str());
+        return result;
     }
-    bool IsOdd(std::pair<gulong, std::any> p)
+    // bool IsOdd(std::pair<gulong, std::any> p)
+    //{
+    // g_print("%lu\n", p.first);
+    // return true;  //]p.first == xid;
+
+    //// return ((i%2)==1);
+    //}
+    bool DockItemContainer::createFromDesktopFile(gulong xid, GdkPixbuf* gdkpixbuf,
+                                                  Glib::ustring instance_name,
+                                                  std::string groupname, Glib::ustring window_name,
+                                                  Glib::ustring window_icon_name,
+                                                  bool icon_is_fallback, WnckWindowType wintype)
     {
-        g_print("%lu\n", p.first);
-        return true;  //]p.first == xid;
-
-        // return ((i%2)==1);
-    }
-    bool DockItemContainer::insert(gulong xid, GdkPixbuf* gdkpixbuf,
-                                   const Glib::ustring instance_name, std::string group_name,
-                                   const Glib::ustring window_name,
-                                   const Glib::ustring window_icon_name, bool icon_is_fallback,
-                                   WnckWindowType wintype)
-    {
-        // g_print("---------S T A R T -  I N S E R T D -TOP----- %lu\n", xid);
-        //        Glib::RefPtr<IDockItem> shapes;
-        // std::vector<Glib::RefPtr<IDockItem>> shapes;
-        // Glib::RefPtr<IDockItem>(new DockItem(xid, instance_name, group_name, wintype));
-        // shapes.push_back(std::make_unique<DockItem>());
-        //     shapes.push_back(std::make_unique<Polygon>());
-        //     shapes.push_back(std::make_unique<Rectangle>());
-        // TODO maybe move to strings utils...
-        // std::string lowercase_group_name(group_name);
-        // std::transform(lowercase_group_name.begin(), lowercase_group_name.end(),
-        // lowercase_group_name.begin(), ::tolower);
-
-        // group_name = lowercase_group_name;
-        //  g_message("GROUP::----->[%s]\n", group_name.c_str());
-        // exit(1);
-        //  if (group_name != "bleachbit" ) return false;
-        // g_print("---------IN------ %lu\n", xid);
-
-        // TODO xid muss be ulong
-        ///*wnck_window_get_xid(window), wnck_window_get_class_group_name(window)*/);
-        //        true;
-        //        if (group_name != "Gedit" && group_name != "Geany") return true;
         Glib::RefPtr<Gdk::Pixbuf> pixbuf;
         Glib::ustring title_name;
         Glib::ustring desktop_file;
         Glib::ustring icon_name;
 
-        guint count = items_count();
-
-        // get_map().emplace(xid, a);
-
-        // Handles desktop files icons and Names for the app.
         if (get_theme_icon(xid, pixbuf, title_name, desktop_file, icon_name)) {
-            // create the DockItem.
+            // TODO: simplify constrctor only xid and icon. the rest via setters
             std::shared_ptr<DockItemIcon> dockitem = std::shared_ptr<DockItemIcon>(
-                new DockItemIcon(xid, instance_name, group_name, wintype));
+                new DockItemIcon(xid, instance_name, groupname, wintype));
 
             dockitem->set_desktop_file(desktop_file);
             dockitem->set_icon_name(icon_name);
             dockitem->set_icon(pixbuf);
 
-            // Group the items by group_name.
-            // auto cxid = exist(group_name);
             std::shared_ptr<DockItemIcon> owner;
-            if (m_container.exist<DockItemIcon>(group_name, owner)) {
-                g_print("***GROUP FOUND  %lu %s\n", owner->get_xid(), group_name.c_str());
-
-                // g_print("----------GRUP OWNER ID------ %lu\n", owner->get_xid());
-                // g_print(">>START IN GROUPW  %lu %s\n", xid, group_name.c_str());
-
+            if (m_container.exist<DockItemIcon>(groupname, owner)) {
                 dockitem->set_title(window_name);
 
                 if (wintype == WnckWindowType::WNCK_WINDOW_DIALOG) {
@@ -423,22 +401,17 @@ namespace docklight
                     dockitem->set_icon(pixbuf);
                 }
 
-                // g_print(">>>>>>>>>>>>>>>>>>>>>>>>ADD IN GROUP %lu %s\n", xid,
-                // group_name.c_str());
                 owner->add_child(dockitem);
-                auto total = m_container.count<DockItemIcon>();
-                // g_print("Total %lu\n", owner->get_childmap().size());
+                //                g_print("****G[%lu] %s\n", dockitem->get_xid(),
+                //                dockitem->get_group_name().c_str());
+                // g_print("****G[%lu] %s childscount : %d\n", owner->get_xid(),
+                // dockitem->get_group_name().c_str(), owner->get_container_size());
 
             } else {
-                g_print(">>INSERT NEW  %lu %s\n", xid, group_name.c_str());
                 dockitem->set_title(title_name);
-                // g_print(">>START INSERT NEW  %lu %s\n", xid, group_name.c_str());
-
                 m_container.add(xid, dockitem);
-                m_container.exist(xid);
-                // auto total = m_container.count<DockItemIcon>();
-                //  auto total = m_container.count();
-                // g_print("Total %d\n", total);
+                // g_print("[%lu] %s  %d\n", xid, dockitem->get_group_name().c_str(),
+                // m_container.size());
 
                 // always add a replica Dockitem child clone
                 std::shared_ptr<DockItemIcon> child = dockitem->clone();
@@ -455,87 +428,89 @@ namespace docklight
                 if (get_window_icon(gdkpixbuf, pixbuf)) {
                     child->set_icon(pixbuf);
                 }
-                //   g_print("-----------ADD CHILD NOT IN GROUP %d %s\n", xid,
-                //   window_icon_name.c_str());
-                // g_print(">>START INSERT NEW CHILD REPLICA %lu %s\n", xid, group_name.c_str());
+
                 dockitem->add_child(child);
-                // total = m_container.count<DockItemIcon>();
-                // g_print("Total %d\n", total);
-                // g_print(">>ENDT INSERT %lu %s\n", xid, group_name.c_str());
+                // g_print("****R[%lu] %s childscount : %d\n", child->get_xid(),
+                // dockitem->get_group_name().c_str(), dockitem->get_container_size());
             }
-        } else {
-            return false;
-            g_print(">>>>>>>>>>>>>>>>>>>>>>>>INSERT NEW!!!! %lu %s\n", xid, group_name.c_str());
-            // Handles the window icons
-            if (get_window_icon(gdkpixbuf, pixbuf)) {
-                const auto dockitem = Glib::RefPtr<DockItemIcon>(
-                    new DockItemIcon(xid, instance_name, group_name, wintype));
-
-                // create groups setion.
-                auto cxid = exist(group_name);
-                if (cxid) {
-                    std::shared_ptr<DockItemIcon> dockitem = std::shared_ptr<DockItemIcon>(
-                        new DockItemIcon(xid, instance_name, group_name, wintype));
-
-                    dockitem->set_title(window_icon_name);
-                    dockitem->set_icon_name(icon_name);
-                    dockitem->set_icon(pixbuf);
-
-                    // if a child exist then remove it and
-                    // add a new child. Is the icon is fallback the
-                    // set the icon from owner.
-                    // finally add the child item.
-                    //
-                    std::shared_ptr<DockItemIcon> owner;
-                    dockitem_any_cast<std::shared_ptr<DockItemIcon>>(get_map().at(cxid), owner);
-
-                    if (!owner) return false;
-
-                    if (icon_is_fallback) {
-                        dockitem->set_icon(owner->get_icon());
-                    }
-
-                    if (owner->get_childmap().count(xid)) {
-                        remove(xid);
-                        if (wintype == 3) dockitem->set_title(window_icon_name);
-                        owner->add_child(dockitem);
-                    } else {
-                        // if the icon is fallback
-                        // replace the icon with the owner icon.
-                        dockitem->set_icon(owner->get_icon());
-
-                        // add the new child icon to the owner.
-                        if (wintype == 3) dockitem->set_title(window_icon_name);
-                        owner->add_child(dockitem);
-                    }
-                } else if (!exist(xid) && !icon_is_fallback) {
-                    auto dockitem = Glib::RefPtr<DockItemIcon>(
-                        new DockItemIcon(xid, instance_name, group_name, wintype));
-
-                    dockitem->set_title(group_name);
-                    dockitem->set_icon_name(icon_name);
-                    dockitem->set_icon_name(window_icon_name);
-                    dockitem->set_icon(pixbuf);
-
-                    // add a new DockItem
-                    get_map().insert({xid, dockitem});
-
-                    // always add a replica DockTtem child clone
-                    dockitem->set_title(window_name);
-                    if (wintype == 3) dockitem->set_title(window_icon_name);
-                    dockitem->add_child(dockitem->clone());
-                }
-            }
-        }
-
-        // TODO remove this.check it by map count
-        // observer patter
-
-        if (count != items_count()) {
-            m_signal_update.emit(window_action_t::UPDATE, (gint)get_map().size());
         }
 
         return true;
+    }
+
+    bool DockItemContainer::createFromWindow(gulong xid, GdkPixbuf* gdkpixbuf,
+                                             Glib::ustring instance_name, std::string groupname,
+                                             Glib::ustring window_name,
+                                             Glib::ustring window_icon_name, bool icon_is_fallback,
+                                             WnckWindowType wintype)
+    {
+        Glib::RefPtr<Gdk::Pixbuf> pixbuf;
+        Glib::ustring title_name;
+        Glib::ustring icon_name = window_icon_name;
+
+        // if (groupname != "mullvad vpn") return false;
+
+        if (get_window_icon(gdkpixbuf, pixbuf)) {
+            // g_print("IN  %s \n", groupname.c_str());
+            std::shared_ptr<DockItemIcon> dockitem = std::shared_ptr<DockItemIcon>(
+                new DockItemIcon(xid, instance_name, groupname, wintype));
+
+            std::shared_ptr<DockItemIcon> owner;
+            if (m_container.exist<DockItemIcon>(groupname, owner)) {
+                //  g_print("IN GROUP %s \n", groupname.c_str());
+                dockitem->set_title(window_icon_name);
+                dockitem->set_icon_name(icon_name);
+                dockitem->set_icon(pixbuf);
+
+                if (icon_is_fallback) {
+                    dockitem->set_icon(owner->get_icon());
+                }
+
+                if (owner->get_childmap().count(xid)) {
+                    m_container.remove<DockItemIcon>(xid);
+                    if (wintype == WnckWindowType::WNCK_WINDOW_DIALOG) {
+                        owner->add_child(dockitem);
+                        // g_print("****G[%lu] %s childscount : %d\n", owner->get_xid(),
+                        // owner->get_group_name().c_str(), owner->get_container_size());
+                    }
+
+                } else {
+                    // if the icon is fallback
+                    // replace the icon with the owner icon.
+                    dockitem->set_icon(owner->get_icon());
+
+                    // add the new child icon to the owner.
+                    if (wintype == WnckWindowType::WNCK_WINDOW_DIALOG) {
+                        owner->add_child(dockitem);
+                    }
+                    // g_print("****G[%lu] %s childscount : %d\n", owner->get_xid(),
+                    // owner->get_group_name().c_str(), owner->get_container_size());
+                }
+            } else if (!m_container.exist<DockItemIcon>(xid, true) && !icon_is_fallback) {
+                // g_print("IN NEW %s %lu\n", groupname.c_str(), xid);
+
+                dockitem->set_title(groupname);
+                dockitem->set_icon_name(icon_name);
+                dockitem->set_icon_name(window_icon_name);
+                dockitem->set_icon(pixbuf);
+
+                // add a new DockItem
+                m_container.add(xid, dockitem);
+                // g_print("[%lu] %s  %d\n", xid, dockitem->get_group_name().c_str(),
+                // m_container.size());
+
+                // always add a replica DockTtem child clone
+                dockitem->set_title(window_name);
+                if (wintype == WnckWindowType::WNCK_WINDOW_DIALOG) {
+                    dockitem->set_title(window_icon_name);
+                }
+                dockitem->add_child(dockitem->clone());
+                // g_print("****R[%lu] %s childscount : %d\n", dockitem->get_xid(),
+                // dockitem->get_group_name().c_str(), dockitem->get_container_size());
+            }
+        }
+
+        return false;
     }
 
 }  // namespace docklight

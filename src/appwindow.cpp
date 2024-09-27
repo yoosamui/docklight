@@ -22,7 +22,7 @@ namespace docklight
     {
         // A window to implement a docking bar used for creating the dock panel.
 
-#define DOCK_WINDOW 1
+//#define DOCK_WINDOW 1
 #ifdef DOCK_WINDOW
         set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
         set_decorated(false);
@@ -185,9 +185,26 @@ namespace docklight
     {
         if ((event->type == GDK_BUTTON_PRESS)) {
             //  this->update_position();
-            g_print("Press\n");
+            g_print("\n");
+            g_print("--->Press\n\n");
+            g_print("\n");
 
+            //            m_composite = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
+            m_composite.show_at(800, 800);
             auto container = get_dockcontainer();
+            for (auto& dockitem : container->data()) {
+                const auto map = dockitem->get_childmap();
+                g_print("%lu [%s] %lu\n", dockitem->get_xid(), dockitem->get_group_name().c_str(),
+                        map.size());
+
+                for (auto it = map.begin(); it != map.end(); it++) {
+                    std::shared_ptr<DockItemIcon> dockitem = it->second;
+
+                    g_print("***%lu [%s]\n", dockitem->get_xid(),
+                            dockitem->get_group_name().c_str());
+                }
+            }
+            /*for (auto it = m_appmap.begin(); it != m_appmap.end(); it++) {
             // g_print("Owner %d %s\n", dockitem->to_string().c_str());
             //               g_print("Owner %d %s\n", dockitem->get_xid(),
             //               dockitem->get_group_name().c_str());
@@ -207,8 +224,9 @@ namespace docklight
 
                 char filepath[512];
                 sprintf(filepath, "/home/yoo/TEMP/%s-(%s) [%lu] {%d}",
-                        dockitem->get_group_name().c_str(), dockitem->get_instance_name().c_str(),
-                        dockitem->get_xid(), (int)dockitem->get_childmap().size());
+                        dockitem->get_group_name().c_str(),
+        dockitem->get_instance_name().c_str(), dockitem->get_xid(),
+        (int)dockitem->get_childmap().size());
 
                 if (pixbuf) {
                     pixbuf->save(filepath, "png");
@@ -238,8 +256,6 @@ namespace docklight
                 }
             }
 
-            //  m_composite = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
-            m_composite.show_at(800, 800);
         }*/
         }
         return true;

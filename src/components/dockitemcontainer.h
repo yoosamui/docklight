@@ -33,7 +33,7 @@
 #include "utils/pixbuf.h"
 #include "utils/factory.h"
 // clang-format on
-
+#include <chrono>
 namespace docklight
 {
     class MyClass
@@ -201,20 +201,6 @@ namespace docklight
                 count += dockitem->get_container_size();
             }
             return count;
-            // auto byxid = [&xid](std::pair<gulong, std::any> p) { return p.first == xid; };
-            // if (auto it = std::find_if(begin(m_dockitems), end(m_dockitems), byxid);
-            // it != std::end(m_dockitems)) {
-            ////
-            //*it.
-            ////   std::cout << "w contains an even number " << *it << '\n';
-            //}
-            // if ((auto it = std::find_if(m_dockitems.begin(), m_dockitems.end(), byxid)))
-            // std::cout << "The first value is: " << *it << '\n';
-
-            // if (auto std::vector<std::pair<gulong, std::any>>::iterator it =
-            // std::find_if(m_dockitems.begin(), m_dockitems.end(), byxid)) {
-            ////               std::cout << "The first value is: " << *it << '\n';
-            //}
         }
 
         template <typename T>
@@ -265,31 +251,79 @@ namespace docklight
             return false;
         }
 
-        bool exist(gulong xid)
+        template <typename T>
+        bool exist(gulong xid, bool deep = false)
         {
-            auto byxid = [&xid](std::pair<gulong, std::any> p) { return p.first == xid; };
-            // if (auto it = std::find_if(begin(w), end(w), is_even); it != std::end(w))
-            // std::cout << "w contains an even number " << *it << '\n';
-            // else
-            // std::cout << "w does not contain even numbers\n";
+            // auto byxid = [&xid](std::pair<gulong, std::any> p) { return p.first == xid; };
 
-            if (auto it = std::find_if(begin(m_dockitems), end(m_dockitems), byxid);
-                it != std::end(m_dockitems)) {
-                std::cout << " does contain  the xid   \n" << std::endl;
-                return true;
-            } else {
-                g_print("NOT FOUND \n");
+            // if (auto it = std::find_if(begin(m_dockitems), end(m_dockitems), byxid);
+            // it != std::end(m_dockitems)) {
+            // std::cout << " does contain  the xid   \n" << std::endl;
+            // return true;
+            //} else if (deep) {
+            ////
+            //}
+
+            std::shared_ptr<T> dockitem;
+
+            for (auto it = m_dockitems.begin(); it != m_dockitems.end(); it++) {
+                std::any a = it->second;
+
+                if (!factory::any_cast<std::shared_ptr<T>>(a, dockitem)) continue;
+
+                if (dockitem->get_xid() == xid) return true;
+
+                if (deep) {
+                    if (dockitem->get_childmap().count(xid) == xid) return true;
+                }
             }
-            // if( auto std::vector<std::pair<gulong, std::any>>::iterator it =
-            //            std::find_if(m_dockitems.begin(), m_dockitems.end(), byxid);
-            //    std::cout << "The first value is: " << *it.first << '\n';
 
-            //  std::cout << "The first odd value is " << *it.first << '\n';
-            //
             return false;
         }
 
+        template <typename T>
+        int remove(gulong xid)
+        {
+            int result = 0;
+            std::shared_ptr<T> dockitem;
+
+            for (auto it = m_dockitems.begin(); it != m_dockitems.end(); it++) {
+                std::any a = it->second;
+                if (!factory::any_cast<std::shared_ptr<T>>(a, dockitem)) continue;
+
+                if (dockitem->get_childmap().count(xid)) {
+                    result += dockitem->remove_child(xid);
+                }
+
+                if (dockitem->get_childmap().size() == 0) {
+                    // result += m_dockitems.erase(dockitem->get_xid());
+                    result += 1;
+                    m_dockitems.erase(it);
+                }
+
+                if (result) break;
+            }
+
+            return result;
+        }
+
+        template <typename T>
+        std::vector<std::shared_ptr<DockItemIcon>>& data()
+        {
+            m_data.clear();
+            std::shared_ptr<T> dockitem;
+
+            for (auto it = m_dockitems.begin(); it != m_dockitems.end(); it++) {
+                std::any a = it->second;
+                if (!factory::any_cast<std::shared_ptr<T>>(a, dockitem)) continue;
+                m_data.push_back(dockitem);
+            }
+            g_print("vector %lu", m_data.size());
+            return m_data;
+        }
+
       private:
+        std::vector<std::shared_ptr<DockItemIcon>> m_data;
         std::vector<std::pair<gulong, std::any>> m_dockitems;
     };
 
@@ -310,9 +344,14 @@ namespace docklight
         bool exist(gulong xid);
         bool insert(WnckWindow* window);
 
-        guint items_count();
+        //  guint items_count();
         // signal accessor:
         type_signal_update signal_update();
+
+        std::vector<std::shared_ptr<DockItemIcon>>& data()
+        {
+            return m_container.data<DockItemIcon>();
+        }
 
         std::map<gulong, std::any>& get_map()
         {
@@ -329,6 +368,16 @@ namespace docklight
         bool get_theme_icon(guint xid, Glib::RefPtr<Gdk::Pixbuf>& pixbuf);
         bool get_theme_icon(guint xid, Glib::RefPtr<Gdk::Pixbuf>& pixbuf, Glib::ustring& title_name,
                             Glib::ustring& desktop_file, Glib::ustring& icon_name);
+
+        bool createFromDesktopFile(gulong xid, GdkPixbuf* gdkpixbuf, Glib::ustring instance_name,
+                                   std::string group_name, Glib::ustring window_name,
+                                   Glib::ustring window_icon_name, bool icon_is_fallback,
+                                   WnckWindowType wintype);
+
+        bool createFromWindow(gulong xid, GdkPixbuf* gdkpixbuf, Glib::ustring instance_name,
+                              std::string groupname, Glib::ustring window_name,
+                              Glib::ustring window_icon_name, bool icon_is_fallback,
+                              WnckWindowType wintype);
 
         bool insert(gulong xid, GdkPixbuf* gdkpixbuf, const Glib::ustring instance_name,
                     std::string group_name, const Glib::ustring window_name,
