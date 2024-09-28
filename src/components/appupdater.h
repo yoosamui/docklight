@@ -4,17 +4,19 @@
 #include <glibmm/object.h>
 #include <gdkmm/pixbuf.h>
 #include <libwnck/libwnck.h>
+
 #include <sigc++/sigc++.h>
 
-#include "components/dockitemcontainer.h"
+#include "components/dockitemprovider.h"
 #include "components/position.h"
 
+#include "utils/wnck.h"
 ////#include "constants.h"
 //#include <X11/X.h>
 //#include <gdk/gdkx.h>
 //#include <gtkmm/icontheme.h>
 //#include <giomm/appinfo.h>
-//#include <giomm/desktopappinfo.h>
+//#include <giomm/desktopappinfo.h>
 //#include <memory>
 //#include <vector>
 ////#include "/usr/include/libbamf3/libbamf/libbamf.h"

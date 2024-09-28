@@ -36,6 +36,7 @@ docklight_SOURCES =  \
 utils/system.cpp \
 utils/pixbuf.cpp \
 utils/factory.cpp \
+utils/wnck.cpp \
 appwindow.cpp \
 appoptionsgroup.cpp \
 components/TransparentWindow.cpp \
@@ -45,6 +46,7 @@ components/dockrender.cpp \
 components/device.cpp \
 components/config.cpp \
 components/dockitemcontainer.cpp \
+components/dockitemprovider.cpp \
 components/appupdater.cpp \
 components/dockitem.cpp \
 components/dockitemicon.cpp \

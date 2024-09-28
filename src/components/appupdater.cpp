@@ -49,9 +49,32 @@ namespace docklight
         // clang-format on
 
         gint32 xid = wnck_window_get_xid(window);
-        get_dockcontainer()->remove(xid);
+        get_dockitem_provider()->remove(xid);
     }
 
+    struct Frame {
+        int x, y, width, height;
+    };
+
+    bool isAtTop(const Frame& frame)
+    {
+        return frame.y == 0;
+    }
+
+    bool isAtBottom(const Frame& frame, int screenHeight)
+    {
+        return frame.y + frame.height == screenHeight;
+    }
+
+    bool isAtLeft(const Frame& frame)
+    {
+        return frame.x == 0;
+    }
+
+    bool isAtRight(const Frame& frame, int screenWidth)
+    {
+        return frame.x + frame.width == screenWidth;
+    }
     void AppProvider::on_window_opened(WnckScreen* screen, WnckWindow* window, gpointer data)
     {
         if (!window) {
@@ -60,6 +83,61 @@ namespace docklight
         }
 
         WnckWindowType wt = wnck_window_get_window_type(window);
+        /*
+                if (wt == WNCK_WINDOW_DOCK || wt == WNCK_WINDOW_TOOLBAR) {
+                    static int y = 0;
+                    static int x = 0;
+                    static int width = 0;
+                    static int height = 0;
+
+                    int yp = 0;
+                    int xp = 0;
+                    int widthp = 0;
+                    int heightp = 0;
+
+                    wnck_window_get_geometry(window, &xp, &yp, &widthp, &heightp);
+                    const char* instance_name = wnck_window_get_class_instance_name(window);
+                    g_print(">>[ %s ] %d %d - %d %d\n", instance_name, xp, yp, widthp, heightp);
+
+                    auto screenwidth = position::get_monitor_geometry().get_width();
+                    auto screenHeight = position::get_monitor_geometry().get_height();
+
+                    Frame frame = {xp, yp, widthp, heightp};
+                    if (isAtTop(frame)) {
+                        g_print("TOP\n");
+                    } else if (isAtBottom(frame, screenHeight)) {
+                        g_print("BOTTOM\n");
+
+                    } else if (isAtLeft(frame)) {
+                        g_print("LEFT\n");
+                    } else if (isAtRight(frame, screenwidth)) {
+                        g_print("RIGHT\n");
+                    }
+
+                    // if (widthp > heightp) {  // horizontal
+
+                    // g_print("Horizontal\n");
+                    // if (yp == 0) {
+                    // g_print("top\n");
+                    //} else {
+                    // g_print("bottom\n");
+                    //}
+                    //} else {  // v
+                    // g_print("vertical\n");
+                    // if (xp == 0) {
+                    // g_print("left\n");
+
+                    //} else {
+                    // g_print("right\n");
+                    //}
+                    //}
+
+                    // void                wnck_window_get_geometry            (WnckWindow *window,
+                    // int *xp,
+                    // int *yp,
+                    // int *widthp,
+                    // int *heightp);
+                }*/
 
         // clang-format off
             if (wt == WNCK_WINDOW_DESKTOP ||
@@ -68,14 +146,13 @@ namespace docklight
                 wt == WNCK_WINDOW_MENU ||
                 wt == WNCK_WINDOW_SPLASHSCREEN){
 
-                return ;
             }
         // clang-format on
 
         gint32 xid = wnck_window_get_xid(window);
 
-        auto container = get_dockcontainer();
-        if (get_dockcontainer()->exist(xid)) return;
+        auto container = get_dockitem_provider();
+        if (get_dockitem_provider()->exist(xid)) return;
 
         container->insert(window);
 
@@ -101,7 +178,11 @@ namespace docklight
 
     AppProvider::AppProvider()
     {
-        WnckScreen* wnckscreen = wnck_screen_get_default();
+        WnckHandle* handle = wnck_handle_new(WnckClientType::WNCK_CLIENT_TYPE_PAGER);
+        // WnckHandle* handle = wnck_handle_new(WnckClientType::WNCK_CLIENT_TYPE_APPLICATION);
+        WnckScreen* wnckscreen = wnck_handle_get_default_screen(handle);
+
+        //        WnckScreen* wnckscreen = wnck_screen_get_default();
 
         g_signal_connect(G_OBJECT(wnckscreen), "window-opened",
                          G_CALLBACK(&AppProvider::on_window_opened), nullptr);
@@ -109,4 +190,5 @@ namespace docklight
         g_signal_connect(G_OBJECT(wnckscreen), "window-closed",
                          G_CALLBACK(&AppProvider::on_window_closed), nullptr);
     }
+
 }  // namespace docklight

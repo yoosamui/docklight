@@ -10,7 +10,7 @@
 #include "utils/easing.h" // for testing
 //#include <cmath>
 //#include <ctime>
-#include "dockitemcontainer.h"
+#include "dockitemprovider.h"
 #include "components/TransparentWindow.h"
 #include "components/dockrender.h"
 // clang-format on

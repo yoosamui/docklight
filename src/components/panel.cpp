@@ -45,7 +45,7 @@ namespace docklight
 
     void Panel::init()
     {
-        m_sigc_updated = get_dockcontainer()->signal_update().connect(
+        m_sigc_updated = get_dockitem_provider()->signal_update().connect(
             sigc::mem_fun(this, &Panel::on_container_updated));
 
         // frame_time = GLib.get_monotonic_time();
@@ -60,8 +60,8 @@ namespace docklight
     }
     bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
     {
-        m_sigc_draw =
-            Glib::signal_timeout().connect(sigc::mem_fun(this, &Panel::on_timeout_draw), 1000 / 30);
+        // m_sigc_draw =
+        // Glib::signal_timeout().connect(sigc::mem_fun(this, &Panel::on_timeout_draw), 1000 / 30);
 
         m_mouse_enter = true;
         return false;
@@ -69,7 +69,7 @@ namespace docklight
 
     bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
     {
-        m_sigc_draw.disconnect();
+        // m_sigc_draw.disconnect();
         m_mouse_enter = false;
 
         return false;
@@ -162,15 +162,17 @@ namespace docklight
 
     void Panel::container_updated() const
     {
-        auto container = get_dockcontainer();
+        // g_print("PANEL signal uodated\n");
+        auto provider = get_dockitem_provider();
         // TODO change after home icon is insertet, will be == 1
-        if (container->get_map().size() == 0) return;
+        gint size = provider->data().size();
+        if (!size) return;
 
-        gint size = container->get_map().size() - 1;
+        size--;
         gint separator_size = config::get_separator_size();
         gint separators_count = (size * separator_size);
 
-        position::set_window_position(container->required_size(separators_count));
+        position::set_window_position(provider->required_size(separators_count));
     }
 
     void Panel::on_container_updated(window_action_t action, int index)

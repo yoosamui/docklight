@@ -78,7 +78,7 @@ namespace docklight
     }
     const Glib::RefPtr<Gdk::Pixbuf> DockItemIcon::get_icon(guint size)
     {
-        if (size == m_width) return m_icon;
+        //  if (size == m_width) return m_icon;
 
         auto pixbuf =
             Glib::wrap(m_icon->gobj(), true)->scale_simple(size, size, Gdk::INTERP_BILINEAR);

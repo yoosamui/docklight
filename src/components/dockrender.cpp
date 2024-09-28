@@ -187,8 +187,7 @@ namespace docklight
 
     bool DockRender::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     {
-        auto container = get_dockcontainer();
-        auto appmap = container->get_map();
+        auto provider = get_dockitem_provider();
 
         m_posX = 0;
         m_posY = 0;
@@ -196,10 +195,9 @@ namespace docklight
         draw_surface_background();
 
         guint tag = 0;
-        for (auto it = appmap.begin(); it != appmap.end(); it++) {
-            // auto dockitem = it->second;
-            std::shared_ptr<DockItemIcon> dockitem;
-            dockitem_any_cast<std::shared_ptr<DockItemIcon>>(it->second, dockitem);
+        for (auto& dockitem : provider->data()) {
+            // std::shared_ptr<DockItemIcon> dockitem;
+            // dockitem_any_cast<std::shared_ptr<DockItemIcon>>(it->second, dockitem);
 
             dockitem->set_tag(tag++);
 

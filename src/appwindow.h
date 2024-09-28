@@ -13,7 +13,7 @@
 
 #include "components/appupdater.h" //AppProvider
 
-#include "components/dockitemcontainer.h"
+#include "components/dockitemprovider.h"
 #include "components/TransparentWindow.h"
 #include "components/ExplodesWindow.h"
 
@@ -52,8 +52,8 @@ namespace docklight
         int init(Glib::RefPtr<Gtk::Application>& app);
         // Config* m_config = Config::getInstance();
       private:
-        // instantiate DockItemContainer.
-        AppProvider m_app_provider;
+        // instantiate listener
+        Glib::RefPtr<AppProvider> m_appprovider;
 
         //    bool on_timeout_draw();
         bool on_button_press_event(GdkEventButton* event) override;
@@ -77,6 +77,7 @@ namespace docklight
         // bool on_leave_notify_event(GdkEventCrossing* crossing_event);
 
       private:
+        Glib::RefPtr<Gtk::Window> m_window;
         // sigc::connection m_sigc_updated;
         // Glib::RefPtr<ExplodesWindow> m_composite;
         ExplodesWindow m_composite;

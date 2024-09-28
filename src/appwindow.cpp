@@ -22,7 +22,7 @@ namespace docklight
     {
         // A window to implement a docking bar used for creating the dock panel.
 
-//#define DOCK_WINDOW 1
+#define DOCK_WINDOW 1
 #ifdef DOCK_WINDOW
         set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
         set_decorated(false);
@@ -60,6 +60,28 @@ namespace docklight
         // m_panel = Glib::RefPtr<Panel>(new Panel());
         //        m_panel = new m_panelGlib::RefPtr<Panel>(new Panel());
         //      add(*m_ppanel);
+
+        // m_window = Glib::RefPtr<Gtk::Window>(new Gtk::Window);
+        //// m_window->set_size_request(1000, 1000);
+        // m_window->set_keep_above(true);
+        // m_window->set_title("TEST");
+        // m_window->show();
+        // m_window->maximize();
+
+        Gdk::Rectangle wa = device::monitor::get_workarea();
+        Gdk::Rectangle geo = device::monitor::get_geometry();
+        g_print("---------------geo %d %d %d %d\n", geo.get_x(), geo.get_y(), geo.get_width(),
+                geo.get_height());
+        g_print("---------------WA %d %d %d %d\n", wa.get_x(), wa.get_y(), wa.get_width(),
+                wa.get_height());
+
+        // int x = m_window->get_width();
+        // int y = m_window->get_height();
+
+        // g_print("SIZE %d %d \n", x, y);
+        wnck_set_client_type(WNCK_CLIENT_TYPE_PAGER);
+        m_appprovider = Glib::RefPtr<AppProvider>(new AppProvider());
+
         m_panel = new Panel();
         this->add(*m_panel);
         show_all();
@@ -69,7 +91,8 @@ namespace docklight
     {
         // release the current stryt if any
         delete m_panel;
-        position::struts::set_strut(true);
+        // TODO:
+        //  position::struts::set_strut(true);
 
         g_print(MSG_FREE_OBJECT, "AppWindow");
         g_print("\n");
@@ -84,7 +107,7 @@ namespace docklight
         Gdk::Screen::get_default()->signal_monitors_changed().connect(
             sigc::mem_fun(this, &AppWindow::on_monitor_changed));
 
-        // m_sigc_updated = get_dockcontainer()->signal_update().connect(
+        // m_sigc_updated = get_dockitem_provider()->signal_update().connect(
         // sigc::mem_fun(this, &AppWindow::on_container_updated));
 
         config::load_file();
@@ -189,9 +212,12 @@ namespace docklight
             g_print("--->Press\n\n");
             g_print("\n");
 
+            // wnck::get_docks();
+            return false;
+
             //            m_composite = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
             m_composite.show_at(800, 800);
-            auto container = get_dockcontainer();
+            auto container = get_dockitem_provider();
             for (auto& dockitem : container->data()) {
                 const auto map = dockitem->get_childmap();
                 g_print("%lu [%s] %lu\n", dockitem->get_xid(), dockitem->get_group_name().c_str(),
@@ -216,7 +242,7 @@ namespace docklight
 
             //    Glib::RefPtr<Gtk::IconTheme> theme = Gtk::IconTheme::get_default();
             auto m_appmap = container->get_map();
-            /*for (auto it = m_appmap.begin(); it != m_appmap.end(); it++) {
+            for (auto it = m_appmap.begin(); it != m_appmap.end(); it++) {
                 //  for (const auto& item : container->get_appmap()) {
                 const Glib::RefPtr<DockItemIcon> dockitem = it->second;
 

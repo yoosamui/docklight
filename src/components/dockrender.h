@@ -22,7 +22,7 @@
 #include <gtkmm/drawingarea.h>
 
 #include "components/config.h"
-#include "components/dockitemcontainer.h"
+#include "components/dockitemprovider.h"
 #include "components/position.h"
 //  clang-format on
 
