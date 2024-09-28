@@ -30,9 +30,14 @@ namespace docklight
             return result;
         }
 
-        void set_window_position(guint required_size)
+        int m_cwindow_width = 0;
+        void set_window_position(guint required_size = 1000)
 
         {
+            gint w_width = required_size;
+            if (m_cwindow_width == w_width) return;
+            m_cwindow_width = w_width;
+
             // g_print("FORM POSITION:\n");
             //  wnck::get_docks();
             int area = config::get_dock_area();
@@ -41,8 +46,7 @@ namespace docklight
             // area = config::get_dock_area();
             // area += (geo.get_height() - wa.get_height());
 
-            g_print(" Print AREA %d\n", area);
-            struts::set_strut(true);
+            //  struts::set_strut(true);
             dock_alignment_t alignment = config::get_dock_alignment();
             Gdk::Rectangle workarea = get_workarea();
             ///////////////// auto const panel = m_window->get_panel();
@@ -93,10 +97,14 @@ namespace docklight
                     //   int diff = geo.get_height() - wa.get_height() - wa.get_y();
                     //
                     // TODO esta es  la nueva
-                    ypos = (wa.get_height() + std::abs(wa.get_y()) - area);
+                    //                    ypos = (wa.get_height() + std::abs(wa.get_y()) - area);
 
                     // esta es la vieja
-                    // ypos = workarea.get_y() + workarea.get_height() - area;
+                    ypos = workarea.get_y() + workarea.get_height() - area;
+                    g_print(
+                        "-------------POSITION:\nAREA %d\nypos %d\nwa Height %d\nrequested size: "
+                        "%d",
+                        area, ypos, workarea.get_height(), required_size);
 
                     //   50;  //+ std::abs(142 - m_window->get_height());
                     // area;  // - (geo.get_height() - wa.get_height() - wa.get_y());
@@ -127,11 +135,13 @@ namespace docklight
                 }
 
                 if (config::is_autohide_none()) {
-                    struts::set_strut(false);
+                    // n  struts::set_strut(false);
                 }
 
+                //   struts::set_strut(true);
                 m_window->resize(width, area);
                 m_window->move(xpos, ypos);
+                //                struts::set_strut(false);
             } else {
                 int height = required_size;
                 if (m_last_height == height) return;
@@ -172,12 +182,13 @@ namespace docklight
                 }
 
                 if (config::is_autohide_none()) {
-                    struts::set_strut(false);
+                    //    struts::set_strut(false);
                 }
 
                 m_window->resize(area, height);
                 m_window->move(xpos, ypos);
             }
+            struts::set_strut(false);
         }
 
         void get_docks()
@@ -226,105 +237,8 @@ namespace docklight
 
             void set_strut(bool reset)
             {
-                int area = config::get_dock_area();
-                long insets[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-                bool equal = false;
-                GtkWidget* toplevel = gtk_widget_get_toplevel(GTK_WIDGET(m_window->gobj()));
-                auto gdk_window = gtk_widget_get_window(toplevel);
-                if (gdk_window == nullptr) {
-                    g_critical("set_strut: gdk_window is null.");
-                    return;
-                }
-
-                // Gdk::Rectangle workarea = docklight::device::monitor::get_workarea();
-
-                Gdk::Rectangle workarea = device::monitor::get_geometry();
-                //   auto const location = config::get_dock_location();
-                //                  auto const location = config::get_dock_location();
-                auto const screen = device::display::get_default_screen();
-                auto const geo = get_monitor_geometry();
-
-                auto const location = dock_location_t::bottom;
-                g_print(".....................................IN\n");
-                // set the struts
-
-                insets[struts_position_t::bottom] =
-                    (area + screen->get_height()) - workarea.get_y() - workarea.get_height();
-                insets[struts_position_t::bottom_start] = workarea.get_x();
-                insets[struts_position_t::bottom_end] = workarea.get_x() + workarea.get_width();
-
-                /*switch (location) {
-                    case dock_location_t::top:
-                        insets[struts_position_t::top] = workarea.get_y() + area;
-                        insets[struts_position_t::top_start] = workarea.get_x();
-                        insets[struts_position_t::top_end] =
-                            workarea.get_x() + workarea.get_width();
-                        break;
-                    case dock_location_t::bottom:
-
-                        g_print(".....................................IN\n");
-                        // set the struts
-                        insets[struts_position_t::bottom] = (area + screen->get_height()) -
-                                                            workarea.get_y() -
-                                                            workarea.get_height();
-                        insets[struts_position_t::bottom_start] = workarea.get_x();
-                        insets[struts_position_t::bottom_end] =
-                            workarea.get_x() + workarea.get_width();
-
-                        break;
-                    case dock_location_t::left:
-
-                        // set the struts
-                        insets[struts_position_t::left] = workarea.get_x() + area;
-                        insets[struts_position_t::left_start] = workarea.get_y();
-                        insets[struts_position_t::left_end] =
-                            workarea.get_y() + workarea.get_height();
-
-                        break;
-
-                    case dock_location_t::right:
-
-                        // set the struts
-                        insets[struts_position_t::right] =
-                            (area + screen->get_width()) - workarea.get_x() - workarea.get_width();
-                        insets[struts_position_t::right_start] = workarea.get_y();
-                        insets[struts_position_t::right_end] =
-                            workarea.get_y() + workarea.get_height();
-
-                        break;
-
-                    default:
-                        break;
-                }*/
-                gdk_property_change(gdk_window, gdk_atom_intern("_NET_WM_STRUT_PARTIAL", FALSE),
-                                    gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
-                                    (unsigned char*)&insets, 12);
-
-                gdk_property_change(gdk_window, gdk_atom_intern("_NET_WM_STRUT", FALSE),
-                                    gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
-                                    (unsigned char*)&insets, 4);
-            }  // namespace struts
-        }      // namespace struts
-        namespace strutsXXXXXX
-        {
-            typedef enum struts_enum {
-                left = 0,
-                right = 1,
-                top = 2,
-                bottom = 3,
-                left_start = 4,
-                left_end = 5,
-                right_start = 6,
-                right_end = 7,
-                top_start = 8,
-                top_end = 9,
-                bottom_start = 10,
-                bottom_end = 11
-            } struts_position_t;
-
-            void set_strut(bool reset)
-            {
-                //  if (m_strut_set && !reset) return;
+                if (m_strut_set) return;
+                m_strut_set = true;
 
                 long insets[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
                 bool equal = false;
@@ -334,27 +248,30 @@ namespace docklight
                     g_critical("set_strut: gdk_window is null.");
                     return;
                 }
-
                 if (!reset) {
+                    g_print("IN STRUT\n");
                     int area = config::get_dock_area();
                     /*if (Panel_render::m_stm.m_decrease_factor > 0) {
                         area -= Panel_render::m_stm.m_decrease_factor;
                     }*/
-                    Gdk::Rectangle workarea = get_workarea();
-                    //                    Gdk::Rectangle workarea = device::monitor::get_geometry();
+                    // Gdk::Rectangle workarea =
+                    // device::monitor::get_current()->get_workarea();
+                    Gdk::Rectangle workarea = device::monitor::get_geometry();
                     auto const location = config::get_dock_location();
                     auto const screen = device::display::get_default_screen();
-                    auto const geo = get_monitor_geometry();
 
                     // clang-format off
             switch (location) {
                 case dock_location_t::top:
-                    insets[struts_position_t::top] = workarea.get_y() + area ;
+
+                    // set the struts
+                    insets[struts_position_t::top] = workarea.get_y() + area;
                     insets[struts_position_t::top_start] = workarea.get_x();
                     insets[struts_position_t::top_end] = workarea.get_x() + workarea.get_width();
+
                     break;
                 case dock_location_t::bottom:
-
+                    g_print("------------------in\n");
                     // set the struts
                     insets[struts_position_t::bottom] =(area + screen->get_height()) - workarea.get_y() - workarea.get_height();
                     insets[struts_position_t::bottom_start] = workarea.get_x();
@@ -377,6 +294,7 @@ namespace docklight
                     insets[struts_position_t::right_start] = workarea.get_y();
                     insets[struts_position_t::right_end] = workarea.get_y() + workarea.get_height();
 
+
                     break;
 
                 default:
@@ -385,8 +303,7 @@ namespace docklight
                     // clang-format on
                 }
 
-                m_strut_set = true;
-                // is equal nothing has changed
+                //// is equal nothing has changed
                 // if (equal) {
                 // return;
                 //}
@@ -400,8 +317,9 @@ namespace docklight
                                     (unsigned char*)&insets, 4);
             }
 
-        }  // namespace strutsXXXXXX
-    }      // namespace position
+        }  // namespace struts
+
+    }  // namespace position
 
 }  // namespace docklight
 

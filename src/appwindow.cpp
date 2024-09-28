@@ -80,8 +80,8 @@ namespace docklight
 
         // g_print("SIZE %d %d \n", x, y);
         wnck_set_client_type(WNCK_CLIENT_TYPE_PAGER);
-        m_appprovider = Glib::RefPtr<AppProvider>(new AppProvider());
 
+        m_appprovider = Glib::RefPtr<AppProvider>(new AppProvider());
         m_panel = new Panel();
         this->add(*m_panel);
         show_all();
@@ -140,6 +140,8 @@ namespace docklight
         std::cout << std::endl;
         AppWindow::send_notification(DOCKLIGHT_APPNAME, MSG_APPLICATION_START,
                                      "dialog-information");
+        // TODO ;; Test
+        position::set_window_position(100);
     }
 
     int AppWindow::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine>& command_line,
@@ -212,6 +214,7 @@ namespace docklight
             g_print("--->Press\n\n");
             g_print("\n");
 
+            position::struts::set_strut(false);
             // wnck::get_docks();
             return false;
 

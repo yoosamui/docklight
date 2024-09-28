@@ -83,61 +83,6 @@ namespace docklight
         }
 
         WnckWindowType wt = wnck_window_get_window_type(window);
-        /*
-                if (wt == WNCK_WINDOW_DOCK || wt == WNCK_WINDOW_TOOLBAR) {
-                    static int y = 0;
-                    static int x = 0;
-                    static int width = 0;
-                    static int height = 0;
-
-                    int yp = 0;
-                    int xp = 0;
-                    int widthp = 0;
-                    int heightp = 0;
-
-                    wnck_window_get_geometry(window, &xp, &yp, &widthp, &heightp);
-                    const char* instance_name = wnck_window_get_class_instance_name(window);
-                    g_print(">>[ %s ] %d %d - %d %d\n", instance_name, xp, yp, widthp, heightp);
-
-                    auto screenwidth = position::get_monitor_geometry().get_width();
-                    auto screenHeight = position::get_monitor_geometry().get_height();
-
-                    Frame frame = {xp, yp, widthp, heightp};
-                    if (isAtTop(frame)) {
-                        g_print("TOP\n");
-                    } else if (isAtBottom(frame, screenHeight)) {
-                        g_print("BOTTOM\n");
-
-                    } else if (isAtLeft(frame)) {
-                        g_print("LEFT\n");
-                    } else if (isAtRight(frame, screenwidth)) {
-                        g_print("RIGHT\n");
-                    }
-
-                    // if (widthp > heightp) {  // horizontal
-
-                    // g_print("Horizontal\n");
-                    // if (yp == 0) {
-                    // g_print("top\n");
-                    //} else {
-                    // g_print("bottom\n");
-                    //}
-                    //} else {  // v
-                    // g_print("vertical\n");
-                    // if (xp == 0) {
-                    // g_print("left\n");
-
-                    //} else {
-                    // g_print("right\n");
-                    //}
-                    //}
-
-                    // void                wnck_window_get_geometry            (WnckWindow *window,
-                    // int *xp,
-                    // int *yp,
-                    // int *widthp,
-                    // int *heightp);
-                }*/
 
         // clang-format off
             if (wt == WNCK_WINDOW_DESKTOP ||
@@ -151,10 +96,10 @@ namespace docklight
 
         gint32 xid = wnck_window_get_xid(window);
 
-        auto container = get_dockitem_provider();
+        auto provider = get_dockitem_provider();
         if (get_dockitem_provider()->exist(xid)) return;
 
-        container->insert(window);
+        // provider->insert(window);
 
         /*// i/////////////////// TEST
         Glib::RefPtr<Gdk::Pixbuf> pixbuf;
