@@ -81,7 +81,7 @@ namespace docklight
         // g_print("SIZE %d %d \n", x, y);
         wnck_set_client_type(WNCK_CLIENT_TYPE_PAGER);
 
-        // m_appprovider = Glib::RefPtr<AppProvider>(new AppProvider());
+        m_appprovider = Glib::RefPtr<AppProvider>(new AppProvider());
         m_panel = new Panel();
         this->add(*m_panel);
         show_all();

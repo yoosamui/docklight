@@ -251,52 +251,54 @@ namespace docklight
                     g_critical("set_strut: gdk_window is null.");
                     return;
                 }
-                if (!reset) {
-                    g_print("IN STRUT\n");
-                    int area = config::get_dock_area();
-                    auto monitor_geo = get_monitor_geometry();
-                    auto workarea_geo = device::monitor::get_workarea();
-                    int screen_width = 2560;  ///* screen->get_width();*/  // 2560;
-                    int screen_height = 1440;
-                    // area =(monitor_geo.get_height()-workarea_geo.get_height()) + (area/2);
-                    auto window_scale_factor = 1;
-                    /*if (Panel_render::m_stm.m_decrease_factor > 0) {
-                        area -= Panel_render::m_stm.m_decrease_factor;
-                    }*/
-                    // Gdk::Rectangle workarea =
-                    // device::monitor::get_current()->get_workarea();
-                    Gdk::Rectangle workarea = device::monitor::get_geometry();
-                    auto const location = config::get_dock_location();
-                    auto const screen = device::display::get_default_screen();
+                g_print("IN STRUT\n");
+                int area = config::get_dock_area();
+                auto monitor_geo = get_monitor_geometry();
+                auto workarea_geo = device::monitor::get_workarea();
+                int screen_width = 2560;  ///* screen->get_width();*/  // 2560;
+                int screen_height = 1440;
+                // area =(monitor_geo.get_height()-workarea_geo.get_height()) + (area/2);
+                auto window_scale_factor = 1;
+                /*if (Panel_render::m_stm.m_decrease_factor > 0) {
+                    area -= Panel_render::m_stm.m_decrease_factor;
+                }*/
+                // Gdk::Rectangle workarea =
+                // device::monitor::get_current()->get_workarea();
+                Gdk::Rectangle workarea = device::monitor::get_geometry();
+                auto const location = config::get_dock_location();
+                auto const screen = device::display::get_default_screen();
 
-                    // clang-format off
+                // clang-format off
             switch (location) {
                 case dock_location_t::top:
+                    g_print("------------------in T O P - TESTED WORKS+++\n");
 
-                    // set the struts
-                    area +=( monitor_geo.get_height() - workarea_geo.get_height() );
-                    insets[struts_position_t::top] = workarea.get_y() + area;
-                    insets[struts_position_t::top_start] = workarea.get_x();
-                    insets[struts_position_t::top_end] = workarea.get_x() + workarea.get_width();
+                    area +=  workarea_geo.get_y();
+                    insets[struts_position_t::top] = workarea.get_y() + area * window_scale_factor;
+                    insets[struts_position_t::top_start] = workarea.get_x() *  window_scale_factor;
+                    insets[struts_position_t::top_end] = (workarea.get_x() + workarea.get_width()) * window_scale_factor;
 
                     break;
                 case dock_location_t::bottom:
 
-                    g_print("------------------in B O T T O M\n");
+                    g_print("------------------in B O T T O M TESTED WORKS+++\n");
 
-                    // set the struts
-                    area += (monitor_geo.get_height()-workarea_geo.get_height()) - workarea_geo.get_y();
-                    insets[struts_position_t::bottom] =(area + screen->get_height()) - workarea.get_y() - workarea.get_height();
-                    insets[struts_position_t::bottom_start] = workarea.get_x();
-                    insets[struts_position_t::bottom_end] = workarea.get_x() + workarea.get_width();
+                   area += monitor_geo.get_height()- workarea_geo.get_height() -  workarea_geo.get_y() ;
+                    insets[struts_position_t::bottom] =(area + screen->get_height() - workarea.get_y() - workarea.get_height()) * 1;
+                    insets[struts_position_t::bottom_start] = workarea.get_y() * 1;
+                    insets[struts_position_t::bottom_end] = (workarea.get_y() + workarea.get_height()) * 1;
 
+// TODO BEST WORKING ++++
+                   //area += monitor_geo.get_height()- workarea_geo.get_height() -  workarea_geo.get_y() ;
+                    //insets[struts_position_t::bottom] =area + screen->get_height() - workarea.get_y() - workarea.get_height();
+                    //insets[struts_position_t::bottom_start] = workarea.get_y();
+                    //insets[struts_position_t::bottom_end] = workarea.get_y() + workarea.get_height();
                     break;
-                    }
-                case dock_location_t::left:
-                    g_print("LEFT %d\n",monitor_geo.get_width()- workarea_geo.get_width());
-                    // set the struts
-                    area += monitor_geo.get_width()- workarea_geo.get_width();
 
+                case dock_location_t::left:
+                    g_print("------------------in LEFT TESTED WORKS+++\n");
+
+                    area +=  workarea_geo.get_x();
                     insets[struts_position_t::left] = workarea.get_x() + area;
                     insets[struts_position_t::left_start] = workarea.get_y();
                     insets[struts_position_t::left_end] = workarea.get_y() + workarea.get_height();
@@ -317,27 +319,25 @@ namespace docklight
 
                 default:
                     break;
+}
+                // clang-format on
 
-                        // clang-format on
+                //// is equal nothing has changed
+                // if (equal) {
+                // return;
+                //}
 
-                        //// is equal nothing has changed
-                        // if (equal) {
-                        // return;
-                        //}
+                gdk_property_change(gdk_window, gdk_atom_intern("_NET_WM_STRUT_PARTIAL", FALSE),
+                                    gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
+                                    (unsigned char*)&insets, 12);
 
-                        gdk_property_change(gdk_window,
-                                            gdk_atom_intern("_NET_WM_STRUT_PARTIAL", FALSE),
-                                            gdk_atom_intern("CARDINAL", FALSE), 32,
-                                            GDK_PROP_MODE_REPLACE, (unsigned char*)&insets, 12);
+                gdk_property_change(gdk_window, gdk_atom_intern("_NET_WM_STRUT", FALSE),
+                                    gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
+                                    (unsigned char*)&insets, 4);
+            }
+        }  // namespace struts
 
-                        gdk_property_change(gdk_window, gdk_atom_intern("_NET_WM_STRUT", FALSE),
-                                            gdk_atom_intern("CARDINAL", FALSE), 32,
-                                            GDK_PROP_MODE_REPLACE, (unsigned char*)&insets, 4);
-                }
+    }  // namespace position
 
-            }  // namespace struts
-
-        }  // namespace position
-
-    }  // namespace docklight
+}  // namespace docklight
 
