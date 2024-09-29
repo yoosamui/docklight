@@ -306,7 +306,7 @@ namespace docklight
                     break;
 
                 case dock_location_t::right:
-                    g_print("RIGHT %d\n",monitor_geo.get_width()- workarea_geo.get_width());
+                    g_print("------------------in RIGHT TESTED WORKS+++\n");
 
                     // set the struts  WORK +++++++++
                     area += monitor_geo.get_width()- workarea_geo.get_width() - workarea_geo.get_x();
