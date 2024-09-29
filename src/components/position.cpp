@@ -237,66 +237,13 @@ namespace docklight
                 bottom_end = 11
             } struts_position_t;
 
-            void set_strutX(bool reset)
-            {
-                // GtkWidget* window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-                // GdkWindow* gdk_window = gtk_widget_get_window(window);
-                // auto const screen = device::display::get_default_screen();
-
-                //// Set strut sizes (adjust as needed)
-                // long insets[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-                ////                //   insets[4] = {20, 20, 40, 40};
-                //// unsigned int insets[] = {20, 20, 40, 40};
-                // int area = config::get_dock_area();
-                // Gdk::Rectangle workarea = device::monitor::get_geometry();
-
-                // insets[struts_position_t::bottom] = 64;
-                // insets[struts_position_t::left_end] = 2560;
-                // insets[struts_position_t::right_end] = 2560;
-                // insets[struts_position_t::top_end] = 2560;
-                // insets[struts_position_t::bottom_end] = 2560;
-                //// insets[struts_position_t::bottom] =
-                ////(area + screen->get_height()) - workarea.get_y() - workarea.get_height();
-                //// insets[struts_position_t::bottom_start] = workarea.get_x();
-                //// insets[struts_position_t::bottom_end] = workarea.get_x() +
-                /// workarea.get_width();
-
-                // gdk_property_change(gdk_window, gdk_atom_intern("_NET_WM_STRUT_PARTIAL", FALSE),
-                // gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
-                //(unsigned char*)&insets, 12);
-
-                // gdk_property_change(gdk_window, gdk_atom_intern("_NET_WM_STRUT", FALSE),
-                // gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
-                //(unsigned char*)&insets, 4);
-            }
-
             void set_strut(bool reset)
             {
                 //
 
                 if (m_strut_set) return;
                 m_strut_set = true;
-
-                // Create a window
-                /*GtkWidget* window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-                //                GtkWidget* window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-                // Set strut size (50 pixels at the bottom)
-                // GdkRectangle strut = {0, 0, 0, 50};
-                // gtk_window_set_geometry_hints(GTK_WINDOW(window), NULL, NULL, NULL, NULL, NULL,
-                //&strut, Gdk::WIDGET_POS_NONE);
-                // Set the minimum size to 200x200
-                GdkGeometry geometry;
-                geometry.min_width = 200;
-                geometry.min_height = 200;
-                // gtk_window_set_geometry_hints(GTK_WINDOW(window), NULL, &geometry,
-                // Gdk::HINT_MIN_SIZE);
-
-                gtk_window_set_geometry_hints(GTK_WINDOW(window), NULL, &geometry,
-                                              Gtk::HINT_MIN_SIZE);*/
-
-                //                int wx = m_window->get_x();
-
-                long insets[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+                long insets[12] = {0};
                 bool equal = false;
                 GtkWidget* toplevel = gtk_widget_get_toplevel(GTK_WIDGET(m_window->gobj()));
                 auto gdk_window = gtk_widget_get_window(toplevel);
@@ -334,106 +281,8 @@ namespace docklight
 
                     break;
                 case dock_location_t::bottom:
-{
-
 
                     g_print("------------------in B O T T O M\n");
-//monitor Model:DP-0.9
-//Geometry Width=2560
-//Geometry Height=1440
-//Workarea Width=2560
-//Workarea Height=1298
-
-                   // Gdk::Rectangle workarea = device::monitor::get_workarea();
-                   // int top_offset =64; //;
-
-                    // set the struts
-                    //insets[struts_position_t::right] = (area + screen->get_width()) - workarea.get_x() - workarea.get_width();
-                    //insets[struts_position_t::right_start] = workarea.get_y();
-                    //insets[struts_position_t::right_end] = workarea.get_y() + workarea.get_height();
-
-
-
-//     area = 128;
-// right WORK more or lest
-    //insets[struts_position_t::right] = screen_width - 64 ;
-    //insets[struts_position_t::right_start] = 64;// screen_width - 64 ;
-    //insets[struts_position_t::right_end] = screen_width - 64;
-                    // set the struts
-                    //insets[struts_position_t::right] = (area + screen->get_width()) - workarea.get_x() - workarea.get_width();
-                    //insets[struts_position_t::right_start] = workarea.get_y();
-                    //insets[struts_position_t::right_end] = workarea.get_y() + workarea.get_height();
-
-// right plank work to ++
-//insets [struts_position_t::right] = (area + screen_width - monitor_geo.get_x() - monitor_geo.get_width()) * window_scale_factor;
-//insets [struts_position_t::right_start] = monitor_geo.get_y() * window_scale_factor;
-//insets [struts_position_t::right_end] = (monitor_geo.get_y() + monitor_geo.get_height()) * window_scale_factor - 1;
-
-                    // set the struts JUAN OK
-                    //insets[struts_position_t::right] = (area + screen->get_width()) - workarea.get_x() - workarea.get_width();
-                    //insets[struts_position_t::right_start] = workarea.get_y();
-                    //insets[struts_position_t::right_end] = workarea.get_y() + workarea.get_height();
-
-    //insets[struts_position_t::right] = screen_width - 64;
-    //insets[struts_position_t::right_start] = screen_width - 64;
-    //insets[struts_position_t::right_end] = screen_width;
-
-
-
-                    //LEFT WORKS
-    /*area = 8;
-    insets[struts_position_t::left_start] =0;
-    insets[struts_position_t::left_end] =1; // Left margin of 1 pixel
-    insets[struts_position_t::left] = area; // Width of the left strut area*/
-
-
-                    //insets[struts_position_t::left] = workarea.get_x() + area;
-                    //insets[struts_position_t::left_start] = workarea.get_y();
-                    //insets[struts_position_t::left_end] = workarea.get_y() + workarea.get_height();
-
-
-
-// TOP
-                //insets[struts_position_t::top] = area;
-/////               insets[struts_position_t::left_end] = screen_width;;
-                //insets[struts_position_t::right_end] = screen_width;
-                //insets[struts_position_t::top_end] = area;// + area;
-                //insets[struts_position_t::bottom_end] = screen_height - area;
-// TOP WITH AREA
-
-    //insets[struts_position_t::top] = 0;
-    //insets[struts_position_t::bottom] = screen_height - 64;
-    //insets[struts_position_t::left_end] = 0;
-    //insets[struts_position_t::right_end] = 0;
-    //insets[struts_position_t::top_end] = 0;
-
-                //area*=2;
-                //insets[struts_position_t::top] = area;
-                //insets[struts_position_t::left_end] = screen_width;;
-                //insets[struts_position_t::right_end] = screen_width;
-                //insets[struts_position_t::top_end] =  area;
-                //insets[struts_position_t::bottom_end] = screen_height - area;
-
-
-// TOP CON OFFSET
-                //insets[struts_position_t::top] = top_offset;
-                //insets[struts_position_t::left_end] = screen_width;;
-                //insets[struts_position_t::right_end] = screen_width;
-                //insets[struts_position_t::top_end] = top_offset + area;
-                //insets[struts_position_t::bottom_end] = screen_height - area;
-//// BOTTOM WORKS
-                //insets[struts_position_t::bottom] = 64;
-                //insets[struts_position_t::left_end] = 2560;
-                //insets[struts_position_t::right_end] = 2560;
-                //insets[struts_position_t::top_end] = 2560;
-                //insets[struts_position_t::bottom_end] = 2560;
-
-
-
-                    // set the struts
-                    //insets[0] =(area + screen->get_height()) - workarea.get_y() - workarea.get_height();
-                    //insets[1] = workarea.get_x();
-                    //insets[2] = workarea.get_x() + workarea.get_width();
 
                     // set the struts
                     area += (monitor_geo.get_height()-workarea_geo.get_height()) - workarea_geo.get_y();
@@ -458,7 +307,7 @@ namespace docklight
                     g_print("RIGHT %d\n",monitor_geo.get_width()- workarea_geo.get_width());
 
                     // set the struts  WORK +++++++++
-                    area += monitor_geo.get_width()- workarea_geo.get_width();
+                    area += monitor_geo.get_width()- workarea_geo.get_width() - workarea_geo.get_x();
                     insets[struts_position_t::right] = (area + screen->get_width()) - workarea.get_x() - workarea.get_width() * window_scale_factor;
                     insets[struts_position_t::right_start] = workarea.get_y()* window_scale_factor;
                     insets[struts_position_t::right_end] =(workarea.get_y() + workarea.get_height()) * window_scale_factor - 1;
@@ -468,27 +317,27 @@ namespace docklight
 
                 default:
                     break;
-            }
-                    // clang-format on
+
+                        // clang-format on
+
+                        //// is equal nothing has changed
+                        // if (equal) {
+                        // return;
+                        //}
+
+                        gdk_property_change(gdk_window,
+                                            gdk_atom_intern("_NET_WM_STRUT_PARTIAL", FALSE),
+                                            gdk_atom_intern("CARDINAL", FALSE), 32,
+                                            GDK_PROP_MODE_REPLACE, (unsigned char*)&insets, 12);
+
+                        gdk_property_change(gdk_window, gdk_atom_intern("_NET_WM_STRUT", FALSE),
+                                            gdk_atom_intern("CARDINAL", FALSE), 32,
+                                            GDK_PROP_MODE_REPLACE, (unsigned char*)&insets, 4);
                 }
 
-                //// is equal nothing has changed
-                // if (equal) {
-                // return;
-                //}
+            }  // namespace struts
 
-                gdk_property_change(gdk_window, gdk_atom_intern("_NET_WM_STRUT_PARTIAL", FALSE),
-                                    gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
-                                    (unsigned char*)&insets, 12);
+        }  // namespace position
 
-                gdk_property_change(gdk_window, gdk_atom_intern("_NET_WM_STRUT", FALSE),
-                                    gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
-                                    (unsigned char*)&insets, 4);
-            }
-
-        }  // namespace struts
-
-    }  // namespace position
-
-}  // namespace docklight
+    }  // namespace docklight
 
