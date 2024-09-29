@@ -200,7 +200,7 @@ namespace docklight
                 auto workarea_geo = device::monitor::get_workarea();
 
                 int screen_width = screen->get_width();
-                int screen_height = screen->get_height();
+                int screen_height = 1440;  // screen->get_height();
                 auto window_scale_factor = 1;
                 /*if (Panel_render::m_stm.m_decrease_factor > 0) {
                     area -= Panel_render::m_stm.m_decrease_factor;
@@ -222,17 +222,17 @@ namespace docklight
                         break;
                     case dock_location_t::bottom:
 
-                        g_print("------------------in B O T T O M TESTED WORKS+++\n");
+                        g_print(
+                            "------------------in B O T T O M TESTED WORKS+++AREA: %d QA PASS\n",
+                            area);
+                        // clang-format off
+//                        area += monitor_geo.get_height() - workarea_geo.get_height() ;//-  workarea_geo.get_y();
 
-                        area += monitor_geo.get_height() - workarea_geo.get_height() -
-                                workarea_geo.get_y();
-                        insets[struts_position_t::bottom] =
-                            (area + screen->get_height() - workarea_geo.get_y() -
-                             workarea_geo.get_height()) *
-                            1;
+                        insets[struts_position_t::bottom] =  (area + screen->get_height() - workarea_geo.get_y() -   workarea_geo.get_height()) *     1;
                         insets[struts_position_t::bottom_start] = workarea_geo.get_y() * 1;
-                        insets[struts_position_t::bottom_end] =
-                            (workarea_geo.get_y() + workarea_geo.get_height()) * 1;
+                        insets[struts_position_t::bottom_end] = (workarea_geo.get_y() + workarea_geo.get_height()) * 1;
+
+                        // clang-format on
 
                         // TODO BEST WORKING ++++
                         // area += monitor_geo.get_height()- workarea_geo.get_height() -
