@@ -201,7 +201,7 @@ namespace docklight
 
                 int screen_width = screen->get_width();
                 int screen_height = 1440;  // screen->get_height();
-                auto window_scale_factor = 1;
+                auto scale_factor = 1;
                 /*if (Panel_render::m_stm.m_decrease_factor > 0) {
                     area -= Panel_render::m_stm.m_decrease_factor;
                 }*/
@@ -213,9 +213,9 @@ namespace docklight
 
                         // clang-format off
                       //  area += workarea_geo.get_y();
-                        insets[struts_position_t::top] = workarea_geo.get_y() + area * window_scale_factor;
-                        insets[struts_position_t::top_start] = workarea_geo.get_x() * window_scale_factor;
-                        insets[struts_position_t::top_end] = (workarea_geo.get_x() + workarea_geo.get_width()) * window_scale_factor;
+                        insets[struts_position_t::top] = workarea_geo.get_y() + area * scale_factor;
+                        insets[struts_position_t::top_start] = workarea_geo.get_x() * scale_factor;
+                        insets[struts_position_t::top_end] = (workarea_geo.get_x() + workarea_geo.get_width()) * scale_factor -1;
 
                         // clang-format on
                         break;
@@ -227,9 +227,9 @@ namespace docklight
                         // clang-format off
 //                        area += monitor_geo.get_height() - workarea_geo.get_height() ;//-  workarea_geo.get_y();
 
-                        insets[struts_position_t::bottom] =  (area + screen->get_height() - workarea_geo.get_y() -   workarea_geo.get_height()) *     1;
-                        insets[struts_position_t::bottom_start] = workarea_geo.get_y() * 1;
-                        insets[struts_position_t::bottom_end] = (workarea_geo.get_y() + workarea_geo.get_height()) * 1;
+                        insets[struts_position_t::bottom] =  (area + screen->get_height() - workarea_geo.get_y() -   workarea_geo.get_height()) *     scale_factor;
+                        insets[struts_position_t::bottom_start] = workarea_geo.get_y() * scale_factor;
+                        insets[struts_position_t::bottom_end] = (workarea_geo.get_y() + workarea_geo.get_height()) * scale_factor - 1;
 
                         // clang-format on
 
@@ -248,9 +248,9 @@ namespace docklight
 
                         // clang-format off
                         //                        area += workarea_geo.get_x();
-                        insets[struts_position_t::left] = (workarea_geo.get_x() + area) * 1;
+                        insets[struts_position_t::left] = (workarea_geo.get_x() + area) * scale_factor;
                         insets[struts_position_t::left_start] = workarea_geo.get_y() * 1;
-                        insets[struts_position_t::left_end] = (workarea_geo.get_y() + workarea_geo.get_height()) * 1;
+                        insets[struts_position_t::left_end] = (workarea_geo.get_y() + workarea_geo.get_height()) * scale_factor -1;
                         // clang-format on
 
                         break;
@@ -262,9 +262,9 @@ namespace docklight
                         // clang-format off
                         // set the struts  WORK +++++++++
 //                        area += monitor_geo.get_width() - workarea_geo.get_width() -                                workarea_geo.get_x();
-                        insets[struts_position_t::right] = (area + screen->get_width()) - workarea_geo.get_x() - workarea_geo.get_width() * window_scale_factor;
-                        insets[struts_position_t::right_start] =  workarea_geo.get_y() * window_scale_factor;
-                        insets[struts_position_t::right_end] = (workarea_geo.get_y() + workarea_geo.get_height()) *   window_scale_factor - 1;
+                        insets[struts_position_t::right] = (area + screen->get_width()) - workarea_geo.get_x() - workarea_geo.get_width() * scale_factor;
+                        insets[struts_position_t::right_start] =  workarea_geo.get_y() * scale_factor;
+                        insets[struts_position_t::right_end] = (workarea_geo.get_y() + workarea_geo.get_height()) *   scale_factor - 1;
 
                         // clang-format on
                         break;
