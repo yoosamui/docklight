@@ -78,8 +78,10 @@ namespace docklight
         // int x = m_window->get_width();
         // int y = m_window->get_height();
 
-        // g_print("SIZE %d %d \n", x, y);
-        wnck_set_client_type(WNCK_CLIENT_TYPE_PAGER);
+        //// g_print("SIZE %d %d \n", x, y)arning: ‘void wnck_set_client_type(WnckClientType)’ is
+        /// deprecated: Use 'wnck_handle_new' instead [-Wdeprecated-declarations]
+        // 82 |         wnck_set_client_type(WNCK_CLIENT_TYPE_PAGER);
+        //  wnck_set_client_type(WNCK_CLIENT_TYPE_PAGER);
 
         m_appprovider = Glib::RefPtr<AppProvider>(new AppProvider());
         m_panel = new Panel();
@@ -111,7 +113,10 @@ namespace docklight
         // sigc::mem_fun(this, &AppWindow::on_container_updated));
 
         config::load_file();
+
         position::init(*(this));
+
+        m_position = position::create(this);
         m_panel->init();
 
         return EXIT_SUCCESS;

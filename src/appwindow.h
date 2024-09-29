@@ -16,7 +16,7 @@
 #include "components/dockitemprovider.h"
 #include "components/TransparentWindow.h"
 #include "components/ExplodesWindow.h"
-
+//#include "components/position.h"
 // clang-format on
 
 //#include <gtkmm.h>
@@ -54,6 +54,7 @@ namespace docklight
       private:
         // instantiate listener
         Glib::RefPtr<AppProvider> m_appprovider;
+        Glib::RefPtr<position::PositionManager> m_position;
 
         //    bool on_timeout_draw();
         bool on_button_press_event(GdkEventButton* event) override;
@@ -77,9 +78,9 @@ namespace docklight
         // bool on_leave_notify_event(GdkEventCrossing* crossing_event);
 
       private:
-        Glib::RefPtr<Gtk::Window> m_window;
-        // sigc::connection m_sigc_updated;
-        // Glib::RefPtr<ExplodesWindow> m_composite;
+        // Glib::RefPtr<Gtk::Window> m_window;
+        //  sigc::connection m_sigc_updated;
+        //  Glib::RefPtr<ExplodesWindow> m_composite;
         ExplodesWindow m_composite;
         //  Glib::RefPtr<Panel> m_panel;
         static Panel* m_panel;

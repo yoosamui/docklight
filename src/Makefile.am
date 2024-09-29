@@ -37,6 +37,7 @@ utils/system.cpp \
 utils/pixbuf.cpp \
 utils/factory.cpp \
 utils/wnck.cpp \
+utils/struts.cpp \
 appwindow.cpp \
 appoptionsgroup.cpp \
 components/TransparentWindow.cpp \

@@ -1,6 +1,5 @@
 // clang-format off
 #include "components/position.h"
-#include "components/device.h"
 // clang-format on
 #include <gtkmm.h>
 namespace docklight
@@ -8,6 +7,16 @@ namespace docklight
 
     namespace position
     {
+        Glib::RefPtr<PositionManager> m_position_manager;
+        // TODO factory
+        Glib::RefPtr<PositionManager> create(Gtk::Window* window)
+        {
+            if (!m_position_manager) {
+                m_position_manager = Glib::RefPtr<PositionManager>(new PositionManager(window));
+            }
+            return m_position_manager;
+        }
+
         Gtk::Window* m_window = nullptr;
         int m_last_width = 0;
         int m_last_height = 0;
@@ -83,7 +92,7 @@ namespace docklight
                 }
 
                 if (config::is_autohide_none()) {
-                    //  struts::set_strut(false);
+                    struts::set_strut();
                 }
 
                 m_window->resize(width, area);
@@ -129,19 +138,17 @@ namespace docklight
                 }
 
                 if (config::is_autohide_none()) {
-                    //    struts::set_strut(false);
+                    struts::set_strut();
                 }
 
                 m_window->resize(area, height);
                 m_window->move(xpos, ypos);
             }
-            //   g_print("Setut set!!!!\n");
-            struts::set_strut(false);
         }
 
         void get_docks()
         {
-            wnck::get_docks();
+            /// wnck::get_docks();
         }
 
         Gdk::Rectangle get_monitor_geometry()
@@ -184,93 +191,96 @@ namespace docklight
                 bottom_end = 11
             } struts_position_t;
 
-            void set_strut(bool reset)
+            void set_strut(bool create)
             {
-                if (m_strut_set) return;
+                if (m_strut_set && create) return;
                 m_strut_set = true;
 
                 long insets[12] = {0};
 
                 g_print("IN STRUT\n");
-                auto const screen = device::display::get_default_screen();
+                if (create) {
+                    auto const screen = device::display::get_default_screen();
 
-                int area = config::get_dock_area();
+                    int area = config::get_dock_area();
 
-                auto monitor_geo = get_monitor_geometry();
-                auto workarea_geo = device::monitor::get_workarea();
+                    auto monitor_geo = get_monitor_geometry();
+                    auto workarea_geo = device::monitor::get_workarea();
 
-                int screen_width = screen->get_width();
-                int screen_height = 1440;  // screen->get_height();
-                auto scale_factor = 1;
-                /*if (Panel_render::m_stm.m_decrease_factor > 0) {
-                    area -= Panel_render::m_stm.m_decrease_factor;
-                }*/
-                auto const location = config::get_dock_location();
+                    int screen_width = screen->get_width();
+                    int screen_height = 1440;  // screen->get_height();
+                    auto scale_factor = 1;
+                    /*if (Panel_render::m_stm.m_decrease_factor > 0) {
+                        area -= Panel_render::m_stm.m_decrease_factor;
+                    }*/
+                    auto const location = config::get_dock_location();
 
-                switch (location) {
-                    case dock_location_t::top:
-                        g_print("------------------in T O P - TESTED WORKS+++QA PASS\n");
+                    switch (location) {
+                        case dock_location_t::top:
+                            g_print("------------------in T O P - TESTED WORKS+++QA PASS\n");
 
-                        // clang-format off
+                            // clang-format off
                       //  area += workarea_geo.get_y();
                         insets[struts_position_t::top] = workarea_geo.get_y() + area * scale_factor;
                         insets[struts_position_t::top_start] = workarea_geo.get_x() * scale_factor;
                         insets[struts_position_t::top_end] = (workarea_geo.get_x() + workarea_geo.get_width()) * scale_factor -1;
 
-                        // clang-format on
-                        break;
-                    case dock_location_t::bottom:
+                            // clang-format on
+                            break;
+                        case dock_location_t::bottom:
 
-                        g_print(
-                            "------------------in B O T T O M TESTED WORKS+++AREA: %d QA PASS\n",
-                            area);
-                        // clang-format off
+                            g_print(
+                                "------------------in B O T T O M TESTED WORKS+++AREA: %d QA "
+                                "PASS\n",
+                                area);
+                            // clang-format off
 //                        area += monitor_geo.get_height() - workarea_geo.get_height() ;//-  workarea_geo.get_y();
 
                         insets[struts_position_t::bottom] =  (area + screen->get_height() - workarea_geo.get_y() -   workarea_geo.get_height()) *     scale_factor;
                         insets[struts_position_t::bottom_start] = workarea_geo.get_y() * scale_factor;
                         insets[struts_position_t::bottom_end] = (workarea_geo.get_y() + workarea_geo.get_height()) * scale_factor - 1;
 
-                        // clang-format on
+                            // clang-format on
 
-                        // TODO BEST WORKING ++++
-                        // area += monitor_geo.get_height()- workarea_geo.get_height() -
-                        // workarea_geo.get_y() ; insets[struts_position_t::bottom] =area +
-                        // screen->get_height() - workarea.get_y() - workarea.get_height();
-                        // insets[struts_position_t::bottom_start] = workarea.get_y();
-                        // insets[struts_position_t::bottom_end] = workarea.get_y() +
-                        // workarea.get_height();
-                        break;
+                            // TODO BEST WORKING ++++
+                            // area += monitor_geo.get_height()- workarea_geo.get_height() -
+                            // workarea_geo.get_y() ; insets[struts_position_t::bottom] =area +
+                            // screen->get_height() - workarea.get_y() - workarea.get_height();
+                            // insets[struts_position_t::bottom_start] = workarea.get_y();
+                            // insets[struts_position_t::bottom_end] = workarea.get_y() +
+                            // workarea.get_height();
+                            break;
 
-                    case dock_location_t::left:
-                        g_print("------------------in LEFT  TESTED WORKS+++AREA: %d QA PASS\n",
-                                area);
+                        case dock_location_t::left:
+                            g_print("------------------in LEFT  TESTED WORKS+++AREA: %d QA PASS\n",
+                                    area);
 
-                        // clang-format off
+                            // clang-format off
                         //                        area += workarea_geo.get_x();
                         insets[struts_position_t::left] = (workarea_geo.get_x() + area) * scale_factor;
                         insets[struts_position_t::left_start] = workarea_geo.get_y() * 1;
                         insets[struts_position_t::left_end] = (workarea_geo.get_y() + workarea_geo.get_height()) * scale_factor -1;
-                        // clang-format on
+                            // clang-format on
 
-                        break;
+                            break;
 
-                    case dock_location_t::right:
-                        g_print("------------------in RIGHT TESTED WORKS+++AREA: %d QA PASS\n",
-                                area);
+                        case dock_location_t::right:
+                            g_print("------------------in RIGHT TESTED WORKS+++AREA: %d QA PASS\n",
+                                    area);
 
-                        // clang-format off
+                            // clang-format off
                         // set the struts  WORK +++++++++
 //                        area += monitor_geo.get_width() - workarea_geo.get_width() -                                workarea_geo.get_x();
                         insets[struts_position_t::right] = (area + screen->get_width()) - workarea_geo.get_x() - workarea_geo.get_width() * scale_factor;
                         insets[struts_position_t::right_start] =  workarea_geo.get_y() * scale_factor;
                         insets[struts_position_t::right_end] = (workarea_geo.get_y() + workarea_geo.get_height()) *   scale_factor - 1;
 
-                        // clang-format on
-                        break;
+                            // clang-format on
+                            break;
 
-                    default:
-                        break;
+                        default:
+                            break;
+                    }
                 }
 
                 GtkWidget* toplevel = gtk_widget_get_toplevel(GTK_WIDGET(m_window->gobj()));
