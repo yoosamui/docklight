@@ -2,7 +2,7 @@
 #include "components/position.h"
 #include "components/device.h"
 // clang-format on
-
+#include <gtkmm.h>
 namespace docklight
 {
 
@@ -46,7 +46,7 @@ namespace docklight
             // area = config::get_dock_area();
             // area += (geo.get_height() - wa.get_height());
 
-            //  struts::set_strut(true);
+            // struts::set_strut(false);
             dock_alignment_t alignment = config::get_dock_alignment();
             Gdk::Rectangle workarea = get_workarea();
             ///////////////// auto const panel = m_window->get_panel();
@@ -176,7 +176,8 @@ namespace docklight
                 }
 
                 if (config::get_dock_location() == dock_location_t::right) {
-                    xpos = workarea.get_x() + workarea.get_width() - area;
+                    // xpos = workarea.get_x() + workarea.get_width() - area;
+                    xpos = workarea.get_width() - area;
                 } else {
                     xpos = workarea.get_x();
                 }
@@ -188,6 +189,7 @@ namespace docklight
                 m_window->resize(area, height);
                 m_window->move(xpos, ypos);
             }
+            //   g_print("Setut set!!!!\n");
             struts::set_strut(false);
         }
 
@@ -235,10 +237,64 @@ namespace docklight
                 bottom_end = 11
             } struts_position_t;
 
+            void set_strutX(bool reset)
+            {
+                // GtkWidget* window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+                // GdkWindow* gdk_window = gtk_widget_get_window(window);
+                // auto const screen = device::display::get_default_screen();
+
+                //// Set strut sizes (adjust as needed)
+                // long insets[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+                ////                //   insets[4] = {20, 20, 40, 40};
+                //// unsigned int insets[] = {20, 20, 40, 40};
+                // int area = config::get_dock_area();
+                // Gdk::Rectangle workarea = device::monitor::get_geometry();
+
+                // insets[struts_position_t::bottom] = 64;
+                // insets[struts_position_t::left_end] = 2560;
+                // insets[struts_position_t::right_end] = 2560;
+                // insets[struts_position_t::top_end] = 2560;
+                // insets[struts_position_t::bottom_end] = 2560;
+                //// insets[struts_position_t::bottom] =
+                ////(area + screen->get_height()) - workarea.get_y() - workarea.get_height();
+                //// insets[struts_position_t::bottom_start] = workarea.get_x();
+                //// insets[struts_position_t::bottom_end] = workarea.get_x() +
+                /// workarea.get_width();
+
+                // gdk_property_change(gdk_window, gdk_atom_intern("_NET_WM_STRUT_PARTIAL", FALSE),
+                // gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
+                //(unsigned char*)&insets, 12);
+
+                // gdk_property_change(gdk_window, gdk_atom_intern("_NET_WM_STRUT", FALSE),
+                // gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
+                //(unsigned char*)&insets, 4);
+            }
+
             void set_strut(bool reset)
             {
+                //
+
                 if (m_strut_set) return;
                 m_strut_set = true;
+
+                // Create a window
+                /*GtkWidget* window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+                //                GtkWidget* window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+                // Set strut size (50 pixels at the bottom)
+                // GdkRectangle strut = {0, 0, 0, 50};
+                // gtk_window_set_geometry_hints(GTK_WINDOW(window), NULL, NULL, NULL, NULL, NULL,
+                //&strut, Gdk::WIDGET_POS_NONE);
+                // Set the minimum size to 200x200
+                GdkGeometry geometry;
+                geometry.min_width = 200;
+                geometry.min_height = 200;
+                // gtk_window_set_geometry_hints(GTK_WINDOW(window), NULL, &geometry,
+                // Gdk::HINT_MIN_SIZE);
+
+                gtk_window_set_geometry_hints(GTK_WINDOW(window), NULL, &geometry,
+                                              Gtk::HINT_MIN_SIZE);*/
+
+                //                int wx = m_window->get_x();
 
                 long insets[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
                 bool equal = false;
@@ -251,6 +307,12 @@ namespace docklight
                 if (!reset) {
                     g_print("IN STRUT\n");
                     int area = config::get_dock_area();
+                    auto monitor_geo = get_monitor_geometry();
+                    auto workarea_geo = device::monitor::get_workarea();
+                    int screen_width = 2560;  ///* screen->get_width();*/  // 2560;
+                    int screen_height = 1440;
+                    // area =(monitor_geo.get_height()-workarea_geo.get_height()) + (area/2);
+                    auto window_scale_factor = 1;
                     /*if (Panel_render::m_stm.m_decrease_factor > 0) {
                         area -= Panel_render::m_stm.m_decrease_factor;
                     }*/
@@ -265,22 +327,127 @@ namespace docklight
                 case dock_location_t::top:
 
                     // set the struts
+                    area +=( monitor_geo.get_height() - workarea_geo.get_height() );
                     insets[struts_position_t::top] = workarea.get_y() + area;
                     insets[struts_position_t::top_start] = workarea.get_x();
                     insets[struts_position_t::top_end] = workarea.get_x() + workarea.get_width();
 
                     break;
                 case dock_location_t::bottom:
-                    g_print("------------------in\n");
+{
+
+
+                    g_print("------------------in B O T T O M\n");
+//monitor Model:DP-0.9
+//Geometry Width=2560
+//Geometry Height=1440
+//Workarea Width=2560
+//Workarea Height=1298
+
+                   // Gdk::Rectangle workarea = device::monitor::get_workarea();
+                   // int top_offset =64; //;
+
                     // set the struts
+                    //insets[struts_position_t::right] = (area + screen->get_width()) - workarea.get_x() - workarea.get_width();
+                    //insets[struts_position_t::right_start] = workarea.get_y();
+                    //insets[struts_position_t::right_end] = workarea.get_y() + workarea.get_height();
+
+
+
+//     area = 128;
+// right WORK more or lest
+    //insets[struts_position_t::right] = screen_width - 64 ;
+    //insets[struts_position_t::right_start] = 64;// screen_width - 64 ;
+    //insets[struts_position_t::right_end] = screen_width - 64;
+                    // set the struts
+                    //insets[struts_position_t::right] = (area + screen->get_width()) - workarea.get_x() - workarea.get_width();
+                    //insets[struts_position_t::right_start] = workarea.get_y();
+                    //insets[struts_position_t::right_end] = workarea.get_y() + workarea.get_height();
+
+// right plank work to ++
+//insets [struts_position_t::right] = (area + screen_width - monitor_geo.get_x() - monitor_geo.get_width()) * window_scale_factor;
+//insets [struts_position_t::right_start] = monitor_geo.get_y() * window_scale_factor;
+//insets [struts_position_t::right_end] = (monitor_geo.get_y() + monitor_geo.get_height()) * window_scale_factor - 1;
+
+                    // set the struts JUAN OK
+                    //insets[struts_position_t::right] = (area + screen->get_width()) - workarea.get_x() - workarea.get_width();
+                    //insets[struts_position_t::right_start] = workarea.get_y();
+                    //insets[struts_position_t::right_end] = workarea.get_y() + workarea.get_height();
+
+    //insets[struts_position_t::right] = screen_width - 64;
+    //insets[struts_position_t::right_start] = screen_width - 64;
+    //insets[struts_position_t::right_end] = screen_width;
+
+
+
+                    //LEFT WORKS
+    /*area = 8;
+    insets[struts_position_t::left_start] =0;
+    insets[struts_position_t::left_end] =1; // Left margin of 1 pixel
+    insets[struts_position_t::left] = area; // Width of the left strut area*/
+
+
+                    //insets[struts_position_t::left] = workarea.get_x() + area;
+                    //insets[struts_position_t::left_start] = workarea.get_y();
+                    //insets[struts_position_t::left_end] = workarea.get_y() + workarea.get_height();
+
+
+
+// TOP
+                //insets[struts_position_t::top] = area;
+/////               insets[struts_position_t::left_end] = screen_width;;
+                //insets[struts_position_t::right_end] = screen_width;
+                //insets[struts_position_t::top_end] = area;// + area;
+                //insets[struts_position_t::bottom_end] = screen_height - area;
+// TOP WITH AREA
+
+    //insets[struts_position_t::top] = 0;
+    //insets[struts_position_t::bottom] = screen_height - 64;
+    //insets[struts_position_t::left_end] = 0;
+    //insets[struts_position_t::right_end] = 0;
+    //insets[struts_position_t::top_end] = 0;
+
+                //area*=2;
+                //insets[struts_position_t::top] = area;
+                //insets[struts_position_t::left_end] = screen_width;;
+                //insets[struts_position_t::right_end] = screen_width;
+                //insets[struts_position_t::top_end] =  area;
+                //insets[struts_position_t::bottom_end] = screen_height - area;
+
+
+// TOP CON OFFSET
+                //insets[struts_position_t::top] = top_offset;
+                //insets[struts_position_t::left_end] = screen_width;;
+                //insets[struts_position_t::right_end] = screen_width;
+                //insets[struts_position_t::top_end] = top_offset + area;
+                //insets[struts_position_t::bottom_end] = screen_height - area;
+//// BOTTOM WORKS
+                //insets[struts_position_t::bottom] = 64;
+                //insets[struts_position_t::left_end] = 2560;
+                //insets[struts_position_t::right_end] = 2560;
+                //insets[struts_position_t::top_end] = 2560;
+                //insets[struts_position_t::bottom_end] = 2560;
+
+
+
+                    // set the struts
+                    //insets[0] =(area + screen->get_height()) - workarea.get_y() - workarea.get_height();
+                    //insets[1] = workarea.get_x();
+                    //insets[2] = workarea.get_x() + workarea.get_width();
+
+                    // set the struts
+                    area += (monitor_geo.get_height()-workarea_geo.get_height()) - workarea_geo.get_y();
                     insets[struts_position_t::bottom] =(area + screen->get_height()) - workarea.get_y() - workarea.get_height();
                     insets[struts_position_t::bottom_start] = workarea.get_x();
                     insets[struts_position_t::bottom_end] = workarea.get_x() + workarea.get_width();
 
                     break;
+                    }
                 case dock_location_t::left:
-
+                    g_print("LEFT %d\n",monitor_geo.get_width()- workarea_geo.get_width());
                     // set the struts
+                    area += monitor_geo.get_width()- workarea_geo.get_width();
+
                     insets[struts_position_t::left] = workarea.get_x() + area;
                     insets[struts_position_t::left_start] = workarea.get_y();
                     insets[struts_position_t::left_end] = workarea.get_y() + workarea.get_height();
@@ -288,11 +455,13 @@ namespace docklight
                     break;
 
                 case dock_location_t::right:
+                    g_print("RIGHT %d\n",monitor_geo.get_width()- workarea_geo.get_width());
 
-                    // set the struts
-                    insets[struts_position_t::right] = (area + screen->get_width()) - workarea.get_x() - workarea.get_width();
-                    insets[struts_position_t::right_start] = workarea.get_y();
-                    insets[struts_position_t::right_end] = workarea.get_y() + workarea.get_height();
+                    // set the struts  WORK +++++++++
+                    area += monitor_geo.get_width()- workarea_geo.get_width();
+                    insets[struts_position_t::right] = (area + screen->get_width()) - workarea.get_x() - workarea.get_width() * window_scale_factor;
+                    insets[struts_position_t::right_start] = workarea.get_y()* window_scale_factor;
+                    insets[struts_position_t::right_end] =(workarea.get_y() + workarea.get_height()) * window_scale_factor - 1;
 
 
                     break;

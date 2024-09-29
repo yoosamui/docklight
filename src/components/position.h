@@ -35,7 +35,9 @@ namespace docklight
         namespace struts
         {
             void set_strut(bool reset);
-        }
-    }  // namespace position
+            void set_strutX(bool reset);
+
+        }  // namespace struts
+    }      // namespace position
 
 }  // namespace docklight
