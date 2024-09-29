@@ -209,16 +209,15 @@ namespace docklight
 
                 switch (location) {
                     case dock_location_t::top:
-                        g_print("------------------in T O P - TESTED WORKS+++\n");
+                        g_print("------------------in T O P - TESTED WORKS+++QA PASS\n");
 
-                        area += workarea_geo.get_y();
-                        insets[struts_position_t::top] =
-                            workarea_geo.get_y() + area * window_scale_factor;
-                        insets[struts_position_t::top_start] =
-                            workarea_geo.get_x() * window_scale_factor;
-                        insets[struts_position_t::top_end] =
-                            (workarea_geo.get_x() + workarea_geo.get_width()) * window_scale_factor;
+                        // clang-format off
+                      //  area += workarea_geo.get_y();
+                        insets[struts_position_t::top] = workarea_geo.get_y() + area * window_scale_factor;
+                        insets[struts_position_t::top_start] = workarea_geo.get_x() * window_scale_factor;
+                        insets[struts_position_t::top_end] = (workarea_geo.get_x() + workarea_geo.get_width()) * window_scale_factor;
 
+                        // clang-format on
                         break;
                     case dock_location_t::bottom:
 
