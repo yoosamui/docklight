@@ -42,6 +42,11 @@ namespace docklight
             return device::monitor::get_workarea();
         }
 
+        Gdk::Rectangle PositionManager::get_monitor() const
+        {
+            return device::monitor::get_geometry();
+        }
+
         Gdk::Rectangle PositionManager::get_background_region() const
         {
             return Gdk::Rectangle(0, 0, m_window->get_width(), m_window->get_height());
@@ -54,9 +59,10 @@ namespace docklight
 
             g_message("Position request: %d", required_size);
             int area = config::get_dock_area();
-
+            //   set_struts();
             dock_alignment_t alignment = config::get_dock_alignment();
             auto workarea = get_workarea();
+            auto monitor = get_monitor();
 
             int xpos = 0, ypos = 0, center = 0;
             if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
@@ -83,6 +89,7 @@ namespace docklight
                     default:  // fill
                         xpos = workarea.get_x();
                         width = workarea.get_width();
+                        break;
                 }
 
                 if (config::get_dock_location() == dock_location_t::bottom) {
@@ -91,12 +98,12 @@ namespace docklight
                     ypos = workarea.get_y();
                 }
 
-                if (config::is_autohide_none()) {
-                    m_struts.set_struts();
-                }
-
                 m_window->resize(width, area);
                 m_window->move(xpos, ypos);
+
+                if (config::is_autohide_none()) {
+                    //  m_struts.set_struts(true);
+                }
 
             } else  // orientation vertical
             {
@@ -130,15 +137,21 @@ namespace docklight
                     // xpos = workarea.get_x() + workarea.get_width() - area;
                     xpos = workarea.get_width() - area;
                 } else {
-                    xpos = workarea.get_x();
-                }
+                    auto diff = monitor.get_width() - workarea.get_width();
 
-                if (config::is_autohide_none()) {
-                    m_struts.set_struts();
+                    //  xpos = workarea.get_x() + diff;  // area;
+                    xpos = monitor.get_x() + diff - area;
+                    if (xpos < 0) xpos = 0;
+                    //   int offset =
+                    //   xpos = monitor.get_x();
                 }
 
                 m_window->resize(area, height);
                 m_window->move(xpos, ypos);
+
+                if (config::is_autohide_none()) {
+                    //                    m_struts.set_struts(true);
+                }
             }
         }
     }  // namespace position

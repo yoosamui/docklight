@@ -8,6 +8,7 @@ namespace docklight::position
     Struts::Struts()
     {
         g_message("create Struts.");
+        //        set_struts();
     }
 
     Struts::~Struts()
@@ -23,7 +24,6 @@ namespace docklight::position
     void Struts::set_struts(bool create)
     {
         if (m_strut_set && create) return;
-        m_strut_set = true;
 
         long insets[12] = {0};
 
@@ -61,9 +61,31 @@ namespace docklight::position
                     // clang-format on
             }
 
-            g_message("Struts request has bin set.");
+            m_strut_set = true;
         }
 
+        set_insets(insets);
+
+        //        set_insets(insets);
+        GtkWidget* toplevel = gtk_widget_get_toplevel(GTK_WIDGET(m_window->gobj()));
+        auto gdk_window = gtk_widget_get_window(toplevel);
+        if (!gdk_window) {
+            g_warning("set_strut: gdk_window is null.");
+            return;
+        }
+        gdk_property_change(gdk_window, gdk_atom_intern("_NET_WM_STRUT_PARTIAL", FALSE),
+                            gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
+                            (unsigned char*)&insets, 12);
+
+        gdk_property_change(gdk_window, gdk_atom_intern("_NET_WM_STRUT", FALSE),
+                            gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
+                            (unsigned char*)&insets, 4);
+
+        g_message("Struts request has bin set.");
+    }
+
+    /*void struts::remove_struts(long& insets)
+    {
         GtkWidget* toplevel = gtk_widget_get_toplevel(GTK_WIDGET(m_window->gobj()));
         auto gdk_window = gtk_widget_get_window(toplevel);
         if (!gdk_window) {
@@ -77,5 +99,5 @@ namespace docklight::position
         gdk_property_change(gdk_window, gdk_atom_intern("_NET_WM_STRUT", FALSE),
                             gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
                             (unsigned char*)&insets, 4);
-    }
+    }*/
 }  // namespace docklight::position

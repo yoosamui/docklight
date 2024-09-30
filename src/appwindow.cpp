@@ -83,8 +83,8 @@ namespace docklight
         // 82 |         wnck_set_client_type(WNCK_CLIENT_TYPE_PAGER);
         //  wnck_set_client_type(WNCK_CLIENT_TYPE_PAGER);
 
-        m_position = position::create(this);
         m_observer = Glib::RefPtr<AppObserver>(new AppObserver());
+        m_position = position::create(this);
         m_panel = new Panel();
         this->add(*m_panel);
         show_all();
@@ -222,6 +222,7 @@ namespace docklight
             g_print("--->Press\n\n");
             g_print("\n");
 
+            m_position->set_struts();
             // position::struts::set_strut(false);
             // wnck::get_docks();
             return false;

@@ -18,9 +18,16 @@ namespace docklight::position
 
         const Gtk::Window* get_window() const;
         Gdk::Rectangle get_workarea() const;
+        Gdk::Rectangle get_monitor() const;
         Gdk::Rectangle get_background_region() const;
 
         void set_position(guint required_size);
+        void set_struts()
+        {
+            //
+
+            m_struts.set_struts();
+        }
 
       private:
         Struts m_struts;
