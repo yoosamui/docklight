@@ -93,16 +93,39 @@ namespace docklight
                 }
 
                 if (config::get_dock_location() == dock_location_t::bottom) {
-                    ypos = workarea.get_y() + workarea.get_height() - area;
+                    ypos = workarea.get_height() + workarea.get_y();
+
                 } else {
-                    ypos = workarea.get_y();
+                    // top
+
+                    // ypos = workarea.get_y() - area;
+                    // if (ypos < 0) {
+                    // ypos += area;
+                    //}
+                    // ypos = workarea.get_y();  // - area;
+                    // if (ypos < 0) {
+                    //// ypos = workarea.get_y() - area;
+                    //}
+
+                    if (workarea.get_y() > 0) {
+                        ypos = workarea.get_y() - area;
+                    } else {
+                        ypos = 0;
+                    }
+                    // else {
+                    // ypos = 0;
+                    //}
                 }
 
+                // vor the move setzen
+                if (config::is_autohide_none()) {
+                    m_struts.set_struts();
+                }
                 m_window->resize(width, area);
                 m_window->move(xpos, ypos);
 
                 if (config::is_autohide_none()) {
-                    //  m_struts.set_struts(true);
+                    // n  m_struts.set_struts(true);
                 }
 
             } else  // orientation vertical
@@ -134,23 +157,56 @@ namespace docklight
                 }
 
                 if (config::get_dock_location() == dock_location_t::right) {
-                    // xpos = workarea.get_x() + workarea.get_width() - area;
-                    xpos = workarea.get_width() - area;
-                } else {
-                    auto diff = monitor.get_width() - workarea.get_width();
+                    // Right
+                    xpos = workarea.get_width();
+                    if (workarea.get_x() != 0) {
+                        xpos = workarea.get_width() + workarea.get_x();  // + area;
+                    }
 
-                    //  xpos = workarea.get_x() + diff;  // area;
-                    xpos = monitor.get_x() + diff - area;
-                    if (xpos < 0) xpos = 0;
-                    //   int offset =
-                    //   xpos = monitor.get_x();
+                    if (workarea.get_width() < monitor.get_width()) {
+                        // if (workarea.get_x() != 0) {
+                        // g_print("'''''''''''''''''''''''''''''' COMP-1");
+                        // xpos = workarea.get_width() - area;
+
+                        //} else {
+                        // g_print("'''''''''''''''''''''''''''''' COMP-2");
+                        // xpos = workarea.get_width();
+                        //}
+                        auto diff = monitor.get_width() - workarea.get_width();
+
+                        // if (diff < area) {
+                        // xpos = monitor.get_width() - area;
+                        //}
+
+                        g_print("'''''''''''''''''''''''''''''' COMP-1");
+                        // xpos = workarea.get_width();
+                        // if (xpos < area) {
+                        //}
+
+                    } else {
+                        // g_print("'''''''''''''''''''''''''''''' COMP-3");
+                        // xpos = monitor.get_width() - area;
+                    }
+
+                } else {
+                    // Left
+                    if (workarea.get_x() > 0) {
+                        xpos = workarea.get_x() - area;
+                    } else {
+                        xpos = 0;
+                    }
+                }
+
+                // vor the move setzen
+                if (config::is_autohide_none()) {
+                    m_struts.set_struts();
                 }
 
                 m_window->resize(area, height);
                 m_window->move(xpos, ypos);
 
                 if (config::is_autohide_none()) {
-                    //                    m_struts.set_struts(true);
+                    // m_struts.set_struts(true);
                 }
             }
         }
