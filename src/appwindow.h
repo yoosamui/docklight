@@ -11,7 +11,7 @@
 #include "components/config.h"
 
 
-#include "components/appupdater.h" //AppProvider
+#include "components/appobserver.h" //AppProvider
 
 #include "components/dockitemprovider.h"
 #include "components/TransparentWindow.h"
@@ -53,7 +53,7 @@ namespace docklight
         // Config* m_config = Config::getInstance();
       private:
         // instantiate listener
-        Glib::RefPtr<AppProvider> m_appprovider;
+        Glib::RefPtr<AppObserver> m_observer;
         Glib::RefPtr<position::PositionManager> m_position;
 
         //    bool on_timeout_draw();

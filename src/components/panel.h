@@ -12,6 +12,7 @@
 //#include <ctime>
 #include "dockitemprovider.h"
 #include "components/TransparentWindow.h"
+#include "components/position.h"
 #include "components/dockrender.h"
 // clang-format on
 
@@ -24,13 +25,14 @@ namespace docklight
         Panel();
         ~Panel();
         void init();
-        void container_updated() const;
+        void container_updated(guint explicit_size = 0) const;
 
       private:
         sigc::connection m_sigc_draw;
         sigc::connection m_sigc_updated;
 
-        //  Glib::RefPtr<DockCell> m_cell;
+        Glib::RefPtr<position::PositionManager> m_position;
+
         bool on_button_press_event(GdkEventButton* event);
         bool on_motion_notify_event(GdkEventMotion* event);
         void on_container_updated(window_action_t action, int index);

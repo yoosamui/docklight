@@ -68,12 +68,12 @@ namespace docklight
         // m_window->show();
         // m_window->maximize();
 
-        Gdk::Rectangle wa = device::monitor::get_workarea();
+        /*Gdk::Rectangle wa = device::monitor::get_workarea();
         Gdk::Rectangle geo = device::monitor::get_geometry();
-        g_print("---------------geo %d %d %d %d\n", geo.get_x(), geo.get_y(), geo.get_width(),
-                geo.get_height());
-        g_print("---------------WA %d %d %d %d\n", wa.get_x(), wa.get_y(), wa.get_width(),
-                wa.get_height());
+        g_message("Monitor size %d %d %d %d\n", geo.get_x(), geo.get_y(), geo.get_width(),
+                  geo.get_height());
+        g_message("Workarea size %d %d %d %d\n", wa.get_x(), wa.get_y(), wa.get_width(),
+                  wa.get_height());*/
 
         // int x = m_window->get_width();
         // int y = m_window->get_height();
@@ -83,10 +83,12 @@ namespace docklight
         // 82 |         wnck_set_client_type(WNCK_CLIENT_TYPE_PAGER);
         //  wnck_set_client_type(WNCK_CLIENT_TYPE_PAGER);
 
-        m_appprovider = Glib::RefPtr<AppProvider>(new AppProvider());
+        m_position = position::create(this);
+        m_observer = Glib::RefPtr<AppObserver>(new AppObserver());
         m_panel = new Panel();
         this->add(*m_panel);
         show_all();
+        g_message("Create AppWindow.");
     }
 
     AppWindow::~AppWindow()
@@ -114,11 +116,12 @@ namespace docklight
 
         config::load_file();
 
-        position::init(*(this));
+        // position::init(*(this));
 
-        m_position = position::create(this);
         m_panel->init();
 
+        //// TODO use for test
+        // m_position->set_position(1000);
         return EXIT_SUCCESS;
     }
 
@@ -145,8 +148,6 @@ namespace docklight
         std::cout << std::endl;
         AppWindow::send_notification(DOCKLIGHT_APPNAME, MSG_APPLICATION_START,
                                      "dialog-information");
-        // TODO ;; Test
-        position::set_window_position(100);
     }
 
     int AppWindow::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine>& command_line,
@@ -182,6 +183,8 @@ namespace docklight
             // iadd args to config
             config::AddArgs(args_list);
         }
+
+        m_panel->container_updated(224);
 
         std::cout << "\n" << MSG_DISPLAY_DETECTED_MONITORS << " :" << std::endl;
 
@@ -219,7 +222,7 @@ namespace docklight
             g_print("--->Press\n\n");
             g_print("\n");
 
-            position::struts::set_strut(false);
+            // position::struts::set_strut(false);
             // wnck::get_docks();
             return false;
 

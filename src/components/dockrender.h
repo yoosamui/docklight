@@ -63,6 +63,10 @@ namespace docklight
         Cairo::RefPtr<Cairo::Context> m_bck_ctx;
         Cairo::RefPtr<Cairo::Context> m_cell_ctx;
         Cairo::RefPtr<Cairo::Context> m_indicator_ctx;
+
+
+
+        Glib::RefPtr<position::PositionManager> m_position;
     };
 
 }  // namespace docklight

@@ -5,9 +5,9 @@
 namespace docklight::position
 {
 
-    Struts::Struts(Gtk::Window* window)
+    Struts::Struts()
     {
-        m_window = window;
+        g_message("create Struts.");
     }
 
     Struts::~Struts()
@@ -15,14 +15,18 @@ namespace docklight::position
         //
     }
 
-    inline void Struts::set_struts(bool create)
+    void Struts::init(Gtk::Window* window)
+    {
+        m_window = window;
+    }
+
+    void Struts::set_struts(bool create)
     {
         if (m_strut_set && create) return;
         m_strut_set = true;
 
         long insets[12] = {0};
 
-        g_print("IN STRUT\n");
         if (create) {
             auto const screen = device::display::get_default_screen();
             auto const location = config::get_dock_location();
@@ -56,6 +60,8 @@ namespace docklight::position
                     break;
                     // clang-format on
             }
+
+            g_message("Struts request has bin set.");
         }
 
         GtkWidget* toplevel = gtk_widget_get_toplevel(GTK_WIDGET(m_window->gobj()));

@@ -1,6 +1,6 @@
 #include "wnck.h"
 
-#include "components/appupdater.h"
+//#include "components/appupdater.h"
 
 namespace docklight
 {

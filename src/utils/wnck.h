@@ -6,10 +6,10 @@
 #include <gtkmm/window.h>
 #include <libwnck/libwnck.h>
 //#include "DockItem.h"
-//#include "common.h"
-
 #include <X11/X.h>
 #include <gdk/gdkx.h>
+
+#include "constants.h"
 
 namespace docklight
 {

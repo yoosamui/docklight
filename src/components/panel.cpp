@@ -41,12 +41,15 @@ namespace docklight
                    Gdk::SMOOTH_SCROLL_MASK | Gdk::POINTER_MOTION_HINT_MASK |
                    Gdk::FOCUS_CHANGE_MASK | Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK |
                    Gdk::POINTER_MOTION_HINT_MASK | Gdk::POINTER_MOTION_MASK);
+        g_message("Create Panel.");
     }
 
     void Panel::init()
     {
         m_sigc_updated = get_dockitem_provider()->signal_update().connect(
             sigc::mem_fun(this, &Panel::on_container_updated));
+
+        m_position = position::get();
 
         // frame_time = GLib.get_monotonic_time();
     }
@@ -160,19 +163,19 @@ namespace docklight
         return m_surfaceIcon;
     }*/
 
-    void Panel::container_updated() const
+    void Panel::container_updated(guint explicit_size) const
     {
-        // g_print("PANEL signal uodated\n");
         auto provider = get_dockitem_provider();
         // TODO change after home icon is insertet, will be == 1
         gint size = provider->data().size();
+        if (explicit_size) size = explicit_size;
         if (!size) return;
 
         size--;
         gint separator_size = config::get_separator_size();
         gint separators_count = (size * separator_size);
 
-        position::set_window_position(provider->required_size(separators_count));
+        m_position->set_position(provider->required_size(separators_count));
     }
 
     void Panel::on_container_updated(window_action_t action, int index)

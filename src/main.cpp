@@ -72,12 +72,12 @@ int main(int argc, char *argv[])
     char *txtdomain = textdomain(GETTEXT_PACKAGE);
     g_print("textdomain: %s\n", txtdomain);
 
-    g_print("create application\n");
+    g_message("Create Application.");
     Glib::RefPtr<Gtk::Application> app = Gtk::Application::create(
         argc, argv, "org.gtkmm.AppWindow.base",
         Gio::APPLICATION_HANDLES_COMMAND_LINE | Gio::APPLICATION_NON_UNIQUE);
 
-    g_print("create AppWindow \n");
+    g_message("Create Window.");
     AppWindow win;
     int result = win.init(app);
 

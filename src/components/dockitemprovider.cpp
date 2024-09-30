@@ -49,7 +49,7 @@ namespace docklight
         m_sigc = icon_theme->signal_changed().connect(
             sigc::mem_fun(*this, &DockItemProvider ::on_theme_changed));
 
-        g_message("DockItemProvider instantiated.");
+        g_message("Create DockItemProvider.");
     }
 
     void DockItemProvider::request_update_signal()

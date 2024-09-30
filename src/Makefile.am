@@ -48,7 +48,7 @@ components/device.cpp \
 components/config.cpp \
 components/dockitemcontainer.cpp \
 components/dockitemprovider.cpp \
-components/appupdater.cpp \
+components/appobserver.cpp \
 components/dockitem.cpp \
 components/dockitemicon.cpp \
 components/position.cpp \

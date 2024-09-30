@@ -25,7 +25,9 @@ namespace docklight
 
     DockRender::DockRender()
     {
-        g_message("DockRender instantiated");
+        m_position = position::get();
+
+        g_message("Create DockRender.");
     }
 
     DockRender::~DockRender()
@@ -35,7 +37,7 @@ namespace docklight
 
     void DockRender::create_surface_background()
     {
-        Gdk::Rectangle bckrect = position::get_background_region();
+        Gdk::Rectangle bckrect = m_position->get_background_region();
         m_background = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, bckrect.get_width(),
                                                    bckrect.get_height());
 

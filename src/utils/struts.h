@@ -27,9 +27,10 @@ namespace docklight::position
         } struts_position_t;
 
       public:
-        Struts(Gtk::Window* window);
+        Struts();
         ~Struts();
 
+        void init(Gtk::Window* window);
         void set_struts(bool create = true);
 
       private:
