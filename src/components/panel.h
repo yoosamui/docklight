@@ -33,6 +33,8 @@ namespace docklight
 
         Glib::RefPtr<position::PositionManager> m_position;
 
+        guint get_dockitem_index(int mx, int my);
+
         bool on_button_press_event(GdkEventButton* event);
         bool on_motion_notify_event(GdkEventMotion* event);
         void on_container_updated(window_action_t action, int index);

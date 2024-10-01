@@ -1,3 +1,21 @@
+//  Copyright (c) 2018-2024 Juan R. González
+//
+//
+//  This file is part of Docklight.
+//
+//  Docklight is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  Docklight is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  public Glib::Object GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  identification number, along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 // clang-format off
 #include "components/position.h"
 // clang-format on
@@ -8,6 +26,7 @@ namespace docklight
     namespace position
     {
         Glib::RefPtr<PositionManager> m_position_manager;
+
         // TODO factory
         Glib::RefPtr<PositionManager> create(Gtk::Window* window)
         {
@@ -47,7 +66,7 @@ namespace docklight
             return device::monitor::get_geometry();
         }
 
-        Gdk::Rectangle PositionManager::get_background_region() const
+        Gdk::Rectangle PositionManager::get_window_geometry() const
         {
             return Gdk::Rectangle(0, 0, m_window->get_width(), m_window->get_height());
         }
@@ -62,9 +81,15 @@ namespace docklight
             //   set_struts();
             dock_alignment_t alignment = config::get_dock_alignment();
             auto workarea = get_workarea();
-            auto monitor = get_monitor();
+            //    auto monitor = get_monitor();
 
             int xpos = 0, ypos = 0, center = 0;
+
+            // vor the move setzen
+            if (config::is_autohide_none()) {
+                m_struts.set_struts();
+            }
+
             if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
                 int width = required_size;
 
@@ -108,10 +133,6 @@ namespace docklight
                     }
                 }
 
-                // vor the move setzen
-                if (config::is_autohide_none()) {
-                    m_struts.set_struts();
-                }
                 m_window->resize(width, area);
                 m_window->move(xpos, ypos);
 
@@ -156,11 +177,6 @@ namespace docklight
                     } else {
                         xpos = 0;
                     }
-                }
-
-                // vor the move setzen
-                if (config::is_autohide_none()) {
-                    m_struts.set_struts();
                 }
 
                 m_window->resize(area, height);

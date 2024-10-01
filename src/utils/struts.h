@@ -1,4 +1,21 @@
 #pragma once
+//  Copyright (c) 2018-2024 Juan R. González
+//
+//
+//  This file is part of Docklight.
+//
+//  Docklight is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  Docklight is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  public Glib::Object GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  identification number, along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // clang-format off
 #include <gtkmm/window.h>
@@ -31,23 +48,7 @@ namespace docklight::position
         ~Struts();
 
         void init(Gtk::Window* window);
-        void set_struts(bool create = true);
-        void set_insets(long insets[12])
-        {
-            GtkWidget* toplevel = gtk_widget_get_toplevel(GTK_WIDGET(m_window->gobj()));
-            auto gdk_window = gtk_widget_get_window(toplevel);
-            if (!gdk_window) {
-                g_critical("set_strut: gdk_window is null.");
-                return;
-            }
-            gdk_property_change(gdk_window, gdk_atom_intern("_NET_WM_STRUT_PARTIAL", FALSE),
-                                gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
-                                (unsigned char*)&insets, 12);
-
-            gdk_property_change(gdk_window, gdk_atom_intern("_NET_WM_STRUT", FALSE),
-                                gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
-                                (unsigned char*)&insets, 4);
-        }
+        void set_struts(bool force = false);
 
       private:
         Gtk::Window* m_window;

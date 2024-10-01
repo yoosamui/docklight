@@ -55,7 +55,7 @@ namespace docklight
     void DockItemProvider::request_update_signal()
     {
         g_print("EMIT");
-        m_signal_update.emit(window_action_t::UPDATE, 0);
+        // m_signal_update.emit(window_action_t::UPDATE, 0);
     }
 
     type_signal_update DockItemProvider::signal_update()

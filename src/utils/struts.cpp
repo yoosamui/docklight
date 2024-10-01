@@ -1,3 +1,21 @@
+//  Copyright (c) 2018-2024 Juan R. González
+//
+//
+//  This file is part of Docklight.
+//
+//  Docklight is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  Docklight is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  public Glib::Object GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  identification number, along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 // clang-format off
 #include "utils/struts.h"
 // clang-format on
@@ -8,7 +26,6 @@ namespace docklight::position
     Struts::Struts()
     {
         g_message("create Struts.");
-        //        set_struts();
     }
 
     Struts::~Struts()
@@ -21,21 +38,20 @@ namespace docklight::position
         m_window = window;
     }
 
-    void Struts::set_struts(bool create)
+    void Struts::set_struts(bool force)
     {
-        if (m_strut_set && create) return;
+        if (m_strut_set && !force) return;
 
         long insets[12] = {0};
 
-        if (create) {
-            auto const screen = device::display::get_default_screen();
-            auto const location = config::get_dock_location();
-            auto area = config::get_dock_area();
-            auto workarea = device::monitor::get_workarea();
-            auto scale_factor = 1;
+        auto const screen = device::display::get_default_screen();
+        auto const location = config::get_dock_location();
+        auto area = config::get_dock_area();
+        auto workarea = device::monitor::get_workarea();
+        auto scale_factor = 1;
 
-            switch (location) {
-                    // clang-format off
+        switch (location) {
+                // clang-format off
                 case dock_location_t::top:
                         insets[struts_position_t::top] = workarea.get_y() + area * scale_factor;
                         insets[struts_position_t::top_start] = workarea.get_x() * scale_factor;
@@ -58,15 +74,11 @@ namespace docklight::position
                     break;
                 default:
                     break;
-                    // clang-format on
-            }
-
-            m_strut_set = true;
+                // clang-format on
         }
 
-        set_insets(insets);
+        m_strut_set = true;
 
-        //        set_insets(insets);
         GtkWidget* toplevel = gtk_widget_get_toplevel(GTK_WIDGET(m_window->gobj()));
         auto gdk_window = gtk_widget_get_window(toplevel);
         if (!gdk_window) {
@@ -80,24 +92,6 @@ namespace docklight::position
         gdk_property_change(gdk_window, gdk_atom_intern("_NET_WM_STRUT", FALSE),
                             gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
                             (unsigned char*)&insets, 4);
-
-        g_message("Struts request has bin set.");
     }
 
-    /*void struts::remove_struts(long& insets)
-    {
-        GtkWidget* toplevel = gtk_widget_get_toplevel(GTK_WIDGET(m_window->gobj()));
-        auto gdk_window = gtk_widget_get_window(toplevel);
-        if (!gdk_window) {
-            g_critical("set_strut: gdk_window is null.");
-            return;
-        }
-        gdk_property_change(gdk_window, gdk_atom_intern("_NET_WM_STRUT_PARTIAL", FALSE),
-                            gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
-                            (unsigned char*)&insets, 12);
-
-        gdk_property_change(gdk_window, gdk_atom_intern("_NET_WM_STRUT", FALSE),
-                            gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
-                            (unsigned char*)&insets, 4);
-    }*/
 }  // namespace docklight::position

@@ -166,7 +166,7 @@ namespace docklight
     void Panel::container_updated(guint explicit_size) const
     {
         auto provider = get_dockitem_provider();
-        // TODO change after home icon is insertet, will be == 1
+        // TODO change after home icon is insertet, size will be == size - 1
         gint size = provider->data().size();
         if (explicit_size) size = explicit_size;
         if (!size) return;
@@ -186,46 +186,25 @@ namespace docklight
 
     bool Panel::on_motion_notify_event(GdkEventMotion* event)
     {
-        //   g_print("motion %d x %d\n", (int)event->x, (int)event->y);
-
+        g_print("motion %d x %d\n", (int)event->x, (int)event->y);
+        // get_dockitem_index(event->x, event->y);
         return false;
+    }
+    guint Panel::get_dockitem_index(int mx, int my)
+    {
+        int y = mx;
+        int x = my;
+
+        if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+            // if (event->type == GDK_BUTTON_PRESS) {
+            // g_print("on press %d x %d\n", (int)event->x, (int)event->y);
+            //  }
+        } else {
+        }
     }
 
     bool Panel::on_button_press_event(GdkEventButton* event)
     {
-        if ((event->type == GDK_BUTTON_PRESS)) {
-            //  g_print("on press %d x %d\n", (int)event->x, (int)event->y);
-
-            /*Cairo::RefPtr<Cairo::Context> ctx = Cairo::Context::create(m_background);
-            // ctx->cairo_translate(64, 64);
-            ctx->translate(64, 64);
-            // cairo_rotate(cr, rotation);
-            //
-            rotation = DegreesToRadians(0);
-            // rotate_cb(90);
-            ctx->rotate(rotation);
-            Gtk::Widget::queue_draw();
-
-            g_print("rotate\n");*/
-            return false;
-
-            // m_cell = Glib::RefPtr<DockCell>(new DockCell());
-            // m_cell->set_name("DOCKCELL");
-            // m_cell->set_size_request(200, 200);
-            // m_cell->show();
-
-            /*m_cell->set_visible(true);
-            m_cell->activate();
-            int width, height;
-
-            auto parent = m_cell->get_parent();
-            if (parent) g_print("NAME %s\n", parent->get_name().c_str());
-
-            m_cell->get_size_request(width, height);
-            g_print("SIZE %d x %d\n", width, height);
-            //  m_cell->move(800, 600);
-            m_cell->show();*/
-        }
         return true;
     }
 
