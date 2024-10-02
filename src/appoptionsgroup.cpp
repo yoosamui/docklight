@@ -46,6 +46,11 @@ namespace docklight
         m_entry_alignment.set_short_name('a');
         m_entry_alignment.set_description(MSG_SETS_THE_DOCK_ALIGNMENT);
         add_entry(m_entry_alignment, m_arg_alignment);
+
+        m_entry_icon_alignment.set_long_name("icon_alignment");
+        m_entry_icon_alignment.set_short_name('i');
+        m_entry_icon_alignment.set_description(MSG_SETS_THE_ICON_ALIGNMENT);
+        add_entry(m_entry_icon_alignment, m_arg_icon_alignment);
     }
 
     AppOptionsGroup::~AppOptionsGroup()
@@ -59,6 +64,7 @@ namespace docklight
         validate_location();
         validate_monitor();
         validate_alignment();
+        validate_icon_alignment();
     }
 
     Glib::ustring AppOptionsGroup::toString() const
@@ -120,11 +126,27 @@ namespace docklight
         throw Glib::OptionError(Glib::OptionError::UNKNOWN_OPTION, msg.str());
     }
 
+    void AppOptionsGroup::validate_icon_alignment()
+    {
+        if (m_arg_alignment == "start" || m_arg_alignment == "end" || m_arg_alignment == "center" ||
+            m_arg_alignment == "fill") {
+            return;
+        }
+
+        std::stringstream msg;
+        msg << "m_arg_icon_alignment: unexpected option name: " << m_arg_icon_alignment << "\n"
+            << m_entry_icon_alignment.get_description() << std::endl;
+
+        throw Glib::OptionError(Glib::OptionError::UNKNOWN_OPTION, msg.str());
+    }
+
     const std::vector<std::tuple<gchar, int, Glib::ustring>>& AppOptionsGroup::getList()
     {
         m_list.push_back(std::make_tuple(m_entry_monitor.get_short_name(), m_arg_monitor, ""));
         m_list.push_back(std::make_tuple(m_entry_location.get_short_name(), 0, m_arg_location));
         m_list.push_back(std::make_tuple(m_entry_alignment.get_short_name(), 0, m_arg_alignment));
+        m_list.push_back(
+            std::make_tuple(m_entry_icon_alignment.get_short_name(), 0, m_arg_icon_alignment));
 
         return m_list;
     }

@@ -31,8 +31,6 @@ namespace docklight
         sigc::connection m_sigc_draw;
         sigc::connection m_sigc_updated;
 
-        gint m_dockitem_index = -1;
-
         guint get_dockitem_index(int mx, int my);
 
         bool on_button_press_event(GdkEventButton* event);
@@ -48,6 +46,9 @@ namespace docklight
         Glib::Timer m_animation_timer;
 
       private:
+        Glib::RefPtr<DockItemProvider> m_provider;
+
+        gint m_dockitem_index = -1;
         easing::bounce m_bounce;
     };
 }  // namespace docklight

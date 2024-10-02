@@ -42,12 +42,14 @@ namespace docklight
                    Gdk::FOCUS_CHANGE_MASK | Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK |
                    Gdk::POINTER_MOTION_HINT_MASK | Gdk::POINTER_MOTION_MASK);
         g_message("Create Panel.");
+
+        m_provider = get_dockitem_provider();
     }
 
     void Panel::init()
     {
-        m_sigc_updated = get_dockitem_provider()->signal_update().connect(
-            sigc::mem_fun(this, &Panel::on_container_updated));
+        m_sigc_updated =
+            m_provider->signal_update().connect(sigc::mem_fun(this, &Panel::on_container_updated));
 
         m_position = position::get();
 
@@ -165,9 +167,8 @@ namespace docklight
 
     void Panel::container_updated(guint explicit_size) const
     {
-        auto provider = get_dockitem_provider();
         // TODO change after home icon is insertet, size will be == size - 1
-        gint size = provider->data().size();
+        gint size = m_provider->data().size();
         if (explicit_size) size = explicit_size;
         if (!size) return;
 
@@ -175,7 +176,7 @@ namespace docklight
         gint separator_size = config::get_separator_size();
         gint separators_count = (size * separator_size);
 
-        m_position->set_position(provider->required_size(separators_count));
+        m_position->set_position(m_provider->required_size(separators_count));
     }
 
     void Panel::on_container_updated(window_action_t action, int index)
@@ -194,10 +195,9 @@ namespace docklight
         gint pos_x = 0;
         gint pos_y = 0;
 
-        auto provider = get_dockitem_provider();
         auto separator_size = config::get_separator_size();
         auto area = config::get_dock_area() + separator_size;
-        auto size = provider->data().size();
+        auto size = m_provider->data().size();
         auto maxsize = size * area;
         auto start_pos = 0;
 
@@ -227,8 +227,13 @@ namespace docklight
     bool Panel::on_button_press_event(GdkEventButton* event)
     {
         m_dockitem_index = get_dockitem_index(event->x, event->y);
-        g_print("%d x %d  index = %d\n", (int)event->x, (int)event->y, m_dockitem_index);
-        return true;
+
+        std::shared_ptr<DockItemIcon> dockitem;
+        if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return false;
+
+        g_print("%d x %d  index = %d %s\n", (int)event->x, (int)event->y, m_dockitem_index,
+                dockitem->to_string().c_str());
+        return false;
     }
 
 }  // namespace docklight

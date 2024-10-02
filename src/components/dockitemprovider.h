@@ -62,6 +62,15 @@ namespace docklight
         // signal accessor:
         type_signal_update signal_update();
 
+        bool get_dockitem_by_index(guint index, std::shared_ptr<DockItemIcon>& dockitem)
+        {
+            auto v = data();
+            if (index < 0 || index > v.size()) return false;
+
+            dockitem = v.at(index);
+            return dockitem ? true : false;
+        }
+
         std::vector<std::shared_ptr<DockItemIcon>>& data()
 
         {

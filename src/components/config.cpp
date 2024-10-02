@@ -32,7 +32,7 @@ namespace docklight
         constexpr const char* DEF_CONFIG_FILENAME = "docklight.config";
         constexpr const int DEF_ICON_SIZE = 48;
         constexpr const int DEF_SEPARATOR_MARGIN = 0;
-        constexpr const int DEF_SEPARATOR_SIZE = 22;
+        constexpr const int DEF_SEPARATOR_SIZE = 2;
         constexpr const double DEF_AUTOHIDE_ANIMATION_DELAY = 5.0;
         constexpr const int DEF_AUTOHIDE_ANCHORT_MARGIN = 20;
         constexpr const double DEF_AUTOHIDE_HIDE_DELAY = 0.5;
@@ -49,9 +49,7 @@ namespace docklight
         float m_animation_delay = DEF_AUTOHIDE_ANIMATION_DELAY;
         float m_hide_delay = DEF_AUTOHIDE_HIDE_DELAY;
 
-        // TODO test::
         dock_alignment_t m_alignment = dock_alignment_t::center;
-        // dock_alignment_t m_alignment = dock_alignment_t::fill;
         dock_icon_alignment_t m_icon_alignment = dock_icon_alignment_t::center;
 
         //        TODO : TEST
@@ -148,6 +146,23 @@ namespace docklight
 
                     if (std::get<2>(t) == "fill") {
                         m_alignment = dock_alignment_t::fill;
+                        continue;
+                    }
+                }
+
+                if (std::get<0>(t) == (char)'i') {
+                    if (std::get<2>(t) == "start") {
+                        m_icon_alignment = dock_icon_alignment_t::start;
+                        continue;
+                    }
+
+                    if (std::get<2>(t) == "end") {
+                        m_icon_alignment = dock_icon_alignment_t::end;
+                        continue;
+                    }
+
+                    if (std::get<2>(t) == "center") {
+                        m_icon_alignment = dock_icon_alignment_t::center;
                         continue;
                     }
                 }

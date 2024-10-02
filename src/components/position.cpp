@@ -76,7 +76,7 @@ namespace docklight
             if (m_last_required_size == required_size) return;
             m_last_required_size = required_size;
 
-            g_message("Position request: %d", required_size);
+            //            g_message("Position request: %d", required_size);
             int area = config::get_dock_area();
             //   set_struts();
             dock_alignment_t alignment = config::get_dock_alignment();

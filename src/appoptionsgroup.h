@@ -59,6 +59,7 @@ namespace docklight
         void validate_location();
         void validate_monitor();
         void validate_alignment();
+        void validate_icon_alignment();
 
       private:
         std::vector<std::tuple<gchar, int, Glib::ustring>> m_list;
@@ -66,11 +67,13 @@ namespace docklight
         Glib::OptionEntry m_entry_monitor;
         Glib::OptionEntry m_entry_location;
         Glib::OptionEntry m_entry_alignment;
+        Glib::OptionEntry m_entry_icon_alignment;
 
         int m_arg_monitor;
 
         Glib::ustring m_arg_location;
         Glib::ustring m_arg_alignment;
+        Glib::ustring m_arg_icon_alignment;
     };
 }  // namespace docklight
 

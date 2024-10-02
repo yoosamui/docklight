@@ -91,6 +91,7 @@ namespace docklight
                 wt == WNCK_WINDOW_MENU ||
                 wt == WNCK_WINDOW_SPLASHSCREEN){
 
+                return;
             }
         // clang-format on
 
