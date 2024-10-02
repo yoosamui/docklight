@@ -31,7 +31,7 @@ namespace docklight
         sigc::connection m_sigc_draw;
         sigc::connection m_sigc_updated;
 
-        Glib::RefPtr<position::PositionManager> m_position;
+        gint m_dockitem_index = -1;
 
         guint get_dockitem_index(int mx, int my);
 

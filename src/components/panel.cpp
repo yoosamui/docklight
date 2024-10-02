@@ -186,25 +186,48 @@ namespace docklight
 
     bool Panel::on_motion_notify_event(GdkEventMotion* event)
     {
-        g_print("motion %d x %d\n", (int)event->x, (int)event->y);
-        // get_dockitem_index(event->x, event->y);
         return false;
     }
-    guint Panel::get_dockitem_index(int mx, int my)
-    {
-        int y = mx;
-        int x = my;
 
-        if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-            // if (event->type == GDK_BUTTON_PRESS) {
-            // g_print("on press %d x %d\n", (int)event->x, (int)event->y);
-            //  }
-        } else {
+    inline guint Panel::get_dockitem_index(int mx, int my)
+    {
+        gint pos_x = 0;
+        gint pos_y = 0;
+
+        auto provider = get_dockitem_provider();
+        auto separator_size = config::get_separator_size();
+        auto area = config::get_dock_area() + separator_size;
+        auto size = provider->data().size();
+        auto maxsize = size * area;
+        auto start_pos = 0;
+
+        get_start_pos(maxsize, pos_x, pos_y);
+
+        for (size_t idx = 0; idx < size; idx++) {
+            m_dockitem_index = -1;
+            if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+                if (mx >= pos_x && mx <= pos_x + area) {
+                    m_dockitem_index = idx;
+                    break;
+                }
+                pos_x += start_pos + area;
+
+            } else {  // Vertical
+                if (my >= pos_y && my <= pos_y + area) {
+                    m_dockitem_index = idx;
+                    break;
+                }
+                pos_y += start_pos + area;
+            }
         }
+
+        return m_dockitem_index;
     }
 
     bool Panel::on_button_press_event(GdkEventButton* event)
     {
+        m_dockitem_index = get_dockitem_index(event->x, event->y);
+        g_print("%d x %d  index = %d\n", (int)event->x, (int)event->y, m_dockitem_index);
         return true;
     }
 

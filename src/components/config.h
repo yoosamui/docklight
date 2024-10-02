@@ -27,6 +27,9 @@ namespace docklight
 {
     namespace config
     {
+        constexpr const int DEF_ICON_MAXSIZE = 128;
+        constexpr const int DEF_INDICATOR_SIZE = 2;
+
         GKeyFile* load_file();
 
         void AddArgs(const std::vector<std::tuple<gchar, int, Glib::ustring>>& args);
@@ -35,6 +38,7 @@ namespace docklight
         void set_separator_line(bool value);
         void set_dock_alignment(dock_alignment_t value);
         void set_default_style();
+        void set_dock_alignment(dock_alignment_t value);
 
         int get_dock_area_margin();
         int get_anchor_margin();
@@ -53,8 +57,9 @@ namespace docklight
         float get_animation_delay();
         float get_hide_delay();
 
+        dock_icon_alignment_t get_dock_icon_alignment();
         dock_alignment_t get_dock_alignment();
-        void set_dock_alignment(dock_alignment_t value);
+
         dock_indicator_type_t get_indicator_type();
         Gtk::Orientation get_dock_orientation();
         dock_location_t get_dock_location();

@@ -139,12 +139,44 @@ namespace docklight
 
     void DockRender::create_surface_indicator(std::shared_ptr<DockItemIcon>& item)
     {
-        // TODO 4  put it in config
-        int height = 4;
+        int height = config::DEF_INDICATOR_SIZE;
         int width = config::get_icon_size();
+
+        float factor = std::abs(config::get_icon_size() / config::DEF_ICON_MAXSIZE);
+        height += factor;
+
+        if (height < config::DEF_INDICATOR_SIZE) {
+            height = config::DEF_INDICATOR_SIZE;
+        }
 
         m_indicator = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, width, height);
         m_indicator_ctx = Cairo::Context::create(m_indicator);
+    }
+
+    inline void DockRender::get_start_pos(gint maxsize, gint& x, gint& y)
+    {
+        auto center = 0;
+        x = y = 0;
+
+        if (config::get_dock_alignment() != dock_alignment_t::fill) return;
+
+        if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+            if (config::get_dock_icon_alignment() == dock_icon_alignment_t::center) {
+                center = m_position->get_workarea().get_width() / 2 - maxsize / 2;
+                x = m_position->get_workarea().get_x() + center;
+            } else if (config::get_dock_icon_alignment() == dock_icon_alignment_t::end) {
+                x = m_position->get_workarea().get_width() - maxsize;
+            }
+
+        } else {  // Vertical
+            if (config::get_dock_icon_alignment() == dock_icon_alignment_t::center) {
+                center = m_position->get_workarea().get_height() / 2 - maxsize / 2;
+                y = m_position->get_workarea().get_y() + center;
+
+            } else if (config::get_dock_icon_alignment() == dock_icon_alignment_t::end) {
+                y = m_position->get_workarea().get_height() - maxsize;
+            }
+        }
     }
 
     void DockRender::draw_surface_indicator(std::shared_ptr<DockItemIcon>& item)
@@ -162,18 +194,18 @@ namespace docklight
 
         // draw indicators
         m_indicator_ctx->set_line_width(2.0);
-        // m_indicator_ctx->set_source_rgba(0, 0.243, 0.541, 1.0);
-        m_indicator_ctx->set_source_rgba(0.521, 0.6, 0, 1.0);
+        // Yellow
+        m_indicator_ctx->set_source_rgba(0.980, 0.929, 0.50, 1.0);
 
         if (item->get_childmap().size() == 1) {
             m_indicator_ctx->rectangle(0, 0, m_indicator->get_width(),
                                        m_indicator->get_height() - 1);
 
         } else {
-            m_indicator_ctx->rectangle(0, 0, m_indicator->get_width() / 2 - 4,
+            m_indicator_ctx->rectangle(0, 0, m_indicator->get_width() / 2 - 3,
                                        m_indicator->get_height() - 1);
-            m_indicator_ctx->rectangle(m_indicator->get_width() / 2 + 4, 0,
-                                       m_indicator->get_width() - 8, m_indicator->get_height() - 1);
+            m_indicator_ctx->rectangle(m_indicator->get_width() / 2 + 3, 0,
+                                       m_indicator->get_width() - 6, m_indicator->get_height() - 1);
         }
         m_indicator_ctx->fill();
         m_indicator_ctx->restore();
@@ -202,8 +234,15 @@ namespace docklight
 
         draw_surface_background();
 
+        guint separator_size = config::get_separator_size();
+        auto area = config::get_dock_area() + separator_size;
+        auto data = provider->data();
+        auto maxsize = data.size() * area;
+
+        get_start_pos(maxsize, m_posX, m_posY);
+
         guint tag = 0;
-        for (auto& dockitem : provider->data()) {
+        for (auto& dockitem : data) {
             dockitem->set_tag(tag++);
 
             draw_surface_cell();
@@ -213,11 +252,10 @@ namespace docklight
             m_bck_ctx->set_source(m_cell, m_posX, m_posY);
             m_bck_ctx->paint();
 
-            guint separator_size = config::get_separator_size();
             if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-                m_posX += config::get_dock_area() + separator_size;
+                m_posX += area;  //+ separator_size;
             } else {
-                m_posY += config::get_dock_area() + separator_size;
+                m_posY += area;  //+ separator_size;
             }
         }
 

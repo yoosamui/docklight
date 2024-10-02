@@ -63,7 +63,10 @@ namespace docklight
         type_signal_update signal_update();
 
         std::vector<std::shared_ptr<DockItemIcon>>& data()
+
         {
+            // auto size = m_container.data<DockItemIcon>().size();
+            // g_print("-------------------provider %lu\n", size);
             return m_container.data<DockItemIcon>();
         }
 

@@ -53,6 +53,12 @@ enum class dock_alignment_t : unsigned int {
     fill,
 };
 
+enum class dock_icon_alignment_t : unsigned int {
+    center = 0,
+    start,
+    end,
+};
+
 enum class dock_item_type_t : unsigned int {
     launcher = 0,
     group,

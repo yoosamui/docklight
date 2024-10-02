@@ -24,7 +24,7 @@
 #include "components/config.h"
 #include "components/dockitemprovider.h"
 #include "components/position.h"
-//  clang-format on
+// clang-format on
 
 namespace docklight
 {
@@ -46,13 +46,17 @@ namespace docklight
         void draw_surface_icon(std::shared_ptr<DockItemIcon>& item);
 
         void create_surface_indicator(std::shared_ptr<DockItemIcon>& item);
-        void draw_surface_indicator( std::shared_ptr<DockItemIcon>& item);
+        void draw_surface_indicator(std::shared_ptr<DockItemIcon>& item);
 
-        bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) ;
+        bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr);
+
+      protected:
+        Glib::RefPtr<position::PositionManager> m_position;
+        void get_start_pos(gint maxsize, gint& x, gint& y);
 
       private:
-        guint m_posX = 0;
-        guint m_posY = 0;
+        gint m_posX = 0;
+        gint m_posY = 0;
 
         Cairo::RefPtr<Cairo::ImageSurface> m_cell;
         Cairo::RefPtr<Cairo::ImageSurface> m_icon;
@@ -63,10 +67,6 @@ namespace docklight
         Cairo::RefPtr<Cairo::Context> m_bck_ctx;
         Cairo::RefPtr<Cairo::Context> m_cell_ctx;
         Cairo::RefPtr<Cairo::Context> m_indicator_ctx;
-
-
-
-        Glib::RefPtr<position::PositionManager> m_position;
     };
 
 }  // namespace docklight
