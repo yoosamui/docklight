@@ -24,11 +24,17 @@ namespace docklight
 {
 
     Glib::RefPtr<DockItemProvider> m_provider;
-    Glib::RefPtr<DockItemProvider> get_dockitem_provider()
+    Glib::RefPtr<DockItemProvider> create_provider()
     {
         if (!m_provider) {
             m_provider = Glib::RefPtr<DockItemProvider>(new DockItemProvider());
         }
+        return m_provider;
+    }
+
+    Glib::RefPtr<DockItemProvider> Provider()
+    {
+        g_assert(m_provider);
         return m_provider;
     }
 
@@ -86,7 +92,7 @@ namespace docklight
     guint DockItemProvider::required_size(guint additional_size)
     {
         guint count = additional_size;
-        count += config::get_dock_area() * data().size();
+        count += Config()->get_dock_area() * data().size();
 
         return count;
     }

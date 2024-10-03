@@ -56,4 +56,7 @@ namespace docklight
         static void on_window_opened(WnckScreen* screen, WnckWindow* window, gpointer data);
     };
 
+    Glib::RefPtr<AppObserver> create_observer();
+    Glib::RefPtr<AppObserver> Observer();
+
 }  // namespace docklight

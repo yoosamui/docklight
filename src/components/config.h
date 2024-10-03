@@ -17,15 +17,46 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // clang-format off
-#include <gmodule.h>
-#include <gtkmm/enums.h>
-
+#include "components/configfile.h"
+#include "utils/system.h"
 #include "constants.h"
 // clang-format on
 
 namespace docklight
 {
-    namespace config
+    class Configuration : public ConfigFile
+    {
+      public:
+        static constexpr const int DEF_ICON_MAXSIZE = 128;
+        static constexpr const int DEF_INDICATOR_SIZE = 2;
+
+      public:
+        Configuration();
+        virtual ~Configuration();
+
+        const int get_dock_area_margin() const;
+        const int get_anchor_margin() const;
+        const int get_dock_area() const;
+        const int get_separator_margin() const;
+        const int get_icon_size() const;
+        const int get_separator_size() const;
+
+        const dock_icon_alignment_t get_dock_icon_alignment() const;
+        const dock_alignment_t get_dock_alignment() const;
+        const dock_indicator_type_t get_indicator_type() const;
+        const dock_location_t get_dock_location() const;
+        const Gtk::Orientation get_dock_orientation() const;
+
+        const bool is_autohide_none() const;
+        const bool is_autohide() const;
+        const bool is_intelihide() const;
+
+        void set_arguments(const std::vector<std::tuple<gchar, int, Glib::ustring>>& args);
+    };
+
+    Glib::RefPtr<Configuration> Config();
+
+    /*namespace config
     {
         constexpr const int DEF_ICON_MAXSIZE = 128;
         constexpr const int DEF_INDICATOR_SIZE = 2;
@@ -66,5 +97,5 @@ namespace docklight
         void set_dock_location(dock_location_t location);
 
         //    Config* m_config = Config::getInstance();
-    }  // namespace config
+    }  // namespace config*/
 }  // namespace docklight

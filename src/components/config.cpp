@@ -19,12 +19,266 @@
 #include <iostream>
 
 #include "components/config.h"
-#include "utils/system.h"
 // clang-format on
 
 namespace docklight
 {
-    namespace config
+    Glib::RefPtr<Configuration> m_config;
+    Glib::RefPtr<Configuration> Config()
+    {
+        if (!m_config) {
+            m_config = Glib::RefPtr<Configuration>(new Configuration());
+        }
+
+        return m_config;
+    }
+
+    Configuration::Configuration()
+    {
+        g_message("Create Configuration.");
+    }
+
+    Configuration::~Configuration()
+    {
+        //
+    }
+
+    const int Configuration::get_dock_area_margin() const
+    {
+        return DEF_DOCKAREA_MARGIN;
+    }
+
+    const int Configuration::get_anchor_margin() const
+    {
+        //
+        return m_anchor_margin;
+    }
+
+    const int Configuration::get_dock_area() const
+    {
+        int area = m_icon_size + (DEF_DOCKAREA_MARGIN * 3) + DEF_DOCKAREA_MARGIN / 2;
+
+        return area;
+    }
+
+    const int Configuration::get_separator_margin() const
+    {
+        //
+        return m_separator_margin;
+    }
+
+    const int Configuration::get_icon_size() const
+    {
+        return m_icon_size;
+    }
+
+    const int Configuration::get_separator_size() const
+    {
+        return m_separator_size;
+    }
+
+    const dock_icon_alignment_t Configuration::get_dock_icon_alignment() const
+    {
+        return m_icon_alignment;
+    }
+
+    const dock_alignment_t Configuration::get_dock_alignment() const
+    {
+        return m_alignment;
+    }
+
+    const dock_indicator_type_t Configuration::get_indicator_type() const
+    {
+        return m_indicator_type;
+    }
+
+    const dock_location_t Configuration::get_dock_location() const
+    {
+        //
+        return m_location;
+    }
+
+    const Gtk::Orientation Configuration::get_dock_orientation() const
+    {
+        switch (m_location) {
+            case dock_location_t::top:
+            case dock_location_t::bottom:
+                return Gtk::ORIENTATION_HORIZONTAL;
+
+            case dock_location_t::left:
+            case dock_location_t::right:
+                return Gtk::ORIENTATION_VERTICAL;
+
+            default:
+                return Gtk::ORIENTATION_HORIZONTAL;
+        }
+    }
+
+    const bool Configuration::is_autohide_none() const
+    {
+        return m_autohide_type == dock_autohide_type_t::none;
+    }
+
+    const bool Configuration::is_autohide() const
+    {
+        return m_autohide_type == dock_autohide_type_t::autohide;
+    }
+
+    const bool Configuration::is_intelihide() const
+    {
+        return m_autohide_type == dock_autohide_type_t::intelihide;
+    }
+
+    void Configuration::set_arguments(
+        const std::vector<std::tuple<gchar, int, Glib::ustring>>& args)
+    {
+        if (!load()) return;
+
+        // location
+        std::string location = read_location();
+        if (!location.empty()) {
+            if (location == "left") {
+                m_location = dock_location_t::left;
+            } else if (location == "top") {
+                m_location = dock_location_t::top;
+            } else if (location == "right") {
+                m_location = dock_location_t::right;
+            } else if (location == "bottom") {
+                m_location = dock_location_t::bottom;
+            } else {
+                g_warning("configuration: invalid location. %s\n", location.c_str());
+            }
+        }
+
+        // alignment
+        std::string alignment = read_alignment();
+        if (!alignment.empty()) {
+            if (alignment == "start") {
+                m_alignment = dock_alignment_t::start;
+            } else if (alignment == "end") {
+                m_alignment = dock_alignment_t::end;
+            } else if (alignment == "center") {
+                m_alignment = dock_alignment_t::center;
+            } else if (alignment == "fill") {
+                m_alignment = dock_alignment_t::fill;
+            } else {
+                g_warning("configuration: invalid alignment. %s\n", alignment.c_str());
+            }
+        }
+
+        // Indicator type
+        std::string indicator = read_indicator_type_key();
+        if (!indicator.empty()) {
+            if (indicator == "dots") {
+                m_indicator_type = dock_indicator_type_t::dots;
+            } else if (indicator == "lines") {
+                m_indicator_type = dock_indicator_type_t::lines;
+            } else {
+                g_warning("configuration: invalid indicator mode. %s\n", indicator.c_str());
+            }
+        }
+
+        // separator show line
+        m_show_separator_line = read_separator_show_line();
+
+        // separator size
+        m_separator_size = read_separator_size();
+        if (m_separator_size < 0 || m_separator_size > 20) {
+            m_separator_size = DEF_SEPARATOR_SIZE;
+        }
+
+        // separator margin
+        m_separator_margin = read_separator_margin();
+        if (m_separator_margin < 0 || m_separator_margin > 20) {
+            m_separator_margin = DEF_ICON_SIZE;
+        }
+
+        m_anchor_margin = read_anchor_margin();
+        if (m_anchor_margin < 1 || m_anchor_margin > 20) {
+            m_anchor_margin = DEF_AUTOHIDE_ANCHORT_MARGIN;
+        }
+
+        m_animation_delay = read_animation_delay();
+        if (m_animation_delay < 0.0 || m_animation_delay > 20.0) {
+            m_animation_delay = DEF_AUTOHIDE_ANIMATION_DELAY;
+        }
+
+        m_hide_delay = read_hide_delay();
+        if (m_hide_delay < 0.0 || m_hide_delay > 4.0) {
+            m_hide_delay = DEF_AUTOHIDE_HIDE_DELAY;
+        }
+
+        // ARGS
+        for (auto&& t : args) {
+            // std::cout << "R:" << std::get<0>(t) << ", " << std::get<1>(t)
+            //<< ",
+            //"
+            //<< std::get<2>(t) << std::endl;
+
+            if (std::get<0>(t) == (char)'l') {
+                if (std::get<2>(t) == "bottom") {
+                    m_location = dock_location_t::bottom;
+                    continue;
+                }
+
+                if (std::get<2>(t) == "left") {
+                    m_location = dock_location_t::left;
+                    continue;
+                }
+
+                if (std::get<2>(t) == "top") {
+                    m_location = dock_location_t::top;
+                    continue;
+                }
+
+                if (std::get<2>(t) == "right") {
+                    m_location = dock_location_t::right;
+                    continue;
+                }
+            }
+
+            if (std::get<0>(t) == (char)'a') {
+                if (std::get<2>(t) == "start") {
+                    m_alignment = dock_alignment_t::start;
+                    continue;
+                }
+
+                if (std::get<2>(t) == "end") {
+                    m_alignment = dock_alignment_t::end;
+                    continue;
+                }
+
+                if (std::get<2>(t) == "center") {
+                    m_alignment = dock_alignment_t::center;
+                    continue;
+                }
+
+                if (std::get<2>(t) == "fill") {
+                    m_alignment = dock_alignment_t::fill;
+                    continue;
+                }
+            }
+
+            if (std::get<0>(t) == (char)'i') {
+                if (std::get<2>(t) == "start") {
+                    m_icon_alignment = dock_icon_alignment_t::start;
+                    continue;
+                }
+
+                if (std::get<2>(t) == "end") {
+                    m_icon_alignment = dock_icon_alignment_t::end;
+                    continue;
+                }
+
+                if (std::get<2>(t) == "center") {
+                    m_icon_alignment = dock_icon_alignment_t::center;
+                    continue;
+                }
+            }
+        }
+    }
+    ////////////////////////////////////////////////////////////////
+    /*namespace config
     {
         // parsed and optimized at compile time
         constexpr const int DEF_MIN_ITEM_SIZE = 26;
@@ -69,7 +323,7 @@ namespace docklight
             System::create_directory_if_not_exitst(config_dir);
 
             char buff[PATH_MAX];
-            sprintf(buff, "%s/%s", config_dir, "docklight5.config" /*DEF_CONFIG_FILENAME*/);
+            sprintf(buff, "%s/%s", config_dir, "docklight5.config" [>DEF_CONFIG_FILENAME<]);
 
             return buff;
         }
@@ -434,16 +688,16 @@ namespace docklight
         void set_default_style()
         {
             // clang-format off
-        /*m_theme.set_Panel(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 1, 1, 0), 0, 3, 0));
-        m_theme.set_PanelCell(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 1, 1, 1), 0.5, 3, 0));
-        m_theme.set_PanelDrag(new ColorWindow(Color(1, 1, 1, 0.4), Color(1, 1, 1, 1), 2.5, 3, 0));
-        m_theme.set_PanelIndicator(new ColorWindow(Color(1, 1, 1, 0.7), Color(1, 1, 1, 1), 2, 0, 0));
-        m_theme.set_PanelSeparator(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 1, 1, 1.0), 1.0, 0, 0));
-        m_theme.set_PanelTitle(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 1, 1, 1.0), 1.0, 0, 0));
-        m_theme.set_Preview(new ColorWindow());
-        m_theme.set_PreviewCell(new ColorWindow(Color(1, 1, 1, 0.2), Color(1, 1, 1, 1), 1, 3, 0)n);
-        m_theme.set_PreviewTitleText(new ColorWindow(Color(1,1,1,0.4), Color(1, 1, 1, 1), 0, 0, 0));
-        m_theme.set_PreviewClose(new ColorWindow(Color(0.854, 0.062, 0.133, 1), Color(1, 1, 1, 1), 2.0, 0, 0));*/
+        [>m_theme.set_Panel(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 1, 1, 0), 0, 3, 0));
+        m_theme.set_PanelCell(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 1, 1, 1), 0.5, 3,
+    0)); m_theme.set_PanelDrag(new ColorWindow(Color(1, 1, 1, 0.4), Color(1, 1, 1, 1), 2.5, 3, 0));
+        m_theme.set_PanelIndicator(new ColorWindow(Color(1, 1, 1, 0.7), Color(1, 1, 1, 1), 2, 0,
+    0)); m_theme.set_PanelSeparator(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 1,
+    1, 1.0), 1.0, 0, 0)); m_theme.set_PanelTitle(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 1,
+    1, 1.0), 1.0, 0, 0)); m_theme.set_Preview(new ColorWindow()); m_theme.set_PreviewCell(new
+    ColorWindow(Color(1, 1, 1, 0.2), Color(1, 1, 1, 1), 1, 3, 0)n); m_theme.set_PreviewTitleText(new
+    ColorWindow(Color(1,1,1,0.4), Color(1, 1, 1, 1), 0, 0, 0)); m_theme.set_PreviewClose(new
+    ColorWindow(Color(0.854, 0.062, 0.133, 1), Color(1, 1, 1, 1), 2.0, 0, 0));<]
             // clang-format on
         }
 
@@ -563,5 +817,5 @@ namespace docklight
             m_show_separator_line = value;
         }
 
-    }  // namespace config
+    }  // namespace config*/
 }  // namespace docklight

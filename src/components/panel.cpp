@@ -43,7 +43,7 @@ namespace docklight
                    Gdk::POINTER_MOTION_HINT_MASK | Gdk::POINTER_MOTION_MASK);
         g_message("Create Panel.");
 
-        m_provider = get_dockitem_provider();
+        m_provider = create_provider();
     }
 
     void Panel::init()
@@ -51,7 +51,7 @@ namespace docklight
         m_sigc_updated =
             m_provider->signal_update().connect(sigc::mem_fun(this, &Panel::on_container_updated));
 
-        m_position = position::get();
+        m_position = Position();
 
         // frame_time = GLib.get_monotonic_time();
     }
@@ -173,7 +173,7 @@ namespace docklight
         if (!size) return;
 
         size--;
-        gint separator_size = config::get_separator_size();
+        gint separator_size = Config()->get_separator_size();
         gint separators_count = (size * separator_size);
 
         m_position->set_position(m_provider->required_size(separators_count));
@@ -195,8 +195,8 @@ namespace docklight
         gint pos_x = 0;
         gint pos_y = 0;
 
-        auto separator_size = config::get_separator_size();
-        auto area = config::get_dock_area() + separator_size;
+        auto separator_size = Config()->get_separator_size();
+        auto area = Config()->get_dock_area() + separator_size;
         auto size = m_provider->data().size();
         auto maxsize = size * area;
         auto start_pos = 0;
@@ -205,7 +205,7 @@ namespace docklight
 
         for (size_t idx = 0; idx < size; idx++) {
             m_dockitem_index = -1;
-            if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+            if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
                 if (mx >= pos_x && mx <= pos_x + area) {
                     m_dockitem_index = idx;
                     break;

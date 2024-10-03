@@ -46,6 +46,7 @@ components/panel.cpp \
 components/dockrender.cpp \
 components/device.cpp \
 components/config.cpp \
+components/configfile.cpp \
 components/dockitemcontainer.cpp \
 components/dockitemprovider.cpp \
 components/appobserver.cpp \

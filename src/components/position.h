@@ -25,7 +25,7 @@
 #include "utils/struts.h"
 // clang-format on
 
-namespace docklight::position
+namespace docklight
 {
 
     class PositionManager : public Glib::Object
@@ -47,12 +47,12 @@ namespace docklight::position
         }
 
       private:
-        Struts m_struts;
+        position::Struts m_struts;
         Gtk::Window* m_window;
         guint m_last_required_size = 0;
     };
 
-    Glib::RefPtr<PositionManager> create(Gtk::Window* window);
-    Glib::RefPtr<PositionManager> get();
+    Glib::RefPtr<PositionManager> create_position(Gtk::Window* window);
+    Glib::RefPtr<PositionManager> Position();
 
-}  // namespace docklight::position
+}  // namespace docklight

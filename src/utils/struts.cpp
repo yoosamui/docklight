@@ -45,8 +45,8 @@ namespace docklight::position
         long insets[12] = {0};
 
         auto const screen = device::display::get_default_screen();
-        auto const location = config::get_dock_location();
-        auto area = config::get_dock_area();
+        auto const location = Config()->get_dock_location();
+        auto area = Config()->get_dock_area();
         auto workarea = device::monitor::get_workarea();
         auto scale_factor = 1;
 

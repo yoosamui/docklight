@@ -54,7 +54,7 @@ namespace docklight
       private:
         // instantiate listener
         Glib::RefPtr<AppObserver> m_observer;
-        Glib::RefPtr<position::PositionManager> m_position;
+        Glib::RefPtr<PositionManager> m_position;
 
         //    bool on_timeout_draw();
         bool on_button_press_event(GdkEventButton* event) override;
@@ -82,7 +82,6 @@ namespace docklight
         //  sigc::connection m_sigc_updated;
         //  Glib::RefPtr<ExplodesWindow> m_composite;
         ExplodesWindow m_composite;
-        //  Glib::RefPtr<Panel> m_panel;
         static Panel* m_panel;
         static Glib::RefPtr<Gtk::Application> m_application;
     };

@@ -3,6 +3,7 @@
 #include "gio/gdesktopappinfo.h"
 namespace docklight
 {
+
 #define TESTING
 #ifdef TESTING
     bool get_window_icon(WnckWindow* window, Glib::RefPtr<Gdk::Pixbuf>& pixbuf)
@@ -49,7 +50,7 @@ namespace docklight
         // clang-format on
 
         gint32 xid = wnck_window_get_xid(window);
-        get_dockitem_provider()->remove(xid);
+        Provider()->remove(xid);
     }
 
     struct Frame {
@@ -97,8 +98,8 @@ namespace docklight
 
         gint32 xid = wnck_window_get_xid(window);
 
-        auto provider = get_dockitem_provider();
-        if (get_dockitem_provider()->exist(xid)) return;
+        auto provider = Provider();
+        if (provider->exist(xid)) return;
 
         provider->insert(window);
 
@@ -137,6 +138,22 @@ namespace docklight
                          G_CALLBACK(&AppObserver::on_window_closed), nullptr);
 
         g_message("Create AppObserver.");
+    }
+
+    Glib::RefPtr<AppObserver> m_observer;
+    Glib::RefPtr<AppObserver> create_observer()
+    {
+        if (!m_observer) {
+            m_observer = Glib::RefPtr<AppObserver>(new AppObserver());
+        }
+
+        return m_observer;
+    }
+
+    Glib::RefPtr<AppObserver> Observer()
+    {
+        g_assert(m_observer);
+        return m_observer;
     }
 
 }  // namespace docklight

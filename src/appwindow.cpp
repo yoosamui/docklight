@@ -20,10 +20,9 @@ namespace docklight
 
     AppWindow::AppWindow()
     {
-        // A window to implement a docking bar used for creating the dock panel.
-
 #define DOCK_WINDOW 1
 #ifdef DOCK_WINDOW
+        // A window to implement a docking bar used for creating the dock panel.
         set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
         set_decorated(false);
 #else
@@ -36,56 +35,13 @@ namespace docklight
         set_keep_above(true);
 
         set_size_request(1, 1);
-        /*GdkScreen* screen;
-        GdkVisual* visual;
 
-        gtk_widget_set_app_paintable(GTK_WIDGET(gobj()), TRUE);
-        screen = gdk_screen_get_default();
-        visual = gdk_screen_get_rgba_visual(screen);
+        Config();
+        m_observer = create_observer();
+        m_position = create_position(this);
 
-        if (visual != NULL && gdk_screen_is_composited(screen)) {
-            gtk_widget_set_visual(GTK_WIDGET(gobj()), visual);
-        }
-
-        //    this->set_gravity(Gdk::Gravity::GRAVITY_STATIC);
-        this->set_size_request(1, 1);
-
-        // A window to implement a docking bar used for creating the dock panel.
-        //  this->set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
-        this->set_skip_taskbar_hint(true);
-        this->set_skip_pager_hint(true);
-        this->set_keep_above(true);
-        // this->set_decorated(false);*/
-
-        // m_panel = Glib::RefPtr<Panel>(new Panel());
-        //        m_panel = new m_panelGlib::RefPtr<Panel>(new Panel());
-        //      add(*m_ppanel);
-
-        // m_window = Glib::RefPtr<Gtk::Window>(new Gtk::Window);
-        //// m_window->set_size_request(1000, 1000);
-        // m_window->set_keep_above(true);
-        // m_window->set_title("TEST");
-        // m_window->show();
-        // m_window->maximize();
-
-        /*Gdk::Rectangle wa = device::monitor::get_workarea();
-        Gdk::Rectangle geo = device::monitor::get_geometry();
-        g_message("Monitor size %d %d %d %d\n", geo.get_x(), geo.get_y(), geo.get_width(),
-                  geo.get_height());
-        g_message("Workarea size %d %d %d %d\n", wa.get_x(), wa.get_y(), wa.get_width(),
-                  wa.get_height());*/
-
-        // int x = m_window->get_width();
-        // int y = m_window->get_height();
-
-        //// g_print("SIZE %d %d \n", x, y)arning: ‘void wnck_set_client_type(WnckClientType)’ is
-        /// deprecated: Use 'wnck_handle_new' instead [-Wdeprecated-declarations]
-        // 82 |         wnck_set_client_type(WNCK_CLIENT_TYPE_PAGER);
-        //  wnck_set_client_type(WNCK_CLIENT_TYPE_PAGER);
-
-        m_observer = Glib::RefPtr<AppObserver>(new AppObserver());
-        m_position = position::create(this);
         m_panel = new Panel();
+
         this->add(*m_panel);
         show_all();
         g_message("Create AppWindow.");
@@ -95,8 +51,8 @@ namespace docklight
     {
         // release the current stryt if any
         delete m_panel;
-        // TODO:
-        //  position::struts::set_strut(true);
+        //  TODO:
+        //   position::struts::set_strut(true);
 
         g_print(MSG_FREE_OBJECT, "AppWindow");
         g_print("\n");
@@ -114,7 +70,7 @@ namespace docklight
         // m_sigc_updated = get_dockitem_provider()->signal_update().connect(
         // sigc::mem_fun(this, &AppWindow::on_container_updated));
 
-        config::load_file();
+        Config()->load();
 
         // position::init(*(this));
 
@@ -181,7 +137,7 @@ namespace docklight
             auto const args_list = group.getList();
 
             // iadd args to config
-            config::AddArgs(args_list);
+            Config()->set_arguments(args_list);
         }
 
         m_panel->container_updated(224);
@@ -229,7 +185,7 @@ namespace docklight
 
             //            m_composite = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
             m_composite.show_at(800, 800);
-            auto container = get_dockitem_provider();
+            auto container = Provider();
             for (auto& dockitem : container->data()) {
                 const auto map = dockitem->get_childmap();
                 g_print("%lu [%s] %lu\n", dockitem->get_xid(), dockitem->get_group_name().c_str(),

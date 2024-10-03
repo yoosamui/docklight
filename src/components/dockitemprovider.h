@@ -91,6 +91,7 @@ namespace docklight
         BamfMatcher* m_matcher = nullptr;
     };
 
-    Glib::RefPtr<DockItemProvider> get_dockitem_provider();
+    Glib::RefPtr<DockItemProvider> create_provider();
+    Glib::RefPtr<DockItemProvider> Provider();
 
 }  // namespace docklight

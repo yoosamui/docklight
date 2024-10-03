@@ -51,7 +51,7 @@ namespace docklight
         bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr);
 
       protected:
-        Glib::RefPtr<position::PositionManager> m_position;
+        Glib::RefPtr<PositionManager> m_position;
         void get_start_pos(gint maxsize, gint& x, gint& y);
 
       private:
