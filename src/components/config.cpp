@@ -32,7 +32,7 @@ namespace docklight
         constexpr const char* DEF_CONFIG_FILENAME = "docklight.config";
         constexpr const int DEF_ICON_SIZE = 48;
         constexpr const int DEF_SEPARATOR_MARGIN = 0;
-        constexpr const int DEF_SEPARATOR_SIZE = 2;
+        constexpr const int DEF_SEPARATOR_SIZE = 0;
         constexpr const double DEF_AUTOHIDE_ANIMATION_DELAY = 5.0;
         constexpr const int DEF_AUTOHIDE_ANCHORT_MARGIN = 20;
         constexpr const double DEF_AUTOHIDE_HIDE_DELAY = 0.5;
@@ -69,7 +69,7 @@ namespace docklight
             System::create_directory_if_not_exitst(config_dir);
 
             char buff[PATH_MAX];
-            sprintf(buff, "%s/%s", config_dir, DEF_CONFIG_FILENAME);
+            sprintf(buff, "%s/%s", config_dir, "docklight5.config" /*DEF_CONFIG_FILENAME*/);
 
             return buff;
         }
@@ -100,8 +100,270 @@ namespace docklight
             return key_file;
         }
 
+        int get_icon_size_from_file(GKeyFile* key_file)
+        {
+            GError* error = nullptr;
+            int value = g_key_file_get_integer(key_file, "dock", "icon_size", &error);
+            if (error) {
+                g_error_free(error);
+                error = nullptr;
+
+                return m_icon_size;
+            }
+
+            return value;
+        }
+
+        std::string get_location(GKeyFile* key_file)
+        {
+            GError* error = nullptr;
+            char* value = g_key_file_get_string(key_file, "dock", "location", &error);
+            if (error) {
+                g_error_free(error);
+                error = nullptr;
+
+                return std::string{};
+            }
+
+            return value;
+        }
+
+        std::string get_alignment(GKeyFile* key_file)
+        {
+            GError* error = nullptr;
+            char* value = g_key_file_get_string(key_file, "dock", "alignment", &error);
+            if (error) {
+                g_error_free(error);
+                error = nullptr;
+
+                return std::string{};
+            }
+
+            return value;
+        }
+
+        std::string get_autohide(GKeyFile* key_file)
+        {
+            GError* error = nullptr;
+            char* value = g_key_file_get_string(key_file, "dock", "autohide_mode", &error);
+            if (error) {
+                g_error_free(error);
+                error = nullptr;
+
+                return std::string{};
+            }
+
+            return value;
+        }
+
+        std::string get_indicator_type_key(GKeyFile* key_file)
+        {
+            GError* error = nullptr;
+            char* value = g_key_file_get_string(key_file, "dock", "indicator_type", &error);
+            if (error) {
+                g_error_free(error);
+                error = nullptr;
+
+                return std::string{};
+            }
+
+            return value;
+        }
+
+        bool get_separator_show_line(GKeyFile* key_file)
+        {
+            GError* error = nullptr;
+            bool result;
+            result = g_key_file_get_boolean(key_file, "separator", "show_line", &error);
+            if (error) {
+                g_error_free(error);
+                error = nullptr;
+
+                return false;
+            }
+
+            return result;
+        }
+
+        int get_separator_size()
+        {
+            return m_separator_size;
+        }
+
+        int get_separator_margin(GKeyFile* key_file)
+        {
+            GError* error = nullptr;
+            int value = g_key_file_get_integer(key_file, "separator", "separator_margin", &error);
+            if (error) {
+                g_error_free(error);
+                error = nullptr;
+
+                return m_separator_margin;
+            }
+
+            return value;
+        }
+
+        int get_anchor_margin()
+        {
+            //
+            return m_anchor_margin;
+        }
+
+        float get_animation_delay()
+        {
+            //
+            return m_animation_delay;
+        }
+
+        float get_hide_delay()
+        {
+            //
+            return m_hide_delay;
+        }
+
+        int get_separator_size(GKeyFile* key_file)
+        {
+            GError* error = nullptr;
+            int value = g_key_file_get_integer(key_file, "separator", "separator_size", &error);
+            if (error) {
+                g_error_free(error);
+                error = nullptr;
+
+                return m_separator_size;
+            }
+
+            return value;
+        }
+
+        int get_anchor_margin(GKeyFile* key_file)
+        {
+            GError* error = nullptr;
+            int value = g_key_file_get_integer(key_file, "dock", "anchor_margin", &error);
+            if (error) {
+                g_error_free(error);
+                error = nullptr;
+
+                return m_anchor_margin;
+            }
+
+            return value;
+        }
+
+        float get_animation_delay(GKeyFile* key_file)
+        {
+            GError* error = nullptr;
+            double value = g_key_file_get_double(key_file, "dock", "animation_delay", &error);
+            if (error) {
+                g_error_free(error);
+                error = nullptr;
+
+                return m_animation_delay;
+            }
+
+            return value;
+        }
+
+        float get_hide_delay(GKeyFile* key_file)
+        {
+            GError* error = nullptr;
+            double value = g_key_file_get_double(key_file, "dock", "hide_delay", &error);
+            if (error) {
+                g_error_free(error);
+                error = nullptr;
+
+                return m_hide_delay;
+            }
+
+            return value;
+        }
+
         void AddArgs(const std::vector<std::tuple<gchar, int, Glib::ustring>>& args)
         {
+            GKeyFile* key_file = load_file();
+            if (!key_file) return;
+
+            m_icon_size = get_icon_size_from_file(key_file);
+            if (m_icon_size < 32 || m_icon_size > 128) {
+                m_icon_size = DEF_ICON_SIZE;
+            }
+            // location
+            std::string location = get_location(key_file);
+            if (!location.empty()) {
+                if (location == "left") {
+                    m_location = dock_location_t::left;
+                } else if (location == "top") {
+                    m_location = dock_location_t::top;
+                } else if (location == "right") {
+                    m_location = dock_location_t::right;
+                } else if (location == "bottom") {
+                    m_location = dock_location_t::bottom;
+                } else {
+                    g_warning("configuration: invalid location. %s\n", location.c_str());
+                }
+            }
+
+            // alignment
+
+            std::string alignment = get_alignment(key_file);
+            if (!alignment.empty()) {
+                if (alignment == "start") {
+                    m_alignment = dock_alignment_t::start;
+                } else if (alignment == "end") {
+                    m_alignment = dock_alignment_t::end;
+                } else if (alignment == "center") {
+                    m_alignment = dock_alignment_t::center;
+                } else if (alignment == "fill") {
+                    m_alignment = dock_alignment_t::fill;
+                } else {
+                    g_warning("configuration: invalid alignment. %s\n", alignment.c_str());
+                }
+            }
+
+            std::string indicator = get_indicator_type_key(key_file);
+            if (!indicator.empty()) {
+                if (indicator == "dots") {
+                    m_indicator_type = dock_indicator_type_t::dots;
+                } else if (indicator == "lines") {
+                    m_indicator_type = dock_indicator_type_t::lines;
+                } else {
+                    g_warning("configuration: invalid indicator mode. %s\n", indicator.c_str());
+                }
+            }
+
+            // separator show line
+            m_show_separator_line = get_separator_show_line(key_file);
+
+            // separator size
+            m_separator_size = get_separator_size(key_file);
+            if (m_separator_size < 0 || m_separator_size > 20) {
+                m_separator_size = DEF_SEPARATOR_SIZE;
+            }
+
+            // separator margin
+            m_separator_margin = get_separator_margin(key_file);
+            if (m_separator_margin < 0 || m_separator_margin > 20) {
+                m_separator_margin = DEF_ICON_SIZE;
+            }
+
+            m_anchor_margin = get_anchor_margin(key_file);
+            if (m_anchor_margin < 1 || m_anchor_margin > 20) {
+                m_anchor_margin = DEF_AUTOHIDE_ANCHORT_MARGIN;
+            }
+
+            m_animation_delay = get_animation_delay(key_file);
+            if (m_animation_delay < 0.0 || m_animation_delay > 20.0) {
+                m_animation_delay = DEF_AUTOHIDE_ANIMATION_DELAY;
+            }
+
+            m_hide_delay = get_hide_delay(key_file);
+            if (m_hide_delay < 0.0 || m_hide_delay > 4.0) {
+                m_hide_delay = DEF_AUTOHIDE_HIDE_DELAY;
+            }
+
+            //
+            //
+            // ARGS
             for (auto&& t : args) {
                 std::cout << "R:" << std::get<0>(t) << ", " << std::get<1>(t) << ", "
                           << std::get<2>(t) << std::endl;
@@ -198,6 +460,12 @@ namespace docklight
             m_location = location;
         }
 
+        int get_icon_size()
+        {
+            int icon_size = m_icon_size;
+            return icon_size;
+        }
+
         int get_dock_area_margin()
         {
             return DEF_DOCKAREA_MARGIN;
@@ -245,11 +513,6 @@ namespace docklight
             m_alignment = value;
         }
 
-        int get_separator_size()
-        {
-            //
-            return m_separator_size;
-        }
         int get_separator_margin()
         {
             //
@@ -264,12 +527,6 @@ namespace docklight
 
             // TODO: constant
             return 20;
-        }
-
-        int get_icon_size()
-        {
-            int icon_size = m_icon_size;
-            return icon_size;
         }
 
         void set_icon_size(int value)
@@ -304,24 +561,6 @@ namespace docklight
         void set_separator_line(bool value)
         {
             m_show_separator_line = value;
-        }
-
-        float get_animation_delay()
-        {
-            //
-            return m_animation_delay;
-        }
-
-        float get_hide_delay()
-        {
-            //
-            return m_hide_delay;
-        }
-
-        int get_anchor_margin()
-        {
-            //
-            return m_anchor_margin;
         }
 
     }  // namespace config

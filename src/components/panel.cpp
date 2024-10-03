@@ -231,8 +231,9 @@ namespace docklight
         std::shared_ptr<DockItemIcon> dockitem;
         if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return false;
 
-        g_print("%d x %d  index = %d %s\n", (int)event->x, (int)event->y, m_dockitem_index,
-                dockitem->to_string().c_str());
+        // g_print("%d x %d  index = %d %s\n", (int)event->x, (int)event->y, m_dockitem_index,
+        // dockitem->to_string().c_str());
+        g_print("index = %d\n%s\n", m_dockitem_index, dockitem->to_string().c_str());
         return false;
     }
 

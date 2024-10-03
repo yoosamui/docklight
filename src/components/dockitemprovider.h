@@ -27,12 +27,9 @@
 #include <gtkmm/icontheme.h>
 
 #include "components/dockitemcontainer.h"
-//#include "components/dockitemicon.h"
 #include "components/config.h"
-//#include "utils/singletonbase.h"
-#include "utils/pixbuf.h"
 // clang-format on
-#include <chrono>
+
 namespace docklight
 {
 
@@ -48,43 +45,18 @@ namespace docklight
         virtual ~DockItemProvider();
 
         void request_update_signal();
-        //    guint count(guint additional_size) const
+
         guint required_size(guint additional_size);
-        // const std::map<gulong, Glib::RefPtr<DockItemIcon>> get_appmap() const;
-        //          const std::map<gulong, std::any> get_appmap();
         int remove(gulong xid);
-        gulong exist(const Glib::ustring& group);
 
         bool exist(gulong xid);
         bool insert(WnckWindow* window);
 
-        //  guint items_count();
-        // signal accessor:
         type_signal_update signal_update();
 
-        bool get_dockitem_by_index(guint index, std::shared_ptr<DockItemIcon>& dockitem)
-        {
-            auto v = data();
-            if (index < 0 || index > v.size()) return false;
+        bool get_dockitem_by_index(guint index, std::shared_ptr<DockItemIcon>& dockitem);
 
-            dockitem = v.at(index);
-            return dockitem ? true : false;
-        }
-
-        std::vector<std::shared_ptr<DockItemIcon>>& data()
-
-        {
-            // auto size = m_container.data<DockItemIcon>().size();
-            // g_print("-------------------provider %lu\n", size);
-            return m_container.data<DockItemIcon>();
-        }
-
-        // std::map<gulong, std::any>& get_map()
-        //{
-        ////  return m_container.m_map;
-        // return m_map;
-        ////  return Container::getInstance()->m_map;
-        //}
+        std::vector<std::shared_ptr<DockItemIcon>>& data();
 
       private:
         sigc::connection m_sigc;

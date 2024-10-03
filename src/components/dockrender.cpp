@@ -153,7 +153,7 @@ namespace docklight
         m_indicator_ctx = Cairo::Context::create(m_indicator);
     }
 
-    inline void DockRender::get_start_pos(gint maxsize, gint& x, gint& y)
+    void DockRender::get_start_pos(gint maxsize, gint& x, gint& y)
     {
         auto center = 0;
         x = y = 0;
@@ -235,6 +235,7 @@ namespace docklight
         draw_surface_background();
 
         guint separator_size = config::get_separator_size();
+
         auto area = config::get_dock_area() + separator_size;
         auto data = provider->data();
         auto maxsize = data.size() * area;
