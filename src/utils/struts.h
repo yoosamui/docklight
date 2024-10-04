@@ -49,6 +49,9 @@ namespace docklight::position
 
         void init(Gtk::Window* window);
         void set_struts(bool force = false);
+        void reset_struts();
+
+        bool is_set() { return m_strut_set; }
 
       private:
         Gtk::Window* m_window;

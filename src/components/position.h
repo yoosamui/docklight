@@ -38,6 +38,8 @@ namespace docklight
         Gdk::Rectangle get_monitor() const;
         Gdk::Rectangle get_window_geometry() const;
 
+        void force_position();
+        void reset_position();
         void set_position(guint required_size);
         void set_struts()
         {
@@ -50,6 +52,7 @@ namespace docklight
         position::Struts m_struts;
         Gtk::Window* m_window;
         guint m_last_required_size = 0;
+        int m_lastposx = 0;
     };
 
     Glib::RefPtr<PositionManager> create_position(Gtk::Window* window);

@@ -233,7 +233,25 @@ namespace docklight
 
         // g_print("%d x %d  index = %d %s\n", (int)event->x, (int)event->y, m_dockitem_index,
         // dockitem->to_string().c_str());
-        g_print("index = %d\n%s\n", m_dockitem_index, dockitem->to_string().c_str());
+        //////////////////
+
+        if (m_dockitem_index == 0) {
+            auto iconsize = Config()->get_icon_size();
+            iconsize = 32;
+            Config()->set_icon_size(iconsize);
+            m_position->force_position();
+            container_updated();
+            Gtk::Widget::queue_draw();
+
+            g_print("EXEC");
+            g_print("index = %d\n%d\n", m_dockitem_index, iconsize);
+        } else {
+            m_position->reset_position();
+        }
+
+        //   Config()->set_icon_size(32);
+        //   m_position->reset_position();
+
         return false;
     }
 

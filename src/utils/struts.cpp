@@ -38,6 +38,26 @@ namespace docklight::position
         m_window = window;
     }
 
+    void Struts::reset_struts()
+    {
+        long insets[12] = {0};
+
+        GtkWidget* toplevel = gtk_widget_get_toplevel(GTK_WIDGET(m_window->gobj()));
+        auto gdk_window = gtk_widget_get_window(toplevel);
+        if (!gdk_window) {
+            g_warning("set_strut: gdk_window is null.");
+            return;
+        }
+        gdk_property_change(gdk_window, gdk_atom_intern("_NET_WM_STRUT_PARTIAL", FALSE),
+                            gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
+                            (unsigned char*)&insets, 12);
+
+        gdk_property_change(gdk_window, gdk_atom_intern("_NET_WM_STRUT", FALSE),
+                            gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
+                            (unsigned char*)&insets, 4);
+
+        m_strut_set = false;
+    }
     void Struts::set_struts(bool force)
     {
         if (m_strut_set && !force) return;
@@ -92,6 +112,8 @@ namespace docklight::position
         gdk_property_change(gdk_window, gdk_atom_intern("_NET_WM_STRUT", FALSE),
                             gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
                             (unsigned char*)&insets, 4);
+
+        g_message("set_strut.");
     }
 
 }  // namespace docklight::position

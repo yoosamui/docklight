@@ -51,6 +51,7 @@ namespace docklight
         const bool is_autohide() const;
         const bool is_intelihide() const;
 
+        const void set_icon_size(guint size);
         void set_arguments(const std::vector<std::tuple<gchar, int, Glib::ustring>>& args);
     };
 

@@ -175,10 +175,25 @@ namespace docklight
         if ((event->type == GDK_BUTTON_PRESS)) {
             //  this->update_position();
             g_print("\n");
-            g_print("--->Press\n\n");
+            g_print("--->Window Press\n\n");
             g_print("\n");
 
-            m_position->set_struts();
+            return false;
+            int factor = Config()->get_icon_size();
+            g_print("----------------------------------ara - %d\n", factor);
+            //  factor -= 1;
+
+            Config()->set_icon_size(factor);
+            //  factor = Config()->get_dock_area();
+            g_print("------------------------------factor-%d---icon - %d\n", factor,
+                    Config()->get_icon_size());
+            m_position->reset_position();
+
+            // m_panel->container_updated();
+
+            // Gtk::Widget::queue_draw();
+            //             m_position->set_struts();
+
             // position::struts::set_strut(false);
             // wnck::get_docks();
             return false;

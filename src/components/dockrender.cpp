@@ -67,9 +67,9 @@ namespace docklight
 
     void DockRender::draw_surface_cell()
     {
-        if (!m_cell) {
-            create_surface_cell();
-        }
+        // if (!m_cell) {
+        create_surface_cell();
+        // }
 
         // clear
         m_cell_ctx->save();
@@ -105,9 +105,9 @@ namespace docklight
         int size = Config()->get_icon_size();
         g_assert(m_background);
 
-        if (!m_icon) {
-            create_surface_icon();
-        }
+        // if (!m_icon) {
+        create_surface_icon();
+        // }
 
         // clear
         m_icon_ctx->save();
@@ -183,9 +183,9 @@ namespace docklight
     {
         g_assert(m_cell);
 
-        if (!m_indicator) {
-            create_surface_indicator(item);
-        }
+        // if (!m_indicator) {
+        create_surface_indicator(item);
+        //}
         // clear
         m_indicator_ctx->save();
         m_indicator_ctx->set_source_rgba(0.0, 0.0, 0.0, 0.0);

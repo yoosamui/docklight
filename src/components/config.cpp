@@ -72,6 +72,11 @@ namespace docklight
         return m_icon_size;
     }
 
+    const void Configuration::set_icon_size(guint size)
+    {
+        m_icon_size = size;
+    }
+
     const int Configuration::get_separator_size() const
     {
         return m_separator_size;

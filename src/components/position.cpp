@@ -70,12 +70,28 @@ namespace docklight
         return Gdk::Rectangle(0, 0, m_window->get_width(), m_window->get_height());
     }
 
+    void PositionManager::force_position()
+    {
+        //
+        // m_struts.reset_struts();
+        m_struts.set_struts();
+        //    set_position(1000);
+        set_position(m_last_required_size);
+    }
+
+    void PositionManager::reset_position()
+    {
+        //
+        //  m_lastposx = 0;
+        m_struts.reset_struts();
+        set_position(m_last_required_size);
+    }
     void PositionManager::set_position(guint required_size)
     {
-        if (m_last_required_size == required_size) return;
-        m_last_required_size = required_size;
+        // if (m_last_required_size == required_size) return;
+        // m_last_required_size = required_size;
 
-        //            g_message("Position request: %d", required_size);
+        g_message("Position request: %d", required_size);
         int area = Config()->get_dock_area();
         //   set_struts();
         dock_alignment_t alignment = Config()->get_dock_alignment();
@@ -85,9 +101,6 @@ namespace docklight
         int xpos = 0, ypos = 0, center = 0;
 
         // vor the move setzen
-        if (Config()->is_autohide_none()) {
-            m_struts.set_struts();
-        }
 
         if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
             int width = required_size;
@@ -117,12 +130,98 @@ namespace docklight
             }
 
             if (Config()->get_dock_location() == dock_location_t::bottom) {
-                //  bottom
-                ypos = workarea.get_height();
-                if (workarea.get_y() != 0) {
-                    ypos = workarea.get_height() + workarea.get_y();
+                // if (!m_struts.is_set()) {
+                // i
+                //}
+                // ypos = workarea.get_height() - !m_struts.is_set() ? 0 : area;
+                // if (workarea.get_y() != 0) {
+                // ypos = workarea.get_height() + workarea.get_y() - !m_struts.is_set() ? 0 : area;
+                //}
+
+                // auto offset = area;
+
+                // if (m_struts.is_set()) {
+                // offset = 0;
+                //}
+                // ypos = workarea.get_height() - offset;
+                // if (workarea.get_y() != 0) {
+                // ypos = workarea.get_height() + workarea.get_y() - offset;
+                //}
+
+                if (!m_struts.is_set()) {
+                    // bottom
+                    ypos = workarea.get_height() - area;
+                    if (workarea.get_y() != 0) {
+                        ypos = workarea.get_height() + workarea.get_y() - area;
+                    }
+                    g_print("-------------:NORMAL\n");
+                } else {
+                    // static int lastposx = 0;
+                    ypos = workarea.get_height() + workarea.get_y() - area;
+
+                    if (std::abs(m_lastposx - workarea.get_height()) == area) {
+                        ypos = workarea.get_height() + workarea.get_y();
+                        //  exit(1);
+                    }
+
+                    m_lastposx = workarea.get_height();
+
+                    g_print("PPPPPPPPPPPPPPPPPPPPPPPPPPPP %d (%d) area %d lastposx %d\n", ypos,
+                            workarea.get_height(), area, m_lastposx);
+                    //  -area;
+                    // - workarea.get_y();  // + workarea.get_y() - area;
+                    if (ypos + area == workarea.get_height()) {
+                        //
+
+                        g_print("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY\n");
+                        exit(1);
+                    }
+
+                    if (ypos < workarea.get_height()) {
+                        //
+
+                        ypos = workarea.get_height() + workarea.get_y();
+                        g_print("AAAAAAAAAAAAAAAAAAAAAAi\n");
+                    }
+                    /*if (ypos < workarea.get_height() - area) {
+                        //
+                        ypos = workarea.get_height() + workarea.get_y();
+                        g_print(
+                            " 1  "
+                            "-iSSSSSSSSSSSSSSSSSSS------------:STRUTS%d\n ",
+                            ypos);
+                        //} else [>if (ypos != workarea.get_height())<] {
+                        // g_print(
+                        //" 2  "
+                        //"-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas------------:STRUTS%"
+                        //"d\n ",
+                        // ypos);
+                        // ypos = workarea.get_height() + workarea.get_y() - area;
+                        g_print("AAAAAAAAAAAA %d == %d\n", ypos + area, workarea.get_height());
+                        if (ypos + area == workarea.get_height()) {
+                            ypos = workarea.get_height() + workarea.get_y();
+                        }
+                    } else {
+                        g_print("XXXXXXXXXX %d == %d\n", ypos + area, workarea.get_height());
+                        ypos = workarea.get_height() + workarea.get_y();
+                    }*/
                 }
 
+                // ypos = workarea.get_height();  // - area + workarea.get_y();
+                // if (workarea.get_y() != 0) {
+                // if (ypos < workarea.get_height()) {
+                // ypos = workarea.get_height() + workarea.get_y() - area;
+                // g_print(
+                //"-ssssssssssssssssssssssssssssssssssssssss------------:STRUTS%d\n ",
+                // ypos);
+                //} else {
+                /////
+                // ypos = workarea.get_height() + workarea.get_y() - area;
+                // g_print("-aaaaaaaaaaaaaaaaaaaaaaas------------:STRUTS%d\n ", ypos);
+                //}
+
+                //}
+                // g_print("-------------:STRUTS%d\n ", ypos);
             } else {
                 // top
                 if (workarea.get_y() > 0) {
@@ -134,6 +233,9 @@ namespace docklight
 
             m_window->resize(width, area);
             m_window->move(xpos, ypos);
+            if (Config()->is_autohide_none()) {
+                //       m_struts.set_struts();
+            }
 
         } else  // orientation vertical
         {
