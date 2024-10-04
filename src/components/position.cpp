@@ -75,7 +75,7 @@ namespace docklight
         //
         m_struts.set_struts(true);
         //    set_position(1000);
-        set_position(m_last_required_size);
+        set_position(m_last_required_size + 10);
     }
 
     void PositionManager::reset_position()
@@ -156,57 +156,29 @@ namespace docklight
                     g_print("-------------:NORMAL\n");
                 } else {
                     g_print("-------------:STRUTS\n");
-                    // static int lastposx = 0;
+
                     ypos = workarea.get_height() + workarea.get_y();
-                    g_print("--> YPOS %d wa %d area: %d \n", ypos,
-                            workarea.get_height() + workarea.get_y(), area);
 
                     if (ypos == monitor.get_height()) {
-                        g_print("---DESCOLOCAOi_0\n");
                         ypos = monitor.get_height() - area;
                     }
 
-                    // if (ypos == 1296 /*m_lastposx*/) { // TOD:: WORKS
                     if (ypos == m_lastposx) {
-                        // if (ypos + area == workarea.get_height() + workarea.get_y()) {
-                        g_print("-->DESC  %d wa %d area: %d \n", ypos,
-                                workarea.get_height() + workarea.get_y() + area, area);
-                        ///
                         ypos = workarea.get_height() + workarea.get_y() - area;
-                        //
-                        g_print("---DESCOLOCAO-1  [%d]\n",
-                                workarea.get_height() + workarea.get_y());
-                    } else if (ypos == monitor.get_height()) {
-                        //  g_print("---DESCOLOCAOi_2\n");
-                        //  ypos = monitor.get_height() - area;
                     }
 
-                    // if (std::abs(m_lastposx - workarea.get_height()) == area) {
-                    // g_print(" EEEEEEEEEE  EEEEEEEEEEEE EEEEEEe\n");
-                    //// ypos = workarea.get_height() + workarea.get_y();
-                    //} else {
-                    // g_print(" ooooooooooooo ooooooooooooooooo\n");
-                    // ypos = m_lastposx;  // workarea.get_height() + workarea.get_y() - area;
-                    //}
+                    if (ypos < workarea.get_height()) {
+                        //// ypos = workarea.get_height() - area;
+                        ypos = workarea.get_height() + workarea.get_y();
+                        if (ypos >= monitor.get_height()) {
+                            ypos = workarea.get_height() + workarea.get_y() - area;
+                        }
+                        g_print("need  go out! is inside  %d < %d\n", ypos, workarea.get_height());
+                    }
 
                     m_lastposx = workarea.get_height() + workarea.get_y();
                 }
 
-                // ypos = workarea.get_height();  // - area + workarea.get_y();
-                // if (workarea.get_y() != 0) {
-                // if (ypos < workarea.get_height()) {
-                // ypos = workarea.get_height() + workarea.get_y() - area;
-                // g_print(
-                //"-ssssssssssssssssssssssssssssssssssssssss------------:STRUTS%d\n ",
-                // ypos);
-                //} else {
-                /////
-                // ypos = workarea.get_height() + workarea.get_y() - area;
-                // g_print("-aaaaaaaaaaaaaaaaaaaaaaas------------:STRUTS%d\n ", ypos);
-                //}
-
-                //}
-                // g_print("-------------:STRUTS%d\n ", ypos);
             } else {
                 // top
                 if (workarea.get_y() > 0) {
