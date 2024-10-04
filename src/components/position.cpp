@@ -177,7 +177,7 @@ namespace docklight
 
                     if (ypos < workarea.get_height()) {
                         //// ypos = workarea.get_height() - area;
-                        ypos = workarea.get_height() + workarea.get_y();
+                        ypos = workarea.get_height() - workarea.get_y() - area;
                         if (ypos >= monitor.get_height()) {
                             ypos = workarea.get_height() + workarea.get_y() - area;
                             g_print("need go out! is inside!!!  %d < %d\n", ypos,
