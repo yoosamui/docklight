@@ -237,7 +237,7 @@ namespace docklight
 
         if (m_dockitem_index == 0) {
             auto iconsize = Config()->get_icon_size();
-            iconsize = 32;
+            iconsize -= 2;
             Config()->set_icon_size(iconsize);
             m_position->force_position();
             container_updated();
