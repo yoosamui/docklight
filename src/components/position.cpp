@@ -95,7 +95,7 @@ namespace docklight
         //   set_struts();
         dock_alignment_t alignment = Config()->get_dock_alignment();
         auto workarea = get_workarea();
-        //    auto monitor = get_monitor();
+        auto monitor = get_monitor();
 
         int xpos = 0, ypos = 0, center = 0;
 
@@ -160,9 +160,21 @@ namespace docklight
                     ypos = workarea.get_height() + workarea.get_y();
                     g_print("--> YPOS %d\n", ypos);
 
-                    if (ypos == 1440) {
-                        g_print("---DESCOLOCAO\n");
-                        ypos = 1440 - area;
+                    if (ypos == 1395) {
+                        ypos = workarea.get_height() + workarea.get_y() - area;
+                        // ypos = workarea.get_height() - area;
+                        g_print("---DESCOLOCAO-1\n");
+
+                        //
+                    }
+
+                    if (m_lastposx == workarea.get_height()) {
+                        //     exit(1);
+                    }
+
+                    if (ypos == monitor.get_height()) {
+                        g_print("---DESCOLOCAOi_2\n");
+                        ypos = monitor.get_height() - area;
                         // workarea.get_height() + workarea.get_y();
                         //   ypos = workarea.get_height() - area;
                         //     ypos = workarea.get_height();  // + workarea.get_y();
@@ -177,46 +189,6 @@ namespace docklight
                     //}
 
                     m_lastposx = workarea.get_height();
-
-                    g_print("PPPPPPPPPPPPPPPPPPPPPPPPPPPP %d (%d) area %d lastposx %d\n", ypos,
-                            workarea.get_height(), area, m_lastposx);
-                    //  -area;
-                    // - workarea.get_y();  // + workarea.get_y() - area;
-                    if (ypos + area == workarea.get_height()) {
-                        //
-
-                        g_print("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY\n");
-                        exit(1);
-                    }
-
-                    if (ypos < workarea.get_height()) {
-                        //
-
-                        //    ypos = workarea.get_height() + workarea.get_y();
-                        g_print("AAAAAAAAAAAAAAAAAAAAAAi\n");
-                    }
-                    /*if (ypos < workarea.get_height() - area) {
-                        //
-                        ypos = workarea.get_height() + workarea.get_y();
-                        g_print(
-                            " 1  "
-                            "-iSSSSSSSSSSSSSSSSSSS------------:STRUTS%d\n ",
-                            ypos);
-                        //} else [>if (ypos != workarea.get_height())<] {
-                        // g_print(
-                        //" 2  "
-                        //"-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaas------------:STRUTS%"
-                        //"d\n ",
-                        // ypos);
-                        // ypos = workarea.get_height() + workarea.get_y() - area;
-                        g_print("AAAAAAAAAAAA %d == %d\n", ypos + area, workarea.get_height());
-                        if (ypos + area == workarea.get_height()) {
-                            ypos = workarea.get_height() + workarea.get_y();
-                        }
-                    } else {
-                        g_print("XXXXXXXXXX %d == %d\n", ypos + area, workarea.get_height());
-                        ypos = workarea.get_height() + workarea.get_y();
-                    }*/
                 }
 
                 // ypos = workarea.get_height();  // - area + workarea.get_y();
