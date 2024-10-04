@@ -158,26 +158,27 @@ namespace docklight
                     g_print("-------------:STRUTS\n");
                     // static int lastposx = 0;
                     ypos = workarea.get_height() + workarea.get_y();
-                    g_print("--> YPOS %d\n", ypos);
-
-                    if (ypos == 1395) {
-                        ypos = workarea.get_height() + workarea.get_y() - area;
-                        // ypos = workarea.get_height() - area;
-                        g_print("---DESCOLOCAO-1\n");
-
-                        //
-                    }
-
-                    if (m_lastposx == workarea.get_height()) {
-                        //     exit(1);
-                    }
+                    g_print("--> YPOS %d wa %d area: %d \n", ypos,
+                            workarea.get_height() + workarea.get_y(), area);
 
                     if (ypos == monitor.get_height()) {
-                        g_print("---DESCOLOCAOi_2\n");
+                        g_print("---DESCOLOCAOi_0\n");
                         ypos = monitor.get_height() - area;
-                        // workarea.get_height() + workarea.get_y();
-                        //   ypos = workarea.get_height() - area;
-                        //     ypos = workarea.get_height();  // + workarea.get_y();
+                    }
+
+                    // if (ypos == 1296 /*m_lastposx*/) { // TOD:: WORKS
+                    if (ypos == m_lastposx) {
+                        // if (ypos + area == workarea.get_height() + workarea.get_y()) {
+                        g_print("-->DESC  %d wa %d area: %d \n", ypos,
+                                workarea.get_height() + workarea.get_y() + area, area);
+                        ///
+                        ypos = workarea.get_height() + workarea.get_y() - area;
+                        //
+                        g_print("---DESCOLOCAO-1  [%d]\n",
+                                workarea.get_height() + workarea.get_y());
+                    } else if (ypos == monitor.get_height()) {
+                        //  g_print("---DESCOLOCAOi_2\n");
+                        //  ypos = monitor.get_height() - area;
                     }
 
                     // if (std::abs(m_lastposx - workarea.get_height()) == area) {
@@ -188,7 +189,7 @@ namespace docklight
                     // ypos = m_lastposx;  // workarea.get_height() + workarea.get_y() - area;
                     //}
 
-                    m_lastposx = workarea.get_height();
+                    m_lastposx = workarea.get_height() + workarea.get_y();
                 }
 
                 // ypos = workarea.get_height();  // - area + workarea.get_y();
