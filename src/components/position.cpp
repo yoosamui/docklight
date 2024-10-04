@@ -74,7 +74,7 @@ namespace docklight
     {
         //
         // m_struts.reset_struts();
-        m_struts.set_struts();
+        m_struts.set_struts(true);
         //    set_position(1000);
         set_position(m_last_required_size);
     }
