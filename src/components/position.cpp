@@ -73,7 +73,8 @@ namespace docklight
     void PositionManager::force_position()
     {
         //
-        //  m_struts.reset_struts();
+        //      m_struts.reset_struts();
+        //        set_position(m_last_required_size + 10);
         m_struts.set_struts(true);
         set_position(m_last_required_size + 10);
     }
@@ -83,12 +84,12 @@ namespace docklight
         //
         //  m_lastposx = 0;
         m_struts.reset_struts();
-        //   set_position(m_last_required_size);
+        // set_position(m_last_required_size + 10);
     }
     void PositionManager::set_position(guint required_size)
     {
-        if (m_last_required_size == required_size) return;
-        m_last_required_size = required_size;
+        // if (m_last_required_size == required_size) return;
+        // m_last_required_size = required_size;
 
         g_message("Position request: %d", required_size);
         int area = Config()->get_dock_area();
@@ -129,44 +130,29 @@ namespace docklight
             }
 
             if (Config()->get_dock_location() == dock_location_t::bottom) {
-                // if (!m_struts.is_set()) {
-                // i
-                //}
-                // ypos = workarea.get_height() - !m_struts.is_set() ? 0 : area;
-                // if (workarea.get_y() != 0) {
-                // ypos = workarea.get_height() + workarea.get_y() - !m_struts.is_set() ? 0 : area;
-                //}
-
-                // auto offset = area;
-
-                // if (m_struts.is_set()) {
-                // offset = 0;
-                //}
-                // ypos = workarea.get_height() - offset;
-                // if (workarea.get_y() != 0) {
-                // ypos = workarea.get_height() + workarea.get_y() - offset;
-                //}
-
                 if (!m_struts.is_set()) {
                     // bottom
                     ypos = workarea.get_height() - area;
                     if (workarea.get_y() != 0) {
+                        //
                         ypos = workarea.get_height() + workarea.get_y() - area;
                     }
                     g_print("-------------:NORMAL\n");
                 } else {
                     g_print("-------------:STRUTS\n");
-
+                    // ypos = 1340;
                     ypos = workarea.get_height() + workarea.get_y();
                     g_print(" 0 start pos   %d \n", ypos);
+                    ////
+                    ypos = workarea.get_height() + workarea.get_y();
 
-                    if (ypos == monitor.get_height()) {
+                    if (ypos >= monitor.get_height()) {
                         ypos = monitor.get_height() - area;
-                        g_print(" 1  %d \n", ypos);
+                        g_print(" out  1  %d \n", ypos);
                     }
 
                     if (ypos == m_lastposx) {
-                        if (workarea.get_y() /*&& workarea.getheight() != monitor.get_height()*/) {
+                        if (workarea.get_y()) {
                             ypos = workarea.get_height() + workarea.get_y();
                             g_print(" 2a  %d \n", ypos);
                         } else {
