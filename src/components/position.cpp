@@ -73,8 +73,8 @@ namespace docklight
     void PositionManager::force_position()
     {
         //
+        //  m_struts.reset_struts();
         m_struts.set_struts(true);
-        //    set_position(1000);
         set_position(m_last_required_size + 10);
     }
 
@@ -87,8 +87,8 @@ namespace docklight
     }
     void PositionManager::set_position(guint required_size)
     {
-        // if (m_last_required_size == required_size) return;
-        // m_last_required_size = required_size;
+        if (m_last_required_size == required_size) return;
+        m_last_required_size = required_size;
 
         g_message("Position request: %d", required_size);
         int area = Config()->get_dock_area();
@@ -158,13 +158,21 @@ namespace docklight
                     g_print("-------------:STRUTS\n");
 
                     ypos = workarea.get_height() + workarea.get_y();
+                    g_print(" 0 start pos   %d \n", ypos);
 
                     if (ypos == monitor.get_height()) {
                         ypos = monitor.get_height() - area;
+                        g_print(" 1  %d \n", ypos);
                     }
 
                     if (ypos == m_lastposx) {
-                        ypos = workarea.get_height() + workarea.get_y() - area;
+                        if (workarea.get_y() /*&& workarea.getheight() != monitor.get_height()*/) {
+                            ypos = workarea.get_height() + workarea.get_y();
+                            g_print(" 2a  %d \n", ypos);
+                        } else {
+                            ypos = workarea.get_height() + workarea.get_y() - area;
+                            g_print(" 2b  %d \n", ypos);
+                        }
                     }
 
                     if (ypos < workarea.get_height()) {
@@ -172,8 +180,9 @@ namespace docklight
                         ypos = workarea.get_height() + workarea.get_y();
                         if (ypos >= monitor.get_height()) {
                             ypos = workarea.get_height() + workarea.get_y() - area;
+                            g_print("need go out! is inside!!!  %d < %d\n", ypos,
+                                    workarea.get_height());
                         }
-                        g_print("need  go out! is inside  %d < %d\n", ypos, workarea.get_height());
                     }
 
                     m_lastposx = workarea.get_height() + workarea.get_y();
