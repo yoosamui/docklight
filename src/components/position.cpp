@@ -73,7 +73,6 @@ namespace docklight
     void PositionManager::force_position()
     {
         //
-        // m_struts.reset_struts();
         m_struts.set_struts(true);
         //    set_position(1000);
         set_position(m_last_required_size);
@@ -84,7 +83,7 @@ namespace docklight
         //
         //  m_lastposx = 0;
         m_struts.reset_struts();
-        set_position(m_last_required_size);
+        //   set_position(m_last_required_size);
     }
     void PositionManager::set_position(guint required_size)
     {
@@ -156,13 +155,26 @@ namespace docklight
                     }
                     g_print("-------------:NORMAL\n");
                 } else {
+                    g_print("-------------:STRUTS\n");
                     // static int lastposx = 0;
-                    ypos = workarea.get_height() + workarea.get_y() - area;
+                    ypos = workarea.get_height() + workarea.get_y();
+                    g_print("--> YPOS %d\n", ypos);
 
-                    if (std::abs(m_lastposx - workarea.get_height()) == area) {
-                        ypos = workarea.get_height() + workarea.get_y();
-                        //  exit(1);
+                    if (ypos == 1440) {
+                        g_print("---DESCOLOCAO\n");
+                        ypos = 1440 - area;
+                        // workarea.get_height() + workarea.get_y();
+                        //   ypos = workarea.get_height() - area;
+                        //     ypos = workarea.get_height();  // + workarea.get_y();
                     }
+
+                    // if (std::abs(m_lastposx - workarea.get_height()) == area) {
+                    // g_print(" EEEEEEEEEE  EEEEEEEEEEEE EEEEEEe\n");
+                    //// ypos = workarea.get_height() + workarea.get_y();
+                    //} else {
+                    // g_print(" ooooooooooooo ooooooooooooooooo\n");
+                    // ypos = m_lastposx;  // workarea.get_height() + workarea.get_y() - area;
+                    //}
 
                     m_lastposx = workarea.get_height();
 
@@ -180,7 +192,7 @@ namespace docklight
                     if (ypos < workarea.get_height()) {
                         //
 
-                        ypos = workarea.get_height() + workarea.get_y();
+                        //    ypos = workarea.get_height() + workarea.get_y();
                         g_print("AAAAAAAAAAAAAAAAAAAAAAi\n");
                     }
                     /*if (ypos < workarea.get_height() - area) {
