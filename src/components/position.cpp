@@ -132,7 +132,8 @@ namespace docklight
             if (Config()->get_dock_location() == dock_location_t::bottom) {
                 if (!m_struts.is_set()) {
                     // bottom
-                    ypos = workarea.get_height() - area;
+                    // ori ypos = workarea.get_height() - area;
+                    ypos = workarea.get_height() + workarea.get_y();
                     if (workarea.get_y() != 0) {
                         //
                         ypos = workarea.get_height() + workarea.get_y() - area;
