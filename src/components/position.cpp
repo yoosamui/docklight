@@ -130,132 +130,52 @@ namespace docklight
             }
 
             if (Config()->get_dock_location() == dock_location_t::bottom) {
+                // bottom
                 if (!m_struts.is_set()) {
-                    // bottom
                     ypos = workarea.get_height() - area;
                     if (workarea.get_y() != 0) {
-                        //
                         ypos = workarea.get_height() + workarea.get_y() - area;
                     }
-                    g_print("-------------:NORMAL\n");
                 } else {
-                    g_print("-------------:STRUTS\n");
-                    // ypos = 1340;
-                    //   ypos = workarea.get_height() + workarea.get_y();
-                    // ypos = workarea.get_height() + workarea.get_y();
-                    // ypos = workarea.get_height();
                     ypos = workarea.get_height() + workarea.get_y();
-                    g_print(" 0 start pos   %d \n", ypos);
 
-                    // if (ypos >= monitor.get_height()) {
                     if (ypos == workarea.get_height()) {
-                        //  ypos = workarea.get_height() - area;
-                        //  if (workarea.get_y()) {
                         ypos = workarea.get_height() + workarea.get_y();  //- area;
-                        //  }
-                        // ypos = workarea.get_height() + workarea.get_y();
-                        g_print("  out wokarea equal !!!  %d wa %d\n", ypos, workarea.get_height());
                     }
 
                     if (ypos + area > workarea.get_height()) {
-                        //  ypos = workarea.get_height() - area;
-                        //  if (workarea.get_y()) {
-                        // ypos = workarea.get_height() + workarea.get_y();
                         ypos = workarea.get_height() + workarea.get_y();
-
                         if (ypos + area > monitor.get_height()) {
                             ypos = workarea.get_height() + workarea.get_y() - area;
                         }
-
-                        //                        -area;
-                        //  }
-                        // ypos = workarea.get_height() + workarea.get_y();
-                        g_print("  out wokarea greater !!!  %d wa %d\n", ypos,
-                                workarea.get_height());
                     }
-                    ////
-                    //  ypos = workarea.get_height() + workarea.get_y();
-
-                    /*if (ypos >= workarea.get_height()) {
-                        ypos = workarea.get_height() + workarea.get_y();
-                        // ypos = workarea.get_height() + workarea.get_y();
-                        g_print("  out wokarea !!!  %d \n", ypos);
-                    } else if (ypos >= monitor.get_height()) {
-                        // ypos = monitor.get_height() - area;
-                        ypos = workarea.get_height() + workarea.get_y();
-
-                        g_print(" monitor out  1  %d \n", ypos);
-                    } else if (ypos == m_lastposx) {
-                        if (workarea.get_y()) {
-                            ypos = workarea.get_height() + workarea.get_y();
-                            g_print(" 2a  %d \n", ypos);
-                        } else {
-                            ypos = workarea.get_height() + workarea.get_y() - area;
-                            g_print(" 2b  %d \n", ypos);
-                        }
-                    }
-
-                    if (ypos < workarea.get_height()) {
-                        //// ypos = workarea.get_height() - area;
-                        ypos = workarea.get_height() - workarea.get_y() - area;
-                        if (ypos >= monitor.get_height()) {
-                            ypos = workarea.get_height() + workarea.get_y() - area;
-                            g_print("need go out! is inside!!!  %d < %d\n", ypos,
-                                    workarea.get_height());
-                        }
-                    }*/
-
-                    m_lastposx = workarea.get_height() + workarea.get_y();
                 }
 
             } else {
                 // top
                 if (!m_struts.is_set()) {
                     if (workarea.get_y() > 0) {
-                        //                    ypos = workarea.get_y() - workarea;
                         ypos = workarea.get_y();
                     } else {
                         ypos = 0;
                     }
                 } else {
                     ypos = workarea.get_y() - area;
-                    g_print(" 0 start pos   %d \n", ypos);
-
                     if (ypos == workarea.get_y()) {
-                        ypos = workarea.get_y();  //- area;
-                        g_print("  out wokarea equal !!!  %d wa %d\n", ypos, workarea.get_height());
+                        ypos = workarea.get_y();
                     }
 
                     if (ypos < workarea.get_y()) {
-                        //
                         ypos = workarea.get_y() - area;
                         if (ypos < monitor.get_y()) {
                             ypos = workarea.get_y();
                         }
-
-                        g_print("  out wokarea smaller !!!  %d wa %d\n", ypos, workarea.get_y());
                     }
-
-                    /*if (ypos < workarea.get_y()) {
-                        ypos = workarea.get_y();
-
-                        if (ypos + area > monitor.get_y()) {
-                            ypos = workarea.get_y();
-                        }
-
-                        //                        -area;
-                        //  }
-                        // ypos = workarea.get_height() + workarea.get_y();
-                        Vg_print("  out wokarea greater !!!  %d wa %d\n", ypos, workarea.get_y());
-                    }*/
                 }
             }
 
             m_window->resize(width, area);
             m_window->move(xpos, ypos);
-            if (Config()->is_autohide_none()) {
-                //       m_struts.set_struts();
-            }
 
         } else  // orientation vertical
         {
@@ -286,17 +206,46 @@ namespace docklight
             }
 
             if (Config()->get_dock_location() == dock_location_t::right) {
-                // Right
-                xpos = workarea.get_width();
-                if (workarea.get_x() != 0) {
+                // right
+                if (!m_struts.is_set()) {
+                    xpos = workarea.get_width() - area;
+                    if (workarea.get_x() != 0) {
+                        xpos = workarea.get_width() + workarea.get_x() - area;
+                    }
+                } else {
                     xpos = workarea.get_width() + workarea.get_x();
+
+                    if (xpos == workarea.get_width()) {
+                        xpos = workarea.get_width() + workarea.get_x();
+                    }
+
+                    if (xpos + area > workarea.get_width()) {
+                        xpos = workarea.get_width() + workarea.get_x();
+                        if (xpos + area > monitor.get_width()) {
+                            xpos = workarea.get_width() + workarea.get_x() - area;
+                        }
+                    }
                 }
             } else {
-                // Left
-                if (workarea.get_x() > 0) {
-                    xpos = workarea.get_x() - area;
+                // left
+                if (!m_struts.is_set()) {
+                    if (workarea.get_x() > 0) {
+                        xpos = workarea.get_x();
+                    } else {
+                        xpos = 0;
+                    }
                 } else {
-                    xpos = 0;
+                    xpos = workarea.get_x() - area;
+                    if (xpos == workarea.get_x()) {
+                        xpos = workarea.get_x();
+                    }
+
+                    if (xpos < workarea.get_x()) {
+                        xpos = workarea.get_x() - area;
+                        if (xpos < monitor.get_x()) {
+                            xpos = workarea.get_x();
+                        }
+                    }
                 }
             }
 
