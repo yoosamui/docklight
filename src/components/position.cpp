@@ -151,7 +151,7 @@ namespace docklight
                     if (ypos == workarea.get_height()) {
                         //  ypos = workarea.get_height() - area;
                         //  if (workarea.get_y()) {
-                        ypos = workarea.get_height() + workarea.get_y() - area;
+                        ypos = workarea.get_height() + workarea.get_y();  //- area;
                         //  }
                         // ypos = workarea.get_height() + workarea.get_y();
                         g_print("  out wokarea equal !!!  %d wa %d\n", ypos, workarea.get_height());
@@ -210,10 +210,44 @@ namespace docklight
 
             } else {
                 // top
-                if (workarea.get_y() > 0) {
-                    ypos = workarea.get_y() - area;
+                if (!m_struts.is_set()) {
+                    if (workarea.get_y() > 0) {
+                        //                    ypos = workarea.get_y() - workarea;
+                        ypos = workarea.get_y();
+                    } else {
+                        ypos = 0;
+                    }
                 } else {
-                    ypos = 0;
+                    ypos = workarea.get_y() - area;
+                    g_print(" 0 start pos   %d \n", ypos);
+
+                    if (ypos == workarea.get_y()) {
+                        ypos = workarea.get_y();  //- area;
+                        g_print("  out wokarea equal !!!  %d wa %d\n", ypos, workarea.get_height());
+                    }
+
+                    if (ypos < workarea.get_y()) {
+                        //
+                        ypos = workarea.get_y() - area;
+                        if (ypos < monitor.get_y()) {
+                            ypos = workarea.get_y();
+                        }
+
+                        g_print("  out wokarea smaller !!!  %d wa %d\n", ypos, workarea.get_y());
+                    }
+
+                    /*if (ypos < workarea.get_y()) {
+                        ypos = workarea.get_y();
+
+                        if (ypos + area > monitor.get_y()) {
+                            ypos = workarea.get_y();
+                        }
+
+                        //                        -area;
+                        //  }
+                        // ypos = workarea.get_height() + workarea.get_y();
+                        Vg_print("  out wokarea greater !!!  %d wa %d\n", ypos, workarea.get_y());
+                    }*/
                 }
             }
 
