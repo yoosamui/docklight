@@ -263,12 +263,9 @@ namespace docklight
             result = createFromWindow(xid, gdkpixbuf, instance_name, groupname, window_name,
                                       window_icon_name, icon_is_fallback, wintype);
 
-        // TODO with count
         if (count != data().size()) {
             m_signal_update.emit(window_action_t::UPDATE, 0);
         }
-
-        // g_print("------------%ld\n", data().size());
 
         return result;
     }
