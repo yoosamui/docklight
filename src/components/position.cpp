@@ -73,7 +73,7 @@ namespace docklight
     void PositionManager::force_position()
     {
         //
-        //      m_struts.reset_struts();
+        m_struts.reset_struts();
         //        set_position(m_last_required_size + 10);
         m_struts.set_struts(true);
         set_position(m_last_required_size + 10);
@@ -141,19 +141,53 @@ namespace docklight
                 } else {
                     g_print("-------------:STRUTS\n");
                     // ypos = 1340;
+                    //   ypos = workarea.get_height() + workarea.get_y();
+                    // ypos = workarea.get_height() + workarea.get_y();
+                    // ypos = workarea.get_height();
                     ypos = workarea.get_height() + workarea.get_y();
                     g_print(" 0 start pos   %d \n", ypos);
-                    ////
-                    ypos = workarea.get_height() + workarea.get_y();
 
-                    if (ypos >= monitor.get_height()) {
-                        ypos = monitor.get_height() - area;
-                        g_print(" out  1  %d \n", ypos);
+                    // if (ypos >= monitor.get_height()) {
+                    if (ypos == workarea.get_height()) {
+                        //  ypos = workarea.get_height() - area;
+                        //  if (workarea.get_y()) {
+                        ypos = workarea.get_height() + workarea.get_y() - area;
+                        //  }
+                        // ypos = workarea.get_height() + workarea.get_y();
+                        g_print("  out wokarea equal !!!  %d wa %d\n", ypos, workarea.get_height());
                     }
 
-                    if (ypos == m_lastposx) {
-                        if (workarea.get_y()) {
+                    if (ypos + area > workarea.get_height()) {
+                        //  ypos = workarea.get_height() - area;
+                        //  if (workarea.get_y()) {
+                        // ypos = workarea.get_height() + workarea.get_y();
+                        ypos = workarea.get_height() + workarea.get_y();
+
+                        if (ypos + area > monitor.get_height()) {
                             ypos = workarea.get_height() + workarea.get_y() - area;
+                        }
+
+                        //                        -area;
+                        //  }
+                        // ypos = workarea.get_height() + workarea.get_y();
+                        g_print("  out wokarea greater !!!  %d wa %d\n", ypos,
+                                workarea.get_height());
+                    }
+                    ////
+                    //  ypos = workarea.get_height() + workarea.get_y();
+
+                    /*if (ypos >= workarea.get_height()) {
+                        ypos = workarea.get_height() + workarea.get_y();
+                        // ypos = workarea.get_height() + workarea.get_y();
+                        g_print("  out wokarea !!!  %d \n", ypos);
+                    } else if (ypos >= monitor.get_height()) {
+                        // ypos = monitor.get_height() - area;
+                        ypos = workarea.get_height() + workarea.get_y();
+
+                        g_print(" monitor out  1  %d \n", ypos);
+                    } else if (ypos == m_lastposx) {
+                        if (workarea.get_y()) {
+                            ypos = workarea.get_height() + workarea.get_y();
                             g_print(" 2a  %d \n", ypos);
                         } else {
                             ypos = workarea.get_height() + workarea.get_y() - area;
@@ -169,7 +203,7 @@ namespace docklight
                             g_print("need go out! is inside!!!  %d < %d\n", ypos,
                                     workarea.get_height());
                         }
-                    }
+                    }*/
 
                     m_lastposx = workarea.get_height() + workarea.get_y();
                 }
