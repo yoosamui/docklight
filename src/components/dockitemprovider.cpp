@@ -100,10 +100,21 @@ namespace docklight
     int DockItemProvider::remove(gulong xid)
     {
         auto count = m_container.remove<DockItemIcon>(xid);
-        m_signal_update.emit(window_action_t::UPDATE, 0);
+        m_signal_update.emit(window_action_t::UPDATE, count);
 
         return count;
     }
+
+    guint DockItemProvider::DockItemProvider::count()
+    {
+        guint count = data().size();
+        for (auto& dockitem : data()) {
+            count += dockitem->get_childmap().size();
+        }
+
+        return count;
+    }
+
     void DockItemProvider::on_theme_changed()
     {
         bool updated = false;
@@ -254,8 +265,6 @@ namespace docklight
             window_icon_name = window_name;
         }
 
-        guint count = data().size();
-
         bool result = createFromDesktopFile(xid, gdkpixbuf, instance_name, groupname, window_name,
                                             window_icon_name, icon_is_fallback, wintype);
 
@@ -263,7 +272,7 @@ namespace docklight
             result = createFromWindow(xid, gdkpixbuf, instance_name, groupname, window_name,
                                       window_icon_name, icon_is_fallback, wintype);
 
-        if (count != data().size()) {
+        if (result) {
             m_signal_update.emit(window_action_t::UPDATE, 0);
         }
 
@@ -390,7 +399,7 @@ namespace docklight
             dockitem->add_child(dockitem->clone());
         }
 
-        return false;
+        return true;
     }
 
 }  // namespace docklight

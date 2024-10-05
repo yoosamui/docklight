@@ -72,24 +72,20 @@ namespace docklight
 
     void PositionManager::force_position()
     {
-        //
-        m_struts.reset_struts();
-        //        set_position(m_last_required_size + 10);
+        // m_struts.reset_struts();
+
         m_struts.set_struts(true);
         set_position(m_last_required_size + 10);
     }
 
     void PositionManager::reset_position()
     {
-        //
-        //  m_lastposx = 0;
         m_struts.reset_struts();
-        // set_position(m_last_required_size + 10);
     }
     void PositionManager::set_position(guint required_size)
     {
-        // if (m_last_required_size == required_size) return;
-        // m_last_required_size = required_size;
+        if (m_last_required_size == required_size) return;
+        m_last_required_size = required_size;
 
         g_message("Position request: %d", required_size);
         int area = Config()->get_dock_area();
@@ -100,7 +96,9 @@ namespace docklight
 
         int xpos = 0, ypos = 0, center = 0;
 
-        // vor the move setzen
+        if (Config()->is_autohide_none()) {
+            m_struts.set_struts();
+        }
 
         if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
             int width = required_size;

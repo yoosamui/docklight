@@ -26,6 +26,8 @@
 #include <giomm/desktopappinfo.h>
 #include <gtkmm/icontheme.h>
 
+
+//#include "components/dockitemicon.h"
 #include "components/dockitemcontainer.h"
 #include "components/config.h"
 // clang-format on
@@ -58,6 +60,8 @@ namespace docklight
 
         std::vector<std::shared_ptr<DockItemIcon>>& data();
 
+        guint count();
+
       private:
         sigc::connection m_sigc;
 
@@ -84,9 +88,6 @@ namespace docklight
 
       private:
         DockItemContainer m_container;
-        // std::unordered_map<gulong, std::any> m_map;
-        //        std::map<gulong, std::any> m_map;
-        //         std::map<gulong, std::any> m_appmap;
         type_signal_update m_signal_update;
         BamfMatcher* m_matcher = nullptr;
     };
