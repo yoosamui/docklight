@@ -36,7 +36,7 @@ namespace docklight
       protected:
         // parsed and optimized at compile time
         static constexpr const int DEF_MIN_ITEM_SIZE = 26;
-        static constexpr const int DEF_DOCKAREA_MARGIN = 3;
+        static constexpr const int DEF_DOCKAREA_MARGIN = 10;
         //        static constexpr const char* DEF_CONFIG_FILENAME = "docklight.config";
         static constexpr const int DEF_ICON_SIZE = 128;
         static constexpr const int DEF_SEPARATOR_MARGIN = 0;

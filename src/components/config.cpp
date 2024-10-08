@@ -56,7 +56,7 @@ namespace docklight
 
     const int Configuration::get_dock_area() const
     {
-        int area = m_icon_size + (DEF_DOCKAREA_MARGIN * 3) + DEF_DOCKAREA_MARGIN / 2;
+        int area = m_icon_size + DEF_DOCKAREA_MARGIN;
 
         return area;
     }
