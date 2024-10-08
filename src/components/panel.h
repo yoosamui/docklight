@@ -25,9 +25,11 @@ namespace docklight
         Panel();
         ~Panel();
         void init();
-        void container_updated(guint explicit_size = 0) const;
+        void container_updated(guint explicit_size = 0);
         guint m_icon_size = 0;
         //  int m_icon_size = 0;
+
+        int get_scalling_factor();
 
       private:
         sigc::connection m_sigc_draw;
