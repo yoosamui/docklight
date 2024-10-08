@@ -30,6 +30,7 @@ namespace docklight
         //  int m_icon_size = 0;
 
         int get_scalling_factor(int& carea);
+        int get_scalling_factor_down(int& carea);
         //        int get_scalling_factor_down();
 
       private:

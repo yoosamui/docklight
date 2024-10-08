@@ -194,21 +194,20 @@ namespace docklight
         icon_size = std::floor(icon_size * scaling_factor);
 
         g_print("XXXXXXXXXXX %d size: %ld\n", icon_size, m_provider->data().size());
-        // if (icon_size > area) {
-        // icon_size -= area;
-        // exit(1);
-        ////
-        //// icon_size = (icon_size - Config()->DEF_ICON_MAXSIZE) + last_size;
+        if (icon_size >= area) {
+            // icon_size -= area;
 
-        //// if (icon_size > Config()->DEF_ICON_MAXSIZE) {
-        //// icon_size = Config()->DEF_ICON_MAXSIZE;
-        ////}
-        //}
+            // icon_size = (icon_size - Config()->DEF_ICON_MAXSIZE) + last_size;
+
+            if (Config())  //            if (icon_size >= Config()->DEF_ICON_MAXSIZE) {
+                icon_size = Config()->DEF_ICON_MAXSIZE;
+            //          }
+        }
 
         return icon_size;
     }
 
-    /*int Panel::get_scalling_factor_down(int& carea);
+    int Panel::get_scalling_factor_down(int& carea)
     {
         // scale factor;
         const auto workarea = device::monitor::get_workarea();
@@ -228,8 +227,8 @@ namespace docklight
         carea = area;
 
         // screen_width -= ((area * 2) [> + area<]);  // - Config()->get_separator_size();
-        screen_width -= ((area * 2) [> + area<]);  // - Config()->get_separator_size();
-                                                   //(128*2);
+        screen_width -= (area * 2);  //[ > +area < ]);  // - Config()->get_separator_size();
+                                     //(128*2);
         auto size = m_provider->data().size();
         // auto icon_size = Config()->get_icon_size();
         auto icon_size = area;
@@ -240,19 +239,21 @@ namespace docklight
         icon_size = std::floor(icon_size * scaling_factor);
 
         g_print("XXXXXXXXXXX %d size: %ld\n", icon_size, m_provider->data().size());
-        // if (icon_size > area) {
-        // icon_size -= area;
-        // exit(1);
-        ////
-        //// icon_size = (icon_size - Config()->DEF_ICON_MAXSIZE) + last_size;
+        if (icon_size > area) {
+            // icon_size -= area;
+            // exit(1);
+            ////
+            //// icon_size = (icon_size - Config()->DEF_ICON_MAXSIZE) + last_size;
 
-        //// if (icon_size > Config()->DEF_ICON_MAXSIZE) {
-        //// icon_size = Config()->DEF_ICON_MAXSIZE;
-        ////}
-        //}
+            if (Config()) {
+                icon_size = Config()->DEF_ICON_MAXSIZE;
+                ////}
+            }
+        }
 
         return icon_size;
-    }*/
+    }
+
     void Panel::container_updated(guint explicit_size)
     {
         auto size = m_provider->data().size();  //- 1;
@@ -324,13 +325,15 @@ namespace docklight
             }
             g_print("RESIZE UP\n");  ///
             int carea = 0;
-            int scalled_icon_size = this->get_scalling_factor(carea);
+            int scalled_icon_size = this->get_scalling_factor_down(carea);
 
-            if (carea == Config()->get_dock_area()) {
-                Config()->set_icon_size(std::abs(128));
+            if (carea == Config()->get_dock_area() + Config()->get_separator_size()) {
+                g_print(" COMPARE CAREA %d AREA %d\n", carea,
+                        Config()->get_dock_area() + Config()->get_separator_size());
+                Config()->set_icon_size(std::abs(Config()->DEF_ICON_MAXSIZE));
                 required_size = m_provider->required_size(separators_count);
                 m_position->set_position(required_size);
-                exit(1);
+
                 return;
             }
 
