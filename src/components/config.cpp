@@ -72,9 +72,26 @@ namespace docklight
         return m_icon_size;
     }
 
+    int Configuration::get_icon_original_size()
+    {
+        return m_icon_factor;
+    }
+
+    int Configuration::get_separator_original_size()
+    {
+        return m_separator_size_factor;
+    }
+
     const void Configuration::set_icon_size(guint size)
     {
+        if (size < 0 || size > 128) return;
         m_icon_size = size;
+    }
+
+    void Configuration::set_separator_size(guint size)
+    {
+        if (size < 0 || size > 64) return;
+        m_separator_size = size;
     }
 
     const int Configuration::get_separator_size() const
@@ -101,6 +118,29 @@ namespace docklight
     {
         //
         return m_location;
+    }
+
+    Glib::ustring Configuration::get_dock_location_name() const
+    {
+        Glib::ustring location_name;
+
+        switch (m_location) {
+            case dock_location_t::top:
+                location_name = "top";
+                break;
+            case dock_location_t::bottom:
+                location_name = "bottom";
+                break;
+
+            case dock_location_t::left:
+                location_name = "left";
+                break;
+            case dock_location_t::right:
+                location_name = "right";
+                break;
+        }
+
+        return location_name;
     }
 
     const Gtk::Orientation Configuration::get_dock_orientation() const

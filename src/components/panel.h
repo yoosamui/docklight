@@ -26,6 +26,8 @@ namespace docklight
         ~Panel();
         void init();
         void container_updated(guint explicit_size = 0) const;
+        guint m_icon_size = 0;
+        //  int m_icon_size = 0;
 
       private:
         sigc::connection m_sigc_draw;
@@ -47,7 +49,6 @@ namespace docklight
 
       private:
         Glib::RefPtr<DockItemProvider> m_provider;
-
         gint m_dockitem_index = -1;
         easing::bounce m_bounce;
     };

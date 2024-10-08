@@ -48,14 +48,24 @@ namespace docklight::position
         ~Struts();
 
         void init(Gtk::Window* window);
+        void set_insets(long& insets);
         void set_struts(bool force = false);
         void reset_struts();
+
+        guint get_bottom_pos() { return m_last_bottom_pos; }
+        guint get_right_pos() { return m_last_right_pos; }
+        guint get_left_pos() { return m_last_left_pos; }
+        guint get_top_pos() { return m_last_top_pos; }
 
         bool is_set() { return m_strut_set; }
 
       private:
         Gtk::Window* m_window;
         bool m_strut_set = false;
+        guint m_last_bottom_pos = 0;
+        guint m_last_right_pos = 0;
+        guint m_last_left_pos = 0;
+        guint m_last_top_pos = 0;
     };
 
 }  // namespace docklight::position

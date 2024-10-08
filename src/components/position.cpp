@@ -19,7 +19,10 @@
 // clang-format off
 #include "components/position.h"
 // clang-format on
+//#include <unistd.h>
 
+//#include <cstdlib>
+//#include <iostream>
 namespace docklight
 {
 
@@ -70,12 +73,27 @@ namespace docklight
         return Gdk::Rectangle(0, 0, m_window->get_width(), m_window->get_height());
     }
 
+    void PositionManager::monitor_changed()
+    {
+        m_struts.reset_struts();
+
+        auto location_name = Config()->get_dock_location_name().c_str();
+        // TODO program name after instllation can change
+        execl("src/docklight", "docklight", "-l", location_name, NULL);
+
+        if (m_struts.is_set()) {
+            m_struts.set_struts(true);
+        }
+
+        set_position(m_last_required_size + 1);
+    }
+
     void PositionManager::force_position()
     {
-        // m_struts.reset_struts();
+        m_struts.reset_struts();
 
         m_struts.set_struts(true);
-        set_position(m_last_required_size + 10);
+        set_position(m_last_required_size + 1);
     }
 
     void PositionManager::reset_position()
@@ -84,8 +102,8 @@ namespace docklight
     }
     void PositionManager::set_position(guint required_size)
     {
-        if (m_last_required_size == required_size) return;
-        m_last_required_size = required_size;
+        // if (m_last_required_size == required_size) return;
+        // m_last_required_size = required_size;
 
         g_message("Position request: %d", required_size);
         int area = Config()->get_dock_area();
@@ -97,7 +115,7 @@ namespace docklight
         int xpos = 0, ypos = 0, center = 0;
 
         if (Config()->is_autohide_none()) {
-            m_struts.set_struts();
+            // m_struts.set_struts();
         }
 
         if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
@@ -127,6 +145,8 @@ namespace docklight
                     break;
             }
 
+            if (width <= 0) return;
+
             if (Config()->get_dock_location() == dock_location_t::bottom) {
                 // bottom
                 if (!m_struts.is_set()) {
@@ -135,30 +155,21 @@ namespace docklight
                         ypos = workarea.get_height() + workarea.get_y() - area;
                     }
                 } else {
-                    ypos = workarea.get_height() + workarea.get_y();
-
-                    if (ypos == workarea.get_height()) {
-                        ypos = workarea.get_height() + workarea.get_y();  //- area;
-                    }
-
-                    if (ypos + area > workarea.get_height()) {
-                        ypos = workarea.get_height() + workarea.get_y();
-                        if (ypos + area > monitor.get_height()) {
-                            ypos = workarea.get_height() + workarea.get_y() - area;
-                        }
-                    }
+                    ypos = m_struts.get_bottom_pos();
                 }
 
             } else {
                 // top
                 if (!m_struts.is_set()) {
-                    if (workarea.get_y() > 0) {
+                    ypos = workarea.get_y();
+                    /*if (workarea.get_y() > 0) {
                         ypos = workarea.get_y();
                     } else {
                         ypos = 0;
-                    }
+                    }*/
                 } else {
-                    ypos = workarea.get_y() - area;
+                    ypos = m_struts.get_top_pos();
+                    /*ypos = workarea.get_y() - area;
                     if (ypos == workarea.get_y()) {
                         ypos = workarea.get_y();
                     }
@@ -168,7 +179,7 @@ namespace docklight
                         if (ypos < monitor.get_y()) {
                             ypos = workarea.get_y();
                         }
-                    }
+                    }*/
                 }
             }
 
@@ -203,47 +214,64 @@ namespace docklight
                     break;
             }
 
+            if (height > workarea.get_height()) return;
+
             if (Config()->get_dock_location() == dock_location_t::right) {
                 // right
                 if (!m_struts.is_set()) {
-                    xpos = workarea.get_width() - area;
+                    xpos = workarea.get_width() + workarea.get_x() - area;
+                    /*xpos = workarea.get_width() - area;
                     if (workarea.get_x() != 0) {
                         xpos = workarea.get_width() + workarea.get_x() - area;
-                    }
+                    }*/
                 } else {
-                    xpos = workarea.get_width() + workarea.get_x();
+                    // xpos = workarea.get_width() - area;
+                    // if (workarea.get_x() != 0) {
+                    // xpos = workarea.get_width() + workarea.get_x() - area;
+                    //}
+                    xpos = m_struts.get_right_pos();
+                    // if (xpos + area > monitor.get_width()) {
+                    // xpos = workarea.get_width() + workarea.get_x();
+                    // g_print("def\n");
+                    //}
 
-                    if (xpos == workarea.get_width()) {
-                        xpos = workarea.get_width() + workarea.get_x();
-                    }
+                    // xpos = workarea.get_width() + workarea.get_x();
 
-                    if (xpos + area > workarea.get_width()) {
-                        xpos = workarea.get_width() + workarea.get_x();
-                        if (xpos + area > monitor.get_width()) {
-                            xpos = workarea.get_width() + workarea.get_x() - area;
-                        }
-                    }
+                    // if (xpos == workarea.get_width()) {
+                    // xpos = workarea.get_width() + workarea.get_x();
+                    //}
+
+                    // if (xpos + area > workarea.get_width()) {
+                    // xpos = workarea.get_width() + workarea.get_x();
+                    // if (xpos + area > monitor.get_width()) {
+                    // xpos = workarea.get_width() + workarea.get_x() - area;
+                    //}
+                    //}
                 }
             } else {
                 // left
                 if (!m_struts.is_set()) {
-                    if (workarea.get_x() > 0) {
-                        xpos = workarea.get_x();
-                    } else {
-                        xpos = 0;
-                    }
-                } else {
-                    xpos = workarea.get_x() - area;
-                    if (xpos == workarea.get_x()) {
-                        xpos = workarea.get_x();
-                    }
+                    xpos = workarea.get_x();
 
-                    if (xpos < workarea.get_x()) {
-                        xpos = workarea.get_x() - area;
-                        if (xpos < monitor.get_x()) {
-                            xpos = workarea.get_x();
-                        }
-                    }
+                    // if (workarea.get_x() > 0) {
+                    // xpos = workarea.get_x();
+                    //} else {
+                    // xpos = 0;
+                    //}
+                } else {
+                    xpos = m_struts.get_left_pos();
+
+                    // xpos = workarea.get_x() - area;
+                    //  if (xpos == workarea.get_x()) {
+                    //  xpos = workarea.get_x();
+                    // }
+
+                    // if (xpos < workarea.get_x()) {
+                    // xpos = workarea.get_x() - area;
+                    // if (xpos < monitor.get_x()) {
+                    // xpos = workarea.get_x();
+                    //}
+                    //}
                 }
             }
 

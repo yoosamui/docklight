@@ -41,7 +41,13 @@ namespace docklight::position
     void Struts::reset_struts()
     {
         long insets[12] = {0};
+        set_insets(*insets);
 
+        m_strut_set = false;
+    }
+
+    void Struts::set_insets(long& insets)
+    {
         GtkWidget* toplevel = gtk_widget_get_toplevel(GTK_WIDGET(m_window->gobj()));
         auto gdk_window = gtk_widget_get_window(toplevel);
         if (!gdk_window) {
@@ -55,9 +61,8 @@ namespace docklight::position
         gdk_property_change(gdk_window, gdk_atom_intern("_NET_WM_STRUT", FALSE),
                             gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
                             (unsigned char*)&insets, 4);
-
-        m_strut_set = false;
     }
+
     void Struts::set_struts(bool force)
     {
         if (m_strut_set && !force) return;
@@ -67,53 +72,73 @@ namespace docklight::position
         auto const screen = device::display::get_default_screen();
         auto const location = Config()->get_dock_location();
         auto area = Config()->get_dock_area();
-        auto workarea = device::monitor::get_workarea();
+        Gdk::Rectangle workarea;  // = device::monitor::get_workarea();
+                                  // TODO;; device
+        auto m = device::monitor::get_primary();
+        m->get_workarea(workarea);
+
         auto scale_factor = 1;
 
         switch (location) {
-                // clang-format off
+            // clang-format off
                 case dock_location_t::top:
                         insets[struts_position_t::top] = workarea.get_y() + area * scale_factor;
                         insets[struts_position_t::top_start] = workarea.get_x() * scale_factor;
                         insets[struts_position_t::top_end] = (workarea.get_x() + workarea.get_width()) * scale_factor -1;
-                    break;
+
+                        m_last_top_pos = workarea.get_y() ;
+
+                        break;
                 case dock_location_t::bottom:
+
                         insets[struts_position_t::bottom] =  (area + screen->get_height() - workarea.get_y() -   workarea.get_height()) *     scale_factor;
-                        insets[struts_position_t::bottom_start] = workarea.get_y() * scale_factor;
-                        insets[struts_position_t::bottom_end] = (workarea.get_y() + workarea.get_height()) * scale_factor - 1;
-                    break;
+                        insets[struts_position_t::bottom_start] = workarea.get_x() * scale_factor;
+                        insets[struts_position_t::bottom_end] = (workarea.get_x() + workarea.get_height()) * scale_factor - 1;
+
+                        m_last_bottom_pos = workarea.get_height() + workarea.get_y() - area;
+
+                        break;
                 case dock_location_t::left:
+
                         insets[struts_position_t::left] = (workarea.get_x() + area) * scale_factor;
                         insets[struts_position_t::left_start] = workarea.get_y() * scale_factor;
                         insets[struts_position_t::left_end] = (workarea.get_y() + workarea.get_height()) * scale_factor -1;
-                    break;
+
+                        m_last_left_pos = workarea.get_x() ;
+
+                        break;
                 case dock_location_t::right:
                         insets[struts_position_t::right] = (area + screen->get_width()) - workarea.get_x() - workarea.get_width() * scale_factor;
                         insets[struts_position_t::right_start] =  workarea.get_y() * scale_factor;
                         insets[struts_position_t::right_end] = (workarea.get_y() + workarea.get_height()) *   scale_factor - 1;
-                    break;
+
+                        m_last_right_pos = workarea.get_width() + workarea.get_x() - area;
+
+                        break;
                 default:
-                    break;
+                        break;
                 // clang-format on
         }
 
+        set_insets(*insets);
+
         m_strut_set = true;
-
-        GtkWidget* toplevel = gtk_widget_get_toplevel(GTK_WIDGET(m_window->gobj()));
-        auto gdk_window = gtk_widget_get_window(toplevel);
-        if (!gdk_window) {
-            g_warning("set_strut: gdk_window is null.");
-            return;
-        }
-        gdk_property_change(gdk_window, gdk_atom_intern("_NET_WM_STRUT_PARTIAL", FALSE),
-                            gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
-                            (unsigned char*)&insets, 12);
-
-        gdk_property_change(gdk_window, gdk_atom_intern("_NET_WM_STRUT", FALSE),
-                            gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
-                            (unsigned char*)&insets, 4);
-
         g_message("set_strut.");
+        // return;
+
+        // GtkWidget* toplevel = gtk_widget_get_toplevel(GTK_WIDGET(m_window->gobj()));
+        // auto gdk_window = gtk_widget_get_window(toplevel);
+        // if (!gdk_window) {
+        // g_warning("set_strut: gdk_window is null.");
+        // return;
+        //}
+        // gdk_property_change(gdk_window, gdk_atom_intern("_NET_WM_STRUT_PARTIAL", FALSE),
+        // gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
+        //(unsigned char*)&insets, 12);
+
+        // gdk_property_change(gdk_window, gdk_atom_intern("_NET_WM_STRUT", FALSE),
+        // gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
+        //(unsigned char*)&insets, 4);
     }
 
 }  // namespace docklight::position

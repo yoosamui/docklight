@@ -8,7 +8,7 @@
 #include "translations.h"
 #include "components/position.h"
 // clang-format on
-
+#include <cmath>
 namespace docklight
 {
     // TODO move to somme tools.
@@ -173,10 +173,256 @@ namespace docklight
         if (!size) return;
 
         size--;
-        gint separator_size = Config()->get_separator_size();
-        gint separators_count = (size * separator_size);
+        int separator_size = Config()->get_separator_size();
+        int separators_count = (size * separator_size);
+        int required_size = m_provider->required_size(separators_count);
 
-        m_position->set_position(m_provider->required_size(separators_count));
+        // m_position->set_position(required_size);
+        // return;
+
+        auto workarea = device::monitor::get_workarea();
+        // TODO Test
+        // m_position->set_position(required_size);
+
+        if (required_size + Config()->get_separator_size() > workarea.get_width()) {
+            const int screen_width = workarea.get_width();  //
+            //   required_size = workarea.get_width();           // - area * 2;
+
+            // const int icon_size = Config()->get_icon_size();
+            const int area = Config()->get_dock_area();
+            const int icon_size = 128;  // area;  // Config()->get_icon_size();
+            const int num_icons = size + 1;
+
+            double scaling_factor = screen_width / (double)(num_icons * icon_size);
+            // int scales_size = icon_size;
+            //    scales_size *= scaling_factor;
+            int scales_size = std::floor(icon_size * scaling_factor);
+
+            int final_icon = icon_size - std::abs(scales_size - icon_size);
+            if (final_icon > area) final_icon = area;
+            if (final_icon <= 0) final_icon = 32;
+
+            g_print(" ADD final-%d scaled------%d\n", final_icon, scales_size);
+            g_print("screen wodth-------------%d\n", screen_width);
+            g_print("size------------%d\n", num_icons);
+            g_print("icon size-------------%d\n", icon_size);
+            g_print("scales size-------------%d\n", scales_size);
+            g_print("final size-------------%d\n", final_icon);
+            g_print("\n\n\n\n\n\n\n\n\n\n\n\n\n");
+            //    Config()->set_icon_size(std::abs(final_icon));
+            // Config()->set_icon_size(std::abs(scales_size));
+
+            if (required_size > workarea.get_width()) {
+                //
+                while (required_size > workarea.get_width()) {
+                    g_print("Loop \n");
+                    gint size = m_provider->data().size();
+                    int separator_size = Config()->get_separator_size();
+                    int separators_count = (size * separator_size);
+
+                    auto icon_size = Config()->get_icon_size();
+                    icon_size -= 2;
+                    Config()->set_icon_size(std::abs(icon_size));
+
+                    required_size = m_provider->required_size(separators_count);
+                }
+            }
+
+            m_position->set_position(workarea.get_width());
+            return;
+            if (required_size > workarea.get_width()) {
+                g_print(" RECALLLLLLLLLLLLLLLLLL-------------%d\n", final_icon);
+
+                auto diff = required_size - workarea.get_width();
+                g_print(" DIFF--%d cal %d\n", diff, 128 - diff);
+
+                auto icon_size = Config()->get_icon_original_size();
+                icon_size -= 8;
+
+                // Config()->set_icon_size(std::abs(icon_size));
+                Config()->set_icon_size(std::abs(final_icon));
+                m_position->set_position(workarea.get_width());
+            }
+
+            //  m_position->force_position();
+
+            // Gtk::Widget::queue_draw();
+            g_print("screen wodth-------------%d\n", screen_width);
+            g_print("size------------%d\n", num_icons);
+            g_print("icon size-------------%d\n", icon_size);
+            g_print("scales size-------------%d\n", scales_size);
+            g_print("final size-------------%d\n", final_icon);
+            g_print("\n\n\n\n\n\n\n\n\n\n\n\n\n");
+            return;
+        }
+
+        Config()->set_icon_size(std::abs(128));
+        m_position->set_position(required_size);
+        if (required_size > workarea.get_width()) {
+            m_position->set_position(workarea.get_width());
+        }
+        return;
+
+        g_print("required size [%d] width: %d size: %d \n", required_size, workarea.get_width(),
+                size);
+
+        int current_icon_size = Config()->get_icon_original_size();
+        // int current_icon_size = Config()->get_icon_size();
+        int area = Config()->get_dock_area();
+        int diff = required_size - workarea.get_width();
+
+        // int diff = std::max(required_size, workarea.get_width()) -
+        // std::min(required_size, workarea.get_width());
+
+        //        int icon_size = diff / area;  // current_icon_size;
+        int icon_size = area;
+        //      current_icon_size -
+        //      (Config()->get_icon_size() / (size + 1));  //)workarea.get_width() / (size + 1) -
+        //      128;
+        if (icon_size > 128) icon_size = 128;
+        if (icon_size < 32) icon_size = 32;
+
+        // separator_size = Config()->get_separator_original_size();
+        // separator_size /= (size + 1) + separator_size;
+
+        if (separator_size <= 0) separator_size = 128;
+        ;  // Config()->get_separator_original_size();
+        //        diff - current_icon_size;
+        g_print(">>> OLD ICON SIZE %d   NEW ICON SIZE ==  %d \n", current_icon_size, icon_size);
+        g_print(">>> OLD SEPARATOR_SIZE ==  %d \n", separator_size);
+        // std::abs((int)current_icon_size - (int)icon_size);
+        // icon_size -= std::abs((int)current_icon_size - (int)icon_size);
+        if (diff < 128) {
+            //            exit(1);
+        }
+        // icon_size -= (diff / size);
+        if (required_size + area > (int)workarea.get_width()) {
+            required_size = workarea.get_width();
+            gint size = m_provider->data().size();
+            // if (explicit_size) size = explicit_size;
+            // if (!size) return;
+
+            // size--;
+            // int separator_size = Config()->get_separator_size();
+            // int separators_count = (size * separator_size);
+            // int required_size = m_provider->required_size(separators_count);
+
+            g_print(">>> I N S D E!!!!!!!!!!!! TO BIG  DIFF %d\n", diff);
+            // icon_size -= current_icon_size - (diff / size);
+            // icon_size -= (diff / area);
+            // icon_size -=
+            //((required_size - diff) / (size * area));  // / area;  // area;  // / (size + 1)
+
+            // icon_size -= std::abs((required_size - diff) / (size + 1));
+            g_print(">>> !!!!!!!!!!!!  NEW ICON SIZE  %d %d\n", icon_size, required_size - diff);
+            // / area;  // area;  // / (size + 1)
+
+            //  icon_size += 10;  // Scurrent_icon_size;
+
+            //  icon_size = 46;
+            const int screen_width = required_size;  // workarea.get_width();  // - area * 2;
+            //  const int icon_size = Config()->get_dock_area();
+            // const int icon_size = Config()->get_icon_size();
+            const int icon_size = 128;  // Config()->get_icon_size();
+            const int num_icons = size + 1;
+
+            double scaling_factor = screen_width / (double)(num_icons * icon_size);
+            // double scaling_factor = (int)workarea.get_width() / ((int)size * (int)128);
+            std::cout << "sice " << scaling_factor << std::endl;
+            // double scaling_factor = 1.1842;
+            //  `   icon_size = current_icon_size;
+            // int aicon_size =
+            // std::abs(current_icon_size - (current_icon_size * scaling_factor)) - 128;
+
+            int isize = icon_size;
+            isize *= scaling_factor;
+            //  if (isize > 128) isize = 128;
+
+            g_print("AREA %d\n", area);
+            g_print("SCALING FACTOR %f\n", scaling_factor);
+            g_print("ICON_SIZE %d\n", isize);
+            g_print("ICON_SIZE  MINUS %d\n", std::abs(isize - icon_size));
+
+            int xicon_size = icon_size - std::abs(isize - icon_size);
+            g_print("ICON_SIZE RESULT %d\n", xicon_size);
+
+            //            icon_size = aicon_size;
+
+            Config()->set_icon_size(std::abs(xicon_size));
+            // Config()->set_icon_size(std::abs(isize));
+
+            // cal separato
+            //
+            //
+            {
+                const int screen_width = workarea.get_width();
+                const int icon_size = Config()->get_separator_original_size();
+                const int num_icons = size + 1;
+                double scaling_factor = screen_width / (double)(num_icons * icon_size);
+
+                g_print("SEPARA RESULT FACTOR %f\n", scaling_factor);
+
+                int sepa = icon_size;
+                sepa *= scaling_factor;
+
+                g_print("SEPARA RESULT FACTOR %d\n", sepa);
+                g_print("SEPARA RESULT FINAL %d\n", std::abs(128 - sepa));
+                int sepa_size = std::abs(128 - sepa);
+                //    Config()->set_separator_size(sepa_size);
+            }
+            m_position->set_position(required_size);
+            g_print("\n\n\n\n\n\n\n\n\n\n\n\n\n");
+            return;
+            // g_print(">>> !!!!!!!!!!!! TO BIG  NEW ICON SIZE  %d\n", icon_size);
+
+            // diff = std::abs(diff);
+            // icon_size -= std::abs(diff - icon_size);
+
+            // icon_size -= area;
+            //.. current_icon_size, diff, icon_size);
+            // if (size > 1) {
+            // auto maxiconsize = (int)Config()->get_separator_original_size();
+            // auto factor = (maxiconsize / size);
+            // separator_size = 128 - factor;  // - separator_size);
+            //// separator_size = icon_size;     // auto aseparator_size = 128 / size;
+            ////  / size);
+
+            // std::cout << separator_size << std::endl;
+            //// separator_size =;
+            // g_print("SEPARA %d\n", (int)separator_size);
+            //}
+        }
+        ////
+        //  Config()->set_separator_size(separator_size);
+        g_print(">>> NEW ICON SIZE %d   D I F F  %d NEW SIZE=%d\n", icon_size, diff,
+                current_icon_size - icon_size);
+
+        g_print(">>> NEW SEPARATOR_SIZE ==  %d \n", Config()->get_separator_size());
+        // Config()->set_icon_size(std::abs(icon_size));
+        // diff = (int)((diff + area) / 32);
+        // diff = (int)(area );
+        //      auto icon_size =
+        //            (int)std::fabs(current_icon_size - diff);  // Config()->get_icon_size();  // -
+        //            diff;
+        /*if ((int)(required_size) > (int)workarea.get_width()) {
+            g_print(">>> TO BIG  \n");
+            // required_size = workarea.get_width() - 64;
+            // auto diff = required_size - workarea.get_width();
+            // required_size = workarea.get_width() - 4;
+            required_size -= diff;  // workarea.get_width() - 4;
+            // m_provider->required_size(separators_count- diff);  // diff;
+        }*/
+
+        // g_print(">>> items count %d\n", size + 1);
+        // g_print(">>> current_icon_size [%d] diff-factor :( %d )\n icon_size %d\n",
+        // current_icon_size, diff, icon_size);
+        Config()->set_icon_size(std::abs(icon_size));
+
+        // separator_size -= std::abs(Config()->get_separator_original_size() - size);
+        //        if (std::abs(Config()->get_separator_size() > 2))
+
+        m_position->set_position(required_size);
+        g_print("\n\n\n\n\n\n\n\n\n\n\n\n\n");
     }
 
     void Panel::on_container_updated(window_action_t action, int index)

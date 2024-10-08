@@ -272,9 +272,10 @@ namespace docklight
 
     void AppWindow::on_monitor_changed()
     {
-        //     device::monitor::set_primary();
-        g_warning("!!!!!!!!!!!!!! on_monitor_change.\n");
-        update_position();
+        g_message("on_monitor_change.");
+        // TODO selective monitor nummer;
+        device::monitor::set_primary();
+        m_position->monitor_changed();
     }
     // bool AppWindow::on_enter_notify_event(GdkEventCrossing* crossing_event)
     //{
@@ -289,7 +290,7 @@ namespace docklight
     //}
     void AppWindow::update_position()
     {
-        m_panel->container_updated();
+        // m_panel->container_updated();
 
         // position_util::set_window_position();
         // g_print("AppWindow updated.\n");

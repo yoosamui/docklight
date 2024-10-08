@@ -38,17 +38,22 @@ namespace docklight
         static constexpr const int DEF_MIN_ITEM_SIZE = 26;
         static constexpr const int DEF_DOCKAREA_MARGIN = 3;
         //        static constexpr const char* DEF_CONFIG_FILENAME = "docklight.config";
-        static constexpr const int DEF_ICON_SIZE = 48;
+        static constexpr const int DEF_ICON_SIZE = 128;
         static constexpr const int DEF_SEPARATOR_MARGIN = 0;
-        static constexpr const int DEF_SEPARATOR_SIZE = 0;
+        static constexpr const int DEF_SEPARATOR_SIZE = 8;
         static constexpr const double DEF_AUTOHIDE_ANIMATION_DELAY = 5.0;
         static constexpr const int DEF_AUTOHIDE_ANCHORT_MARGIN = 20;
         static constexpr const double DEF_AUTOHIDE_HIDE_DELAY = 0.5;
 
         // Initializers
         int m_icon_size = DEF_ICON_SIZE;
-        int m_separator_margin = DEF_SEPARATOR_MARGIN;
+        int m_icon_factor = DEF_ICON_SIZE;
+
         int m_separator_size = DEF_SEPARATOR_SIZE;
+        int m_separator_size_factor = DEF_SEPARATOR_SIZE;
+
+        int m_separator_margin = DEF_SEPARATOR_MARGIN;
+
         int m_anchor_margin = DEF_AUTOHIDE_ANCHORT_MARGIN;
 
         bool m_show_title = true;

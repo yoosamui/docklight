@@ -38,6 +38,7 @@ namespace docklight
         const int get_anchor_margin() const;
         const int get_dock_area() const;
         const int get_separator_margin() const;
+        void set_separator_size(guint size);
         const int get_icon_size() const;
         const int get_separator_size() const;
 
@@ -45,6 +46,7 @@ namespace docklight
         const dock_alignment_t get_dock_alignment() const;
         const dock_indicator_type_t get_indicator_type() const;
         const dock_location_t get_dock_location() const;
+        Glib::ustring get_dock_location_name() const;
         const Gtk::Orientation get_dock_orientation() const;
 
         const bool is_autohide_none() const;
@@ -52,6 +54,10 @@ namespace docklight
         const bool is_intelihide() const;
 
         const void set_icon_size(guint size);
+
+        int get_icon_original_size();
+        int get_separator_original_size();
+
         void set_arguments(const std::vector<std::tuple<gchar, int, Glib::ustring>>& args);
     };
 

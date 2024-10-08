@@ -1,5 +1,5 @@
 #pragma once
-//  Copyright (c) 2018-2024 Juan R. González
+//  Copyright(c) 2018 - 2024 Juan R.González
 //
 //
 //  This file is part of Docklight.
@@ -27,7 +27,6 @@
 
 namespace docklight
 {
-
     class PositionManager : public Glib::Object
     {
       public:
@@ -38,6 +37,7 @@ namespace docklight
         Gdk::Rectangle get_monitor() const;
         Gdk::Rectangle get_window_geometry() const;
 
+        void monitor_changed();
         void force_position();
         void reset_position();
         void set_position(guint required_size);

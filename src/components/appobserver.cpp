@@ -87,7 +87,7 @@ namespace docklight
 
         // clang-format off
             if (
-                wt == 3 ||
+          //      wt == 3 ||
                 wt == WNCK_WINDOW_DESKTOP ||
                 wt == WNCK_WINDOW_DOCK ||
                 wt == WNCK_WINDOW_TOOLBAR ||
@@ -100,13 +100,13 @@ namespace docklight
 
         //
         // TODO test
-        auto instance_name = wnck_window_get_class_instance_name(window);
+        /*auto instance_name = wnck_window_get_class_instance_name(window);
         if (!instance_name) {
             //            instance_name = window_name;
             return;
         }
 
-        g_print("-->%s type: %d\n", instance_name, wt);
+        g_print("-->%s type: %d\n", instance_name, wt);*/
 
         gint32 xid = wnck_window_get_xid(window);
 
