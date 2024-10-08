@@ -80,7 +80,7 @@ namespace docklight::position
         auto scale_factor = 1;
 
         switch (location) {
-            // clang-format off
+                // clang-format off
                 case dock_location_t::top:
                         insets[struts_position_t::top] = workarea.get_y() + area * scale_factor;
                         insets[struts_position_t::top_start] = workarea.get_x() * scale_factor;
@@ -93,7 +93,7 @@ namespace docklight::position
 
                         insets[struts_position_t::bottom] =  (area + screen->get_height() - workarea.get_y() -   workarea.get_height()) *     scale_factor;
                         insets[struts_position_t::bottom_start] = workarea.get_x() * scale_factor;
-                        insets[struts_position_t::bottom_end] = (workarea.get_x() + workarea.get_height()) * scale_factor - 1;
+                        insets[struts_position_t::bottom_end] = (workarea.get_x() + workarea.get_height()) ;//* scale_factor - 1;
 
                         m_last_bottom_pos = workarea.get_height() + workarea.get_y() - area;
 
