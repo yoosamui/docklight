@@ -217,7 +217,7 @@ namespace docklight
         return icon_size;*/
     }
 
-    int Panel::get_scalling_factor(int& carea)
+    int Panel::get_scalling_factorX(int& carea)
     {
         // scale factor;
         const auto workarea = device::monitor::get_workarea();
@@ -341,13 +341,14 @@ namespace docklight
 
         int carea = 0;
         int scalled_icon_size = this->get_scalling_factor(carea);
+        // if (required_size > workarea.get_width()) {
         // auto size = m_provider->data().size();
 
         // int scalled_icon_size = compute_scalling_factor(size, carea);
-        g_print("------RESIZE--->SALLING %d size %ld\n", scalled_icon_size, size);
+        g_print("RESIZE--->SALLING icon_size %d items %ld\n", scalled_icon_size, size);
         Config()->set_icon_size(scalled_icon_size);
-
-        // required_size = m_provider->required_size(separators_count);
+        // }
+        required_size = m_provider->required_size(separators_count);
         m_position->set_position(required_size);
 
         return;
