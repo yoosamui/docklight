@@ -73,6 +73,56 @@ namespace docklight
         return Gdk::Rectangle(0, 0, m_window->get_width(), m_window->get_height());
     }
 
+    /*
+     * screen_width is the width to be calculated.
+     * Like the width of a screen. The unit item_size multiplied by
+     * items_count and divided by the screen_width gives us the resulting
+     * factor that we can use as scale factor.
+     *
+     */
+    inline double PositionManager::get_scalling_factor(const guint screen_width,
+                                                       const guint item_size,
+                                                       const guint items_count)
+    {
+        return screen_width / (double)(items_count * item_size);
+    }
+
+    double PositionManager::get_window_scalling_factor(const guint items_count, const guint area)
+    {
+        if (!m_window || !Config()) return 0;
+
+        const auto workarea = device::monitor::get_workarea();
+
+        int screen_width = workarea.get_width();
+        int width = Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL
+                        ? m_window->get_width()
+                        : m_window->get_height();
+
+        if (width > 1) {
+            screen_width = width;
+        };
+
+        /*static int area = 0;
+
+        if (!area) area = Config()->get_dock_area() + Config()->get_separator_size();
+        // carea = area;*/
+
+        screen_width -= area * 2;
+
+        auto size = items_count;  // m_provider->data().size() + 1;
+        auto icon_size = area;
+
+        return screen_width / (double)(size * icon_size);
+        // icon_size = std::floor(icon_size * scaling_factor);
+
+        // g_print("XXXXXXXXXXX %d size: %ld\n", icon_size, m_provider->data().size());
+        // if (icon_size >= area) {
+        // icon_size = Config()->DEF_ICON_MAXSIZE;
+        //}
+
+        // return icon_size;
+    }
+
     void PositionManager::monitor_changed()
     {
         m_struts.reset_struts();
@@ -184,6 +234,7 @@ namespace docklight
             }
 
             m_window->resize(width, area);
+            m_width = width;
             m_window->move(xpos, ypos);
 
         } else  // orientation vertical

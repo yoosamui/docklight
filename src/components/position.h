@@ -37,6 +37,14 @@ namespace docklight
         Gdk::Rectangle get_monitor() const;
         Gdk::Rectangle get_window_geometry() const;
 
+        double get_window_scalling_factor(const guint items_count, const guint area);
+        double get_scalling_factor(const guint screen_width, const guint item_size,
+                                   const guint size);
+        int get_width()
+        {
+            return m_width;
+            // window->get_width();
+        }
         void monitor_changed();
         void force_position();
         void reset_position();
@@ -53,6 +61,7 @@ namespace docklight
         Gtk::Window* m_window;
         guint m_last_required_size = 0;
         int m_lastposx = 0;
+        guint m_width = 1;
     };
 
     Glib::RefPtr<PositionManager> create_position(Gtk::Window* window);
