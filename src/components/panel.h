@@ -29,49 +29,32 @@ namespace docklight
         guint m_icon_size = 0;
         //  int m_icon_size = 0;
 
-        int get_scalling_factor(int& carea)
+        inline int get_scalling_factor()
         {
+            // remember the bigest area
             static int area = 0;
             if (!area) area = Config()->get_dock_area() + Config()->get_separator_size();
-            carea = area;
 
+            const guint max_icon_size = Config()->DEF_ICON_MAXSIZE;
             const auto workarea = device::monitor::get_workarea();
             const int num_items = m_provider->data().size();
             const int item_width = area;
 
-            int screen_width = workarea.get_width() - area;
-            if (screen_width <= 1) return 128;
-
-            if (Position()->get_width() > workarea.get_width()) {
-                // screen_width -= area;  // Position()->get_width();
-                //  screen_width Position()->get_width();
-            }
-            //  screen_width = Position()->get_width();
-            if (screen_width <= 1) return 128;
-            /// screen_width = Position()->get_width();
-            // Position()->get_width();  //- (area * 2);
-            // screen_width -= area;
+            if (workarea.get_width() <= 1) return max_icon_size;
+            int screen_width = workarea.get_width() - item_width;
 
             // Calculate the scaling factor
             float scaling_factor =
                 static_cast<float>(screen_width) / static_cast<float>(num_items * item_width);
 
-            int icon_size = std::floor(128 * scaling_factor);
-            if (icon_size > 128) {
-                g_print("ICON_SIZE SCALES RAW %d\n", icon_size);
-
-                icon_size = 128;  // std::abs(icon_size - 128);
+            int icon_size = std::floor(max_icon_size * scaling_factor);
+            if (icon_size > max_icon_size) {
+                icon_size = max_icon_size;
             }
 
-            g_print(
-                "XXX SCALE %f  screen_width %d workaarea_width: %d size: %ld  area: %d icon_zize: "
-                "%d\n",
-                scaling_factor, screen_width, workarea.get_width(), m_provider->data().size(), area,
-                icon_size);
-
-            //            g_print("%d\n", icon_size);
             return icon_size;
         }
+
         int compute_scalling_factor(const guint size, int& carea);
         int get_scalling_factorX(int& carea);
         int get_scalling_factor_down(int& carea);

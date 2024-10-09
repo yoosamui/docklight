@@ -340,7 +340,7 @@ namespace docklight
         return;*/
 
         int carea = 0;
-        int scalled_icon_size = this->get_scalling_factor(carea);
+        int scalled_icon_size = this->get_scalling_factor();
         // if (required_size > workarea.get_width()) {
         // auto size = m_provider->data().size();
 
@@ -360,7 +360,7 @@ namespace docklight
             //  {
             g_print("RESIZE DOWNL\n");  ///
             carea = 0;
-            scalled_icon_size = this->get_scalling_factor(carea);
+            scalled_icon_size = this->get_scalling_factor();
             // auto size = m_provider->data().size() + 1;
             // int scalled_icon_size = compute_scalling_factor(size, carea);
 
@@ -437,7 +437,7 @@ namespace docklight
             g_print("RESIZE UP\n");  ///
             int carea = 0;
             // int scalled_icon_size = this->get_scalling_factor_down(carea);
-            int scalled_icon_size = this->get_scalling_factor(carea);
+            int scalled_icon_size = this->get_scalling_factor();
 
             // if (carea == Config()->get_dock_area() + Config()->get_separator_size()) {
             // if (carea > Position()->get_window()->get_height() + Config()->get_separator_size())
