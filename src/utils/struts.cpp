@@ -44,6 +44,8 @@ namespace docklight::position
         set_insets(*insets);
 
         m_strut_set = false;
+
+        g_print("Reset struts\n");
     }
 
     void Struts::set_insets(long& insets)
@@ -91,9 +93,9 @@ namespace docklight::position
                         break;
                 case dock_location_t::bottom:
 
-                        insets[struts_position_t::bottom] =  (area + screen->get_height() - workarea.get_y() -   workarea.get_height()) *     scale_factor;
-                        insets[struts_position_t::bottom_start] = workarea.get_x() * scale_factor;
-                        insets[struts_position_t::bottom_end] = (workarea.get_x() + workarea.get_height()) ;//* scale_factor - 1;
+                        insets[struts_position_t::bottom] =  (area + screen->get_height() - workarea.get_y() -   workarea.get_height()) *     scale_factor + 1;
+                        insets[struts_position_t::bottom_start] = workarea.get_x() *  scale_factor;
+                        insets[struts_position_t::bottom_end] = (workarea.get_x() + workarea.get_height()) * scale_factor - 1;
 
                         m_last_bottom_pos = workarea.get_height() + workarea.get_y()  - area;
 

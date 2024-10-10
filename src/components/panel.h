@@ -39,7 +39,7 @@ namespace docklight
             const int item_width = area;
 
             if (workarea.get_width() <= 1) return max_icon_size;
-            int screen_width = workarea.get_width() - item_width;
+            int screen_width = workarea.get_width() - (item_width * 2);
 
             // Calculate the scaling factor
             float scaling_factor =

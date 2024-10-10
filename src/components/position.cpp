@@ -70,7 +70,25 @@ namespace docklight
 
     Gdk::Rectangle PositionManager::get_window_geometry() const
     {
-        return Gdk::Rectangle(0, 0, m_window->get_width(), m_window->get_height());
+        // GtkWidget* toplevel = gtk_widget_get_toplevel(GTK_WIDGET(m_window->gobj()));
+        // auto gdk_window = gtk_widget_get_window(toplevel);
+
+        // gint* x = nullptr;
+        // gint* y = nullptr;
+        // gint* width = nullptr;
+        // gint* height = nullptr;
+        //// https://docs.gtk.org/gdk3/method.Window.get_geometry.html
+        //
+        int yy = 0;
+        int xx = 0;
+
+        if (m_x) xx = m_x;
+        if (m_y) yy = m_y;
+
+        //        gdk_window_get_geometry(gdk_window, x, y, width, height);
+
+        return Gdk::Rectangle(xx, yy, m_window->get_width(), m_window->get_height());
+        // return Gdk::Rectangle(*x, *y, *width, *height);
     }
 
     /*
@@ -140,7 +158,10 @@ namespace docklight
 
     void PositionManager::force_position()
     {
-        m_struts.reset_struts();
+        //  m_struts.reset_struts();
+        //       set_position(m_last_required_size);
+
+        //
 
         m_struts.set_struts(true);
         set_position(m_last_required_size);
@@ -162,7 +183,7 @@ namespace docklight
         auto workarea = get_workarea();
         auto monitor = get_monitor();
 
-        int xpos = 0, ypos = 0, center = 0;
+        guint xpos = 0, ypos = 0, center = 0;
 
         //  m_struts.reset_struts();
         if (Config()->is_autohide_none()) {
@@ -205,15 +226,28 @@ namespace docklight
 
             if (Config()->get_dock_location() == dock_location_t::bottom) {
                 // bottom
-                if (!m_struts.is_set()) {
+                if (1 == 2 /* && !m_struts.is_set()*/) {
                     ypos = workarea.get_height() - area;
                     if (workarea.get_y() != 0) {
                         ypos = workarea.get_height() + workarea.get_y() - area;
                     }
                 } else {
-                    // ypos = m_struts.get_bottom_pos();
-                    ypos = workarea.get_height() + workarea.get_y() - area;
-                    // if(ypos)
+                    static guint pos = 0;  // ypos = m_struts.get_bottom_pos();
+                    if (!pos) pos = workarea.get_height() + workarea.get_y();
+                    //// workarea.get_y() - area;
+                    //// m_struts.reset_struts();
+                    ypos = pos - area;
+
+                    // ypos = monitor.get_height() - workarea.get_y() - area;
+
+                    ////
+                    // if (m_struts.get_bottom_pos() != m_last_ypos) {
+                    //// exit(1);
+                    // g_print("ypos %d %d\n", ypos, m_last_ypos);
+                    // ypos = m_last_ypos;
+                    ////  return;  // only change width;
+                    //}
+                    //  ypos = 1426;
                 }
 
             } else {
@@ -241,12 +275,21 @@ namespace docklight
                 }
             }
 
+            //  m_struts.reset_struts();
+            if (Config()->is_autohide_none()) {
+                set_struts3(true);
+            }
             m_window->resize(width, area);
             m_window->move(xpos, ypos);
 
+            m_last_ypos = ypos;
+
+            m_y = ypos;
+            m_x = xpos;
             m_width = width;
             m_height = area;
 
+            //  m_struts.set_struts();
         } else  // orientation vertical
         {
             int height = required_size;

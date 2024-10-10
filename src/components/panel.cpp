@@ -171,6 +171,7 @@ namespace docklight
         auto separator_size = Config()->get_separator_size();
         auto separators_count = (size * separator_size);
 
+        // Position()->reset_position();
         // resize the icon if necesery
         int scaled_icon_size = this->get_scale_factor();
         Config()->set_icon_size(scaled_icon_size);
@@ -181,7 +182,6 @@ namespace docklight
         size = m_provider->data().size();
 
         //        g_print("Items %ld icon_size: %d\n", size, scaled_icon_size);
-        // Position()->reset_position();
         // Position()->force_position();
     }
 
