@@ -33,10 +33,13 @@ namespace docklight
     class ConfigBase : public Glib::Object
     {
       public:
+        static constexpr const int DEF_ICON_MAXSIZE = 128;
+        static constexpr const int DEF_INDICATOR_SIZE = 2;
+
       protected:
         // parsed and optimized at compile time
-        static constexpr const int DEF_MIN_ITEM_SIZE = 26;
-        static constexpr const int DEF_DOCKAREA_MARGIN = 10;
+        static constexpr const int DEF_MIN_ITEM_SIZE = 32;
+        static constexpr const int DEF_DOCKAREA_MARGIN = 16;
         //        static constexpr const char* DEF_CONFIG_FILENAME = "docklight.config";
         static constexpr const int DEF_ICON_SIZE = 128;
         static constexpr const int DEF_SEPARATOR_MARGIN = 0;
@@ -47,7 +50,7 @@ namespace docklight
 
         // Initializers
         int m_icon_size = DEF_ICON_SIZE;
-        int m_icon_factor = DEF_ICON_SIZE;
+        int m_custom_icon_size = DEF_ICON_SIZE;
 
         int m_separator_size = DEF_SEPARATOR_SIZE;
         int m_separator_size_factor = DEF_SEPARATOR_SIZE;
@@ -90,6 +93,7 @@ namespace docklight
 
         bool read_separator_show_line();
 
+        int read_icon_size();
         int read_separator_size();
         int read_separator_margin();  // not use it
         int read_anchor_margin();

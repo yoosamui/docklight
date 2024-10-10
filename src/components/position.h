@@ -60,8 +60,11 @@ namespace docklight
         position::Struts m_struts;
         Gtk::Window* m_window;
         guint m_last_required_size = 0;
+        guint m_last_ypos = 0;
+
         int m_lastposx = 0;
         guint m_width = 1;
+        guint m_height = 1;
     };
 
     Glib::RefPtr<PositionManager> create_position(Gtk::Window* window);

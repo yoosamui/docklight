@@ -95,7 +95,7 @@ namespace docklight::position
                         insets[struts_position_t::bottom_start] = workarea.get_x() * scale_factor;
                         insets[struts_position_t::bottom_end] = (workarea.get_x() + workarea.get_height()) ;//* scale_factor - 1;
 
-                        m_last_bottom_pos = workarea.get_height() + workarea.get_y() - area;
+                        m_last_bottom_pos = workarea.get_height() + workarea.get_y()  - area;
 
                         break;
                 case dock_location_t::left:
@@ -104,7 +104,7 @@ namespace docklight::position
                         insets[struts_position_t::left_start] = workarea.get_y() * scale_factor;
                         insets[struts_position_t::left_end] = (workarea.get_y() + workarea.get_height()) * scale_factor -1;
 
-                        m_last_left_pos = workarea.get_x() ;
+                        m_last_left_pos = workarea.get_x()  ;
 
                         break;
                 case dock_location_t::right:

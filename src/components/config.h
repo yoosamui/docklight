@@ -27,9 +27,6 @@ namespace docklight
     class Configuration : public ConfigFile
     {
       public:
-        static constexpr const int DEF_ICON_MAXSIZE = 128;
-        static constexpr const int DEF_INDICATOR_SIZE = 2;
-
       public:
         Configuration();
         virtual ~Configuration();
@@ -55,8 +52,11 @@ namespace docklight
 
         const void set_icon_size(guint size);
 
-        int get_icon_original_size();
-        int get_separator_original_size();
+        int get_custom_icon_size() const;
+        const void set_custom_icon_size(const guint size);
+
+        // int get_icon_original_size();
+        // int get_separator_original_size();
 
         void set_arguments(const std::vector<std::tuple<gchar, int, Glib::ustring>>& args);
     };

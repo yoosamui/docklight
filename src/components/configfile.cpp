@@ -6,7 +6,6 @@ namespace docklight
     {
         g_message("Create ConfigFile.");
     }
-
     ConfigFile::~ConfigFile()
     {
         if (m_key_file) {
@@ -19,7 +18,6 @@ namespace docklight
     bool ConfigFile::load()
     {
         // set_default_style();
-
         std::string filepath = read_filepath();
 
         GError* error = nullptr;
@@ -38,6 +36,83 @@ namespace docklight
 
             g_key_file_free(m_key_file);
             m_key_file = nullptr;
+        } else {
+            // location
+            std::string location = read_location();
+            if (!location.empty()) {
+                if (location == "left") {
+                    m_location = dock_location_t::left;
+                } else if (location == "top") {
+                    m_location = dock_location_t::top;
+                } else if (location == "right") {
+                    m_location = dock_location_t::right;
+                } else if (location == "bottom") {
+                    m_location = dock_location_t::bottom;
+                } else {
+                    g_warning("configuration: invalid location. %s\n", location.c_str());
+                }
+            }
+
+            // alignment
+            std::string alignment = read_alignment();
+            if (!alignment.empty()) {
+                if (alignment == "start") {
+                    m_alignment = dock_alignment_t::start;
+                } else if (alignment == "end") {
+                    m_alignment = dock_alignment_t::end;
+                } else if (alignment == "center") {
+                    m_alignment = dock_alignment_t::center;
+                } else if (alignment == "fill") {
+                    m_alignment = dock_alignment_t::fill;
+                } else {
+                    g_warning("configuration: invalid alignment. %s\n", alignment.c_str());
+                }
+            }
+
+            // Indicator type
+            std::string indicator = read_indicator_type_key();
+            if (!indicator.empty()) {
+                if (indicator == "dots") {
+                    m_indicator_type = dock_indicator_type_t::dots;
+                } else if (indicator == "lines") {
+                    m_indicator_type = dock_indicator_type_t::lines;
+                } else {
+                    g_warning("configuration: invalid indicator mode. %s\n", indicator.c_str());
+                }
+            }
+
+            // the icon size
+            m_icon_size = m_custom_icon_size = read_icon_size();
+
+            // separator show line
+            m_show_separator_line = read_separator_show_line();
+
+            // separator size
+            m_separator_size = read_separator_size();
+            if (m_separator_size < 0 || m_separator_size > 20) {
+                m_separator_size = DEF_SEPARATOR_SIZE;
+            }
+
+            // separator margin
+            m_separator_margin = read_separator_margin();
+            if (m_separator_margin < 0 || m_separator_margin > 20) {
+                m_separator_margin = DEF_ICON_SIZE;
+            }
+
+            m_anchor_margin = read_anchor_margin();
+            if (m_anchor_margin < 1 || m_anchor_margin > 20) {
+                m_anchor_margin = DEF_AUTOHIDE_ANCHORT_MARGIN;
+            }
+
+            m_animation_delay = read_animation_delay();
+            if (m_animation_delay < 0.0 || m_animation_delay > 20.0) {
+                m_animation_delay = DEF_AUTOHIDE_ANIMATION_DELAY;
+            }
+
+            m_hide_delay = read_hide_delay();
+            if (m_hide_delay < 0.0 || m_hide_delay > 4.0) {
+                m_hide_delay = DEF_AUTOHIDE_HIDE_DELAY;
+            }
         }
         return found;
     }
@@ -57,6 +132,19 @@ namespace docklight
         return buff;
     }
 
+    int ConfigFile::read_icon_size()
+    {
+        GError* error = nullptr;
+        int value = g_key_file_get_integer(m_key_file, "dock", "icon_size", &error);
+        if (error) {
+            g_error_free(error);
+            error = nullptr;
+
+            return DEF_ICON_MAXSIZE;
+        }
+
+        return value;
+    }
     std::string ConfigFile::read_location()
     {
         GError* error = nullptr;

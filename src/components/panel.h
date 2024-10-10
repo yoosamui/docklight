@@ -26,16 +26,14 @@ namespace docklight
         ~Panel();
         void init();
         void container_updated(guint explicit_size = 0);
-        guint m_icon_size = 0;
-        //  int m_icon_size = 0;
 
-        inline int get_scalling_factor()
+        inline guint get_scale_factor()
         {
             // remember the bigest area
             static int area = 0;
             if (!area) area = Config()->get_dock_area() + Config()->get_separator_size();
 
-            const guint max_icon_size = Config()->DEF_ICON_MAXSIZE;
+            const int max_icon_size = Config()->get_custom_icon_size();
             const auto workarea = device::monitor::get_workarea();
             const int num_items = m_provider->data().size();
             const int item_width = area;
@@ -52,13 +50,8 @@ namespace docklight
                 icon_size = max_icon_size;
             }
 
-            return icon_size;
+            return std::abs(icon_size);
         }
-
-        int compute_scalling_factor(const guint size, int& carea);
-        int get_scalling_factorX(int& carea);
-        int get_scalling_factor_down(int& carea);
-        //        int get_scalling_factor_down();
 
       private:
         sigc::connection m_sigc_draw;

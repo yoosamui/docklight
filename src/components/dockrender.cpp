@@ -133,7 +133,7 @@ namespace docklight
         m_icon_ctx->restore();
 
         guint centerX = (Config()->get_dock_area() / 2) - (m_icon->get_width() / 2);
-        m_cell_ctx->set_source(m_icon, centerX, Config()->get_dock_area_margin());
+        m_cell_ctx->set_source(m_icon, centerX, Config()->get_dock_area_margin() / 2);
         m_cell_ctx->paint();
     }
 

@@ -56,6 +56,7 @@ namespace docklight
 
     const int Configuration::get_dock_area() const
     {
+        // TODO add separatot margin
         int area = m_icon_size + DEF_DOCKAREA_MARGIN;
 
         return area;
@@ -72,19 +73,22 @@ namespace docklight
         return m_icon_size;
     }
 
-    int Configuration::get_icon_original_size()
+    int Configuration::get_custom_icon_size() const
     {
-        return m_icon_factor;
+        return m_custom_icon_size;
     }
 
-    int Configuration::get_separator_original_size()
+    const void Configuration::set_custom_icon_size(const guint size)
     {
-        return m_separator_size_factor;
+        if (size < 0 || size > DEF_ICON_MAXSIZE) return;
+
+        m_custom_icon_size = size;
+        if (size == 0) m_custom_icon_size = m_icon_size;
     }
 
     const void Configuration::set_icon_size(guint size)
     {
-        if (size < 0 || size > 128) return;
+        if (size < 0 || size > DEF_ICON_MAXSIZE) return;
         m_icon_size = size;
     }
 
@@ -178,81 +182,6 @@ namespace docklight
         const std::vector<std::tuple<gchar, int, Glib::ustring>>& args)
     {
         if (!load()) return;
-
-        // location
-        std::string location = read_location();
-        if (!location.empty()) {
-            if (location == "left") {
-                m_location = dock_location_t::left;
-            } else if (location == "top") {
-                m_location = dock_location_t::top;
-            } else if (location == "right") {
-                m_location = dock_location_t::right;
-            } else if (location == "bottom") {
-                m_location = dock_location_t::bottom;
-            } else {
-                g_warning("configuration: invalid location. %s\n", location.c_str());
-            }
-        }
-
-        // alignment
-        std::string alignment = read_alignment();
-        if (!alignment.empty()) {
-            if (alignment == "start") {
-                m_alignment = dock_alignment_t::start;
-            } else if (alignment == "end") {
-                m_alignment = dock_alignment_t::end;
-            } else if (alignment == "center") {
-                m_alignment = dock_alignment_t::center;
-            } else if (alignment == "fill") {
-                m_alignment = dock_alignment_t::fill;
-            } else {
-                g_warning("configuration: invalid alignment. %s\n", alignment.c_str());
-            }
-        }
-
-        // Indicator type
-        std::string indicator = read_indicator_type_key();
-        if (!indicator.empty()) {
-            if (indicator == "dots") {
-                m_indicator_type = dock_indicator_type_t::dots;
-            } else if (indicator == "lines") {
-                m_indicator_type = dock_indicator_type_t::lines;
-            } else {
-                g_warning("configuration: invalid indicator mode. %s\n", indicator.c_str());
-            }
-        }
-
-        // separator show line
-        m_show_separator_line = read_separator_show_line();
-
-        // separator size
-        m_separator_size = read_separator_size();
-        if (m_separator_size < 0 || m_separator_size > 20) {
-            m_separator_size = DEF_SEPARATOR_SIZE;
-        }
-
-        // separator margin
-        m_separator_margin = read_separator_margin();
-        if (m_separator_margin < 0 || m_separator_margin > 20) {
-            m_separator_margin = DEF_ICON_SIZE;
-        }
-
-        m_anchor_margin = read_anchor_margin();
-        if (m_anchor_margin < 1 || m_anchor_margin > 20) {
-            m_anchor_margin = DEF_AUTOHIDE_ANCHORT_MARGIN;
-        }
-
-        m_animation_delay = read_animation_delay();
-        if (m_animation_delay < 0.0 || m_animation_delay > 20.0) {
-            m_animation_delay = DEF_AUTOHIDE_ANIMATION_DELAY;
-        }
-
-        m_hide_delay = read_hide_delay();
-        if (m_hide_delay < 0.0 || m_hide_delay > 4.0) {
-            m_hide_delay = DEF_AUTOHIDE_HIDE_DELAY;
-        }
-
         // ARGS
         for (auto&& t : args) {
             // std::cout << "R:" << std::get<0>(t) << ", " << std::get<1>(t)
