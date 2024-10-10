@@ -211,7 +211,8 @@ namespace docklight
                         ypos = workarea.get_height() + workarea.get_y() - area;
                     }
                 } else {
-                    ypos = m_struts.get_bottom_pos();
+                    // ypos = m_struts.get_bottom_pos();
+                    ypos = workarea.get_height() + workarea.get_y() - area;
                     // if(ypos)
                 }
 
