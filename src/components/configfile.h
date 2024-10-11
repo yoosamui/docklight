@@ -33,8 +33,8 @@ namespace docklight
     class ConfigBase : public Glib::Object
     {
       public:
-        static constexpr const int DEF_ICON_MAXSIZE = 128;
         static constexpr const int DEF_INDICATOR_SIZE = 2;
+        static const int DEF_ICON_MAXSIZE = 128;
 
       protected:
         // parsed and optimized at compile time

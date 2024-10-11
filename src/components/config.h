@@ -53,6 +53,7 @@ namespace docklight
         const void set_icon_size(guint size);
 
         int get_custom_icon_size() const;
+        int get_icon_max_size();
         const void set_custom_icon_size(const guint size);
 
         // int get_icon_original_size();

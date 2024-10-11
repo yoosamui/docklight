@@ -46,7 +46,10 @@ namespace docklight
         auto const icon_theme = Gtk::IconTheme::get_default();
 
         m_sigc_timer = Glib::signal_timeout().connect(
-            sigc::mem_fun(this, &DockItemProvider::on_timeout_draw), 10);
+            sigc::mem_fun(this, &DockItemProvider::on_timeout_draw), 5);
+
+        icon_theme->signal_changed().connect(
+            sigc::mem_fun(*this, &DockItemProvider::on_theme_changed));
 
         g_message("Create DockItemProvider.");
     }
@@ -126,6 +129,7 @@ namespace docklight
 
     void DockItemProvider::on_theme_changed()
     {
+        g_message("Icon theme updated.");
         bool updated = false;
         Glib::RefPtr<Gdk::Pixbuf> pixbuf;
 
@@ -148,8 +152,9 @@ namespace docklight
     {
         if (!gdkpixbuf) return false;
 
+        auto maxicon_size = Config()->get_icon_max_size();
         pixbuf = Glib::wrap(gdkpixbuf, true)
-                     ->scale_simple(DEF_MAX_ICON_SIZE, DEF_MAX_ICON_SIZE, Gdk::INTERP_BILINEAR);
+                     ->scale_simple(maxicon_size, maxicon_size, Gdk::INTERP_BILINEAR);
 
         return pixbuf ? true : false;
     }
@@ -221,7 +226,7 @@ namespace docklight
         try {
             // Always get the icon scaled to the
             // requested size.
-            pixbuf = theme->load_icon(icon_name, DEF_MAX_ICON_SIZE,
+            pixbuf = theme->load_icon(icon_name, Config()->get_icon_max_size(),
                                       Gtk::IconLookupFlags::ICON_LOOKUP_FORCE_SIZE);
         } catch (...) {
             g_warning("get_theme_icon::pixbuf: Exception the object has not been created. (%s)",

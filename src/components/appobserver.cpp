@@ -100,13 +100,14 @@ namespace docklight
 
         //
         // TODO test
-        /*auto instance_name = wnck_window_get_class_instance_name(window);
+        auto instance_name = wnck_window_get_class_instance_name(window);
+        auto group_name = wnck_window_get_class_group_name(window);
         if (!instance_name) {
             //            instance_name = window_name;
             return;
         }
 
-        g_print("-->%s type: %d\n", instance_name, wt);*/
+        g_print("-->%s group: %s, type: %d\n", group_name, instance_name, wt);
 
         gint32 xid = wnck_window_get_xid(window);
 
