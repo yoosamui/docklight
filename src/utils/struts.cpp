@@ -105,10 +105,8 @@ namespace docklight::position
         Gdk::Rectangle workarea = device::monitor::get_workarea();
         Gdk::Rectangle monitor = device::monitor::get_geometry();
 
-        auto scale_factor = 1;
-
         switch (location) {
-                // clang-format off
+            // clang-format off
                 case dock_location_t::top:
                         if (m_strut_top_pos == -1) {
                             m_strut_top_pos = workarea.get_y();
