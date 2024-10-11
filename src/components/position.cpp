@@ -144,10 +144,12 @@ namespace docklight
     void PositionManager::monitor_changed()
     {
         //       m_struts.reset_struts();
-
+        //   set_position(m_last_required_size);
+        //    return;
         auto location_name = Config()->get_dock_location_name().c_str();
         // TODO program name after instllation can change
-        // read the passing parameters
+        // read the iall passing parameters
+        g_print("Restart %s\n", location_name);
         execl("src/docklight", "docklight", "-l", location_name, NULL);
 
         // if (m_struts.active()) {
@@ -159,13 +161,8 @@ namespace docklight
 
     void PositionManager::force_position()
     {
-        //  m_struts.reset_struts();
-        //       set_position(m_last_required_size);
-
-        //
-
-        m_struts.set_struts(true);
-        set_position(m_last_required_size);
+        m_struts.set_struts();
+        // set_position(m_last_required_size);
     }
 
     void PositionManager::reset_position()
@@ -185,6 +182,9 @@ namespace docklight
         // auto monitor = get_monitor();
 
         guint xpos = 0, ypos = 0, center = 0;
+        if (Config()->is_autohide_none()) {
+            m_struts.set_struts();
+        }
 
         if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
             int width = required_size;
@@ -315,9 +315,6 @@ namespace docklight
 
             m_window->resize(area, height);
             m_window->move(xpos, ypos);
-        }
-        if (Config()->is_autohide_none()) {
-            m_struts.set_struts();
         }
     }
     //}  // namespace position

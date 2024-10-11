@@ -153,7 +153,7 @@ namespace docklight
         m_indicator_ctx = Cairo::Context::create(m_indicator);
     }
 
-    void DockRender::get_start_pos(gint maxsize, gint& x, gint& y)
+    inline void DockRender::get_start_pos(gint maxsize, gint& x, gint& y)
     {
         auto center = 0;
         x = y = 0;
@@ -164,6 +164,7 @@ namespace docklight
             if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::center) {
                 center = m_position->get_workarea().get_width() / 2 - maxsize / 2;
                 x = m_position->get_workarea().get_x() + center;
+
             } else if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::end) {
                 x = m_position->get_workarea().get_width() - maxsize;
             }
@@ -240,7 +241,7 @@ namespace docklight
         auto data = provider->data();
         auto maxsize = data.size() * area;
 
-        get_start_pos(maxsize, m_posX, m_posY);
+        get_start_pos(maxsize + area, m_posX, m_posY);
 
         guint tag = 0;
         for (auto& dockitem : data) {

@@ -70,21 +70,40 @@ namespace docklight::position
                             (unsigned char*)&insets, 4);
     }
 
-    // void Struts::set_struts(bool force)
-    void Struts::set_struts(const guint pos)
+    bool Struts::active() const
     {
-        //   if (m_strut_set && !force) return;
+        return m_active;
+    }
 
+    guint Struts::get_bottom_pos() const
+    {
+        return m_last_bottom_pos;
+    }
+
+    guint Struts::get_right_pos() const
+    {
+        return m_last_right_pos;
+    }
+
+    guint Struts::get_left_pos() const
+    {
+        return m_last_left_pos;
+    }
+
+    guint Struts::get_top_pos() const
+    {
+        return m_last_top_pos;
+    }
+
+    void Struts::set_struts()
+    {
         long insets[12] = {0};
 
         auto const screen = device::display::get_default_screen();
         auto const location = Config()->get_dock_location();
         auto area = Config()->get_dock_area();
         Gdk::Rectangle workarea = device::monitor::get_workarea();
-        // TODO;; remove after use monitor
         Gdk::Rectangle monitor = device::monitor::get_geometry();
-        // Gdk::Rectangle monitor;
-        // device::monitor::get_primary()->get_geometry(monitor);
 
         auto scale_factor = 1;
 
@@ -93,61 +112,50 @@ namespace docklight::position
                 case dock_location_t::top:
                         if (m_strut_top_pos == -1) {
                             m_strut_top_pos = workarea.get_y();
+                            m_last_top_pos = workarea.get_y();
                         }
 
                         insets[struts_position_t::top] = m_strut_top_pos  + area;
                         insets[struts_position_t::top_start] = monitor.get_x();
                         insets[struts_position_t::top_end] = (monitor.get_x() + monitor.get_width()) ;
 
-                        m_last_top_pos = m_strut_top_pos;
-
                         break;
                 case dock_location_t::bottom:
 
                         if (m_strut_bottom_pos == -1) {
-                            m_strut_bottom_pos =  monitor.get_height() - (workarea.get_height() + workarea.get_y());
+                            m_strut_bottom_pos = screen->get_height()  - workarea.get_height() - workarea.get_y();
+                            m_last_bottom_pos =  workarea.get_height() + workarea.get_y();
                         }
 
                         insets[struts_position_t::bottom] = m_strut_bottom_pos +  area ;
                         insets[struts_position_t::bottom_start] = monitor.get_x();
                         insets[struts_position_t::bottom_end] = monitor.get_height();
 
-                        m_last_bottom_pos = monitor.get_height() - m_strut_bottom_pos ;
-
                         break;
                 case dock_location_t::left:
 
-                        insets[struts_position_t::left] = (workarea.get_x() + area) * scale_factor;
-                        insets[struts_position_t::left_start] = workarea.get_y() * scale_factor;
-                        insets[struts_position_t::left_end] = (workarea.get_y() + workarea.get_height()) * scale_factor -1;
+                        if (m_strut_left_pos == -1) {
+                            m_strut_left_pos =  workarea.get_x();
+                            m_last_left_pos = workarea.get_x();
+                        }
 
-                        m_last_left_pos = workarea.get_x()  ;
+                        insets[struts_position_t::left] = m_strut_left_pos + area ;
+                        insets[struts_position_t::left_start] = monitor.get_y();
+                        insets[struts_position_t::left_end] = monitor.get_height();
 
                         break;
                 case dock_location_t::right:
+
                         if (m_strut_right_pos == -1) {
                             m_strut_right_pos = screen->get_width()  - workarea.get_width() - workarea.get_x();
-                            m_last_right_pos =  workarea.get_width()+workarea.get_x();
+                            m_last_right_pos =  workarea.get_width() + workarea.get_x();
                         }
-                        g_print("Monitor width %d %d\n", monitor.get_width(), screen->get_width());
 
-                        insets[struts_position_t::right] =m_strut_right_pos +  area ;
+                        insets[struts_position_t::right] = m_strut_right_pos +  area ;
                         insets[struts_position_t::right_start] = monitor.get_y();
                         insets[struts_position_t::right_end] = monitor.get_height();
 
-
-                    // set the struts
-                    //insets[struts_position_t::right] = (area + screen->get_width()) - workarea.get_x() - workarea.get_width();
-                    //insets[struts_position_t::right] = m_strut_right_pos -area; //(area + screen->get_width()) - workarea.get_x() - workarea.get_width();
-                    //insets[struts_position_t::right_start] = workarea.get_y();
-                    //insets[struts_position_t::right_end] = workarea.get_y() + workarea.get_height();
-
-
-                    //insets[struts_position_t::right] = 128;// (screen->get_width() - workarea.get_x() - workarea.get_width());
-                    //insets[struts_position_t::right_start] = workarea.get_y();
-                    //insets[struts_position_t::right_end] = workarea.get_y() + workarea.get_height();
-
-                    break;
+                        break;
 
                 default:
                         break;

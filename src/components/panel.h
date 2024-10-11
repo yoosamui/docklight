@@ -24,6 +24,7 @@ namespace docklight
       public:
         Panel();
         ~Panel();
+
         void init();
         void container_updated(guint explicit_size = 0);
 
@@ -39,13 +40,14 @@ namespace docklight
             const int item_width = area;
 
             int screen_width = 0;
+            int reduce_screen_value = (item_width * 2);
 
             if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
                 if (workarea.get_width() <= 1) return max_icon_size;
-                screen_width = workarea.get_width() - (item_width * 2);
+                screen_width = workarea.get_width() - reduce_screen_value;
             } else {
                 if (workarea.get_height() <= 1) return max_icon_size;
-                screen_width = workarea.get_height() - (item_width * 2);
+                screen_width = workarea.get_height() - reduce_screen_value;
             }
 
             // Calculate the scaling factor

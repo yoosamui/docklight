@@ -49,17 +49,15 @@ namespace docklight::position
 
         void init(Gtk::Window* window);
         void set_insets(long& insets);
-        //        void set_struts(bool force = false);
         void reset_struts();
+        void set_struts();
 
-        void set_struts(const guint pos = 0);
+        guint get_bottom_pos() const;
+        guint get_right_pos() const;
+        guint get_left_pos() const;
+        guint get_top_pos() const;
 
-        guint get_bottom_pos() { return m_last_bottom_pos; }
-        guint get_right_pos() { return m_last_right_pos; }
-        guint get_left_pos() { return m_last_left_pos; }
-        guint get_top_pos() { return m_last_top_pos; }
-
-        bool active() { return m_active; }
+        bool active() const;
 
       private:
         Gtk::Window* m_window;
