@@ -239,7 +239,7 @@ namespace docklight
 
     bool DockItemProvider::insert(WnckWindow* window)
     {
-        // reurn if the window don't has a name.
+        // return if the window don't has a name.
         if (!wnck_window_has_name(window)) return false;
 
         // return if the DockItem exist.

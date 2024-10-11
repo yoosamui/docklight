@@ -1,4 +1,4 @@
-SUBDIRS = icons	
+SUBDIRS = icons
 
 policydir = /usr/share/polkit-1/actions
 policy_DATA = \
@@ -30,21 +30,21 @@ docklightimages_DATA = 	\
 
 
 install-data-local:
-	
+
 	if test -f $(srcdir)/docklight.sh; then cp $(srcdir)/docklight.sh $(bindir); fi
 	if test -f $(bindir)/docklight.sh; then chmod u+x $(bindir)/docklight.sh; fi
 	if test -f $(bindir)/docklight.sh; then mv $(bindir)/docklight.sh /bin; fi
-	if test -f /bin/docklight.sh && test ! -L /bin/docklight; then ln -s /bin/docklight.sh /bin/docklight; fi
-	
+	if test -f /bin/docklight.sh && test ! -L /bin/docklight5; then ln -s /bin/docklight.sh /bin/docklight5; fi
+
 
 install-exec-hook:
 
-	mkdir -p $(bindir)/docklight-5 
+	mkdir -p $(bindir)/docklight-5
 	if test -f $(bindir)/docklight; then mv $(bindir)/docklight  $(bindir)/docklight-5; fi
-	
+
 uninstall-hook:
 
 	if test -d $(bindir)/docklight-5; then rm -fdr $(bindir)/docklight-5; fi
 	if test -f /bin/docklight.sh; then rm -f /bin/docklight.sh; fi
-	if test	-L /bin/docklight; then rm /bin/docklight; fi
+	if test	-L /bin/docklight5; then rm /bin/docklight5; fi
 
