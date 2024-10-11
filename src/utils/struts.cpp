@@ -44,6 +44,9 @@ namespace docklight::position
 
         set_insets(*insets);
 
+        m_strut_top_pos = -1;
+        m_strut_right_pos = -1;
+        m_strut_left_pos = -1;
         m_strut_bottom_pos = -1;
         m_active = false;
 
@@ -80,29 +83,30 @@ namespace docklight::position
         Gdk::Rectangle workarea = device::monitor::get_workarea();
         // TODO;; remove after use monitor
         Gdk::Rectangle monitor = device::monitor::get_geometry();
+        // Gdk::Rectangle monitor;
+        // device::monitor::get_primary()->get_geometry(monitor);
 
         auto scale_factor = 1;
 
         switch (location) {
                 // clang-format off
                 case dock_location_t::top:
-                        insets[struts_position_t::top] = workarea.get_y() + area * scale_factor;
-                        insets[struts_position_t::top_start] = workarea.get_x() * scale_factor;
-                        insets[struts_position_t::top_end] = (workarea.get_x() + workarea.get_width()) * scale_factor -1;
+                        if (m_strut_top_pos == -1) {
+                            m_strut_top_pos = workarea.get_y();
+                        }
 
-                        m_last_top_pos = workarea.get_y() ;
+                        insets[struts_position_t::top] = m_strut_top_pos  + area;
+                        insets[struts_position_t::top_start] = monitor.get_x();
+                        insets[struts_position_t::top_end] = (monitor.get_x() + monitor.get_width()) ;
+
+                        m_last_top_pos = m_strut_top_pos;
 
                         break;
                 case dock_location_t::bottom:
 
                         if (m_strut_bottom_pos == -1) {
                             m_strut_bottom_pos =  monitor.get_height() - (workarea.get_height() + workarea.get_y());
-
                         }
-
-
-g_print("Strut size %d\n", m_strut_bottom_pos+area);
-
 
                         insets[struts_position_t::bottom] = m_strut_bottom_pos +  area ;
                         insets[struts_position_t::bottom_start] = monitor.get_x();
@@ -121,13 +125,30 @@ g_print("Strut size %d\n", m_strut_bottom_pos+area);
 
                         break;
                 case dock_location_t::right:
-                        insets[struts_position_t::right] = (area + screen->get_width()) - workarea.get_x() - workarea.get_width() * scale_factor;
-                        insets[struts_position_t::right_start] =  workarea.get_y() * scale_factor;
-                        insets[struts_position_t::right_end] = (workarea.get_y() + workarea.get_height()) *   scale_factor - 1;
+                        if (m_strut_right_pos == -1) {
+                            m_strut_right_pos = screen->get_width()  - workarea.get_width() - workarea.get_x();
+                            m_last_right_pos =  workarea.get_width()+workarea.get_x();
+                        }
+                        g_print("Monitor width %d %d\n", monitor.get_width(), screen->get_width());
 
-                        m_last_right_pos = workarea.get_width() + workarea.get_x() - area;
+                        insets[struts_position_t::right] =m_strut_right_pos +  area ;
+                        insets[struts_position_t::right_start] = monitor.get_y();
+                        insets[struts_position_t::right_end] = monitor.get_height();
 
-                        break;
+
+                    // set the struts
+                    //insets[struts_position_t::right] = (area + screen->get_width()) - workarea.get_x() - workarea.get_width();
+                    //insets[struts_position_t::right] = m_strut_right_pos -area; //(area + screen->get_width()) - workarea.get_x() - workarea.get_width();
+                    //insets[struts_position_t::right_start] = workarea.get_y();
+                    //insets[struts_position_t::right_end] = workarea.get_y() + workarea.get_height();
+
+
+                    //insets[struts_position_t::right] = 128;// (screen->get_width() - workarea.get_x() - workarea.get_width());
+                    //insets[struts_position_t::right_start] = workarea.get_y();
+                    //insets[struts_position_t::right_end] = workarea.get_y() + workarea.get_height();
+
+                    break;
+
                 default:
                         break;
                 // clang-format on

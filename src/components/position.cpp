@@ -223,11 +223,6 @@ namespace docklight
                         ypos = workarea.get_height() + workarea.get_y() - area;
                     }
                 } else {
-                    /*static guint pos = 0;  // ypos = m_struts.get_bottom_pos();
-                    // if (!pos) pos = workarea.get_height() + workarea.get_y();
-                    if (!pos) pos = m_struts.get_bottom_pos();
-                    ypos = pos - area;*/
-
                     ypos = m_struts.get_bottom_pos() - area;
                 }
 
@@ -235,24 +230,9 @@ namespace docklight
                 // top
                 if (!m_struts.active()) {
                     ypos = workarea.get_y();
-                    /*if (workarea.get_y() > 0) {
-                        ypos = workarea.get_y();
-                    } else {
-                        ypos = 0;
-                    }*/
                 } else {
-                    ypos = m_struts.get_top_pos();
-                    /*ypos = workarea.get_y() - area;
-                    if (ypos == workarea.get_y()) {
-                        ypos = workarea.get_y();
-                    }
-
-                    if (ypos < workarea.get_y()) {
-                        ypos = workarea.get_y() - area;
-                        if (ypos < monitor.get_y()) {
-                            ypos = workarea.get_y();
-                        }
-                    }*/
+                    ypos = m_struts.get_top_pos();  // + area;
+                    // ypos = workarea.get_y() + area;
                 }
             }
 
@@ -303,28 +283,8 @@ namespace docklight
                         xpos = workarea.get_width() + workarea.get_x() - area;
                     }*/
                 } else {
-                    // xpos = workarea.get_width() - area;
-                    // if (workarea.get_x() != 0) {
-                    // xpos = workarea.get_width() + workarea.get_x() - area;
-                    //}
-                    xpos = m_struts.get_right_pos();
-                    // if (xpos + area > monitor.get_width()) {
-                    // xpos = workarea.get_width() + workarea.get_x();
-                    // g_print("def\n");
-                    //}
-
-                    // xpos = workarea.get_width() + workarea.get_x();
-
-                    // if (xpos == workarea.get_width()) {
-                    // xpos = workarea.get_width() + workarea.get_x();
-                    //}
-
-                    // if (xpos + area > workarea.get_width()) {
-                    // xpos = workarea.get_width() + workarea.get_x();
-                    // if (xpos + area > monitor.get_width()) {
-                    // xpos = workarea.get_width() + workarea.get_x() - area;
-                    //}
-                    //}
+                    xpos = m_struts.get_right_pos() - area;
+                    // xpos = iworkarea.get_width();  // + workarea.get_x() - area;
                 }
             } else {
                 // left
@@ -356,7 +316,6 @@ namespace docklight
             m_window->resize(area, height);
             m_window->move(xpos, ypos);
         }
-
         if (Config()->is_autohide_none()) {
             m_struts.set_struts();
         }

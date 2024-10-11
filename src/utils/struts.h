@@ -69,6 +69,9 @@ namespace docklight::position
         guint m_last_left_pos = 0;
         guint m_last_top_pos = 0;
 
+        gint m_strut_top_pos = -1;
+        gint m_strut_right_pos = -1;
+        gint m_strut_left_pos = -1;
         gint m_strut_bottom_pos = -1;
     };
 

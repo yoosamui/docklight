@@ -38,8 +38,15 @@ namespace docklight
             const int num_items = m_provider->data().size();
             const int item_width = area;
 
-            if (workarea.get_width() <= 1) return max_icon_size;
-            int screen_width = workarea.get_width() - (item_width * 2);
+            int screen_width = 0;
+
+            if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+                if (workarea.get_width() <= 1) return max_icon_size;
+                screen_width = workarea.get_width() - (item_width * 2);
+            } else {
+                if (workarea.get_height() <= 1) return max_icon_size;
+                screen_width = workarea.get_height() - (item_width * 2);
+            }
 
             // Calculate the scaling factor
             float scaling_factor =
