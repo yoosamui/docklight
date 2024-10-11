@@ -68,6 +68,9 @@ namespace docklight
 
         void set_struts3(bool reset)
         {
+            static bool active = false;
+            //   if (active) return;
+
             typedef enum struts_enum {
                 left = 0,
                 right = 1,
@@ -142,7 +145,8 @@ namespace docklight
                         //((area + screen->get_height()) - monitor.get_y() - monitor.get_height())+ get_workarea().get_y()-area;
 //                        (area+64) ;//
                  //  215;//  get_workarea().get_y();
-                    monitor.get_height() - m_y;
+                   monitor.get_height() - m_y;
+                  // monitor.get_height() - workarea.get_height();//m_y;
                      //       area +
 
                     insets[struts_position_t::bottom_start] = monitor.get_x();
@@ -224,6 +228,7 @@ namespace docklight
             gdk_property_change(gdk_window, gdk_atom_intern("_NET_WM_STRUT", FALSE),
                                 gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
                                 (unsigned char*)&insets, 4);
+            active = true;
         }
 
       private:

@@ -187,12 +187,13 @@ namespace docklight
 
         //  m_struts.reset_struts();
         if (Config()->is_autohide_none()) {
-            if (m_last_required_size != required_size) {
-                m_last_required_size = required_size;
+            if (m_y > area - 1) set_struts3(true);
+            // if (m_last_required_size != required_size) {
+            // m_last_required_size = required_size;
 
-                // m_struts.reset_struts();
-                //     m_struts.set_struts();
-            }
+            //// m_struts.reset_struts();
+            ////     m_struts.set_struts();
+            //}
         }
 
         if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
@@ -234,20 +235,7 @@ namespace docklight
                 } else {
                     static guint pos = 0;  // ypos = m_struts.get_bottom_pos();
                     if (!pos) pos = workarea.get_height() + workarea.get_y();
-                    //// workarea.get_y() - area;
-                    //// m_struts.reset_struts();
                     ypos = pos - area;
-
-                    // ypos = monitor.get_height() - workarea.get_y() - area;
-
-                    ////
-                    // if (m_struts.get_bottom_pos() != m_last_ypos) {
-                    //// exit(1);
-                    // g_print("ypos %d %d\n", ypos, m_last_ypos);
-                    // ypos = m_last_ypos;
-                    ////  return;  // only change width;
-                    //}
-                    //  ypos = 1426;
                 }
 
             } else {
@@ -277,7 +265,8 @@ namespace docklight
 
             //  m_struts.reset_struts();
             if (Config()->is_autohide_none()) {
-                set_struts3(true);
+                //   if (m_y) set_struts3(true);
+                //   set_struts3(true);
             }
             m_window->resize(width, area);
             m_window->move(xpos, ypos);
@@ -382,6 +371,7 @@ namespace docklight
             m_window->resize(area, height);
             m_window->move(xpos, ypos);
         }
+        // if (m_y) set_struts3(true);
     }
     //}  // namespace position
 
