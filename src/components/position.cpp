@@ -185,17 +185,6 @@ namespace docklight
 
         guint xpos = 0, ypos = 0, center = 0;
 
-        //  m_struts.reset_struts();
-        if (Config()->is_autohide_none()) {
-            if (m_y > area - 1) set_struts3(true);
-            // if (m_last_required_size != required_size) {
-            // m_last_required_size = required_size;
-
-            //// m_struts.reset_struts();
-            ////     m_struts.set_struts();
-            //}
-        }
-
         if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
             int width = required_size;
 
@@ -263,11 +252,6 @@ namespace docklight
                 }
             }
 
-            //  m_struts.reset_struts();
-            if (Config()->is_autohide_none()) {
-                //   if (m_y) set_struts3(true);
-                //   set_struts3(true);
-            }
             m_window->resize(width, area);
             m_window->move(xpos, ypos);
 
@@ -277,6 +261,10 @@ namespace docklight
             m_x = xpos;
             m_width = width;
             m_height = area;
+
+            if (Config()->is_autohide_none()) {
+                set_struts3(true);
+            }
 
             //  m_struts.set_struts();
         } else  // orientation vertical
