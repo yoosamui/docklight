@@ -143,17 +143,18 @@ namespace docklight
 
     void PositionManager::monitor_changed()
     {
-        m_struts.reset_struts();
+        //       m_struts.reset_struts();
 
         auto location_name = Config()->get_dock_location_name().c_str();
         // TODO program name after instllation can change
+        // read the passing parameters
         execl("src/docklight", "docklight", "-l", location_name, NULL);
 
-        if (m_struts.is_set()) {
-            m_struts.set_struts(true);
-        }
+        // if (m_struts.active()) {
+        // m_struts.set_struts();
+        //}
 
-        set_position(m_last_required_size + 1);
+        // set_position(m_last_required_size);
     }
 
     void PositionManager::force_position()
@@ -181,7 +182,7 @@ namespace docklight
         //   set_struts();
         dock_alignment_t alignment = Config()->get_dock_alignment();
         auto workarea = get_workarea();
-        auto monitor = get_monitor();
+        // auto monitor = get_monitor();
 
         guint xpos = 0, ypos = 0, center = 0;
 
@@ -216,20 +217,23 @@ namespace docklight
 
             if (Config()->get_dock_location() == dock_location_t::bottom) {
                 // bottom
-                if (1 == 2 /* && !m_struts.is_set()*/) {
+                if (!m_struts.active()) {
                     ypos = workarea.get_height() - area;
                     if (workarea.get_y() != 0) {
                         ypos = workarea.get_height() + workarea.get_y() - area;
                     }
                 } else {
-                    static guint pos = 0;  // ypos = m_struts.get_bottom_pos();
-                    if (!pos) pos = workarea.get_height() + workarea.get_y();
-                    ypos = pos - area;
+                    /*static guint pos = 0;  // ypos = m_struts.get_bottom_pos();
+                    // if (!pos) pos = workarea.get_height() + workarea.get_y();
+                    if (!pos) pos = m_struts.get_bottom_pos();
+                    ypos = pos - area;*/
+
+                    ypos = m_struts.get_bottom_pos() - area;
                 }
 
             } else {
                 // top
-                if (!m_struts.is_set()) {
+                if (!m_struts.active()) {
                     ypos = workarea.get_y();
                     /*if (workarea.get_y() > 0) {
                         ypos = workarea.get_y();
@@ -255,18 +259,11 @@ namespace docklight
             m_window->resize(width, area);
             m_window->move(xpos, ypos);
 
-            m_last_ypos = ypos;
-
             m_y = ypos;
             m_x = xpos;
             m_width = width;
             m_height = area;
 
-            if (Config()->is_autohide_none()) {
-                m_struts.set_struts(m_y);
-            }
-
-            //  m_struts.set_struts();
         } else  // orientation vertical
         {
             int height = required_size;
@@ -299,7 +296,7 @@ namespace docklight
 
             if (Config()->get_dock_location() == dock_location_t::right) {
                 // right
-                if (!m_struts.is_set()) {
+                if (!m_struts.active()) {
                     xpos = workarea.get_width() + workarea.get_x() - area;
                     /*xpos = workarea.get_width() - area;
                     if (workarea.get_x() != 0) {
@@ -331,7 +328,7 @@ namespace docklight
                 }
             } else {
                 // left
-                if (!m_struts.is_set()) {
+                if (!m_struts.active()) {
                     xpos = workarea.get_x();
 
                     // if (workarea.get_x() > 0) {
@@ -359,7 +356,10 @@ namespace docklight
             m_window->resize(area, height);
             m_window->move(xpos, ypos);
         }
-        // if (m_y) set_struts3(true);
+
+        if (Config()->is_autohide_none()) {
+            m_struts.set_struts();
+        }
     }
     //}  // namespace position
 

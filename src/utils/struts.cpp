@@ -41,9 +41,11 @@ namespace docklight::position
     void Struts::reset_struts()
     {
         long insets[12] = {0};
+
         set_insets(*insets);
 
-        m_strut_set = false;
+        m_strut_bottom_pos = -1;
+        m_active = false;
 
         g_print("Reset struts\n");
     }
@@ -93,12 +95,20 @@ namespace docklight::position
                         break;
                 case dock_location_t::bottom:
 
-//                      insets[struts_position_t::bottom] =  (area + screen->get_height() - monitor.get_y() -   monitor.get_height()) *     scale_factor + 1;
-                        insets[struts_position_t::bottom] =  monitor.get_height() - pos;
-                        insets[struts_position_t::bottom_start] = monitor.get_x() *  scale_factor;
-                        insets[struts_position_t::bottom_end] = (monitor.get_x() + monitor.get_height()) * scale_factor - 1;
+                        if (m_strut_bottom_pos == -1) {
+                            m_strut_bottom_pos =  monitor.get_height() - (workarea.get_height() + workarea.get_y());
 
-//                        m_last_bottom_pos = workarea.get_height() + workarea.get_y()  - area;
+                        }
+
+
+g_print("Strut size %d\n", m_strut_bottom_pos+area);
+
+
+                        insets[struts_position_t::bottom] = m_strut_bottom_pos +  area ;
+                        insets[struts_position_t::bottom_start] = monitor.get_x();
+                        insets[struts_position_t::bottom_end] = monitor.get_height();
+
+                        m_last_bottom_pos = monitor.get_height() - m_strut_bottom_pos ;
 
                         break;
                 case dock_location_t::left:
@@ -125,7 +135,7 @@ namespace docklight::position
 
         set_insets(*insets);
 
-        m_strut_set = true;
+        m_active = true;
         g_message("set_strut.");
         // return;
 

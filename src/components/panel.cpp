@@ -181,7 +181,7 @@ namespace docklight
         m_position->set_position(required_size);
         size = m_provider->data().size();
 
-        //        g_print("Items %ld icon_size: %d\n", size, scaled_icon_size);
+        g_print("Items %ld icon_size: %d\n", size, scaled_icon_size);
         // Position()->force_position();
     }
 

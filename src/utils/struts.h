@@ -59,15 +59,17 @@ namespace docklight::position
         guint get_left_pos() { return m_last_left_pos; }
         guint get_top_pos() { return m_last_top_pos; }
 
-        bool is_set() { return m_strut_set; }
+        bool active() { return m_active; }
 
       private:
         Gtk::Window* m_window;
-        bool m_strut_set = false;
+        bool m_active = false;
         guint m_last_bottom_pos = 0;
         guint m_last_right_pos = 0;
         guint m_last_left_pos = 0;
         guint m_last_top_pos = 0;
+
+        gint m_strut_bottom_pos = -1;
     };
 
 }  // namespace docklight::position

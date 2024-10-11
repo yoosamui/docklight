@@ -46,16 +46,14 @@ namespace docklight
         DockItemProvider();
         virtual ~DockItemProvider();
 
-        void request_update_signal();
+        // void request_update_signal();
+        type_signal_update signal_update();
 
         guint required_size(guint additional_size);
         int remove(gulong xid);
 
         bool exist(gulong xid);
         bool insert(WnckWindow* window);
-
-        type_signal_update signal_update();
-
         bool get_dockitem_by_index(guint index, std::shared_ptr<DockItemIcon>& dockitem);
 
         std::vector<std::shared_ptr<DockItemIcon>>& data();
@@ -66,6 +64,8 @@ namespace docklight
         sigc::connection m_sigc;
 
         void on_theme_changed();
+        bool on_timeout_draw();
+
         bool get_window_icon(GdkPixbuf* gdkpixbuf, Glib::RefPtr<Gdk::Pixbuf>& pixbuf);
         bool get_theme_icon(guint xid, Glib::RefPtr<Gdk::Pixbuf>& pixbuf);
         bool get_theme_icon(guint xid, Glib::RefPtr<Gdk::Pixbuf>& pixbuf, Glib::ustring& title_name,
@@ -87,9 +87,12 @@ namespace docklight
                     WnckWindowType wintype);
 
       private:
+        sigc::connection m_sigc_timer;
         DockItemContainer m_container;
         type_signal_update m_signal_update;
         BamfMatcher* m_matcher = nullptr;
+
+        bool m_startup_time_set = false;
     };
 
     Glib::RefPtr<DockItemProvider> create_provider();

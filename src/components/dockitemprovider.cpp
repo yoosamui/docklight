@@ -45,17 +45,26 @@ namespace docklight
 
         auto const icon_theme = Gtk::IconTheme::get_default();
 
-        m_sigc = icon_theme->signal_changed().connect(
-            sigc::mem_fun(*this, &DockItemProvider ::on_theme_changed));
+        m_sigc_timer = Glib::signal_timeout().connect(
+            sigc::mem_fun(this, &DockItemProvider::on_timeout_draw), 10);
 
         g_message("Create DockItemProvider.");
     }
 
-    void DockItemProvider::request_update_signal()
+    bool DockItemProvider::on_timeout_draw()
     {
-        g_print("EMIT");
-        // m_signal_update.emit(window_action_t::UPDATE, 0);
+        m_startup_time_set = true;
+        m_signal_update.emit(window_action_t::UPDATE, data().size());
+
+        m_sigc.disconnect();
+        return false;
     }
+
+    // void DockItemProvider::request_update_signal()
+    //{
+    // g_print("EMIT");
+    //// m_signal_update.emit(window_action_t::UPDATE, 0);
+    //}
 
     type_signal_update DockItemProvider::signal_update()
     {
@@ -252,7 +261,7 @@ namespace docklight
             group_name = window_name;
         }
 
-        // gorup name mus by in lower case.
+        // group name must by lower case.
         std::string groupname(group_name);
 
         std::locale loc("en_US.UTF-8");
@@ -272,8 +281,8 @@ namespace docklight
             result = createFromWindow(xid, gdkpixbuf, instance_name, groupname, window_name,
                                       window_icon_name, icon_is_fallback, wintype);
 
-        if (result) {
-            m_signal_update.emit(window_action_t::UPDATE, 0);
+        if (result && m_startup_time_set) {
+            m_signal_update.emit(window_action_t::UPDATE, data().size());
         }
 
         return result;
@@ -377,7 +386,7 @@ namespace docklight
             } else {
                 dockitem->set_icon(owner->get_icon());
 
-                // add the new child icon to the owner.
+                // add the new child to the owner.
                 if (wintype == WnckWindowType::WNCK_WINDOW_DIALOG) {
                     owner->add_child(dockitem);
                 }
@@ -391,11 +400,12 @@ namespace docklight
             // add a new DockItem
             m_container.add(xid, dockitem);
 
-            // always add a replica DockTtem child clone
             dockitem->set_title(window_name);
             if (wintype == WnckWindowType::WNCK_WINDOW_DIALOG) {
                 dockitem->set_title(window_icon_name);
             }
+
+            // always add a replica DockTtem clone
             dockitem->add_child(dockitem->clone());
         }
 
