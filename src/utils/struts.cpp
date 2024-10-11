@@ -65,9 +65,10 @@ namespace docklight::position
                             (unsigned char*)&insets, 4);
     }
 
-    void Struts::set_struts(bool force)
+    // void Struts::set_struts(bool force)
+    void Struts::set_struts(const guint pos)
     {
-        if (m_strut_set && !force) return;
+        //   if (m_strut_set && !force) return;
 
         long insets[12] = {0};
 
@@ -76,13 +77,12 @@ namespace docklight::position
         auto area = Config()->get_dock_area();
         Gdk::Rectangle workarea = device::monitor::get_workarea();
         // TODO;; remove after use monitor
-        Gdk::Rectangle monitor = device::monitor::get_primary()->get_geometry();
-        m->get_workarea(workarea);
+        Gdk::Rectangle monitor = device::monitor::get_geometry();
 
         auto scale_factor = 1;
 
         switch (location) {
-            // clang-format off
+                // clang-format off
                 case dock_location_t::top:
                         insets[struts_position_t::top] = workarea.get_y() + area * scale_factor;
                         insets[struts_position_t::top_start] = workarea.get_x() * scale_factor;
@@ -93,11 +93,12 @@ namespace docklight::position
                         break;
                 case dock_location_t::bottom:
 
-                        insets[struts_position_t::bottom] =  (area + screen->get_height() - workarea.get_y() -   workarea.get_height()) *     scale_factor + 1;
-                        insets[struts_position_t::bottom_start] = workarea.get_x() *  scale_factor;
-                        insets[struts_position_t::bottom_end] = (workarea.get_x() + workarea.get_height()) * scale_factor - 1;
+//                      insets[struts_position_t::bottom] =  (area + screen->get_height() - monitor.get_y() -   monitor.get_height()) *     scale_factor + 1;
+                        insets[struts_position_t::bottom] =  monitor.get_height() - pos;
+                        insets[struts_position_t::bottom_start] = monitor.get_x() *  scale_factor;
+                        insets[struts_position_t::bottom_end] = (monitor.get_x() + monitor.get_height()) * scale_factor - 1;
 
-                        m_last_bottom_pos = workarea.get_height() + workarea.get_y()  - area;
+//                        m_last_bottom_pos = workarea.get_height() + workarea.get_y()  - area;
 
                         break;
                 case dock_location_t::left:

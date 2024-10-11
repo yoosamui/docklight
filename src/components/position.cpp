@@ -263,7 +263,7 @@ namespace docklight
             m_height = area;
 
             if (Config()->is_autohide_none()) {
-                set_struts3(true);
+                m_struts.set_struts(m_y);
             }
 
             //  m_struts.set_struts();
