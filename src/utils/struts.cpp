@@ -74,15 +74,15 @@ namespace docklight::position
         auto const screen = device::display::get_default_screen();
         auto const location = Config()->get_dock_location();
         auto area = Config()->get_dock_area();
-        Gdk::Rectangle workarea;  // = device::monitor::get_workarea();
-                                  // TODO;; device
-        auto m = device::monitor::get_primary();
+        Gdk::Rectangle workarea = device::monitor::get_workarea();
+        // TODO;; remove after use monitor
+        Gdk::Rectangle monitor = device::monitor::get_primary()->get_geometry();
         m->get_workarea(workarea);
 
         auto scale_factor = 1;
 
         switch (location) {
-                // clang-format off
+            // clang-format off
                 case dock_location_t::top:
                         insets[struts_position_t::top] = workarea.get_y() + area * scale_factor;
                         insets[struts_position_t::top_start] = workarea.get_x() * scale_factor;
