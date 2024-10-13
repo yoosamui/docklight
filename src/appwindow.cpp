@@ -120,27 +120,18 @@ namespace docklight
 
             try {
                 ctx.parse(argc, argv);
+                group.validate();
             } catch (const Glib::Error& ex) {
-                std::cout << "Exception: " << ex.what() << std::endl;
+                std::cout << "on_command_line:Exception: " << ex.what() << std::endl;
                 return EXIT_FAILURE;
             }
-
-            try {
-                group.validate();
-
-            } catch (const Glib::Error& ex) {
-                std::cout << "Exception: " << ex.what() << std::endl;
-                return EXIT_FAILURE;
-            };
 
             std::cout << group.toString() << std::endl;
             auto const args_list = group.getList();
 
-            // iadd args to config
+            // add args to config
             Config()->set_arguments(args_list);
         }
-
-        m_panel->container_updated(224);
 
         std::cout << "\n" << MSG_DISPLAY_DETECTED_MONITORS << " :" << std::endl;
 

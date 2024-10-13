@@ -81,7 +81,7 @@ namespace docklight
             void set_current_monitor(int monitor_num)
             {
                 if (monitor_num > get_monitor_count()) {
-                    g_error("Invalid monitor number\n");
+                    g_warning("Invalid monitor number: %d\n", monitor_num);
                     return;
                 }
 
