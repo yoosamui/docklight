@@ -45,8 +45,8 @@ namespace docklight
 
         auto const icon_theme = Gtk::IconTheme::get_default();
 
-        m_sigc_timer = Glib::signal_timeout().connect(
-            sigc::mem_fun(this, &DockItemProvider::on_timeout_draw), 5);
+        m_sigc_timer =
+            Glib::signal_timeout().connect(sigc::mem_fun(this, &DockItemProvider::on_timeout), 5);
 
         icon_theme->signal_changed().connect(
             sigc::mem_fun(*this, &DockItemProvider::on_theme_changed));
@@ -54,7 +54,7 @@ namespace docklight
         g_message("Create DockItemProvider.");
     }
 
-    bool DockItemProvider::on_timeout_draw()
+    bool DockItemProvider::on_timeout()
     {
         m_startup_time_set = true;
         m_signal_update.emit(window_action_t::UPDATE, data().size());
@@ -129,7 +129,6 @@ namespace docklight
 
     void DockItemProvider::on_theme_changed()
     {
-        g_message("Icon theme updated.");
         bool updated = false;
         Glib::RefPtr<Gdk::Pixbuf> pixbuf;
 
@@ -245,8 +244,6 @@ namespace docklight
         // return if the DockItem exist.
         gint32 xid = wnck_window_get_xid(window);
 
-        // TODO should i goo traversal or acheck the main map only
-        // if (get_map().count(xid)) return false;
         if (exist(xid)) return false;
 
         const char* window_name = wnck_window_get_name(window);

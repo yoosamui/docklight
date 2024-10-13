@@ -75,8 +75,8 @@ namespace docklight
     bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
     {
         // m_sigc_draw.disconnect();
-        m_mouse_enter = false;
 
+        m_mouse_enter = false;
         return false;
     }
     bool Panel::on_timeout_draw()
@@ -232,10 +232,6 @@ namespace docklight
         std::shared_ptr<DockItemIcon> dockitem;
         if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return false;
 
-        // g_print("%d x %d  index = %d %s\n", (int)event->x, (int)event->y, m_dockitem_index,
-        // dockitem->to_string().c_str());
-        //////////////////
-
         if (m_dockitem_index == 0) {
             auto iconsize = Config()->get_icon_size();
             iconsize -= 2;
@@ -244,14 +240,9 @@ namespace docklight
             container_updated();
             Gtk::Widget::queue_draw();
 
-            g_print("EXEC");
-            g_print("index = %d\n%d\n", m_dockitem_index, iconsize);
         } else {
             m_position->reset_position();
         }
-
-        //   Config()->set_icon_size(32);
-        //   m_position->reset_position();
 
         return false;
     }

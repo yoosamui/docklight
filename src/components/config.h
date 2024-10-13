@@ -56,54 +56,9 @@ namespace docklight
         int get_icon_max_size();
         const void set_custom_icon_size(const guint size);
 
-        // int get_icon_original_size();
-        // int get_separator_original_size();
-
         void set_arguments(const std::vector<std::tuple<gchar, int, Glib::ustring>>& args);
     };
 
     Glib::RefPtr<Configuration> Config();
 
-    /*namespace config
-    {
-        constexpr const int DEF_ICON_MAXSIZE = 128;
-        constexpr const int DEF_INDICATOR_SIZE = 2;
-
-        GKeyFile* load_file();
-
-        void AddArgs(const std::vector<std::tuple<gchar, int, Glib::ustring>>& args);
-        void set_dock_location(dock_location_t location);
-        void set_icon_size(int value);
-        void set_separator_line(bool value);
-        void set_dock_alignment(dock_alignment_t value);
-        void set_default_style();
-        void set_dock_alignment(dock_alignment_t value);
-
-        int get_dock_area_margin();
-        int get_anchor_margin();
-        int get_dock_area();
-        int get_separator_margin();
-        int get_window_start_end_margin();
-        int get_icon_size();
-        int get_separator_size();
-
-        bool is_autohide_none();
-        bool is_autohide();
-        bool is_intelihide();
-        bool is_show_title();
-        bool is_separator_line();
-
-        float get_animation_delay();
-        float get_hide_delay();
-
-        dock_icon_alignment_t get_dock_icon_alignment();
-        dock_alignment_t get_dock_alignment();
-
-        dock_indicator_type_t get_indicator_type();
-        Gtk::Orientation get_dock_orientation();
-        dock_location_t get_dock_location();
-        void set_dock_location(dock_location_t location);
-
-        //    Config* m_config = Config::getInstance();
-    }  // namespace config*/
 }  // namespace docklight

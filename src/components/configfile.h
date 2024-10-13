@@ -40,7 +40,6 @@ namespace docklight
         // parsed and optimized at compile time
         static constexpr const int DEF_MIN_ITEM_SIZE = 32;
         static constexpr const int DEF_DOCKAREA_MARGIN = 16;
-        //        static constexpr const char* DEF_CONFIG_FILENAME = "docklight.config";
         static constexpr const int DEF_ICON_SIZE = 128;
         static constexpr const int DEF_SEPARATOR_MARGIN = 0;
         static constexpr const int DEF_SEPARATOR_SIZE = 8;
@@ -95,7 +94,7 @@ namespace docklight
 
         int read_icon_size();
         int read_separator_size();
-        int read_separator_margin();  // not use it
+        int read_separator_margin();
         int read_anchor_margin();
 
         float read_animation_delay();

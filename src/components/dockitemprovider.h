@@ -26,8 +26,6 @@
 #include <giomm/desktopappinfo.h>
 #include <gtkmm/icontheme.h>
 
-
-//#include "components/dockitemicon.h"
 #include "components/dockitemcontainer.h"
 #include "components/config.h"
 // clang-format on
@@ -62,7 +60,7 @@ namespace docklight
         sigc::connection m_sigc;
 
         void on_theme_changed();
-        bool on_timeout_draw();
+        bool on_timeout();
 
         bool get_window_icon(GdkPixbuf* gdkpixbuf, Glib::RefPtr<Gdk::Pixbuf>& pixbuf);
         bool get_theme_icon(guint xid, Glib::RefPtr<Gdk::Pixbuf>& pixbuf);
@@ -86,8 +84,9 @@ namespace docklight
 
       private:
         sigc::connection m_sigc_timer;
-        DockItemContainer m_container;
         type_signal_update m_signal_update;
+
+        DockItemContainer m_container;
         BamfMatcher* m_matcher = nullptr;
 
         bool m_startup_time_set = false;

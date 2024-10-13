@@ -257,9 +257,9 @@ namespace docklight
             m_bck_ctx->paint();
 
             if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-                m_posX += area;  //+ separator_size;
+                m_posX += area;
             } else {
-                m_posY += area;  //+ separator_size;
+                m_posY += area;
             }
         }
 

@@ -37,9 +37,9 @@ namespace docklight
         Gdk::Rectangle get_monitor() const;
         Gdk::Rectangle get_window_geometry() const;
 
-        double get_window_scalling_factor(const guint items_count, const guint area);
-        double get_scalling_factor(const guint screen_width, const guint item_size,
-                                   const guint size);
+        // double get_window_scalling_factor(const guint items_count, const guint area);
+        // double get_scalling_factor(const guint screen_width, const guint item_size,
+        // const guint size);
 
         void monitor_changed();
         void force_position();

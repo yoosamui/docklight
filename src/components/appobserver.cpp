@@ -1,6 +1,5 @@
 #include "appobserver.h"
-// test remove after
-#include "gio/gdesktopappinfo.h"
+
 namespace docklight
 {
 
@@ -30,13 +29,8 @@ namespace docklight
 
 #endif
 
-    void AppObserver::on_window_closed(WnckScreen* screen, WnckWindow* window, gpointer data)
+    bool AppObserver::valid_type(WnckWindow* window)
     {
-        if (!window) {
-            g_warning("wck-window is null.\n");
-            return;
-        }
-
         WnckWindowType wt = wnck_window_get_window_type(window);
         // clang-format off
             if (wt == WNCK_WINDOW_DESKTOP ||
@@ -45,37 +39,25 @@ namespace docklight
                 wt == WNCK_WINDOW_MENU ||
                 wt == WNCK_WINDOW_SPLASHSCREEN){
 
-                return ;
+                return false;
             }
         // clang-format on
+
+        return true;
+    }
+
+    void AppObserver::on_window_closed(WnckScreen* screen, WnckWindow* window, gpointer data)
+    {
+        if (!window) {
+            g_warning("wck-window is null.\n");
+            return;
+        }
+        if (!valid_type(window)) return;
 
         gint32 xid = wnck_window_get_xid(window);
         Provider()->remove(xid);
     }
 
-    struct Frame {
-        int x, y, width, height;
-    };
-
-    bool isAtTop(const Frame& frame)
-    {
-        return frame.y == 0;
-    }
-
-    bool isAtBottom(const Frame& frame, int screenHeight)
-    {
-        return frame.y + frame.height == screenHeight;
-    }
-
-    bool isAtLeft(const Frame& frame)
-    {
-        return frame.x == 0;
-    }
-
-    bool isAtRight(const Frame& frame, int screenWidth)
-    {
-        return frame.x + frame.width == screenWidth;
-    }
     void AppObserver::on_window_opened(WnckScreen* screen, WnckWindow* window, gpointer data)
     {
         if (!window) {
@@ -83,57 +65,14 @@ namespace docklight
             return;
         }
 
-        WnckWindowType wt = wnck_window_get_window_type(window);
+        if (!valid_type(window)) return;
 
-        // clang-format off
-            if (
-          //      wt == 3 ||
-                wt == WNCK_WINDOW_DESKTOP ||
-                wt == WNCK_WINDOW_DOCK ||
-                wt == WNCK_WINDOW_TOOLBAR ||
-                wt == WNCK_WINDOW_MENU ||
-                wt == WNCK_WINDOW_SPLASHSCREEN){
-
-                return;
-            }
-        // clang-format on
-
-        //
-        // TODO test
-        /*auto instance_name = wnck_window_get_class_instance_name(window);
-        auto group_name = wnck_window_get_class_group_name(window);
-        if (!instance_name) {
-            //            instance_name = window_name;
-            return;
-        }
-
-        g_print("-->%s group: %s, type: %d\n", group_name, instance_name, wt);
-*/
         gint32 xid = wnck_window_get_xid(window);
 
         auto provider = Provider();
         if (provider->exist(xid)) return;
 
         provider->insert(window);
-
-        /*// i/////////////////// TEST
-        Glib::RefPtr<Gdk::Pixbuf> pixbuf;
-        const char* group_name = wnck_window_get_class_group_name(window);
-
-        if (get_window_icon(window, pixbuf)) {
-            try {
-                char filepath[512];
-                sprintf(filepath,
-                        "/home/yoo/TEMP/window/"
-                        "%d-%s(%s)-%s",
-                        xid, wnck_window_get_class_instance_name(window), group_name,
-                        wnck_window_get_icon_name(window));
-                pixbuf->save(filepath, "png");
-            } catch (...) {
-                // swallow
-            }
-        }*/
-        return;
     }
 
     AppObserver::AppObserver()
@@ -141,8 +80,6 @@ namespace docklight
         WnckHandle* handle = wnck_handle_new(WnckClientType::WNCK_CLIENT_TYPE_PAGER);
         // WnckHandle* handle = wnck_handle_new(WnckClientType::WNCK_CLIENT_TYPE_APPLICATION);
         WnckScreen* wnckscreen = wnck_handle_get_default_screen(handle);
-
-        //        WnckScreen* wnckscreen = wnck_screen_get_default();
 
         g_signal_connect(G_OBJECT(wnckscreen), "window-opened",
                          G_CALLBACK(&AppObserver::on_window_opened), nullptr);

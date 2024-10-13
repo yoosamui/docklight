@@ -30,7 +30,7 @@ namespace docklight::position
 
     Struts::~Struts()
     {
-        //
+        reset_struts();
     }
 
     void Struts::init(Gtk::Window* window)
@@ -106,7 +106,7 @@ namespace docklight::position
         Gdk::Rectangle monitor = device::monitor::get_geometry();
 
         switch (location) {
-            // clang-format off
+                // clang-format off
                 case dock_location_t::top:
                         if (m_strut_top_pos == -1) {
                             m_strut_top_pos = workarea.get_y();
@@ -164,21 +164,6 @@ namespace docklight::position
 
         m_active = true;
         g_message("set_strut.");
-        // return;
-
-        // GtkWidget* toplevel = gtk_widget_get_toplevel(GTK_WIDGET(m_window->gobj()));
-        // auto gdk_window = gtk_widget_get_window(toplevel);
-        // if (!gdk_window) {
-        // g_warning("set_strut: gdk_window is null.");
-        // return;
-        //}
-        // gdk_property_change(gdk_window, gdk_atom_intern("_NET_WM_STRUT_PARTIAL", FALSE),
-        // gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
-        //(unsigned char*)&insets, 12);
-
-        // gdk_property_change(gdk_window, gdk_atom_intern("_NET_WM_STRUT", FALSE),
-        // gdk_atom_intern("CARDINAL", FALSE), 32, GDK_PROP_MODE_REPLACE,
-        //(unsigned char*)&insets, 4);
     }
 
 }  // namespace docklight::position

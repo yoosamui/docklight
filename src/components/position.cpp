@@ -18,18 +18,12 @@
 
 // clang-format off
 #include "components/position.h"
+#include <unistd.h>
 // clang-format on
-//#include <unistd.h>
 
-//#include <cstdlib>
-//#include <iostream>
 namespace docklight
 {
-
-    // namespace position
-    //{
     Glib::RefPtr<PositionManager> m_position_manager;
-
     Glib::RefPtr<PositionManager> create_position(Gtk::Window* window)
     {
         if (!m_position_manager) {
@@ -70,99 +64,26 @@ namespace docklight
 
     Gdk::Rectangle PositionManager::get_window_geometry() const
     {
-        // GtkWidget* toplevel = gtk_widget_get_toplevel(GTK_WIDGET(m_window->gobj()));
-        // auto gdk_window = gtk_widget_get_window(toplevel);
-
-        // gint* x = nullptr;
-        // gint* y = nullptr;
-        // gint* width = nullptr;
-        // gint* height = nullptr;
-        //// https://docs.gtk.org/gdk3/method.Window.get_geometry.html
-        //
-        int yy = 0;
-        int xx = 0;
-
-        if (m_x) xx = m_x;
-        if (m_y) yy = m_y;
-
-        //        gdk_window_get_geometry(gdk_window, x, y, width, height);
-
-        return Gdk::Rectangle(xx, yy, m_window->get_width(), m_window->get_height());
-        // return Gdk::Rectangle(*x, *y, *width, *height);
-    }
-
-    /*
-     * screen_width is the width to be calculated.
-     * Like the width of a screen. The unit item_size multiplied by
-     * items_count and divided by the screen_width gives us the resulting
-     * factor that we can use as scale factor.
-     *
-     */
-    inline double PositionManager::get_scalling_factor(const guint screen_width,
-                                                       const guint item_size,
-                                                       const guint items_count)
-    {
-        return screen_width / (double)(items_count * item_size);
-    }
-
-    double PositionManager::get_window_scalling_factor(const guint items_count, const guint area)
-    {
-        if (!m_window || !Config()) return 0;
-
-        const auto workarea = device::monitor::get_workarea();
-
-        int screen_width = workarea.get_width();
-        int width = Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL
-                        ? m_window->get_width()
-                        : m_window->get_height();
-
-        if (width > 1) {
-            screen_width = width;
-        };
-
-        /*static int area = 0;
-
-        if (!area) area = Config()->get_dock_area() + Config()->get_separator_size();
-        // carea = area;*/
-
-        screen_width -= area * 2;
-
-        auto size = items_count;  // m_provider->data().size() + 1;
-        auto icon_size = area;
-
-        return screen_width / (double)(size * icon_size);
-        // icon_size = std::floor(icon_size * scaling_factor);
-
-        // g_print("XXXXXXXXXXX %d size: %ld\n", icon_size, m_provider->data().size());
-        // if (icon_size >= area) {
-        // icon_size = Config()->DEF_ICON_MAXSIZE;
-        //}
-
-        // return icon_size;
+        return Gdk::Rectangle(m_x, m_y, m_window->get_width(), m_window->get_height());
     }
 
     void PositionManager::monitor_changed()
     {
-        //       m_struts.reset_struts();
-        //   set_position(m_last_required_size);
-        //    return;
+        unsigned int microsecond = 1000000;
+        usleep(1 * microsecond);  // sleeps for 1 second
+
         auto location_name = Config()->get_dock_location_name().c_str();
-        // TODO program name after instllation can change
-        // read the iall passing parameters
-        g_print("Restart %s\n", location_name);
-        execl("src/docklight", "docklight", "-l", location_name, NULL);
+#ifdef DEBUG
+        execl("src/docklight", "docklight", "-l", location_name, nullptr);
+#endif
+        execl("docklight", "docklight", "-l", location_name, nullptr);
 
-        // if (m_struts.active()) {
-        // m_struts.set_struts();
-        //}
-
-        // set_position(m_last_required_size);
+        g_warning("Restart failed!\n");
     }
 
     void PositionManager::force_position()
     {
         m_struts.set_struts();
-        // set_position(m_last_required_size);
     }
 
     void PositionManager::reset_position()
@@ -171,23 +92,22 @@ namespace docklight
     }
     void PositionManager::set_position(guint required_size)
     {
-        // if (m_last_required_size == required_size) return;
-        // m_last_required_size = required_size;
-
         g_message("Position request: %d", required_size);
         int area = Config()->get_dock_area();
-        //   set_struts();
+
         dock_alignment_t alignment = Config()->get_dock_alignment();
         auto workarea = get_workarea();
         // auto monitor = get_monitor();
 
         guint xpos = 0, ypos = 0, center = 0;
+
         if (Config()->is_autohide_none()) {
             m_struts.set_struts();
         }
 
         if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
             int width = required_size;
+            if (width <= 0) return;
 
             if (width > workarea.get_width()) {
                 width = workarea.get_width();
@@ -213,8 +133,6 @@ namespace docklight
                     break;
             }
 
-            if (width <= 0) return;
-
             if (Config()->get_dock_location() == dock_location_t::bottom) {
                 // bottom
                 if (!m_struts.active()) {
@@ -231,8 +149,7 @@ namespace docklight
                 if (!m_struts.active()) {
                     ypos = workarea.get_y();
                 } else {
-                    ypos = m_struts.get_top_pos();  // + area;
-                    // ypos = workarea.get_y() + area;
+                    ypos = m_struts.get_top_pos();
                 }
             }
 
@@ -247,7 +164,8 @@ namespace docklight
         } else  // orientation vertical
         {
             int height = required_size;
-            //
+            if (height <= 0) return;
+
             if (height > workarea.get_height()) {
                 height = workarea.get_height();
             }
@@ -272,49 +190,29 @@ namespace docklight
                     break;
             }
 
-            if (height > workarea.get_height()) return;
-
             if (Config()->get_dock_location() == dock_location_t::right) {
                 // right
                 if (!m_struts.active()) {
                     xpos = workarea.get_width() + workarea.get_x() - area;
-                    /*xpos = workarea.get_width() - area;
-                    if (workarea.get_x() != 0) {
-                        xpos = workarea.get_width() + workarea.get_x() - area;
-                    }*/
                 } else {
                     xpos = m_struts.get_right_pos() - area;
-                    // xpos = iworkarea.get_width();  // + workarea.get_x() - area;
                 }
             } else {
                 // left
                 if (!m_struts.active()) {
                     xpos = workarea.get_x();
-
-                    // if (workarea.get_x() > 0) {
-                    // xpos = workarea.get_x();
-                    //} else {
-                    // xpos = 0;
-                    //}
                 } else {
                     xpos = m_struts.get_left_pos();
-
-                    // xpos = workarea.get_x() - area;
-                    //  if (xpos == workarea.get_x()) {
-                    //  xpos = workarea.get_x();
-                    // }
-
-                    // if (xpos < workarea.get_x()) {
-                    // xpos = workarea.get_x() - area;
-                    // if (xpos < monitor.get_x()) {
-                    // xpos = workarea.get_x();
-                    //}
-                    //}
                 }
             }
 
             m_window->resize(area, height);
             m_window->move(xpos, ypos);
+
+            m_y = ypos;
+            m_x = xpos;
+            m_width = area;
+            m_height = height;
         }
     }
     //}  // namespace position

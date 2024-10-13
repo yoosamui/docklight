@@ -110,8 +110,7 @@ namespace docklight
             }
 
             if (dockitem->get_childmap().size() == 0) {
-                // result += m_dockitems.erase(dockitem->get_xid());
-                result += 1;
+                result++;
                 m_dockitems.erase(it);
             }
 
