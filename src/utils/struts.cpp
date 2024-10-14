@@ -106,7 +106,7 @@ namespace docklight::position
         Gdk::Rectangle monitor = device::monitor::get_geometry();
 
         switch (location) {
-                // clang-format off
+            // clang-format off
                 case dock_location_t::top:
                         if (m_strut_top_pos == -1) {
                             m_strut_top_pos = workarea.get_y();
@@ -132,13 +132,13 @@ namespace docklight::position
                 case dock_location_t::left:
 
                         if (m_strut_left_pos == -1) {
-                            m_strut_left_pos =  workarea.get_x();
+                            m_strut_left_pos = workarea.get_x();
                             m_last_left_pos = workarea.get_x();
                         }
 
                         insets[struts_position_t::left] = m_strut_left_pos + area ;
                         insets[struts_position_t::left_start] = monitor.get_y();
-                        insets[struts_position_t::left_end] = monitor.get_height();
+                        insets[struts_position_t::left_end] = monitor.get_y() + monitor.get_height();
 
                         break;
                 case dock_location_t::right:
@@ -153,7 +153,6 @@ namespace docklight::position
                         insets[struts_position_t::right_end] = monitor.get_height();
 
                         break;
-
                 default:
                         break;
                 // clang-format on
