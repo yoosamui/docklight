@@ -43,6 +43,11 @@ namespace docklight
         //
     }
 
+    const Glib::ustring& Configuration::get_monitor_name() const
+    {
+        return m_monitor_name;
+    }
+
     const int Configuration::get_dock_area_margin() const
     {
         return DEF_DOCKAREA_MARGIN;
@@ -189,10 +194,10 @@ namespace docklight
         if (!load()) return;
         // ARGS
         for (auto&& t : args) {
-            // std::cout << "R:" << std::get<0>(t) << ", " << std::get<1>(t)
-            //<< ",
-            //"
-            //<< std::get<2>(t) << std::endl;
+            if (std::get<0>(t) == (char)'m') {
+                m_monitor_name = std::get<2>(t);
+                continue;
+            }
 
             if (std::get<0>(t) == (char)'l') {
                 if (std::get<2>(t) == "bottom") {
@@ -309,6 +314,7 @@ namespace docklight
 
         GKeyFile* load_file()
         {
+        const int get_monitor_name() const;
             set_default_style();
 
             std::string filepath = get_filepath();

@@ -37,6 +37,11 @@ namespace docklight
             g_key_file_free(m_key_file);
             m_key_file = nullptr;
         } else {
+            auto monitor_name = read_monitor_name();
+            if (!monitor_name.empty()) {
+                m_monitor_name = monitor_name;
+            }
+
             // location
             std::string location = read_location();
             if (!location.empty()) {
@@ -141,6 +146,18 @@ namespace docklight
             error = nullptr;
 
             return DEF_ICON_MAXSIZE;
+        }
+
+        return value;
+    }
+    std::string ConfigFile::read_monitor_name()
+    {
+        GError* error = nullptr;
+        char* value = g_key_file_get_string(m_key_file, "dock", "monitor_name", &error);
+        if (error) {
+            g_error_free(error);
+            error = nullptr;
+            return std::string{};
         }
 
         return value;

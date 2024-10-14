@@ -31,6 +31,8 @@ namespace docklight
         Configuration();
         virtual ~Configuration();
 
+        const Glib::ustring& get_monitor_name() const;
+
         const int get_dock_area_margin() const;
         const int get_anchor_margin() const;
         const int get_dock_area() const;

@@ -28,7 +28,7 @@ namespace docklight
         : Glib::OptionGroup("Docklight",
                             "Supports short and long commandline options for the group.",
                             "help - Options can be single letters, prefixed by a single dash."),
-          m_arg_monitor(0),
+          m_arg_monitor("primary"),
           m_arg_location("bottom"),
           m_arg_alignment("center")
     {
@@ -83,16 +83,29 @@ namespace docklight
 
     void AppOptionsGroup::validate_monitor()
     {
-        int count = device::monitor::get_monitor_count();
+        if (m_arg_monitor == "primary") return;
 
-        if (m_arg_monitor < count) {
-            return;
+        Glib::ustring monitor_list = "";
+
+        for (int i = 0; i < device::monitor::get_monitor_count(); i++) {
+            auto const m = device::monitor::get_monitor(i);
+
+            if (m_arg_monitor == m->get_model()) return;
+
+            monitor_list += (Glib::ustring)m->get_model() + ", ";
         }
 
+        // std::cout << MSG_DEFAULT_MONITOR << ": " << device::monitor::get_monitor_number() << ", "
+        //<< device::monitor::get_current()->get_model() << std::endl;
+
+        // if (m_arg_monitor < count) {
+        // return;
+        //}
+
         std::stringstream msg;
-        msg << "m_arg_monitor: unexpected out of range value:" << m_arg_monitor << std::endl
+        msg << "m_arg_monitor: unexpected value of monitor: " << m_arg_monitor << std::endl
             << m_entry_monitor.get_description() << std::endl
-            << "Valid arguments range from 0 to " << (count - 1) << " monitor count: " << count
+            << "Valid arguments are: primary, " + monitor_list << std::endl
             << std::endl;
 
         throw Glib::OptionError(Glib::OptionError::BAD_VALUE, msg.str());
@@ -142,7 +155,7 @@ namespace docklight
 
     const std::vector<std::tuple<gchar, int, Glib::ustring>>& AppOptionsGroup::getList()
     {
-        m_list.push_back(std::make_tuple(m_entry_monitor.get_short_name(), m_arg_monitor, ""));
+        m_list.push_back(std::make_tuple(m_entry_monitor.get_short_name(), 0, m_arg_monitor));
         m_list.push_back(std::make_tuple(m_entry_location.get_short_name(), 0, m_arg_location));
         m_list.push_back(std::make_tuple(m_entry_alignment.get_short_name(), 0, m_arg_alignment));
         m_list.push_back(

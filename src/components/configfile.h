@@ -73,6 +73,8 @@ namespace docklight
 
         dock_location_t m_location = dock_location_t::bottom;
         dock_indicator_type_t m_indicator_type = dock_indicator_type_t::dots;
+
+        Glib::ustring m_monitor_name = "primary";
     };
 
     class ConfigFile : public ConfigBase
@@ -89,6 +91,7 @@ namespace docklight
         std::string read_location();
         std::string read_alignment();
         std::string read_indicator_type_key();
+        std::string read_monitor_name();
 
         bool read_separator_show_line();
 

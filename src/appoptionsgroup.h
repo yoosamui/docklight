@@ -69,8 +69,7 @@ namespace docklight
         Glib::OptionEntry m_entry_alignment;
         Glib::OptionEntry m_entry_icon_alignment;
 
-        int m_arg_monitor;
-
+        Glib::ustring m_arg_monitor;
         Glib::ustring m_arg_location;
         Glib::ustring m_arg_alignment;
         Glib::ustring m_arg_icon_alignment;

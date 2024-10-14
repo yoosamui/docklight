@@ -133,6 +133,8 @@ namespace docklight
             Config()->set_arguments(args_list);
         }
 
+        device::monitor::set_current_monitor(Config()->get_monitor_name());
+
         std::cout << "\n" << MSG_DISPLAY_DETECTED_MONITORS << " :" << std::endl;
 
         for (int i = 0; i < device::monitor::get_monitor_count(); i++) {
@@ -264,8 +266,9 @@ namespace docklight
     void AppWindow::on_monitor_changed()
     {
         g_message("on_monitor_change.");
-        // TODO selective monitor nummer;
-        device::monitor::set_primary();
+        g_print("Monitor changed %s\n", Config()->get_monitor_name().c_str());
+        device::monitor::set_current_monitor(Config()->get_monitor_name());
+
         m_position->monitor_changed();
     }
     // bool AppWindow::on_enter_notify_event(GdkEventCrossing* crossing_event)
