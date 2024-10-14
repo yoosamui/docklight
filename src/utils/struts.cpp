@@ -113,23 +113,21 @@ namespace docklight::position
                             m_last_top_pos = workarea.get_y();
                         }
 
-                        insets[struts_position_t::top] = m_strut_top_pos  + area;
+                        insets[struts_position_t::top] = m_strut_top_pos + area;
                         insets[struts_position_t::top_start] = monitor.get_x();
-                        insets[struts_position_t::top_end] = (monitor.get_x() + monitor.get_width()) ;
+                        insets[struts_position_t::top_end] = monitor.get_x() + monitor.get_width();
 
                         break;
                 case dock_location_t::bottom:
-
                         if (m_strut_bottom_pos == -1) {
-                            m_strut_bottom_pos = screen->get_height()  - workarea.get_height() - workarea.get_y();
+                            m_strut_bottom_pos = screen->get_height()  -  monitor.get_y() - monitor.get_height();
                             m_last_bottom_pos =  workarea.get_height() + workarea.get_y();
                         }
 
                         insets[struts_position_t::bottom] = m_strut_bottom_pos +  area ;
                         insets[struts_position_t::bottom_start] = monitor.get_x();
-                        insets[struts_position_t::bottom_end] = monitor.get_height();
+                        insets[struts_position_t::bottom_end] = monitor.get_x()+monitor.get_height();
 
-                        g_print("STRUTS bottom %ld %d\n ",insets[struts_position_t::bottom], workarea.get_height() );
                         break;
                 case dock_location_t::left:
 
