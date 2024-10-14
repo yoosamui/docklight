@@ -19,6 +19,8 @@
 // clang-format off
 #include "components/position.h"
 #include <unistd.h>
+#include <stdio.h>
+#include <linux/limits.h>
 // clang-format on
 
 namespace docklight
@@ -43,6 +45,7 @@ namespace docklight
         m_window = window;
         m_struts.init(window);
 
+        m_exepath = get_execpath();
         g_message("Create PositionManager.");
     }
 
@@ -67,19 +70,28 @@ namespace docklight
         return Gdk::Rectangle(m_x, m_y, m_window->get_width(), m_window->get_height());
     }
 
-    void PositionManager::monitor_changed()
+    std::string PositionManager::get_execpath()
+    {
+        char result[PATH_MAX];
+        ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
+        return std::string(result, (count > 0) ? count : 0);
+    }
+
+    void PositionManager::on_monitor_changed()
     {
         unsigned int microsecond = 1000000;
         usleep(1 * microsecond);  // sleeps for 1 second
 
         auto monitor_name = Config()->get_monitor_name().c_str();
         auto location_name = Config()->get_dock_location_name().c_str();
+        auto exec_file = "docklight";
 
-#ifdef DEBUG
-        execl("src/docklight", "docklight", "-l", location_name, "-m", monitor_name, nullptr);
-#endif
-        execl("docklight", "docklight", "-l", location_name, nullptr);
+        size_t found = m_exepath.find("/sources/docklight");
+        if (found != std::string::npos) {
+            exec_file = "src/docklight";
+        }
 
+        execl(exec_file, "docklight", "-l", location_name, "-m", monitor_name, nullptr);
         g_warning("Restart failed!\n");
     }
 

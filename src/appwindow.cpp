@@ -266,11 +266,9 @@ namespace docklight
     void AppWindow::on_monitor_changed()
     {
         g_message("on_monitor_change.");
-        g_print("Monitor changed %s\n", Config()->get_monitor_name().c_str());
-        device::monitor::set_current_monitor(Config()->get_monitor_name());
-
-        m_position->monitor_changed();
+        m_position->on_monitor_changed();
     }
+
     // bool AppWindow::on_enter_notify_event(GdkEventCrossing* crossing_event)
     //{
     //// m_mouse_in = true;
