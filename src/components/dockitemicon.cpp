@@ -53,6 +53,7 @@ namespace docklight
         clone->m_tag = m_tag;
         clone->m_width = m_width;
         clone->m_height = m_height;
+        clone->m_attached = m_attached;
 
         // covariant return type.
         return clone;

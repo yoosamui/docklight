@@ -232,18 +232,21 @@ namespace docklight
         std::shared_ptr<DockItemIcon> dockitem;
         if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return false;
 
-        if (m_dockitem_index == 0) {
-            auto iconsize = Config()->get_icon_size();
-            iconsize -= 2;
-            Config()->set_icon_size(iconsize);
-            m_position->force_position();
-            container_updated();
-            Gtk::Widget::queue_draw();
+        // if( )
 
-        } else {
-            m_position->reset_position();
+        switch (m_dockitem_index) {
+            case 0:
+                m_position->force_position();
+                break;
+            case 1:
+                m_position->reset_position();
+                break;
+            case 2:
+                dockitem->set_attached(true);
+                break;
         }
 
+        g_print("%s\n", dockitem->to_string().c_str());
         return false;
     }
 

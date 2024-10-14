@@ -50,9 +50,10 @@ namespace docklight
 
       protected:
         //// setters
+        virtual void set_attached(bool attached) = 0;
         virtual void set_tag(guint tag) = 0;
         //  virtual void set_icon(Glib::RefPtr<Gdk::Pixbuf> icon) = 0;
-        virtual void set_attached(bool attached) = 0;
+        /// virtual void set_attached(bool attached) = 0;
         virtual void set_title(Glib::ustring title) = 0;
         virtual void set_window_name(Glib::ustring window_name) = 0;
         virtual void set_instance_name(Glib::ustring instance_name) = 0;
@@ -68,7 +69,7 @@ namespace docklight
         virtual guint get_container_size() = 0;
 
         virtual const guint get_tag() const = 0;
-        virtual const bool get_is_attached() const = 0;
+        virtual const bool get_attached() const = 0;
         virtual const gulong get_xid() const = 0;
         virtual const guint get_width() const = 0;
         virtual const guint get_height() const = 0;
@@ -120,7 +121,7 @@ namespace docklight
         bool const has_desktop_file() const;
         //     const DockItem* get() const;
         //    const std::map<guint32, Glib::RefPtr<xDockItem>>& get_childmap() const;
-        const bool get_is_attached() const;
+        const bool get_attached() const;
         const gulong get_xid() const;
         const guint get_wintype() const;
         const Glib::ustring& get_window_name() const;

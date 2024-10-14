@@ -34,6 +34,11 @@ namespace docklight
         g_print("Dockitem removed  %s %lu\n", m_title.c_str(), m_xid);
     }
 
+    inline void DockItem::set_attached(bool attached)
+    {
+        m_attached = attached;
+    }
+
     void DockItem::set_tag(guint tag)
     {
         m_tag = tag;
@@ -49,11 +54,6 @@ namespace docklight
     //{
     // m_childmap.insert({child->get_xid(), child});
     //}
-
-    inline void DockItem::set_attached(bool attached)
-    {
-        m_attached = attached;
-    }
 
     inline void DockItem::set_has_desktop_file(bool has)
     {
@@ -124,7 +124,7 @@ namespace docklight
         return m_wintype;
     }
 
-    inline const bool DockItem::get_is_attached() const
+    inline const bool DockItem::get_attached() const
     {
         return m_attached;
     }
@@ -180,7 +180,7 @@ namespace docklight
             std::stringstream ss;
             ss << "xid: " << m_xid << std::endl
                << "wintype: " << std::to_string(m_wintype)<< std::endl
-//               << "childrens: " << m_childmap.size()<< std::endl
+               << "attached: " << (m_attached ? "yes":"no") << std::endl
                << "title: " << m_title << std::endl
                << "group: " << m_group_name << std::endl
                << "instance: " << m_instance_name << std::endl
