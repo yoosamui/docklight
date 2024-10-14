@@ -46,7 +46,7 @@ namespace docklight
         auto const icon_theme = Gtk::IconTheme::get_default();
 
         m_sigc_timer =
-            Glib::signal_timeout().connect(sigc::mem_fun(this, &DockItemProvider::on_timeout), 5);
+            Glib::signal_timeout().connect(sigc::mem_fun(this, &DockItemProvider::on_timeout), 10);
 
         icon_theme->signal_changed().connect(
             sigc::mem_fun(*this, &DockItemProvider::on_theme_changed));
