@@ -50,7 +50,7 @@ namespace docklight
             char comment[512];
             char desktop_file[512];
             char icon_name[128];
-            guint8 pixbuff[16384 * 3] = {0};  //  128 x 128 max
+            guint8 pixbuff[128 * 128] = {0};
         } attach_rec_t;
 
       public:

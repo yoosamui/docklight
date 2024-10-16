@@ -60,10 +60,6 @@ namespace docklight
                 icon_size = max_icon_size;
             }
 
-            g_print("IconSize %d\n", icon_size);
-            g_print("Calculated %f\n",
-                    std::ceil(128 * ((double)screen_width / (double)(item_width * num_items))));
-
             return icon_size;
         }
 

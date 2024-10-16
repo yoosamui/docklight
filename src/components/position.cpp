@@ -79,8 +79,8 @@ namespace docklight
 
     void PositionManager::on_monitor_changed()
     {
-        unsigned int microsecond = 1000000;
-        usleep(1 * microsecond);  // sleeps for 1 second
+        //    unsigned int microsecond = 1000000;
+        //   usleep(1 * microsecond);  // sleeps for 1 second
 
         auto monitor_name = Config()->get_monitor_name().c_str();
         auto location_name = Config()->get_dock_location_name().c_str();
