@@ -25,11 +25,14 @@
 #include <libwnck/libwnck.h>
 #include <giomm/desktopappinfo.h>
 #include <gtkmm/icontheme.h>
+#include <gdkmm/pixbufloader.h>
 
+#include "utils/system.h"
 #include "components/dockitemcontainer.h"
 #include "components/config.h"
 // clang-format on
-
+//#include <fstream>
+//#include <iostream>
 namespace docklight
 {
 
@@ -38,6 +41,18 @@ namespace docklight
 
     class DockItemProvider : public Glib::Object
     {
+        typedef struct {
+            char name[60];
+            char title[60];
+            char group[60];
+            char instance[60];
+            char locale[20];
+            char comment[512];
+            char desktop_file[512];
+            char icon_name[128];
+            guint8 pixbuff[16384 * 3] = {0};  //  128 x 128 max
+        } attach_rec_t;
+
       public:
         DockItemProvider();
         virtual ~DockItemProvider();
@@ -55,6 +70,7 @@ namespace docklight
         std::vector<std::shared_ptr<DockItemIcon>>& data();
 
         guint count();
+        bool save();
 
       private:
         sigc::connection m_sigc;
@@ -81,6 +97,10 @@ namespace docklight
                     std::string group_name, const Glib::ustring window_name,
                     const Glib::ustring window_icon_name, bool icon_is_fallback,
                     WnckWindowType wintype);
+
+        Glib::ustring get_config_filepath();
+
+        bool load();
 
       private:
         sigc::connection m_sigc_timer;

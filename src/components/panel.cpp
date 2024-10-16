@@ -236,17 +236,41 @@ namespace docklight
 
         switch (m_dockitem_index) {
             case 0:
-                m_position->force_position();
+                //    m_position->force_position();
+                dockitem->set_attached(true);
+                m_provider->save();
                 break;
             case 1:
-                m_position->reset_position();
+                //    m_position->reset_position();
+                dockitem->set_attached(true);
+                m_provider->save();
                 break;
             case 2:
                 dockitem->set_attached(true);
+                m_provider->save();
+                break;
+            case 3:
+                dockitem->set_attached(true);
+                m_provider->save();
+                break;
+            case 4:
+                dockitem->set_attached(true);
+                m_provider->save();
+                //    m_provider->load();
                 break;
         }
 
-        g_print("%s\n", dockitem->to_string().c_str());
+        dockitem->set_attached(true);
+        m_provider->save();
+        g_print("ATTACHED %s\n", dockitem->to_string().c_str());
+
+        //   m_provider->load();
+        for (auto& dockitem : m_provider->data()) {
+            g_print("X %ld  XXXXXXX %s attach %d child %ld\n", dockitem->get_xid(),
+                    dockitem->get_group_name().c_str(), (int)dockitem->get_attached(),
+                    dockitem->get_childmap().size());
+        }
+
         return false;
     }
 

@@ -200,16 +200,20 @@ namespace docklight
         // Yellow
         m_indicator_ctx->set_source_rgba(0.980, 0.929, 0.50, 1.0);
 
-        if (item->get_childmap().size() == 1) {
-            m_indicator_ctx->rectangle(0, 0, m_indicator->get_width(),
-                                       m_indicator->get_height() - 1);
+        if (item->get_childmap().size() > 0) {
+            if (item->get_childmap().size() == 1) {
+                m_indicator_ctx->rectangle(0, 0, m_indicator->get_width(),
+                                           m_indicator->get_height() - 1);
 
-        } else {
-            m_indicator_ctx->rectangle(0, 0, m_indicator->get_width() / 2 - 3,
-                                       m_indicator->get_height() - 1);
-            m_indicator_ctx->rectangle(m_indicator->get_width() / 2 + 3, 0,
-                                       m_indicator->get_width() - 6, m_indicator->get_height() - 1);
+            } else {
+                m_indicator_ctx->rectangle(0, 0, m_indicator->get_width() / 2 - 3,
+                                           m_indicator->get_height() - 1);
+                m_indicator_ctx->rectangle(m_indicator->get_width() / 2 + 3, 0,
+                                           m_indicator->get_width() - 6,
+                                           m_indicator->get_height() - 1);
+            }
         }
+
         m_indicator_ctx->fill();
         m_indicator_ctx->restore();
 

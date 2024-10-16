@@ -103,4 +103,5 @@ namespace docklight
     {
         return m_map.erase(xid);
     }
+
 }  // namespace docklight

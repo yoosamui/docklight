@@ -40,6 +40,8 @@ namespace docklight
         const std::map<gulong, std::shared_ptr<DockItemIcon>>& get_childmap() const;
         void add_child(std::shared_ptr<DockItemIcon> child);
         int remove_child(gulong xid);
+
+        void remove_all() { return m_map.clear(); }
         //    const std::shared_ptr<DockItemIcon> clone();
         std::shared_ptr<DockItemIcon> clone();
 

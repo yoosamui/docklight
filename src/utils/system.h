@@ -20,7 +20,7 @@
 
 namespace docklight
 {
-    namespace System
+    namespace system
     {
         bool get_mouse_position(int& x, int& y);
         bool is_mutter_window_manager();
@@ -30,6 +30,7 @@ namespace docklight
         Glib::ustring get_window_manager_name();
         Glib::ustring get_current_path(const Glib::ustring& str);
         Glib::ustring get_current_user();
+        Glib::ustring get_current_path();
 
         /*
         bool file_exists(const Glib::ustring& name);
@@ -43,5 +44,5 @@ namespace docklight
         std::string get_window_manager_name();
         std::string file_exists(const std::string& directory, std::string& file_name);*/
 
-    }  // namespace System
+    }  // namespace system
 }  // namespace docklight

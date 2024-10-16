@@ -31,7 +31,7 @@ namespace docklight
 
     DockItem::~DockItem()
     {
-        g_print("Dockitem removed  %s %lu\n", m_title.c_str(), m_xid);
+        g_print("Dockitem removed  %s [%lu]\n", m_title.c_str(), m_xid);
     }
 
     inline void DockItem::set_attached(bool attached)

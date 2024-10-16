@@ -55,6 +55,7 @@ namespace docklight
 
         return false;
     }
+
     template <typename T>
     bool DockItemContainer::exist(const Glib::ustring& group_name, std::shared_ptr<T>& dockitem)
     {
@@ -105,6 +106,13 @@ namespace docklight
             std::any a = it->second;
             if (!factory::any_cast<std::shared_ptr<T>>(a, dockitem)) continue;
 
+            if (dockitem->get_attached()) {
+                if (!dockitem->get_childmap().size()) continue;
+
+                result += dockitem->remove_child(xid);
+                continue;
+            }
+
             if (dockitem->get_childmap().count(xid)) {
                 result += dockitem->remove_child(xid);
             }
@@ -117,6 +125,7 @@ namespace docklight
             if (result) break;
         }
 
+        g_print("REMOVE size: %ld\n", m_data.size());
         return result;
     }
 
@@ -149,6 +158,7 @@ namespace docklight
         return m_dockitems.size();
     }
 
+    template bool DockItemContainer::get<DockItemIcon>(gulong xid, std::any& a);
     template std::vector<std::shared_ptr<DockItemIcon>>& DockItemContainer::data<DockItemIcon>();
     template int DockItemContainer::remove<DockItemIcon>(gulong xid);
     template bool DockItemContainer::exist<DockItemIcon>(gulong xid, bool deep);

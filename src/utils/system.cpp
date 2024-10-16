@@ -35,7 +35,7 @@
 
 namespace docklight
 {
-    namespace System
+    namespace system
     {
         bool get_mouse_position(int& x, int& y)
         {
@@ -124,5 +124,18 @@ namespace docklight
             return false;
         }
 
-    }  // namespace System
+        Glib::ustring get_current_path()
+        {
+            char szTmp[32];
+            sprintf(szTmp, "/proc/%d/exe", getpid());
+
+            char buffer[PATH_MAX];
+            ssize_t count = readlink(szTmp, buffer, PATH_MAX);
+            Glib::ustring result = Glib::ustring(buffer, (count > 0) ? count : 0);
+            size_t found = result.find_last_of("/");
+            if (found != Glib::ustring::npos) result = result.substr(0, found);
+
+            return result;
+        }
+    }  // namespace system
 }  // namespace docklight

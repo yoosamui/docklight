@@ -51,6 +51,8 @@ namespace docklight
         icon_theme->signal_changed().connect(
             sigc::mem_fun(*this, &DockItemProvider::on_theme_changed));
 
+        load();
+
         g_message("Create DockItemProvider.");
     }
 
@@ -263,7 +265,7 @@ namespace docklight
             group_name = window_name;
         }
 
-        // group name must by lower case.
+        // group name must hast to be lower case.
         std::string groupname(group_name);
 
         std::locale loc("en_US.UTF-8");
@@ -414,4 +416,115 @@ namespace docklight
         return true;
     }
 
+    Glib::ustring DockItemProvider::get_config_filepath()
+    {
+        Glib::ustring user_name = system::get_current_user();
+
+        char config_dir[120];
+        sprintf(config_dir, "/home/%s/.config/docklight", user_name.c_str());
+
+        system::create_directory_if_not_exitst(config_dir);
+
+        char buff[PATH_MAX];
+        sprintf(buff, "%s/%s", config_dir, "docklight5.dat");
+
+        return buff;
+    }
+
+    bool DockItemProvider::load()
+    {
+        auto file_name = get_config_filepath();
+        if (file_name == "") {
+            return false;
+        }
+
+        attach_rec_t rec;
+        FILE* file_reader;
+
+        file_reader = fopen(file_name.c_str(), "rb");
+
+        if (!file_reader) {
+            g_critical("provider::load: can't open file.");
+            return false;
+        }
+
+        while (true) {
+            auto sn = fread(&rec, sizeof(rec), 1, file_reader);
+            if (feof(file_reader) != 0) break;
+            if (sn == 0) continue;
+
+            std::shared_ptr<DockItemIcon> dockitem =
+                std::shared_ptr<DockItemIcon>(new DockItemIcon(0, rec.instance, rec.group, 0));
+
+            try {
+                auto loader = Gdk::PixbufLoader::create();
+                loader->write(rec.pixbuff, sizeof(rec.pixbuff));
+                dockitem->set_icon(loader->get_pixbuf());
+                loader->close();
+
+            } catch (...) {
+                g_warning("provider::PixbufError \n");
+            }
+
+            dockitem->set_attached(true);
+
+            std::shared_ptr<DockItemIcon> owner;
+            if (!m_container.exist<DockItemIcon>(rec.group, owner)) {
+                m_container.add(0, dockitem);
+                continue;
+            }
+        }
+
+        fclose(file_reader);
+        g_message("Attachments loaded.\n");
+
+        on_theme_changed();
+
+        return true;
+    }
+
+    bool DockItemProvider::save()
+    {
+        auto file_name = get_config_filepath();
+        if (file_name.empty()) {
+            return false;
+        }
+
+        FILE* file_writer;
+        gchar* iconBuffer;
+        gsize buffer_size;
+        attach_rec_t rec;
+
+        file_writer = fopen(file_name.c_str(), "wb");
+
+        if (!file_writer) {
+            g_critical("provider::save: can't create file.");
+            return false;
+        }
+
+        for (auto& dockitem : data()) {
+            if (!dockitem->get_attached()) {
+                continue;
+            }
+
+            try {
+                dockitem->get_icon()->save_to_buffer(iconBuffer, buffer_size);
+                memcpy(rec.pixbuff, iconBuffer, buffer_size);
+                delete[](gchar*) iconBuffer;
+
+            } catch (...) {
+                g_critical("provider::save: Gdk::PixbufError ");
+                return false;
+            }
+
+            strncpy(rec.group, dockitem->get_group_name().c_str(), sizeof(rec.group) - 1);
+            strncpy(rec.instance, dockitem->get_instance_name().c_str(), sizeof(rec.instance) - 1);
+
+            size_t result = fwrite(&rec, sizeof(rec), 1, file_writer);
+            if (result == 0) g_critical("provider::save:: Error writing file fwrite\n");
+        }
+
+        fclose(file_writer);
+        return true;
+    }
 }  // namespace docklight

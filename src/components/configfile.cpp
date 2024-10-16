@@ -19,6 +19,10 @@ namespace docklight
     {
         // set_default_style();
         std::string filepath = read_filepath();
+        if (filepath.empty()) {
+            g_warning("Configuration could not be found!");
+            return false;
+        }
 
         GError* error = nullptr;
         m_key_file = g_key_file_new();
@@ -124,12 +128,12 @@ namespace docklight
 
     std::string ConfigFile::read_filepath()
     {
-        std::string user_name = System::get_current_user();
+        auto user_name = system::get_current_user();
 
         char config_dir[512];
         sprintf(config_dir, "/home/%s/.config/docklight", user_name.c_str());
 
-        System::create_directory_if_not_exitst(config_dir);
+        system::create_directory_if_not_exitst(config_dir);
 
         char buff[PATH_MAX];
         sprintf(buff, "%s/%s", config_dir, m_filename.c_str());
