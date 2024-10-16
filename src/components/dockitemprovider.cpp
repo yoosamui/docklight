@@ -18,6 +18,7 @@
 
 // clang-format off
 #include "components/dockitemprovider.h"
+#include <glibmm/fileutils.h>
 // clang-format on
 
 namespace docklight
@@ -44,6 +45,23 @@ namespace docklight
         g_assert(BAMF_IS_MATCHER(m_matcher));
 
         auto const icon_theme = Gtk::IconTheme::get_default();
+
+        /*std::shared_ptr<DockItemIcon> dockitem =
+            std::shared_ptr<DockItemIcon>(new DockItemIcon(1, "docklight", "docklight", 0));
+
+        std::string filename = "data/images/docklight.home.ico";
+        try {
+            auto pixbuf = Gdk::Pixbuf::create_from_file(filename, 128, 128, true);
+            dockitem->set_icon(pixbuf);
+
+        } catch (const Glib::FileError& ex) {
+            g_critical("get_from file: %s FileError: %s", filename.c_str(), ex.what().c_str());
+        } catch (const Gdk::PixbufError& ex) {
+            g_critical("get_from file: %s PixbufError: %s", filename.c_str(), ex.what().c_str());
+        }
+
+        m_container.add(0, dockitem);
+*/
         load();
 
         m_sigc_timer =
