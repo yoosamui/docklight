@@ -125,7 +125,6 @@ namespace docklight
             if (result) break;
         }
 
-        g_print("REMOVE size: %ld\n", m_data.size());
         return result;
     }
 

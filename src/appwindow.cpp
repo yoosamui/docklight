@@ -98,10 +98,7 @@ namespace docklight
     //}
     void AppWindow::on_app_activated()
     {
-        // initializes the position namespace
-        // position::set_window_position();
         g_message(MSG_APPLICATION_ACTIVATED);
-        std::cout << std::endl;
         AppWindow::send_notification(DOCKLIGHT_APPNAME, MSG_APPLICATION_START,
                                      "dialog-information");
     }
@@ -123,7 +120,6 @@ namespace docklight
                 group.validate();
             } catch (const Glib::Error& ex) {
                 std::cout << "on_command_line:Exception: " << ex.what() << std::endl;
-                return EXIT_FAILURE;
             }
 
             std::cout << group.toString() << std::endl;

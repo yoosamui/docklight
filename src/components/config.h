@@ -36,7 +36,7 @@ namespace docklight
         const int get_dock_area_margin() const;
         const int get_anchor_margin() const;
         const int get_dock_area() const;
-        const int get_separator_margin() const;
+        //  const int get_separator_margin() const;
         void set_separator_size(guint size);
         const int get_icon_size() const;
         const int get_separator_size() const;

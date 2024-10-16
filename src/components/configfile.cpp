@@ -58,7 +58,7 @@ namespace docklight
                 } else if (location == "bottom") {
                     m_location = dock_location_t::bottom;
                 } else {
-                    g_warning("configuration: invalid location. %s\n", location.c_str());
+                    g_warning("configuration: invalid location. [%s] \n", location.c_str());
                 }
             }
 
@@ -103,10 +103,10 @@ namespace docklight
             }
 
             // separator margin
-            m_separator_margin = read_separator_margin();
-            if (m_separator_margin < 0 || m_separator_margin > 20) {
-                m_separator_margin = DEF_ICON_SIZE;
-            }
+            // m_separator_margin = read_separator_margin();
+            // if (m_separator_margin < 0 || m_separator_margin > 20) {
+            // m_separator_margin = DEF_ICON_SIZE;
+            //}
 
             m_anchor_margin = read_anchor_margin();
             if (m_anchor_margin < 1 || m_anchor_margin > 20) {
@@ -235,7 +235,7 @@ namespace docklight
             g_error_free(error);
             error = nullptr;
 
-            return m_separator_margin;
+            return 0;  // m_separator_margin;
         }
 
         return value;

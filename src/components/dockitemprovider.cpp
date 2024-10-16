@@ -44,14 +44,13 @@ namespace docklight
         g_assert(BAMF_IS_MATCHER(m_matcher));
 
         auto const icon_theme = Gtk::IconTheme::get_default();
+        load();
 
         m_sigc_timer =
             Glib::signal_timeout().connect(sigc::mem_fun(this, &DockItemProvider::on_timeout), 10);
 
         icon_theme->signal_changed().connect(
             sigc::mem_fun(*this, &DockItemProvider::on_theme_changed));
-
-        load();
 
         g_message("Create DockItemProvider.");
     }
@@ -182,7 +181,8 @@ namespace docklight
 
         BamfApplication* bamfapp = bamf_matcher_get_application_for_xid(matcher, xid);
         if (!bamfapp) {
-            g_warning("get_theme_icon::BamfApplication: the object has not been created.");
+            // g_warning("get_theme_icon::BamfApplication: the object has not been created.");
+            // not necessery, can be null for attachments.
             return false;
         }
 
@@ -476,8 +476,6 @@ namespace docklight
         }
 
         fclose(file_reader);
-        g_message("Attachments loaded.\n");
-
         on_theme_changed();
 
         return true;

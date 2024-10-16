@@ -61,17 +61,14 @@ namespace docklight
 
     const int Configuration::get_dock_area() const
     {
-        // TODO add separatot margin
-        int area = m_icon_size + DEF_DOCKAREA_MARGIN;
-
-        return area;
+        return m_icon_size + DEF_DOCKAREA_MARGIN;
     }
 
-    const int Configuration::get_separator_margin() const
-    {
-        //
-        return m_separator_margin;
-    }
+    // const int Configuration::get_separator_margin() const
+    //{
+    ////
+    // return m_separator_margin;
+    //}
 
     const int Configuration::get_icon_size() const
     {
@@ -432,7 +429,7 @@ namespace docklight
         int get_separator_margin(GKeyFile* key_file)
         {
             GError* error = nullptr;
-            int value = g_key_file_get_integer(key_file, "separator", "separator_margin", &error);
+            int value = g_key_file_get_integenr(key_file, "separator", "separator_margin", &error);
             if (error) {
                 g_error_free(error);
                 error = nullptr;

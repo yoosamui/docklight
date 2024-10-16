@@ -262,6 +262,8 @@ namespace docklight
 
         dockitem->set_attached(true);
         m_provider->save();
+        // ..    container_updated();
+        //     m_provider->remove(0);
         g_print("ATTACHED %s\n", dockitem->to_string().c_str());
 
         //   m_provider->load();

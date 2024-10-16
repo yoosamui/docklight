@@ -39,10 +39,10 @@ namespace docklight
       protected:
         // parsed and optimized at compile time
         static constexpr const int DEF_MIN_ITEM_SIZE = 32;
-        static constexpr const int DEF_DOCKAREA_MARGIN = 16;
+        static constexpr const int DEF_DOCKAREA_MARGIN = 0;
         static constexpr const int DEF_ICON_SIZE = 128;
-        static constexpr const int DEF_SEPARATOR_MARGIN = 0;
-        static constexpr const int DEF_SEPARATOR_SIZE = 8;
+        // static constexpr const int DEF_SEPARATOR_MARGIN = 0;  // OBSOLETE
+        static constexpr const int DEF_SEPARATOR_SIZE = 0;
         static constexpr const double DEF_AUTOHIDE_ANIMATION_DELAY = 5.0;
         static constexpr const int DEF_AUTOHIDE_ANCHORT_MARGIN = 20;
         static constexpr const double DEF_AUTOHIDE_HIDE_DELAY = 0.5;
@@ -54,7 +54,7 @@ namespace docklight
         int m_separator_size = DEF_SEPARATOR_SIZE;
         int m_separator_size_factor = DEF_SEPARATOR_SIZE;
 
-        int m_separator_margin = DEF_SEPARATOR_MARGIN;
+        // int m_separator_margin = DEF_SEPARATOR_MARGIN;
 
         int m_anchor_margin = DEF_AUTOHIDE_ANCHORT_MARGIN;
 

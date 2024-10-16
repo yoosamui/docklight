@@ -33,7 +33,7 @@ namespace docklight
         {
             // remember the bigest area
             static int area = 0;
-            if (!area) area = Config()->get_dock_area() + Config()->get_separator_size();
+            if (!area) area = Config()->get_dock_area();  // + Config()->get_separator_size() ;
 
             const int max_icon_size = Config()->get_custom_icon_size();
             const auto workarea = device::monitor::get_workarea();
@@ -41,7 +41,7 @@ namespace docklight
             const int item_width = area;
 
             int screen_width = 0;
-            int reduce_screen_value = (item_width * 2);
+            int reduce_screen_value = 0;
 
             if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
                 if (workarea.get_width() <= 1) return max_icon_size;
@@ -59,6 +59,10 @@ namespace docklight
             if (icon_size > max_icon_size) {
                 icon_size = max_icon_size;
             }
+
+            g_print("IconSize %d\n", icon_size);
+            g_print("Calculated %f\n",
+                    128 * ((double)screen_width / (double)(item_width * num_items)));
 
             return std::abs(icon_size);
         }
