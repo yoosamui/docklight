@@ -78,7 +78,7 @@ namespace docklight
         m_cell_ctx->paint_with_alpha(1.0);
         // m_cell_ctx->paint();
 
-#define STROKE_SURFACE_RECT 1
+//#define STROKE_SURFACE_RECT 1
 #ifdef STROKE_SURFACE_RECT
         // Surface rect TEST
         m_cell_ctx->set_line_width(2.0);

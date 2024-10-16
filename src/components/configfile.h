@@ -38,8 +38,9 @@ namespace docklight
 
       protected:
         // parsed and optimized at compile time
-        static constexpr const int DEF_MIN_ITEM_SIZE = 32;
-        static constexpr const int DEF_DOCKAREA_MARGIN = 0;
+        static constexpr const int DEF_MIN_ITEM_SIZE = 24;
+        // no access from draussen
+        static constexpr const int DEF_DOCKAREA_MARGIN = 16;
         static constexpr const int DEF_ICON_SIZE = 128;
         // static constexpr const int DEF_SEPARATOR_MARGIN = 0;  // OBSOLETE
         static constexpr const int DEF_SEPARATOR_SIZE = 0;
