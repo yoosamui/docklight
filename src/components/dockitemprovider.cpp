@@ -46,7 +46,7 @@ namespace docklight
 
         auto const icon_theme = Gtk::IconTheme::get_default();
 
-        /*std::shared_ptr<DockItemIcon> dockitem =
+        std::shared_ptr<DockItemIcon> dockitem =
             std::shared_ptr<DockItemIcon>(new DockItemIcon(1, "docklight", "docklight", 0));
 
         std::string filename = "data/images/docklight.home.ico";
@@ -60,15 +60,17 @@ namespace docklight
             g_critical("get_from file: %s PixbufError: %s", filename.c_str(), ex.what().c_str());
         }
 
+        dockitem->set_attached();
         m_container.add(0, dockitem);
-*/
-        load();
-
-        m_sigc_timer =
-            Glib::signal_timeout().connect(sigc::mem_fun(this, &DockItemProvider::on_timeout), 10);
 
         icon_theme->signal_changed().connect(
             sigc::mem_fun(*this, &DockItemProvider::on_theme_changed));
+
+        load();
+        g_message("Attachments loaded.");
+
+        m_sigc_timer =
+            Glib::signal_timeout().connect(sigc::mem_fun(this, &DockItemProvider::on_timeout), 10);
 
         g_message("Create DockItemProvider.");
     }
@@ -76,6 +78,7 @@ namespace docklight
     bool DockItemProvider::on_timeout()
     {
         m_startup_time_set = true;
+        on_theme_changed();
         m_signal_update.emit(window_action_t::UPDATE, data().size());
 
         m_sigc.disconnect();
@@ -149,14 +152,27 @@ namespace docklight
     void DockItemProvider::on_theme_changed()
     {
         bool updated = false;
-        Glib::RefPtr<Gdk::Pixbuf> pixbuf;
+        GError* error = nullptr;
+        GtkIconTheme* icon_theme = gtk_icon_theme_get_default();
 
         for (auto& dockitem : data()) {
-            auto xid = dockitem->get_xid();
+            GdkPixbuf* gdkpixbuf =
+                gtk_icon_theme_load_icon(icon_theme,
+                                         dockitem->get_icon_name().c_str(),  // icon name
+                                         Config()->get_icon_max_size(),      // icon size
+                                         GTK_ICON_LOOKUP_FORCE_SIZE,         // flags //
+                                         &error);
+            if (error) {
+                std::string error_message = error->message;
+                g_error_free(error);
+                error = nullptr;
+                continue;
+            }
 
-            if (get_theme_icon(xid, pixbuf)) {
-                dockitem->set_icon(pixbuf);
-                if (!updated) updated = true;
+            if (gdkpixbuf) {
+                auto icon =
+                    Glib::wrap(gdkpixbuf, true)->scale_simple(128, 128, Gdk::INTERP_BILINEAR);
+                dockitem->set_icon(icon);
             }
         }
 
@@ -193,14 +209,13 @@ namespace docklight
         // This matcher is owned by bamf and shared between other callers.
         BamfMatcher* matcher = bamf_matcher_get_default();
         if (!matcher) {
-            g_warning("get_theme_icon::(amfMatcher: the object has not been created.");
+            g_warning("get_theme_icon::bamfMatcher: the object has not been created.");
             return false;
         }
 
         BamfApplication* bamfapp = bamf_matcher_get_application_for_xid(matcher, xid);
         if (!bamfapp) {
             // g_warning("get_theme_icon::BamfApplication: the object has not been created.");
-            // not necessery, can be null for attachments.
             return false;
         }
 
@@ -230,7 +245,6 @@ namespace docklight
 
             return false;
         }
-
         // set the out parameter.
         icon_name = iconname;
         // This is the name taken from the desktop file.
@@ -247,6 +261,7 @@ namespace docklight
             // requested size.
             pixbuf = theme->load_icon(icon_name, Config()->get_icon_max_size(),
                                       Gtk::IconLookupFlags::ICON_LOOKUP_FORCE_SIZE);
+
         } catch (...) {
             g_warning("get_theme_icon::pixbuf: Exception the object has not been created. (%s)",
                       icon_name.c_str());
@@ -321,7 +336,9 @@ namespace docklight
         Glib::ustring desktop_file;
         Glib::ustring icon_name;
 
-        if (!get_theme_icon(xid, pixbuf, title_name, desktop_file, icon_name)) return false;
+        if (!get_theme_icon(xid, pixbuf, title_name, desktop_file, icon_name)) {
+            return false;
+        }
 
         std::shared_ptr<DockItemIcon> dockitem =
             std::shared_ptr<DockItemIcon>(new DockItemIcon(xid, instance_name, groupname, wintype));
@@ -333,7 +350,6 @@ namespace docklight
         std::shared_ptr<DockItemIcon> owner;
         if (m_container.exist<DockItemIcon>(groupname, owner)) {
             dockitem->set_title(window_name);
-
             if (wintype == WnckWindowType::WNCK_WINDOW_DIALOG) {
                 dockitem->set_title(window_icon_name);
             }
@@ -438,7 +454,7 @@ namespace docklight
     {
         Glib::ustring user_name = system::get_current_user();
 
-        char config_dir[120];
+        char config_dir[200];
         sprintf(config_dir, "/home/%s/.config/docklight", user_name.c_str());
 
         system::create_directory_if_not_exitst(config_dir);
@@ -453,6 +469,7 @@ namespace docklight
     {
         auto file_name = get_config_filepath();
         if (file_name == "") {
+            g_warning("provider::load file not available.");
             return false;
         }
 
@@ -485,6 +502,8 @@ namespace docklight
             }
 
             dockitem->set_attached(true);
+            dockitem->set_icon_name(rec.icon_name);
+            dockitem->set_desktop_file(rec.desktop_file);
 
             std::shared_ptr<DockItemIcon> owner;
             if (!m_container.exist<DockItemIcon>(rec.group, owner)) {
@@ -494,7 +513,6 @@ namespace docklight
         }
 
         fclose(file_reader);
-        on_theme_changed();
 
         return true;
     }
@@ -503,6 +521,7 @@ namespace docklight
     {
         auto file_name = get_config_filepath();
         if (file_name.empty()) {
+            g_critical("provider::save: can't open file.");
             return false;
         }
 
@@ -523,6 +542,8 @@ namespace docklight
                 continue;
             }
 
+            if (!dockitem->get_icon()) continue;
+
             try {
                 dockitem->get_icon()->save_to_buffer(iconBuffer, buffer_size);
                 memcpy(rec.pixbuff, iconBuffer, buffer_size);
@@ -535,6 +556,9 @@ namespace docklight
 
             strncpy(rec.group, dockitem->get_group_name().c_str(), sizeof(rec.group) - 1);
             strncpy(rec.instance, dockitem->get_instance_name().c_str(), sizeof(rec.instance) - 1);
+            strncpy(rec.icon_name, dockitem->get_icon_name().c_str(), sizeof(rec.icon_name) - 1);
+            strncpy(rec.desktop_file, dockitem->get_desktop_file().c_str(),
+                    sizeof(rec.desktop_file) - 1);
 
             size_t result = fwrite(&rec, sizeof(rec), 1, file_writer);
             if (result == 0) g_critical("provider::save:: Error writing file fwrite\n");

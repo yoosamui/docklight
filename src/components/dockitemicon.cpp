@@ -62,6 +62,7 @@ namespace docklight
     void DockItemIcon::set_icon(Glib::RefPtr<Gdk::Pixbuf> icon)
     {
         g_assert(icon);
+
         m_width = icon->get_width();
         m_height = icon->get_height();
         m_icon = icon;

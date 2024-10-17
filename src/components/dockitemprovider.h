@@ -50,7 +50,8 @@ namespace docklight
             char comment[512];
             char desktop_file[512];
             char icon_name[128];
-            guint8 pixbuff[128 * 128] = {0};
+            guint8 pixbuff[128 * 128 * 3] = {0};  //  128 x 128 x 3 max
+
         } attach_rec_t;
 
       public:
@@ -72,10 +73,11 @@ namespace docklight
         guint count();
         bool save();
 
+        void on_theme_changed();  // TEST move to privat
+
       private:
         sigc::connection m_sigc;
 
-        void on_theme_changed();
         bool on_timeout();
 
         bool get_window_icon(GdkPixbuf* gdkpixbuf, Glib::RefPtr<Gdk::Pixbuf>& pixbuf);

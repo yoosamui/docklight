@@ -91,16 +91,8 @@ namespace docklight
             auto const m = device::monitor::get_monitor(i);
 
             if (m_arg_monitor == m->get_model()) return;
-
             monitor_list += (Glib::ustring)m->get_model() + ", ";
         }
-
-        // std::cout << MSG_DEFAULT_MONITOR << ": " << device::monitor::get_monitor_number() << ", "
-        //<< device::monitor::get_current()->get_model() << std::endl;
-
-        // if (m_arg_monitor < count) {
-        // return;
-        //}
 
         std::stringstream msg;
         msg << "m_arg_monitor: unexpected value of monitor: " << m_arg_monitor << std::endl

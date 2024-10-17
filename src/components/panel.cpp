@@ -237,31 +237,37 @@ namespace docklight
         switch (m_dockitem_index) {
             case 0:
                 //    m_position->force_position();
-                dockitem->set_attached(true);
-                m_provider->save();
+                // dockitem->set_attached(true);
+                //.m_provider->save();
+                //
+                // m_provider->on_theme_changed();
+
                 break;
             case 1:
                 //    m_position->reset_position();
-                dockitem->set_attached(true);
-                m_provider->save();
+                //                dockitem->set_attached(true);
+                //                m_provider->save();
                 break;
             case 2:
-                dockitem->set_attached(true);
-                m_provider->save();
+                //              dockitem->set_attached(true);
+                //             m_provider->save();
                 break;
             case 3:
-                dockitem->set_attached(true);
-                m_provider->save();
+                //           dockitem->set_attached(true);
+                //         m_provider->save();
                 break;
             case 4:
-                dockitem->set_attached(true);
-                m_provider->save();
+                //       dockitem->set_attached(true);
+                //     m_provider->save();
                 //    m_provider->load();
                 break;
         }
 
-        dockitem->set_attached(true);
+        dockitem->set_attached();
         m_provider->save();
+        //  container_updated();
+        //  return false;
+
         // ..    container_updated();
         //     m_provider->remove(0);
         g_print("ATTACHED %s\n", dockitem->to_string().c_str());

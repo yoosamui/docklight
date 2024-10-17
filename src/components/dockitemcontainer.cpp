@@ -79,6 +79,10 @@ namespace docklight
     template <typename T>
     bool DockItemContainer::exist(gulong xid, bool deep)
     {
+        if (xid == 0) {
+            exit(1);
+        }
+
         std::shared_ptr<T> dockitem;
 
         for (auto it = m_dockitems.begin(); it != m_dockitems.end(); it++) {

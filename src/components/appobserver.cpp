@@ -55,6 +55,7 @@ namespace docklight
         if (!valid_type(window)) return;
 
         gint32 xid = wnck_window_get_xid(window);
+
         Provider()->remove(xid);
     }
 
@@ -70,7 +71,9 @@ namespace docklight
         gint32 xid = wnck_window_get_xid(window);
 
         auto provider = Provider();
-        if (provider->exist(xid)) return;
+        if (provider->exist(xid)) {
+            return;
+        }
 
         provider->insert(window);
     }

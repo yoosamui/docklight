@@ -50,7 +50,7 @@ namespace docklight
 
       protected:
         //// setters
-        virtual void set_attached(bool attached) = 0;
+        virtual void set_attached(bool attached = true) = 0;
         virtual void set_tag(guint tag) = 0;
         //  virtual void set_icon(Glib::RefPtr<Gdk::Pixbuf> icon) = 0;
         /// virtual void set_attached(bool attached) = 0;
@@ -101,7 +101,7 @@ namespace docklight
         // implementations
 
         // setters
-        void set_attached(bool attached);
+        void set_attached(bool attached = true);
         void set_tag(guint tag);
         //    void set_icon(Glib::RefPtr<Gdk::Pixbuf> icon);
         void set_icon_name(Glib::ustring icon_name);
