@@ -8,6 +8,7 @@
 
 #include "components/config.h"
 #include "utils/easing.h" // for testing
+#include "utils/launcher.h" // for testing
 //#include <cmath>
 //#include <ctime>
 #include "components/dockitemicon.h"

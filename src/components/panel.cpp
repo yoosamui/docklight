@@ -279,6 +279,8 @@ namespace docklight
                     dockitem->get_childmap().size());
         }
 
+        launcher2(dockitem->get_desktop_file(), dockitem->get_instance_name(),
+                  dockitem->get_group_name(), dockitem->get_icon_name());
         return false;
     }
 
