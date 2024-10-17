@@ -75,7 +75,11 @@ namespace docklight
         // launch via command line
         // g_spawn_command_line_async(instance_name.c_str(), &error);
         // g_spawn_command_line_async(group_name.c_str(), &error);
-        g_spawn_command_line_async(instance_name.c_str(), &error);
+        try {
+            g_spawn_command_line_async(instance_name.c_str(), &error);
+        } catch (...) {
+            //
+        }
 
         if (error) {
             g_warning("Lauch via command line: Error (%s) %s \n", instance_name.c_str(),
@@ -85,7 +89,7 @@ namespace docklight
             g_key_file_free(key_file);
         }
 
-        g_spawn_command_line_async(group_name.c_str(), &error);
+        //  g_spawn_command_line_async(group_name.c_str(), &error);
         g_print("Launch via command line: %s\n", instance_name.c_str());
         g_key_file_free(key_file);
     }
