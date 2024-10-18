@@ -50,7 +50,7 @@ namespace docklight
     AppWindow::~AppWindow()
     {
         // release the current stryt if any
-        delete m_panel;
+        // delete m_panel;
         //  TODO:
         //   position::struts::set_strut(true);
 
@@ -71,13 +71,8 @@ namespace docklight
         // sigc::mem_fun(this, &AppWindow::on_container_updated));
 
         Config()->load();
+        m_panel->init(app);
 
-        // position::init(*(this));
-
-        m_panel->init();
-
-        //// TODO use for test
-        // m_position->set_position(1000);
         return EXIT_SUCCESS;
     }
 
@@ -119,7 +114,9 @@ namespace docklight
                 ctx.parse(argc, argv);
                 group.validate();
             } catch (const Glib::Error& ex) {
-                std::cout << "on_command_line:Exception: " << ex.what() << std::endl;
+                //                std::cout << "on_command_line:Exception: " << ex.what() <<
+                //                std::endl;
+                g_warning("on_command_line:Exception: %s", ex.what().c_str());
             }
 
             std::cout << group.toString() << std::endl;
@@ -161,6 +158,8 @@ namespace docklight
 
     bool AppWindow::on_button_press_event(GdkEventButton* event)
     {
+        return false;
+        ;
         if ((event->type == GDK_BUTTON_PRESS)) {
             //  this->update_position();
             g_print("\n");

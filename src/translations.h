@@ -66,4 +66,18 @@
     _("Height")
 #define MSG_MODEL \
     _("Model")
+#define MSG_QUIT \
+    _("Quit")
+#define MSG_CLOSE_ALL \
+    _("Close all")
+#define MSG_SHOW_ALL \
+    _("Show all")
+#define MSG_MINIMIZE_ALL \
+    _("Minimize all")
+#define MSG_CLOSE_ALL \
+    _("Close all")
+#define MSG_OPEN_NEW \
+    _("Open new")
+#define MSG_ATTACH \
+    _("Attach")
 // clang-format on

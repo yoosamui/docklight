@@ -29,7 +29,7 @@ namespace docklight
     class DockItemIcon : public DockItem
     {
       public:
-        DockItemIcon(gulong xid, const Glib::ustring& instance_name,
+        DockItemIcon(gulong xid, WnckWindow* window, const Glib::ustring& instance_name,
                      const Glib::ustring& group_name, guint wintype
                      /* Glib::RefPtr<Gdk::Pixbuf> icon*/);
 

@@ -21,10 +21,10 @@
 
 namespace docklight
 {
-    DockItemIcon::DockItemIcon(gulong xid, const Glib::ustring& instance_name,
+    DockItemIcon::DockItemIcon(gulong xid, WnckWindow* window, const Glib::ustring& instance_name,
                                const Glib::ustring& group_name, guint wintype
                                /*  Glib::RefPtr<Gdk::Pixbuf> icon*/)
-        : DockItem(xid, instance_name, group_name, wintype)
+        : DockItem(xid, window, instance_name, group_name, wintype)
     {
         //  m_icon = icon;
         // g_assert(m_icon);
@@ -39,7 +39,7 @@ namespace docklight
         // new DockItemIcon(m_xid, m_instance_name, m_group_name, m_wintype));
 
         auto clone = std::shared_ptr<DockItemIcon>(
-            new DockItemIcon(m_xid, m_instance_name, m_group_name, m_wintype));
+            new DockItemIcon(m_xid, nullptr, m_instance_name, m_group_name, m_wintype));
 
         clone->m_has_desktop_file = m_has_desktop_file;
         clone->m_attached = m_attached;

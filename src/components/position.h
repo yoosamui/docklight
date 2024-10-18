@@ -20,6 +20,7 @@
 // clang-format off
 #include <gtkmm/window.h>
 
+#include "components/dockitemprovider.h"
 #include "components/device.h"
 #include "components/config.h"
 #include "utils/struts.h"
@@ -41,6 +42,8 @@ namespace docklight
         void force_position();
         void reset_position();
         void set_position(guint required_size);
+
+        bool get_dockmenu_position(int index, int& x, int& y, int width, int height);
 
       private:
         std::string get_execpath();

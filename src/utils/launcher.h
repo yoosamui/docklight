@@ -1,4 +1,3 @@
-
 #pragma once
 //  Copyright (c) 2018-2024 Juan R. González
 //

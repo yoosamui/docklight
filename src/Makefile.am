@@ -44,6 +44,7 @@ appoptionsgroup.cpp \
 components/TransparentWindow.cpp \
 components/ExplodesWindow.cpp \
 components/panel.cpp \
+components/dockmenu.cpp \
 components/dockrender.cpp \
 components/device.cpp \
 components/config.cpp \

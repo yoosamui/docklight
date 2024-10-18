@@ -95,6 +95,24 @@ namespace docklight
         g_warning("Restart failed!\n");
     }
 
+    bool PositionManager::get_dockmenu_position(int index, int& x, int& y, int width, int height)
+    {
+        auto const area = Config()->get_dock_area();
+
+        x = m_x;
+        y = m_y;
+
+        if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+            int center = (area / 2) - (width / 2);
+            x += (area * index) + center;
+        } else {
+            int center = (area / 2) - (height / 2);
+            y += (area * index) + center;
+        }
+
+        return true;
+    }
+
     void PositionManager::force_position()
     {
         m_struts.set_struts();
@@ -106,7 +124,7 @@ namespace docklight
     }
     void PositionManager::set_position(guint required_size)
     {
-        g_message("Position request: %d", required_size);
+        // g_message("Position request: %d", required_size);
         int area = Config()->get_dock_area();
 
         dock_alignment_t alignment = Config()->get_dock_alignment();

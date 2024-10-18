@@ -46,8 +46,8 @@ namespace docklight
 
         auto const icon_theme = Gtk::IconTheme::get_default();
 
-        std::shared_ptr<DockItemIcon> dockitem =
-            std::shared_ptr<DockItemIcon>(new DockItemIcon(1, "docklight", "docklight", 0));
+        std::shared_ptr<DockItemIcon> dockitem = std::shared_ptr<DockItemIcon>(
+            new DockItemIcon(1, nullptr, "docklight", "docklight", 0));
 
         std::string filename = "data/images/docklight.home.ico";
         try {
@@ -275,6 +275,7 @@ namespace docklight
     {
         // return if the window don't has a name.
         if (!wnck_window_has_name(window)) return false;
+        m_wnckwindow = window;
 
         // return if the DockItem exist.
         gint32 xid = wnck_window_get_xid(window);
@@ -340,8 +341,8 @@ namespace docklight
             return false;
         }
 
-        std::shared_ptr<DockItemIcon> dockitem =
-            std::shared_ptr<DockItemIcon>(new DockItemIcon(xid, instance_name, groupname, wintype));
+        std::shared_ptr<DockItemIcon> dockitem = std::shared_ptr<DockItemIcon>(
+            new DockItemIcon(xid, m_wnckwindow, instance_name, groupname, wintype));
 
         dockitem->set_desktop_file(desktop_file);
         dockitem->set_icon_name(icon_name);
@@ -361,7 +362,6 @@ namespace docklight
             if (get_window_icon(gdkpixbuf, pixbuf)) {
                 dockitem->set_icon(pixbuf);
             }
-
             owner->add_child(dockitem);
 
         } else {
@@ -402,8 +402,8 @@ namespace docklight
 
         if (!get_window_icon(gdkpixbuf, pixbuf)) return false;
 
-        std::shared_ptr<DockItemIcon> dockitem =
-            std::shared_ptr<DockItemIcon>(new DockItemIcon(xid, instance_name, groupname, wintype));
+        std::shared_ptr<DockItemIcon> dockitem = std::shared_ptr<DockItemIcon>(
+            new DockItemIcon(xid, m_wnckwindow, instance_name, groupname, wintype));
 
         std::shared_ptr<DockItemIcon> owner;
         if (m_container.exist<DockItemIcon>(groupname, owner)) {
@@ -488,8 +488,8 @@ namespace docklight
             if (feof(file_reader) != 0) break;
             if (sn == 0) continue;
 
-            std::shared_ptr<DockItemIcon> dockitem =
-                std::shared_ptr<DockItemIcon>(new DockItemIcon(0, rec.instance, rec.group, 0));
+            std::shared_ptr<DockItemIcon> dockitem = std::shared_ptr<DockItemIcon>(
+                new DockItemIcon(0, nullptr, rec.instance, rec.group, 0));
 
             try {
                 auto loader = Gdk::PixbufLoader::create();

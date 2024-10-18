@@ -20,13 +20,14 @@
 
 namespace docklight
 {
-    DockItem::DockItem(gulong xid, const Glib::ustring& instance_name,
+    DockItem::DockItem(gulong xid, WnckWindow* window, const Glib::ustring& instance_name,
                        const Glib::ustring& group_name, guint wintype)
     {
         m_xid = xid;
         m_wintype = wintype;
         m_instance_name = instance_name;
         m_group_name = group_name;
+        m_wnckwindow = window;
     }
 
     DockItem::~DockItem()
@@ -43,6 +44,11 @@ namespace docklight
         m_attached = attached;
     }
 
+    WnckWindow* DockItem::get_wnckwindow() const
+    {
+        //   g_assert(m_wnckwindow);
+        return m_wnckwindow;
+    }
     void DockItem::set_tag(guint tag)
     {
         m_tag = tag;

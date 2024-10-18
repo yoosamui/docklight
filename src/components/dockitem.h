@@ -20,6 +20,13 @@
 // clang-format off
 #include <glibmm/object.h>
 #include <gdkmm/pixbuf.h>
+
+//#include <glibmm/timer.h>
+//#include <gtkmm/window.h>
+#include <libwnck/libwnck.h>
+//#include <X11/X.h>
+//#include <gdk/gdkx.h>
+
 #include <sstream>
 // clang-format on
 
@@ -31,6 +38,7 @@ namespace docklight
       protected:
         // 32-bit window identification number,
         gulong m_xid = 0;
+        WnckWindow* m_wnckwindow = nullptr;
 
         bool m_has_desktop_file = true;
         bool m_attached = false;
@@ -66,6 +74,7 @@ namespace docklight
         // virtual const void add_child(Glib::RefPtr<DockItem> child) = 0;
 
         //// getters
+        virtual WnckWindow* get_wnckwindow() const = 0;
         virtual guint get_container_size() = 0;
 
         virtual const guint get_tag() const = 0;
@@ -94,8 +103,8 @@ namespace docklight
     class DockItem : public IDockItem
     {
       public:
-        DockItem(gulong xid, const Glib::ustring& instance_name, const Glib::ustring& group_name,
-                 guint wintype);
+        DockItem(gulong xid, WnckWindow* window, const Glib::ustring& instance_name,
+                 const Glib::ustring& group_name, guint wintype);
         ~DockItem();
 
         // implementations
@@ -115,6 +124,7 @@ namespace docklight
         //      const void add_child(Glib::RefPtr<DockItem> child);
 
         // Getters
+        virtual WnckWindow* get_wnckwindow() const;
         virtual guint get_container_size() { return 0; };
 
         const guint get_tag() const;

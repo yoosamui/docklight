@@ -46,8 +46,9 @@ namespace docklight
         m_provider = create_provider();
     }
 
-    void Panel::init()
+    void Panel::init(Glib::RefPtr<Gtk::Application> app)
     {
+        m_app = app;
         m_sigc_updated =
             m_provider->signal_update().connect(sigc::mem_fun(this, &Panel::on_container_updated));
 
@@ -165,6 +166,11 @@ namespace docklight
         return m_surfaceIcon;
     }*/
 
+    void Panel::on_home_menu_quit_event()
+    {
+        m_app->quit();
+    }
+
     void Panel::container_updated(guint explicit_size)
     {
         auto size = m_provider->data().size();  //- 1;
@@ -188,6 +194,7 @@ namespace docklight
 
     bool Panel::on_motion_notify_event(GdkEventMotion* event)
     {
+        get_dockitem_index(event->x, event->y);
         return false;
     }
 
@@ -225,46 +232,102 @@ namespace docklight
         return m_dockitem_index;
     }
 
-    bool Panel::on_button_press_event(GdkEventButton* event)
+    bool Panel::on_scroll_event(GdkEventScroll* e)
     {
-        m_dockitem_index = get_dockitem_index(event->x, event->y);
+        if (m_dockitem_index < 1) return false;
 
         std::shared_ptr<DockItemIcon> dockitem;
         if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return false;
 
-        // if( )
+        auto size = dockitem->get_childmap().size();
+        if (!size) return false;
 
-        switch (m_dockitem_index) {
-            case 0:
-                //    m_position->force_position();
-                // dockitem->set_attached(true);
-                //.m_provider->save();
-                //
-                // m_provider->on_theme_changed();
+        static size_t idx = 0;
 
-                break;
-            case 1:
-                //    m_position->reset_position();
-                //                dockitem->set_attached(true);
-                //                m_provider->save();
-                break;
-            case 2:
-                //              dockitem->set_attached(true);
-                //             m_provider->save();
-                break;
-            case 3:
-                //           dockitem->set_attached(true);
-                //         m_provider->save();
-                break;
-            case 4:
-                //       dockitem->set_attached(true);
-                //     m_provider->save();
-                //    m_provider->load();
-                break;
+        if (idx++ >= size - 1) idx = 0;
+        auto it = dockitem->get_childmap().begin();
+        std::advance(it, idx);
+        auto child = it->second;
+
+        WnckWindow* window = child->get_wnckwindow();
+        if (!window) return false;
+
+        wnck::activate_window(window);
+
+        return false;
+    }
+
+    bool Panel::on_button_press_event(GdkEventButton* event)
+    {
+        if ((event->type != GDK_BUTTON_PRESS)) return true;
+
+        std::shared_ptr<DockItemIcon> dockitem;
+        if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return true;
+        g_print("PRESS: %d\n", m_dockitem_index);
+
+        auto size = dockitem->get_childmap().size();
+
+        if (event->button == 1 && m_dockitem_index > 0) {
+            if (!size) {
+                launcher2(dockitem->get_desktop_file(), dockitem->get_instance_name(),
+                          dockitem->get_group_name(), dockitem->get_icon_name());
+                return true;
+            }
+
+            g_print("PRESS IN: %d\n", m_dockitem_index);
+            auto it = dockitem->get_childmap().begin();
+            std::advance(it, 0);
+            auto child = it->second;
+
+            WnckWindow* window = child->get_wnckwindow();
+            if (!window) {
+                g_print("BUM %d\n", m_dockitem_index);
+
+                return true;
+            }
+
+            wnck::activate_window(window);
+
+            g_print("PRESS AFTER: %d\n", m_dockitem_index);
+            //..  return true;
+
+            // show group
+        } else if (event->button == 3) {
+            if (m_dockitem_index == 0) {
+                // Home Menu
+                if (!m_home_menu.get_attach_widget()) {
+                    m_home_menu.attach_to_widget(*this);
+                }
+
+                m_home_menu.popup(sigc::mem_fun(*this, &Panel::on_home_menu_position), 1,
+                                  event->time);
+
+            } else if (m_dockitem_index > 0) {
+                m_item_menu.popup(sigc::mem_fun(*this, &Panel::on_item_menu_position), 1,
+                                  event->time);
+            }
         }
+
+        return true;
+        ////////////////////
+        ///
+
+        if (!dockitem->get_childmap().size()) return false;
 
         dockitem->set_attached();
         m_provider->save();
+        //        std::shared_ptr<DockItemIcon> child = dockitem->get_childmap().at(0);
+        auto it = dockitem->get_childmap().begin();
+        std::advance(it, 0);
+        auto child = it->second;
+        auto window = child->get_wnckwindow();
+        if (window) wnck::activate_window(window);
+        // auto child = item.second;
+
+        // WnckWindow* window = child->get_wnckwindow();
+        //  wnck::activate_window(window);
+
+        return false;
         //  container_updated();
         //  return false;
 
@@ -274,13 +337,28 @@ namespace docklight
 
         //   m_provider->load();
         for (auto& dockitem : m_provider->data()) {
-            g_print("X %ld  XXXXXXX %s attach %d child %ld\n", dockitem->get_xid(),
+            g_print("X %ld %s attach %d child %ld\n", dockitem->get_xid(),
                     dockitem->get_group_name().c_str(), (int)dockitem->get_attached(),
                     dockitem->get_childmap().size());
+            for (auto& item : dockitem->get_childmap()) {
+                auto child = item.second;
+
+                WnckWindow* window = child->get_wnckwindow();
+
+                g_print("   -| %ld %s attach %d wnck %p\n", child->get_xid(),
+                        child->get_group_name().c_str(), 0, &window);
+                // try {
+                // wnck::activate_window(window);
+                //} catch (...) {
+                ////
+                //}
+
+                break;
+            }
         }
 
-        launcher2(dockitem->get_desktop_file(), dockitem->get_instance_name(),
-                  dockitem->get_group_name(), dockitem->get_icon_name());
+        // launcher2(dockitem->get_desktop_file(), dockitem->get_instance_name(),
+        // dockitem->get_group_name(), dockitem->get_icon_name());
         return false;
     }
 

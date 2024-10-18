@@ -11,11 +11,13 @@
 #include "utils/launcher.h" // for testing
 //#include <cmath>
 //#include <ctime>
+#include "utils/wnck.h"
 #include "components/dockitemicon.h"
 #include "dockitemprovider.h"
 #include "components/TransparentWindow.h"
 #include "components/position.h"
 #include "components/dockrender.h"
+//#include "components/dockmenu.h"
 // clang-format on
 
 namespace docklight
@@ -27,7 +29,7 @@ namespace docklight
         Panel();
         ~Panel();
 
-        void init();
+        void init(Glib::RefPtr<Gtk::Application> app);
         void container_updated(guint explicit_size = 0);
 
         inline guint get_scale_factor()
@@ -65,6 +67,7 @@ namespace docklight
         }
 
       private:
+        Glib::RefPtr<Gtk::Application> m_app;
         sigc::connection m_sigc_draw;
         sigc::connection m_sigc_updated;
 
@@ -81,10 +84,26 @@ namespace docklight
         bool on_leave_notify_event(GdkEventCrossing* crossing_event) override;
 
         Glib::Timer m_animation_timer;
+        // Mouse handlers
+        // bool on_button_press_event(GdkEventButton* event);
+        // bool on_button_release_event(GdkEventButton* event);
+        // bool on_motion_notify_event(GdkEventMotion* event);
+        bool on_scroll_event(GdkEventScroll* e) override;
+
+        // Menus
+        void on_home_menu_quit_event() override;
+        void on_home_menu_position(int& x, int& y, bool& push_in) override
+        {
+            DockMenu::on_home_menu_position(x, y, push_in);
+        }
+
+        void on_item_menu_position(int& x, int& y, bool& push_in) override
+        {
+            DockMenu::on_item_menu_position(x, y, push_in);
+        }
 
       private:
         Glib::RefPtr<DockItemProvider> m_provider;
-        gint m_dockitem_index = -1;
         easing::bounce m_bounce;
     };
 }  // namespace docklight

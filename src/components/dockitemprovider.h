@@ -77,6 +77,7 @@ namespace docklight
 
       private:
         sigc::connection m_sigc;
+        WnckWindow* m_wnckwindow = nullptr;
 
         bool on_timeout();
 

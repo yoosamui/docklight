@@ -19,8 +19,9 @@
 
 // clang-format off
 #include <gdkmm/general.h>
-#include <gtkmm/drawingarea.h>
+//#include <gtkmm/drawingarea.h>
 
+#include "components/dockmenu.h"
 #include "components/config.h"
 #include "components/dockitemprovider.h"
 #include "components/position.h"
@@ -29,7 +30,7 @@
 namespace docklight
 {
 
-    class DockRender : public Gtk::DrawingArea
+    class DockRender : public DockMenu
     {
       public:
         DockRender();
