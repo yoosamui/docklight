@@ -36,6 +36,7 @@ namespace docklight
       public:
       protected:
         gint m_dockitem_index = -1;
+        bool m_context_menu_active = false;
     };
 
     class DockMenu : public PanelBase
@@ -77,8 +78,8 @@ namespace docklight
         void on_item_menu_close_group_event();
         void on_item_menu_minimize_all_event();
         void on_item_menu_unminimize_all_event();
-        // void on_menu_show_event();
-        // void on_menu_hide_event();
+        void on_menu_show_event();
+        void on_menu_hide_event();
     };
 
 }  // namespace docklight

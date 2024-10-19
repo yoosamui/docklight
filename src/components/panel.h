@@ -95,15 +95,16 @@ namespace docklight
         void on_item_menu_childlist_event(WnckWindow* window);
 
         void on_home_menu_quit_event() override;
-        void on_home_menu_position(int& x, int& y, bool& push_in) override
-        {
-            DockMenu::on_home_menu_position(x, y, push_in);
-        }
 
-        void on_item_menu_position(int& x, int& y, bool& push_in) override
-        {
-            DockMenu::on_item_menu_position(x, y, push_in);
-        }
+        // void on_home_menu_position(int& x, int& y, bool& push_in) override
+        //{
+        // DockMenu::on_home_menu_position(x, y, push_in);
+        //}
+
+        // void on_item_menu_position(int& x, int& y, bool& push_in) override
+        //{
+        // DockMenu::on_item_menu_position(x, y, push_in);
+        //}
 
       private:
         Glib::RefPtr<DockItemProvider> m_provider;

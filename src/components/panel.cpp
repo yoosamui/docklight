@@ -357,7 +357,7 @@ namespace docklight
 
                 m_item_menu.show_all();
                 m_item_menu.popup_at_pointer(nullptr);
-                m_item_menu.popup(sigc::mem_fun(*this, &Panel::on_item_menu_position), NULL,
+                m_item_menu.popup(sigc::mem_fun(*this, &Panel::on_item_menu_position), 0,
                                   event->time);
             }
         }
