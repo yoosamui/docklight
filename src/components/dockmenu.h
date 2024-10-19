@@ -52,6 +52,7 @@ namespace docklight
         // Item menu
         Gtk::Menu m_item_menu;
         Gtk::Menu* m_item_menu_windowlist = nullptr;
+        Gtk::MenuItem* m_item_menu_childlist = nullptr;
 
         Gtk::MenuItem m_item_menu_new;
         Gtk::CheckMenuItem m_item_menu_attach;
@@ -76,6 +77,8 @@ namespace docklight
         void on_item_menu_close_group_event();
         void on_item_menu_minimize_all_event();
         void on_item_menu_unminimize_all_event();
+        // void on_menu_show_event();
+        // void on_menu_hide_event();
     };
 
 }  // namespace docklight

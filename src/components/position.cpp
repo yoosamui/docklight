@@ -105,6 +105,7 @@ namespace docklight
         if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
             int center = (area / 2) - (width / 2);
             x += (area * index) + center;
+
         } else {
             int center = (area / 2) - (height / 2);
             y += (area * index) + center;

@@ -18,7 +18,9 @@
 #include "components/dockrender.h"
 //#include "components/dockmenu.h"
 // clang-format on
-
+#include <gtkmm/image.h>
+#include <gtkmm/imagemenuitem.h>
+#include <gtkmm/menuitem.h>
 namespace docklight
 {
 
@@ -90,6 +92,8 @@ namespace docklight
         bool on_scroll_event(GdkEventScroll* e) override;
 
         // Menus
+        void on_item_menu_childlist_event(WnckWindow* window);
+
         void on_home_menu_quit_event() override;
         void on_home_menu_position(int& x, int& y, bool& push_in) override
         {

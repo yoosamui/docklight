@@ -51,6 +51,9 @@ namespace docklight
         m_item_menu.append(m_item_menu_attach);
         m_item_menu.append(m_separatorMenuItem0);
         m_item_menu.append(m_item_menu_new);
+
+        //   m_item_menu.append(m_item_menu_childlist);  // = nullptr;
+
         m_item_menu.show_all();
 
         // events
@@ -72,6 +75,14 @@ namespace docklight
 
         m_item_menu_unminimize_all.signal_activate().connect(
             sigc::mem_fun(*this, &DockMenu::on_item_menu_unminimize_all_event));
+
+        /*m_item_menu_childlist.signal_show().connect(
+            sigc::mem_fun(*this, &DockMenu::on_menu_show_event));
+
+        m_item_menu_childlist.signal_hide().connect(
+            sigc::mem_fun(*this, &DockMenu::on_menu_hide_event));*/
+
+        //        m_item_menu_childlist.show_all();
     }
 
     void DockMenu::on_item_menu_attach_event()
@@ -79,6 +90,18 @@ namespace docklight
         bool attached = m_item_menu_attach.get_active();
         Provider()->attach(m_dockitem_index, attached);
     }
+
+    // void DockMenu::on_menu_show_event()
+    //{
+    ////  exit(1);  //
+    // g_print("MENu SHOW\n");
+    //}
+
+    // void DockMenu::on_menu_hide_event()
+    //{
+    ////
+    // g_print("MENu hide\n");
+    //}
 
     void DockMenu::on_item_menu_minimize_all_event()
     {

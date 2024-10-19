@@ -257,14 +257,20 @@ namespace docklight
         return false;
     }
 
+    void Panel::on_item_menu_childlist_event(WnckWindow* window)
+    {
+        wnck::activate_window(window);
+    }
+
     bool Panel::on_button_press_event(GdkEventButton* event)
     {
+        // if (get_dockitem_index(event->x, event->y) < 1) return false;
         if ((event->type != GDK_BUTTON_PRESS)) return false;
 
         std::shared_ptr<DockItemIcon> dockitem;
         if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return false;
 
-        // TODO: test
+        /*// TODO: test
         g_print("ATTACHED %s\n", dockitem->to_string().c_str());
         for (auto& dockitem : m_provider->data()) {
             g_print("X %ld %s attach %d child %ld\n", dockitem->get_xid(),
@@ -279,7 +285,7 @@ namespace docklight
                         child->get_group_name().c_str(), 0, window);
                 break;
             }
-        }
+        }*/
 
         if (event->button == 1 && m_dockitem_index > 0) {
             auto size = dockitem->get_childmap().size();
@@ -310,13 +316,53 @@ namespace docklight
                                   event->time);
 
             } else if (m_dockitem_index > 0) {
+                // Items Menu
                 m_item_menu_attach.set_active(dockitem->get_attached());
 
-                m_item_menu.popup(sigc::mem_fun(*this, &Panel::on_item_menu_position), 1,
+                // populate childrens;
+                static Gtk::SeparatorMenuItem* separator = nullptr;
+                for (auto& itemMenu : m_item_menu.get_children()) {
+                    auto type = dynamic_cast<Gtk::ImageMenuItem*>(itemMenu);
+                    if (type) {
+                        m_item_menu.remove(*itemMenu);
+                    }
+                }
+
+                m_item_menu.show_all();
+                if (separator) m_item_menu.remove(*separator);
+
+                separator = Gtk::manage(new Gtk::SeparatorMenuItem());
+                m_item_menu.append(*separator);
+                // m_item_menu.insert(*separator, 0);
+
+                for (auto& item : dockitem->get_childmap()) {
+                    auto child = item.second;
+
+                    Gtk::ImageMenuItem* menu_item =
+                        Gtk::manage(new Gtk::ImageMenuItem(child->get_title()));
+
+                    const Glib::RefPtr<Gdk::Pixbuf> pixbuf = dockitem->get_icon(16);
+                    Gtk::Image* image = Gtk::manage(new Gtk::Image(pixbuf));
+
+                    menu_item->set_image(*image);
+                    menu_item->set_always_show_image(true);
+
+                    menu_item->signal_activate().connect(sigc::bind<WnckWindow*>(
+                        sigc::mem_fun(*this, &Panel::on_item_menu_childlist_event),
+                        child->get_wnckwindow()));
+
+                    m_item_menu.append(*menu_item);
+                    // m_item_menu.insert(*menu_item, 0);
+                }
+
+                m_item_menu.show_all();
+                m_item_menu.popup_at_pointer(nullptr);
+                m_item_menu.popup(sigc::mem_fun(*this, &Panel::on_item_menu_position), NULL,
                                   event->time);
             }
         }
 
+        // It has been handled.
         return true;
         ////////////////////
         ///
