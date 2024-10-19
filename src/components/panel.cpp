@@ -264,28 +264,10 @@ namespace docklight
 
     bool Panel::on_button_press_event(GdkEventButton* event)
     {
-        // if (get_dockitem_index(event->x, event->y) < 1) return false;
         if ((event->type != GDK_BUTTON_PRESS)) return false;
 
         std::shared_ptr<DockItemIcon> dockitem;
         if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return false;
-
-        /*// TODO: test
-        g_print("ATTACHED %s\n", dockitem->to_string().c_str());
-        for (auto& dockitem : m_provider->data()) {
-            g_print("X %ld %s attach %d child %ld\n", dockitem->get_xid(),
-                    dockitem->get_group_name().c_str(), (int)dockitem->get_attached(),
-                    dockitem->get_childmap().size());
-            for (auto& item : dockitem->get_childmap()) {
-                auto child = item.second;
-
-                WnckWindow* window = child->get_wnckwindow();
-
-                g_print("   -| %ld %s attach %d wnck %p\n", child->get_xid(),
-                        child->get_group_name().c_str(), 0, window);
-                break;
-            }
-        }*/
 
         if (event->button == 1 && m_dockitem_index > 0) {
             auto size = dockitem->get_childmap().size();
@@ -346,6 +328,7 @@ namespace docklight
 
                     menu_item->set_image(*image);
                     menu_item->set_always_show_image(true);
+                    menu_item->set_label(child->get_title());
 
                     menu_item->signal_activate().connect(sigc::bind<WnckWindow*>(
                         sigc::mem_fun(*this, &Panel::on_item_menu_childlist_event),
