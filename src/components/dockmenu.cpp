@@ -56,6 +56,83 @@ namespace docklight
         // events
         m_home_menu_quit_item.signal_activate().connect(
             sigc::mem_fun(*this, &DockMenu::on_home_menu_quit_event));
+
+        m_item_menu_attach.set_active(false);
+        m_item_menu_attach.signal_toggled().connect(
+            sigc::mem_fun(*this, &DockMenu::on_item_menu_attach_event));
+
+        m_item_menu_new.signal_activate().connect(
+            sigc::mem_fun(*this, &DockMenu::on_item_menu_new_event));
+
+        m_item_menu_close_all.signal_activate().connect(
+            sigc::mem_fun(*this, &DockMenu::on_item_menu_close_group_event));
+
+        m_item_menu_minimize_all.signal_activate().connect(
+            sigc::mem_fun(*this, &DockMenu::on_item_menu_minimize_all_event));
+
+        m_item_menu_unminimize_all.signal_activate().connect(
+            sigc::mem_fun(*this, &DockMenu::on_item_menu_unminimize_all_event));
+    }
+
+    void DockMenu::on_item_menu_attach_event()
+    {
+        bool attached = m_item_menu_attach.get_active();
+        Provider()->attach(m_dockitem_index, attached);
+    }
+
+    void DockMenu::on_item_menu_minimize_all_event()
+    {
+        if (m_dockitem_index < 1) return;
+
+        std::shared_ptr<DockItemIcon> dockitem;
+        if (!Provider()->get_dockitem_by_index(m_dockitem_index, dockitem)) return;
+
+        for (auto& item : dockitem->get_childmap()) {
+            auto window = item.second->get_wnckwindow();
+            if (!window) continue;
+
+            wnck::minimize(window);
+        }
+    }
+
+    void DockMenu::on_item_menu_unminimize_all_event()
+    {
+        if (m_dockitem_index < 1) return;
+
+        std::shared_ptr<DockItemIcon> dockitem;
+        if (!Provider()->get_dockitem_by_index(m_dockitem_index, dockitem)) return;
+
+        for (auto& item : dockitem->get_childmap()) {
+            auto window = item.second->get_wnckwindow();
+            if (!window) continue;
+
+            wnck::unminimize(window);
+        }
+    }
+
+    void DockMenu::on_item_menu_close_group_event()
+    {
+        if (m_dockitem_index < 1) return;
+
+        std::shared_ptr<DockItemIcon> dockitem;
+        if (!Provider()->get_dockitem_by_index(m_dockitem_index, dockitem)) return;
+
+        for (auto& item : dockitem->get_childmap()) {
+            auto window = item.second->get_wnckwindow();
+            if (!window) continue;
+
+            wnck::close_window(window);
+        }
+    }
+
+    void DockMenu::on_item_menu_new_event()
+    {
+        if (m_dockitem_index < 1) return;
+
+        std::shared_ptr<DockItemIcon> dockitem;
+        if (!Provider()->get_dockitem_by_index(m_dockitem_index, dockitem)) return;
+
+        dockitem->launch();
     }
 
     void DockMenu::on_home_menu_position(int& x, int& y, bool& push_in)

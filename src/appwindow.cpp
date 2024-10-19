@@ -114,8 +114,6 @@ namespace docklight
                 ctx.parse(argc, argv);
                 group.validate();
             } catch (const Glib::Error& ex) {
-                //                std::cout << "on_command_line:Exception: " << ex.what() <<
-                //                std::endl;
                 g_warning("on_command_line:Exception: %s", ex.what().c_str());
             }
 

@@ -21,6 +21,9 @@
 #include <glibmm/object.h>
 #include <gdkmm/pixbuf.h>
 
+#include <gdkmm/display.h>
+
+#include "gio/gdesktopappinfo.h"
 //#include <glibmm/timer.h>
 //#include <gtkmm/window.h>
 #include <libwnck/libwnck.h>
@@ -145,7 +148,7 @@ namespace docklight
         //       const Glib::RefPtr<Gdk::Pixbuf> get_icon(guint size);
         const guint get_width() const;
         const guint get_height() const;
-        //        const int remove_child(guint32 xid);
+        void launch();
         virtual const Glib::ustring to_string();
     };
 

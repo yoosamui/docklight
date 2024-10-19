@@ -30,8 +30,7 @@ namespace docklight
     {
       public:
         DockItemIcon(gulong xid, WnckWindow* window, const Glib::ustring& instance_name,
-                     const Glib::ustring& group_name, guint wintype
-                     /* Glib::RefPtr<Gdk::Pixbuf> icon*/);
+                     const Glib::ustring& group_name, guint wintype);
 
         void set_icon(Glib::RefPtr<Gdk::Pixbuf> icon);
         const Glib::RefPtr<Gdk::Pixbuf>& get_icon() const;
@@ -42,14 +41,9 @@ namespace docklight
         int remove_child(gulong xid);
 
         void remove_all() { return m_map.clear(); }
-        //    const std::shared_ptr<DockItemIcon> clone();
         std::shared_ptr<DockItemIcon> clone();
 
-        guint get_container_size() override
-        {
-            //
-            return m_map.size();
-        };
+        guint get_container_size() override;
 
       private:
         Glib::RefPtr<Gdk::Pixbuf> m_icon;

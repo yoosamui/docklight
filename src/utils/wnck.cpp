@@ -34,15 +34,6 @@ namespace docklight
             wnck_window_activate(window, ct);
         }
 
-        void close_group_windows(int index)
-        {
-            // auto const item = AppUpdater::m_dockitems[index];
-
-            // for (auto const citem : item->m_items) {
-            // close_window(citem->get_wnckwindow());
-            //}
-        }
-
         void close_window(WnckWindow* window)
         {
             if (!WNCK_IS_WINDOW(window)) {
@@ -210,29 +201,23 @@ namespace docklight
             return true;
         }
 
-        void minimize_group(int index)
+        void minimize(WnckWindow* window)
         {
-            // if (index == -1) return;
+            if (!WNCK_IS_WINDOW(window)) {
+                return;
+            }
 
-            // auto const item = AppUpdater::m_dockitems[index];
-
-            // for (auto const citem : item->m_items) {
-            // WnckWindow* window = citem->get_wnckwindow();
-            // wnck_window_minimize(window);
-            //}
+            wnck_window_minimize(window);
         }
 
-        void unminimize_group(int index)
+        void unminimize(WnckWindow* window)
         {
-            // if (index == -1) return;
+            if (!WNCK_IS_WINDOW(window)) {
+                return;
+            }
 
-            // auto const item = AppUpdater::m_dockitems[index];
-
-            // for (auto const citem : item->m_items) {
-            // WnckWindow* window = citem->get_wnckwindow();
-            // int ct = gtk_get_current_event_time();
-            // wnck_window_unminimize(window, ct);
-            //}
+            int ct = gtk_get_current_event_time();
+            wnck_window_unminimize(window, ct);
         }
     }  // namespace wnck
 }  // namespace docklight

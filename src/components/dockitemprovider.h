@@ -67,6 +67,7 @@ namespace docklight
         bool exist(gulong xid);
         bool insert(WnckWindow* window);
         bool get_dockitem_by_index(guint index, std::shared_ptr<DockItemIcon>& dockitem);
+        bool attach(guint index, bool attach);
 
         std::vector<std::shared_ptr<DockItemIcon>>& data();
 

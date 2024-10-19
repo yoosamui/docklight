@@ -259,38 +259,45 @@ namespace docklight
 
     bool Panel::on_button_press_event(GdkEventButton* event)
     {
-        if ((event->type != GDK_BUTTON_PRESS)) return true;
+        if ((event->type != GDK_BUTTON_PRESS)) return false;
 
         std::shared_ptr<DockItemIcon> dockitem;
-        if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return true;
-        g_print("PRESS: %d\n", m_dockitem_index);
+        if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return false;
 
-        auto size = dockitem->get_childmap().size();
+        // TODO: test
+        g_print("ATTACHED %s\n", dockitem->to_string().c_str());
+        for (auto& dockitem : m_provider->data()) {
+            g_print("X %ld %s attach %d child %ld\n", dockitem->get_xid(),
+                    dockitem->get_group_name().c_str(), (int)dockitem->get_attached(),
+                    dockitem->get_childmap().size());
+            for (auto& item : dockitem->get_childmap()) {
+                auto child = item.second;
+
+                WnckWindow* window = child->get_wnckwindow();
+
+                g_print("   -| %ld %s attach %d wnck %p\n", child->get_xid(),
+                        child->get_group_name().c_str(), 0, window);
+                break;
+            }
+        }
 
         if (event->button == 1 && m_dockitem_index > 0) {
+            auto size = dockitem->get_childmap().size();
             if (!size) {
-                launcher2(dockitem->get_desktop_file(), dockitem->get_instance_name(),
-                          dockitem->get_group_name(), dockitem->get_icon_name());
-                return true;
+                dockitem->launch();
+                return false;
             }
 
-            g_print("PRESS IN: %d\n", m_dockitem_index);
             auto it = dockitem->get_childmap().begin();
             std::advance(it, 0);
             auto child = it->second;
 
             WnckWindow* window = child->get_wnckwindow();
             if (!window) {
-                g_print("BUM %d\n", m_dockitem_index);
-
-                return true;
+                return false;
             }
 
             wnck::activate_window(window);
-
-            g_print("PRESS AFTER: %d\n", m_dockitem_index);
-            //..  return true;
-
             // show group
         } else if (event->button == 3) {
             if (m_dockitem_index == 0) {
@@ -303,6 +310,8 @@ namespace docklight
                                   event->time);
 
             } else if (m_dockitem_index > 0) {
+                m_item_menu_attach.set_active(dockitem->get_attached());
+
                 m_item_menu.popup(sigc::mem_fun(*this, &Panel::on_item_menu_position), 1,
                                   event->time);
             }
@@ -334,7 +343,6 @@ namespace docklight
         // ..    container_updated();
         //     m_provider->remove(0);
         g_print("ATTACHED %s\n", dockitem->to_string().c_str());
-
         //   m_provider->load();
         for (auto& dockitem : m_provider->data()) {
             g_print("X %ld %s attach %d child %ld\n", dockitem->get_xid(),
@@ -347,12 +355,6 @@ namespace docklight
 
                 g_print("   -| %ld %s attach %d wnck %p\n", child->get_xid(),
                         child->get_group_name().c_str(), 0, &window);
-                // try {
-                // wnck::activate_window(window);
-                //} catch (...) {
-                ////
-                //}
-
                 break;
             }
         }

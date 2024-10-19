@@ -44,14 +44,13 @@ namespace docklight
         m_matcher = bamf_matcher_get_default();
         g_assert(BAMF_IS_MATCHER(m_matcher));
 
-        auto const icon_theme = Gtk::IconTheme::get_default();
-
         std::shared_ptr<DockItemIcon> dockitem = std::shared_ptr<DockItemIcon>(
             new DockItemIcon(1, nullptr, "docklight", "docklight", 0));
 
         std::string filename = "data/images/docklight.home.ico";
         try {
-            auto pixbuf = Gdk::Pixbuf::create_from_file(filename, 128, 128, true);
+            auto size = Config()->get_icon_max_size();
+            auto pixbuf = Gdk::Pixbuf::create_from_file(filename, size, size, true);
             dockitem->set_icon(pixbuf);
 
         } catch (const Glib::FileError& ex) {
@@ -63,16 +62,34 @@ namespace docklight
         dockitem->set_attached();
         m_container.add(0, dockitem);
 
+        auto const icon_theme = Gtk::IconTheme::get_default();
         icon_theme->signal_changed().connect(
             sigc::mem_fun(*this, &DockItemProvider::on_theme_changed));
-
-        load();
-        g_message("Attachments loaded.");
 
         m_sigc_timer =
             Glib::signal_timeout().connect(sigc::mem_fun(this, &DockItemProvider::on_timeout), 10);
 
+        load();
+        g_message("Attachments loaded.");
+
         g_message("Create DockItemProvider.");
+    }
+
+    bool DockItemProvider::attach(guint index, bool attach)
+    {
+        if (index < 1 || index > data().size()) return false;
+
+        std::shared_ptr<DockItemIcon> dockitem;
+        if (!get_dockitem_by_index(index, dockitem)) return false;
+
+        dockitem->set_attached(attach);
+        save();
+
+        if (!attach && dockitem->get_childmap().size() == 0) {
+            remove(0);
+        }
+
+        return true;
     }
 
     bool DockItemProvider::on_timeout()

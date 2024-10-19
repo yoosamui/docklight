@@ -24,6 +24,7 @@
 #include <gtkmm/menu.h>
 #include <gtkmm/separatormenuitem.h>
 
+#include "utils/wnck.h"
 #include "components/position.h"
 // clang-format on
 
@@ -64,16 +65,17 @@ namespace docklight
         Gtk::SeparatorMenuItem m_separatorMenuItem0;
         Gtk::SeparatorMenuItem m_separatorMenuItem1;
 
-        //       Gtk::SeparatorMenuItem m_separatorMenuItem1;
         // events
-        //        virtual void on_menu_hide_event() {}
-        //        virtual void on_menu_show_event() {}
         virtual void on_home_menu_quit_event() {}
-        //       virtual void on_item_menu_new_event() {}
-        //       on_home_menu_position
-        //
+        virtual void on_item_menu_new_event();
+
         virtual void on_home_menu_position(int& x, int& y, bool& push_in);
         virtual void on_item_menu_position(int& x, int& y, bool& push_in);
+
+        void on_item_menu_attach_event();
+        void on_item_menu_close_group_event();
+        void on_item_menu_minimize_all_event();
+        void on_item_menu_unminimize_all_event();
     };
 
 }  // namespace docklight

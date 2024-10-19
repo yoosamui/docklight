@@ -22,22 +22,13 @@
 namespace docklight
 {
     DockItemIcon::DockItemIcon(gulong xid, WnckWindow* window, const Glib::ustring& instance_name,
-                               const Glib::ustring& group_name, guint wintype
-                               /*  Glib::RefPtr<Gdk::Pixbuf> icon*/)
+                               const Glib::ustring& group_name, guint wintype)
         : DockItem(xid, window, instance_name, group_name, wintype)
     {
-        //  m_icon = icon;
-        // g_assert(m_icon);
-
-        // m_width = icon->get_width();
-        // m_height = icon->get_height();
     }
 
     std::shared_ptr<DockItemIcon> DockItemIcon::clone()
     {
-        // auto clone = std::shared_ptr<DockItemIcon>(
-        // new DockItemIcon(m_xid, m_instance_name, m_group_name, m_wintype));
-
         auto clone = std::shared_ptr<DockItemIcon>(
             new DockItemIcon(m_xid, nullptr, m_instance_name, m_group_name, m_wintype));
 
@@ -54,9 +45,16 @@ namespace docklight
         clone->m_width = m_width;
         clone->m_height = m_height;
         clone->m_attached = m_attached;
+        clone->m_wnckwindow = m_wnckwindow;
 
         // covariant return type.
         return clone;
+    }
+
+    guint DockItemIcon::get_container_size()
+    {
+        //
+        return m_map.size();
     }
 
     void DockItemIcon::set_icon(Glib::RefPtr<Gdk::Pixbuf> icon)

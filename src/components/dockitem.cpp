@@ -27,6 +27,7 @@ namespace docklight
         m_wintype = wintype;
         m_instance_name = instance_name;
         m_group_name = group_name;
+
         m_wnckwindow = window;
     }
 
@@ -69,19 +70,6 @@ namespace docklight
     {
         m_has_desktop_file = has;
     }
-
-    // inline void DockItem::set_icon(Glib::RefPtr<Gdk::Pixbuf> icon)
-    //{
-    // g_assert(icon);
-    // m_width = icon->get_width();
-    // m_height = icon->get_height();
-    // m_icon = icon;
-    //}
-
-    // inline const std::map<guint32, Glib::RefPtr<DockItem>>& DockItem::get_childmap() const
-    //{
-    // return m_childmap;
-    //}
 
     inline void DockItem::set_icon_name(Glib::ustring icon_name)
     {
@@ -182,6 +170,70 @@ namespace docklight
     inline const Glib::ustring& DockItem::get_icon_name() const
     {
         return m_icon_name;
+    }
+
+    void DockItem::launch()
+    {
+        GAppLaunchContext* context = nullptr;
+        GAppInfo* app_info = nullptr;
+        GKeyFile* key_file = g_key_file_new();
+        GError* error = nullptr;
+
+        if (!m_desktop_file.empty()) {
+            gboolean found = g_key_file_load_from_file(key_file, m_desktop_file.c_str(),
+                                                       GKeyFileFlags::G_KEY_FILE_NONE, nullptr);
+
+            if (found) {
+                app_info = (GAppInfo*)g_desktop_app_info_new_from_keyfile(key_file);
+                if (app_info) {
+                    char* uri = nullptr;
+                    GFile* file = nullptr;
+                    GList* glist_parameters = nullptr;
+
+                    GdkDisplay* display = gdk_display_get_default();
+                    context = (GAppLaunchContext*)gdk_display_get_app_launch_context(display);
+
+                    gboolean launched =
+                        g_app_info_launch_uris(app_info, glist_parameters, context, &error);
+
+                    if (error) {
+                        g_warning("Launcher: Error %s %s \n", m_instance_name.c_str(),
+                                  error->message);
+
+                        g_error_free(error);
+                        error = nullptr;
+                    }
+
+                    g_object_unref(app_info);
+                    g_object_unref(context);
+
+                    if (uri) g_free(uri);
+
+                    if (file) g_object_unref(file);
+
+                    if (launched) {
+                        g_key_file_free(key_file);
+                        g_print("Launch via Desktop file %s\n", m_instance_name.c_str());
+                        return;
+                    }
+                }
+            }
+        }
+
+        // desktop file could not be found
+        // launch via command line
+        g_spawn_command_line_async(m_instance_name.c_str(), &error);
+
+        if (error) {
+            g_warning("Lauch via command line: Error (%s) %s \n", m_instance_name.c_str(),
+                      error->message);
+            g_error_free(error);
+            error = nullptr;
+            g_key_file_free(key_file);
+        }
+
+        g_print("Launched via command line: %s\n", m_instance_name.c_str());
+        g_key_file_free(key_file);
     }
 
     const Glib::ustring DockItem::to_string()
