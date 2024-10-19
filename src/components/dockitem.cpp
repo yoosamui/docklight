@@ -213,7 +213,6 @@ namespace docklight
 
                     if (launched) {
                         g_key_file_free(key_file);
-                        g_print("Launch via Desktop file %s\n", m_instance_name.c_str());
                         return;
                     }
                 }
@@ -232,7 +231,6 @@ namespace docklight
             g_key_file_free(key_file);
         }
 
-        g_print("Launched via command line: %s\n", m_instance_name.c_str());
         g_key_file_free(key_file);
     }
 
