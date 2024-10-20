@@ -49,18 +49,13 @@ namespace docklight
 
     AppWindow::~AppWindow()
     {
-        // release the current stryt if any
-        // delete m_panel;
-        //  TODO:
-        //   position::struts::set_strut(true);
-
-        g_print(MSG_FREE_OBJECT, "AppWindow");
-        g_print("\n");
+        g_message(MSG_FREE_OBJECT, "AppWindow");
     }
 
     int AppWindow::init(Glib::RefPtr<Gtk::Application>& app)
     {
         app->signal_activate().connect(sigc::ptr_fun(&AppWindow::on_app_activated));
+
         app->signal_command_line().connect(
             sigc::bind(sigc::ptr_fun(&AppWindow::on_command_line), app), false);
 
@@ -79,18 +74,15 @@ namespace docklight
     void AppWindow::send_notification(const Glib::ustring& title, const Glib::ustring& text,
                                       const Glib::ustring& icon_name)
     {
-        /*auto Notification = Gio::Notification::create(title);
+        auto Notification = Gio::Notification::create(title);
         Notification->set_body(text);
         auto Icon = Gio::ThemedIcon::create(icon_name);
         Notification->set_icon(Icon);
 
-        m_application->send_notification(Notification);*/
+        // TODO: just for testing
+        m_application->send_notification(Notification);
     }
-    // TODO dont work when already used from a client
-    // void AppWindow::on_container_updated(window_action_t action, gint index)
-    //{
-    // g_print("AppWindow container updated");
-    //}
+
     void AppWindow::on_app_activated()
     {
         g_message(MSG_APPLICATION_ACTIVATED);
@@ -258,7 +250,7 @@ namespace docklight
 
     void AppWindow::on_monitor_changed()
     {
-        g_message("on_monitor_change.");
+        g_message("on_monitor_changed.");
         m_position->on_monitor_changed();
     }
 
