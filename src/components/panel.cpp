@@ -328,7 +328,7 @@ namespace docklight
 
                     menu_item->set_image(*image);
                     menu_item->set_always_show_image(true);
-                    menu_item->set_label(child->get_title());
+                    menu_item->set_label(child->get_window_name());
 
                     menu_item->signal_activate().connect(sigc::bind<WnckWindow*>(
                         sigc::mem_fun(*this, &Panel::on_item_menu_childlist_event),

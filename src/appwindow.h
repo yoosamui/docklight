@@ -9,14 +9,10 @@
 #include "components/panel.h"
 #include "components/device.h"
 #include "components/config.h"
-
-
-#include "components/appobserver.h" //AppProvider
-
+#include "components/appobserver.h"
 #include "components/dockitemprovider.h"
 #include "components/TransparentWindow.h"
 #include "components/ExplodesWindow.h"
-//#include "components/position.h"
 // clang-format on
 
 //#include <gtkmm.h>
@@ -62,7 +58,6 @@ namespace docklight
 
         //  void createWindow();
         void on_monitor_changed();
-        static void update_position();
 
         static void send_Notify(const Glib::ustring& title, const Glib::ustring& text,
                                 const Glib::ustring& icon_name);

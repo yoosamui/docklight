@@ -45,7 +45,7 @@ namespace docklight
         g_assert(BAMF_IS_MATCHER(m_matcher));
 
         std::shared_ptr<DockItemIcon> dockitem = std::shared_ptr<DockItemIcon>(
-            new DockItemIcon(1, nullptr, "docklight", "docklight", 0));
+            new DockItemIcon(0, nullptr, DOCKLIGHT_INSTANCENAME, DOCKLIGHT_INSTANCENAME, 0));
 
         std::string filename = "data/images/docklight.home.ico";
         try {
@@ -70,7 +70,6 @@ namespace docklight
             Glib::signal_timeout().connect(sigc::mem_fun(this, &DockItemProvider::on_timeout), 10);
 
         load();
-        g_message("Attachments loaded.");
 
         g_message("Create DockItemProvider.");
     }
@@ -555,7 +554,8 @@ namespace docklight
         }
 
         for (auto& dockitem : data()) {
-            if (!dockitem->get_attached()) {
+            if (!dockitem->get_attached() ||
+                dockitem->get_instance_name() == DOCKLIGHT_INSTANCENAME) {
                 continue;
             }
 

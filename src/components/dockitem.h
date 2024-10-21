@@ -86,7 +86,7 @@ namespace docklight
         virtual const guint get_width() const = 0;
         virtual const guint get_height() const = 0;
         virtual const guint get_wintype() const = 0;
-        virtual const Glib::ustring& get_window_name() const = 0;
+        virtual const Glib::ustring& get_window_name() = 0;
         virtual const Glib::ustring& get_title() const = 0;
         virtual const Glib::ustring& get_instance_name() const = 0;
         virtual const Glib::ustring& get_group_name() const = 0;
@@ -137,7 +137,7 @@ namespace docklight
         const bool get_attached() const;
         const gulong get_xid() const;
         const guint get_wintype() const;
-        const Glib::ustring& get_window_name() const;
+        const Glib::ustring& get_window_name();
         const Glib::ustring& get_title() const;
         const Glib::ustring& get_group_name() const;
         const Glib::ustring& get_description() const;

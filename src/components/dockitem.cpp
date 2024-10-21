@@ -127,8 +127,10 @@ namespace docklight
         return m_attached;
     }
 
-    inline const Glib::ustring& DockItem::get_window_name() const
+    const Glib::ustring& DockItem::get_window_name()
     {
+        if (m_wnckwindow) m_window_name = wnck_window_get_name(m_wnckwindow);
+
         return m_window_name;
     }
 
@@ -256,3 +258,4 @@ namespace docklight
         return ss.str();
     }
 }  // namespace docklight
+   // namespace docklight

@@ -254,39 +254,4 @@ namespace docklight
         m_position->on_monitor_changed();
     }
 
-    // bool AppWindow::on_enter_notify_event(GdkEventCrossing* crossing_event)
-    //{
-    //// m_mouse_in = true;
-    // return true;
-    //}
-
-    // bool AppWindow::on_leave_notify_event(GdkEventCrossing* crossing_event)
-    //{
-    ////   m_mouse_in = false;
-    // return true;
-    //}
-    void AppWindow::update_position()
-    {
-        // m_panel->container_updated();
-
-        // position_util::set_window_position();
-        // g_print("AppWindow updated.\n");
-
-        /*// int area = 64 + 20;  // config::get_dock_area();
-        int area = config::get_dock_area();
-        auto const workarea = get_workarea();
-        //  auto const alignment = config::get_dock_alignment();
-        // auto const panel = m_window->get_panel();
-        int xpos = 0, ypos = 0, center = 0;
-
-        int width = m_panel.get_required_size();
-        center = workarea.get_width() / 2 - width / 2;
-        xpos = workarea.get_x() + center;
-
-        ypos = workarea.get_y() + workarea.get_height() - area;
-
-        this->resize(width, area);
-        this->move(xpos, ypos);*/
-    }
-
 }  // namespace docklight
