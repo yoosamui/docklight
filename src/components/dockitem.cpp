@@ -186,7 +186,13 @@ namespace docklight
                                                        GKeyFileFlags::G_KEY_FILE_NONE, nullptr);
 
             if (found) {
-                app_info = (GAppInfo*)g_desktop_app_info_new_from_keyfile(key_file);
+                try {
+                    app_info = (GAppInfo*)g_desktop_app_info_new_from_keyfile(key_file);
+                } catch (...) {
+                    g_key_file_free(key_file);
+                    return;
+                }
+
                 if (app_info) {
                     char* uri = nullptr;
                     GFile* file = nullptr;
@@ -223,14 +229,18 @@ namespace docklight
 
         // desktop file could not be found
         // launch via command line
-        g_spawn_command_line_async(m_instance_name.c_str(), &error);
+        try {
+            g_spawn_command_line_async(m_instance_name.c_str(), &error);
+        } catch (...) {
+            g_key_file_free(key_file);
+            return;
+        }
 
         if (error) {
             g_warning("Lauch via command line: Error (%s) %s \n", m_instance_name.c_str(),
                       error->message);
             g_error_free(error);
             error = nullptr;
-            g_key_file_free(key_file);
         }
 
         g_key_file_free(key_file);

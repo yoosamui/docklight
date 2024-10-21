@@ -266,6 +266,8 @@ namespace docklight
     {
         if ((event->type != GDK_BUTTON_PRESS)) return false;
 
+        get_dockitem_index(event->x, event->y);
+
         std::shared_ptr<DockItemIcon> dockitem;
         if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return false;
 
