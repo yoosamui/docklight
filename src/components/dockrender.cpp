@@ -49,13 +49,21 @@ namespace docklight
         create_surface_background();
 
         Cairo::RefPtr<Cairo::Context> ctx = Cairo::Context::create(m_background);
-        ctx->set_source_rgba(0.266, 0.309, 0.361, 1.0);
-        ctx->paint();
+        // ctx->set_source_rgba(0.266, 0.309, 0.361, 1.0);
+        // ctx->paint();
 
+//#define STROKE_BCK_RECT 1
+#ifdef STROKE_BCK_RECT
         ctx->set_line_width(1.0);
         ctx->set_source_rgba(1.0, 1.0, 1.0, 1.0);
         ctx->rectangle(0, 0, m_background->get_width(), m_background->get_height());
         ctx->stroke();
+#endif
+
+        ctx->set_source_rgba(0.266, 0.309, 0.361, 1.0);
+        cairo::rounded_rectangle(ctx, 0, 0, m_background->get_width(), m_background->get_height(),
+                                 4.0);
+        ctx->fill();
     }
 
     void DockRender::create_surface_cell()

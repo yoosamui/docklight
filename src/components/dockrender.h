@@ -21,6 +21,7 @@
 #include <gdkmm/general.h>
 //#include <gtkmm/drawingarea.h>
 
+#include "utils/cairo.h"
 #include "components/dockmenu.h"
 #include "components/config.h"
 #include "components/dockitemprovider.h"
