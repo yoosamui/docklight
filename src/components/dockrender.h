@@ -19,7 +19,6 @@
 
 // clang-format off
 #include <gdkmm/general.h>
-//#include <gtkmm/drawingarea.h>
 
 #include "utils/cairo.h"
 #include "components/dockmenu.h"
@@ -42,7 +41,7 @@ namespace docklight
         void draw_surface_background();
 
         void create_surface_cell();
-        void draw_surface_cell();
+        void draw_surface_cell(std::shared_ptr<DockItemIcon>& item);
 
         void create_surface_icon();
         void draw_surface_icon(std::shared_ptr<DockItemIcon>& item);

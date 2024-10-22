@@ -73,7 +73,7 @@ namespace docklight
         m_cell_ctx = Cairo::Context::create(m_cell);
     }
 
-    void DockRender::draw_surface_cell()
+    void DockRender::draw_surface_cell(std::shared_ptr<DockItemIcon>& item)
     {
         // if (!m_cell) {
         create_surface_cell();
@@ -89,7 +89,7 @@ namespace docklight
 //#define STROKE_SURFACE_RECT 1
 #ifdef STROKE_SURFACE_RECT
         // Surface rect TEST
-        m_cell_ctx->set_line_width(2.0);
+        m_cell_ctx->set_line_width(1.0);
         m_cell_ctx->set_source_rgba(1.0, 1.0, 1.0, 1.0);
         m_cell_ctx->rectangle(0, 0, m_cell->get_width(), m_cell->get_height());
         m_cell_ctx->stroke();
@@ -261,7 +261,7 @@ namespace docklight
         for (auto& dockitem : data) {
             dockitem->set_tag(tag++);
 
-            draw_surface_cell();
+            draw_surface_cell(dockitem);
             draw_surface_icon(dockitem);
             draw_surface_indicator(dockitem);
 

@@ -51,7 +51,6 @@ namespace docklight
         std::string m_exepath;
         position::Struts m_struts;
         Gtk::Window* m_window;
-        //        guint m_last_required_size = 0;
 
         guint m_width = 1;
         guint m_height = 1;

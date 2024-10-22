@@ -67,7 +67,7 @@ namespace docklight
     bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
     {
         // m_sigc_draw =
-        // Glib::signal_timeout().connect(sigc::mem_fun(this, &Panel::on_timeout_draw), 1000 / 30);
+        // Glib::signal_timeout().connect(sigc::mem_fun(this, &Panel::on_timeout_draw), 1000 / 9);
 
         m_mouse_enter = true;
         return false;
@@ -195,6 +195,11 @@ namespace docklight
     bool Panel::on_motion_notify_event(GdkEventMotion* event)
     {
         get_dockitem_index(event->x, event->y);
+
+        if (m_mouse_enter) {
+            //      Gtk::Widget::queue_draw();
+        }
+
         return false;
     }
 

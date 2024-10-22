@@ -219,5 +219,50 @@ namespace docklight
             int ct = gtk_get_current_event_time();
             wnck_window_unminimize(window, ct);
         }
+
+        void HomeMinimizeAll()
+        {
+            WnckScreen* screen;
+            GList* window_l;
+
+            WnckHandle* handle = wnck_handle_new(WnckClientType::WNCK_CLIENT_TYPE_APPLICATION);
+            screen = wnck_handle_get_default_screen(handle);
+
+            wnck_screen_force_update(screen);
+
+            for (window_l = wnck_screen_get_windows(screen); window_l != nullptr;
+                 window_l = window_l->next) {
+                WnckWindow* window = WNCK_WINDOW(window_l->data);
+                if (!window) continue;
+
+                if (!is_valid_window_type(window)) continue;
+
+                wnck_window_minimize(window);
+            }
+        }
+
+        void HomeUnMinimizeAll()
+        {
+            WnckScreen* screen;
+            GList* window_l;
+
+            WnckHandle* handle = wnck_handle_new(WnckClientType::WNCK_CLIENT_TYPE_APPLICATION);
+            screen = wnck_handle_get_default_screen(handle);
+
+            wnck_screen_force_update(screen);
+
+            for (window_l = wnck_screen_get_windows(screen); window_l != nullptr;
+                 window_l = window_l->next) {
+                WnckWindow* window = WNCK_WINDOW(window_l->data);
+                if (!window) continue;
+
+                if (!is_valid_window_type(window)) continue;
+
+                auto ct = gtk_get_current_event_time();
+                if (wnck_window_is_minimized(window)) wnck_window_unminimize(window, ct);
+
+                wnck_window_activate(window, ct);
+            }
+        }
     }  // namespace wnck
 }  // namespace docklight

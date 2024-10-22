@@ -29,8 +29,13 @@ namespace docklight
         // Home menu
         m_home_menu.set_halign(Gtk::Align::ALIGN_CENTER);
         m_home_menu_quit_item.set_label(MSG_QUIT);
-        m_home_menu_close_all_item.set_label(MSG_CLOSE_ALL);
+        m_home_menu_close_all_item.set_label(MSG_CLOSE_ALL_WINDOWS);
+        m_HomeMinimizeAllWindowsMenuItem.set_label(MSG_MINIMIZE_ALL_WINDOWS);
+        m_HomeUnMinimizeAllWindowsMenuItem.set_label(MSG_MAXIMIZE_ALL_WINDOWS);
 
+        m_home_menu.append(m_HomeMinimizeAllWindowsMenuItem);
+        m_home_menu.append(m_HomeUnMinimizeAllWindowsMenuItem);
+        m_home_menu.append(m_separatorMenuHome1);
         m_home_menu.append(m_home_menu_close_all_item);
         m_home_menu.append(m_separatorMenuHome1);
         m_home_menu.append(m_home_menu_quit_item);
@@ -44,21 +49,25 @@ namespace docklight
         m_item_menu_new.set_label(MSG_OPEN_NEW);
         m_item_menu_attach.set_label(MSG_ATTACH);
 
+        m_item_menu.append(m_item_menu_attach);
+        m_item_menu.append(m_separatorMenuItem1);
         m_item_menu.append(m_item_menu_unminimize_all);
         m_item_menu.append(m_item_menu_minimize_all);
         m_item_menu.append(m_item_menu_close_all);
-        m_item_menu.append(m_separatorMenuItem1);
-        m_item_menu.append(m_item_menu_attach);
         m_item_menu.append(m_separatorMenuItem0);
         m_item_menu.append(m_item_menu_new);
-
-        //   m_item_menu.append(m_item_menu_childlist);  // = nullptr;
 
         m_item_menu.show_all();
 
         // events
         m_home_menu_quit_item.signal_activate().connect(
             sigc::mem_fun(*this, &DockMenu::on_home_menu_quit_event));
+
+        m_HomeMinimizeAllWindowsMenuItem.signal_activate().connect(
+            sigc::mem_fun(*this, &DockMenu::on_HomeMinimizeAllWindows_event));
+
+        m_HomeUnMinimizeAllWindowsMenuItem.signal_activate().connect(
+            sigc::mem_fun(*this, &DockMenu::on_HomeUnMinimizeAllWindows_event));
 
         m_item_menu_attach.set_active(false);
         m_item_menu_attach.signal_toggled().connect(
@@ -94,6 +103,16 @@ namespace docklight
     void DockMenu::on_menu_hide_event()
     {
         m_context_menu_active = false;
+    }
+
+    void DockMenu::on_HomeMinimizeAllWindows_event()
+    {
+        wnck::HomeMinimizeAll();
+    }
+
+    void DockMenu::on_HomeUnMinimizeAllWindows_event()
+    {
+        wnck::HomeUnMinimizeAll();
     }
 
     void DockMenu::on_item_menu_minimize_all_event()

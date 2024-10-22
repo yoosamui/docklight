@@ -35,7 +35,7 @@ namespace docklight
     {
       public:
       protected:
-        gint m_dockitem_index = -1;
+        guint m_dockitem_index = 0;
         bool m_context_menu_active = false;
     };
 
@@ -49,11 +49,12 @@ namespace docklight
         Gtk::Menu m_home_menu;
         Gtk::MenuItem m_home_menu_quit_item;
         Gtk::MenuItem m_home_menu_close_all_item;
+        Gtk::MenuItem m_HomeMinimizeAllWindowsMenuItem;
+        Gtk::MenuItem m_HomeUnMinimizeAllWindowsMenuItem;
 
         // Item menu
         Gtk::Menu m_item_menu;
         Gtk::Menu* m_item_menu_windowlist = nullptr;
-        Gtk::MenuItem* m_item_menu_childlist = nullptr;
 
         Gtk::MenuItem m_item_menu_new;
         Gtk::CheckMenuItem m_item_menu_attach;
@@ -73,6 +74,9 @@ namespace docklight
 
         virtual void on_home_menu_position(int& x, int& y, bool& push_in);
         virtual void on_item_menu_position(int& x, int& y, bool& push_in);
+
+        void on_HomeMinimizeAllWindows_event();
+        void on_HomeUnMinimizeAllWindows_event();
 
         void on_item_menu_attach_event();
         void on_item_menu_close_group_event();

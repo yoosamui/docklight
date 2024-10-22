@@ -90,7 +90,7 @@ namespace docklight
             exec_file = "src/docklight";
         }
 
-        usleep(10 * microsecond);  // sleeps for 1 second
+        usleep(8 * microsecond);  // sleeps for 3 seconds
         execl(exec_file, "docklight", "-l", location_name, "-m", monitor_name, nullptr);
         g_warning("Restart failed!\n");
     }
@@ -248,7 +248,6 @@ namespace docklight
             m_height = height;
         }
     }
-    //}  // namespace position
 
 }  // namespace docklight
 

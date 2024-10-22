@@ -74,10 +74,14 @@
     _("Show all")
 #define MSG_MINIMIZE_ALL \
     _("Minimize all")
-#define MSG_CLOSE_ALL \
-    _("Close all")
+#define MSG_CLOSE_ALL_WINDOWS \
+    _("Close all windows")
 #define MSG_OPEN_NEW \
     _("Open new")
 #define MSG_ATTACH \
     _("Attach")
+#define MSG_MINIMIZE_ALL_WINDOWS \
+    _("Minimize all windows")
+#define MSG_MAXIMIZE_ALL_WINDOWS \
+    _("Maximinize all windows")
 // clang-format on

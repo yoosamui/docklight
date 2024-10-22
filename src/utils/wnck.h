@@ -27,37 +27,8 @@ namespace docklight
         void unminimize(WnckWindow* window);
         bool is_valid_window_type(WnckWindow* window);
         int get_workspace_number(WnckWindow* window);
-
-        //
-        // bool is_windowOnCurrentDesktop(WnckWindow* window);
-        // voVid ActivateWindow(WnckWindow* window);
-        // WnckWindow* get_ActiveWindowIfAny(DockItem* item);
-        ////void SelectWindow(WnckWindow* window);
-        // void HomeCloseAllWindows();
-        // void HomeCloseAllExceptActive();
-        // void HomeMinimizeAllExceptActive();
-        // void HomeMinimizeAll();
-        // void HomeUnMinimizeAll();
-        // bool isExistsUnMaximizedWindowsByDockItem(DockItem* dockitem);
-        // bool isExistsMinimizedWindowsByDockItem(DockItem* dockitem);
-        // void closeAllExceptActiveByDockItem(DockItem* dockitem);
-        // void closeAllByDockItem(DockItem* dockitem);
-        // void closeByWindow(WnckWindow *window);
-        // void minimizeAllExceptActiveByDockItem(DockItem* dockitem);
-        // void minimizeAllByDockItem(DockItem* dockitem);
-        // void unMinimizeAllByDockItem(DockItem* dockitem);
-        // bool isExitsActivetWindowByDockItem(DockItem* dockitem);
-        // int isExitstWindowsByDockItem(DockItem* dockitem);
-        // int windowscount();
-        // WnckWindow* get_Active();
-        // bool isWindowExists(XID xid);
-        // bool isExistsMinimizedWindows();
-        // void hideWindow(Gtk::Window* instance);
-        // int minimizedWindowscount();
-        // int unMinimizedWindowsCount();
-        // bool FullscreenActive();
-        // WnckWindow* get_ExistingWindowDock();
-        // std::std::string get_windowName(WnckWindow* window);
+        void HomeMinimizeAll();
+        void HomeUnMinimizeAll();
     }  // namespace wnck
 }  // namespace docklight
 
