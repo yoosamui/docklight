@@ -75,16 +75,15 @@ namespace docklight
 
     void DockRender::draw_surface_cell(std::shared_ptr<DockItemIcon>& item)
     {
-        // if (!m_cell) {
-        create_surface_cell();
-        // }
+        if (!m_cell) {
+            create_surface_cell();
+        }
 
         // clear
         m_cell_ctx->save();
         m_cell_ctx->set_source_rgba(0.0, 0.0, 0.0, 0.0);
         m_cell_ctx->set_operator(Cairo::Operator::OPERATOR_SOURCE);
         m_cell_ctx->paint_with_alpha(1.0);
-        // m_cell_ctx->paint();
 
 //#define STROKE_SURFACE_RECT 1
 #ifdef STROKE_SURFACE_RECT
@@ -94,6 +93,11 @@ namespace docklight
         m_cell_ctx->rectangle(0, 0, m_cell->get_width(), m_cell->get_height());
         m_cell_ctx->stroke();
 #endif
+
+        if (item->get_tag() == m_dockitem_index) {
+            m_cell_ctx->set_source_rgba(1.0, 1.0, 1.0, 0.1);
+            m_cell_ctx->paint();
+        }
 
         m_cell_ctx->restore();
     }
@@ -113,9 +117,9 @@ namespace docklight
         int size = Config()->get_icon_size();
         g_assert(m_background);
 
-        // if (!m_icon) {
-        create_surface_icon();
-        // }
+        if (!m_icon) {
+            create_surface_icon();
+        }
 
         // clear
         m_icon_ctx->save();
@@ -194,9 +198,9 @@ namespace docklight
     {
         g_assert(m_cell);
 
-        // if (!m_indicator) {
-        create_surface_indicator(item);
-        //}
+        if (!m_indicator) {
+            create_surface_indicator(item);
+        }
         // clear
         m_indicator_ctx->save();
         m_indicator_ctx->set_source_rgba(0.0, 0.0, 0.0, 0.0);
@@ -247,20 +251,16 @@ namespace docklight
         m_posX = 0;
         m_posY = 0;
 
-        draw_surface_background();
-
         guint separator_size = Config()->get_separator_size();
-
         auto area = Config()->get_dock_area() + separator_size;
         auto data = provider->data();
         auto maxsize = data.size() * area;
 
         get_start_pos(maxsize, m_posX, m_posY);
 
+        draw_surface_background();
         guint tag = 0;
         for (auto& dockitem : data) {
-            dockitem->set_tag(tag++);
-
             draw_surface_cell(dockitem);
             draw_surface_icon(dockitem);
             draw_surface_indicator(dockitem);
@@ -273,11 +273,53 @@ namespace docklight
             } else {
                 m_posY += area;
             }
+
+            dockitem->set_tag(tag++);
         }
 
         cr->set_source(m_background, 0, 0);
         cr->paint();
+        return true;
+    }
 
-        return false;
+    bool DockRender::on_drawX(const Cairo::RefPtr<Cairo::Context>& cr)
+    {
+        auto provider = Provider();
+
+        m_posX = 0;
+        m_posY = 0;
+
+        draw_surface_background();
+
+        guint separator_size = Config()->get_separator_size();
+
+        auto area = Config()->get_dock_area() + separator_size;
+        auto data = provider->data();
+        auto maxsize = data.size() * area;
+
+        get_start_pos(maxsize, m_posX, m_posY);
+
+        /*guint tag = 0;
+        for (auto& dockitem : data) {
+            dockitem->set_tag(tag++);
+
+            // draw_surface_cell(dockitem);
+            // draw_surface_icon(dockitem);
+            // draw_surface_indicator(dockitem);
+
+            // m_bck_ctx->set_source(m_cell, m_posX, m_posY);
+            // m_bck_ctx->paint();
+
+            if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+                m_posX += area;
+            } else {
+                m_posY += area;
+            }
+        }*/
+
+        cr->set_source(m_background, 0, 0);
+        cr->paint();
+
+        return true;
     }
 }  // namespace docklight

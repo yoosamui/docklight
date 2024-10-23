@@ -7,6 +7,75 @@ namespace docklight
 
     namespace wnck
     {
+        void bring_window(WnckWindow* window)
+        {
+            if (!WNCK_IS_WINDOW(window)) {
+                return;
+            }
+
+            int ct = gtk_get_current_event_time();
+            if (!is_window_on_current_desktop(window)) {
+                WnckWorkspace* ws = wnck_window_get_workspace(window);
+                if (ws != nullptr) {
+                    wnck_workspace_activate(ws, ct);
+                }
+            }
+
+            wnck_window_activate(window, ct);
+        }
+
+        void activate_window_ws(std::vector<WnckWindow*> window_list)
+        {
+            bool mini = false;
+
+            GdkScreen* screen = gdk_screen_get_default();
+            int current_ws_number = gdk_x11_screen_get_current_desktop(screen);
+
+            int ct = gtk_get_current_event_time();
+            for (auto& window : window_list) {
+                WnckWorkspace* ws = wnck_window_get_workspace(window);
+                if (wnck_workspace_get_number(ws) != current_ws_number) continue;
+
+                mini = wnck_window_is_minimized(window);
+                if (mini) break;
+            }
+
+            for (auto& window : window_list) {
+                WnckWorkspace* ws = wnck_window_get_workspace(window);
+                if (wnck_workspace_get_number(ws) != current_ws_number) continue;
+
+                if (mini)
+                    wnck_window_activate(window, ct);
+                else
+                    wnck_window_minimize(window);
+            }
+        }
+
+        void activate_window_ws(WnckWindow* window)
+        {
+            if (!WNCK_IS_WINDOW(window)) {
+                return;
+            }
+
+            GdkScreen* screen = gdk_screen_get_default();
+            int current_ws_number = gdk_x11_screen_get_current_desktop(screen);
+            WnckWorkspace* ws = wnck_window_get_workspace(window);
+
+            if (wnck_workspace_get_number(ws) != current_ws_number) return;
+
+            if (!wnck_window_is_minimized(window)) {
+                //  if (wnck_window_is_active(window)) {
+                //  if (wnck_window_is_unmaximize(window)) {
+                //  g_print("IN WS %d\n", current_ws_number);
+                wnck_window_minimize(window);
+                return;
+            }
+            int ct = gtk_get_current_event_time();
+            if (!wnck_window_is_active(window)) {
+                wnck_window_activate(window, ct);
+            }
+        }
+
         void activate_window(WnckWindow* window)
         {
             if (!WNCK_IS_WINDOW(window)) {

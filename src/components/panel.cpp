@@ -36,15 +36,28 @@ namespace docklight
     */
     Panel::Panel()
     {
+        // clang-format off
         // Set event masks
-        add_events(Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::SCROLL_MASK |
-                   Gdk::SMOOTH_SCROLL_MASK | Gdk::POINTER_MOTION_HINT_MASK |
-                   Gdk::FOCUS_CHANGE_MASK | Gdk::ENTER_NOTIFY_MASK | Gdk::LEAVE_NOTIFY_MASK |
-                   Gdk::POINTER_MOTION_HINT_MASK | Gdk::POINTER_MOTION_MASK);
-        g_message("Create Panel.");
+        add_events( Gdk::BUTTON_PRESS_MASK |
+                    Gdk::BUTTON_RELEASE_MASK |
+                    Gdk::SCROLL_MASK |
+                    Gdk::ENTER_NOTIFY_MASK |
+                    Gdk::LEAVE_NOTIFY_MASK |
+                    Gdk::POINTER_MOTION_MASK
+                   );
+        // clang-format on
+        //        m_drawing_area.set_content_width(100);
+
+        //   m_drawing_area.set_draw_func(sigc::mem_fun(*this, &Panel::on_drawingarea));
 
         m_provider = create_provider();
+        g_message("Create Panel.");
     }
+
+    // void Panel::on_drawingarea(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height)
+    //{
+    ////
+    //}
 
     void Panel::init(Glib::RefPtr<Gtk::Application> app)
     {
@@ -60,14 +73,14 @@ namespace docklight
     Panel::~Panel()
     {
         m_sigc_updated.disconnect();
-
-        g_print(MSG_FREE_OBJECT, "Panel");
-        g_print("\n");
+        g_message(MSG_FREE_OBJECT, "Panel");
     }
+
     bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
     {
-        // m_sigc_draw =
-        // Glib::signal_timeout().connect(sigc::mem_fun(this, &Panel::on_timeout_draw), 1000 / 9);
+        //     m_sigc_draw =
+        //         Glib::signal_timeout().connect(sigc::mem_fun(this, &Panel::on_timeout_draw), 1000
+        //         / 8);
 
         m_mouse_enter = true;
         return false;
@@ -75,14 +88,21 @@ namespace docklight
 
     bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
     {
-        // m_sigc_draw.disconnect();
+        //       m_sigc_draw.disconnect();
 
         m_mouse_enter = false;
         return false;
     }
+
     bool Panel::on_timeout_draw()
     {
-        Gtk::Widget::queue_draw();
+        //        get_dockitem_index(event->x, event->y);
+
+        // if (m_dockitem_index != m_last_index) {
+        // m_last_index = m_dockitem_index;
+        // Gtk::Widget::queue_draw();
+        //}
+        // Gtk::Widget::queue_draw();
 
         /*auto max_click_time = LaunchBounceTime;
         if (anim) {
@@ -140,32 +160,6 @@ namespace docklight
         // return true;
     }
 
-    /*const Cairo::RefPtr<Cairo::ImageSurface>& Panel::DrawIcon()
-    {
-        int size = 64;
-        if (!m_surfaceIcon) {
-            //
-            m_surfaceIcon = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, size, size);
-        }
-        std::string iconname("data/images/docklight.home.ico");
-        auto home_pixbuf = Gdk::Pixbuf::create_from_file(iconname, size, size);\h
-        Cairo::RefPtr<Cairo::Context> ctx = Cairo::Context::create(m_surfaceIcon);
-
-        Gdk::Cairo::set_source_pixbuf(ctx, home_pixbuf, 0, 0);
-        ctx->paint();
-
-        double draw_value_darken = 0.8;
-        ctx->rectangle(0, 0, m_surfaceIcon->get_width(), m_surfaceIcon->get_height());
-        ctx->set_source_rgba(0, 0, 0, draw_value_darken);
-        ctx->set_operator(Cairo::Operator::OPERATOR_ATOP);
-        // icon_cr.set_source_rgba(0, 0, 0, draw_value.darken);
-        //   icon_cr.set_operator(Cairo.Operator.ATOP);
-        ctx->fill();
-        ctx->set_operator(Cairo::Operator::OPERATOR_OVER);
-
-        return m_surfaceIcon;
-    }*/
-
     void Panel::on_home_menu_quit_event()
     {
         m_app->quit();
@@ -173,7 +167,7 @@ namespace docklight
 
     void Panel::container_updated(guint explicit_size)
     {
-        auto size = m_provider->data().size();  //- 1;
+        auto size = m_provider->data().size();
         auto separator_size = Config()->get_separator_size();
         auto separators_count = (size * separator_size);
 
@@ -194,13 +188,17 @@ namespace docklight
 
     bool Panel::on_motion_notify_event(GdkEventMotion* event)
     {
+        if (!m_mouse_enter) return true;
+
         get_dockitem_index(event->x, event->y);
 
-        if (m_mouse_enter) {
-            //      Gtk::Widget::queue_draw();
+        if (m_dockitem_index != m_last_index) {
+            m_last_index = m_dockitem_index;
+            Gtk::Widget::queue_draw();
         }
 
-        return false;
+        // TRUE to stop other handlers from being invoked for the event.
+        return true;
     }
 
     inline guint Panel::get_dockitem_index(int mx, int my)
@@ -247,19 +245,27 @@ namespace docklight
         auto size = dockitem->get_childmap().size();
         if (!size) return false;
 
-        static size_t idx = 0;
+        if (e->direction == GDK_SCROLL_UP) {
+            m_scroll_index++;
+        } else if (e->direction == GDK_SCROLL_DOWN) {
+            m_scroll_index--;
+        }
 
-        if (idx++ >= size - 1) idx = 0;
+        if (m_scroll_index < 0) {
+            m_scroll_index = (int)size - 1;
+        } else if (m_scroll_index > (int)size - 1) {
+            m_scroll_index = 0;
+        }
+
         auto it = dockitem->get_childmap().begin();
-        std::advance(it, idx);
+        std::advance(it, m_scroll_index);
         auto child = it->second;
 
         WnckWindow* window = child->get_wnckwindow();
         if (!window) return false;
+        wnck::bring_window(window);
 
-        wnck::activate_window(window);
-
-        return false;
+        return true;
     }
 
     void Panel::on_item_menu_childlist_event(WnckWindow* window)
@@ -276,25 +282,21 @@ namespace docklight
         std::shared_ptr<DockItemIcon> dockitem;
         if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return false;
 
+        // Handle the left mouse button.
         if (event->button == 1 && m_dockitem_index > 0) {
             auto size = dockitem->get_childmap().size();
             if (!size) {
                 dockitem->launch();
-                return false;
+                return true;
             }
 
-            auto it = dockitem->get_childmap().begin();
-            std::advance(it, 0);
-            auto child = it->second;
+            // show all the childrens in current workspace.
+            wnck::activate_window_ws(dockitem->get_wnck_window_list());
+            return true;
+        }
 
-            WnckWindow* window = child->get_wnckwindow();
-            if (!window) {
-                return false;
-            }
-
-            wnck::activate_window(window);
-            // show group
-        } else if (event->button == 3) {
+        // Handle the right mouse button.
+        if (event->button == 3) {
             if (m_dockitem_index == 0) {
                 // Home Menu
                 if (!m_home_menu.get_attach_widget()) {

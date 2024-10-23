@@ -105,10 +105,15 @@ namespace docklight
         //{
         // DockMenu::on_item_menu_position(x, y, push_in);
         //}
+        //
+        // Gtk::DrawingArea m_drawing_area;
+        // void on_drawingarea(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height);
 
       private:
         Glib::RefPtr<DockItemProvider> m_provider;
         easing::bounce m_bounce;
+        guint m_last_index = 0;
+        gint m_scroll_index = 0;
     };
 }  // namespace docklight
 
