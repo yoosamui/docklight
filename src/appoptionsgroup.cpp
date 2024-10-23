@@ -18,9 +18,8 @@
 // clang-format off
 #include "appoptionsgroup.h"
 #include "translations.h"
-
 // clang-format on
-//
+
 namespace docklight
 {
 

@@ -24,7 +24,6 @@
 #include <iostream>
 
 #include "components/device.h"
-
 // clang-format on
 
 // Commandline Option Parser

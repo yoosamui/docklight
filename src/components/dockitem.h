@@ -55,16 +55,13 @@ namespace docklight
         Glib::ustring m_description = {};
         guint m_wintype = 0;
         guint m_tag = 0;
-
         guint m_width = 0;
         guint m_height = 0;
 
       protected:
-        //// setters
+        // setters
         virtual void set_attached(bool attached = true) = 0;
         virtual void set_tag(guint tag) = 0;
-        //  virtual void set_icon(Glib::RefPtr<Gdk::Pixbuf> icon) = 0;
-        /// virtual void set_attached(bool attached) = 0;
         virtual void set_title(Glib::ustring title) = 0;
         virtual void set_window_name(Glib::ustring window_name) = 0;
         virtual void set_instance_name(Glib::ustring instance_name) = 0;
@@ -74,9 +71,7 @@ namespace docklight
         virtual void set_description(Glib::ustring icon_name) = 0;
         virtual void set_has_desktop_file(bool has) = 0;
 
-        // virtual const void add_child(Glib::RefPtr<DockItem> child) = 0;
-
-        //// getters
+        // getters
         virtual WnckWindow* get_wnckwindow() const = 0;
         virtual guint get_container_size() = 0;
 
@@ -93,14 +88,6 @@ namespace docklight
         virtual const Glib::ustring& get_description() const = 0;
         virtual const Glib::ustring& get_desktop_file() const = 0;
         virtual const Glib::ustring& get_icon_name() const = 0;
-        // virtual const Glib::RefPtr<Gdk::Pixbuf>& get_icon() const = 0;
-        //  virtual const Glib::RefPtr<Gdk::Pixbuf> get_icon(guint size) = 0;
-
-        // virtual const Glib::RefPtr<DockItem> clone() = 0;
-        ///        virtual const std::map<guint32, Glib::RefPtr<DockItem>>& get_childmap() const =
-        ///        0;
-        //   virtual const DockItem* get() const = 0;
-        // virtual const int remove_child(guint32 xid) = 0;
     };
 
     class DockItem : public IDockItem
@@ -115,7 +102,6 @@ namespace docklight
         // setters
         void set_attached(bool attached = true);
         void set_tag(guint tag);
-        //    void set_icon(Glib::RefPtr<Gdk::Pixbuf> icon);
         void set_icon_name(Glib::ustring icon_name);
         void set_has_desktop_file(bool has);
         void set_title(Glib::ustring title);
@@ -124,7 +110,6 @@ namespace docklight
         void set_group_name(Glib::ustring group_name);
         void set_description(Glib::ustring description);
         void set_desktop_file(Glib::ustring desktop_file);
-        //      const void add_child(Glib::RefPtr<DockItem> child);
 
         // Getters
         virtual WnckWindow* get_wnckwindow() const;
@@ -132,8 +117,6 @@ namespace docklight
 
         const guint get_tag() const;
         bool const has_desktop_file() const;
-        //     const DockItem* get() const;
-        //    const std::map<guint32, Glib::RefPtr<xDockItem>>& get_childmap() const;
         const bool get_attached() const;
         const gulong get_xid() const;
         const guint get_wintype() const;
@@ -144,8 +127,6 @@ namespace docklight
         const Glib::ustring& get_instance_name() const;
         const Glib::ustring& get_desktop_file() const;
         const Glib::ustring& get_icon_name() const;
-        //       const Glib::RefPtr<Gdk::Pixbuf>& get_icon() const;
-        //       const Glib::RefPtr<Gdk::Pixbuf> get_icon(guint size);
         const guint get_width() const;
         const guint get_height() const;
         void launch();

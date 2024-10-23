@@ -31,8 +31,7 @@
 #include "components/dockitemcontainer.h"
 #include "components/config.h"
 // clang-format on
-//#include <fstream>
-//#include <iostream>
+
 namespace docklight
 {
 
@@ -50,7 +49,7 @@ namespace docklight
             char comment[512];
             char desktop_file[512];
             char icon_name[128];
-            guint8 pixbuff[128 * 128 * 3] = {0};  //  128 x 128 x 3 max
+            guint8 pixbuff[128 * 128 * 3] = {0};  //  128 x 128 x 3 icon max size
 
         } attach_rec_t;
 

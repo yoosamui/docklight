@@ -170,12 +170,13 @@ namespace docklight
         bool updated = false;
         GError* error = nullptr;
         GtkIconTheme* icon_theme = gtk_icon_theme_get_default();
+        guint icon_max_size = Config()->get_icon_max_size();
 
         for (auto& dockitem : data()) {
             GdkPixbuf* gdkpixbuf =
                 gtk_icon_theme_load_icon(icon_theme,
                                          dockitem->get_icon_name().c_str(),  // icon name
-                                         Config()->get_icon_max_size(),      // icon size
+                                         icon_max_size,                      // icon size
                                          GTK_ICON_LOOKUP_FORCE_SIZE,         // flags //
                                          &error);
             if (error) {
@@ -186,8 +187,8 @@ namespace docklight
             }
 
             if (gdkpixbuf) {
-                auto icon =
-                    Glib::wrap(gdkpixbuf, true)->scale_simple(128, 128, Gdk::INTERP_BILINEAR);
+                auto icon = Glib::wrap(gdkpixbuf, true)
+                                ->scale_simple(icon_max_size, icon_max_size, Gdk::INTERP_BILINEAR);
                 dockitem->set_icon(icon);
             }
         }

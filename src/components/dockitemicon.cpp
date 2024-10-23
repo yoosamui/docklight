@@ -53,7 +53,6 @@ namespace docklight
 
     guint DockItemIcon::get_container_size()
     {
-        //
         return m_map.size();
     }
 
@@ -76,6 +75,7 @@ namespace docklight
         g_assert(m_icon);
         return m_icon;
     }
+
     const Glib::RefPtr<Gdk::Pixbuf> DockItemIcon::get_icon(guint size)
     {
         auto pixbuf =
@@ -91,6 +91,8 @@ namespace docklight
 
     const std::vector<WnckWindow*>& DockItemIcon::get_wnck_window_list()
     {
+        m_wnck_window_list.clear();
+
         for (auto& item : m_map) {
             auto dockitem = item.second;
             WnckWindow* window = dockitem->get_wnckwindow();
@@ -107,8 +109,6 @@ namespace docklight
         return m_map;
     }
 
-    // inline
-    // const
     int DockItemIcon::remove_child(gulong xid)
     {
         return m_map.erase(xid);

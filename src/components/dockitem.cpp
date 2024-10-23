@@ -60,12 +60,6 @@ namespace docklight
         return m_has_desktop_file;
     }
 
-    // Setters
-    // inline const void DockItem::add_child(Glib::RefPtr<DockItem> child)
-    //{
-    // m_childmap.insert({child->get_xid(), child});
-    //}
-
     inline void DockItem::set_has_desktop_file(bool has)
     {
         m_has_desktop_file = has;
