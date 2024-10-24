@@ -74,10 +74,7 @@ namespace docklight
                          G_CALLBACK(Panel::on_active_window_changed), nullptr);
 
         m_position = Position();
-
         m_bck_thread = std::shared_ptr<std::thread>(new std::thread(&Panel::thread_func, this));
-
-        // frame_time = GLib.get_monotonic_time();
     }
 
     Panel::~Panel()

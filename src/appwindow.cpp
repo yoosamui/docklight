@@ -15,7 +15,7 @@ namespace docklight
 {
 
     // static members declaration
-    Panel* AppWindow::m_panel;
+    //  Panel* AppWindow::m_panel;
     Glib::RefPtr<Gtk::Application> AppWindow::m_application;
 
     AppWindow::AppWindow()
@@ -37,12 +37,16 @@ namespace docklight
         set_size_request(1, 1);
 
         Config();
+
+        new Panel();
+
         m_observer = create_observer();
         m_position = create_position(this);
 
-        m_panel = new Panel();
+        //   m_panel = new Panel();
 
-        this->add(*m_panel);
+        exit(1);
+        // this->add(*m_panel);
         show_all();
         g_message("Create AppWindow.");
     }
@@ -66,7 +70,7 @@ namespace docklight
         // sigc::mem_fun(this, &AppWindow::on_container_updated));
 
         Config()->load();
-        m_panel->init(app);
+        // m_panel.init(app);
 
         return EXIT_SUCCESS;
     }
@@ -74,13 +78,13 @@ namespace docklight
     void AppWindow::send_notification(const Glib::ustring& title, const Glib::ustring& text,
                                       const Glib::ustring& icon_name)
     {
-        auto Notification = Gio::Notification::create(title);
+        /*auto Notification = Gio::Notification::create(title);
         Notification->set_body(text);
         auto Icon = Gio::ThemedIcon::create(icon_name);
         Notification->set_icon(Icon);
 
         // TODO: just for testing
-        m_application->send_notification(Notification);
+        m_application->send_notification(Notification);*/
     }
 
     void AppWindow::on_app_activated()
