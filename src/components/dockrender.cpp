@@ -100,7 +100,8 @@ namespace docklight
         }
 
         if (item->get_tag() == m_dockitem_active_index) {
-            m_cell_ctx->set_source_rgba(0.0, 1.0, 1.0, 0.2);
+            m_cell_ctx->set_source_rgba(0.266, 0.309, 0.361, 0.1);
+            //   m_cell_ctx->set_source_rgba(0.0, 1.0, 1.0, 0.2);
             m_cell_ctx->paint();
         }
 
