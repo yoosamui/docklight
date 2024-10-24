@@ -100,10 +100,8 @@ namespace docklight
         }
 
         if (item->get_tag() == m_dockitem_active_index) {
-            m_cell_ctx->set_line_width(0.5);
-            m_cell_ctx->set_source_rgba(1.0, 1.0, 1.0, 1.0);
-            m_cell_ctx->rectangle(0, 0, m_cell->get_width(), m_cell->get_height());
-            m_cell_ctx->stroke();
+            m_cell_ctx->set_source_rgba(0.0, 1.0, 1.0, 0.2);
+            m_cell_ctx->paint();
         }
 
         m_cell_ctx->restore();
