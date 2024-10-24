@@ -333,5 +333,30 @@ namespace docklight
                 wnck_window_activate(window, ct);
             }
         }
+
+        WnckWindow* get_active()
+        {
+            WnckScreen* screen;
+            GList* window_l;
+
+            WnckHandle* handle = wnck_handle_new(WnckClientType::WNCK_CLIENT_TYPE_APPLICATION);
+            screen = wnck_handle_get_default_screen(handle);
+
+            wnck_screen_force_update(screen);
+
+            for (window_l = wnck_screen_get_windows(screen); window_l != nullptr;
+                 window_l = window_l->next) {
+                WnckWindow* window = WNCK_WINDOW(window_l->data);
+                // if (!window) continue;
+
+                // if (!is_valid_window_type(window)) continue;
+
+                if (wnck_window_is_active(window)) {
+                    return window;
+                }
+            }
+
+            return nullptr;
+        }
     }  // namespace wnck
 }  // namespace docklight

@@ -8,6 +8,8 @@
 
 #include "components/config.h"
 #include "utils/easing.h" // for testing
+#include  <thread>
+
 //#include <cmath>
 //#include <ctime>
 #include "utils/wnck.h"
@@ -80,7 +82,6 @@ namespace docklight
 
         bool on_timeout_draw();
 
-        bool m_mouse_enter = false;
         bool on_enter_notify_event(GdkEventCrossing* crossing_event) override;
         bool on_leave_notify_event(GdkEventCrossing* crossing_event) override;
 
@@ -109,7 +110,15 @@ namespace docklight
         // Gtk::DrawingArea m_drawing_area;
         // void on_drawingarea(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height);
 
+        static void on_active_window_changed(WnckScreen* screen,
+                                             WnckWindow* previously_active_window,
+                                             gpointer user_data);
+        void thread_func();
+
       private:
+        std::shared_ptr<std::thread> m_bck_thread;
+
+        // std::thread* m_bck_thread = nullptr;
         Glib::RefPtr<DockItemProvider> m_provider;
         easing::bounce m_bounce;
         guint m_last_index = 0;

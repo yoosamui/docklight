@@ -89,6 +89,20 @@ namespace docklight
         return pixbuf;
     }
 
+    const std::vector<gulong>& DockItemIcon::get_wnck_xid_list()
+    {
+        m_wnck_xid_list.clear();
+
+        for (auto& item : m_map) {
+            auto dockitem = item.second;
+            gulong xid = dockitem->get_xid();
+
+            m_wnck_xid_list.push_back(xid);
+        }
+
+        return m_wnck_xid_list;
+    }
+
     const std::vector<WnckWindow*>& DockItemIcon::get_wnck_window_list()
     {
         m_wnck_window_list.clear();

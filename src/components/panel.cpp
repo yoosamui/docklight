@@ -9,6 +9,8 @@
 #include "components/position.h"
 // clang-format on
 #include <cmath>
+
+//  guint Panel::m_active_index;
 namespace docklight
 {
     // TODO move to somme tools.
@@ -65,22 +67,71 @@ namespace docklight
         m_sigc_updated =
             m_provider->signal_update().connect(sigc::mem_fun(this, &Panel::on_container_updated));
 
+        // WnckHandle* handle = wnck_handle_new(WnckClientType::WNCK_CLIENT_TYPE_PAGER);
+        WnckHandle* handle = wnck_handle_new(WnckClientType::WNCK_CLIENT_TYPE_APPLICATION);
+        WnckScreen* wnckscreen = wnck_handle_get_default_screen(handle);
+        g_signal_connect(wnckscreen, "active_window_changed",
+                         G_CALLBACK(Panel::on_active_window_changed), nullptr);
+
         m_position = Position();
+
+        m_bck_thread = std::shared_ptr<std::thread>(new std::thread(&Panel::thread_func, this));
 
         // frame_time = GLib.get_monotonic_time();
     }
 
     Panel::~Panel()
     {
+        m_bck_thread->detach();
+
         m_sigc_updated.disconnect();
         g_message(MSG_FREE_OBJECT, "Panel");
+    }
+
+    void Panel::thread_func()
+    {
+        WnckWindow* window = nullptr;
+        while (true) {
+            if (window != m_active_window) {
+                window = m_active_window;
+
+                // Gets the active WnckWindow on screen.
+                // May return NULL sometimes, since not all
+                // window managers guarantee that a window is always active.
+                if (window) {
+                    size_t idx = 0;
+                    for (; idx < m_provider->data().size(); idx++) {
+                        auto dockitem = m_provider->data().at(idx);
+                        auto xid_list = dockitem->get_wnck_xid_list();
+                        gulong xid = wnck_window_get_xid(window);
+
+                        if (std::find(xid_list.begin(), xid_list.end(), xid) != xid_list.end()) {
+                            m_dockitem_active_index = idx;
+                            Gtk::Widget::queue_draw();
+                            break;
+                        }
+                    }
+                }
+            }
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
+    }
+
+    void Panel::on_active_window_changed(WnckScreen* screen, WnckWindow* previously_active_window,
+                                         gpointer user_data)
+    {
+        // Gets the active WnckWindow on screen.
+        // May return NULL sometimes, since not all
+        // window managers guarantee that a window is always active.
+        m_active_window = wnck_screen_get_active_window(screen);
     }
 
     bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
     {
         //     m_sigc_draw =
-        //         Glib::signal_timeout().connect(sigc::mem_fun(this, &Panel::on_timeout_draw), 1000
-        //         / 8);
+        //         Glib::signal_timeout().connect(sigc::mem_fun(this, &Panel::on_timeout_draw),
+        //         1000 / 8);
 
         m_mouse_enter = true;
         return false;
@@ -91,6 +142,7 @@ namespace docklight
         //       m_sigc_draw.disconnect();
 
         m_mouse_enter = false;
+        Gtk::Widget::queue_draw();
         return false;
     }
 
@@ -359,7 +411,7 @@ namespace docklight
         ////////////////////
         ///
 
-        if (!dockitem->get_childmap().size()) return false;
+        /*if (!dockitem->get_childmap().size()) return false;
 
         dockitem->set_attached();
         m_provider->save();
@@ -368,13 +420,13 @@ namespace docklight
         std::advance(it, 0);
         auto child = it->second;
         auto window = child->get_wnckwindow();
-        if (window) wnck::activate_window(window);
+        if (window) wnck::activate_window(window);*/
         // auto child = item.second;
 
         // WnckWindow* window = child->get_wnckwindow();
         //  wnck::activate_window(window);
 
-        return false;
+        //        return false;
         //  container_updated();
         //  return false;
 
@@ -392,7 +444,7 @@ namespace docklight
                 WnckWindow* window = child->get_wnckwindow();
 
                 g_print("   -| %ld %s attach %d wnck %p\n", child->get_xid(),
-                        child->get_group_name().c_str(), 0, &window);
+                        child->get_group_name().c_str(), 0, window);
                 break;
             }
         }

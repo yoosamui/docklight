@@ -35,8 +35,11 @@ namespace docklight
     {
       public:
       protected:
+        static WnckWindow* m_active_window;
         guint m_dockitem_index = 0;
+        gulong m_dockitem_active_index = 0;
         bool m_context_menu_active = false;
+        bool m_mouse_enter = false;
     };
 
     class DockMenu : public PanelBase

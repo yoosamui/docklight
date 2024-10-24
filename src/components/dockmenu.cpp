@@ -24,6 +24,7 @@
 namespace docklight
 {
 
+    WnckWindow* PanelBase::m_active_window;
     DockMenu::DockMenu()
     {
         // Home menu

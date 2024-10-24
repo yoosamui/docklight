@@ -18,6 +18,7 @@ namespace docklight
     {
         void activate_window_ws(std::vector<WnckWindow*> window_list);
         void activate_window_ws(WnckWindow* window);
+        WnckWindow* get_active();
 
         void bring_window(WnckWindow* window);
         void get_docks();
