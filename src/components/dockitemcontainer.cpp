@@ -22,6 +22,12 @@
 
 namespace docklight
 {
+
+    DockItemContainer::DockItemContainer()
+    {
+        g_message("Create DockItemContainer");
+    }
+
     template <typename T>
     guint DockItemContainer::count()
     {

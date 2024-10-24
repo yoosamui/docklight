@@ -54,8 +54,7 @@ namespace docklight
 
     AppOptionsGroup::~AppOptionsGroup()
     {
-        g_print(MSG_FREE_OBJECT, "AppOptionsGroup");
-        g_print("\n");
+        g_message(MSG_FREE_OBJECT, "AppOptionsGroup");
     }
 
     void AppOptionsGroup::validate()

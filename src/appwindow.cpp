@@ -37,12 +37,11 @@ namespace docklight
         set_size_request(1, 1);
 
         Config();
-
         m_observer = create_observer();
         m_position = create_position(this);
         m_panel = new Panel();
 
-        this->add(*m_panel);
+        add(*m_panel);
         show_all();
         g_message("Create AppWindow.");
     }

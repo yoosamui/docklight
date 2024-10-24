@@ -31,6 +31,8 @@ namespace docklight
     class DockItemContainer : public Glib::Object
     {
       public:
+        DockItemContainer();
+
         guint size();
 
         template <typename T>

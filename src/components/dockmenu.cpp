@@ -36,7 +36,6 @@ namespace docklight
 
         m_home_menu.append(m_HomeMinimizeAllWindowsMenuItem);
         m_home_menu.append(m_HomeUnMinimizeAllWindowsMenuItem);
-        m_home_menu.append(m_separatorMenuHome1);
         m_home_menu.append(m_home_menu_close_all_item);
         m_home_menu.append(m_separatorMenuHome1);
         m_home_menu.append(m_home_menu_quit_item);
