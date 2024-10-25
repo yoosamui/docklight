@@ -51,40 +51,6 @@ namespace docklight
         void init(Glib::RefPtr<Gtk::Application> app);
         void container_updated(guint explicit_size = 0);
 
-        inline guint get_scale_factor()
-        {
-            // remember the bigest area
-            static int area = 0;
-            if (!area) area = Config()->get_dock_area() + Config()->get_separator_size();
-
-            const int max_icon_size = Config()->get_custom_icon_size();
-            const auto workarea = device::monitor::get_workarea();
-            const int num_items = m_provider->data().size();
-            const int item_width = area;
-
-            int screen_width = 0;
-            int reduce_screen_value = Config()->get_dock_area_margin() * num_items;
-
-            if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-                if (workarea.get_width() <= 1) return max_icon_size;
-                screen_width = workarea.get_width() - reduce_screen_value;
-            } else {
-                if (workarea.get_height() <= 1) return max_icon_size;
-                screen_width = workarea.get_height() - reduce_screen_value;
-            }
-
-            // Calculate the scaling factor
-            float scaling_factor =
-                static_cast<float>(screen_width) / static_cast<float>(num_items * item_width);
-
-            int icon_size = std::floor(max_icon_size * scaling_factor);
-            if (icon_size > max_icon_size) {
-                icon_size = max_icon_size;
-            }
-
-            return icon_size;
-        }
-
       private:
         Glib::RefPtr<Gtk::Application> m_app;
         sigc::connection m_sigc_draw;
@@ -92,6 +58,7 @@ namespace docklight
 
         guint get_dockitem_index(int mx, int my);
 
+        guint get_scale_factor();
         bool on_button_press_event(GdkEventButton* event);
         bool on_motion_notify_event(GdkEventMotion* event);
         void on_container_updated(window_action_t action, int index);
@@ -133,7 +100,7 @@ namespace docklight
 
       private:
         std::shared_ptr<std::thread> m_bck_thread;
-
+        Gtk::SeparatorMenuItem* m_separatorMenuItem = nullptr;
         // std::thread* m_bck_thread = nullptr;
         Glib::RefPtr<DockItemProvider> m_provider;
         easing::bounce m_bounce;

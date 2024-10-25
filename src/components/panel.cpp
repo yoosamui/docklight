@@ -329,6 +329,7 @@ namespace docklight
     void Panel::on_item_menu_childlist_event(WnckWindow* window)
     {
         wnck::activate_window(window);
+        // wnck::bring_window(window);
     }
 
     bool Panel::on_button_press_event(GdkEventButton* event)
@@ -380,7 +381,6 @@ namespace docklight
                 m_item_menu_unminimize_all.set_sensitive(size);
 
                 // populate childrens;
-                static Gtk::SeparatorMenuItem* separator = nullptr;
                 for (auto& itemMenu : m_item_menu.get_children()) {
                     auto type = dynamic_cast<Gtk::ImageMenuItem*>(itemMenu);
                     if (type) {
@@ -388,12 +388,10 @@ namespace docklight
                     }
                 }
 
-                // m_item_menu.show_all();
-                if (separator) m_item_menu.remove(*separator);
+                if (m_separatorMenuItem) m_item_menu.remove(*m_separatorMenuItem);
 
-                separator = Gtk::manage(new Gtk::SeparatorMenuItem());
-                m_item_menu.append(*separator);
-                // m_item_menu.insert(*separator, 0);
+                m_separatorMenuItem = Gtk::manage(new Gtk::SeparatorMenuItem());
+                m_item_menu.append(*m_separatorMenuItem);
 
                 for (auto& item : dockitem->get_childmap()) {
                     auto child = item.second;
@@ -413,7 +411,6 @@ namespace docklight
                         child->get_wnckwindow()));
 
                     m_item_menu.append(*menu_item);
-                    // m_item_menu.insert(*menu_item, 0);
                 }
 
                 m_item_menu.show_all();
@@ -471,5 +468,38 @@ namespace docklight
         return false;
     }
 
+    inline guint Panel::get_scale_factor()
+    {
+        // remember the bigest area
+        static int area = 0;
+        if (!area) area = Config()->get_dock_area() + Config()->get_separator_size();
+
+        const int max_icon_size = Config()->get_custom_icon_size();
+        const auto workarea = device::monitor::get_workarea();
+        const int num_items = m_provider->data().size();
+        const int item_width = area;
+
+        int screen_width = 0;
+        int reduce_screen_value = Config()->get_dock_area_margin() * num_items;
+
+        if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+            if (workarea.get_width() <= 1) return max_icon_size;
+            screen_width = workarea.get_width() - reduce_screen_value;
+        } else {
+            if (workarea.get_height() <= 1) return max_icon_size;
+            screen_width = workarea.get_height() - reduce_screen_value;
+        }
+
+        // Calculate the scaling factor
+        float scaling_factor =
+            static_cast<float>(screen_width) / static_cast<float>(num_items * item_width);
+
+        int icon_size = std::floor(max_icon_size * scaling_factor);
+        if (icon_size > max_icon_size) {
+            icon_size = max_icon_size;
+        }
+
+        return icon_size;
+    }
 }  // namespace docklight
 
