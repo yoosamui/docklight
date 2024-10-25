@@ -85,6 +85,7 @@ namespace docklight
         void on_item_menu_close_group_event();
         void on_item_menu_minimize_all_event();
         void on_item_menu_unminimize_all_event();
+        void on_HomeCloseAllWindows_event();
         void on_menu_show_event();
         void on_menu_hide_event();
     };

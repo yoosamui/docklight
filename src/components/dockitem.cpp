@@ -47,9 +47,9 @@ namespace docklight
 
     WnckWindow* DockItem::get_wnckwindow() const
     {
-        //   g_assert(m_wnckwindow);
         return m_wnckwindow;
     }
+
     void DockItem::set_tag(guint tag)
     {
         m_tag = tag;

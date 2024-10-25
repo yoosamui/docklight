@@ -69,6 +69,9 @@ namespace docklight
         m_HomeUnMinimizeAllWindowsMenuItem.signal_activate().connect(
             sigc::mem_fun(*this, &DockMenu::on_HomeUnMinimizeAllWindows_event));
 
+        m_home_menu_close_all_item.signal_activate().connect(
+            sigc::mem_fun(*this, &DockMenu::on_HomeCloseAllWindows_event));
+
         m_item_menu_attach.set_active(false);
         m_item_menu_attach.signal_toggled().connect(
             sigc::mem_fun(*this, &DockMenu::on_item_menu_attach_event));
@@ -113,6 +116,11 @@ namespace docklight
     void DockMenu::on_HomeUnMinimizeAllWindows_event()
     {
         wnck::HomeUnMinimizeAll();
+    }
+
+    void DockMenu::on_HomeCloseAllWindows_event()
+    {
+        wnck::HomeCloseAllWindows();
     }
 
     void DockMenu::on_item_menu_minimize_all_event()

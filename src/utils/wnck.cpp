@@ -1,6 +1,24 @@
 #include "wnck.h"
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
 
-//#include "components/appupdater.h"
+//  You should have received a copy of the GNU General Public License
+//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+// Translation messages
+//
+// #define _(String) gettext(String)
+// redefined in /usr/include/glib-2.0/glib/gi18n.h
+//
+// Macro Expansion instead of using String literals:
+//
+// #define ready_to_go _("Ready to go")
+//
+// When the preprocessor encounters a macro definition like #define ready_to_go _("Ready to go"),
+// it replaces all occurrences of ready_to_go with the text _("Ready to go") before compilation.
+// This means that the gettext function is called during the preprocessing stage, and the
+// translation is performed.
 
 namespace docklight
 {
@@ -275,11 +293,6 @@ namespace docklight
             }
             // clang-format on
 
-            const char* instancename = wnck_window_get_class_instance_name(window);
-            if (instancename != nullptr && strcasecmp(instancename, DOCKLIGHT_INSTANCENAME) == 0) {
-                return false;
-            }
-
             return true;
         }
 
@@ -360,9 +373,9 @@ namespace docklight
             for (window_l = wnck_screen_get_windows(screen); window_l != nullptr;
                  window_l = window_l->next) {
                 WnckWindow* window = WNCK_WINDOW(window_l->data);
-                // if (!window) continue;
+                if (!window) continue;
 
-                // if (!is_valid_window_type(window)) continue;
+                if (!is_valid_window_type(window)) continue;
 
                 if (wnck_window_is_active(window)) {
                     return window;
@@ -370,6 +383,32 @@ namespace docklight
             }
 
             return nullptr;
+        }
+
+        void HomeCloseAllWindows()
+        {
+            WnckScreen* screen;
+            GList* window_l;
+
+            WnckHandle* handle = wnck_handle_new(WnckClientType::WNCK_CLIENT_TYPE_APPLICATION);
+            screen = wnck_handle_get_default_screen(handle);
+
+            wnck_screen_force_update(screen);
+
+            for (window_l = wnck_screen_get_windows(screen); window_l != nullptr;
+                 window_l = window_l->next) {
+                WnckWindow* window = WNCK_WINDOW(window_l->data);
+                if (!window) continue;
+
+                if (!is_valid_window_type(window)) continue;
+
+                const char* instancename = wnck_window_get_class_instance_name(window);
+                if (instancename != NULL && strcmp(instancename, DOCKLIGHT_INSTANCENAME) == 0) {
+                    continue;
+                }
+
+                wnck_window_close(window, gtk_get_current_event_time());
+            }
         }
     }  // namespace wnck
 }  // namespace docklight
