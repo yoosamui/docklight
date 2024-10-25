@@ -40,6 +40,7 @@ namespace docklight
                 if (mini) break;
             }
 
+            int count = 0;
             for (auto& window : window_list) {
                 WnckWorkspace* ws = wnck_window_get_workspace(window);
                 if (wnck_workspace_get_number(ws) != current_ws_number) continue;
@@ -48,6 +49,17 @@ namespace docklight
                     wnck_window_activate(window, ct);
                 else
                     wnck_window_minimize(window);
+
+                count++;
+            }
+
+            if (!count) {
+                for (auto& window : window_list) {
+                    // if (mini)
+                    wnck_window_activate(window, ct);
+                    // else
+                    //     wnck_window_minimize(window);
+                }
             }
         }
 
@@ -221,7 +233,8 @@ namespace docklight
 
             WnckHandle* handle = wnck_handle_new(WnckClientType::WNCK_CLIENT_TYPE_APPLICATION);
             screen = wnck_handle_get_default_screen(handle);
-            // screen = wnck_screen_get_default();
+
+            wnck_screen_force_update(screen);
 
             for (window_l = wnck_screen_get_windows(screen); window_l != nullptr;
                  window_l = window_l->next) {
@@ -231,7 +244,7 @@ namespace docklight
                     continue;
                 }
 
-                if (window == nullptr) {
+                if (!window) {
                     continue;
                 }
 

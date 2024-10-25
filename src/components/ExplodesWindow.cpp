@@ -56,9 +56,7 @@ namespace docklight
     ExplodesWindow::~ExplodesWindow()
     {
         connect_signal(false);
-
-        g_print(MSG_FREE_OBJECT, "ExplodesWindow");
-        g_print("\n");
+        g_message(MSG_FREE_OBJECT, "ExplodesWindow");
     }
 
     void ExplodesWindow::connect_signal(bool connect)

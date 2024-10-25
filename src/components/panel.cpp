@@ -1,4 +1,23 @@
+//  Copyright (c) 2018-2024 Juan R. González
+//
+//
+//  This file is part of Docklight.
+//
+//  Docklight is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  Docklight is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  public Glib::Object GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  identification number, along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 // clang-format off
+
 //#include <gdkmm/general.h>  // set_source_pixbuf()
 #include <glibmm/i18n.h>
 #include <iostream>
@@ -8,9 +27,7 @@
 #include "translations.h"
 #include "components/position.h"
 // clang-format on
-#include <cmath>
 
-//  guint Panel::m_active_index;
 namespace docklight
 {
     // TODO move to somme tools.
@@ -48,18 +65,10 @@ namespace docklight
                     Gdk::POINTER_MOTION_MASK
                    );
         // clang-format on
-        //        m_drawing_area.set_content_width(100);
-
-        //   m_drawing_area.set_draw_func(sigc::mem_fun(*this, &Panel::on_drawingarea));
-
+        //
         m_provider = create_provider();
         g_message("Create Panel.");
     }
-
-    // void Panel::on_drawingarea(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height)
-    //{
-    ////
-    //}
 
     void Panel::init(Glib::RefPtr<Gtk::Application> app)
     {
@@ -352,12 +361,23 @@ namespace docklight
                     m_home_menu.attach_to_widget(*this);
                 }
 
+                auto count = wnck::get_windows_count();
+                m_HomeMinimizeAllWindowsMenuItem.set_sensitive(count);
+                m_HomeUnMinimizeAllWindowsMenuItem.set_sensitive(count);
+                m_home_menu_close_all_item.set_sensitive(count);
+
                 m_home_menu.popup(sigc::mem_fun(*this, &Panel::on_home_menu_position), 1,
                                   event->time);
 
             } else if (m_dockitem_index > 0) {
                 // Items Menu
                 m_item_menu_attach.set_active(dockitem->get_attached());
+
+                auto size = dockitem->get_childmap().size();
+
+                m_item_menu_close_all.set_sensitive(size);
+                m_item_menu_minimize_all.set_sensitive(size);
+                m_item_menu_unminimize_all.set_sensitive(size);
 
                 // populate childrens;
                 static Gtk::SeparatorMenuItem* separator = nullptr;
@@ -368,7 +388,7 @@ namespace docklight
                     }
                 }
 
-                m_item_menu.show_all();
+                // m_item_menu.show_all();
                 if (separator) m_item_menu.remove(*separator);
 
                 separator = Gtk::manage(new Gtk::SeparatorMenuItem());

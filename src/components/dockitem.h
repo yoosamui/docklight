@@ -20,16 +20,9 @@
 // clang-format off
 #include <glibmm/object.h>
 #include <gdkmm/pixbuf.h>
-
 #include <gdkmm/display.h>
-
 #include "gio/gdesktopappinfo.h"
-//#include <glibmm/timer.h>
-//#include <gtkmm/window.h>
 #include <libwnck/libwnck.h>
-//#include <X11/X.h>
-//#include <gdk/gdkx.h>
-
 #include <sstream>
 // clang-format on
 

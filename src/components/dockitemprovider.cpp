@@ -337,6 +337,7 @@ namespace docklight
         return result;
     }
 
+    // if (!window_icon_name) return false;
     bool DockItemProvider::createFromDesktopFile(gulong xid, GdkPixbuf* gdkpixbuf,
                                                  Glib::ustring instance_name, std::string groupname,
                                                  Glib::ustring window_name,

@@ -69,11 +69,11 @@
 #define MSG_QUIT \
     _("Quit")
 #define MSG_CLOSE_ALL \
-    _("Close all")
+    _("Close")
 #define MSG_SHOW_ALL \
-    _("Show all")
+    _("Maximize")
 #define MSG_MINIMIZE_ALL \
-    _("Minimize all")
+    _("Minimize")
 #define MSG_CLOSE_ALL_WINDOWS \
     _("Close all windows")
 #define MSG_OPEN_NEW \

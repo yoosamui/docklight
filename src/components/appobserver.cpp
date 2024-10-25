@@ -1,3 +1,21 @@
+//  Copyright (c) 2018-2024 Juan R. González
+//
+//
+//  This file is part of Docklight.
+//
+//  Docklight is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  Docklight is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  public Glib::Object GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  identification number, along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 #include "appobserver.h"
 
 namespace docklight
@@ -9,8 +27,6 @@ namespace docklight
     {
         if (!wnck_window_has_name(window)) return false;
         if (wnck_window_get_icon_is_fallback(window)) return false;
-
-        // if (!window_icon_name) return false;
 
         // Gets the icon to be used for window. If no icon was found, a fallback icon is
         // used. wnck_window_get_icon_is_fallback() can be used to tell if the icon is the
