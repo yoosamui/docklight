@@ -45,9 +45,8 @@ namespace docklight
     }
     void DockRender::draw_surface_background()
     {
-        // recreate necessery.
+        // recreate this surface is mandatory.
         create_surface_background();
-
         Cairo::RefPtr<Cairo::Context> ctx = Cairo::Context::create(m_background);
         // ctx->set_source_rgba(0.266, 0.309, 0.361, 1.0);
         // ctx->paint();
@@ -118,18 +117,17 @@ namespace docklight
     void DockRender::draw_surface_icon(std::shared_ptr<DockItemIcon>& item)
     {
         g_assert(m_cell);
-
-        int size = Config()->get_icon_size();
         g_assert(m_background);
 
-        if (!m_icon) {
-            create_surface_icon();
-        }
+        //   if (!m_icon) {
+        create_surface_icon();
+        //    }
 
         // clear
         m_icon_ctx->save();
         m_icon_ctx->set_source_rgba(0.0, 0.0, 0.0, 0.0);
 
+        int size = Config()->get_icon_size();
         auto icon = item->get_icon(size);
 
         // rotation test
@@ -281,6 +279,9 @@ namespace docklight
 
             dockitem->set_tag(tag++);
         }
+
+        //  float scale = 0.71;  // 10.507936507936508;
+        //  cr->scale(scale, scale);
 
         cr->set_source(m_background, 0, 0);
         cr->paint();

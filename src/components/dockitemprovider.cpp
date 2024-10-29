@@ -67,11 +67,17 @@ namespace docklight
             sigc::mem_fun(*this, &DockItemProvider::on_theme_changed));
 
         m_sigc_timer =
-            Glib::signal_timeout().connect(sigc::mem_fun(this, &DockItemProvider::on_timeout), 10);
+            Glib::signal_timeout().connect(sigc::mem_fun(this, &DockItemProvider::on_timeout), 100);
 
         load();
 
         g_message("Create DockItemProvider.");
+    }
+
+    DockItemProvider::~DockItemProvider()
+    {
+        m_sigc.disconnect();
+        g_object_unref(m_matcher);
     }
 
     bool DockItemProvider::attach(guint index, bool attach)
@@ -104,13 +110,6 @@ namespace docklight
     type_signal_update DockItemProvider::signal_update()
     {
         return m_signal_update;
-    }
-
-    DockItemProvider::~DockItemProvider()
-    {
-        g_object_unref(m_matcher);
-
-        m_sigc.disconnect();
     }
 
     bool DockItemProvider::exist(gulong xid)

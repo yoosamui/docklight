@@ -223,6 +223,39 @@ namespace docklight
         m_app->quit();
     }
 
+    inline guint Panel::get_scale_factor()
+    {
+        const int max_icon_size = Config()->get_custom_icon_size();
+        const auto workarea = device::monitor::get_workarea();
+        const int num_items = m_provider->data().size();
+        const int item_width = max_icon_size;
+        int screen_width = 0;
+
+        if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+            if (workarea.get_width() <= 1) return max_icon_size;
+            screen_width = workarea.get_width();
+        } else {
+            if (workarea.get_height() <= 1) return max_icon_size;
+            screen_width = workarea.get_height();
+        }
+
+        // Calculate the scaling factor
+        float scaling_factor =
+            static_cast<float>(screen_width) / static_cast<float>(num_items * item_width);
+
+        int icon_size = std::floor(item_width * scaling_factor);
+
+        // g_print("-->size %d saling-factor %f area %d First icon_size %d [%d] curr-icon %d\n",
+        // num_items, scaling_factor, item_width, icon_size, (icon_size * num_items),
+        // Config()->get_icon_size());
+
+        if (icon_size > max_icon_size) {
+            icon_size = max_icon_size;
+        };
+
+        return icon_size - Config()->get_dock_area_margin();
+    }
+
     void Panel::container_updated(guint explicit_size)
     {
         auto size = m_provider->data().size();
@@ -230,7 +263,7 @@ namespace docklight
         auto separators_count = (size * separator_size);
 
         // resize the icon if necesery
-        int scaled_icon_size = this->get_scale_factor();
+        int scaled_icon_size = get_scale_factor();
         Config()->set_icon_size(scaled_icon_size);
 
         // draw and positioning
@@ -242,6 +275,7 @@ namespace docklight
     {
         container_updated();
         Gtk::Widget::queue_draw();
+        g_message("Panel updated");
     }
 
     bool Panel::on_motion_notify_event(GdkEventMotion* event)
@@ -468,38 +502,5 @@ namespace docklight
         return false;
     }
 
-    inline guint Panel::get_scale_factor()
-    {
-        // remember the bigest area
-        static int area = 0;
-        if (!area) area = Config()->get_dock_area() + Config()->get_separator_size();
-
-        const int max_icon_size = Config()->get_custom_icon_size();
-        const auto workarea = device::monitor::get_workarea();
-        const int num_items = m_provider->data().size();
-        const int item_width = area;
-
-        int screen_width = 0;
-        int reduce_screen_value = Config()->get_dock_area_margin() * num_items;
-
-        if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-            if (workarea.get_width() <= 1) return max_icon_size;
-            screen_width = workarea.get_width() - reduce_screen_value;
-        } else {
-            if (workarea.get_height() <= 1) return max_icon_size;
-            screen_width = workarea.get_height() - reduce_screen_value;
-        }
-
-        // Calculate the scaling factor
-        float scaling_factor =
-            static_cast<float>(screen_width) / static_cast<float>(num_items * item_width);
-
-        int icon_size = std::floor(max_icon_size * scaling_factor);
-        if (icon_size > max_icon_size) {
-            icon_size = max_icon_size;
-        }
-
-        return icon_size;
-    }
 }  // namespace docklight
 

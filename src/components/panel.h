@@ -57,7 +57,9 @@ namespace docklight
         sigc::connection m_sigc_updated;
 
         guint get_dockitem_index(int mx, int my);
-
+        // gint          gdk_window_get_scale_factor  (GdkWindow     *window);
+        // https://docs.gtk.org/gdk3/method.Window.get_scale_factor.html
+        //
         guint get_scale_factor();
         bool on_button_press_event(GdkEventButton* event);
         bool on_motion_notify_event(GdkEventMotion* event);

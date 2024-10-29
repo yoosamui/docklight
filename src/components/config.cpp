@@ -48,7 +48,7 @@ namespace docklight
         return m_monitor_name;
     }
 
-    const int Configuration::get_dock_area_margin() const
+    int Configuration::get_dock_area_margin() const
     {
         return DEF_DOCKAREA_MARGIN;
     }
