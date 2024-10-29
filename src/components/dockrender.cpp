@@ -74,9 +74,9 @@ namespace docklight
 
     void DockRender::draw_surface_cell(std::shared_ptr<DockItemIcon>& item)
     {
-        if (!m_cell) {
-            create_surface_cell();
-        }
+        //        if (!m_cell) {
+        create_surface_cell();
+        //        }
 
         // clear
         m_cell_ctx->save();
@@ -98,12 +98,15 @@ namespace docklight
             m_cell_ctx->paint();
         }
 
-        if (!m_mouse_enter && item->get_tag() == m_dockitem_active_index) {
-            m_cell_ctx->set_source_rgba(0.0, 1.0, 1.0, 0.2);
-            m_cell_ctx->paint();
-        }
-
         m_cell_ctx->restore();
+        if (!m_mouse_enter && item->get_tag() == m_dockitem_active_index) {
+            m_cell_ctx->set_source_rgba(0.0, 1.0, 1.0, 0.3);
+            m_cell_ctx->paint();
+
+            // m_cell_ctx->set_operator(Cairo::Operator::OPERATOR_ADD);
+            // m_cell_ctx->paint_with_alpha(0.6);
+            // m_cell_ctx->set_operator(Cairo::Operator::OPERATOR_OVER);
+        }
     }
 
     void DockRender::create_surface_icon()
@@ -119,9 +122,9 @@ namespace docklight
         g_assert(m_cell);
         g_assert(m_background);
 
-        //   if (!m_icon) {
+        // if (!m_icon) {
         create_surface_icon();
-        //    }
+        // }
 
         // clear
         m_icon_ctx->save();
@@ -204,6 +207,7 @@ namespace docklight
         if (!m_indicator) {
             create_surface_indicator(item);
         }
+
         // clear
         m_indicator_ctx->save();
         m_indicator_ctx->set_source_rgba(0.0, 0.0, 0.0, 0.0);
@@ -217,13 +221,13 @@ namespace docklight
 
         if (item->get_childmap().size() > 0) {
             if (item->get_childmap().size() == 1) {
-                m_indicator_ctx->rectangle(0, 0, m_indicator->get_width(),
+                m_indicator_ctx->rectangle(2, 0, (m_indicator->get_width()) - 2,
                                            m_indicator->get_height() - 1);
 
             } else {
-                m_indicator_ctx->rectangle(0, 0, m_indicator->get_width() / 2 - 3,
+                m_indicator_ctx->rectangle(2, 0, (m_indicator->get_width() / 2) - 4,
                                            m_indicator->get_height() - 1);
-                m_indicator_ctx->rectangle(m_indicator->get_width() / 2 + 3, 0,
+                m_indicator_ctx->rectangle((m_indicator->get_width() / 2) + 2, 0,
                                            m_indicator->get_width() - 6,
                                            m_indicator->get_height() - 1);
             }

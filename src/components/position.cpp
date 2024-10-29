@@ -79,7 +79,7 @@ namespace docklight
 
     void PositionManager::on_monitor_changed()
     {
-        unsigned int microsecond = 1000000;
+        // unsigned int microsecond = 1000000;
 
         auto monitor_name = Config()->get_monitor_name().c_str();
         auto location_name = Config()->get_dock_location_name().c_str();
@@ -90,7 +90,7 @@ namespace docklight
             exec_file = "src/docklight";
         }
 
-        usleep(8 * microsecond);  // sleeps for 3 seconds
+        //   usleep(8 * microsecond);  // sleeps for 3 seconds
         execl(exec_file, "docklight", "-l", location_name, "-m", monitor_name, nullptr);
         g_warning("Restart failed!\n");
     }
