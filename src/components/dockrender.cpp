@@ -98,8 +98,7 @@ namespace docklight
             m_cell_ctx->paint();
         }
 
-        m_cell_ctx->restore();
-        if (!m_mouse_enter && item->get_tag() == m_dockitem_active_index) {
+        if (!m_mouse_enter && item->get_tag() && item->get_tag() == m_dockitem_active_index) {
             m_cell_ctx->set_source_rgba(0.0, 1.0, 1.0, 0.3);
             m_cell_ctx->paint();
 
@@ -107,6 +106,7 @@ namespace docklight
             // m_cell_ctx->paint_with_alpha(0.6);
             // m_cell_ctx->set_operator(Cairo::Operator::OPERATOR_OVER);
         }
+        m_cell_ctx->restore();
     }
 
     void DockRender::create_surface_icon()
@@ -292,44 +292,4 @@ namespace docklight
         return true;
     }
 
-    bool DockRender::on_drawX(const Cairo::RefPtr<Cairo::Context>& cr)
-    {
-        auto provider = Provider();
-
-        m_posX = 0;
-        m_posY = 0;
-
-        draw_surface_background();
-
-        guint separator_size = Config()->get_separator_size();
-
-        auto area = Config()->get_dock_area() + separator_size;
-        auto data = provider->data();
-        auto maxsize = data.size() * area;
-
-        get_start_pos(maxsize, m_posX, m_posY);
-
-        /*guint tag = 0;
-        for (auto& dockitem : data) {
-            dockitem->set_tag(tag++);
-
-            // draw_surface_cell(dockitem);
-            // draw_surface_icon(dockitem);
-            // draw_surface_indicator(dockitem);
-
-            // m_bck_ctx->set_source(m_cell, m_posX, m_posY);
-            // m_bck_ctx->paint();
-
-            if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-                m_posX += area;
-            } else {
-                m_posY += area;
-            }
-        }*/
-
-        cr->set_source(m_background, 0, 0);
-        cr->paint();
-
-        return true;
-    }
 }  // namespace docklight

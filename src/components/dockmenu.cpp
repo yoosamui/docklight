@@ -110,17 +110,17 @@ namespace docklight
 
     void DockMenu::on_HomeMinimizeAllWindows_event()
     {
-        wnck::HomeMinimizeAll();
+        wnck::minimize_all();
     }
 
     void DockMenu::on_HomeUnMinimizeAllWindows_event()
     {
-        wnck::HomeUnMinimizeAll();
+        wnck::unminimize_all();
     }
 
     void DockMenu::on_HomeCloseAllWindows_event()
     {
-        wnck::HomeCloseAllWindows();
+        wnck::close_all_windows();
     }
 
     void DockMenu::on_item_menu_minimize_all_event()

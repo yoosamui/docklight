@@ -51,7 +51,6 @@ namespace docklight
         void draw_surface_indicator(std::shared_ptr<DockItemIcon>& item);
 
         bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr);
-        bool on_drawX(const Cairo::RefPtr<Cairo::Context>& cr);
 
       protected:
         Glib::RefPtr<PositionManager> m_position;

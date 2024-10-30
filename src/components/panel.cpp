@@ -30,29 +30,6 @@
 
 namespace docklight
 {
-    // TODO move to somme tools.
-    /*gdouble rotation = 0;
-    double DegreesToRadians(int degrees);
-
-    double DegreesToRadians(int degrees)
-    {
-        return ((double)((double)degrees * (M_PI / 180)));
-    }
-
-    gboolean rotate_cb(void* degrees)
-    {
-        // Any rotation applied to cr here will be lost, as we create
-        // a new cairo context on every expose eventm_cell
-        // cairo_rotate (cr, 4);
-        rotation += DegreesToRadians((*(int*)(degrees)));
-        // cairo_paint(cr);
-        //       printf("rotating\n");
-        //  Tell our window that it should repaint itself (ie. emit an expose event)
-        //  gtk_widget_queue_draw(window);
-
-        return (TRUE);
-    }
-    */
     Panel::Panel()
     {
         // clang-format off
@@ -76,9 +53,7 @@ namespace docklight
         m_sigc_updated =
             m_provider->signal_update().connect(sigc::mem_fun(this, &Panel::on_container_updated));
 
-        // WnckHandle* handle = wnck_handle_new(WnckClientType::WNCK_CLIENT_TYPE_PAGER);
-        WnckHandle* handle = wnck_handle_new(WnckClientType::WNCK_CLIENT_TYPE_APPLICATION);
-        WnckScreen* wnckscreen = wnck_handle_get_default_screen(handle);
+        WnckScreen* wnckscreen = wnck::get_default_screen();
         g_signal_connect(wnckscreen, "active_window_changed",
                          G_CALLBACK(Panel::on_active_window_changed), nullptr);
 
@@ -104,7 +79,7 @@ namespace docklight
                 // Gets the active WnckWindow on screen.
                 // May return NULL sometimes, since not all
                 // window managers guarantee that a window is always active.
-                if (window) {
+                if (window && !m_mouse_enter) {
                     size_t idx = 0;
                     for (; idx < m_provider->data().size(); idx++) {
                         auto dockitem = m_provider->data().at(idx);
@@ -113,7 +88,8 @@ namespace docklight
 
                         if (std::find(xid_list.begin(), xid_list.end(), xid) != xid_list.end()) {
                             m_dockitem_active_index = idx;
-                            Gtk::Widget::queue_draw();
+
+                            if (idx) Gtk::Widget::queue_draw();
                             break;
                         }
                     }

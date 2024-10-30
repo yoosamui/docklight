@@ -28,32 +28,34 @@
 #include "constants.h"
 // clang-format on
 
-// TODO clean up, names snake case
-// check code
-//
 namespace docklight
 {
 
     namespace wnck
     {
-        WnckWindow* get_active();
-        std::string get_window_name(WnckWindow* window);
-        int get_windows_count();
-        int get_workspace_number(WnckWindow* window);
-        bool is_window_on_current_desktop(WnckWindow* window);
-        bool is_valid_window_type(WnckWindow* window);
+        void init();
         void activate_window_ws(std::vector<WnckWindow*> window_list);
         void activate_window_ws(WnckWindow* window);
         void bring_window(WnckWindow* window);
-        void get_docks();
         void activate_window(WnckWindow* window);
         void close_all_windows();
         void close_window(WnckWindow* window);
         void minimize(WnckWindow* window);
         void unminimize(WnckWindow* window);
-        void HomeMinimizeAll();
-        void HomeUnMinimizeAll();
-        void HomeCloseAllWindows();
+        void minimize_all();
+        void unminimize_all();
+
+        WnckScreen* get_default_screen();
+        WnckWindow* get_active();
+
+        std::string get_window_name(WnckWindow* window);
+
+        int get_windows_count();
+        int get_workspace_number(WnckWindow* window);
+
+        bool is_window_on_current_desktop(WnckWindow* window);
+        bool is_valid_window_type(WnckWindow* window);
+
     }  // namespace wnck
 }  // namespace docklight
 

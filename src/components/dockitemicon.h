@@ -32,17 +32,19 @@ namespace docklight
         DockItemIcon(gulong xid, WnckWindow* window, const Glib::ustring& instance_name,
                      const Glib::ustring& group_name, guint wintype);
 
+        int remove_child(gulong xid);
+
         void set_icon(Glib::RefPtr<Gdk::Pixbuf> icon);
+        void add_child(std::shared_ptr<DockItemIcon> child);
+        //  void remove_all() { return m_map.clear(); }
+
         const Glib::RefPtr<Gdk::Pixbuf>& get_icon() const;
         const Glib::RefPtr<Gdk::Pixbuf> get_icon(guint size);
 
         const std::vector<gulong>& get_wnck_xid_list();
         const std::vector<WnckWindow*>& get_wnck_window_list();
         const std::map<gulong, std::shared_ptr<DockItemIcon>>& get_childmap() const;
-        void add_child(std::shared_ptr<DockItemIcon> child);
-        int remove_child(gulong xid);
 
-        void remove_all() { return m_map.clear(); }
         std::shared_ptr<DockItemIcon> clone();
 
         guint get_container_size() override;

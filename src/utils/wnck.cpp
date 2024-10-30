@@ -25,6 +25,25 @@ namespace docklight
 
     namespace wnck
     {
+        WnckScreen* m_screen = nullptr;
+
+        void init()
+        {
+            WnckHandle* handle = wnck_handle_new(WnckClientType::WNCK_CLIENT_TYPE_PAGER);
+            if (!m_screen) {
+                m_screen = wnck_handle_get_default_screen(handle);
+                wnck_screen_force_update(m_screen);
+            }
+        }
+
+        WnckScreen* get_default_screen()
+        {
+            if (!m_screen) init();
+
+            wnck_screen_force_update(m_screen);
+            return m_screen;
+        }
+
         void bring_window(WnckWindow* window)
         {
             if (!WNCK_IS_WINDOW(window)) {
@@ -94,12 +113,10 @@ namespace docklight
             if (wnck_workspace_get_number(ws) != current_ws_number) return;
 
             if (!wnck_window_is_minimized(window)) {
-                //  if (wnck_window_is_active(window)) {
-                //  if (wnck_window_is_unmaximize(window)) {
-                //  g_print("IN WS %d\n", current_ws_number);
                 wnck_window_minimize(window);
                 return;
             }
+
             int ct = gtk_get_current_event_time();
             if (!wnck_window_is_active(window)) {
                 wnck_window_activate(window, ct);
@@ -114,10 +131,6 @@ namespace docklight
 
             if (wnck_window_is_active(window)) {
                 wnck_window_minimize(window);
-                // if (wnck_window_is_maximized(window)) {
-                // wnck_window_unmaximize(window);
-                // return;
-                //}
 
                 return;
             }
@@ -139,56 +152,13 @@ namespace docklight
                 return;
             }
 
-            //  wnck_window_minimize(window);
             wnck_window_close(window, gtk_get_current_event_time());
         }
 
-        void get_docks()
-        {
-            WnckScreen* screen;
-            GList* window_l;
-
-            // WnckHandle* handle = wnck_handle_new(WnckClientType::WNCK_CLIENT_TYPE_PAGER);
-            WnckHandle* handle = wnck_handle_new(WnckClientType::WNCK_CLIENT_TYPE_APPLICATION);
-            screen = wnck_handle_get_default_screen(handle);
-
-            wnck_screen_force_update(screen);
-
-            g_print("BEFORE LOOP\n");
-            for (window_l = wnck_screen_get_windows(screen); window_l != NULL;
-                 window_l = window_l->next) {
-                WnckWindow* window = WNCK_WINDOW(window_l->data);
-                //  g_print("IN LOOP\n");
-
-                // if (!is_valid_window_type(window)) {
-                // continue;
-                //}
-
-                WnckWindowType wt = wnck_window_get_window_type(window);
-                if (wt == WNCK_WINDOW_DOCK || wt == WNCK_WINDOW_TOOLBAR) {
-                    int yp = 0;
-                    int xp = 0;
-                    int widthp = 0;
-                    int heightp = 0;
-
-                    wnck_window_get_geometry(window, &xp, &yp, &widthp, &heightp);
-                    const char* instance_name = wnck_window_get_class_instance_name(window);
-                    g_print(">>[ %s ] %d %d - %d %d\n", instance_name, xp, yp, widthp, heightp);
-                }
-
-                //               wnck_window_close(window, gtk_get_current_event_time());
-            }
-        }
         void close_all_windows()
         {
-            WnckScreen* screen;
+            WnckScreen* screen = get_default_screen();
             GList* window_l;
-
-            // WnckHandle* handle = wnck_handle_new(WnckClientType::WNCK_CLIENT_TYPE_PAGER);
-            WnckHandle* handle = wnck_handle_new(WnckClientType::WNCK_CLIENT_TYPE_APPLICATION);
-            screen = wnck_handle_get_default_screen(handle);
-            //            screen = wnck_screen_get_default();
-            wnck_screen_force_update(screen);
 
             for (window_l = wnck_screen_get_windows(screen); window_l != NULL;
                  window_l = window_l->next) {
@@ -246,13 +216,8 @@ namespace docklight
         int get_windows_count()
         {
             int count = 0;
-            WnckScreen* screen;
+            WnckScreen* screen = get_default_screen();
             GList* window_l;
-
-            WnckHandle* handle = wnck_handle_new(WnckClientType::WNCK_CLIENT_TYPE_APPLICATION);
-            screen = wnck_handle_get_default_screen(handle);
-
-            wnck_screen_force_update(screen);
 
             for (window_l = wnck_screen_get_windows(screen); window_l != nullptr;
                  window_l = window_l->next) {
@@ -315,15 +280,10 @@ namespace docklight
             wnck_window_unminimize(window, ct);
         }
 
-        void HomeMinimizeAll()
+        void minimize_all()
         {
-            WnckScreen* screen;
+            WnckScreen* screen = get_default_screen();
             GList* window_l;
-
-            WnckHandle* handle = wnck_handle_new(WnckClientType::WNCK_CLIENT_TYPE_APPLICATION);
-            screen = wnck_handle_get_default_screen(handle);
-
-            wnck_screen_force_update(screen);
 
             for (window_l = wnck_screen_get_windows(screen); window_l != nullptr;
                  window_l = window_l->next) {
@@ -336,15 +296,10 @@ namespace docklight
             }
         }
 
-        void HomeUnMinimizeAll()
+        void unminimize_all()
         {
-            WnckScreen* screen;
+            WnckScreen* screen = get_default_screen();
             GList* window_l;
-
-            WnckHandle* handle = wnck_handle_new(WnckClientType::WNCK_CLIENT_TYPE_APPLICATION);
-            screen = wnck_handle_get_default_screen(handle);
-
-            wnck_screen_force_update(screen);
 
             for (window_l = wnck_screen_get_windows(screen); window_l != nullptr;
                  window_l = window_l->next) {
@@ -362,13 +317,8 @@ namespace docklight
 
         WnckWindow* get_active()
         {
-            WnckScreen* screen;
+            WnckScreen* screen = get_default_screen();
             GList* window_l;
-
-            WnckHandle* handle = wnck_handle_new(WnckClientType::WNCK_CLIENT_TYPE_APPLICATION);
-            screen = wnck_handle_get_default_screen(handle);
-
-            wnck_screen_force_update(screen);
 
             for (window_l = wnck_screen_get_windows(screen); window_l != nullptr;
                  window_l = window_l->next) {
@@ -385,7 +335,7 @@ namespace docklight
             return nullptr;
         }
 
-        void HomeCloseAllWindows()
+        /*void HomeCloseAllWindows()
         {
             WnckScreen* screen;
             GList* window_l;
@@ -409,6 +359,6 @@ namespace docklight
 
                 wnck_window_close(window, gtk_get_current_event_time());
             }
-        }
+        }*/
     }  // namespace wnck
 }  // namespace docklight
