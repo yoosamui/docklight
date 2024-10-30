@@ -27,38 +27,35 @@ namespace docklight
     class Configuration : public ConfigFile
     {
       public:
-      public:
         Configuration();
         virtual ~Configuration();
 
+        int get_dock_area_margin() const;
+        int get_anchor_margin() const;
+        int get_dock_area() const;
+        int get_icon_size() const;
+        int get_separator_size() const;
+
+        Glib::ustring get_dock_location_name() const;
         const Glib::ustring& get_monitor_name() const;
 
-        int get_dock_area_margin() const;
-        const int get_anchor_margin() const;
-        const int get_dock_area() const;
-        //  const int get_separator_margin() const;
+        dock_icon_alignment_t get_dock_icon_alignment() const;
+        dock_alignment_t get_dock_alignment() const;
+        dock_indicator_type_t get_indicator_type() const;
+        dock_location_t get_dock_location() const;
+        Gtk::Orientation get_dock_orientation() const;
+
+        bool is_autohide_none() const;
+        bool is_autohide() const;
+        bool is_intelihide() const;
+        void set_custom_icon_size(const guint size);
+
         void set_separator_size(guint size);
-        const int get_icon_size() const;
-        const int get_separator_size() const;
-
-        const dock_icon_alignment_t get_dock_icon_alignment() const;
-        const dock_alignment_t get_dock_alignment() const;
-        const dock_indicator_type_t get_indicator_type() const;
-        const dock_location_t get_dock_location() const;
-        Glib::ustring get_dock_location_name() const;
-        const Gtk::Orientation get_dock_orientation() const;
-
-        const bool is_autohide_none() const;
-        const bool is_autohide() const;
-        const bool is_intelihide() const;
-
-        const void set_icon_size(guint size);
+        void set_icon_size(guint size);
+        void set_arguments(const std::vector<std::tuple<gchar, int, Glib::ustring>>& args);
 
         int get_custom_icon_size() const;
         int get_icon_max_size();
-        const void set_custom_icon_size(const guint size);
-
-        void set_arguments(const std::vector<std::tuple<gchar, int, Glib::ustring>>& args);
     };
 
     Glib::RefPtr<Configuration> Config();

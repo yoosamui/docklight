@@ -46,6 +46,7 @@ namespace docklight
         Glib::ustring m_desktop_file = {};
         Glib::ustring m_icon_name = {};
         Glib::ustring m_description = {};
+
         guint m_wintype = 0;
         guint m_tag = 0;
         guint m_width = 0;
@@ -66,14 +67,17 @@ namespace docklight
 
         // getters
         virtual WnckWindow* get_wnckwindow() const = 0;
-        virtual guint get_container_size() = 0;
 
-        virtual const guint get_tag() const = 0;
-        virtual const bool get_attached() const = 0;
-        virtual const gulong get_xid() const = 0;
-        virtual const guint get_width() const = 0;
-        virtual const guint get_height() const = 0;
-        virtual const guint get_wintype() const = 0;
+        virtual guint get_container_size() = 0;
+        virtual guint get_tag() const = 0;
+        virtual guint get_width() const = 0;
+        virtual guint get_height() const = 0;
+        virtual guint get_wintype() const = 0;
+
+        virtual bool get_attached() const = 0;
+
+        virtual gulong get_xid() const = 0;
+
         virtual const Glib::ustring& get_window_name() = 0;
         virtual const Glib::ustring& get_title() const = 0;
         virtual const Glib::ustring& get_instance_name() const = 0;
@@ -89,8 +93,6 @@ namespace docklight
         DockItem(gulong xid, WnckWindow* window, const Glib::ustring& instance_name,
                  const Glib::ustring& group_name, guint wintype);
         ~DockItem();
-
-        // implementations
 
         // setters
         void set_attached(bool attached = true);
@@ -108,11 +110,16 @@ namespace docklight
         virtual WnckWindow* get_wnckwindow() const;
         virtual guint get_container_size() { return 0; };
 
-        const guint get_tag() const;
-        bool const has_desktop_file() const;
-        const bool get_attached() const;
-        const gulong get_xid() const;
-        const guint get_wintype() const;
+        guint get_tag() const;
+        guint get_wintype() const;
+        guint get_width() const;
+        guint get_height() const;
+
+        bool has_desktop_file() const;
+        bool get_attached() const;
+
+        gulong get_xid() const;
+
         const Glib::ustring& get_window_name();
         const Glib::ustring& get_title() const;
         const Glib::ustring& get_group_name() const;
@@ -120,10 +127,10 @@ namespace docklight
         const Glib::ustring& get_instance_name() const;
         const Glib::ustring& get_desktop_file() const;
         const Glib::ustring& get_icon_name() const;
-        const guint get_width() const;
-        const guint get_height() const;
+
         void launch();
-        virtual const Glib::ustring to_string();
+
+        virtual Glib::ustring to_string();
     };
 
 }  // namespace docklight

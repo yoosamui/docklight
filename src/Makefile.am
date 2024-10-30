@@ -13,19 +13,11 @@ docklight_CPPFLAGS = $(ALLCPPFLAGS)
 
 # release
 #docklight_CPPFLAGS += O2 -s -DNDEBUG -Wall -Wextra -Werror -std=c++11 -pedantic
+docklight_CPPFLAGS +=  -s -DNDEBUG -Wall -Wextra  -std=c++17
 
 # standard
-docklight_CPPFLAGS += -DDEBUG -Wall -std=c++17
-#-Lbamf3 -I/usr/include/libbamf3/
-#docklight_CPPFLAGS += $(pkg-config --libs libbamf3)
+####docklight_CPPFLAGS += -DDEBUG -Wall -std=c++17
 
-#BAPIS = \
-#    libbamf3.deps \
-#    libbamf3.vapi \
-#    $(NULL)
-#LIBADD += -L<LIBDIR> -lbamf3
-
-#EXTRA_DIST = $(BAPIS)
 
 ALLDADDLIBS = $(GTKMM_LIBS)
 #ALLDADDLIBS += $(LIBBAMF_PRIVATE_LIB)

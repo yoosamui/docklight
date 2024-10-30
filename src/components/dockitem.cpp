@@ -55,7 +55,7 @@ namespace docklight
         m_tag = tag;
     }
 
-    inline const bool DockItem::has_desktop_file() const
+    inline bool DockItem::has_desktop_file() const
     {
         return m_has_desktop_file;
     }
@@ -101,22 +101,22 @@ namespace docklight
     }
 
     // Getters
-    inline const guint DockItem::get_tag() const
+    inline guint DockItem::get_tag() const
     {
         return m_tag;
     }
 
-    inline const gulong DockItem::get_xid() const
+    inline gulong DockItem::get_xid() const
     {
         return m_xid;
     }
 
-    inline const guint DockItem::get_wintype() const
+    inline guint DockItem::get_wintype() const
     {
         return m_wintype;
     }
 
-    inline const bool DockItem::get_attached() const
+    inline bool DockItem::get_attached() const
     {
         return m_attached;
     }
@@ -151,14 +151,14 @@ namespace docklight
     inline const Glib::ustring& DockItem::get_desktop_file() const
     {
         return m_desktop_file;
-    };
+    }
 
-    inline const guint DockItem::get_width() const
+    inline guint DockItem::get_width() const
     {
         return m_width;
     }
 
-    inline const guint DockItem::get_height() const
+    inline guint DockItem::get_height() const
     {
         return m_height;
     }
@@ -240,7 +240,7 @@ namespace docklight
         g_key_file_free(key_file);
     }
 
-    const Glib::ustring DockItem::to_string()
+    Glib::ustring DockItem::to_string()
     {
         // clang-format off
             std::stringstream ss;
