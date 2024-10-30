@@ -106,6 +106,7 @@ namespace docklight
             // m_cell_ctx->paint_with_alpha(0.6);
             // m_cell_ctx->set_operator(Cairo::Operator::OPERATOR_OVER);
         }
+
         m_cell_ctx->restore();
     }
 

@@ -53,7 +53,11 @@ namespace docklight
         m_sigc_updated =
             m_provider->signal_update().connect(sigc::mem_fun(this, &Panel::on_container_updated));
 
-        WnckScreen* wnckscreen = wnck::get_default_screen();
+        //     WnckScreen* wnckscreen = wnck::get_default_screen();
+        WnckHandle* handle = wnck_handle_new(WnckClientType::WNCK_CLIENT_TYPE_APPLICATION);
+        WnckScreen* wnckscreen = wnck_handle_get_default_screen(handle);
+        //  wnck_screen_force_update(m_screen);
+
         g_signal_connect(wnckscreen, "active_window_changed",
                          G_CALLBACK(Panel::on_active_window_changed), nullptr);
 
@@ -76,22 +80,19 @@ namespace docklight
             if (window != m_active_window) {
                 window = m_active_window;
 
-                // Gets the active WnckWindow on screen.
-                // May return NULL sometimes, since not all
-                // window managers guarantee that a window is always active.
-                if (window && !m_mouse_enter) {
-                    size_t idx = 0;
-                    for (; idx < m_provider->data().size(); idx++) {
-                        auto dockitem = m_provider->data().at(idx);
-                        auto xid_list = dockitem->get_wnck_xid_list();
-                        gulong xid = wnck_window_get_xid(window);
+                if (!window && !m_mouse_enter) continue;
 
-                        if (std::find(xid_list.begin(), xid_list.end(), xid) != xid_list.end()) {
-                            m_dockitem_active_index = idx;
+                size_t idx = 1;
+                for (; idx < m_provider->data().size(); idx++) {
+                    auto dockitem = m_provider->data().at(idx);
+                    auto xid_list = dockitem->get_wnck_xid_list();
+                    gulong xid = wnck_window_get_xid(window);
 
-                            if (idx) Gtk::Widget::queue_draw();
-                            break;
-                        }
+                    if (std::find(xid_list.begin(), xid_list.end(), xid) != xid_list.end()) {
+                        m_dockitem_active_index = idx;
+                        Gtk::Widget::queue_draw();
+
+                        break;
                     }
                 }
             }
