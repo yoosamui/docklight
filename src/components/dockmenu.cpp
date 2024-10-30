@@ -1,3 +1,4 @@
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 //  Copyright (c) 2018-2024 Juan R. González
 //
 //
@@ -21,7 +22,6 @@
 #include "translations.h"
 // clang-format on
 
-#pragma GCC diagnostic ignored "-Wunused-parameter"
 namespace docklight
 {
 

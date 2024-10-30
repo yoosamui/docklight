@@ -13,7 +13,7 @@ docklight_CPPFLAGS = $(ALLCPPFLAGS)
 
 # release
 #docklight_CPPFLAGS += O2 -s -DNDEBUG -Wall -Wextra -Werror -std=c++11 -pedantic
-docklight_CPPFLAGS +=  -s -DNDEBUG -Wall -Wextra  -std=c++17
+docklight_CPPFLAGS +=  -s -DNDEBUG -Wall -Wextra -Werror -std=c++17 -pedantic
 
 # standard
 ####docklight_CPPFLAGS += -DDEBUG -Wall -std=c++17

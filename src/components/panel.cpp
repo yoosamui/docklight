@@ -1,3 +1,4 @@
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 //  Copyright (c) 2018-2024 Juan R. González
 //
 //
@@ -28,7 +29,6 @@
 #include "components/position.h"
 // clang-format on
 
-#pragma GCC diagnostic ignored "-Wunused-parameter"
 namespace docklight
 {
     Panel::Panel()
@@ -43,8 +43,8 @@ namespace docklight
                     Gdk::POINTER_MOTION_MASK
                    );
         // clang-format on
-        //
-        m_provider = create_provider();
+
+        // m_provider = create_provider();
         g_message("Create Panel.");
     }
 
@@ -199,29 +199,21 @@ namespace docklight
 
     inline guint Panel::get_scale_factor()
     {
-        const int max_icon_size = Config()->get_custom_icon_size();
         const auto workarea = device::monitor::get_workarea();
+        const int max_icon_size = Config()->get_custom_icon_size();
         const int num_items = m_provider->data().size();
         const int item_width = max_icon_size;
         int screen_width = 0;
 
-        if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-            if (workarea.get_width() <= 1) return max_icon_size;
-            screen_width = workarea.get_width();
-        } else {
-            if (workarea.get_height() <= 1) return max_icon_size;
-            screen_width = workarea.get_height();
-        }
+        screen_width = Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL
+                           ? workarea.get_width()
+                           : workarea.get_height();
 
         // Calculate the scaling factor
         float scaling_factor =
             static_cast<float>(screen_width) / static_cast<float>(num_items * item_width);
 
         int icon_size = std::floor(item_width * scaling_factor);
-
-        // g_print("-->size %d saling-factor %f area %d First icon_size %d [%d] curr-icon %d\n",
-        // num_items, scaling_factor, item_width, icon_size, (icon_size * num_items),
-        // Config()->get_icon_size());
 
         if (icon_size > max_icon_size) {
             icon_size = max_icon_size;
@@ -454,7 +446,7 @@ namespace docklight
 
         // ..    container_updated();
         //     m_provider->remove(0);
-        g_print("ATTACHED %s\n", dockitem->to_string().c_str());
+        /*g_print("ATTACHED %s\n", dockitem->to_string().c_str());
         //   m_provider->load();
         for (auto& dockitem : m_provider->data()) {
             g_print("X %ld %s attach %d child %ld\n", dockitem->get_xid(),
@@ -470,7 +462,7 @@ namespace docklight
                 break;
             }
         }
-
+*/
         // launcher2(dockitem->get_desktop_file(), dockitem->get_instance_name(),
         // dockitem->get_group_name(), dockitem->get_icon_name());
         return false;
