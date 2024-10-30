@@ -227,7 +227,7 @@ namespace docklight
             } else {
                 m_indicator_ctx->rectangle(2, 0, (m_indicator->get_width() / 2) - 4,
                                            m_indicator->get_height() - 1);
-                m_indicator_ctx->rectangle((m_indicator->get_width() / 2) + 2, 0,
+                m_indicator_ctx->rectangle((m_indicator->get_width() / 2) + 4, 0,
                                            m_indicator->get_width() - 6,
                                            m_indicator->get_height() - 1);
             }

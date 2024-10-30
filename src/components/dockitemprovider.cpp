@@ -47,7 +47,7 @@ namespace docklight
         std::shared_ptr<DockItemIcon> dockitem = std::shared_ptr<DockItemIcon>(
             new DockItemIcon(0, nullptr, DOCKLIGHT_INSTANCENAME, DOCKLIGHT_INSTANCENAME, 0));
 
-        std::string filename = "data/images/docklight.home.ico";
+        std::string filename = "data/images/docklight-home.svg";
         try {
             auto size = Config()->get_icon_max_size();
             auto pixbuf = Gdk::Pixbuf::create_from_file(filename, size, size, true);
