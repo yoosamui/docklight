@@ -87,7 +87,7 @@ namespace docklight
 
     void Configuration::set_custom_icon_size(const guint size)
     {
-        if (size < 0 || size > DEF_ICON_MAXSIZE) return;
+        if (!size || size > (guint)DEF_ICON_MAXSIZE) return;
 
         m_custom_icon_size = size;
         if (size == 0) m_custom_icon_size = m_icon_size;
@@ -95,13 +95,13 @@ namespace docklight
 
     void Configuration::set_icon_size(guint size)
     {
-        if (size < 0 || size > DEF_ICON_MAXSIZE) return;
+        if (!size || size > (guint)DEF_ICON_MAXSIZE) return;
         m_icon_size = size;
     }
 
     void Configuration::set_separator_size(guint size)
     {
-        if (size < 0 || size > 64) return;
+        if (!size || size > 64) return;
         m_separator_size = size;
     }
 

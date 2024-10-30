@@ -70,23 +70,23 @@ namespace docklight
         return EXIT_SUCCESS;
     }
 
-    void AppWindow::send_notification(const Glib::ustring& title, const Glib::ustring& text,
+    /*void AppWindow::send_notification(const Glib::ustring& title, const Glib::ustring& text,
                                       const Glib::ustring& icon_name)
     {
-        /*auto Notification = Gio::Notification::create(title);
+        [>auto Notification = Gio::Notification::create(title);
         Notification->set_body(text);
         auto Icon = Gio::ThemedIcon::create(icon_name);
         Notification->set_icon(Icon);
 
         // TODO: just for testing
-        m_application->send_notification(Notification);*/
-    }
+        m_application->send_notification(Notification);<]
+    }*/
 
     void AppWindow::on_app_activated()
     {
         g_message(MSG_APPLICATION_ACTIVATED);
-        AppWindow::send_notification(DOCKLIGHT_APPNAME, MSG_APPLICATION_START,
-                                     "dialog-information");
+        // AppWindow::send_notification(DOCKLIGHT_APPNAME, MSG_APPLICATION_START,
+        //"dialog-information");
     }
 
     int AppWindow::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine>& command_line,

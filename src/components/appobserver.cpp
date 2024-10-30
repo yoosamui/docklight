@@ -21,6 +21,8 @@
 namespace docklight
 {
 
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#pragma GCC diagnostic ignored "-Wunused-parameter"
     void AppObserver::on_window_closed(WnckScreen* screen, WnckWindow* window, gpointer data)
     {
         if (!window) {

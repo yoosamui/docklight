@@ -28,6 +28,7 @@
 #include "components/position.h"
 // clang-format on
 
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 namespace docklight
 {
     Panel::Panel()

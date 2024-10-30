@@ -21,6 +21,7 @@
 #include "translations.h"
 // clang-format on
 
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 namespace docklight
 {
 

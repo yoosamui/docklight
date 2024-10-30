@@ -19,7 +19,8 @@
 // clang-format off
 #include "dockrender.h"
 // clang-format on
-
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 namespace docklight
 {
 

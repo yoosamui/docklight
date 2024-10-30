@@ -66,8 +66,8 @@ namespace docklight
 
         //  void on_container_updated(window_action_t action, gint index);
         static void on_app_activated();
-        static void send_notification(const Glib::ustring& title, const Glib::ustring& text,
-                                      const Glib::ustring& icon_name);
+        // static void send_notification(const Glib::ustring& title, const Glib::ustring& text,
+        // const Glib::ustring& icon_name);
 
         // bool on_enter_notify_event(GdkEventCrossing* crossing_event);
         // bool on_leave_notify_event(GdkEventCrossing* crossing_event);

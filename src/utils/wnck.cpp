@@ -33,17 +33,12 @@ namespace docklight
 
             if (!m_screen) {
                 m_screen = wnck_handle_get_default_screen(handle);
-                //    wnck_screen_force_update(m_screen);
             }
         }
 
         WnckScreen* get_default_screen()
         {
             if (!m_screen) init();
-            //  WnckHandle* handle = wnck_handle_new(WnckClientType::WNCK_CLIENT_TYPE_PAGER);
-            //  m_screen = wnck_handle_get_default_screen(handle);
-
-            //   wnck_screen_force_update(m_screen);
             return m_screen;
         }
 
@@ -61,7 +56,7 @@ namespace docklight
                 }
             }
 
-            wnck_window_activate(window, ct);
+            if (!wnck_window_is_active(window)) wnck_window_activate(window, ct);
         }
 
         void activate_window_ws(std::vector<WnckWindow*> window_list)
@@ -85,20 +80,20 @@ namespace docklight
                 WnckWorkspace* ws = wnck_window_get_workspace(window);
                 if (wnck_workspace_get_number(ws) != current_ws_number) continue;
 
-                if (mini)
-                    wnck_window_activate(window, ct);
-                else
-                    wnck_window_minimize(window);
+                if (mini) {
+                    if (!wnck_window_is_active(window)) {
+                        wnck_window_activate(window, ct);
+                    } else {
+                        wnck_window_minimize(window);
+                    }
 
-                count++;
+                    count++;
+                }
             }
 
             if (!count) {
                 for (auto& window : window_list) {
-                    // if (mini)
-                    wnck_window_activate(window, ct);
-                    // else
-                    //     wnck_window_minimize(window);
+                    if (!wnck_window_is_active(window)) wnck_window_activate(window, ct);
                 }
             }
         }
@@ -146,7 +141,7 @@ namespace docklight
                 }
             }
 
-            wnck_window_activate(window, ct);
+            if (!wnck_window_is_active(window)) wnck_window_activate(window, ct);
         }
 
         void close_window(WnckWindow* window)

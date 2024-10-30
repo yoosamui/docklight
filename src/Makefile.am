@@ -26,7 +26,6 @@ docklight_LDADD = $(ALLDADDLIBS)
 
 docklight_SOURCES =  \
 utils/system.cpp \
-utils/pixbuf.cpp \
 utils/factory.cpp \
 utils/wnck.cpp \
 utils/struts.cpp \
