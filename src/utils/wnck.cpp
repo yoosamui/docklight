@@ -81,14 +81,12 @@ namespace docklight
                 if (wnck_workspace_get_number(ws) != current_ws_number) continue;
 
                 if (mini) {
-                    if (!wnck_window_is_active(window)) {
-                        wnck_window_activate(window, ct);
-                    } else {
-                        wnck_window_minimize(window);
-                    }
-
-                    count++;
+                    if (!wnck_window_is_active(window)) wnck_window_activate(window, ct);
+                } else {
+                    if (!wnck_window_is_minimized(window)) wnck_window_minimize(window);
                 }
+
+                count++;
             }
 
             if (!count) {
@@ -141,7 +139,8 @@ namespace docklight
                 }
             }
 
-            if (!wnck_window_is_active(window)) wnck_window_activate(window, ct);
+            // if (!wnck_window_is_active(window))
+            wnck_window_activate(window, ct);
         }
 
         void close_window(WnckWindow* window)

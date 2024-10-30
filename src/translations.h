@@ -77,7 +77,7 @@
 #define MSG_CLOSE_ALL_WINDOWS \
     _("Close all windows")
 #define MSG_OPEN_NEW \
-    _("Open new")
+    _("New")
 #define MSG_ATTACH \
     _("Attach")
 #define MSG_MINIMIZE_ALL_WINDOWS \

@@ -44,7 +44,7 @@ namespace docklight
                    );
         // clang-format on
 
-        // m_provider = create_provider();
+        m_provider = Provider();
         g_message("Create Panel.");
     }
 

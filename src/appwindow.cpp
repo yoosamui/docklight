@@ -37,6 +37,7 @@ namespace docklight
         set_size_request(1, 1);
 
         Config();
+        m_provider = create_provider();
         m_observer = create_observer();
         m_position = create_position(this);
         m_panel = new Panel();

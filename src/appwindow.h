@@ -51,6 +51,7 @@ namespace docklight
         // instantiate listener
         Glib::RefPtr<AppObserver> m_observer;
         Glib::RefPtr<PositionManager> m_position;
+        Glib::RefPtr<DockItemProvider> m_provider;
 
         //    bool on_timeout_draw();
         bool on_button_press_event(GdkEventButton* event) override;

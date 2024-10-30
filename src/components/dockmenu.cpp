@@ -35,8 +35,8 @@ namespace docklight
         m_HomeMinimizeAllWindowsMenuItem.set_label(MSG_MINIMIZE_ALL_WINDOWS);
         m_HomeUnMinimizeAllWindowsMenuItem.set_label(MSG_MAXIMIZE_ALL_WINDOWS);
 
-        m_home_menu.append(m_HomeMinimizeAllWindowsMenuItem);
         m_home_menu.append(m_HomeUnMinimizeAllWindowsMenuItem);
+        m_home_menu.append(m_HomeMinimizeAllWindowsMenuItem);
         m_home_menu.append(m_home_menu_close_all_item);
         m_home_menu.append(m_separatorMenuHome1);
         m_home_menu.append(m_home_menu_quit_item);

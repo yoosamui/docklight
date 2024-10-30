@@ -121,7 +121,7 @@ namespace docklight
                                                  std::shared_ptr<DockItemIcon>& dockitem)
     {
         auto v = data();
-        if (!index || index > (guint)v.size()) return false;
+        if (index > (guint)v.size()) return false;
 
         dockitem = v.at(index);
         return dockitem ? true : false;
