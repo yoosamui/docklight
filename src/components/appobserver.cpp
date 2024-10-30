@@ -54,8 +54,10 @@ namespace docklight
 
     AppObserver::AppObserver()
     {
-        WnckHandle* handle = wnck_handle_new(WnckClientType::WNCK_CLIENT_TYPE_PAGER);
-        WnckScreen* wnckscreen = wnck_handle_get_default_screen(handle);
+        // WnckHandle* handle = wnck_handle_new(WnckClientType::WNCK_CLIENT_TYPE_PAGER);
+        // WnckScreen* wnckscreen = wnck_handle_get_default_screen(handle);
+
+        WnckScreen* wnckscreen = wnck::get_default_screen();
 
         g_signal_connect(G_OBJECT(wnckscreen), "window-opened",
                          G_CALLBACK(&AppObserver::on_window_opened), nullptr);

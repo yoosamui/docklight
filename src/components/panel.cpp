@@ -53,11 +53,7 @@ namespace docklight
         m_sigc_updated =
             m_provider->signal_update().connect(sigc::mem_fun(this, &Panel::on_container_updated));
 
-        //     WnckScreen* wnckscreen = wnck::get_default_screen();
-        WnckHandle* handle = wnck_handle_new(WnckClientType::WNCK_CLIENT_TYPE_APPLICATION);
-        WnckScreen* wnckscreen = wnck_handle_get_default_screen(handle);
-        //  wnck_screen_force_update(m_screen);
-
+        WnckScreen* wnckscreen = wnck::get_default_screen();
         g_signal_connect(wnckscreen, "active_window_changed",
                          G_CALLBACK(Panel::on_active_window_changed), nullptr);
 
@@ -80,7 +76,7 @@ namespace docklight
             if (window != m_active_window) {
                 window = m_active_window;
 
-                if (!window && !m_mouse_enter) continue;
+                if (!window) continue;
 
                 size_t idx = 1;
                 for (; idx < m_provider->data().size(); idx++) {

@@ -30,17 +30,20 @@ namespace docklight
         void init()
         {
             WnckHandle* handle = wnck_handle_new(WnckClientType::WNCK_CLIENT_TYPE_PAGER);
+
             if (!m_screen) {
                 m_screen = wnck_handle_get_default_screen(handle);
-                wnck_screen_force_update(m_screen);
+                //    wnck_screen_force_update(m_screen);
             }
         }
 
         WnckScreen* get_default_screen()
         {
             if (!m_screen) init();
+            //  WnckHandle* handle = wnck_handle_new(WnckClientType::WNCK_CLIENT_TYPE_PAGER);
+            //  m_screen = wnck_handle_get_default_screen(handle);
 
-            wnck_screen_force_update(m_screen);
+            //   wnck_screen_force_update(m_screen);
             return m_screen;
         }
 
@@ -160,6 +163,7 @@ namespace docklight
             WnckScreen* screen = get_default_screen();
             GList* window_l;
 
+            wnck_screen_force_update(m_screen);
             for (window_l = wnck_screen_get_windows(screen); window_l != NULL;
                  window_l = window_l->next) {
                 WnckWindow* window = WNCK_WINDOW(window_l->data);
@@ -219,6 +223,7 @@ namespace docklight
             WnckScreen* screen = get_default_screen();
             GList* window_l;
 
+            wnck_screen_force_update(m_screen);
             for (window_l = wnck_screen_get_windows(screen); window_l != nullptr;
                  window_l = window_l->next) {
                 WnckWindow* window = static_cast<WnckWindow*>(window_l->data);
@@ -285,6 +290,7 @@ namespace docklight
             WnckScreen* screen = get_default_screen();
             GList* window_l;
 
+            wnck_screen_force_update(m_screen);
             for (window_l = wnck_screen_get_windows(screen); window_l != nullptr;
                  window_l = window_l->next) {
                 WnckWindow* window = WNCK_WINDOW(window_l->data);
@@ -301,6 +307,7 @@ namespace docklight
             WnckScreen* screen = get_default_screen();
             GList* window_l;
 
+            wnck_screen_force_update(m_screen);
             for (window_l = wnck_screen_get_windows(screen); window_l != nullptr;
                  window_l = window_l->next) {
                 WnckWindow* window = WNCK_WINDOW(window_l->data);
@@ -320,6 +327,7 @@ namespace docklight
             WnckScreen* screen = get_default_screen();
             GList* window_l;
 
+            wnck_screen_force_update(m_screen);
             for (window_l = wnck_screen_get_windows(screen); window_l != nullptr;
                  window_l = window_l->next) {
                 WnckWindow* window = WNCK_WINDOW(window_l->data);
