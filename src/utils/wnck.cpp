@@ -62,6 +62,7 @@ namespace docklight
         void activate_window_ws(std::vector<WnckWindow*> window_list)
         {
             bool mini = false;
+            g_print("Activate ws\n");
 
             GdkScreen* screen = gdk_screen_get_default();
             int current_ws_number = gdk_x11_screen_get_current_desktop(screen);
@@ -84,12 +85,12 @@ namespace docklight
                     if (!wnck_window_is_active(window)) wnck_window_activate(window, ct);
                 } else {
                     if (!wnck_window_is_minimized(window)) wnck_window_minimize(window);
+                    count++;
                 }
-
-                count++;
             }
 
             if (!count) {
+                g_print("ooooo\n");
                 for (auto& window : window_list) {
                     if (!wnck_window_is_active(window)) wnck_window_activate(window, ct);
                 }
@@ -337,30 +338,5 @@ namespace docklight
             return nullptr;
         }
 
-        /*void HomeCloseAllWindows()
-        {
-            WnckScreen* screen;
-            GList* window_l;
-
-            WnckHandle* handle = wnck_handle_new(WnckClientType::WNCK_CLIENT_TYPE_APPLICATION);
-            screen = wnck_handle_get_default_screen(handle);
-
-            wnck_screen_force_update(screen);
-
-            for (window_l = wnck_screen_get_windows(screen); window_l != nullptr;
-                 window_l = window_l->next) {
-                WnckWindow* window = WNCK_WINDOW(window_l->data);
-                if (!window) continue;
-
-                if (!is_valid_window_type(window)) continue;
-
-                const char* instancename = wnck_window_get_class_instance_name(window);
-                if (instancename != NULL && strcmp(instancename, DOCKLIGHT_INSTANCENAME) == 0) {
-                    continue;
-                }
-
-                wnck_window_close(window, gtk_get_current_event_time());
-            }
-        }*/
     }  // namespace wnck
 }  // namespace docklight
