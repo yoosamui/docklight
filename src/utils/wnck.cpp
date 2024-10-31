@@ -81,6 +81,7 @@ namespace docklight
             GdkScreen* screen = gdk_screen_get_default();
             int current_ws_number = gdk_x11_screen_get_current_desktop(screen);
             int event_time = gtk_get_current_event_time();
+            // Focus off-viewport window if it needs attention
 
             // Unminimize minimized windows if there is one or moreen_force_update(m_screen);
             int et = gtk_get_current_event_time();
@@ -88,8 +89,11 @@ namespace docklight
                 WnckWorkspace* ws = wnck_window_get_workspace(window);
                 if (wnck_workspace_get_number(ws) != current_ws_number) continue;
 
-                if (wnck_window_is_minimized(window)) {
+                if (wnck_window_is_minimized(window) && wnck_window_is_in_viewport(window, ws)) {
                     for (auto& w : window_list) {
+                        WnckWorkspace* ws = wnck_window_get_workspace(w);
+                        if (wnck_workspace_get_number(ws) != current_ws_number) continue;
+
                         wnck_window_unminimize(w, et);
                     }
 
@@ -105,9 +109,13 @@ namespace docklight
                 WnckScreen* wckscreen = wnck_window_get_screen(window);
 
                 if (wnck_window_is_active(window) ||
-                    window == wnck_screen_get_active_window(wckscreen)) {
+                    (window == wnck_screen_get_active_window(wckscreen) &&
+                     wnck_window_is_in_viewport(window, ws))) {
                     for (auto& w : window_list) {
                         if (!wnck_window_is_minimized(w)) {
+                            WnckWorkspace* ws = wnck_window_get_workspace(w);
+                            if (wnck_workspace_get_number(ws) != current_ws_number) continue;
+
                             wnck_window_minimize(w);
                         }
                     }
@@ -120,11 +128,17 @@ namespace docklight
             for (auto& window : window_list) {
                 WnckWorkspace* ws = wnck_window_get_workspace(window);
                 if (wnck_workspace_get_number(ws) != current_ws_number) continue;
+                if (wnck_window_is_in_viewport(window, ws)) {
+                    for (auto& w : window_list) {
+                        if (!wnck_window_is_minimized(w)) {
+                            WnckWorkspace* ws = wnck_window_get_workspace(w);
+                            if (wnck_workspace_get_number(ws) != current_ws_number) continue;
 
-                for (auto& w : window_list) {
-                    if (!wnck_window_is_minimized(w)) {
-                        focus_window(w, event_time);
+                            focus_window(w, event_time);
+                        }
                     }
+
+                    return;
                 }
             }
         }
