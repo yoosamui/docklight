@@ -59,21 +59,112 @@ namespace docklight
             if (!wnck_window_is_active(window)) wnck_window_activate(window, ct);
         }
 
+        void focus_window(WnckWindow* window, int event_time)
+        {
+            WnckWorkspace* ws = wnck_window_get_workspace(window);
+
+            wnck_workspace_activate(ws, event_time);
+
+            if (wnck_window_is_minimized(window)) {
+                wnck_window_unminimize(window, event_time);
+            }
+
+            wnck_window_activate_transient(window, event_time);
+        }
+
+        // Taken from plank code,
         void activate_window_ws(std::vector<WnckWindow*> window_list)
         {
+            // bool mini = false;
+            g_print("Activate ws\n");
+
+            GdkScreen* screen = gdk_screen_get_default();
+            int current_ws_number = gdk_x11_screen_get_current_desktop(screen);
+            int event_time = gtk_get_current_event_time();
+
+            // Unminimize minimized windows if there is one or moreen_force_update(m_screen);
+            int et = gtk_get_current_event_time();
+            for (auto& window : window_list) {
+                WnckWorkspace* ws = wnck_window_get_workspace(window);
+                if (wnck_workspace_get_number(ws) != current_ws_number) continue;
+
+                if (wnck_window_is_minimized(window)) {
+                    for (auto& w : window_list) {
+                        wnck_window_unminimize(w, et);
+                    }
+
+                    return;
+                }
+            }
+
+            // Minimize all windows if this application owns the active window
+            for (auto& window : window_list) {
+                WnckWorkspace* ws = wnck_window_get_workspace(window);
+                if (wnck_workspace_get_number(ws) != current_ws_number) continue;
+
+                WnckScreen* wckscreen = wnck_window_get_screen(window);
+
+                if (wnck_window_is_active(window) ||
+                    window == wnck_screen_get_active_window(wckscreen)) {
+                    for (auto& w : window_list) {
+                        if (!wnck_window_is_minimized(w)) {
+                            wnck_window_minimize(w);
+                        }
+                    }
+
+                    return;
+                }
+            }
+
+            // Get all windows on the current workspace in the foreground
+            for (auto& window : window_list) {
+                WnckWorkspace* ws = wnck_window_get_workspace(window);
+                if (wnck_workspace_get_number(ws) != current_ws_number) continue;
+
+                for (auto& w : window_list) {
+                    if (!wnck_window_is_minimized(w)) {
+                        focus_window(w, event_time);
+                    }
+                }
+            }
+        }
+
+        void activate_window_wsORI(std::vector<WnckWindow*> window_list)
+        {
+            /*g_print("Activate ws\n");
+            WnckScreen* screen = get_default_screen();
+            GList* window_l;
+
+            window_list.clear();
+            wnck_screen_force_update(screen);
+
+            for (window_l = wnck_screen_get_windows(screen); window_l != nullptr;
+                 window_l = window_l->next) {
+                WnckWindow* window = WNCK_WINDOW(window_l->data);
+                if (!window) continue;
+
+                //  if (!is_valid_window_type(window)) continue;
+
+                if (wnck_window_is_below(window)) exit(1);
+                // wnck_Vwindow_minimize(window);
+            }*/
+
             bool mini = false;
             g_print("Activate ws\n");
 
             GdkScreen* screen = gdk_screen_get_default();
             int current_ws_number = gdk_x11_screen_get_current_desktop(screen);
 
+            //    wnck_screen_force_update(m_screen);
             int ct = gtk_get_current_event_time();
             for (auto& window : window_list) {
                 WnckWorkspace* ws = wnck_window_get_workspace(window);
                 if (wnck_workspace_get_number(ws) != current_ws_number) continue;
 
                 mini = wnck_window_is_minimized(window);
-                if (mini) break;
+                if (mini) {
+                    break;
+                }
             }
 
             int count = 0;
@@ -81,16 +172,25 @@ namespace docklight
                 WnckWorkspace* ws = wnck_window_get_workspace(window);
                 if (wnck_workspace_get_number(ws) != current_ws_number) continue;
 
+                // if (wnck_window_is_below(window)) exit(1);
+                // if (wnck_window_is_above(window)) exit(1);
+
                 if (mini) {
-                    if (!wnck_window_is_active(window)) wnck_window_activate(window, ct);
+                    wnck_window_activate(window, ct);
                 } else {
-                    if (!wnck_window_is_minimized(window)) wnck_window_minimize(window);
-                    count++;
+                    // if (wnck_window_get_state(window) ==
+                    // WnckWindowState::WNCK_WINDOW_STATE_MINIMIZED) {
+                    // wnck_window_activate(window, ct);
+                    // continue;
+                    //}
+
+                    wnck_window_minimize(window);
                 }
+
+                count++;
             }
 
             if (!count) {
-                g_print("ooooo\n");
                 for (auto& window : window_list) {
                     if (!wnck_window_is_active(window)) wnck_window_activate(window, ct);
                 }
@@ -285,7 +385,7 @@ namespace docklight
             WnckScreen* screen = get_default_screen();
             GList* window_l;
 
-            wnck_screen_force_update(m_screen);
+            wnck_screen_force_update(screen);
             for (window_l = wnck_screen_get_windows(screen); window_l != nullptr;
                  window_l = window_l->next) {
                 WnckWindow* window = WNCK_WINDOW(window_l->data);
