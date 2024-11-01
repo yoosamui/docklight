@@ -173,11 +173,7 @@ namespace docklight
 
     void DockItem::launch()
     {
-        //        GAppLaunchContext* context = nullptr;
-        // GAppInfo* app_info = nullptr;
-        //        GKeyFile* key_file = g_key_file_new();
-
-        Glib::RefPtr<Gio::DesktopAppInfo> appinfo =
+        /*Glib::RefPtr<Gio::DesktopAppInfo> appinfo =
             Gio::DesktopAppInfo::create_from_filename(m_desktop_file);
 
         if (appinfo) {
@@ -193,9 +189,15 @@ namespace docklight
             g_error_free(error);
             error = nullptr;
         }
-        return;
 
-        /*if (!m_desktop_file.empty()) {
+        return;*/
+
+        GAppLaunchContext* context = nullptr;
+        GAppInfo* app_info = nullptr;
+        GKeyFile* key_file = g_key_file_new();
+        GError* error = nullptr;
+
+        if (!m_desktop_file.empty()) {
             gboolean found = g_key_file_load_from_file(key_file, m_desktop_file.c_str(),
                                                        GKeyFileFlags::G_KEY_FILE_NONE, nullptr);
 
@@ -257,7 +259,7 @@ namespace docklight
             error = nullptr;
         }
 
-        g_key_file_free(key_file);*/
+        g_key_file_free(key_file);
     }
 
     Glib::ustring DockItem::to_string()

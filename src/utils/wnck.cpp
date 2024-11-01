@@ -154,7 +154,7 @@ namespace docklight
                             WnckWorkspace* ws = wnck_window_get_workspace(w);
                             if (wnck_workspace_get_number(ws) != current_ws_number) continue;
 
-                            focus_window(w, event_time);
+                            //    focus_window(w, event_time);
                         }
                     }
 
@@ -163,7 +163,11 @@ namespace docklight
             }
 
             for (auto& window : window_list) {
-                focus_window(window, event_time);
+                if (window) {
+                    ;
+                }
+                //   focus_window(window, event_time);
+                g_print("FOCUS\n");
             }
         }
 
