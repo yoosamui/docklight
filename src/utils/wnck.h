@@ -38,6 +38,7 @@ namespace docklight
         void select_window(WnckWindow* window);
         void select_window(std::vector<WnckWindow*> window_list);
         void activate_window(WnckWindow* window);
+        void bring_above_window(WnckWindow* window);
         int count_in_workspace(WnckWindow* window, std::string& result);
 
         void close_all_windows();

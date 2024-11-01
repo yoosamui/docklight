@@ -321,7 +321,7 @@ namespace docklight
 
         WnckWindow* window = child->get_wnckwindow();
         if (!window) return false;
-        wnck::activate_window(window);
+        wnck::bring_above_window(window);
 
         return true;
     }

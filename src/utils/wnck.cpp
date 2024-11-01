@@ -52,10 +52,6 @@ namespace docklight
             int count = 0;
             result = "";
 
-            // auto groupname = wnck_window_get_class_group_name(source_window);
-            // std::string instance_name = wnck_window_get_class_instance_name(source_window);
-            // std::string group_name = groupname;
-
             WnckScreen* wckscreen = get_default_screen();
             GList* window_l;
 
@@ -67,10 +63,6 @@ namespace docklight
 
                 WnckWorkspace* ws = wnck_window_get_workspace(window);
                 if (wnck_workspace_get_number(ws) == current_ws_number) continue;
-
-                // auto cgroupname = wnck_window_get_class_group_name(window);
-                // std::string cinstance_name = wnck_window_get_class_instance_name(window);
-                // std::string cgroup_name = cgroupname;
 
                 if (source_window != window) continue;
 
@@ -102,12 +94,6 @@ namespace docklight
 
             int event_time = gtk_get_current_event_time();
             focus_window(window, event_time);
-
-            // if (!is_window_on_current_desktop(window)) {
-            // WnckWorkspace* ws = wnck_window_get_workspace(window);
-            // if (ws != nullptr) {
-            // wnck_workspace_activate(ws, ct);
-            //}
         }
 
         // if (!wnck_window_is_active(window)) wnck_window_activate(window, ct);
@@ -117,10 +103,8 @@ namespace docklight
             GdkScreen* screen = gdk_screen_get_default();
             int current_ws_number = gdk_x11_screen_get_current_desktop(screen);
             int event_time = gtk_get_current_event_time();
-            // Focus off-viewport window if it needs attention
 
             // Unminimize minimized windows if there is one or moreen_force_update(m_screen);
-            int et = gtk_get_current_event_time();
             for (auto& window : window_list) {
                 WnckWorkspace* ws = wnck_window_get_workspace(window);
                 if (wnck_workspace_get_number(ws) != current_ws_number) continue;
@@ -130,7 +114,7 @@ namespace docklight
                         WnckWorkspace* ws = wnck_window_get_workspace(w);
                         if (wnck_workspace_get_number(ws) != current_ws_number) continue;
 
-                        wnck_window_unminimize(w, et);
+                        wnck_window_unminimize(w, event_time);
                     }
 
                     return;
@@ -177,6 +161,10 @@ namespace docklight
                     return;
                 }
             }
+
+            for (auto& window : window_list) {
+                focus_window(window, event_time);
+            }
         }
 
         void activate_window(WnckWindow* window)
@@ -191,17 +179,38 @@ namespace docklight
                 return;
             }
 
-            int ct = gtk_get_current_event_time();
+            int event_time = gtk_get_current_event_time();
             if (!is_window_on_current_desktop(window)) {
                 WnckWorkspace* ws = wnck_window_get_workspace(window);
                 if (ws != nullptr) {
-                    wnck_workspace_activate(ws, ct);
+                    wnck_workspace_activate(ws, event_time);
                 }
             }
 
-            if (!wnck_window_is_active(window)) {
-                wnck_window_activate(window, ct);
+            focus_window(window, event_time);
+            // if (!wnck_window_is_active(window)) {
+            // wnck_window_activate(window, ct);
+            //}
+        }
+
+        void bring_above_window(WnckWindow* window)
+        {
+            if (!WNCK_IS_WINDOW(window)) {
+                return;
             }
+
+            int event_time = gtk_get_current_event_time();
+            if (!is_window_on_current_desktop(window)) {
+                WnckWorkspace* ws = wnck_window_get_workspace(window);
+                if (ws != nullptr) {
+                    wnck_workspace_activate(ws, event_time);
+                }
+            }
+
+            // focus_window(window, event_time);
+            //  if (!wnck_window_is_active(window)) {
+            wnck_window_activate(window, event_time);
+            //}
         }
 
         void close_window(WnckWindow* window)
