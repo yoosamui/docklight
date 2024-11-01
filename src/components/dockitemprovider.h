@@ -19,7 +19,7 @@
 
 // clang-format off
 #include <any>
-#include <gdkmm/pixbuf.h>
+//#include <gdkmm/pixbuf.h>
 #include <sigc++/sigc++.h>
 #include <libbamf/libbamf.h>
 #include <libwnck/libwnck.h>

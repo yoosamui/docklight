@@ -42,7 +42,6 @@ install-exec-hook:
 
 	mkdir -p $(bindir)/docklight-5
 	if test -f $(bindir)/docklight; then mv $(bindir)/docklight  $(bindir)/docklight-5; fi
-#	if test -f /bin/docklight5; then chown $(USER):$(USER) /bin/docklight-5/docklight; fi
 
 uninstall-hook:
 

@@ -18,6 +18,9 @@
 
 #include "components/dockitem.h"
 
+#include <giomm/desktopappinfo.h>
+//#include <giomm/appinfo.h>
+//#include <glibmm/fileutils.h>
 namespace docklight
 {
     DockItem::DockItem(gulong xid, WnckWindow* window, const Glib::ustring& instance_name,
@@ -170,12 +173,29 @@ namespace docklight
 
     void DockItem::launch()
     {
-        GAppLaunchContext* context = nullptr;
-        GAppInfo* app_info = nullptr;
-        GKeyFile* key_file = g_key_file_new();
-        GError* error = nullptr;
+        //        GAppLaunchContext* context = nullptr;
+        // GAppInfo* app_info = nullptr;
+        //        GKeyFile* key_file = g_key_file_new();
 
-        if (!m_desktop_file.empty()) {
+        Glib::RefPtr<Gio::DesktopAppInfo> appinfo =
+            Gio::DesktopAppInfo::create_from_filename(m_desktop_file);
+
+        if (appinfo) {
+            if (appinfo->launch_uri("")) return;
+        }
+
+        GError* error = nullptr;
+        g_spawn_command_line_async(m_instance_name.c_str(), &error);
+
+        if (error) {
+            g_warning("Lauch via command linei failed: Error (%s) %s \n", m_instance_name.c_str(),
+                      error->message);
+            g_error_free(error);
+            error = nullptr;
+        }
+        return;
+
+        /*if (!m_desktop_file.empty()) {
             gboolean found = g_key_file_load_from_file(key_file, m_desktop_file.c_str(),
                                                        GKeyFileFlags::G_KEY_FILE_NONE, nullptr);
 
@@ -237,7 +257,7 @@ namespace docklight
             error = nullptr;
         }
 
-        g_key_file_free(key_file);
+        g_key_file_free(key_file);*/
     }
 
     Glib::ustring DockItem::to_string()
