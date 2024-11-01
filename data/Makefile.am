@@ -22,6 +22,7 @@ docklightdata_DATA = \
 docklightimagesdir = $(bindir)/docklight-5/data/images
 docklightimages_DATA = 	\
 			images/docklight.home.ico \
+			images/docklight-home.svg \
 			images/explodes.svg \
 			images/*.png \
 			$(NULL)
@@ -41,6 +42,7 @@ install-exec-hook:
 
 	mkdir -p $(bindir)/docklight-5
 	if test -f $(bindir)/docklight; then mv $(bindir)/docklight  $(bindir)/docklight-5; fi
+#	if test -f /bin/docklight5; then chown $(USER):$(USER) /bin/docklight-5/docklight; fi
 
 uninstall-hook:
 
