@@ -321,7 +321,7 @@ namespace docklight
 
         WnckWindow* window = child->get_wnckwindow();
         if (!window) return false;
-        wnck::bring_window(window);
+        wnck::activate_window(window);
 
         return true;
     }
@@ -329,7 +329,6 @@ namespace docklight
     void Panel::on_item_menu_childlist_event(WnckWindow* window)
     {
         wnck::activate_window(window);
-        // wnck::bring_window(window);
     }
 
     bool Panel::on_button_press_event(GdkEventButton* event)
@@ -350,7 +349,7 @@ namespace docklight
             }
 
             // show all the childrens in current workspace.
-            wnck::activate_window_ws(dockitem->get_wnck_window_list());
+            wnck::select_window(dockitem->get_wnck_window_list());
             return true;
         }
 
@@ -405,6 +404,12 @@ namespace docklight
                     menu_item->set_image(*image);
                     menu_item->set_always_show_image(true);
                     menu_item->set_label(child->get_window_name());
+
+                    std::string wstring;
+                    if (wnck::count_in_workspace(child->get_wnckwindow(), wstring)) {
+                        Glib::ustring label = wstring + child->get_window_name();
+                        menu_item->set_label(label);
+                    }
 
                     menu_item->signal_activate().connect(sigc::bind<WnckWindow*>(
                         sigc::mem_fun(*this, &Panel::on_item_menu_childlist_event),

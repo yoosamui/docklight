@@ -34,10 +34,12 @@ namespace docklight
     namespace wnck
     {
         void init();
-        void activate_window_ws(std::vector<WnckWindow*> window_list);
-        void activate_window_ws(WnckWindow* window);
-        void bring_window(WnckWindow* window);
+
+        void select_window(WnckWindow* window);
+        void select_window(std::vector<WnckWindow*> window_list);
         void activate_window(WnckWindow* window);
+        int count_in_workspace(WnckWindow* window, std::string& result);
+
         void close_all_windows();
         void close_window(WnckWindow* window);
         void minimize(WnckWindow* window);
