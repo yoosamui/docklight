@@ -191,8 +191,8 @@ namespace docklight
                         activate_window(m_actives.at(hash));
                         //     bring_above_window(m_actives.at(hash));
                     }
-                    if (active_window) {
-                        // activate_window(active_window);
+                    if (m_active_window) {
+                        // activate_window(m_active_window);
                         //  bring_above_window(active_window);
                     }
                     return;
@@ -247,10 +247,10 @@ namespace docklight
 
                     if (m_actives.count(hash)) {
                         activate_window(m_actives.at(hash));
-                        //     bring_above_window(m_actives.at(hash));
+                        //      bring_above_window(m_actives.at(hash));
                     }
-                    if (active_window) {
-                        //      activate_window(active_window);
+                    if (m_active_window) {
+                        //   activate_window(m_active_window);
                         // bring_above_window(active_window);
                     }
                     return;
