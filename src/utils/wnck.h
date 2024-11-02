@@ -21,10 +21,13 @@
 // translation is performed.
 
 // clang-format off
+#include <map>
+
+#include <functional>
+#include <libbamf/libbamf.h>
 #include <libwnck/libwnck.h>
 #include <X11/X.h>
 #include <gdk/gdkx.h>
-
 #include "constants.h"
 // clang-format on
 
@@ -35,8 +38,11 @@ namespace docklight
     {
         void init();
 
+        void set_active_window(WnckWindow* active_window);
+
         void select_window(WnckWindow* window);
-        void select_window(std::vector<WnckWindow*> window_list);
+        void select_window(gulong hash, WnckWindow* active_window,
+                           std::vector<WnckWindow*> window_list);
         void activate_window(WnckWindow* window);
         void bring_above_window(WnckWindow* window);
         int count_in_workspace(WnckWindow* window, std::string& result);

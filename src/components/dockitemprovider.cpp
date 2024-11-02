@@ -67,7 +67,7 @@ namespace docklight
             sigc::mem_fun(*this, &DockItemProvider::on_theme_changed));
 
         m_sigc_timer =
-            Glib::signal_timeout().connect(sigc::mem_fun(this, &DockItemProvider::on_timeout), 100);
+            Glib::signal_timeout().connect(sigc::mem_fun(this, &DockItemProvider::on_timeout), 50);
 
         load();
 

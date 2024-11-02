@@ -32,6 +32,8 @@ namespace docklight
         m_group_name = group_name;
 
         m_wnckwindow = window;
+
+        m_hash = std::hash<std::string>{}(m_group_name + m_instance_name);
     }
 
     DockItem::~DockItem()
@@ -51,6 +53,11 @@ namespace docklight
     WnckWindow* DockItem::get_wnckwindow() const
     {
         return m_wnckwindow;
+    }
+
+    void DockItem::set_active(bool active)
+    {
+        m_active_window = active;
     }
 
     void DockItem::set_tag(guint tag)
@@ -109,6 +116,11 @@ namespace docklight
         return m_tag;
     }
 
+    inline gulong DockItem::get_hash() const
+    {
+        return m_hash;
+    }
+
     inline gulong DockItem::get_xid() const
     {
         return m_xid;
@@ -117,6 +129,11 @@ namespace docklight
     inline guint DockItem::get_wintype() const
     {
         return m_wintype;
+    }
+
+    inline bool DockItem::get_active() const
+    {
+        return m_active_window;
     }
 
     inline bool DockItem::get_attached() const

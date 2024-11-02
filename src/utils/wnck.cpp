@@ -21,6 +21,8 @@
 
 #include "wnck.h"
 
+//#include <libbamf/bamf-application.h>
+
 #include <functional>
 
 namespace docklight
@@ -29,6 +31,8 @@ namespace docklight
     namespace wnck
     {
         WnckScreen* m_screen = nullptr;
+        std::map<gulong, WnckWindow*> m_actives;
+        WnckWindow* m_active_window = nullptr;
 
         void init()
         {
@@ -37,6 +41,11 @@ namespace docklight
             if (!m_screen) {
                 m_screen = wnck_handle_get_default_screen(handle);
             }
+        }
+
+        void set_active_window(WnckWindow* active_window)
+        {
+            m_active_window = active_window;
         }
 
         WnckScreen* get_default_screen()
@@ -73,6 +82,53 @@ namespace docklight
             return count;
         }
 
+        std::vector<WnckWindow*> get_ordered_window_list(std::vector<WnckWindow*> windows_vector)
+        {
+            g_print("ORDERE\n");
+
+            // GList* window_list;
+            std::vector<WnckWindow*> windows;
+            GtkWindow* win = nullptr;
+
+            //      WnckScreen *        wnck_screen_get_default             (void);
+            WnckScreen* wnckscreen = get_default_screen();
+
+            wnck_screen_force_update(wnckscreen);
+            // for (auto& window : windows_vector) {
+            // }
+
+            /*for (auto& w : windows_vector) {
+                //  if (wnck_window_get_xid(window) == wnck_window_get_xid(w)) {
+                g_print("input %lu\n", wnck_window_get_xid(w));
+                //
+                // window_list = g_list_append(window_list, window);
+            }*/
+
+            // Gets the list of WnckWindow on screen in bottom-to-top order.
+            GList* stack = wnck_screen_get_windows_stacked(wnckscreen);
+
+            for (stack = wnck_screen_get_windows(wnckscreen); stack != nullptr;
+                 stack = stack->next) {
+                WnckWindow* window = WNCK_WINDOW(stack->data);
+
+                // if (!is_valid_window_type(window)) {
+                // continue;
+                //}
+
+                // g_print("stack %lu\n", wnck_window_get_xid(window));
+                for (auto& w : windows_vector) {
+                    if (wnck_window_get_xid(window) == wnck_window_get_xid(w)) {
+                        //
+                        // window_list = g_list_append(window_list, window);
+                        g_print("stack %lu\n", wnck_window_get_xid(window));
+                        windows.push_back(window);
+                    }
+                }
+            }
+
+            return windows;
+        }
+
         void focus_window(WnckWindow* window, int event_time)
         {
             WnckWorkspace* ws = wnck_window_get_workspace(window);
@@ -98,25 +154,47 @@ namespace docklight
 
         // if (!wnck_window_is_active(window)) wnck_window_activate(window, ct);
         //}
-        void select_window(std::vector<WnckWindow*> window_list)
+        void select_window(gulong hash, WnckWindow* active_window,
+                           std::vector<WnckWindow*> window_list)
         {
             GdkScreen* screen = gdk_screen_get_default();
             int current_ws_number = gdk_x11_screen_get_current_desktop(screen);
             int event_time = gtk_get_current_event_time();
 
+            //   auto window_list = get_ordered_window_list(windows);
+            static WnckWindow* stm_window = nullptr;
+            // g_print("hash size: %lu\n", m_actives.size());
+            g_print("hash size: %lu\n", window_list.size());
+            //     active_window = get_active();
             // Unminimize minimized windows if there is one or moreen_force_update(m_screen);
             for (auto& window : window_list) {
                 WnckWorkspace* ws = wnck_window_get_workspace(window);
                 if (wnck_workspace_get_number(ws) != current_ws_number) continue;
 
                 if (wnck_window_is_minimized(window) && wnck_window_is_in_viewport(window, ws)) {
+                    //                    auto ordered = window_list;
+                    //                    std::sort(ordered.begin(), ordered.end(),
+                    //                    std::greater<WnckWindow*>()); std::sort(s.begin(),
+                    ////                    s.end(), std::greater<int>());
                     for (auto& w : window_list) {
+                        // for (int i = window_list.size() - 1; i != 0; i--) {
+                        //   WnckWindow* w = window_list.at(i);
                         WnckWorkspace* ws = wnck_window_get_workspace(w);
                         if (wnck_workspace_get_number(ws) != current_ws_number) continue;
 
                         wnck_window_unminimize(w, event_time);
+                        g_print("unminimize: %lu\n", wnck_window_get_xid(w));
                     }
 
+                    // activate_window(stm_window);
+                    if (m_actives.count(hash)) {
+                        activate_window(m_actives.at(hash));
+                        //     bring_above_window(m_actives.at(hash));
+                    }
+                    if (active_window) {
+                        // activate_window(active_window);
+                        //  bring_above_window(active_window);
+                    }
                     return;
                 }
             }
@@ -135,8 +213,16 @@ namespace docklight
                         if (!wnck_window_is_minimized(w)) {
                             WnckWorkspace* ws = wnck_window_get_workspace(w);
                             if (wnck_workspace_get_number(ws) != current_ws_number) continue;
-
+                            if (wnck_window_is_active(w)) {
+                                //// stm_window = w;
+                                ////                                 if (m_actives.count(hash) == 0)
+                                ///{ /      m_actives.insert({hash, w});
+                                m_actives[hash] = w;
+                                ////                              }
+                                // g_print("minimize: %lu\n", wnck_window_get_xid(w));
+                            }
                             wnck_window_minimize(w);
+                            g_print("minimize: %lu\n", wnck_window_get_xid(w));
                         }
                     }
 
@@ -154,10 +240,19 @@ namespace docklight
                             WnckWorkspace* ws = wnck_window_get_workspace(w);
                             if (wnck_workspace_get_number(ws) != current_ws_number) continue;
 
-                            focus_window(w, event_time);
+                            activate_window(w);
+                            // focus_window(w, event_time);
                         }
                     }
 
+                    if (m_actives.count(hash)) {
+                        activate_window(m_actives.at(hash));
+                        //     bring_above_window(m_actives.at(hash));
+                    }
+                    if (active_window) {
+                        //      activate_window(active_window);
+                        // bring_above_window(active_window);
+                    }
                     return;
                 }
             }

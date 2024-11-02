@@ -34,10 +34,12 @@ namespace docklight
       protected:
         // 32-bit window identification number,
         gulong m_xid = 0;
+        gulong m_hash = 0;
         WnckWindow* m_wnckwindow = nullptr;
 
         bool m_has_desktop_file = true;
         bool m_attached = false;
+        bool m_active_window = false;
 
         Glib::ustring m_title = {};
         Glib::ustring m_window_name = {};
@@ -55,6 +57,7 @@ namespace docklight
       protected:
         // setters
         virtual void set_attached(bool attached = true) = 0;
+        virtual void set_active(bool active) = 0;
         virtual void set_tag(guint tag) = 0;
         virtual void set_title(Glib::ustring title) = 0;
         virtual void set_window_name(Glib::ustring window_name) = 0;
@@ -75,8 +78,10 @@ namespace docklight
         virtual guint get_wintype() const = 0;
 
         virtual bool get_attached() const = 0;
+        virtual bool get_active() const = 0;
 
         virtual gulong get_xid() const = 0;
+        virtual gulong get_hash() const = 0;
 
         virtual const Glib::ustring& get_window_name() = 0;
         virtual const Glib::ustring& get_title() const = 0;
@@ -97,6 +102,7 @@ namespace docklight
         // setters
         void set_attached(bool attached = true);
         void set_tag(guint tag);
+        void set_active(bool active);
         void set_icon_name(Glib::ustring icon_name);
         void set_has_desktop_file(bool has);
         void set_title(Glib::ustring title);
@@ -117,8 +123,10 @@ namespace docklight
 
         bool has_desktop_file() const;
         bool get_attached() const;
+        bool get_active() const;
 
         gulong get_xid() const;
+        gulong get_hash() const;
 
         const Glib::ustring& get_window_name();
         const Glib::ustring& get_title() const;

@@ -86,6 +86,22 @@ namespace docklight
                     gulong xid = wnck_window_get_xid(window);
 
                     if (std::find(xid_list.begin(), xid_list.end(), xid) != xid_list.end()) {
+                        // TODO: fix this
+                        for (auto& it : dockitem->get_childmap()) {
+                            auto child = it.second;
+                            dockitem->set_active(false);
+                        }
+
+                        for (auto& it : dockitem->get_childmap()) {
+                            auto child = it.second;
+
+                            if (child->get_xid() == xid) {
+                                child->set_active(true);
+                                // g_print(wnck_window_get_name(active_window));
+                                // g_print("%s\n", child->get_window_name().c_str());
+                            }
+                        }
+
                         m_dockitem_active_index = idx;
                         Gtk::Widget::queue_draw();
 
@@ -105,6 +121,7 @@ namespace docklight
         // May return NULL sometimes, since not all
         // window managers guarantee that a window is always active.
         m_active_window = wnck_screen_get_active_window(screen);
+        if (m_active_window) g_print("ACTIVE: %s\n", wnck_window_get_name(m_active_window));
     }
 
     bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
@@ -349,7 +366,25 @@ namespace docklight
             }
 
             // show all the childrens in current workspace.
-            wnck::select_window(dockitem->get_wnck_window_list());
+            WnckWindow* active_window = nullptr;
+            //            if (dockitem->get_active()) {
+            //                active_window = dockitem->get_wnckwindow();
+
+            // for (auto& it : dockitem->get_childmap()) {
+            // auto child = it.second;
+            // if (child->get_active()) {
+            // active_window = child->get_wnckwindow();
+
+            // if (active_window) g_print(wnck_window_get_name(active_window));
+
+            // break;
+            //}
+            //}
+            // g_print("active change\n");
+            //          }
+
+            wnck::select_window(dockitem->get_hash(), m_active_window,
+                                dockitem->get_wnck_window_list());
             return true;
         }
 
