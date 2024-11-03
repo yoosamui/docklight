@@ -86,7 +86,7 @@ namespace docklight
                     gulong xid = wnck_window_get_xid(window);
 
                     if (std::find(xid_list.begin(), xid_list.end(), xid) != xid_list.end()) {
-                        // TODO: fix this
+                        /*// TODO: fix this
                         for (auto& it : dockitem->get_childmap()) {
                             auto child = it.second;
                             dockitem->set_active(false);
@@ -101,7 +101,7 @@ namespace docklight
                                 // g_print("%s\n", child->get_window_name().c_str());
                             }
                         }
-
+*/
                         m_dockitem_active_index = idx;
                         Gtk::Widget::queue_draw();
 
@@ -121,9 +121,6 @@ namespace docklight
         // May return NULL sometimes, since not all
         // window managers guarantee that a window is always active.
         m_active_window = wnck_screen_get_active_window(screen);
-        //  wnck::set_active_window(m_active_window);
-
-        if (m_active_window) g_print("ACTIVE: %s\n", wnck_window_get_name(m_active_window));
     }
 
     bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
