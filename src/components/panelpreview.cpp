@@ -27,14 +27,22 @@
 namespace docklight
 {
 
-    PanelPreview::PanelPreview()
+    PanelPreview::PanelPreview() : Gtk::Window(Gtk::WindowType::WINDOW_POPUP)
     {
+        // set_skip_taskbar_hint(true);
+        // set_skip_pager_hint(true);
+        //// set_resizable(false);
+        // set_can_focus(false);
+        //// set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
+        //        Gtk::Window(Gtk::WindowType::WINDOW_POPUP);
+        set_resizable(true);
+
+        // set_decorated(true);
+
+        set_resizable(true);
         set_skip_taskbar_hint(true);
         set_skip_pager_hint(true);
-        set_resizable(false);
-        set_can_focus(false);
-        set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
-
+        set_keep_above(true);
         // auto filename = "data/images/explodes.svg";
 
         // try {
@@ -51,7 +59,8 @@ namespace docklight
         //}
 
         m_size = 512;  // m_image->get_width();
-        set_size_request(m_size, m_size);
+        // set_size_request(m_size * 3, m_size);
+        // resize(512 * 3, 512);
     }
 
     PanelPreview::~PanelPreview()
@@ -104,10 +113,13 @@ namespace docklight
         m_frame_time = m_start_time;
 
         connect_signal(true);
+        // move(x - (m_size / 2), y - (m_size / 2));
+
+        auto size = dockitem->get_childmap().size();
 
         show();
-        move(x - (m_size / 2), y - (m_size / 2));
-
+        resize(512 * size, m_size);
+        move(x, y);
         m_visible = true;
     }
 
@@ -127,30 +139,53 @@ namespace docklight
         cairo::rounded_rectangle(cr, 0, 0, m_size, m_size, 4.0);
         cr->fill();
 
+        int startX = 0;
+        int startY = 0;
+
         for (auto& it : m_dockitem->get_childmap()) {
             //
-            auto xid = it.second->get_xid();
+            auto child = it.second;
+            auto xid = child->get_xid();
+
             WnckWindow* window = it.second->get_wnckwindow();
 
             if (wnck_window_is_minimized(window)) {
                 wnck::bring_above_window(window);
                 unsigned int milli = 1000;
-                usleep(50 * milli);
+                usleep(10 * milli);
             }
 
-            GdkPixbuf* win_pixbuf = pixbuf::get_gdk_pixbuf_from_window(xid);
-            if (win_pixbuf) {
-                GdkPixbuf* scaled_pixbuf =
-                    pixbuf::get_gdk_pixbuf_scaled(win_pixbuf, m_size, m_size);
-                g_object_unref(win_pixbuf);
-                m_image = Glib::wrap(scaled_pixbuf, true);
-                g_object_unref(scaled_pixbuf);
+            std::string wstring;
+            if (wnck::count_in_workspace(window, wstring)) {
+                // TODO get the item by xid
+                std::shared_ptr<DockItemIcon> child;
+                if (Provider()->get_dockitem_by_xid(xid, child)) {
+                    m_image = child->get_icon();
+
+                    // connect_signal(false);
+                }
+            } else {
+                GdkPixbuf* win_pixbuf = pixbuf::get_gdk_pixbuf_from_window(xid);
+                if (win_pixbuf) {
+                    GdkPixbuf* scaled_pixbuf =
+                        pixbuf::get_gdk_pixbuf_scaled(win_pixbuf, m_size, m_size);
+                    g_object_unref(win_pixbuf);
+                    m_image = Glib::wrap(scaled_pixbuf, true);
+                    g_object_unref(scaled_pixbuf);
+
+                    child->set_icon(m_image);
+
+                    // auto xid = it.second->get_xid();
+                }
             }
-            break;
-        }
-        if (m_image) {
-            Gdk::Cairo::set_source_pixbuf(cr, m_image, 0, 0);
-            cr->paint();
+            // break;
+            if (m_image) {
+                Gdk::Cairo::set_source_pixbuf(cr, m_image, startX, startY);
+                cr->paint();
+            }
+
+            startX += m_size;
+            startY = 0;
         }
         // Replace destination layer (bounded)
         // cr->set_operator(Cairo::Operator::OPERATOR_SOURCE);

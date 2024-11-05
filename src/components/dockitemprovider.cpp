@@ -117,6 +117,20 @@ namespace docklight
         return m_container.exist<DockItemIcon>(xid);
     }
 
+    bool DockItemProvider::get_dockitem_by_xid(gulong xid, std::shared_ptr<DockItemIcon>& dockitem)
+    {
+        for (auto& item : data()) {
+            for (auto it : item->get_childmap()) {
+                auto child = it.second;
+                if (child->get_xid() != xid) continue;
+
+                dockitem = child->clone();
+                break;
+            }
+        }
+        return dockitem ? true : false;
+    }
+
     bool DockItemProvider::get_dockitem_by_index(guint index,
                                                  std::shared_ptr<DockItemIcon>& dockitem)
     {
