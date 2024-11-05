@@ -79,7 +79,7 @@ namespace docklight
 
     void PositionManager::on_monitor_changed()
     {
-        // unsigned int microsecond = 1000000;
+        unsigned int microsecond = 1000000;
 
         auto monitor_name = Config()->get_monitor_name().c_str();
         auto location_name = Config()->get_dock_location_name().c_str();
@@ -90,7 +90,7 @@ namespace docklight
             exec_file = "src/docklight";
         }
 
-        //   usleep(8 * microsecond);  // sleeps for 3 seconds
+        usleep(3 * microsecond);  // sleeps for 3 seconds
         execl(exec_file, "docklight", "-l", location_name, "-m", monitor_name, nullptr);
         g_warning("Restart failed!\n");
     }
@@ -114,6 +114,27 @@ namespace docklight
         return true;
     }
 
+    bool PositionManager::get_preview_position(int index, int& x, int& y, int width, int height)
+    {
+        auto const area = Config()->get_dock_area();
+
+        x = m_x;
+        x = m_x + get_workarea().get_x() + (width / 2);
+        y = m_y - (height / 2);
+        // y = get_workarea().get_height() - 512;
+
+        if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+            int center = (area / 2) - (width / 2);
+            x += (area * index) + center;
+
+        } else {
+            y = get_workarea().get_y() + (height / 2);
+            int center = (area / 2) - (height / 2);
+            y += (area * index) + center;
+        }
+
+        return true;
+    }
     void PositionManager::force_position()
     {
         m_struts.set_struts();

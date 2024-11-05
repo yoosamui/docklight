@@ -39,6 +39,8 @@
 #include <gtkmm/imagemenuitem.h>
 #include <gtkmm/menuitem.h>
 
+#include "components/ExplodesWindow.h"
+#include "components/panelpreview.h"
 namespace docklight
 {
 
@@ -62,6 +64,7 @@ namespace docklight
         //
         guint get_scale_factor();
         bool on_button_press_event(GdkEventButton* event);
+        bool on_button_release_event(GdkEventButton* event);
         bool on_motion_notify_event(GdkEventMotion* event);
         void on_container_updated(window_action_t action, int index);
 
@@ -101,6 +104,10 @@ namespace docklight
         void thread_func();
 
       private:
+        Glib::RefPtr<ExplodesWindow> m_composite;
+        Glib::RefPtr<PanelPreview> m_preview;
+        float m_mouseclickEventTime = 0.0f;
+        Glib::Timer m_mouse_click_timer;
         std::shared_ptr<std::thread> m_bck_thread;
         Gtk::SeparatorMenuItem* m_separatorMenuItem = nullptr;
         // std::thread* m_bck_thread = nullptr;

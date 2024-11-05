@@ -60,6 +60,9 @@ namespace docklight
 
         m_position = Position();
         m_bck_thread = std::shared_ptr<std::thread>(new std::thread(&Panel::thread_func, this));
+
+        m_composite = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
+        m_preview = Glib::RefPtr<PanelPreview>(new PanelPreview());
     }
 
     Panel::~Panel()
@@ -86,7 +89,7 @@ namespace docklight
                     gulong xid = wnck_window_get_xid(window);
 
                     if (std::find(xid_list.begin(), xid_list.end(), xid) != xid_list.end()) {
-                        /*// TODO: fix this
+                        // TODO: fix this
                         for (auto& it : dockitem->get_childmap()) {
                             auto child = it.second;
                             dockitem->set_active(false);
@@ -97,11 +100,11 @@ namespace docklight
 
                             if (child->get_xid() == xid) {
                                 child->set_active(true);
-                                // g_print(wnck_window_get_name(active_window));
+                                g_print("Active: %s\n", wnck_window_get_name(m_active_window));
                                 // g_print("%s\n", child->get_window_name().c_str());
                             }
                         }
-*/
+
                         m_dockitem_active_index = idx;
                         Gtk::Widget::queue_draw();
 
@@ -351,7 +354,33 @@ namespace docklight
     {
         if ((event->type != GDK_BUTTON_PRESS)) return false;
 
+        m_mouseclickEventTime = gtk_get_current_event_time();
         get_dockitem_index(event->x, event->y);
+
+        return true;
+    }
+
+    bool Panel::on_button_release_event(GdkEventButton* event)
+    {
+        if ((event->type != GDK_BUTTON_RELEASE)) return false;
+
+        int diff = (int)((gtk_get_current_event_time() - m_mouseclickEventTime));
+        if (diff > 200) {
+            int x = 0;
+            int y = 0;
+
+            std::shared_ptr<DockItemIcon> dockitem;
+            if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return false;
+
+            Position()->get_preview_position(m_dockitem_index, x, y, 512, 512);
+            m_preview->show_at(x, y, dockitem);
+            return true;
+        }
+
+        if (m_preview->get_visible()) {
+            m_preview->hide_now();
+            return true;
+        }
 
         std::shared_ptr<DockItemIcon> dockitem;
         if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return false;
@@ -365,7 +394,7 @@ namespace docklight
             }
 
             // show all the childrens in current workspace.
-            WnckWindow* active_window = nullptr;
+            // WnckWindow* active_window = nullptr;
             //            if (dockitem->get_active()) {
             //                active_window = dockitem->get_wnckwindow();
 

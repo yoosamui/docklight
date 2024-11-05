@@ -30,11 +30,13 @@ utils/factory.cpp \
 utils/wnck.cpp \
 utils/struts.cpp \
 utils/cairo.cpp \
+utils/pixbuf.cpp \
 appwindow.cpp \
 appoptionsgroup.cpp \
 components/TransparentWindow.cpp \
 components/ExplodesWindow.cpp \
 components/panel.cpp \
+components/panelpreview.cpp \
 components/dockmenu.cpp \
 components/dockrender.cpp \
 components/device.cpp \
