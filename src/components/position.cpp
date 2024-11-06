@@ -128,6 +128,9 @@ namespace docklight
             x += (area * index) + center;
 
             if (x < 0) x = 0;
+            if (x + width > get_workarea().get_width()) {
+                x = 0;
+            }
 
         } else {
             y = get_workarea().get_y() + (height / 2);

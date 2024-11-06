@@ -336,12 +336,14 @@ namespace docklight
             window_icon_name = window_name;
         }
 
+        // const char* window_name = wnck_window_get_name(window);
         bool result = createFromDesktopFile(xid, gdkpixbuf, instance_name, groupname, window_name,
                                             window_icon_name, icon_is_fallback, wintype);
 
-        if (!result)
+        if (!result) {
             result = createFromWindow(xid, gdkpixbuf, instance_name, groupname, window_name,
                                       window_icon_name, icon_is_fallback, wintype);
+        }
 
         if (result && m_startup_time_set) {
             m_signal_update.emit(window_action_t::UPDATE, data().size());
@@ -442,18 +444,14 @@ namespace docklight
 
             if (owner->get_childmap().count(xid)) {
                 m_container.remove<DockItemIcon>(xid);
-                if (wintype == WnckWindowType::WNCK_WINDOW_DIALOG) {
-                    owner->add_child(dockitem);
-                }
 
             } else {
                 dockitem->set_icon(owner->get_icon());
-
-                // add the new child to the owner.
-                if (wintype == WnckWindowType::WNCK_WINDOW_DIALOG) {
-                    owner->add_child(dockitem);
-                }
             }
+
+            // add the new child to the owner.
+            owner->add_child(dockitem);
+
         } else if (!m_container.exist<DockItemIcon>(xid, true) && !icon_is_fallback) {
             dockitem->set_title(groupname);
             dockitem->set_icon_name(icon_name);

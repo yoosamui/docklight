@@ -100,7 +100,8 @@ namespace docklight
 
                             if (child->get_xid() == xid) {
                                 child->set_active(true);
-                                g_print("Active: %s\n", wnck_window_get_name(m_active_window));
+                                //                g_print("Active: %s\n",
+                                //                wnck_window_get_name(m_active_window));
                                 // g_print("%s\n", child->get_window_name().c_str());
                             }
                         }

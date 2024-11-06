@@ -151,8 +151,10 @@ namespace docklight
 
             if (wnck_window_is_minimized(window)) {
                 wnck::bring_above_window(window);
-                unsigned int milli = 1000;
-                usleep(10 * milli);
+                // wnck_window_unminimize(window, 0);
+                wnck_window_make_below(window);
+                // unsigned int milli = 1000;
+                // usleep(10 * milli);
             }
 
             std::string wstring;
