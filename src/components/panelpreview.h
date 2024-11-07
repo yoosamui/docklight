@@ -45,6 +45,8 @@ namespace docklight
         bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
         bool get_visible() const;
 
+        guint get_width();
+
       private:
         void connect_signal(bool connect);
         bool on_timeout_draw();

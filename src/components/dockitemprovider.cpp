@@ -67,7 +67,7 @@ namespace docklight
             sigc::mem_fun(*this, &DockItemProvider::on_theme_changed));
 
         m_sigc_timer =
-            Glib::signal_timeout().connect(sigc::mem_fun(this, &DockItemProvider::on_timeout), 50);
+            Glib::signal_timeout().connect(sigc::mem_fun(this, &DockItemProvider::on_timeout), 100);
 
         load();
 
@@ -115,6 +115,38 @@ namespace docklight
     bool DockItemProvider::exist(gulong xid)
     {
         return m_container.exist<DockItemIcon>(xid);
+    }
+
+    void DockItemProvider::set_window_image(WnckWindow* window)
+    {
+        size_t idx = 1;
+        for (; idx < Provider()->data().size(); idx++) {
+            auto dockitem = Provider()->data().at(idx);
+            auto xid_list = dockitem->get_wnck_xid_list();
+
+            gulong xid = wnck_window_get_xid(window);
+
+            if (std::find(xid_list.begin(), xid_list.end(), xid) != xid_list.end()) {
+                for (auto& it : dockitem->get_childmap()) {
+                    auto child = it.second;
+
+                    if (child->get_xid() == xid) {
+                        Glib::RefPtr<Gdk::Pixbuf> image;
+
+                        if (wnck_window_is_minimized(window)) {
+                            wnck::unminimize(window);
+                        }
+
+                        wnck_window_make_below(window);
+
+                        if (pixbuf::get_window_image(xid, image)) {
+                            child->set_image(image);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     bool DockItemProvider::get_dockitem_by_xid(gulong xid, std::shared_ptr<DockItemIcon>& dockitem)

@@ -28,6 +28,8 @@
 #include <gdkmm/pixbufloader.h>
 
 #include "utils/system.h"
+#include "utils/pixbuf.h"
+#include "utils/wnck.h"
 #include "components/dockitemcontainer.h"
 #include "components/config.h"
 // clang-format on
@@ -74,6 +76,7 @@ namespace docklight
         guint count();
         bool save();
 
+        void set_window_image(WnckWindow* window);
         void on_theme_changed();  // TEST move to privat
 
       private:

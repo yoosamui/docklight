@@ -95,7 +95,7 @@ namespace docklight
                             if (child->get_xid() == xid) {
                                 Glib::RefPtr<Gdk::Pixbuf> image;
 
-                                if (pixbuf::get_window_image(xid, image, 512)) {
+                                if (pixbuf::get_window_image(xid, image)) {
                                     child->set_image(image);
                                     break;
                                 }

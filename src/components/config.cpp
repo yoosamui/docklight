@@ -85,6 +85,11 @@ namespace docklight
         return DEF_ICON_MAXSIZE;
     }
 
+    int Configuration::get_max_preview_image_size()
+    {
+        return DEF_PREVIEW_IMAGE_SIZE;
+    }
+
     void Configuration::set_custom_icon_size(const guint size)
     {
         if (!size || size > (guint)DEF_ICON_MAXSIZE) return;

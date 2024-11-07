@@ -51,7 +51,9 @@ namespace docklight
             return;
         }
 
-        Provider()->insert(window);
+        if (Provider()->insert(window)) {
+            //    Provider()->set_window_image(window);
+        }
 
         size_t idx = 1;
         for (; idx < Provider()->data().size(); idx++) {
@@ -63,7 +65,7 @@ namespace docklight
                 for (auto& it : dockitem->get_childmap()) {
                     auto child = it.second;
 
-                    if (child->get_xid() == xid) {
+                    if (child->get_xid() == (gulong)xid) {
                         Glib::RefPtr<Gdk::Pixbuf> image;
 
                         // if (wnck_window_is_minimized(window))
@@ -71,7 +73,7 @@ namespace docklight
                         wnck_window_make_below(window);
                         //        wnck::select_window(child->get_wnckwindow());
 
-                        if (pixbuf::get_window_image(xid, image, 512)) {
+                        if (pixbuf::get_window_image(xid, image)) {
                             child->set_image(image);
                             // g_message("---->SET IMAGE %s\n", dockitem->get_group_name().c_str());
                             break;

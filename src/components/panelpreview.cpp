@@ -73,7 +73,7 @@ namespace docklight
     {
         if (connect) {
             m_sigc_connection = Glib::signal_timeout().connect(
-                sigc::mem_fun(this, &PanelPreview::on_timeout_draw), 1000 / 30);
+                sigc::mem_fun(this, &PanelPreview::on_timeout_draw), 1000 / 4);
         } else {
             m_sigc_connection.disconnect();
         }
@@ -104,6 +104,11 @@ namespace docklight
 
         // hide();
         return true;
+    }
+
+    guint PanelPreview::get_width()
+    {
+        return m_size;
     }
 
     void PanelPreview::show_at(int x, int y, std::shared_ptr<DockItemIcon> dockitem)
@@ -180,7 +185,7 @@ namespace docklight
                 }
 
             } else {
-                pixbuf::get_window_image(xid, m_image, 512);
+                pixbuf::get_window_image(xid, m_image);
             }
 
             /*if (wnck::count_in_workspace(window, wstring)) {
