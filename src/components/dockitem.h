@@ -36,6 +36,7 @@ namespace docklight
         gulong m_xid = 0;
         gulong m_hash = 0;
         WnckWindow* m_wnckwindow = nullptr;
+        Glib::RefPtr<Gdk::Pixbuf> m_image;
 
         bool m_has_desktop_file = true;
         bool m_attached = false;
@@ -104,6 +105,7 @@ namespace docklight
         void set_tag(guint tag);
         void set_active(bool active);
         void set_icon_name(Glib::ustring icon_name);
+        void set_image(Glib::RefPtr<Gdk::Pixbuf> image);
         void set_has_desktop_file(bool has);
         void set_title(Glib::ustring title);
         void set_window_name(Glib::ustring window_name);
@@ -135,6 +137,9 @@ namespace docklight
         const Glib::ustring& get_instance_name() const;
         const Glib::ustring& get_desktop_file() const;
         const Glib::ustring& get_icon_name() const;
+
+        const Glib::RefPtr<Gdk::Pixbuf>& get_image() const;
+        const Glib::RefPtr<Gdk::Pixbuf> get_image(guint size);
 
         void launch();
 

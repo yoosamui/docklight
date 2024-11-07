@@ -269,6 +269,25 @@ namespace docklight
 
             return result_pixbuf;
         }
+
+        bool get_window_image(gulong xid, Glib::RefPtr<Gdk::Pixbuf>& image, guint size)
+        {
+            GdkPixbuf* win_pixbuf = get_gdk_pixbuf_from_window(xid);
+            if (!win_pixbuf) return false;
+
+            GdkPixbuf* scaled_pixbuf = get_gdk_pixbuf_scaled(win_pixbuf, size, size);
+            if (!scaled_pixbuf) {
+                g_object_unref(win_pixbuf);
+                return false;
+            }
+
+            g_object_unref(win_pixbuf);
+            image = Glib::wrap(scaled_pixbuf, true);
+            g_object_unref(scaled_pixbuf);
+
+            return image ? true : false;
+        }
+
         GdkPixbuf* get_gdk_pixbuf_from_window(int xid)
         {
             GdkPixbuf* winPixbuf = nullptr;

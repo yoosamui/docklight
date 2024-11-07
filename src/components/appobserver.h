@@ -19,6 +19,7 @@
 
 // clang-format off
 #include "components/dockitemprovider.h"
+#include "utils/pixbuf.h"
 #include "utils/wnck.h"
 // clang-format on
 

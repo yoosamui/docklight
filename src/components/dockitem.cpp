@@ -110,6 +110,12 @@ namespace docklight
         m_desktop_file = desktop_file;
     }
 
+    void DockItem::set_image(Glib::RefPtr<Gdk::Pixbuf> image)
+    {
+        g_assert(image);
+        m_image = image;
+    }
+
     // Getters
     inline guint DockItem::get_tag() const
     {
@@ -188,6 +194,21 @@ namespace docklight
         return m_icon_name;
     }
 
+    const Glib::RefPtr<Gdk::Pixbuf>& DockItem::get_image() const
+    {
+        // if (!m_image) m_image = m_icon;
+        return m_image;
+    }
+
+    const Glib::RefPtr<Gdk::Pixbuf> DockItem::get_image(guint size)
+    {
+        auto pixbuf =
+            Glib::wrap(m_image->gobj(), true)->scale_simple(size, size, Gdk::INTERP_BILINEAR);
+
+        g_assert(pixbuf);
+
+        return pixbuf;
+    }
     void DockItem::launch()
     {
         /*Glib::RefPtr<Gio::DesktopAppInfo> appinfo =

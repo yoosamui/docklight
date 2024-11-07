@@ -145,42 +145,59 @@ namespace docklight
         for (auto& it : m_dockitem->get_childmap()) {
             //
             auto child = it.second;
-            auto xid = child->get_xid();
+            auto xid = it.first;  // get_xid();
 
             WnckWindow* window = it.second->get_wnckwindow();
 
-            if (wnck_window_is_minimized(window)) {
-                wnck::bring_above_window(window);
-                // wnck_window_unminimize(window, 0);
+            if (window && wnck_window_is_minimized(window)) {
+                // int event_time = gtk_get_current_event_time();
+                //   wnck::bring_above_window(window);
+                // g_message("on_draw unminimize");
+                wnck::unminimize(window);
                 wnck_window_make_below(window);
-                // unsigned int milli = 1000;
-                // usleep(10 * milli);
+                //   unsigned int milli = 1000;
+                //   usleep(100 * milli);
+                //  wnck::select_window(window);
             }
+
+            /*if (Provider()->get_dockitem_by_xid(xid, child)) {
+                m_image = child->get_image();
+            }
+
+            if (wnck::count_in_workspace(window, wstring)) {
+                std::shared_ptr<DockItemIcon> child;
+                //} else {
+                // if (pixbuf::get_window_image(xid, m_image, 512)) {
+                // child->set_image(m_image);
+                //}
+            }*/
 
             std::string wstring;
             if (wnck::count_in_workspace(window, wstring)) {
-                // TODO get the item by xid
                 std::shared_ptr<DockItemIcon> child;
                 if (Provider()->get_dockitem_by_xid(xid, child)) {
-                    m_image = child->get_icon();
-
-                    // connect_signal(false);
+                    m_image = child->get_image();
                 }
+
             } else {
-                GdkPixbuf* win_pixbuf = pixbuf::get_gdk_pixbuf_from_window(xid);
-                if (win_pixbuf) {
-                    GdkPixbuf* scaled_pixbuf =
-                        pixbuf::get_gdk_pixbuf_scaled(win_pixbuf, m_size, m_size);
-                    g_object_unref(win_pixbuf);
-                    m_image = Glib::wrap(scaled_pixbuf, true);
-                    g_object_unref(scaled_pixbuf);
-
-                    child->set_icon(m_image);
-
-                    // auto xid = it.second->get_xid();
-                }
+                pixbuf::get_window_image(xid, m_image, 512);
             }
-            // break;
+
+            /*if (wnck::count_in_workspace(window, wstring)) {
+                // std::shared_ptr<DockItemIcon> dockitem;
+                // if (Provider()->get_dockitem_by_xid(xid, dockitem)) {
+                // m_image = dockitem->get_image();
+                // if (m_image) {
+                // m_image->save("/home/yoo/TEMP/docklight_icons/%s",
+                // dockitem->get_instance_name().c_str());
+                // g_print("Get from other workspace\n");
+                //}
+                //// pixbuf::get_window_image(dockitem->get_xid(), m_image, 512);
+                //}
+            } else {
+                pixbuf::get_window_image(xid, m_image, 512);
+            }*/
+
             if (m_image) {
                 Gdk::Cairo::set_source_pixbuf(cr, m_image, startX, startY);
                 cr->paint();
@@ -193,7 +210,8 @@ namespace docklight
         // cr->set_operator(Cairo::Operator::OPERATOR_SOURCE);
 
         // int ypos = -m_size * (int)(m_frames * (m_frame_time - m_start_time) /
-        // DF_EXPLODES_TIMEMAX); Gdk::Cairo::set_source_pixbuf(cr, m_image, 0, ypos); cr->paint();
+        // DF_EXPLODES_TIMEMAX); Gdk::Cairo::set_source_pixbuf(cr, m_image, 0, ypos);
+        // cr->paint();
 
         return false;
     }

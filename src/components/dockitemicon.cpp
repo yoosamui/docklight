@@ -40,6 +40,7 @@ namespace docklight
         clone->m_icon_name = m_icon_name;
         clone->m_description = m_description;
         clone->m_icon = m_icon;
+        clone->m_image = m_image;
         clone->m_wintype = m_wintype;
         clone->m_tag = m_tag;
         clone->m_width = m_width;

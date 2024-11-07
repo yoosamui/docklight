@@ -71,6 +71,7 @@ namespace docklight
                 if (!is_valid_window_type(window)) continue;
 
                 WnckWorkspace* ws = wnck_window_get_workspace(window);
+                if (!ws) continue;
                 if (wnck_workspace_get_number(ws) == current_ws_number) continue;
 
                 if (source_window != window) continue;
@@ -166,16 +167,23 @@ namespace docklight
                 WnckWorkspace* ws = wnck_window_get_workspace(window);
                 if (wnck_workspace_get_number(ws) != current_ws_number) continue;
 
+                WnckWindow* ca_window = nullptr;
+                if (m_actives.count(hash_code)) {
+                    ca_window = m_actives.at(hash_code);
+                }
+
                 if (wnck_window_is_minimized(window) && wnck_window_is_in_viewport(window, ws)) {
                     for (auto& w : window_list) {
                         WnckWorkspace* ws = wnck_window_get_workspace(w);
                         if (wnck_workspace_get_number(ws) != current_ws_number) continue;
 
+                        // if (w == ca_window) continue;
+
                         wnck_window_unminimize(w, event_time);
                     }
 
-                    if (m_actives.count(hash_code)) {
-                        activate_window(m_actives.at(hash_code));
+                    if (ca_window) {
+                        activate_window(ca_window);
                     }
                     return;
                 }
@@ -213,17 +221,24 @@ namespace docklight
                 WnckWorkspace* ws = wnck_window_get_workspace(window);
                 if (wnck_workspace_get_number(ws) != current_ws_number) continue;
                 if (wnck_window_is_in_viewport(window, ws)) {
+                    WnckWindow* ca_window = nullptr;
+                    if (m_actives.count(hash_code)) {
+                        ca_window = m_actives.at(hash_code);
+                    }
+
                     for (auto& w : window_list) {
                         if (!wnck_window_is_minimized(w)) {
                             WnckWorkspace* ws = wnck_window_get_workspace(w);
                             if (wnck_workspace_get_number(ws) != current_ws_number) continue;
 
+                            //      if (w == ca_window) continue;
+
                             focus_window(w, event_time);
                         }
                     }
 
-                    if (m_actives.count(hash_code)) {
-                        activate_window(m_actives.at(hash_code));
+                    if (ca_window) {
+                        activate_window(ca_window);
                     }
 
                     return;
