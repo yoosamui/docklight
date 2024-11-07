@@ -165,6 +165,8 @@ namespace docklight
                 //  wnck::select_window(window);
             }
 
+            std::string wstring = "";
+
             /*if (Provider()->get_dockitem_by_xid(xid, child)) {
                 m_image = child->get_image();
             }
@@ -177,31 +179,35 @@ namespace docklight
                 //}
             }*/
 
-            std::string wstring;
             if (wnck::count_in_workspace(window, wstring)) {
-                std::shared_ptr<DockItemIcon> child;
-                if (Provider()->get_dockitem_by_xid(xid, child)) {
-                    m_image = child->get_image();
-                }
+                std::shared_ptr<DockItemIcon> dockitem;
 
+                for (auto& item : Provider()->data()) {
+                    //  if (dockitem->get_hash() == item->get_hash()) continue;
+                    for (auto& it : item->get_childmap()) {
+                        auto source = it.second;
+                        if (source->get_xid() != xid) continue;
+                        if (child->get_hash() == source->get_hash()) continue;
+
+                        m_image = source->get_image();
+                        if (!m_image) continue;
+
+                        g_message("found");
+                        break;
+                    }
+                }
+                // if (Provider()->get_dockitem_by_xid(xid, dockitem)) {
+                // m_image = dockitem->get_image();
+                // if (!m_image) exit(1);
+                //// m_image->save("/home/yoo/TEMP/docklight_icons/%s",
+                //// dockitem->get_instance_name().c_str());
+                //// g_print("Get from other workspace\n");
+                ////}
+                ////// pixbuf::get_window_image(dockitem->get_xid(), m_image, 512);
+                //}
             } else {
                 pixbuf::get_window_image(xid, m_image);
             }
-
-            /*if (wnck::count_in_workspace(window, wstring)) {
-                // std::shared_ptr<DockItemIcon> dockitem;
-                // if (Provider()->get_dockitem_by_xid(xid, dockitem)) {
-                // m_image = dockitem->get_image();
-                // if (m_image) {
-                // m_image->save("/home/yoo/TEMP/docklight_icons/%s",
-                // dockitem->get_instance_name().c_str());
-                // g_print("Get from other workspace\n");
-                //}
-                //// pixbuf::get_window_image(dockitem->get_xid(), m_image, 512);
-                //}
-            } else {
-                pixbuf::get_window_image(xid, m_image, 512);
-            }*/
 
             if (m_image) {
                 Gdk::Cairo::set_source_pixbuf(cr, m_image, startX, startY);

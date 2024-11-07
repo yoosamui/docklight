@@ -130,7 +130,7 @@ namespace docklight
                 for (auto& it : dockitem->get_childmap()) {
                     auto child = it.second;
 
-                    if (child->get_xid() == xid) {
+                    if (child->get_xid() == (gulong)xid) {
                         Glib::RefPtr<Gdk::Pixbuf> image;
 
                         if (wnck_window_is_minimized(window)) {
@@ -141,6 +141,7 @@ namespace docklight
 
                         if (pixbuf::get_window_image(xid, image)) {
                             child->set_image(image);
+                            g_message("---->SET IMAGE %s\n", dockitem->get_group_name().c_str());
                             break;
                         }
                     }
