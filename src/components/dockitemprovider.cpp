@@ -133,17 +133,27 @@ namespace docklight
                     if (child->get_xid() == (gulong)xid) {
                         Glib::RefPtr<Gdk::Pixbuf> image;
 
+                        wnck::move_window_to_workspace(window);
+
                         if (wnck_window_is_minimized(window)) {
                             wnck::unminimize(window);
                         }
 
+                        // wnck::bring_above_window(window);
                         wnck_window_make_below(window);
+                        // i  wnck_window_make_above(window);
+                        // wnck_window_activate(window, 0);
 
                         if (pixbuf::get_window_image(xid, image)) {
                             child->set_image(image);
-                            g_message("---->SET IMAGE %s\n", dockitem->get_group_name().c_str());
-                            break;
+                            // char filename[512];
+                            // sprintf(filename, "/home/yoo/TEMP/docklight_icons/%lu_%s",
+                            // child->get_xid(), child->get_instance_name().c_str());
+
+                            // image->save(filename, "png");
                         }
+
+                        if (image) break;
                     }
                 }
             }

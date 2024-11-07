@@ -368,9 +368,9 @@ namespace docklight
 
             std::shared_ptr<DockItemIcon> dockitem;
             if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return false;
-
-            int size = 512 * dockitem->get_childmap().size();
-            Position()->get_preview_position(m_dockitem_index, x, y, size, 512);
+            int area = Config()->get_preview_area();
+            int size = area * dockitem->get_childmap().size();
+            Position()->get_preview_position(m_dockitem_index, x, y, size, area);
             m_preview->show_at(x, y, dockitem);
             return true;
         }

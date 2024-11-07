@@ -42,7 +42,8 @@ namespace docklight
         // no access from draussen
         static constexpr const int DEF_DOCKAREA_MARGIN = 12;
         static constexpr const int DEF_ICON_SIZE = 128;
-        static constexpr const int DEF_PREVIEW_IMAGE_SIZE = 128;
+        static constexpr const int DEF_PREVIEW_IMAGE_SIZE = 260;
+        static constexpr const int DEF_PREVIEW_IMAGE_MAX_SIZE = 512;
         // static constexpr const int DEF_SEPARATOR_MARGIN = 0;  // OBSOLETE
         static constexpr const int DEF_SEPARATOR_SIZE = 0;
         static constexpr const double DEF_AUTOHIDE_ANIMATION_DELAY = 5.0;
@@ -52,6 +53,8 @@ namespace docklight
         // Initializers
         int m_icon_size = DEF_ICON_SIZE;
         int m_custom_icon_size = DEF_ICON_SIZE;
+
+        int m_image_size = DEF_PREVIEW_IMAGE_SIZE;
 
         int m_separator_size = DEF_SEPARATOR_SIZE;
         int m_separator_size_factor = DEF_SEPARATOR_SIZE;

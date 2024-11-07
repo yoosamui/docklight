@@ -276,6 +276,21 @@ namespace docklight
             }
         }
 
+        void move_window_to_workspace(WnckWindow* window)
+        {
+            if (!WNCK_IS_WINDOW(window)) {
+                return;
+            }
+
+            int event_time = gtk_get_current_event_time();
+            if (!is_window_on_current_desktop(window)) {
+                WnckWorkspace* ws = wnck_window_get_workspace(window);
+                if (ws != nullptr) {
+                    wnck_workspace_activate(ws, event_time);
+                }
+            }
+        }
+
         void bring_above_window(WnckWindow* window)
         {
             if (!WNCK_IS_WINDOW(window)) {

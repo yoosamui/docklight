@@ -39,7 +39,9 @@ namespace docklight
         void init();
 
         void set_active_window(WnckWindow* active_window);
+        bool is_window_on_current_desktop(WnckWindow* window);
 
+        void move_window_to_workspace(WnckWindow* window);
         void select_window(WnckWindow* window);
         void select_window(gulong hash, WnckWindow* active_window,
                            std::vector<WnckWindow*> window_list);

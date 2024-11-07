@@ -58,7 +58,7 @@ namespace docklight
         // g_critical(message, filename, p ? p.__cxa_exception_type()->name() : "unknown type");
         //}
 
-        m_size = 512;  // m_image->get_width();
+        m_size = Config()->get_preview_image_size();  // m_image->get_width();
         // set_size_request(m_size * 3, m_size);
         // resize(512 * 3, 512);
     }
@@ -123,7 +123,7 @@ namespace docklight
         auto size = dockitem->get_childmap().size();
 
         show();
-        resize(512 * size, m_size);
+        resize(m_size * size, m_size);
         move(x, y);
         m_visible = true;
     }
@@ -183,28 +183,43 @@ namespace docklight
                 std::shared_ptr<DockItemIcon> dockitem;
 
                 for (auto& item : Provider()->data()) {
-                    //  if (dockitem->get_hash() == item->get_hash()) continue;
+                    if (wnck::is_window_on_current_desktop(window)) {
+                        continue;
+                    }
+
+                    //   dockitem->get_group_name().c_str());
+                    // if (item->get_hash() == child->get_hash()) {
+                    ////  g_print("%lu == %lu \n", item->get_hash(), child->get_hash());
+                    // continue;
+                    //}
+
                     for (auto& it : item->get_childmap()) {
                         auto source = it.second;
-                        if (source->get_xid() != xid) continue;
-                        if (child->get_hash() == source->get_hash()) continue;
 
-                        m_image = source->get_image();
-                        if (!m_image) continue;
+                        //  if (child->get_hash() == source->get_hash()) continue;
+                        if (it.first != xid) {
+                            //  g_print("%lu == %lu \n", it.first, xid);
+                            continue;
+                        }
 
-                        g_message("found");
-                        break;
+                        //  g_print("%lu == %lu \n", it.first, xid);
+                        // if (it.firstsource->get_xid() != xid) continue;
+
+                        auto image = source->get_image();
+                        if (image) {
+                            m_image = image;
+                            // g_print("FOUND %lu %s \n", it.first,
+                            // source->get_window_name().c_str());
+
+                            // char filename[512];
+                            // sprintf(filename, "/home/yoo/TEMP/docklight_icons/%lu_%s",
+                            // source->get_xid(), source->get_instance_name().c_str());
+
+                            // m_image->save(filename, "png");
+                            break;
+                        }
                     }
                 }
-                // if (Provider()->get_dockitem_by_xid(xid, dockitem)) {
-                // m_image = dockitem->get_image();
-                // if (!m_image) exit(1);
-                //// m_image->save("/home/yoo/TEMP/docklight_icons/%s",
-                //// dockitem->get_instance_name().c_str());
-                //// g_print("Get from other workspace\n");
-                ////}
-                ////// pixbuf::get_window_image(dockitem->get_xid(), m_image, 512);
-                //}
             } else {
                 pixbuf::get_window_image(xid, m_image);
             }
@@ -223,7 +238,7 @@ namespace docklight
         // int ypos = -m_size * (int)(m_frames * (m_frame_time - m_start_time) /
         // DF_EXPLODES_TIMEMAX); Gdk::Cairo::set_source_pixbuf(cr, m_image, 0, ypos);
         // cr->paint();
-
+        // exit(1);
         return false;
     }
 }  // namespace docklight
