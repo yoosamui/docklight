@@ -52,37 +52,37 @@ namespace docklight
         }
 
         if (Provider()->insert(window)) {
-            // Provider()->set_window_image(window);
+            Provider()->set_window_image(window);
         }
 
-        size_t idx = 1;
-        for (; idx < Provider()->data().size(); idx++) {
-            auto dockitem = Provider()->data().at(idx);
-            auto xid_list = dockitem->get_wnck_xid_list();
-            //            gulong cxid = wnck_window_get_xid(window);
+        // size_t idx = 1;
+        // for (; idx < Provider()->data().size(); idx++) {
+        // auto dockitem = Provider()->data().at(idx);
+        // auto xid_list = dockitem->get_wnck_xid_list();
+        ////            gulong cxid = wnck_window_get_xid(window);
 
-            if (std::find(xid_list.begin(), xid_list.end(), xid) != xid_list.end()) {
-                for (auto& it : dockitem->get_childmap()) {
-                    auto child = it.second;
+        // if (std::find(xid_list.begin(), xid_list.end(), xid) != xid_list.end()) {
+        // for (auto& it : dockitem->get_childmap()) {
+        // auto child = it.second;
 
-                    if (child->get_xid() == (gulong)xid) {
-                        Glib::RefPtr<Gdk::Pixbuf> image;
+        // if (child->get_xid() == (gulong)xid) {
+        // Glib::RefPtr<Gdk::Pixbuf> image;
 
-                        // if (wnck_window_is_minimized(window))
-                        //  wnck::unminimize(window);
-                        wnck_window_make_below(window);
-                        //        wnck::select_window(child->get_wnckwindow());
+        //// if (wnck_window_is_minimized(window))
+        ////  wnck::unminimize(window);
+        // wnck_window_make_below(window);
+        ////        wnck::select_window(child->get_wnckwindow());
 
-                        if (pixbuf::get_window_image(xid, image)) {
-                            child->set_image(image);
-                            g_message("---->SET IMAGE %s\n", dockitem->get_group_name().c_str());
-                            break;
-                        }
-                    }
-                }
-                break;
-            }
-        }
+        // if (pixbuf::get_window_image(xid, image)) {
+        // child->set_image(image);
+        // g_message("---->SET IMAGE %s\n", dockitem->get_group_name().c_str());
+        // break;
+        //}
+        //}
+        //}
+        // break;
+        //}
+        //}
         /*std::shared_ptr<DockItemIcon> dockitem;
         if (Provider()->get_dockitem_by_xid(xid, dockitem)) {
             Glib::RefPtr<Gdk::Pixbuf> image;
