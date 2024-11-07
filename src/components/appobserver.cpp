@@ -52,7 +52,7 @@ namespace docklight
         }
 
         if (Provider()->insert(window)) {
-            //    Provider()->set_window_image(window);
+            // Provider()->set_window_image(window);
         }
 
         size_t idx = 1;
@@ -75,7 +75,7 @@ namespace docklight
 
                         if (pixbuf::get_window_image(xid, image)) {
                             child->set_image(image);
-                            // g_message("---->SET IMAGE %s\n", dockitem->get_group_name().c_str());
+                            g_message("---->SET IMAGE %s\n", dockitem->get_group_name().c_str());
                             break;
                         }
                     }
