@@ -62,6 +62,7 @@ namespace docklight
         int m_size = 0;
         int m_frames = 0;
         bool m_visible = false;
+        int m_set = 0;
     };
 
 }  // namespace docklight

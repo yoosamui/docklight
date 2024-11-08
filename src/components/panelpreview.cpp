@@ -120,23 +120,30 @@ namespace docklight
         connect_signal(true);
         // move(x - (m_size / 2), y - (m_size / 2));
 
-        for (auto& it : m_dockitem->get_childmap()) {
-            //
-            auto child = it.second;
-            auto xid = it.first;  // get_xid();
+        if (!system::is_mutter_window_manager()) {
+            /* for (auto& it : m_dockitem->get_childmap()) {*/
+            ////
+            // auto child = it.second;
+            // auto xid = it.first;  // get_xid();
 
-            WnckWindow* window = it.second->get_wnckwindow();
+            // WnckWindow* window = it.second->get_wnckwindow();
+            ////                wnck::move_window_to_workspace(window);
 
-            if (window && wnck_window_is_minimized(window)) {
-                wnck::unminimize(window);
-            }
+            // if (window && wnck_window_is_minimized(window)) {
+            // wnck::unminimize(window);
+            //}
+
+            ////              if (pixbuf::get_window_image(xid, m_image)) {
+            ////              child->set_image(m_image);
+            ////            }
+            /*}*/
         }
-
         auto size = dockitem->get_childmap().size();
 
         show();
         resize(m_size * size, m_size);
         move(x, y);
+        m_set = 0;
         m_visible = true;
     }
 
@@ -149,6 +156,7 @@ namespace docklight
         connect_signal(false);
         hide();
         m_visible = false;
+        m_set = 0;
     }
     bool PanelPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     {
@@ -191,75 +199,118 @@ namespace docklight
                 // child->set_image(m_image);
                 //}
             }*/
+            /*if (m_set == 0) {
+                wnck::move_window_to_workspace(window);
+                wnck::bring_above_window(window);
+                pixbuf::get_window_image(xid, m_image);
+                //   m_image = child->get_image();
+                //    if (pixbuf::get_window_image(xid, m_image)) {
+                if (m_image) {
+                    Gdk::Cairo::set_source_pixbuf(cr, m_image, startX, startY);
+                    child->set_image(m_image);
+                    cr->paint();
+                }
+            } else {
+                m_image = child->get_image();
+                if (m_image) {
+                    Gdk::Cairo::set_source_pixbuf(cr, m_image, startX, startY);
+                    cr->paint();
+                }
+            }*/
+            //    }
+#define PREV
+#ifdef PREV
 
-            if (wnck::count_in_workspace(window, wstring)) {
-                std::shared_ptr<DockItemIcon> dockitem;
+            if (!system::is_mutter_window_manager()) {
+                if (wnck::count_in_workspace(window, wstring)) {
+                    std::shared_ptr<DockItemIcon> dockitem;
 
-                for (auto& item : Provider()->data()) {
-                    if (wnck::is_window_on_current_desktop(window)) {
-                        continue;
-                    }
-
-                    //   dockitem->get_group_name().c_str());
-                    // if (item->get_hash() == child->get_hash()) {
-                    ////  g_print("%lu == %lu \n", item->get_hash(), child->get_hash());
-                    // continue;
-                    //}
-
-                    // wnck::
-                    for (auto& it : item->get_childmap()) {
-                        auto source = it.second;
-
-                        //  if (child->get_hash() == source->get_hash()) continue;
-                        if (it.first != xid) {
-                            //  g_print("%lu == %lu \n", it.first, xid);
+                    for (auto& item : Provider()->data()) {
+                        if (wnck::is_window_on_current_desktop(window)) {
                             continue;
                         }
 
-                        wnck::move_window_to_workspace(window);
-                        //  g_print("%lu == %lu \n", it.first, xid);
-                        // if (it.firstsource->get_xid() != xid) continue;
+                        //   dockitem->get_group_name().c_str());
+                        // if (item->get_hash() == child->get_hash()) {
+                        ////  g_print("%lu == %lu \n", item->get_hash(), child->get_hash());
+                        // continue;
+                        //}
 
-                        auto image = source->get_image();
-                        if (image) {
-                            m_image = image;
-                            // g_print("FOUND %lu %s \n", it.first,
-                            // source->get_window_name().c_str());
+                        // wnck::
+                        for (auto& it : item->get_childmap()) {
+                            auto source = it.second;
 
-                            // char filename[512];
-                            // sprintf(filename, "/home/yoo/TEMP/docklight_icons/%lu_%s",
-                            // source->get_xid(), source->get_instance_name().c_str());
+                            //  if (child->get_hash() == source->get_hash()) continue;
+                            if (it.first != xid) {
+                                //  g_print("%lu == %lu \n", it.first, xid);
+                                continue;
+                            }
 
-                            // m_image->save(filename, "png");
+                            //  g_print("%lu == %lu \n", it.first, xid);
+                            // if (it.firstsource->get_xid() != xid) continue;
+                            //
+                            if (m_set == 0) {
+                                wnck::move_window_to_workspace(window);
+                            }
+
+                            wnck::unminimize(window);
+                            pixbuf::get_window_image(xid, m_image);
+
+                            //   auto image = source->get_image();
+                            if (!m_image) {
+                                m_image = source->get_image();
+                                //  g_print("FOUND %lu %s \n", it.first,
+                                //  source->get_window_name().c_str());
+
+                                // char filename[512];
+                                // sprintf(filename, "/home/yoo/TEMP/docklight_icons/%lu_%s",
+                                // source->get_xid(), source->get_instance_name().c_str());
+
+                                // m_image->save(filename, "png");
+                            }
                             break;
                         }
                     }
+                } else {
+                    //                    m_image = child->get_image();
+
+                    // if (m_set == 0) {
+                    wnck::move_window_to_workspace(window);
+                    //  }
+                    // pixbuf::get_window_image(xid, m_image);
+                    //  if (!wnck_window_is_minimized(window)) {
+                    pixbuf::get_window_image(xid, m_image);
+                    //} else {
+                    // m_image = child->get_image();
+
+                    // if (!m_image) {
+                    // wnck::unminimize(window);
+                    // pixbuf::get_window_image(xid, m_image);
+                    //}
+                    //}
+
+                    if (m_image) {
+                        child->set_image(m_image);
+                    }
+                    //                }
+
+                    if (m_image) {
+                        Gdk::Cairo::set_source_pixbuf(cr, m_image, startX, startY);
+                        cr->paint();
+                    }
+                    m_set = true;
                 }
             } else {
-                if (!wnck_window_is_minimized(window)) {
-                    pixbuf::get_window_image(xid, m_image);
-                } else {
-                    m_image = child->get_image();
-
-                    if (!m_image) {
-                        wnck::unminimize(window);
-                        pixbuf::get_window_image(xid, m_image);
-                    }
-                }
-
-                if (m_image) {
-                    child->set_image(m_image);
+                if (pixbuf::get_window_image(xid, m_image)) {
+                    Gdk::Cairo::set_source_pixbuf(cr, m_image, startX, startY);
+                    cr->paint();
                 }
             }
-
-            if (m_image) {
-                Gdk::Cairo::set_source_pixbuf(cr, m_image, startX, startY);
-                cr->paint();
-            }
-
+#endif
             startX += m_size;
             startY = 0;
         }
+        m_set = 1;
         // Replace destination layer (bounded)
         // cr->set_operator(Cairo::Operator::OPERATOR_SOURCE);
 

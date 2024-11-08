@@ -116,6 +116,9 @@ namespace docklight
             Config()->set_arguments(args_list);
         }
 
+        g_message("Window Manager : %s", system::get_window_manager_name().c_str());
+        g_message("Is Mutter WM: %s", system::is_mutter_window_manager() ? "yes" : "No");
+
         device::monitor::set_current_monitor(Config()->get_monitor_name());
 
         std::cout << "\n" << MSG_DISPLAY_DETECTED_MONITORS << " :" << std::endl;

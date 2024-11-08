@@ -89,15 +89,17 @@ namespace docklight
                     gulong xid = wnck_window_get_xid(window);
 
                     if (std::find(xid_list.begin(), xid_list.end(), xid) != xid_list.end()) {
-                        for (auto& it : dockitem->get_childmap()) {
-                            auto child = it.second;
+                        if (!system::is_mutter_window_manager()) {
+                            for (auto& it : dockitem->get_childmap()) {
+                                auto child = it.second;
 
-                            if (child->get_xid() == xid) {
-                                Glib::RefPtr<Gdk::Pixbuf> image;
+                                if (child->get_xid() == xid) {
+                                    Glib::RefPtr<Gdk::Pixbuf> image;
 
-                                if (pixbuf::get_window_image(xid, image)) {
-                                    child->set_image(image);
-                                    break;
+                                    if (pixbuf::get_window_image(xid, image)) {
+                                        child->set_image(image);
+                                        break;
+                                    }
                                 }
                             }
                         }

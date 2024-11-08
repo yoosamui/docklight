@@ -71,7 +71,7 @@ namespace docklight
         {
             GdkScreen* screen = gdk_screen_get_default();
             const char* wm = gdk_x11_screen_get_window_manager_name(screen);
-            if (wm && strncmp(wm, "Mutter", 5) == 0) {
+            if (wm && (strncmp(wm, "Mutter", 5) == 0 || strncmp(wm, "GNOME", 5) == 0)) {
                 return true;
             }
 
