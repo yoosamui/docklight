@@ -166,6 +166,10 @@ namespace docklight
 
         int startX = 0;
         int startY = 0;
+        bool init = false;
+
+        int event_time = gtk_get_current_event_time();
+        WnckWorkspace* ws = nullptr;
 
         for (auto& it : m_dockitem->get_childmap()) {
             //
@@ -173,6 +177,10 @@ namespace docklight
             auto xid = it.first;  // get_xid();
 
             WnckWindow* window = it.second->get_wnckwindow();
+            if (!init) {
+                init = true;
+                ws = wnck_window_get_workspace(window);
+            }
 
             // if (window && wnck_window_is_minimized(window)) {
             //// int event_time = gtk_get_current_event_time();
@@ -199,20 +207,29 @@ namespace docklight
                 // child->set_image(m_image);
                 //}
             }*/
-            if (m_set == 0) {
-                wnck::move_window_to_workspace(window);
-                wnck::unminimize(window);
-                wnck::bring_above_window(window);
-                pixbuf::get_window_image(xid, m_image);
-                //   m_image = child->get_image();
-                //    if (pixbuf::get_window_image(xid, m_image)) {
-                if (m_image) {
-                    Gdk::Cairo::set_source_pixbuf(cr, m_image, startX, startY);
-                    child->set_image(m_image);
-                    cr->paint();
-                }
-            }
-//#define PREV
+            // if (m_set == 0) {
+            // wnck::move_window_to_workspace(window);
+            // wnck::unminimize(window);
+            // wnck::bring_above_window(window);
+            // pixbuf::get_window_image(xid, m_image);
+            ////   m_image = child->get_image();
+            ////    if (pixbuf::get_window_image(xid, m_image)) {
+            //}
+            // if (m_image) {
+            // Gdk::Cairo::set_source_pixbuf(cr, m_image, startX, startY);
+            // child->set_image(m_image);
+            // cr->paint();
+            //}
+
+            // else {
+            // pixbuf::get_window_image(xid, m_image);
+            // if (m_image) {
+            // Gdk::Cairo::set_source_pixbuf(cr, m_image, startX, startY);
+            // child->set_image(m_image);
+            // cr->paint();
+            //}
+            //}
+#define PREV
 #ifdef PREV
 
             if (!system::is_mutter_window_manager()) {
@@ -247,7 +264,10 @@ namespace docklight
                                 wnck::move_window_to_workspace(window);
                             }
 
+                            //        if (window && wnck_window_is_minimized(window)) {
                             wnck::unminimize(window);
+                            //      }
+
                             pixbuf::get_window_image(xid, m_image);
 
                             //   auto image = source->get_image();
@@ -269,7 +289,7 @@ namespace docklight
                     //                    m_image = child->get_image();
 
                     // if (m_set == 0) {
-                    wnck::move_window_to_workspace(window);
+                    //  wnck::move_window_to_workspace(window);
                     //  }
                     // pixbuf::get_window_image(xid, m_image);
                     //  if (!wnck_window_is_minimized(window)) {
@@ -304,7 +324,9 @@ namespace docklight
             startX += m_size;
             startY = 0;
         }
+
         m_set = 1;
+
         // Replace destination layer (bounded)
         // cr->set_operator(Cairo::Operator::OPERATOR_SOURCE);
 
