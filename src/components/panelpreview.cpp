@@ -261,14 +261,18 @@ namespace docklight
                             // if (it.firstsource->get_xid() != xid) continue;
                             //
                             if (m_set == 0) {
-                                wnck::move_window_to_workspace(window);
+                                //                        wnck::move_window_to_workspace(window);
+                                auto ws2 = wnck_window_get_workspace(window);
+                                wnck_workspace_activate(ws2, event_time);
                             }
 
-                            //        if (window && wnck_window_is_minimized(window)) {
                             wnck::unminimize(window);
-                            //      }
+                            // if (wnck_window_is_minimized(window)) wnck::unminimize(window);
 
                             pixbuf::get_window_image(xid, m_image);
+
+                            // return
+                            // wnck_workspace_activate(ws, event_time);
 
                             //   auto image = source->get_image();
                             if (!m_image) {
@@ -292,7 +296,7 @@ namespace docklight
                     //  wnck::move_window_to_workspace(window);
                     //  }
                     // pixbuf::get_window_image(xid, m_image);
-                    //  if (!wnck_window_is_minimized(window)) {
+                    if (wnck_window_is_minimized(window)) wnck::unminimize(window);
                     pixbuf::get_window_image(xid, m_image);
                     //} else {
                     // m_image = child->get_image();
@@ -326,7 +330,7 @@ namespace docklight
         }
 
         m_set = 1;
-
+        wnck_workspace_activate(ws, event_time);
         // Replace destination layer (bounded)
         // cr->set_operator(Cairo::Operator::OPERATOR_SOURCE);
 
