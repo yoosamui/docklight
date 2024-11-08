@@ -199,8 +199,9 @@ namespace docklight
                 // child->set_image(m_image);
                 //}
             }*/
-            /*if (m_set == 0) {
+            if (m_set == 0) {
                 wnck::move_window_to_workspace(window);
+                wnck::unminimize(window);
                 wnck::bring_above_window(window);
                 pixbuf::get_window_image(xid, m_image);
                 //   m_image = child->get_image();
@@ -210,15 +211,8 @@ namespace docklight
                     child->set_image(m_image);
                     cr->paint();
                 }
-            } else {
-                m_image = child->get_image();
-                if (m_image) {
-                    Gdk::Cairo::set_source_pixbuf(cr, m_image, startX, startY);
-                    cr->paint();
-                }
-            }*/
-            //    }
-#define PREV
+            }
+//#define PREV
 #ifdef PREV
 
             if (!system::is_mutter_window_manager()) {
