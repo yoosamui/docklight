@@ -120,6 +120,18 @@ namespace docklight
         connect_signal(true);
         // move(x - (m_size / 2), y - (m_size / 2));
 
+        for (auto& it : m_dockitem->get_childmap()) {
+            //
+            auto child = it.second;
+            auto xid = it.first;  // get_xid();
+
+            WnckWindow* window = it.second->get_wnckwindow();
+
+            if (window && wnck_window_is_minimized(window)) {
+                wnck::unminimize(window);
+            }
+        }
+
         auto size = dockitem->get_childmap().size();
 
         show();
@@ -154,16 +166,17 @@ namespace docklight
 
             WnckWindow* window = it.second->get_wnckwindow();
 
-            if (window && wnck_window_is_minimized(window)) {
-                // int event_time = gtk_get_current_event_time();
-                //   wnck::bring_above_window(window);
-                // g_message("on_draw unminimize");
-                wnck::unminimize(window);
-                wnck_window_make_below(window);
-                //   unsigned int milli = 1000;
-                //   usleep(100 * milli);
-                //  wnck::select_window(window);
-            }
+            // if (window && wnck_window_is_minimized(window)) {
+            //// int event_time = gtk_get_current_event_time();
+            ////   wnck::bring_above_window(window);
+            //// g_message("on_draw unminimize");
+            // wnck::unminimize(window);
+            ////  wnck::minimize(window);
+            //// wnck_window_make_below(window);
+            ////   unsigned int milli = 1000;
+            ////   usleep(100 * milli);
+            /////wnck::select_window(window);
+            //}
 
             std::string wstring = "";
 
@@ -193,6 +206,7 @@ namespace docklight
                     // continue;
                     //}
 
+                    // wnck::
                     for (auto& it : item->get_childmap()) {
                         auto source = it.second;
 
@@ -202,6 +216,7 @@ namespace docklight
                             continue;
                         }
 
+                        wnck::move_window_to_workspace(window);
                         //  g_print("%lu == %lu \n", it.first, xid);
                         // if (it.firstsource->get_xid() != xid) continue;
 
@@ -221,7 +236,20 @@ namespace docklight
                     }
                 }
             } else {
-                pixbuf::get_window_image(xid, m_image);
+                if (!wnck_window_is_minimized(window)) {
+                    pixbuf::get_window_image(xid, m_image);
+                } else {
+                    m_image = child->get_image();
+
+                    if (!m_image) {
+                        wnck::unminimize(window);
+                        pixbuf::get_window_image(xid, m_image);
+                    }
+                }
+
+                if (m_image) {
+                    child->set_image(m_image);
+                }
             }
 
             if (m_image) {

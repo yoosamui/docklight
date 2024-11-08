@@ -140,7 +140,7 @@ namespace docklight
                         }
 
                         // wnck::bring_above_window(window);
-                        wnck_window_make_below(window);
+                        //  wnck_window_make_below(window);
                         // i  wnck_window_make_above(window);
                         // wnck_window_activate(window, 0);
 

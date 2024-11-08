@@ -35,6 +35,7 @@
 #include "components/dockrender.h"
 // clang-format on
 //
+#include <gdk/gdk.h>
 #include <gtkmm/image.h>
 #include <gtkmm/imagemenuitem.h>
 #include <gtkmm/menuitem.h>

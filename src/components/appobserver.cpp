@@ -52,7 +52,7 @@ namespace docklight
         }
 
         if (Provider()->insert(window)) {
-            Provider()->set_window_image(window);
+            //  Provider()->set_window_image(window);
         }
 
         /*size_t idx = 1;
