@@ -251,13 +251,8 @@ namespace docklight
                 ws = wnck_window_get_workspace(window);
                 if (WNCK_IS_WORKSPACE(ws)) wnck_workspace_activate(ws, event_time);
 
-                //   wnck::unminimize(window);
-                // wnck::select_window(window);
-
-                //
-
                 if (wnck_window_is_minimized(window)) {
-                    wnck::unminimize(window);
+                    wnck::select_window(window);
                 }
 
                 if (wnck_window_is_pinned(window)) {
@@ -268,14 +263,20 @@ namespace docklight
                 // for (int i = 1; i < 4; i++) {
                 std::string wstringx = "";
                 if (wnck::count_in_workspace(window, wstringx)) {
+                    // if (wnck_window_is_minimized(window)) {
+                    // wnck::unminimize(window);
+                    //};
+                    std::this_thread::sleep_for(std::chrono::milliseconds(140));
                     //  wnck_window_make_below(window);
                     // wnck::bring_above_window(window);
                     // wnck::bring_be
                     //   if (wnck_window_is_minimized(window))
+                    //   std::this_thread::sleep_for(std::chrono::milliseconds(140));
+                }
+                if (wnck_window_is_minimized(window)) {
+                    wnck::unminimize(window);
                     std::this_thread::sleep_for(std::chrono::milliseconds(140));
                 }
-                if (wnck_window_is_minimized(window))
-                    std::this_thread::sleep_for(std::chrono::milliseconds(140));
 
                 pixbuf::get_window_image(xid, m_image);
 
