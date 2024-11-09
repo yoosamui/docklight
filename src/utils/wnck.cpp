@@ -276,6 +276,38 @@ namespace docklight
             }
         }
 
+        void move_to_worksapce_number(int number)
+        {
+            WnckScreen* screen = get_default_screen();
+            GList* window_l;
+
+            int event_time = gtk_get_current_event_time();
+            wnck_screen_force_update(m_screen);
+
+            for (window_l = wnck_screen_get_windows(screen); window_l != NULL;
+                 window_l = window_l->next) {
+                WnckWindow* window = WNCK_WINDOW(window_l->data);
+
+                // if (!is_valid_window_type(window)) {
+                // continue;
+                //}
+
+                WnckWorkspace* ws = wnck_window_get_workspace(window);
+                if (WNCK_IS_WORKSPACE(ws)) {
+                    //    if (!ws) continue;
+
+                    if (wnck_workspace_get_number(ws) != number) continue;
+
+                    g_print("IS IN  WVS\n");
+                    // if (ws) {
+                    wnck_workspace_activate(ws, event_time);
+                    g_print("FONUND WVS");
+                    exit(1);
+                    return;
+                    //}
+                }
+            }
+        }
         void move_window_to_workspace(WnckWindow* window)
         {
             if (!WNCK_IS_WINDOW(window)) {

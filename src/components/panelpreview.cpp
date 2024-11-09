@@ -117,7 +117,7 @@ namespace docklight
         m_start_time = g_get_real_time();
         m_frame_time = m_start_time;
 
-        connect_signal(true);
+        // connect_signal(true);
         // move(x - (m_size / 2), y - (m_size / 2));
 
         if (!system::is_mutter_window_manager()) {
@@ -170,6 +170,14 @@ namespace docklight
 
         int event_time = gtk_get_current_event_time();
         WnckWorkspace* ws = nullptr;
+        WnckWorkspace* cws = nullptr;
+
+        GdkScreen* screen = gdk_screen_get_default();
+        int current_ws_number = gdk_x11_screen_get_current_desktop(screen);
+
+        // ws = wnck_window_get_workspace(window);
+        //   g_print(" START WS------------- %d \n", (int)current_ws_number);
+        m_current_images.clear();
 
         for (auto& it : m_dockitem->get_childmap()) {
             //
@@ -177,10 +185,10 @@ namespace docklight
             auto xid = it.first;  // get_xid();
 
             WnckWindow* window = it.second->get_wnckwindow();
-            if (!init) {
-                init = true;
-                ws = wnck_window_get_workspace(window);
-            }
+            // if (!init) {
+            // init = true;
+            // ws = wnck_window_get_workspace(window);
+            //}
 
             // if (window && wnck_window_is_minimized(window)) {
             //// int event_time = gtk_get_current_event_time();
@@ -229,7 +237,69 @@ namespace docklight
             // cr->paint();
             //}
             //}
-#define PREV
+
+            //       g_print("-------------%d %d \n", wnck_workspace_get_number(ws),
+            //       (int)current_ws_number);
+            // if (ws && wnck_workspace_get_number(ws) == current_ws_number) {
+            // cws = ws;
+            //}
+
+            if (!m_set) {
+                //                        wnck::move_window_to_workspace(window);
+                //  auto ws2 = wnck_window_get_workspace(window);
+                ws = wnck_window_get_workspace(window);
+                if (WNCK_IS_WORKSPACE(ws)) wnck_workspace_activate(ws, event_time);
+
+                if (wnck_window_is_minimized(window)) wnck::unminimize(window);
+                //     wnck::unminimize(window);
+                // wnck::select_window(window);
+
+                //
+
+                //  unsigned int microsecond = 1000;
+                // usleep(200 * microsecond);  // sleeps for 3 seconds
+                // for (int i = 1; i < 4; i++) {
+                std::string wstringx = "";
+                if (wnck::count_in_workspace(window, wstringx)) {
+                    wnck::bring_above_window(window);
+                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                };
+
+                pixbuf::get_window_image(xid, m_image);
+
+                if (m_image) {
+                    Gdk::Cairo::set_source_pixbuf(cr, m_image, startX, startY);
+                    cr->paint();
+                    //    Gdk::Cairo::set_source_pixbuf(cr, m_image, startX, startY);
+                    //    g_print("ONE\n");
+                    child->set_image(m_image);
+                }
+                // }
+                //    cr->paint();
+            } else {
+                //
+                //   if (wnck_window_is_minimized(window)) wnck::unminimize(window);
+                //  wnck::select_window(window);
+                //  if (!pixbuf::get_window_image(xid, m_image)) {
+                //    Gdk::Cairo::set_source_pixbuf(cr, m_image, startX, startY);
+                //    g_print("ONE\n");
+                m_image = child->get_image();
+                //    cr->paint();
+                // }
+
+                // else
+                //
+
+                //  auto tws = wnck_window_get_workspace(window);
+                //       if (pixbuf::get_window_image(xid, m_image)) {
+                if (m_image) {
+                    Gdk::Cairo::set_source_pixbuf(cr, m_image, startX, startY);
+                    cr->paint();
+                }
+                //       }
+                //... pixbuf::get_window_image(xid, m_image);
+            }
+//#define PREV
 #ifdef PREV
 
             if (!system::is_mutter_window_manager()) {
@@ -328,9 +398,25 @@ namespace docklight
             startX += m_size;
             startY = 0;
         }
+        if (!m_set) {
+            cws = wnck_screen_get_workspace(wnck::get_default_screen(), current_ws_number);
 
+            if (WNCK_IS_WORKSPACE(cws)) {
+                wnck_workspace_activate(cws, event_time);
+                //  g_print("EDDDDDDDDDDDDDDEDE");
+            }
+        }
         m_set = 1;
-        wnck_workspace_activate(ws, event_time);
+        //   int workspace); wnck::move_to_worksapce_number(3 /*current_ws_number*/);
+
+        //        g_print(" END WS------------- %d \n", (int)current_ws_number,
+        //        wnck_workspace_get_number(cws));
+        //  exit(1);
+        // WnckWorkspace* cws = wnck_window_get_workspace(window);
+        // if (ws == nullptr || wnck_workspace_get_number(ws) != (int)current_ws_number) {
+        // return -1;
+        //}
+
         // Replace destination layer (bounded)
         // cr->set_operator(Cairo::Operator::OPERATOR_SOURCE);
 

@@ -17,6 +17,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // clang-format off
+#include <thread>
 #include <glibmm/main.h>
 #include <gtkmm/window.h>
 #include "utils/cairo.h"
@@ -54,6 +55,7 @@ namespace docklight
       private:
         sigc::connection m_sigc_connection;
         Glib::RefPtr<Gdk::Pixbuf> m_image;
+        std::vector<Glib::RefPtr<Gdk::Pixbuf>> m_current_images;
         std::shared_ptr<DockItemIcon> m_dockitem;
 
         long int m_start_time = 0;
