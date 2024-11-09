@@ -244,7 +244,8 @@ namespace docklight
             // cws = ws;
             //}
 
-            if (!m_set) {
+            /// if (!m_set)
+            {
                 //                        wnck::move_window_to_workspace(window);
                 //  auto ws2 = wnck_window_get_workspace(window);
                 ws = wnck_window_get_workspace(window);
@@ -258,33 +259,43 @@ namespace docklight
                 if (wnck_window_is_minimized(window)) {
                     wnck::unminimize(window);
                 }
+
+                if (wnck_window_is_pinned(window)) {
+                    wnck_window_unpin(window);
+                }
                 //  unsigned int microsecond = 1000;
                 // usleep(200 * microsecond);  // sleeps for 3 seconds
                 // for (int i = 1; i < 4; i++) {
                 std::string wstringx = "";
                 if (wnck::count_in_workspace(window, wstringx)) {
-                    // wnck_window_make_below(window);
+                    //  wnck_window_make_below(window);
                     // wnck::bring_above_window(window);
                     // wnck::bring_be
                     //   if (wnck_window_is_minimized(window))
-                    std::this_thread::sleep_for(std::chrono::milliseconds(120));
-                } else if (wnck_window_is_minimized(window))
+                    std::this_thread::sleep_for(std::chrono::milliseconds(140));
+                }
+                if (wnck_window_is_minimized(window))
                     std::this_thread::sleep_for(std::chrono::milliseconds(140));
 
                 pixbuf::get_window_image(xid, m_image);
 
                 if (m_image) {
-                    Gdk::Cairo::set_source_pixbuf(cr, m_image, startX, startY);
-                    cr->paint();
+                    //   Gdk::Cairo::set_source_pixbuf(cr, m_image, startX, startY);
+                    //  cr->paint();
                     //    Gdk::Cairo::set_source_pixbuf(cr, m_image, startX, startY);
                     //    g_print("ONE\n");
-                    child->set_image(m_image);
+                    // child->set_image(m_image);
                 }
                 // }
                 //    cr->paint();
-            } else {
+            }
+
+            // else
+
+            {
+                pixbuf::get_window_image(xid, m_image);
                 //
-                m_image = child->get_image();
+                //   m_image = child->get_image();
                 // if (wnck_window_is_minimized(window)) {
                 // wnck::unminimize(window);
                 // pixbuf::get_window_image(xid, m_image);
@@ -407,12 +418,13 @@ namespace docklight
             startX += m_size;
             startY = 0;
         }
+
         if (!m_set) {
             cws = wnck_screen_get_workspace(wnck::get_default_screen(), current_ws_number);
 
             if (WNCK_IS_WORKSPACE(cws)) {
-                //  std::this_thread::sleep_for(std::chrono::milliseconds(200));
-                // wnck_workspace_activate(cws, event_time);
+                // std::this_thread::sleep_for(std::chrono::milliseconds(200));
+                //     wnck_workspace_activate(cws, event_time);
             }
         }
         m_set = 1;
