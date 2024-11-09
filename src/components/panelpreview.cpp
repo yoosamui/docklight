@@ -275,7 +275,7 @@ namespace docklight
                 }
                 if (wnck_window_is_minimized(window)) {
                     wnck::unminimize(window);
-                    std::this_thread::sleep_for(std::chrono::milliseconds(40));
+                    std::this_thread::sleep_for(std::chrono::milliseconds(140));
                 }
 
                 pixbuf::get_window_image(xid, m_image);
