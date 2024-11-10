@@ -19,8 +19,6 @@
 #include "components/dockitem.h"
 
 #include <giomm/desktopappinfo.h>
-//#include <giomm/appinfo.h>
-//#include <glibmm/fileutils.h>
 namespace docklight
 {
     DockItem::DockItem(gulong xid, WnckWindow* window, const Glib::ustring& instance_name,

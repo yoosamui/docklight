@@ -281,8 +281,7 @@ namespace docklight
             return false;
         }
         try {
-            // Always get the icon scaled to the
-            // requested size.
+            // Always get the icon scaled to the requested size.
             pixbuf = theme->load_icon(icon_name, Config()->get_icon_max_size(),
                                       Gtk::IconLookupFlags::ICON_LOOKUP_FORCE_SIZE);
 
@@ -352,7 +351,6 @@ namespace docklight
         return result;
     }
 
-    // if (!window_icon_name) return false;
     bool DockItemProvider::createFromDesktopFile(gulong xid, GdkPixbuf* gdkpixbuf,
                                                  Glib::ustring instance_name, std::string groupname,
                                                  Glib::ustring window_name,

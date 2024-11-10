@@ -116,6 +116,13 @@ namespace docklight
             if (WNCK_IS_WORKSPACE(cws)) {
                 wnck_workspace_activate(cws, 1);
             }
+        } else {
+            for (auto& it : m_dockitem->get_childmap()) {
+                auto xid = it.first;
+                if (pixbuf::get_window_image(xid, m_image)) {
+                    m_current_images.push_back(m_image);
+                }
+            }
         }
         auto size = dockitem->get_childmap().size();
 

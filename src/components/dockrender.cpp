@@ -135,12 +135,6 @@ namespace docklight
         int size = Config()->get_icon_size();
         auto icon = item->get_icon(size);
 
-        // rotation test
-        // m_icon_ctx->translate(0, 64);
-        // rotation = DegreesToRadians(90);
-        // m_icon_ctx->rotate(rotation);
-        // paint surface rec
-
         m_icon_ctx->set_operator(Cairo::Operator::OPERATOR_SOURCE);
         m_icon_ctx->set_line_width(2.0);
         m_icon_ctx->set_source_rgb(0.0, 0.0, 0.0);
