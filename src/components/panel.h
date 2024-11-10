@@ -105,6 +105,7 @@ namespace docklight
         void thread_func();
 
       private:
+        bool m_preview_open = false;
         Glib::RefPtr<ExplodesWindow> m_composite;
         Glib::RefPtr<PanelPreview> m_preview;
         float m_mouseclickEventTime = 0.0f;

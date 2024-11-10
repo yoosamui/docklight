@@ -89,7 +89,7 @@ namespace docklight
                     gulong xid = wnck_window_get_xid(window);
 
                     if (std::find(xid_list.begin(), xid_list.end(), xid) != xid_list.end()) {
-                        if (!system::is_mutter_window_manager()) {
+                        /*if (!system::is_mutter_window_manager()) {
                             for (auto& it : dockitem->get_childmap()) {
                                 auto child = it.second;
 
@@ -102,7 +102,7 @@ namespace docklight
                                     }
                                 }
                             }
-                        }
+                        }*/
 
                         m_dockitem_active_index = idx;
                         Gtk::Widget::queue_draw();
@@ -353,6 +353,8 @@ namespace docklight
     {
         if ((event->type != GDK_BUTTON_PRESS)) return false;
 
+        m_preview->hide_now();
+
         m_mouseclickEventTime = gtk_get_current_event_time();
         get_dockitem_index(event->x, event->y);
 
@@ -363,22 +365,31 @@ namespace docklight
     {
         if ((event->type != GDK_BUTTON_RELEASE)) return false;
 
-        int diff = (int)((gtk_get_current_event_time() - m_mouseclickEventTime));
-        if (diff > 200) {
-            int x = 0;
-            int y = 0;
+        if (event->button == 3) {
+            int diff = (int)((gtk_get_current_event_time() - m_mouseclickEventTime));
+            if (diff > 200) {
+                int x = 0;
+                int y = 0;
 
-            std::shared_ptr<DockItemIcon> dockitem;
-            if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return false;
-            int area = Config()->get_preview_area();
-            int size = area * dockitem->get_childmap().size();
-            Position()->get_preview_position(m_dockitem_index, x, y, size, area);
-            m_preview->show_at(x, y, dockitem);
-            return true;
+                std::shared_ptr<DockItemIcon> dockitem;
+                if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return false;
+                int area = Config()->get_preview_area();
+                int size = area * dockitem->get_childmap().size();
+                Position()->get_preview_position(m_dockitem_index, x, y, size, area);
+                m_preview->show_at(x, y, dockitem);
+                m_preview_open = true;
+                return true;
+            }
         }
 
-        if (m_preview->get_visible()) {
-            m_preview->hide_now();
+        // if (m_preview->get_visible()) {
+        // m_preview->hide_now();
+        // return true;
+        //}
+
+        //    if (m_preview->get_visible() {
+        if (m_preview_open) {
+            m_preview_open = false;
             return true;
         }
 
