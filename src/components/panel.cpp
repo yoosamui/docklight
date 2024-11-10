@@ -89,21 +89,6 @@ namespace docklight
                     gulong xid = wnck_window_get_xid(window);
 
                     if (std::find(xid_list.begin(), xid_list.end(), xid) != xid_list.end()) {
-                        /*if (!system::is_mutter_window_manager()) {
-                            for (auto& it : dockitem->get_childmap()) {
-                                auto child = it.second;
-
-                                if (child->get_xid() == xid) {
-                                    Glib::RefPtr<Gdk::Pixbuf> image;
-
-                                    if (pixbuf::get_window_image(xid, image)) {
-                                        child->set_image(image);
-                                        break;
-                                    }
-                                }
-                            }
-                        }*/
-
                         m_dockitem_active_index = idx;
                         Gtk::Widget::queue_draw();
 
@@ -146,68 +131,7 @@ namespace docklight
 
     bool Panel::on_timeout_draw()
     {
-        //        get_dockitem_index(event->x, event->y);
-
-        // if (m_dockitem_index != m_last_index) {
-        // m_last_index = m_dockitem_index;
-        // Gtk::Widget::queue_draw();
-        //}
-        // Gtk::Widget::queue_draw();
-
-        /*auto max_click_time = LaunchBounceTime;
-        if (anim) {
-            m_frame_time = g_get_real_time();
-            m_LastClicked = g_get_real_time();
-            // check for and calculate click-animation
-            LaunchBounceTime = 600;
-            max_click_time *= 1000;
-            anim = true;
-        }
-
-        auto click_time = std::max(0.0f, m_frame_time - m_LastClicked);
-        m_posY += easing_bounce(click_time, max_click_time, 2);
-        g_print("%d\n", (int)m_posY);
-
-        [>position_manager.LaunchBounceHeight <]
-        //  auto urgent_duration = 600 * 1000;
-        //  auto urgent_time = std::max(0.f, frame_time - item.LastUrgent);*/
-
         return true;
-
-        // if (m_animation_time < 1.0f) {
-        // m_frame_time = g_get_real_time();
-        // m_initTime = 0.0f;  // g_get_real_time();
-        // m_endTime = 10.0f;  // m_initTime + 10.0f;
-        //// auto endTime = m_initTime + 12;  // m_easing_duration;
-        //// float startPosition = 0.f;
-        //// float endPosition = 0.f;
-        ////  m_animation_time = 0;
-        //}
-
-        // float pos = 0.0f;
-        // float startPosition = 0.f;
-        // float endPosition = 74.f;
-        //// if (!nearly_equal(m_animation_time, endPosition, 2)) {
-        // m_posY = easing::map_clamp(m_animation_time, m_initTime, m_endTime, startPosition,
-        // endPosition, &easing::bounce::easeOut);
-
-        // if (m_posY != endPosition) {
-        //// std::cout << pos << ",  " << endPosition << std::endl;
-        // g_print("%d\n", (int)m_posY);
-
-        // m_animation_time += 0.4f;  // g_get_real_time() - m_frame_time;
-        //} else {
-        // m_posY = 0;
-        // m_animation_time = 0.f;
-        //}
-
-        //// easing_util::map_clamp(m_animation_time, m_initTime, endTime, startPosition,
-        ////                                   endPosition, &easing_util::linear::easeOut);
-        ////  GLib.get_monotonic_time();
-        ////    initialize_frame(frame_time);
-        ////    widget widget.queue_draw();
-
-        // return true;
     }
 
     void Panel::on_home_menu_quit_event()
@@ -365,6 +289,7 @@ namespace docklight
     {
         if ((event->type != GDK_BUTTON_RELEASE)) return false;
 
+        // Handle the preview right mouse button.
         if (event->button == 3 && !m_preview->get_visible()) {
             int diff = (int)((gtk_get_current_event_time() - m_mouseclickEventTime));
             if (diff > 200) {
@@ -475,52 +400,7 @@ namespace docklight
             }
         }
 
-        // It has been handled.
         return true;
-        ////////////////////
-        ///
-
-        /*if (!dockitem->get_childmap().size()) return false;
-
-        dockitem->set_attached();
-        m_provider->save();
-        //        std::shared_ptr<DockItemIcon> child = dockitem->get_childmap().at(0);
-        auto it = dockitem->get_childmap().begin();
-        std::advance(it, 0);
-        auto child = it->second;
-        auto window = child->get_wnckwindow();
-        if (window) wnck::activate_window(window);*/
-        // auto child = item.second;
-
-        // WnckWindow* window = child->get_wnckwindow();
-        //  wnck::activate_window(window);
-
-        //        return false;
-        //  container_updated();
-        //  return false;
-
-        // ..    container_updated();
-        //     m_provider->remove(0);
-        /*g_print("ATTACHED %s\n", dockitem->to_string().c_str());
-        //   m_provider->load();
-        for (auto& dockitem : m_provider->data()) {
-            g_print("X %ld %s attach %d child %ld\n", dockitem->get_xid(),
-                    dockitem->get_group_name().c_str(), (int)dockitem->get_attached(),
-                    dockitem->get_childmap().size());
-            for (auto& item : dockitem->get_childmap()) {
-                auto child = item.second;
-
-                WnckWindow* window = child->get_wnckwindow();
-
-                g_print("   -| %ld %s attach %d wnck %p\n", child->get_xid(),
-                        child->get_group_name().c_str(), 0, window);
-                break;
-            }
-        }
-*/
-        // launcher2(dockitem->get_desktop_file(), dockitem->get_instance_name(),
-        // dockitem->get_group_name(), dockitem->get_icon_name());
-        return false;
     }
 
 }  // namespace docklight

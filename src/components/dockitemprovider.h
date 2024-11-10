@@ -76,13 +76,11 @@ namespace docklight
         guint count();
         bool save();
 
-        void set_window_image(WnckWindow* window);
-        void on_theme_changed();  // TEST move to privat
-
       private:
         sigc::connection m_sigc;
         WnckWindow* m_wnckwindow = nullptr;
 
+        void on_theme_changed();
         bool on_timeout();
 
         bool get_window_icon(GdkPixbuf* gdkpixbuf, Glib::RefPtr<Gdk::Pixbuf>& pixbuf);

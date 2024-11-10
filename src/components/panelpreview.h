@@ -28,10 +28,6 @@
 #include "components/dockitemicon.h"
 // clang-format on
 
-#define DF_EXPLODES_FRAMESPERSECOND 30
-#define DF_EXPLODES_FRAMERATE double(1000 / DF_EXPLODES_FRAMESPERSECOND)
-#define DF_EXPLODES_TIMEMAX double(DF_EXPLODES_FRAMESPERSECOND * 10000)
-
 namespace docklight
 {
     class PanelPreview : public Gtk::Window  // TransparentWindow
@@ -58,13 +54,8 @@ namespace docklight
         std::vector<Glib::RefPtr<Gdk::Pixbuf>> m_current_images;
         std::shared_ptr<DockItemIcon> m_dockitem;
 
-        long int m_start_time = 0;
-        long int m_frame_time = 0;
-
         int m_size = 0;
-        int m_frames = 0;
         bool m_visible = false;
-        int m_set = 0;
     };
 
 }  // namespace docklight

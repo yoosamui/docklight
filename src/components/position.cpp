@@ -119,9 +119,7 @@ namespace docklight
         auto const area = Config()->get_dock_area();
 
         x = m_x;
-        x = m_x;           //+ get_workarea().get_x();  // + (width / 2);
-        y = m_y - height;  // - get_workarea().get_height();  //(height / 2);
-        // y = get_workarea().get_height() - 512;
+        y = m_y - height;
 
         if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
             int center = (area / 2) - (width / 2);
@@ -134,9 +132,7 @@ namespace docklight
 
         } else {
             y = get_workarea().get_y() + (height / 2);
-            int center = (area / 2) - (height / 2);
-            // y += (area * index) + center;
-            //    y += (area * index) + center;
+            //    int center = (area / 2) - (height / 2);
         }
 
         return true;

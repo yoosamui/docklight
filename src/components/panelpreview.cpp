@@ -29,38 +29,12 @@ namespace docklight
 
     PanelPreview::PanelPreview() : Gtk::Window(Gtk::WindowType::WINDOW_POPUP)
     {
-        // set_skip_taskbar_hint(true);
-        // set_skip_pager_hint(true);
-        //// set_resizable(false);
-        // set_can_focus(false);
-        //// set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
-        //        Gtk::Window(Gtk::WindowType::WINDOW_POPUP);
-        set_resizable(true);
-
-        // set_decorated(true);
-
         set_resizable(true);
         set_skip_taskbar_hint(true);
         set_skip_pager_hint(true);
         set_keep_above(true);
-        // auto filename = "data/images/explodes.svg";
 
-        // try {
-        // m_image = Gdk::Pixbuf::create_from_file(filename);
-        // m_size = m_image->get_width();
-        // m_frames = std::floor(m_image->get_height() / m_size);
-        //} catch (const std::exception& ex) {
-        // g_critical("Exception 'PanelPreview'. :%s", ex.what());
-        //} catch (...) {
-        // std::exception_ptr p = std::current_exception();
-        // auto message =
-        //"Exception 'PanelPreview'. Unable to load the desired image: %s, type: %s";
-        // g_critical(message, filename, p ? p.__cxa_exception_type()->name() : "unknown type");
-        //}
-
-        m_size = Config()->get_preview_image_size();  // m_image->get_width();
-        // set_size_request(m_size * 3, m_size);
-        // resize(512 * 3, 512);
+        m_size = Config()->get_preview_image_size();
     }
 
     PanelPreview::~PanelPreview()
@@ -79,30 +53,10 @@ namespace docklight
         }
     }
 
-    //  hide();  cause  GLib-GObject-CRITICAL **: 09:33:13.256: g_object_unref: assertion
-    //  'G_IS_OBJECT (object)' failed
-    // TODO Work around
-    /*
-     Asks to keep window above, so that it stays on top.
-     Note that you shouldn’t assume the window is definitely
-     above afterward, because other entities (e.g. the user or
-     [window manager][gtk-X11-arch]) could not keep it above,
-     and not all window managers support keeping windows above.
-     But normally the window will end kept above.
-
-     Just don’t write code that crashes if not.
-     */
-    // set_keep_above();
     bool PanelPreview::on_timeout_draw()
 
     {
-        m_frame_time = g_get_real_time();
-        //    if (m_frame_time - m_start_time <= DF_EXPLODES_TIMEMAX) {
         Gtk::Widget::queue_draw();
-        return true;
-        //    }
-
-        // hide();
         return true;
     }
 
@@ -114,20 +68,17 @@ namespace docklight
     void PanelPreview::show_at(int x, int y, std::shared_ptr<DockItemIcon> dockitem)
     {
         m_dockitem = dockitem;
-        m_start_time = g_get_real_time();
-        m_frame_time = m_start_time;
         const int millis = 120;
         int event_time = gtk_get_current_event_time();
 
         GdkScreen* screen = gdk_screen_get_default();
         int current_ws_number = gdk_x11_screen_get_current_desktop(screen);
-        // connect_signal(true);
-        // move(x - (m_size / 2), y - (m_size / 2));
+
         m_current_images.clear();
         if (!system::is_mutter_window_manager()) {
             for (auto& it : m_dockitem->get_childmap()) {
                 auto child = it.second;
-                auto xid = it.first;  // get_xid();
+                auto xid = it.first;
                 bool restore = false;
 
                 WnckWindow* window = it.second->get_wnckwindow();
@@ -147,11 +98,8 @@ namespace docklight
 
                 std::string wstringx = "";
                 if (wnck::count_in_workspace(window, wstringx)) {
-                    // wnck::unminimize(window);
                     std::this_thread::sleep_for(std::chrono::milliseconds(millis));
-                }
-                if (wnck_window_is_minimized(window)) {
-                    //  wnck::unminimize(window);
+                } else if (wnck_window_is_minimized(window)) {
                     std::this_thread::sleep_for(std::chrono::milliseconds(millis));
                 }
 
@@ -174,7 +122,6 @@ namespace docklight
         show();
         resize(m_size * size, m_size);
         move(x, y);
-        m_set = 0;
         m_visible = true;
     }
 
@@ -187,7 +134,6 @@ namespace docklight
         connect_signal(false);
         hide();
         m_visible = false;
-        m_set = 0;
     }
     bool PanelPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     {
@@ -197,10 +143,6 @@ namespace docklight
 
         int startX = 0;
         int startY = 0;
-
-        int event_time = gtk_get_current_event_time();
-        WnckWorkspace* ws = nullptr;
-        WnckWorkspace* cws = nullptr;
 
         for (auto& it : m_current_images) {
             Glib::RefPtr<Gdk::Pixbuf> image = it;

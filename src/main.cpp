@@ -28,19 +28,6 @@
 // clang-format on
 
 using namespace docklight;
-//    Specifies the type of the print handler functions. These are called with the complete
-//    formatted string to output.
-void LogHandler(const gchar *log_domain, GLogLevelFlags log_level, const gchar *message,
-                gpointer user_data)
-{
-    exit(1);
-    if (user_data) {
-        //
-        user_data = NULL;
-    };
-
-    g_print("HANDLER %s %d %s\n", log_domain, log_level, message);
-}
 
 int main(int argc, char *argv[])
 {
@@ -53,24 +40,21 @@ int main(int argc, char *argv[])
     // https://www.x.org/releases/X11R7.5/doc/man/man3/XInitThreads.3.html
     XInitThreads();
 
-    // guint logset = g_log_set_handler("docklight", G_LOG_LEVEL_WARNING, &LogHandler, NULL);
-    // g_print("LOG %d\n", logset);
-
     // The initialization code:
     // Set up the user current locale.
     setlocale(LC_ALL, "");
-    g_print("Initialize gettext\n");
+    g_message("Initialize gettext");
     char *domain = bindtextdomain(GETTEXT_PACKAGE, PROGRAMNAME_LOCALEDIR);
-    g_print(("bindtextdomain: %s %s %s\n"), domain, GETTEXT_PACKAGE, PROGRAMNAME_LOCALEDIR);
+    g_message(("bindtextdomain: %s %s %s"), domain, GETTEXT_PACKAGE, PROGRAMNAME_LOCALEDIR);
 
     // bind_text domain_codeset - set encoding of message translations
     char *btdcodeset = bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
-    g_print("bind_textdomain_codeset: %s\n", btdcodeset);
+    g_message("bind_textdomain_codeset: %s", btdcodeset);
 
     // The  text domain  function  sets or retrieves the current  message
     // domain.
     char *txtdomain = textdomain(GETTEXT_PACKAGE);
-    g_print("textdomain: %s\n", txtdomain);
+    g_message("textdomain: %s", txtdomain);
 
     g_message("Create Application.");
     Glib::RefPtr<Gtk::Application> app = Gtk::Application::create(
@@ -82,14 +66,14 @@ int main(int argc, char *argv[])
     int result = win.init(app);
 
     if (result != 0) {
-        g_error("AppWindow init error.\n");
+        g_error("AppWindow init error.");
         exit(result);
     }
 
     // Shows the window and returns when it is closed.
-    g_print("app running...\n\n");
+    g_message("app running.");
     result = app->run(win);
-    g_print("Terminate with code %d \n", result);
+    g_message("Terminate with code %d", result);
 
     return result;
 }
