@@ -382,12 +382,6 @@ namespace docklight
             }
         }
 
-        // if (m_preview->get_visible()) {
-        // m_preview->hide_now();
-        // return true;
-        //}
-
-        //    if (m_preview->get_visible() {
         if (m_preview_open) {
             m_preview_open = false;
             return true;
@@ -403,24 +397,6 @@ namespace docklight
                 dockitem->launch();
                 return true;
             }
-
-            // show all the childrens in current workspace.
-            // WnckWindow* active_window = nullptr;
-            //            if (dockitem->get_active()) {
-            //                active_window = dockitem->get_wnckwindow();
-
-            // for (auto& it : dockitem->get_childmap()) {
-            // auto child = it.second;
-            // if (child->get_active()) {
-            // active_window = child->get_wnckwindow();
-
-            // if (active_window) g_print(wnck_window_get_name(active_window));
-
-            // break;
-            //}
-            //}
-            // g_print("active change\n");
-            //          }
 
             wnck::select_window(dockitem->get_hash(), m_active_window,
                                 dockitem->get_wnck_window_list());
