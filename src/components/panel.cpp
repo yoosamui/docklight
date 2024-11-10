@@ -365,7 +365,7 @@ namespace docklight
     {
         if ((event->type != GDK_BUTTON_RELEASE)) return false;
 
-        if (event->button == 3) {
+        if (event->button == 3 && !m_preview->get_visible()) {
             int diff = (int)((gtk_get_current_event_time() - m_mouseclickEventTime));
             if (diff > 200) {
                 int x = 0;
