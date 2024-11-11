@@ -14,8 +14,6 @@
 namespace docklight
 {
 
-    // static members declaration
-    // Panel* AppWindow::m_panel;
     Glib::RefPtr<Gtk::Application> AppWindow::m_application;
 
     AppWindow::AppWindow()
