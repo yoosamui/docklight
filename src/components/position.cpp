@@ -98,41 +98,109 @@ namespace docklight
     bool PositionManager::get_dockmenu_position(int index, int& x, int& y, int width, int height)
     {
         auto const area = Config()->get_dock_area();
+        auto workarea = get_workarea();
 
         x = m_x;
         y = m_y;
 
+        int maxsize = area * Provider()->data().size();
+
         if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+            if (Config()->get_dock_alignment() == dock_alignment_t::fill) {
+                if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::center) {
+                    int center = workarea.get_width() / 2 - maxsize / 2;
+                    x = workarea.get_x() + center;
+
+                } else if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::end) {
+                    x = workarea.get_width() - maxsize;
+                }
+            }
+
             int center = (area / 2) - (width / 2);
             x += (area * index) + center;
 
-        } else {
+        } else {  // Vertical
+            if (Config()->get_dock_alignment() == dock_alignment_t::fill) {
+                if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::center) {
+                    int center = workarea.get_height() / 2 - maxsize / 2;
+                    y = workarea.get_y() + center;
+                } else if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::end) {
+                    y = workarea.get_height() + workarea.get_y() - maxsize;
+                }
+            }
+
             int center = (area / 2) - (height / 2);
             y += (area * index) + center;
         }
 
         return true;
     }
+    // int area = Config()->get_preview_area();
+    // int size = area * dockitem->get_childmap().size();
+    // Position()->get_preview_position(m_dockitem_index, x, y, size, area);
 
     bool PositionManager::get_preview_position(int index, int& x, int& y, int width, int height)
     {
         auto const area = Config()->get_dock_area();
+        auto workarea = get_workarea();
 
         x = m_x;
-        y = m_y - height;
+        y = m_y;  //- height;
 
+        int maxsize = area * Provider()->data().size();
         if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+            if (Config()->get_dock_alignment() == dock_alignment_t::fill) {
+                if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::center) {
+                    int center = workarea.get_width() / 2 - maxsize / 2;
+                    x = workarea.get_x() + center;
+
+                } else if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::end) {
+                    x = workarea.get_width() - maxsize;
+                }
+            }
+
             int center = (area / 2) - (width / 2);
             x += (area * index) + center;
 
-            if (x < 0) x = 0;
-            if (x + width > get_workarea().get_width()) {
+            if (x < 0) {
                 x = 0;
             }
 
-        } else {
-            y = get_workarea().get_y() + (height / 2);
-            //    int center = (area / 2) - (height / 2);
+            if (x + width > get_workarea().get_width()) {
+                x = get_workarea().get_width() - width;
+            }
+
+            if (Config()->get_dock_location() == dock_location_t::top) {
+                y += area + height;
+            }
+
+        } else {  // Vertical
+            if (Config()->get_dock_alignment() == dock_alignment_t::fill) {
+                if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::center) {
+                    int center = workarea.get_height() / 2 - maxsize / 2;
+                    y = workarea.get_y() + center;
+                } else if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::end) {
+                    y = workarea.get_height() + workarea.get_y() - maxsize;
+                }
+            }
+
+            int center = (area / 2) - (height / 2);
+            y += (area * index) + center;
+
+            if (y < workarea.get_y()) {
+                y = workarea.get_y();
+            }
+
+            if (y + height > workarea.get_y() + workarea.get_height()) {
+                y = workarea.get_y() + get_workarea().get_height() - height;
+            }
+
+            if (Config()->get_dock_location() == dock_location_t::right) {
+                // x = workarea.get_x() + workarea.get_width() - area;
+                x = workarea.get_x() + workarea.get_width() - width;
+            } else {
+                x += area;
+            }
         }
 
         return true;

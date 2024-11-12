@@ -34,7 +34,20 @@ namespace docklight
         set_skip_pager_hint(true);
         set_keep_above(true);
 
-        m_size = Config()->get_preview_image_size();
+        GdkScreen* screen;
+        GdkVisual* visual;
+
+        gtk_widget_set_app_paintable(GTK_WIDGET(gobj()), TRUE);
+        screen = gdk_screen_get_default();
+        visual = gdk_screen_get_rgba_visual(screen);
+
+        if (visual != NULL && gdk_screen_is_composited(screen)) {
+            gtk_widget_set_visual(GTK_WIDGET(gobj()), visual);
+        }
+
+        // m_size = Config()->get_preview_image_size();
+        m_size = Config()->get_preview_area();
+        // image_size();
     }
 
     PanelPreview::~PanelPreview()
@@ -129,6 +142,7 @@ namespace docklight
         show();
         resize(m_size * size, m_size);
         move(x, y);
+
         m_visible = true;
     }
 
@@ -144,18 +158,34 @@ namespace docklight
     }
     bool PanelPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     {
+        auto size = m_dockitem->get_childmap().size();
         cr->set_source_rgba(0.266, 0.309, 0.361, 1.0);
-        cairo::rounded_rectangle(cr, 0, 0, m_size, m_size, 4.0);
-        cr->fill();
+        cr->paint();
 
         int startX = 0;
         int startY = 0;
-
+        int margin = Config()->get_preview_area_margin();
         for (auto& it : m_current_images) {
             Glib::RefPtr<Gdk::Pixbuf> image = it;
 
-            Gdk::Cairo::set_source_pixbuf(cr, image, startX, startY);
+            int center = m_size / 2 - image->get_width() / 2;
+            Gdk::Cairo::set_source_pixbuf(cr, image, startX + center, startY + margin);
             cr->paint();
+
+            //  cell
+            cr->set_source_rgba(1, 1, 1, 1);
+            cairo::rounded_rectangle(cr, startX, startY, m_size, m_size, 4.0);
+            cr->stroke();
+
+            // border
+            cr->set_source_rgba(5, 1, 0, 1);
+            cairo::rounded_rectangle(cr, startX, startY, m_size, margin, 4.0);
+            cr->stroke();
+
+            // image cell
+            cr->set_source_rgba(1, 1, 1, 1.0);
+            cairo::rounded_rectangle(cr, startX, startY + margin, m_size, m_size - margin, 4.0);
+            cr->stroke();
 
             startX += m_size;
             startY = 0;

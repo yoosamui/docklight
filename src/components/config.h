@@ -31,8 +31,10 @@ namespace docklight
         virtual ~Configuration();
 
         int get_dock_area_margin() const;
+        int get_preview_area_margin() const;
         int get_anchor_margin() const;
         int get_dock_area() const;
+        int get_preview_area() const;
         int get_icon_size() const;
         int get_separator_size() const;
 
@@ -58,7 +60,6 @@ namespace docklight
         int get_icon_max_size();
         int get_preview_image_max_size();
         int get_preview_image_size();
-        int get_preview_area();
     };
 
     Glib::RefPtr<Configuration> Config();

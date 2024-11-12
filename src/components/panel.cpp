@@ -289,10 +289,15 @@ namespace docklight
     {
         if ((event->type != GDK_BUTTON_RELEASE)) return false;
 
+        std::shared_ptr<DockItemIcon> dockitem;
+        if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return false;
+
+        auto size = dockitem->get_childmap().size();
+
         // Handle the preview right mouse button.
-        if (event->button == 3 && !m_preview->get_visible()) {
+        if (size && event->button == 3 && !m_preview->get_visible()) {
             int diff = (int)((gtk_get_current_event_time() - m_mouseclickEventTime));
-            if (diff > 200) {
+            if (diff > 200 && m_dockitem_index > 0) {
                 int x = 0;
                 int y = 0;
 
@@ -311,9 +316,6 @@ namespace docklight
             m_preview_open = false;
             return true;
         }
-
-        std::shared_ptr<DockItemIcon> dockitem;
-        if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return false;
 
         // Handle the left mouse button.
         if (event->button == 1 && m_dockitem_index > 0) {

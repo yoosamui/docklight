@@ -90,9 +90,14 @@ namespace docklight
         return m_image_size;
     }
 
-    int Configuration::get_preview_area()
+    int Configuration::get_preview_area_margin() const
     {
-        return m_image_size + 16;
+        return DEF_PREVIEWAREA_MARGIN;
+    }
+
+    int Configuration::get_preview_area() const
+    {
+        return m_image_size + get_preview_area_margin();
     }
 
     void Configuration::set_custom_icon_size(const guint size)
