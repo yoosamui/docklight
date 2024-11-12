@@ -37,6 +37,8 @@ namespace docklight
         PanelPreview();
         ~PanelPreview();
 
+        void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int x, int y,
+                       const std::string& text);
         void show_at(int x, int y, std::shared_ptr<DockItemIcon> dockitem);
         void hide_now();
 
@@ -52,7 +54,9 @@ namespace docklight
       private:
         sigc::connection m_sigc_connection;
         Glib::RefPtr<Gdk::Pixbuf> m_image;
-        std::vector<Glib::RefPtr<Gdk::Pixbuf>> m_current_images;
+        std::vector<std::pair<Glib::RefPtr<Gdk::Pixbuf>, std::shared_ptr<DockItemIcon>>>
+            m_current_images;
+
         std::shared_ptr<DockItemIcon> m_dockitem;
 
         int m_size = 0;

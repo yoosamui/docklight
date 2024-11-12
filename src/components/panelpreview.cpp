@@ -117,7 +117,10 @@ namespace docklight
                 }
 
                 pixbuf::get_window_image(xid, m_image);
-                if (pixbuf::get_window_image(xid, m_image)) m_current_images.push_back(m_image);
+                if (pixbuf::get_window_image(xid, m_image)) {
+                    auto pair = std::make_pair(m_image, child);
+                    m_current_images.push_back(pair);
+                }
 
                 if (restore) {
                     wnck::minimize(window);
@@ -127,13 +130,14 @@ namespace docklight
             auto cws = wnck_screen_get_workspace(wnck::get_default_screen(), current_ws_number);
 
             if (WNCK_IS_WORKSPACE(cws)) {
-                wnck_workspace_activate(cws, 1);
+                wnck_workspace_activate(cws, event_time);
             }
         } else {
             for (auto& it : m_dockitem->get_childmap()) {
                 auto xid = it.first;
                 if (pixbuf::get_window_image(xid, m_image)) {
-                    m_current_images.push_back(m_image);
+                    auto pair = std::make_pair(m_image, it.second);
+                    m_current_images.push_back(pair);
                 }
             }
         }
@@ -165,32 +169,86 @@ namespace docklight
         int startX = 0;
         int startY = 0;
         int margin = Config()->get_preview_area_margin();
+        int idx = 0;
         for (auto& it : m_current_images) {
-            Glib::RefPtr<Gdk::Pixbuf> image = it;
+            Glib::RefPtr<Gdk::Pixbuf> image = it.first;
+            auto child = it.second;
 
             int center = m_size / 2 - image->get_width() / 2;
             Gdk::Cairo::set_source_pixbuf(cr, image, startX + center, startY + margin);
             cr->paint();
 
             //  cell
-            cr->set_source_rgba(1, 1, 1, 1);
-            cairo::rounded_rectangle(cr, startX, startY, m_size, m_size, 4.0);
-            cr->stroke();
+            // cr->set_source_rgba(1, 1, 1, 1);
+            // cairo::rounded_rectangle(cr, startX, startY, m_size, m_size, 4.0);
+            // cr->stroke();
 
             // border
             cr->set_source_rgba(5, 1, 0, 1);
-            cairo::rounded_rectangle(cr, startX, startY, m_size, margin, 4.0);
+            cr->set_line_width(0.4);
+            cr->rectangle(startX + 8, startY + margin - 4, m_size - 16, 1);
             cr->stroke();
 
+            if (m_dockitem) {
+                cr->save();
+                draw_text(cr, startX, startY, child->get_window_name());
+                cr->restore();
+            }
+
             // image cell
-            cr->set_source_rgba(1, 1, 1, 1.0);
-            cairo::rounded_rectangle(cr, startX, startY + margin, m_size, m_size - margin, 4.0);
-            cr->stroke();
+            // cr->set_source_rgba(1, 1, 1, 1.0);
+            // cairo::rounded_rectangle(cr, startX, startY + margin, m_size, m_size - margin, 4.0);
+            // cr->stroke();
 
             startX += m_size;
             startY = 0;
+
+            idx++;
         }
 
         return true;
+    }
+
+    void PanelPreview::draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int x, int y,
+                                 const std::string& text)
+    {
+        cr->rectangle(x, y + 1, m_size - 26, Config()->get_preview_area_margin() - 1);
+        cr->set_source_rgba(1, 1, 1, 0.f);  // for debuging set alpha to 1.f
+        cr->clip_preserve();
+        cr->stroke();
+
+        /*//    cr->set_source_rgba(1, 1, 1, 1.f);  // for debuging set alpha to 1.f
+        if (m_theme.PreviewTitleText().Stroke().Color::alpha != 0.0) {
+            cr->set_source_rgba(m_theme.PreviewTitleText().Stroke().Color::red,
+                                m_theme.PreviewTitleText().Stroke().Color::green,
+                                m_theme.PreviewTitleText().Stroke().Color::blue,
+                                m_theme.PreviewTitleText().Stroke().Color::alpha);
+
+            cr->stroke();
+        }
+        */
+
+        // http://developer.gnome.org/pangomm/unstable/classPango_1_1FontDescription.html
+        Pango::FontDescription font;
+
+        font.set_family("Monospace");
+        font.set_weight(Pango::WEIGHT_NORMAL);
+        font.set_size(9 * PANGO_SCALE);
+
+        // http://developer.gnome.org/pangomm/unstable/classPango_1_1Layout.html
+        auto layout = create_pango_layout(text);
+
+        layout->set_font_description(font);
+
+        int text_width;
+        int text_height;
+
+        // get the text dimensions (it updates the variables -- by reference)
+        layout->get_pixel_size(text_width, text_height);
+        cr->move_to(x + 8, (Config()->get_preview_area_margin() / 2) - 8);
+
+        cr->set_source_rgba(1, 1, 1, 1.f);
+        layout->show_in_cairo_context(cr);
+        cr->reset_clip();  // Reset the clipping!
     }
 }  // namespace docklight

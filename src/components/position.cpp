@@ -161,6 +161,7 @@ namespace docklight
 
             int center = (area / 2) - (width / 2);
             x += (area * index) + center;
+            y -= height;
 
             if (x < 0) {
                 x = 0;
