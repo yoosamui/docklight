@@ -123,7 +123,7 @@ namespace docklight
                 }
 
                 if (restore) {
-                    wnck::minimize(window);
+                    //   wnck::minimize(window);
                 }
             }
 
