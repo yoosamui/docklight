@@ -43,7 +43,7 @@ namespace docklight
         static constexpr const int DEF_DOCKAREA_MARGIN = 12;
         static constexpr const int DEF_PREVIEWAREA_MARGIN = 32;
         static constexpr const int DEF_ICON_SIZE = 128;
-        static constexpr const int DEF_PREVIEW_IMAGE_SIZE = 260;
+        static constexpr const int DEF_PREVIEW_IMAGE_SIZE = 248;
         static constexpr const int DEF_PREVIEW_IMAGE_MAX_SIZE = 512;
         // static constexpr const int DEF_SEPARATOR_MARGIN = 0;  // OBSOLETE
         static constexpr const int DEF_SEPARATOR_SIZE = 0;

@@ -41,6 +41,7 @@
 #include <gtkmm/menuitem.h>
 
 #include "components/ExplodesWindow.h"
+//#include "components/coverwindow.h"
 #include "components/panelpreview.h"
 namespace docklight
 {

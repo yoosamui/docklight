@@ -297,6 +297,8 @@ namespace docklight
                 return nullptr;
             }
 
+            GdkWindow* rootwindow = gdk_get_default_root_window();
+
             GdkWindow* gdk_window = gdk_x11_window_foreign_new_for_display(gdk_display, xid);
             if (gdk_window == nullptr) {
                 return nullptr;

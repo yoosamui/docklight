@@ -29,11 +29,6 @@ namespace docklight
 
     PanelPreview::PanelPreview() : Gtk::Window(Gtk::WindowType::WINDOW_POPUP)
     {
-        set_resizable(true);
-        set_skip_taskbar_hint(true);
-        set_skip_pager_hint(true);
-        set_keep_above(true);
-
         GdkScreen* screen;
         GdkVisual* visual;
 
@@ -45,6 +40,21 @@ namespace docklight
             gtk_widget_set_visual(GTK_WIDGET(gobj()), visual);
         }
 
+        set_resizable(true);
+        set_skip_taskbar_hint(true);
+        set_skip_pager_hint(true);
+        set_keep_above(true);
+
+        // clang-format off
+        // Set event masks
+        add_events( Gdk::BUTTON_PRESS_MASK |
+                    Gdk::BUTTON_RELEASE_MASK |
+                    Gdk::SCROLL_MASK |
+                    Gdk::ENTER_NOTIFY_MASK |
+                    Gdk::LEAVE_NOTIFY_MASK |
+                    Gdk::POINTER_MOTION_MASK
+                   );
+        // clang-format on
         // m_size = Config()->get_preview_image_size();
         m_size = Config()->get_preview_area();
         // image_size();
@@ -80,6 +90,11 @@ namespace docklight
 
     void PanelPreview::show_at(int x, int y, std::shared_ptr<DockItemIcon> dockitem)
     {
+        // CoverWindow cover;  // = new CoverWindow();
+        // cover.show_at(888, 888, dockitem);
+
+        // return;
+
         m_dockitem = dockitem;
         const int millis = 120;
         int event_time = gtk_get_current_event_time();
@@ -142,7 +157,7 @@ namespace docklight
             }
         }
         auto size = dockitem->get_childmap().size();
-
+        //  cover.close();
         show();
         resize(m_size * size, m_size);
         move(x, y);
@@ -160,6 +175,71 @@ namespace docklight
         hide();
         m_visible = false;
     }
+
+    bool PanelPreview::on_enter_notify_event(GdkEventCrossing* crossing_event)
+    {
+        return true;
+    }
+
+    bool PanelPreview::on_leave_notify_event(GdkEventCrossing* crossing_event)
+    {
+        hide_now();
+        return true;
+    }
+
+    bool PanelPreview::on_button_press_event(GdkEventButton* event)
+    {
+        auto child = m_current_images.at(m_dockpreview_index).second;
+        if (child) {
+            wnck::activate_window(child->get_wnckwindow());
+            //  hide_now();
+        }
+
+        return true;
+    }
+
+    bool PanelPreview::on_motion_notify_event(GdkEventMotion* event)
+    {
+        get_dockpreview_index(event->x, event->y);
+        Gtk::Widget::queue_draw();
+
+        return true;
+    }
+
+    inline guint PanelPreview::get_dockpreview_index(int mx, int my)
+    {
+        gint pos_x = 0;
+        gint pos_y = 0;
+
+        auto separator_size = 0;
+        auto area = Config()->get_preview_area() + separator_size;
+        auto size = m_dockitem->get_childmap().size();
+        auto maxsize = size * area;
+        auto start_pos = 0;
+
+        // get_start_pos(maxsize, pos_x, pos_y);
+
+        for (size_t idx = 0; idx < size; idx++) {
+            m_dockpreview_index = -1;
+            //            if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+            if (mx >= pos_x && mx <= pos_x + area) {
+                m_dockpreview_index = idx;
+                break;
+            }
+            pos_x += start_pos + area;
+
+            //} else {  // Vertical
+            // if (my >= pos_y && my <= pos_y + area) {
+            // m_dockpreview_index = idx;
+            // break;
+            //}
+            // pos_y += start_pos + area;
+            //}
+        }
+
+        return m_dockpreview_index;
+    }
+
     bool PanelPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     {
         auto size = m_dockitem->get_childmap().size();
@@ -174,9 +254,17 @@ namespace docklight
             Glib::RefPtr<Gdk::Pixbuf> image = it.first;
             auto child = it.second;
 
+            if (idx == m_dockpreview_index) {
+                cr->set_source_rgba(1, 1, 1, 0.2);
+                cr->rectangle(startX, startY, m_size, m_size);
+                cr->fill();
+            }
+
             int center = m_size / 2 - image->get_width() / 2;
+            cr->rectangle(startX + center, startY + margin, image->get_width(),
+                          image->get_height());
             Gdk::Cairo::set_source_pixbuf(cr, image, startX + center, startY + margin);
-            cr->paint();
+            cr->fill();
 
             //  cell
             // cr->set_source_rgba(1, 1, 1, 1);

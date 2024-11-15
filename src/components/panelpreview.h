@@ -25,6 +25,7 @@
 #include "utils/wnck.h"
 #include "utils/pixbuf.h"
 #include "components/TransparentWindow.h"
+#include "components/coverwindow.h"
 #include "components/dockitemicon.h"
 // clang-format on
 
@@ -50,6 +51,14 @@ namespace docklight
       private:
         void connect_signal(bool connect);
         bool on_timeout_draw();
+        guint get_dockpreview_index(int mx, int my);
+
+        bool on_enter_notify_event(GdkEventCrossing* crossing_event) override;
+        bool on_leave_notify_event(GdkEventCrossing* crossing_event) override;
+
+        bool on_button_press_event(GdkEventButton* event);
+        // bool on_button_release_event(GdkEventButton* event);
+        bool on_motion_notify_event(GdkEventMotion* event) override;
 
       private:
         sigc::connection m_sigc_connection;
@@ -59,6 +68,7 @@ namespace docklight
 
         std::shared_ptr<DockItemIcon> m_dockitem;
 
+        int m_dockpreview_index = 0;
         int m_size = 0;
         bool m_visible = false;
     };

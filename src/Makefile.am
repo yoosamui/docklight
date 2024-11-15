@@ -35,6 +35,7 @@ appwindow.cpp \
 appoptionsgroup.cpp \
 components/TransparentWindow.cpp \
 components/ExplodesWindow.cpp \
+components/coverwindow.cpp \
 components/panel.cpp \
 components/panelpreview.cpp \
 components/dockmenu.cpp \
