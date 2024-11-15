@@ -90,8 +90,8 @@ namespace docklight
 
     void PanelPreview::show_at(int x, int y, std::shared_ptr<DockItemIcon> dockitem)
     {
-        // CoverWindow cover;  // = new CoverWindow();
-        // cover.show_at(888, 888, dockitem);
+        CoverWindow cover;  // = new CoverWindow();
+        cover.show_at(888, 888, dockitem);
 
         // return;
 
@@ -157,7 +157,7 @@ namespace docklight
             }
         }
         auto size = dockitem->get_childmap().size();
-        //  cover.close();
+        cover.close();
         show();
         resize(m_size * size, m_size);
         move(x, y);
