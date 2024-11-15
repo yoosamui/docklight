@@ -40,7 +40,7 @@ namespace docklight
 
         void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int x, int y,
                        const std::string& text);
-        void show_at(int x, int y, std::shared_ptr<DockItemIcon> dockitem);
+        void show_at(int x, int y, int dockitem_index, std::shared_ptr<DockItemIcon> dockitem);
         void hide_now();
 
         bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
@@ -60,17 +60,23 @@ namespace docklight
         // bool on_button_release_event(GdkEventButton* event);
         bool on_motion_notify_event(GdkEventMotion* event) override;
 
+        void update();
+
       private:
+        bool m_block_leave = false;
+        Gdk::Rectangle m_close_button_rectangle;
         sigc::connection m_sigc_connection;
         Glib::RefPtr<Gdk::Pixbuf> m_image;
         std::vector<std::pair<Glib::RefPtr<Gdk::Pixbuf>, std::shared_ptr<DockItemIcon>>>
             m_current_images;
 
         std::shared_ptr<DockItemIcon> m_dockitem;
-
+        int m_dockitem_index = 0;
         int m_dockpreview_index = 0;
         int m_size = 0;
         bool m_visible = false;
+        int m_x = 0;
+        int m_y = 0;
     };
 
 }  // namespace docklight

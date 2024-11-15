@@ -88,8 +88,10 @@ namespace docklight
         return m_size;
     }
 
-    void PanelPreview::show_at(int x, int y, std::shared_ptr<DockItemIcon> dockitem)
+    void PanelPreview::show_at(int x, int y, int dockitem_index,
+                               std::shared_ptr<DockItemIcon> dockitem)
     {
+        m_dockitem_index = dockitem_index;
         // CoverWindow cover;  // = new CoverWindow();
         // cover.show_at(888, 888, dockitem);
 
@@ -158,11 +160,34 @@ namespace docklight
         }
         auto size = dockitem->get_childmap().size();
         // cover.close();
-        show();
         resize(m_size * size, m_size);
         move(x, y);
+        m_x = x;
+        m_y = y;
 
+        show();
         m_visible = true;
+    }
+
+    void PanelPreview::update()
+    {
+        auto size = m_current_images.size();
+        resize(m_size * size, m_size);
+
+        int x, y;
+        if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+            int area = Config()->get_preview_area();
+            int size = area * m_dockitem->get_childmap().size();
+
+            Position()->get_preview_position(m_dockitem_index, x, y, size, area);
+            move(x + (m_size / 2), y);
+
+        } else {
+            if (Config()->get_dock_location() == dock_location_t::right) {
+                m_x += m_size;
+                move(m_x, m_y);
+            }
+        }
     }
 
     bool PanelPreview::get_visible() const
@@ -178,11 +203,14 @@ namespace docklight
 
     bool PanelPreview::on_enter_notify_event(GdkEventCrossing* crossing_event)
     {
+        m_block_leave = false;
         return true;
     }
 
     bool PanelPreview::on_leave_notify_event(GdkEventCrossing* crossing_event)
     {
+        if (m_block_leave) return true;
+
         hide_now();
         return true;
     }
@@ -190,11 +218,29 @@ namespace docklight
     bool PanelPreview::on_button_press_event(GdkEventButton* event)
     {
         auto child = m_current_images.at(m_dockpreview_index).second;
-        if (child) {
-            wnck::activate_window(child->get_wnckwindow());
-            //  hide_now();
+        if (!child) return false;
+
+        // handle close button
+        Gdk::Rectangle mouse_rect(event->x, event->y, 2, 2);
+        if (m_close_button_rectangle.intersects(mouse_rect)) {
+            m_block_leave = true;
+            wnck::close_window(child->get_wnckwindow());
+
+            m_current_images.erase(m_current_images.begin() + m_dockpreview_index);
+            m_dockpreview_index = 0;
+
+            if (m_current_images.size() == 0) {
+                this->close();
+                return true;
+            }
+
+            update();
+
+            return true;
         }
 
+        wnck::activate_window(child->get_wnckwindow());
+        //  hide_now();
         return true;
     }
 
@@ -258,6 +304,57 @@ namespace docklight
                 cr->set_source_rgba(1, 1, 1, 0.2);
                 cr->rectangle(startX, startY, m_size, m_size);
                 cr->fill();
+
+                // close selector
+                // int x1 = x + m_width - PREVIEW_TITLE_SIZE - 2;
+                // int x2 = PREVIEW_TITLE_SIZE - 10;
+                // int y1 = y + 1;
+                // int y2 = PREVIEW_TITLE_SIZE - 10;
+
+                int PREVIEW_TITLE_SIZE = 20;
+
+                int x1 = startX + m_size - PREVIEW_TITLE_SIZE - 2;
+                int x2 = PREVIEW_TITLE_SIZE - 10;
+                int y1 = startY + 1;
+                int y2 = PREVIEW_TITLE_SIZE - 10;
+
+                m_close_button_rectangle =
+                    Gdk::Rectangle(x1, y1, PREVIEW_TITLE_SIZE, PREVIEW_TITLE_SIZE);
+
+                // if (m_theme.PreviewClose().Fill().Color::alpha != 0.0) {
+                // cr->set_source_rgba(m_theme.PreviewClose().Fill().Color::red,
+                // m_theme.PreviewClose().Fill().Color::green,
+                // m_theme.PreviewClose().Fill().Color::blue,
+                // m_theme.PreviewClose().Fill().Color::alpha);
+
+                // cairo_util::rounded_rectangle(cr, x1, y1, PREVIEW_TITLE_SIZE,
+                // PREVIEW_TITLE_SIZE,
+                // m_theme.PreviewClose().Ratio());
+                // cr->fill();
+                //}
+
+                // if (m_theme.PreviewClose().Stroke().Color::alpha != 0.0) {
+                // cr->set_source_rgba(m_theme.PreviewClose().Stroke().Color::red,
+                // m_theme.PreviewClose().Stroke().Color::green,
+                // m_theme.PreviewClose().Stroke().Color::blue,
+                // m_theme.PreviewClose().Stroke().Color::alpha);
+
+                cr->set_source_rgba(1, 1, 1, 1.0);
+                cr->set_line_width(1.5);
+
+                x1 += 5;
+                y1 += 5;
+
+                cr->move_to(x1, y1);
+                cr->line_to(x1, y1);
+                cr->line_to(x1 + x2, y1 + y2);
+                cr->stroke();
+
+                cr->move_to(x1 + x2, y1);
+                cr->line_to(x1 + x2, y1);
+                cr->line_to(x1, y1 + y2);
+
+                cr->stroke();
             }
 
             int center = m_size / 2 - image->get_width() / 2;
@@ -285,8 +382,8 @@ namespace docklight
 
             // image cell
             // cr->set_source_rgba(1, 1, 1, 1.0);
-            // cairo::rounded_rectangle(cr, startX, startY + margin, m_size, m_size - margin, 4.0);
-            // cr->stroke();
+            // cairo::rounded_rectangle(cr, startX, startY + margin, m_size, m_size -
+            // margin, 4.0); cr->stroke();
 
             startX += m_size;
             startY = 0;

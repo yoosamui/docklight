@@ -310,7 +310,7 @@ namespace docklight
                 // auto cover = new CoverWindow();  // Glib::RefPtr<CoverWindow>(new CoverWindow());
                 // cover->show_at(888, 888, dockitem);
 
-                m_preview->show_at(x, y, dockitem);
+                m_preview->show_at(x, y, m_dockitem_index, dockitem);
                 m_preview_open = true;
                 return true;
             }
