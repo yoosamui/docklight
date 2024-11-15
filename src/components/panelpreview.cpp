@@ -90,8 +90,8 @@ namespace docklight
 
     void PanelPreview::show_at(int x, int y, std::shared_ptr<DockItemIcon> dockitem)
     {
-        CoverWindow cover;  // = new CoverWindow();
-        cover.show_at(888, 888, dockitem);
+        // CoverWindow cover;  // = new CoverWindow();
+        // cover.show_at(888, 888, dockitem);
 
         // return;
 
@@ -157,7 +157,7 @@ namespace docklight
             }
         }
         auto size = dockitem->get_childmap().size();
-        cover.close();
+        // cover.close();
         show();
         resize(m_size * size, m_size);
         move(x, y);
@@ -209,12 +209,12 @@ namespace docklight
     inline guint PanelPreview::get_dockpreview_index(int mx, int my)
     {
         gint pos_x = 0;
-        gint pos_y = 0;
+        //   gint pos_y = 0;
 
         auto separator_size = 0;
         auto area = Config()->get_preview_area() + separator_size;
         auto size = m_dockitem->get_childmap().size();
-        auto maxsize = size * area;
+        //   auto maxsize = size * area;
         auto start_pos = 0;
 
         // get_start_pos(maxsize, pos_x, pos_y);
@@ -242,7 +242,7 @@ namespace docklight
 
     bool PanelPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     {
-        auto size = m_dockitem->get_childmap().size();
+        // auto size = m_dockitem->get_childmap().size();
         cr->set_source_rgba(0.266, 0.309, 0.361, 1.0);
         cr->paint();
 

@@ -21,22 +21,21 @@
 #include <glibmm/main.h>
 #include <gtkmm/window.h>
 #include "utils/cairo.h"
-
+#include <gdk/gdkx.h>
 #include "utils/wnck.h"
 #include "utils/pixbuf.h"
 #include "components/TransparentWindow.h"
-//#include "components/coverwindow.h"
 #include "components/dockitemicon.h"
 // clang-format on
-
+#include "X11/X.h"
 namespace docklight
 {
-    class PanelPreview : public Gtk::Window  // TransparentWindow
-    // class PanelPreview : public TransparentWindow
+    class CoverWindow : public Gtk::Window  // TransparentWindow
+    // class CoverWindow : public TransparentWindow
     {
       public:
-        PanelPreview();
-        ~PanelPreview();
+        CoverWindow();
+        ~CoverWindow();
 
         void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int x, int y,
                        const std::string& text);
@@ -53,12 +52,12 @@ namespace docklight
         bool on_timeout_draw();
         guint get_dockpreview_index(int mx, int my);
 
-        bool on_enter_notify_event(GdkEventCrossing* crossing_event) override;
-        bool on_leave_notify_event(GdkEventCrossing* crossing_event) override;
+        // bool on_enter_notify_event(GdkEventCrossing* crossing_event) override;
+        // bool on_leave_notify_event(GdkEventCrossing* crossing_event) override;
 
-        bool on_button_press_event(GdkEventButton* event);
+        // bool on_button_press_event(GdkEventButton* event);
         // bool on_button_release_event(GdkEventButton* event);
-        bool on_motion_notify_event(GdkEventMotion* event) override;
+        //  bool on_motion_notify_event(GdkEventMotion* event) override;
 
       private:
         sigc::connection m_sigc_connection;
