@@ -305,12 +305,6 @@ namespace docklight
                 cr->rectangle(startX, startY, m_size, m_size);
                 cr->fill();
 
-                // close selector
-                // int x1 = x + m_width - PREVIEW_TITLE_SIZE - 2;
-                // int x2 = PREVIEW_TITLE_SIZE - 10;
-                // int y1 = y + 1;
-                // int y2 = PREVIEW_TITLE_SIZE - 10;
-
                 int PREVIEW_TITLE_SIZE = 20;
 
                 int x1 = startX + m_size - PREVIEW_TITLE_SIZE - 2;
@@ -321,29 +315,11 @@ namespace docklight
                 m_close_button_rectangle =
                     Gdk::Rectangle(x1, y1, PREVIEW_TITLE_SIZE, PREVIEW_TITLE_SIZE);
 
-                // if (m_theme.PreviewClose().Fill().Color::alpha != 0.0) {
-                // cr->set_source_rgba(m_theme.PreviewClose().Fill().Color::red,
-                // m_theme.PreviewClose().Fill().Color::green,
-                // m_theme.PreviewClose().Fill().Color::blue,
-                // m_theme.PreviewClose().Fill().Color::alpha);
-
-                // cairo_util::rounded_rectangle(cr, x1, y1, PREVIEW_TITLE_SIZE,
-                // PREVIEW_TITLE_SIZE,
-                // m_theme.PreviewClose().Ratio());
-                // cr->fill();
-                //}
-
-                // if (m_theme.PreviewClose().Stroke().Color::alpha != 0.0) {
-                // cr->set_source_rgba(m_theme.PreviewClose().Stroke().Color::red,
-                // m_theme.PreviewClose().Stroke().Color::green,
-                // m_theme.PreviewClose().Stroke().Color::blue,
-                // m_theme.PreviewClose().Stroke().Color::alpha);
-
                 cr->set_source_rgba(1, 1, 1, 1.0);
                 cr->set_line_width(1.5);
 
                 x1 += 5;
-                y1 += 5;
+                y1 += 10;
 
                 cr->move_to(x1, y1);
                 cr->line_to(x1, y1);
