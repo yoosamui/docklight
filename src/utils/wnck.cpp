@@ -161,7 +161,6 @@ namespace docklight
             gulong hash_code = hash + current_ws_number;
 
             //   auto window_list = get_ordered_window_list(windows);
-            g_message("Select window...");
 
             // Unminimize minimized windows if there is one or more;
             for (auto& window : window_list) {

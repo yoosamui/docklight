@@ -360,7 +360,7 @@ namespace docklight
 
             if (idx == m_dockpreview_index) {
                 cr->set_source_rgba(1, 1, 1, 0.2);
-                cr->rectangle(startX, startY, m_size, m_size);
+                cr->rectangle(startX, startY, m_size, margin);
                 cr->fill();
 
                 int PREVIEW_TITLE_SIZE = 20;
