@@ -376,7 +376,7 @@ namespace docklight
                 cr->set_source_rgba(1, 1, 1, 1.0);
                 cr->set_line_width(1.5);
 
-                x1 += 5;
+                x1 += 2;
                 y1 += 10;
 
                 cr->move_to(x1, y1);
