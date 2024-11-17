@@ -391,12 +391,11 @@ namespace docklight
                 cr->stroke();
             }
 
-            int center = m_size / 2 - image->get_width() / 2;
+            int centerX = m_size / 2 - image->get_width() / 2;
             int centerY = m_size / 2 - image->get_height() / 2;
-            cr->rectangle(startX + center, startY + margin, image->get_width(),
-                          image->get_height());
+            cr->rectangle(startX + centerX, startY + margin, image->get_width(), m_size - margin);
 
-            Gdk::Cairo::set_source_pixbuf(cr, image, startX + center, startY + centerY);
+            Gdk::Cairo::set_source_pixbuf(cr, image, startX + centerX, startY + centerY);
             cr->fill();
 
             //  cell
