@@ -1,5 +1,5 @@
 # Docklight-5
-Start Applications, access and manage them tmux sessions easily.
+Start Applications, access and manage them easily.
 
 <table>
     <tbody>
@@ -54,3 +54,16 @@ named it "docklight5.desktop" and save it at
 ```bash
 /home/$USER/.config/autostart/docklight5.desktop
 ```
+## Uninstallation
+
+```bash
+sudo make uninstall
+```
+If you want to remove the configuration files, do the following bash statement:
+```bash
+rm -rfd /home/$USER/.config/docklight
+```
+
+
+
+
