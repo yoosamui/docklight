@@ -15,7 +15,7 @@ Start Applications, access and manage them easily.
 clone this repository:
 
 ```bash
-git clone [(https://github.com/yoosamui/docklight)]
+git clone --branch current [(https://github.com/yoosamui/docklight)]
 This will create the diretory docklight.
 cd into it:
 ```
