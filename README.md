@@ -10,3 +10,8 @@ Start Applications, access and manage them tmux sessions easily.
         </tr>
     </tbody>
 </table>
+
+## Installation
+clone this repository:
+
+git clone [(https://github.com/yoosamui/docklight)]
