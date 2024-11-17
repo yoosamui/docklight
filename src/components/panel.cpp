@@ -389,7 +389,7 @@ namespace docklight
                     Gtk::ImageMenuItem* menu_item =
                         Gtk::manage(new Gtk::ImageMenuItem(child->get_title()));
 
-                    const Glib::RefPtr<Gdk::Pixbuf> pixbuf = dockitem->get_icon(16);
+                    const Glib::RefPtr<Gdk::Pixbuf> pixbuf = child->get_icon(16);
                     Gtk::Image* image = Gtk::manage(new Gtk::Image(pixbuf));
 
                     menu_item->set_image(*image);
