@@ -396,7 +396,7 @@ namespace docklight
             cr->rectangle(startX + center, startY + margin, image->get_width(),
                           image->get_height());
 
-            Gdk::Cairo::set_source_pixbuf(cr, image, startX + center, startY + centerY + margin);
+            Gdk::Cairo::set_source_pixbuf(cr, image, startX + center, startY + centerY);
             cr->fill();
 
             //  cell
