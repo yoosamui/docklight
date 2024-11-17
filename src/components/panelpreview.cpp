@@ -27,18 +27,18 @@
 namespace docklight
 {
 
-    PanelPreview::PanelPreview()  //: Gtk::Window(Gtk::WindowType::WINDOW_POPUP)
+    PanelPreview::PanelPreview() : Gtk::Window(Gtk::WindowType::WINDOW_POPUP)
     {
-        // GdkScreen* screen;
-        // GdkVisual* visual;
+        GdkScreen* screen;
+        GdkVisual* visual;
 
-        // gtk_widget_set_app_paintable(GTK_WIDGET(gobj()), TRUE);
-        // screen = gdk_screen_get_default();
-        // visual = gdk_screen_get_rgba_visual(screen);
+        gtk_widget_set_app_paintable(GTK_WIDGET(gobj()), TRUE);
+        screen = gdk_screen_get_default();
+        visual = gdk_screen_get_rgba_visual(screen);
 
-        // if (visual != NULL && gdk_screen_is_composited(screen)) {
-        // gtk_widget_set_visual(GTK_WIDGET(gobj()), visual);
-        //}
+        if (visual != NULL && gdk_screen_is_composited(screen)) {
+            gtk_widget_set_visual(GTK_WIDGET(gobj()), visual);
+        }
 
         set_resizable(true);
         set_skip_taskbar_hint(true);
@@ -347,28 +347,6 @@ namespace docklight
 
     bool PanelPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     {
-        /*
-          int scalesize = get_scale_factor();
-        Config()->set_image_size(scalesize);
-        m_size = Config()->get_preview_area();
-
-        int idx = 0;
-        for (auto& it : m_current_images) {
-            auto image = it.first;
-            Glib::RefPtr<Gdk::Pixbuf> scaled =
-                image->scale_simple(image->get_width(), image->get_height(), Gdk::INTERP_BILINEAR);
-            auto v = m_current_images.at(idx++);
-
-            v = std::make_pair(scaled, it.second);
-            v.back()
-            // m_current_images[idx++] =V
-
-            //  if (pixbuf::get_window_image(xid, m_image, Config()->get_preview_image_size())) {
-            ////    auto pair = std::make_pair(m_image, it.second);
-            ////    m_current_images.push_back(pair);
-            //}
-        }*/
-
         cr->set_source_rgba(0.266, 0.309, 0.361, 1.0);
         cr->paint();
 
@@ -414,10 +392,11 @@ namespace docklight
             }
 
             int center = m_size / 2 - image->get_width() / 2;
+            int centerY = m_size / 2 - image->get_height() / 2;
             cr->rectangle(startX + center, startY + margin, image->get_width(),
                           image->get_height());
 
-            Gdk::Cairo::set_source_pixbuf(cr, image, startX + center, startY + margin);
+            Gdk::Cairo::set_source_pixbuf(cr, image, startX + center, startY + centerY + margin);
             cr->fill();
 
             //  cell

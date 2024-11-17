@@ -290,6 +290,22 @@ namespace docklight
         m_mouseclickEventTime = gtk_get_current_event_time();
         get_dockitem_index(event->x, event->y);
 
+        // Handle the left mouse button.
+        if (event->button == 1 && m_dockitem_index > 0) {
+            std::shared_ptr<DockItemIcon> dockitem;
+            if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return false;
+
+            auto size = dockitem->get_childmap().size();
+
+            if (!size) {
+                dockitem->launch();
+                return true;
+            }
+
+            wnck::select_window(dockitem->get_hash(), m_active_window,
+                                dockitem->get_wnck_window_list());
+            //     return true;
+        }
         return true;
     }
 
@@ -301,6 +317,7 @@ namespace docklight
         if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return false;
 
         auto size = dockitem->get_childmap().size();
+        //  int required = system::is_mutter_window_manager() ? 1 : size;
 
         // Handle the preview right mouse button.
         if (size && event->button == 3 && !m_preview->get_visible()) {
@@ -311,12 +328,9 @@ namespace docklight
 
                 std::shared_ptr<DockItemIcon> dockitem;
                 if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return false;
-                int area = Config()->get_preview_area();
-                int size = area * dockitem->get_childmap().size();
-                Position()->get_preview_position(m_dockitem_index, x, y, size, area);
-
-                // auto cover = new CoverWindow();  // Glib::RefPtr<CoverWindow>(new CoverWindow());
-                // cover->show_at(888, 888, dockitem);
+                // int area = Config()->get_preview_area();
+                // int size = area * dockitem->get_childmap().size();
+                // Position()->get_preview_position(m_dockitem_index, x, y, size, area);
 
                 m_preview->show_at(x, y, m_dockitem_index, dockitem);
                 m_preview_open_index = m_dockitem_index;
@@ -327,19 +341,6 @@ namespace docklight
 
         if (m_preview_open) {
             m_preview_open = false;
-            return true;
-        }
-
-        // Handle the left mouse button.
-        if (event->button == 1 && m_dockitem_index > 0) {
-            auto size = dockitem->get_childmap().size();
-            if (!size) {
-                dockitem->launch();
-                return true;
-            }
-
-            wnck::select_window(dockitem->get_hash(), m_active_window,
-                                dockitem->get_wnck_window_list());
             return true;
         }
 

@@ -30,8 +30,8 @@
 
 namespace docklight
 {
-    // class PanelPreview : public Gtk::Window  // TransparentWindow
-    class PanelPreview : public TransparentWindow
+    class PanelPreview : public Gtk::Window  // TransparentWindow
+                                             // class PanelPreview : public TransparentWindow
     {
       public:
         PanelPreview();
