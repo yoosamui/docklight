@@ -56,6 +56,7 @@ namespace docklight
         int m_custom_icon_size = DEF_ICON_SIZE;
 
         int m_image_size = DEF_PREVIEW_IMAGE_SIZE;
+        int m_custom_image_size = DEF_PREVIEW_IMAGE_SIZE;
 
         int m_separator_size = DEF_SEPARATOR_SIZE;
         int m_separator_size_factor = DEF_SEPARATOR_SIZE;
@@ -102,6 +103,7 @@ namespace docklight
         bool read_separator_show_line();
 
         int read_icon_size();
+        int read_image_size();
         int read_separator_size();
         int read_separator_margin();
         int read_anchor_margin();

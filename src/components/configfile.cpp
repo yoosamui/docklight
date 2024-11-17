@@ -92,6 +92,7 @@ namespace docklight
 
             // the icon size
             m_icon_size = m_custom_icon_size = read_icon_size();
+            m_image_size = m_custom_image_size = read_image_size();
 
             // separator show line
             m_show_separator_line = read_separator_show_line();
@@ -154,6 +155,21 @@ namespace docklight
 
         return value;
     }
+
+    int ConfigFile::read_image_size()
+    {
+        GError* error = nullptr;
+        int value = g_key_file_get_integer(m_key_file, "dock", "preview_image_size", &error);
+        if (error) {
+            g_error_free(error);
+            error = nullptr;
+
+            return DEF_PREVIEW_IMAGE_MAX_SIZE;
+        }
+
+        return value;
+    }
+
     std::string ConfigFile::read_monitor_name()
     {
         GError* error = nullptr;

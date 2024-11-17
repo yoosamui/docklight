@@ -80,12 +80,22 @@ namespace docklight
         return m_custom_icon_size;
     }
 
+    int Configuration::get_custom_image_size() const
+    {
+        return m_custom_image_size;
+    }
+
     int Configuration::get_icon_max_size()
     {
         return DEF_ICON_MAXSIZE;
     }
 
-    int Configuration::get_preview_image_size()
+    int Configuration::get_preview_image_max_size()
+    {
+        return DEF_PREVIEW_IMAGE_MAX_SIZE;
+    }
+
+    int Configuration::get_preview_image_size() const
     {
         return m_image_size;
     }
@@ -100,7 +110,7 @@ namespace docklight
         return m_image_size + get_preview_area_margin();
     }
 
-    void Configuration::set_custom_icon_size(const guint size)
+    void Configuration::set_custom_icon_size(guint size)
     {
         if (!size || size > (guint)DEF_ICON_MAXSIZE) return;
 
@@ -112,6 +122,12 @@ namespace docklight
     {
         if (!size || size > (guint)DEF_ICON_MAXSIZE) return;
         m_icon_size = size;
+    }
+
+    void Configuration::set_image_size(guint size)
+    {
+        if (!size || size > (guint)DEF_PREVIEW_IMAGE_MAX_SIZE) return;
+        m_image_size = size;
     }
 
     void Configuration::set_separator_size(guint size)

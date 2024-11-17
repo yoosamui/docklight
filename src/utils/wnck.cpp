@@ -299,11 +299,11 @@ namespace docklight
 
                     if (wnck_workspace_get_number(ws) != number) continue;
 
-                    g_print("IS IN  WVS\n");
+                    //                    g_print("IS IN  WVS\n");
                     // if (ws) {
                     wnck_workspace_activate(ws, event_time);
-                    g_print("FONUND WVS");
-                    exit(1);
+                    //                  g_print("FONUND WVS");
+                    //                exit(1);
                     return;
                     //}
                 }

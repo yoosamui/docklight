@@ -36,6 +36,7 @@ namespace docklight
         int get_dock_area() const;
         int get_preview_area() const;
         int get_icon_size() const;
+        int get_image_size() const;
         int get_separator_size() const;
 
         Glib::ustring get_dock_location_name() const;
@@ -50,16 +51,19 @@ namespace docklight
         bool is_autohide_none() const;
         bool is_autohide() const;
         bool is_intelihide() const;
-        void set_custom_icon_size(const guint size);
+        void set_custom_icon_size(guint size);
 
         void set_separator_size(guint size);
         void set_icon_size(guint size);
+        void set_image_size(guint size);
         void set_arguments(const std::vector<std::tuple<gchar, int, Glib::ustring>>& args);
 
         int get_custom_icon_size() const;
+        int get_custom_image_size() const;
+
         int get_icon_max_size();
         int get_preview_image_max_size();
-        int get_preview_image_size();
+        int get_preview_image_size() const;
     };
 
     Glib::RefPtr<Configuration> Config();

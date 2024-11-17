@@ -106,6 +106,7 @@ namespace docklight
         void thread_func();
 
       private:
+        guint m_preview_open_index = 0;
         bool m_preview_open = false;
         Glib::RefPtr<ExplodesWindow> m_composite;
         Glib::RefPtr<PanelPreview> m_preview;

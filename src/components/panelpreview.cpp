@@ -27,18 +27,18 @@
 namespace docklight
 {
 
-    PanelPreview::PanelPreview() : Gtk::Window(Gtk::WindowType::WINDOW_POPUP)
+    PanelPreview::PanelPreview()  //: Gtk::Window(Gtk::WindowType::WINDOW_POPUP)
     {
-        GdkScreen* screen;
-        GdkVisual* visual;
+        // GdkScreen* screen;
+        // GdkVisual* visual;
 
-        gtk_widget_set_app_paintable(GTK_WIDGET(gobj()), TRUE);
-        screen = gdk_screen_get_default();
-        visual = gdk_screen_get_rgba_visual(screen);
+        // gtk_widget_set_app_paintable(GTK_WIDGET(gobj()), TRUE);
+        // screen = gdk_screen_get_default();
+        // visual = gdk_screen_get_rgba_visual(screen);
 
-        if (visual != NULL && gdk_screen_is_composited(screen)) {
-            gtk_widget_set_visual(GTK_WIDGET(gobj()), visual);
-        }
+        // if (visual != NULL && gdk_screen_is_composited(screen)) {
+        // gtk_widget_set_visual(GTK_WIDGET(gobj()), visual);
+        //}
 
         set_resizable(true);
         set_skip_taskbar_hint(true);
@@ -88,24 +88,15 @@ namespace docklight
         return m_size;
     }
 
-    void PanelPreview::show_at(int x, int y, int dockitem_index,
-                               std::shared_ptr<DockItemIcon> dockitem)
+    void PanelPreview::read_images()
     {
-        m_dockitem_index = dockitem_index;
-        // CoverWindow cover;  // = new CoverWindow();
-        // cover.show_at(888, 888, dockitem);
-
-        // return;
-
-        m_dockitem = dockitem;
-        const int millis = 120;
-        int event_time = gtk_get_current_event_time();
-
-        GdkScreen* screen = gdk_screen_get_default();
-        int current_ws_number = gdk_x11_screen_get_current_desktop(screen);
-
         m_current_images.clear();
         if (!system::is_mutter_window_manager()) {
+            const int millis = 120;
+            int event_time = gtk_get_current_event_time();
+            GdkScreen* screen = gdk_screen_get_default();
+            int current_ws_number = gdk_x11_screen_get_current_desktop(screen);
+
             for (auto& it : m_dockitem->get_childmap()) {
                 auto child = it.second;
                 auto xid = it.first;
@@ -133,8 +124,8 @@ namespace docklight
                     std::this_thread::sleep_for(std::chrono::milliseconds(millis));
                 }
 
-                pixbuf::get_window_image(xid, m_image);
-                if (pixbuf::get_window_image(xid, m_image)) {
+                //        pixbuf::get_window_image(xid, m_image);
+                if (pixbuf::get_window_image(xid, m_image, Config()->get_preview_image_size())) {
                     auto pair = std::make_pair(m_image, child);
                     m_current_images.push_back(pair);
                 }
@@ -152,18 +143,42 @@ namespace docklight
         } else {
             for (auto& it : m_dockitem->get_childmap()) {
                 auto xid = it.first;
-                if (pixbuf::get_window_image(xid, m_image)) {
+                if (pixbuf::get_window_image(xid, m_image, Config()->get_preview_image_size())) {
                     auto pair = std::make_pair(m_image, it.second);
                     m_current_images.push_back(pair);
                 }
             }
         }
-        auto size = dockitem->get_childmap().size();
-        // cover.close();
+    }
+
+    void PanelPreview::show_at(int x, int y, int dockitem_index,
+                               std::shared_ptr<DockItemIcon> dockitem)
+    {
+        m_dockitem_index = dockitem_index;
+        m_dockitem = dockitem;
+
+        int scalesize = get_scale_factor();
+        Config()->set_image_size(scalesize);
+        m_size = Config()->get_preview_area();
+
+        read_images();
+
+        int xx = 0;
+        int yy = 0;
+
+        // std::shared_ptr<DockItemIcon> dockitem;
+        // if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return false;
+        int area = Config()->get_preview_area();
+        int size = area * dockitem->get_childmap().size();
+        Position()->get_preview_position(m_dockitem_index, xx, yy, size, area);
+
+        size = dockitem->get_childmap().size();
+
         resize(m_size * size, m_size);
-        move(x, y);
-        m_x = x;
-        m_y = y;
+        move(xx, yy);
+
+        m_x = xx;
+        m_y = yy;
 
         show();
         m_visible = true;
@@ -171,23 +186,40 @@ namespace docklight
 
     void PanelPreview::update()
     {
+        int scalesize = get_scale_factor();
+        Config()->set_image_size(scalesize);
+        m_size = Config()->get_preview_area();
+
         auto size = m_current_images.size();
         resize(m_size * size, m_size);
 
         int x, y;
         if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
             int area = Config()->get_preview_area();
-            int size = area * m_dockitem->get_childmap().size();
+            int size = area * m_current_images.size();
 
             Position()->get_preview_position(m_dockitem_index, x, y, size, area);
-            move(x + (m_size / 2), y);
+            move(x, y);
+            m_x = x;
+            // move(x + (m_size / 2), y);
 
         } else {
             if (Config()->get_dock_location() == dock_location_t::right) {
                 m_x += m_size;
+                if (m_x < 0) m_x = 0;
                 move(m_x, m_y);
             }
         }
+
+        int idx = 0;
+        for (auto& it : m_current_images) {
+            auto child = it.second;
+
+            pixbuf::get_window_image(child->get_xid(), m_image, Config()->get_preview_image_size());
+            m_current_images[idx++] = std::make_pair(m_image, it.second);
+        }
+
+        Gtk::Widget::queue_draw();
     }
 
     bool PanelPreview::get_visible() const
@@ -197,6 +229,7 @@ namespace docklight
     void PanelPreview::hide_now()
     {
         connect_signal(false);
+
         hide();
         m_visible = false;
     }
@@ -227,7 +260,13 @@ namespace docklight
             wnck::close_window(child->get_wnckwindow());
 
             m_current_images.erase(m_current_images.begin() + m_dockpreview_index);
-            m_dockpreview_index = 0;
+
+            // if (Config()->get_dock_location() == dock_location_t::right) {
+            //// if (m_dockpreview_index++ > (gint)m_dockitem->get_childmap().size() - 1)
+            //// m_dockpreview_index = 0;
+            //} else {
+            ////  if (m_dockpreview_index-- < 0) m_dockpreview_index = 0;
+            //}
 
             if (m_current_images.size() == 0) {
                 this->close();
@@ -244,43 +283,63 @@ namespace docklight
         return true;
     }
 
+    bool PanelPreview::on_button_release_event(GdkEventButton* event)
+    {
+        //
+        return true;
+    }
+
     bool PanelPreview::on_motion_notify_event(GdkEventMotion* event)
     {
         get_dockpreview_index(event->x, event->y);
-        Gtk::Widget::queue_draw();
+
+        if (m_last_dockpreview_index != m_dockpreview_index) {
+            m_last_dockpreview_index = m_dockpreview_index;
+
+            Gtk::Widget::queue_draw();
+        }
 
         return true;
+    }
+
+    guint PanelPreview::get_scale_factor()
+    {
+        const auto workarea = device::monitor::get_workarea();
+        const int max_preview_size = Config()->get_custom_image_size();
+        const int num_items = m_dockitem->get_childmap().size();
+        const int item_width = max_preview_size;
+        int screen_width = workarea.get_width();
+
+        // Calculate the scaling factor
+        float scaling_factor =
+            static_cast<float>(screen_width) / static_cast<float>(num_items * item_width);
+
+        int image_size = std::floor(item_width * scaling_factor);
+
+        if (image_size > max_preview_size) {
+            image_size = max_preview_size;
+        };
+
+        return image_size - Config()->get_preview_area_margin();
     }
 
     inline guint PanelPreview::get_dockpreview_index(int mx, int my)
     {
         gint pos_x = 0;
-        //   gint pos_y = 0;
 
         auto separator_size = 0;
+        // auto area = Config()->get_preview_area() + separator_size;
         auto area = Config()->get_preview_area() + separator_size;
         auto size = m_dockitem->get_childmap().size();
-        //   auto maxsize = size * area;
         auto start_pos = 0;
-
-        // get_start_pos(maxsize, pos_x, pos_y);
 
         for (size_t idx = 0; idx < size; idx++) {
             m_dockpreview_index = -1;
-            //            if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
             if (mx >= pos_x && mx <= pos_x + area) {
                 m_dockpreview_index = idx;
                 break;
             }
             pos_x += start_pos + area;
-
-            //} else {  // Vertical
-            // if (my >= pos_y && my <= pos_y + area) {
-            // m_dockpreview_index = idx;
-            // break;
-            //}
-            // pos_y += start_pos + area;
-            //}
         }
 
         return m_dockpreview_index;
@@ -288,7 +347,28 @@ namespace docklight
 
     bool PanelPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     {
-        // auto size = m_dockitem->get_childmap().size();
+        /*
+          int scalesize = get_scale_factor();
+        Config()->set_image_size(scalesize);
+        m_size = Config()->get_preview_area();
+
+        int idx = 0;
+        for (auto& it : m_current_images) {
+            auto image = it.first;
+            Glib::RefPtr<Gdk::Pixbuf> scaled =
+                image->scale_simple(image->get_width(), image->get_height(), Gdk::INTERP_BILINEAR);
+            auto v = m_current_images.at(idx++);
+
+            v = std::make_pair(scaled, it.second);
+            v.back()
+            // m_current_images[idx++] =V
+
+            //  if (pixbuf::get_window_image(xid, m_image, Config()->get_preview_image_size())) {
+            ////    auto pair = std::make_pair(m_image, it.second);
+            ////    m_current_images.push_back(pair);
+            //}
+        }*/
+
         cr->set_source_rgba(0.266, 0.309, 0.361, 1.0);
         cr->paint();
 
@@ -336,6 +416,7 @@ namespace docklight
             int center = m_size / 2 - image->get_width() / 2;
             cr->rectangle(startX + center, startY + margin, image->get_width(),
                           image->get_height());
+
             Gdk::Cairo::set_source_pixbuf(cr, image, startX + center, startY + margin);
             cr->fill();
 

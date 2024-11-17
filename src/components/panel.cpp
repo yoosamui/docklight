@@ -197,7 +197,14 @@ namespace docklight
             Gtk::Widget::queue_draw();
         }
 
-        // TRUE to stop other handlers from being invoked for the event.
+        if (m_preview && m_preview_open && m_preview_open_index &&
+            (m_dockitem_index > m_preview_open_index + 1 ||
+             m_dockitem_index < m_preview_open_index - 1)) {
+            //
+            m_preview->hide_now();
+        }
+
+        // stop other handlers from being invoked for the event.
         return true;
     }
 
@@ -278,6 +285,7 @@ namespace docklight
         if ((event->type != GDK_BUTTON_PRESS)) return false;
 
         m_preview->hide_now();
+        m_preview_open_index = 0;
 
         m_mouseclickEventTime = gtk_get_current_event_time();
         get_dockitem_index(event->x, event->y);
@@ -311,6 +319,7 @@ namespace docklight
                 // cover->show_at(888, 888, dockitem);
 
                 m_preview->show_at(x, y, m_dockitem_index, dockitem);
+                m_preview_open_index = m_dockitem_index;
                 m_preview_open = true;
                 return true;
             }

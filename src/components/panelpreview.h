@@ -21,18 +21,17 @@
 #include <glibmm/main.h>
 #include <gtkmm/window.h>
 #include "utils/cairo.h"
-
+#include <gdkmm/pixbuf.h>
 #include "utils/wnck.h"
 #include "utils/pixbuf.h"
 #include "components/TransparentWindow.h"
-//#include "components/coverwindow.h"
 #include "components/dockitemicon.h"
 // clang-format on
 
 namespace docklight
 {
-    class PanelPreview : public Gtk::Window  // TransparentWindow
-    // class PanelPreview : public TransparentWindow
+    // class PanelPreview : public Gtk::Window  // TransparentWindow
+    class PanelPreview : public TransparentWindow
     {
       public:
         PanelPreview();
@@ -51,16 +50,20 @@ namespace docklight
       private:
         void connect_signal(bool connect);
         bool on_timeout_draw();
+
         guint get_dockpreview_index(int mx, int my);
+        guint get_scale_factor();
 
         bool on_enter_notify_event(GdkEventCrossing* crossing_event) override;
         bool on_leave_notify_event(GdkEventCrossing* crossing_event) override;
 
         bool on_button_press_event(GdkEventButton* event);
-        // bool on_button_release_event(GdkEventButton* event);
+        bool on_button_release_event(GdkEventButton* event);
         bool on_motion_notify_event(GdkEventMotion* event) override;
 
         void update();
+
+        void read_images();
 
       private:
         bool m_block_leave = false;
@@ -71,6 +74,7 @@ namespace docklight
             m_current_images;
 
         std::shared_ptr<DockItemIcon> m_dockitem;
+        int m_last_dockpreview_index = 0;
         int m_dockitem_index = 0;
         int m_dockpreview_index = 0;
         int m_size = 0;
