@@ -15,3 +15,9 @@ Start Applications, access and manage them tmux sessions easily.
 clone this repository:
 
 git clone [(https://github.com/yoosamui/docklight)]
+
+Execute the following bash script:
+
+```bash
+sudo ./install_dependencies.sh
+```
