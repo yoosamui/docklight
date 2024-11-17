@@ -50,7 +50,7 @@ X-GNOME-Autostart-Delay=1
 ```
 
 
-and save it at
+named it "docklight5.desktop" and save it at
 ```bash
-/home/$USER/.config/autostart
+/home/$USER/.config/autostart/docklight5.desktop
 ```
