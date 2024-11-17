@@ -14,9 +14,11 @@ Start Applications, access and manage them easily.
 ## Installation
 clone this repository:
 
+```bash
 git clone [(https://github.com/yoosamui/docklight)]
 This will create the diretory docklight.
 cd into it:
+```
 
 ```bash
 cd docklight
