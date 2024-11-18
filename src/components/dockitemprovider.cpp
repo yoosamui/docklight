@@ -309,53 +309,35 @@ namespace docklight
     {
         Glib::RefPtr<Gdk::Pixbuf> image;
 
-        // if (initial) {
-        // for (auto& item : data()) {
-        // for (auto it : item->get_childmap()) {
-        // auto child = it.second;
-        // auto xid = child->get_xid();
-
-        // wnck_window_activate(child->get_wnckwindow(), 1);
-        ////            std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        // std::this_thread::sleep_for(std::chrono::milliseconds(60));
-        // if (pixbuf::get_window_image(xid, image)) {
-        // m_window_images[xid] = image;
-        //}
-        //}
-        //}
-
-        // return;
-        //}
-
         if (!WNCK_IS_WINDOW(window)) return;
 
         gint32 xid = wnck_window_get_xid(window);
         bool restore = false;
 
-        //        wnck::bring_above_window(window);
-
-        if (wnck_window_is_minimized(window)) {
+        if (initial && wnck_window_is_minimized(window)) {
             wnck::unminimize(window);
-            //  std::this_thread::sleep_for(std::chrono::milliseconds(120));
             restore = true;
         }
 
         // if (wnck_window_is_pinned(window)) {
         // wnck_window_unpin(window);
         //}
-        //        wnck_window_actiovate(window, 1);
-        if (restore) {
-            // std::this_thread::sleep_for(std::chrono::milliseconds(40));
-        }
 
-        for (int i = 0; i < 3; i++) {
+        if (initial) {
+            for (int i = 0; i < 4; i++) {
+                std::this_thread::sleep_for(std::chrono::milliseconds(5));
+                if (pixbuf::get_window_image(xid, image)) {
+                    m_window_images[xid] = image;
+                }
+            }
+
+            if (restore) wnck::unminimize(window);
+        } else {
+            std::this_thread::sleep_for(std::chrono::milliseconds(5));
             if (pixbuf::get_window_image(xid, image)) {
                 m_window_images[xid] = image;
             }
-            std::this_thread::sleep_for(std::chrono::milliseconds(20));
         }
-
-        if (restore) wnck::unminimize(window);
     }
 
     bool DockItemProvider::insert(WnckWindow* window)
@@ -412,7 +394,7 @@ namespace docklight
             m_signal_update.emit(window_action_t::UPDATE, data().size());
         }
 
-        set_window_image(window);
+        set_window_image(window, true);
         return result;
     }
 
