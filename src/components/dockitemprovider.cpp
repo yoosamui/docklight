@@ -323,21 +323,16 @@ namespace docklight
         // wnck_window_unpin(window);
         //}
 
-        if (initial) {
-            for (int i = 0; i < 4; i++) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(5));
-                if (pixbuf::get_window_image(xid, image)) {
-                    m_window_images[xid] = image;
-                }
-            }
+        int max = initial ? 4 : 1;
 
-            if (restore) wnck::unminimize(window);
-        } else {
+        for (int i = 0; i < max; i++) {
             std::this_thread::sleep_for(std::chrono::milliseconds(5));
             if (pixbuf::get_window_image(xid, image)) {
                 m_window_images[xid] = image;
             }
         }
+
+        if (initial && restore) wnck::minimize(window);
     }
 
     bool DockItemProvider::insert(WnckWindow* window)
