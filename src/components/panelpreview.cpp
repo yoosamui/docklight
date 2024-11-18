@@ -145,7 +145,7 @@ namespace docklight
 
                 std::string wstringx = "";
                 if (wnck::count_in_workspace(window, wstringx)) {
-                    std::this_thread::sleep_for(std::chrono::milliseconds(150));
+                    std::this_thread::sleep_for(std::chrono::milliseconds(130));
                 } else {
                     std::this_thread::sleep_for(std::chrono::milliseconds(10));
                 }
