@@ -293,14 +293,14 @@ namespace docklight
             GdkPixbuf* winPixbuf = nullptr;
 
             GdkDisplay* gdk_display = gdk_display_get_default();
-            if (gdk_display == nullptr) {
+            if (!gdk_display) {
                 return nullptr;
             }
 
             GdkWindow* rootwindow = gdk_get_default_root_window();
 
             GdkWindow* gdk_window = gdk_x11_window_foreign_new_for_display(gdk_display, xid);
-            if (gdk_window == nullptr) {
+            if (!gdk_window) {
                 return nullptr;
             }
 
@@ -309,15 +309,13 @@ namespace docklight
             guint winHeight = gdk_window_get_height(gdk_window);
 
             winPixbuf = gdk_pixbuf_get_from_window(gdk_window, 0, 0, winWidth, winHeight);
-            if (winPixbuf == nullptr) {
+            if (!winPixbuf) {
                 return nullptr;
             }
 
-            //        result_pixbuf = Glib::wrap(winPixbuf, true);
-            //        g_object_unref(winPixbuf);
-
             return winPixbuf;
         }
+
         const Glib::RefPtr<Gdk::Pixbuf> get_pixbuf_from_window(int xid, int width, int height)
         {
             Glib::RefPtr<Gdk::Pixbuf> result_pixbuf;

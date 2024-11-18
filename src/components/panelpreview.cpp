@@ -102,15 +102,31 @@ namespace docklight
 
             for (auto& it : m_dockitem->get_childmap()) {
                 auto child = it.second;
-                WnckWindow* window = it.second->get_wnckwindow();
 
-                auto ws = wnck_window_get_workspace(window);
-                if (WNCK_IS_WORKSPACE(ws)) {
-                    int ws_number = wnck_workspace_get_number(ws);
-                    auto pair = std::make_pair(ws_number, child);
-                    m_windows.push_back(pair);
+                m_image = Provider()->get_window_image(child->get_xid());
+
+                if (!m_image) {
+                    g_message("PIXBUF IS NULL");
+
+                    continue;
                 }
+
+                auto pair = std::make_pair(m_image, child);
+                m_current_images.push_back(pair);
             }
+            // for (auto& it : m_dockitem->get_childmap()) {
+            // auto child = it.second;
+            // WnckWindow* window = it.second->get_wnckwindow();
+
+            // auto ws = wnck_window_get_workspace(window);
+            // if (WNCK_IS_WORKSPACE(ws)) {
+            // int ws_number = wnck_workspace_get_number(ws);
+            // auto pair = std::make_pair(ws_number, child);
+            // m_windows.push_back(pair);
+            //}
+            //}
+
+            return;
 
             std::sort(m_windows.begin(), m_windows.end());
             //  g_print("WSPACES \n");
@@ -126,7 +142,7 @@ namespace docklight
 
                 //    g_print("WS : %d\n", ws_number);
 
-                millis = 140;
+                millis = 20;
                 if (wnck_window_is_minimized(window)) {
                     wnck::unminimize(window);
                     millis = 200;
@@ -137,15 +153,15 @@ namespace docklight
                     millis = 200;
                 }
 
-                //   wnck::activate_window(window);
+                // wnck::activate_window(window);
 
                 auto ws = wnck_window_get_workspace(window);
                 if (WNCK_IS_WORKSPACE(ws)) {
                     // wnck_workspace_activate(ws, event_time);
                     if (wnck_workspace_get_number(ws) != cws_number) {
-                        wnck_workspace_activate(ws, event_time);
-                        //    wnck::select_window(window);
-                        // wnck_window_move_to_workspace(window, cws);
+                        // wnck_workspace_activate(ws, event_time);
+                        //     wnck::select_window(window);
+                        wnck_window_move_to_workspace(window, cws);
                         //    std::this_thread::sleep_for(std::chrono::milliseconds(40));
                         // wnck::bring_above_winddow(window);
 
@@ -155,11 +171,11 @@ namespace docklight
 
                 //               std::string wstringx = "";
                 //                 if (wnck::count_in_workspace(window, wstringx)) {
-                if (ws && wnck_workspace_get_number(ws) != cws_number) {
-                    std::this_thread::sleep_for(std::chrono::milliseconds(40));
-                } else {
-                    std::this_thread::sleep_for(std::chrono::milliseconds(20));
-                }
+                // if (ws && wnck_workspace_get_number(ws) != cws_number) {
+                // std::this_thread::sleep_for(std::chrono::milliseconds(40));
+                //} else {
+                // std::this_thread::sleep_for(std::chrono::milliseconds(20));
+                //}
 
                 //               std::this_thread::sleep_for(std::chrono::milliseconds(millis));
                 //               std::this_thread::sleep_for(std::chrono::milliseconds(100));
@@ -172,7 +188,7 @@ namespace docklight
                 }
 
                 if (restore) {
-                    // wnck_window_move_to_workspace(window, ws);
+                    wnck_window_move_to_workspace(window, ws);
                 }
             }
             // std::sort(begin(m_windows), end(m_windows),

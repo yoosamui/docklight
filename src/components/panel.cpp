@@ -108,6 +108,7 @@ namespace docklight
         // May return NULL sometimes, since not all
         // window managers guarantee that a window is always active.
         m_active_window = wnck_screen_get_active_window(screen);
+        Provider()->set_window_image(m_active_window);
     }
 
     bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
