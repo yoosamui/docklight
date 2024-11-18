@@ -348,7 +348,7 @@ namespace docklight
             // std::this_thread::sleep_for(std::chrono::milliseconds(40));
         }
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 3; i++) {
             if (pixbuf::get_window_image(xid, image)) {
                 m_window_images[xid] = image;
             }
