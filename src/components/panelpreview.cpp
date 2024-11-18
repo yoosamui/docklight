@@ -90,22 +90,93 @@ namespace docklight
 
     void PanelPreview::read_images()
     {
+        m_windows.clear();
         m_current_images.clear();
         if (!system::is_mutter_window_manager()) {
-            const int millis = 120;
+            const int millis = 10;
             int event_time = gtk_get_current_event_time();
             GdkScreen* screen = gdk_screen_get_default();
             int current_ws_number = gdk_x11_screen_get_current_desktop(screen);
+            auto cws = wnck_screen_get_workspace(wnck::get_default_screen(), current_ws_number);
+            int cws_number = 0;
 
             for (auto& it : m_dockitem->get_childmap()) {
+                auto child = it.second;
+                WnckWindow* window = it.second->get_wnckwindow();
+
+                auto ws = wnck_window_get_workspace(window);
+                if (WNCK_IS_WORKSPACE(ws)) {
+                    int ws_number = wnck_workspace_get_number(ws);
+                    auto pair = std::make_pair(ws_number, child);
+                    m_windows.push_back(pair);
+                }
+            }
+
+            std::sort(m_windows.begin(), m_windows.end());
+            //  g_print("WSPACES \n");
+            // for (auto& it : m_windows) {
+            // auto wsn = it.first;
+            // g_print("WS : %d\n", wsn);
+            //}
+            for (auto& it : m_windows) {
+                auto ws_number = it.first;
+                auto child = it.second;
+                auto window = child->get_wnckwindow();
+                bool restore = false;
+
+                g_print("WS : %d\n", ws_number);
+
+                if (wnck_window_is_minimized(window)) {
+                    wnck::select_window(window);
+                }
+
+                if (wnck_window_is_pinned(window)) {
+                    wnck_window_unpin(window);
+                }
+
+                auto ws = wnck_window_get_workspace(window);
+                if (WNCK_IS_WORKSPACE(ws)) {
+                    //   wnck_workspace_activate(ws, event_time);
+                    //   if (wnck_workspace_get_number(ws) != cws_number) {
+                    wnck_window_move_to_workspace(window, cws);
+                    restore = true;
+                    // }
+                }
+
+                std::string wstringx = "";
+                if (wnck::count_in_workspace(window, wstringx)) {
+                    std::this_thread::sleep_for(std::chrono::milliseconds(150));
+                } else {
+                    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                }
+
+                // std::this_thread::sleep_for(std::chrono::milliseconds(millis));
+                if (pixbuf::get_window_image(child->get_xid(), m_image,
+                                             Config()->get_preview_image_size())) {
+                    auto pair = std::make_pair(m_image, child);
+                    m_current_images.push_back(pair);
+                }
+
+                if (restore) {
+                    wnck_window_move_to_workspace(window, ws);
+                }
+            }
+            // std::sort(begin(m_windows), end(m_windows),
+            //[](const mypair& a, const mypair& b) { return a.second < b.second; });
+
+            /*for (auto& it : m_dockitem->get_childmap()) {
                 auto child = it.second;
                 auto xid = it.first;
                 bool restore = false;
 
                 WnckWindow* window = it.second->get_wnckwindow();
 
+                //                int ws_number = 0;
                 auto ws = wnck_window_get_workspace(window);
-                if (WNCK_IS_WORKSPACE(ws)) wnck_workspace_activate(ws, event_time);
+                if (WNCK_IS_WORKSPACE(ws)) {
+                    wnck_workspace_activate(ws, event_time);
+                    //                  ws_number = wnck_workspace_get_number(ws);
+                }
 
                 if (wnck_window_is_minimized(window)) {
                     wnck::select_window(window);
@@ -133,9 +204,7 @@ namespace docklight
                 if (restore) {
                     //   wnck::minimize(window);
                 }
-            }
-
-            auto cws = wnck_screen_get_workspace(wnck::get_default_screen(), current_ws_number);
+            }*/
 
             if (WNCK_IS_WORKSPACE(cws)) {
                 wnck_workspace_activate(cws, event_time);

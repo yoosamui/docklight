@@ -118,6 +118,7 @@ namespace docklight
 
             int center = (area / 2) - (width / 2);
             x += (area * index) + center;
+            y += area;
 
         } else {  // Vertical
             if (Config()->get_dock_alignment() == dock_alignment_t::fill) {
@@ -163,12 +164,12 @@ namespace docklight
             x += (area * index) + center;
             y -= height;
 
-            if (x < 0) {
-                x = 0;
+            if (x < workarea.get_x()) {
+                x = workarea.get_x();
             }
 
-            if (x + width > get_workarea().get_width()) {
-                x = get_workarea().get_width() - width;
+            if (x + width > workarea.get_x() + workarea.get_width()) {
+                x = workarea.get_x() + workarea.get_width() - width;
             }
 
             if (Config()->get_dock_location() == dock_location_t::top) {
