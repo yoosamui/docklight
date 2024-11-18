@@ -197,12 +197,12 @@ namespace docklight
             Gtk::Widget::queue_draw();
         }
 
-        if (m_preview && m_preview_open && m_preview_open_index &&
-            (m_dockitem_index > m_preview_open_index + 1 ||
-             m_dockitem_index < m_preview_open_index - 1)) {
-            //
-            m_preview->hide_now();
-        }
+        // if (m_preview && m_preview_open && m_preview_open_index &&
+        //(m_dockitem_index > m_preview_open_index + 1 ||
+        // m_dockitem_index < m_preview_open_index - 1)) {
+        ////
+        // m_preview->hide_now();
+        //}
 
         // stop other handlers from being invoked for the event.
         return true;

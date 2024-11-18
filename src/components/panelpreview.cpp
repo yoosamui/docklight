@@ -93,7 +93,7 @@ namespace docklight
         m_windows.clear();
         m_current_images.clear();
         if (!system::is_mutter_window_manager()) {
-            const int millis = 10;
+            int millis = 10;
             int event_time = gtk_get_current_event_time();
             GdkScreen* screen = gdk_screen_get_default();
             int current_ws_number = gdk_x11_screen_get_current_desktop(screen);
@@ -124,31 +124,45 @@ namespace docklight
                 auto window = child->get_wnckwindow();
                 bool restore = false;
 
-                g_print("WS : %d\n", ws_number);
+                //    g_print("WS : %d\n", ws_number);
 
+                millis = 140;
                 if (wnck_window_is_minimized(window)) {
-                    wnck::select_window(window);
+                    wnck::unminimize(window);
+                    millis = 200;
                 }
 
                 if (wnck_window_is_pinned(window)) {
                     wnck_window_unpin(window);
+                    millis = 200;
                 }
+
+                //   wnck::activate_window(window);
 
                 auto ws = wnck_window_get_workspace(window);
                 if (WNCK_IS_WORKSPACE(ws)) {
-                    //   wnck_workspace_activate(ws, event_time);
-                    //   if (wnck_workspace_get_number(ws) != cws_number) {
-                    wnck_window_move_to_workspace(window, cws);
-                    restore = true;
-                    // }
+                    // wnck_workspace_activate(ws, event_time);
+                    if (wnck_workspace_get_number(ws) != cws_number) {
+                        wnck_workspace_activate(ws, event_time);
+                        //    wnck::select_window(window);
+                        // wnck_window_move_to_workspace(window, cws);
+                        //    std::this_thread::sleep_for(std::chrono::milliseconds(40));
+                        // wnck::bring_above_winddow(window);
+
+                        restore = true;
+                    }
                 }
 
-                std::string wstringx = "";
-                if (wnck::count_in_workspace(window, wstringx)) {
-                    std::this_thread::sleep_for(std::chrono::milliseconds(130));
+                //               std::string wstringx = "";
+                //                 if (wnck::count_in_workspace(window, wstringx)) {
+                if (ws && wnck_workspace_get_number(ws) != cws_number) {
+                    std::this_thread::sleep_for(std::chrono::milliseconds(40));
                 } else {
-                    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                    std::this_thread::sleep_for(std::chrono::milliseconds(20));
                 }
+
+                //               std::this_thread::sleep_for(std::chrono::milliseconds(millis));
+                //               std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
                 // std::this_thread::sleep_for(std::chrono::milliseconds(millis));
                 if (pixbuf::get_window_image(child->get_xid(), m_image,
@@ -158,7 +172,7 @@ namespace docklight
                 }
 
                 if (restore) {
-                    wnck_window_move_to_workspace(window, ws);
+                    // wnck_window_move_to_workspace(window, ws);
                 }
             }
             // std::sort(begin(m_windows), end(m_windows),
@@ -223,6 +237,7 @@ namespace docklight
     void PanelPreview::show_at(int x, int y, int dockitem_index,
                                std::shared_ptr<DockItemIcon> dockitem)
     {
+        connect_signal(true);
         m_dockitem_index = dockitem_index;
         m_dockitem = dockitem;
 
@@ -459,6 +474,10 @@ namespace docklight
 
                 cr->stroke();
             }
+
+            if (!m_image)
+                pixbuf::get_window_image(child->get_xid(), m_image,
+                                         Config()->get_preview_image_size());
 
             int centerX = m_size / 2 - image->get_width() / 2;
             int centerY = (m_size + margin) / 2 - image->get_height() / 2;
