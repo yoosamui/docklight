@@ -345,13 +345,15 @@ namespace docklight
         //}
         //        wnck_window_actiovate(window, 1);
         if (restore) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(40));
+            // std::this_thread::sleep_for(std::chrono::milliseconds(40));
         }
 
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++) {
             if (pixbuf::get_window_image(xid, image)) {
                 m_window_images[xid] = image;
             }
+            std::this_thread::sleep_for(std::chrono::milliseconds(20));
+        }
 
         if (restore) wnck::unminimize(window);
     }
