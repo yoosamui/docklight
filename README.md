@@ -11,6 +11,10 @@ Start Applications, access and manage them easily.
     </tbody>
 </table>
 
+
+![image](https://github.com/user-attachments/assets/ca3dc03c-05c5-430d-b143-e553aeadeebe)
+
+
 ## Installation
 clone this repository to get the stable version: !PENDING
 
