@@ -36,6 +36,10 @@ Start it with:
 ```bash
 docklight5
 ```
+You can start docklight with the following parameters:
+
+
+
 You can start docklight after your linux login.
 Create the folowing desktop file:
 
