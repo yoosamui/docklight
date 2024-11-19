@@ -315,7 +315,9 @@ namespace docklight
         bool restore = false;
 
         if (initial && wnck_window_is_minimized(window)) {
-            wnck::unminimize(window);
+            // wnck::unminimize(window);
+            wnck::bring_above_window(window);
+            wnck_window_make_below(window);
             restore = true;
         }
 
