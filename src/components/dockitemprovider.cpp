@@ -325,7 +325,7 @@ namespace docklight
         // wnck_window_unpin(window);
         //}
 
-        int max = initial ? 4 : 2;
+        int max = initial ? 4 : 3;
 
         for (int i = 0; i < max; i++) {
             std::this_thread::sleep_for(std::chrono::milliseconds(5));

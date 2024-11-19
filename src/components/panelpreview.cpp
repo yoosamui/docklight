@@ -70,7 +70,7 @@ namespace docklight
     {
         if (connect) {
             m_sigc_connection = Glib::signal_timeout().connect(
-                sigc::mem_fun(this, &PanelPreview::on_timeout_draw), 1000 / 4);
+                sigc::mem_fun(this, &PanelPreview::on_timeout_draw), 1000 / 2);
         } else {
             m_sigc_connection.disconnect();
         }
@@ -80,7 +80,6 @@ namespace docklight
 
     {
         read_images();
-
         Gtk::Widget::queue_draw();
         return true;
     }
@@ -104,6 +103,11 @@ namespace docklight
 
             for (auto& it : m_dockitem->get_childmap()) {
                 auto child = it.second;
+                // auto window = child->get_wnckwindow();
+
+                // wnck::select_window(window);
+                // wnck::select_window(window);
+                // std::this_thread::sleep_for(std::chrono::milliseconds(15));
 
                 m_image = Provider()->get_window_image(child->get_xid());
 
@@ -116,131 +120,16 @@ namespace docklight
                 auto pair = std::make_pair(m_image, child);
                 m_current_images.push_back(pair);
             }
+
+            //// force activate;
             // for (auto& it : m_dockitem->get_childmap()) {
             // auto child = it.second;
-            // WnckWindow* window = it.second->get_wnckwindow();
+            // auto window = child->get_wnckwindow();
 
-            // auto ws = wnck_window_get_workspace(window);
-            // if (WNCK_IS_WORKSPACE(ws)) {
-            // int ws_number = wnck_workspace_get_number(ws);
-            // auto pair = std::make_pair(ws_number, child);
-            // m_windows.push_back(pair);
-            //}
+            // wnck::select_window(window);
+            // std::this_thread::sleep_for(std::chrono::milliseconds(5));
             //}
 
-            return;
-
-            std::sort(m_windows.begin(), m_windows.end());
-            //  g_print("WSPACES \n");
-            // for (auto& it : m_windows) {
-            // auto wsn = it.first;
-            // g_print("WS : %d\n", wsn);
-            //}
-            for (auto& it : m_windows) {
-                auto ws_number = it.first;
-                auto child = it.second;
-                auto window = child->get_wnckwindow();
-                bool restore = false;
-
-                //    g_print("WS : %d\n", ws_number);
-
-                millis = 20;
-                if (wnck_window_is_minimized(window)) {
-                    wnck::unminimize(window);
-                    millis = 200;
-                }
-
-                if (wnck_window_is_pinned(window)) {
-                    wnck_window_unpin(window);
-                    millis = 200;
-                }
-
-                // wnck::activate_window(window);
-
-                auto ws = wnck_window_get_workspace(window);
-                if (WNCK_IS_WORKSPACE(ws)) {
-                    // wnck_workspace_activate(ws, event_time);
-                    if (wnck_workspace_get_number(ws) != cws_number) {
-                        // wnck_workspace_activate(ws, event_time);
-                        //     wnck::select_window(window);
-                        wnck_window_move_to_workspace(window, cws);
-                        //    std::this_thread::sleep_for(std::chrono::milliseconds(40));
-                        // wnck::bring_above_winddow(window);
-
-                        restore = true;
-                    }
-                }
-
-                //               std::string wstringx = "";
-                //                 if (wnck::count_in_workspace(window, wstringx)) {
-                // if (ws && wnck_workspace_get_number(ws) != cws_number) {
-                // std::this_thread::sleep_for(std::chrono::milliseconds(40));
-                //} else {
-                // std::this_thread::sleep_for(std::chrono::milliseconds(20));
-                //}
-
-                //               std::this_thread::sleep_for(std::chrono::milliseconds(millis));
-                //               std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
-                // std::this_thread::sleep_for(std::chrono::milliseconds(millis));
-                if (pixbuf::get_window_image(child->get_xid(), m_image,
-                                             Config()->get_preview_image_size())) {
-                    auto pair = std::make_pair(m_image, child);
-                    m_current_images.push_back(pair);
-                }
-
-                if (restore) {
-                    wnck_window_move_to_workspace(window, ws);
-                }
-            }
-            // std::sort(begin(m_windows), end(m_windows),
-            //[](const mypair& a, const mypair& b) { return a.second < b.second; });
-
-            /*for (auto& it : m_dockitem->get_childmap()) {
-                auto child = it.second;
-                auto xid = it.first;
-                bool restore = false;
-
-                WnckWindow* window = it.second->get_wnckwindow();
-
-                //                int ws_number = 0;
-                auto ws = wnck_window_get_workspace(window);
-                if (WNCK_IS_WORKSPACE(ws)) {
-                    wnck_workspace_activate(ws, event_time);
-                    //                  ws_number = wnck_workspace_get_number(ws);
-                }
-
-                if (wnck_window_is_minimized(window)) {
-                    wnck::select_window(window);
-                    restore = true;
-                }
-
-                if (wnck_window_is_pinned(window)) {
-                    wnck_window_unpin(window);
-                    restore = true;
-                }
-
-                std::string wstringx = "";
-                if (wnck::count_in_workspace(window, wstringx)) {
-                    std::this_thread::sleep_for(std::chrono::milliseconds(millis));
-                } else if (wnck_window_is_minimized(window)) {
-                    std::this_thread::sleep_for(std::chrono::milliseconds(millis));
-                }
-
-                //        pixbuf::get_window_image(xid, m_image);
-                if (pixbuf::get_window_image(xid, m_image, Config()->get_preview_image_size())) {
-                    auto pair = std::make_pair(m_image, child);
-                    m_current_images.push_back(pair);
-                }
-
-                if (restore) {
-                    //   wnck::minimize(window);
-                }
-            }*/
-
-            if (WNCK_IS_WORKSPACE(cws)) {
-                wnck_workspace_activate(cws, event_time);
-            }
         } else {
             for (auto& it : m_dockitem->get_childmap()) {
                 auto xid = it.first;
@@ -255,7 +144,7 @@ namespace docklight
     void PanelPreview::show_at(int x, int y, int dockitem_index,
                                std::shared_ptr<DockItemIcon> dockitem)
     {
-        connect_signal(true);
+        //  connect_signal(true);
         m_dockitem_index = dockitem_index;
         m_dockitem = dockitem;
 
@@ -356,6 +245,16 @@ namespace docklight
         auto child = m_current_images.at(m_dockpreview_index).second;
         if (!child) return false;
 
+        if (event->button == 3) {
+            auto window = child->get_wnckwindow();
+            wnck::activate_window(child->get_wnckwindow());
+            read_images();
+
+            Gtk::Widget::queue_draw();
+
+            return true;
+        }
+
         // handle close button
         Gdk::Rectangle mouse_rect(event->x, event->y, 2, 2);
         if (m_close_button_rectangle.intersects(mouse_rect)) {
@@ -381,8 +280,9 @@ namespace docklight
             return true;
         }
 
+        //  wnck::activate_window(child->get_wnckwindow());
+        //   read_images();
         wnck::activate_window(child->get_wnckwindow());
-
         return true;
     }
 
