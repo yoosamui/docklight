@@ -382,8 +382,7 @@ namespace docklight
         }
 
         wnck::activate_window(child->get_wnckwindow());
-        // read_images();  ////    Provider()->
-        //  hide_now();
+
         return true;
     }
 
@@ -499,7 +498,6 @@ namespace docklight
 
                 cr->stroke();
             }
-
             // if (!m_image)
             // pixbuf::get_window_image(child->get_xid(), m_image,
             // Config()->get_preview_image_size());

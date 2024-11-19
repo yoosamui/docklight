@@ -334,7 +334,10 @@ namespace docklight
             }
         }
 
-        if (restore) wnck::minimize(window);
+        if (restore) {
+            wnck::minimize(window);
+            wnck_window_unmake_below(window);
+        }
     }
 
     bool DockItemProvider::insert(WnckWindow* window)
