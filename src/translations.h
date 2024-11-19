@@ -39,13 +39,13 @@
 #define MSG_INITIALIZE_PANEL \
     _("Initialize panel.")
 #define MSG_SETS_THE_PRIMARY_MONITOR \
-    _("Sets the primary Monitor.")
+    _("Sets the primary Monitor.Settings are primary oder the monitor name e.g DP-3")
 #define MSG_SETS_THE_PANEL_LOCATION \
     _("Sets the Panel location: top, right, bottom or left. Default bottom")
 #define MSG_SETS_THE_DOCK_ALIGNMENT \
     _("The dock alignment settings are start, end, center or fill. Default center.")
 #define MSG_SETS_THE_ICON_ALIGNMENT \
-    _("The icon alignment settings are start, endi or center. Default center.")
+    _("The icon alignment settings are start, end or center. Default center.")
 #define MSG_PARSED_VALUES \
     _("parsed values")
 #define MSG_FREE_OBJECT \

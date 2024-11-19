@@ -70,7 +70,7 @@ namespace docklight
     {
         if (connect) {
             m_sigc_connection = Glib::signal_timeout().connect(
-                sigc::mem_fun(this, &PanelPreview::on_timeout_draw), 1000 / 2);
+                sigc::mem_fun(this, &PanelPreview::on_timeout_draw), 1000 / 1);
         } else {
             m_sigc_connection.disconnect();
         }
@@ -93,43 +93,35 @@ namespace docklight
     {
         m_windows.clear();
         m_current_images.clear();
+
         if (!system::is_mutter_window_manager()) {
-            int millis = 10;
-            int event_time = gtk_get_current_event_time();
-            GdkScreen* screen = gdk_screen_get_default();
-            int current_ws_number = gdk_x11_screen_get_current_desktop(screen);
-            auto cws = wnck_screen_get_workspace(wnck::get_default_screen(), current_ws_number);
-            int cws_number = 0;
+            // int millis = 10;
+            // int event_time = gtk_get_current_event_time();
+            // GdkScreen* screen = gdk_screen_get_default();
+            // int current_ws_number = gdk_x11_screen_get_current_desktop(screen);
+            // auto cws = wnck_screen_get_workspace(wnck::get_default_screen(), current_ws_number);
+            // int cws_number = 0;
 
             for (auto& it : m_dockitem->get_childmap()) {
                 auto child = it.second;
-                // auto window = child->get_wnckwindow();
-
-                // wnck::select_window(window);
-                // wnck::select_window(window);
-                // std::this_thread::sleep_for(std::chrono::milliseconds(15));
 
                 m_image = Provider()->get_window_image(child->get_xid());
 
                 if (!m_image) {
-                    g_message("PIXBUF IS NULL");
-
-                    continue;
+                    pixbuf::get_window_image(child->get_xid(), m_image,
+                                             Config()->get_preview_image_size());
                 }
+
+                // auto window = child->get_wnckwindow();
+                // if (!wnck_window_is_minimized(window) &&
+                // wnck::is_window_on_current_desktop(window)) {
+                // auto xid = it.first;
+                // pixbuf::get_window_image(xid, m_image, Config()->get_preview_image_size());
+                //}
 
                 auto pair = std::make_pair(m_image, child);
                 m_current_images.push_back(pair);
             }
-
-            //// force activate;
-            // for (auto& it : m_dockitem->get_childmap()) {
-            // auto child = it.second;
-            // auto window = child->get_wnckwindow();
-
-            // wnck::select_window(window);
-            // std::this_thread::sleep_for(std::chrono::milliseconds(5));
-            //}
-
         } else {
             for (auto& it : m_dockitem->get_childmap()) {
                 auto xid = it.first;
@@ -144,7 +136,7 @@ namespace docklight
     void PanelPreview::show_at(int x, int y, int dockitem_index,
                                std::shared_ptr<DockItemIcon> dockitem)
     {
-        //  connect_signal(true);
+        connect_signal(true);
         m_dockitem_index = dockitem_index;
         m_dockitem = dockitem;
 
@@ -210,7 +202,6 @@ namespace docklight
             m_current_images[idx++] = std::make_pair(m_image, it.second);
         }
 
-        read_images();
         Gtk::Widget::queue_draw();
     }
 
@@ -245,14 +236,16 @@ namespace docklight
         auto child = m_current_images.at(m_dockpreview_index).second;
         if (!child) return false;
 
-        if (event->button == 3) {
-            auto window = child->get_wnckwindow();
-            wnck::activate_window(child->get_wnckwindow());
-            read_images();
+        if (!system::is_mutter_window_manager()) {
+            if (event->button == 3) {
+                //   auto window = child->get_wnckwindow();
+                wnck::activate_window(child->get_wnckwindow());
+                read_images();
 
-            Gtk::Widget::queue_draw();
+                Gtk::Widget::queue_draw();
 
-            return true;
+                return true;
+            }
         }
 
         // handle close button
@@ -401,7 +394,8 @@ namespace docklight
             // if (!m_image)
             // pixbuf::get_window_image(child->get_xid(), m_image,
             // Config()->get_preview_image_size());
-            // g_message("-------------------> %d x %d", image->get_width(), image->get_height());
+            // g_message("-------------------> %d x %d", image->get_width(),
+            // image->get_height());
 
             int centerX = m_size / 2 - image_size / 2;
             int centerY = (m_size + margin) / 2 - image_size / 2;
