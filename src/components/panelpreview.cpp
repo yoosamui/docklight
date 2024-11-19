@@ -112,12 +112,17 @@ namespace docklight
                                              Config()->get_preview_image_size());
                 }
 
-                // auto window = child->get_wnckwindow();
-                // if (!wnck_window_is_minimized(window) &&
-                // wnck::is_window_on_current_desktop(window)) {
-                // auto xid = it.first;
-                // pixbuf::get_window_image(xid, m_image, Config()->get_preview_image_size());
-                //}
+                auto window = child->get_wnckwindow();
+                if (!wnck_window_is_minimized(window) &&
+                    wnck::is_window_on_current_desktop(window)) {
+                    auto xid = it.first;
+
+                    if (pixbuf::get_window_image(xid, m_image,
+                                                 Config()->get_preview_image_size())) {
+                        //
+                        Provider()->set_window_image(xid, m_image);
+                    }
+                }
 
                 auto pair = std::make_pair(m_image, child);
                 m_current_images.push_back(pair);

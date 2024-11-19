@@ -307,6 +307,11 @@ namespace docklight
         return image;
     }
 
+    void DockItemProvider::set_window_image(gulong xid, Glib::RefPtr<Gdk::Pixbuf> image)
+    {
+        m_window_images[xid] = image;
+    }
+
     void DockItemProvider::set_window_image(WnckWindow* window, bool initial)
     {
         if (system::is_mutter_window_manager()) return;
@@ -319,7 +324,7 @@ namespace docklight
         bool restore = false;
 
         if (initial && wnck_window_is_minimized(window)) {
-            int event_time = gtk_get_current_event_time();
+            // int event_time = gtk_get_current_event_time();
             //   wnck::unminimize(window);
             // wnck::bring_above_window(window);
 

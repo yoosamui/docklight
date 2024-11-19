@@ -78,6 +78,7 @@ namespace docklight
 
         Glib::RefPtr<Gdk::Pixbuf> get_window_image(gulong xid);
         void set_window_image(WnckWindow* window, bool initial = false);
+        void set_window_image(gulong xid, Glib::RefPtr<Gdk::Pixbuf> image);
 
       private:
         sigc::connection m_sigc;
