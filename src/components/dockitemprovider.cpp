@@ -309,6 +309,8 @@ namespace docklight
 
     void DockItemProvider::set_window_image(WnckWindow* window, bool initial)
     {
+        if (system::is_mutter_window_manager()) return;
+
         if (!WNCK_IS_WINDOW(window)) return;
 
         Glib::RefPtr<Gdk::Pixbuf> image;
@@ -341,8 +343,8 @@ namespace docklight
         }
 
         if (restore) {
-            //            wnck::minimize(window);
-            //            wnck_window_unmake_below(window);
+            wnck_window_unmake_below(window);
+            wnck::minimize(window);
         }
     }
 
