@@ -174,6 +174,8 @@ namespace docklight
 
     void PanelPreview::update()
     {
+        connect_signal(false);
+
         int scalesize = get_scale_factor();
         Config()->set_image_size(scalesize);
         m_size = Config()->get_preview_area();
@@ -181,16 +183,13 @@ namespace docklight
         auto size = m_current_images.size();
         resize(m_size * size, m_size);
 
-        int x, y;
+        int x = m_x, y = m_y;
         if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
             int area = Config()->get_preview_area();
             int size = area * m_current_images.size();
 
             Position()->get_preview_position(m_dockitem_index, x, y, size, area);
             move(x, y);
-            m_x = x;
-            // move(x + (m_size / 2), y);
-
         } else {
             if (Config()->get_dock_location() == dock_location_t::right) {
                 m_x += m_size;
@@ -199,15 +198,7 @@ namespace docklight
             }
         }
 
-        int idx = 0;
-        for (auto& it : m_current_images) {
-            auto child = it.second;
-
-            pixbuf::get_window_image(child->get_xid(), m_image, Config()->get_preview_image_size());
-            m_current_images[idx++] = std::make_pair(m_image, it.second);
-        }
-
-        Gtk::Widget::queue_draw();
+        connect_signal(true);
     }
 
     bool PanelPreview::get_visible() const
