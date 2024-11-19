@@ -1,16 +1,5 @@
 # Docklight-5
-Start Applications, access and manage them easily.
-
-<table>
-    <tbody>
-        <tr align="center">
-            <td>
-                <img src="https://user-images.githubusercontent.com/289949/44366875-1a6cee00-a49c-11e8-9322-76e70df0c88b.gif" alt="Screenshot" width="80%" />
-            </td>
-        </tr>
-    </tbody>
-</table>
-
+Helps to access and manage applications.
 
 ![image](https://github.com/user-attachments/assets/ca3dc03c-05c5-430d-b143-e553aeadeebe)
 
@@ -27,7 +16,7 @@ cd into it:
 clone this repository to get the current version:
 
 ```bash
-git clone --branch current [(https://github.com/yoosamui/docklight)]
+git clone --branch current [(https://github.com/yoosamui/docklight)]E
 This will create the diretory docklight.
 cd into it:
 ```
