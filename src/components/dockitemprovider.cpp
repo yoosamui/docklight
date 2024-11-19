@@ -309,17 +309,21 @@ namespace docklight
 
     void DockItemProvider::set_window_image(WnckWindow* window, bool initial)
     {
-        Glib::RefPtr<Gdk::Pixbuf> image;
-
         if (!WNCK_IS_WINDOW(window)) return;
+
+        Glib::RefPtr<Gdk::Pixbuf> image;
 
         gint32 xid = wnck_window_get_xid(window);
         bool restore = false;
 
         if (initial && wnck_window_is_minimized(window)) {
-            // wnck::unminimize(window);
-            wnck::bring_above_window(window);
+            int event_time = gtk_get_current_event_time();
+            //   wnck::unminimize(window);
+            // wnck::bring_above_window(window);
+
+            wnck_window_activate(window, 1 /*event_time*/);
             wnck_window_make_below(window);
+
             restore = true;
         }
 
@@ -337,8 +341,8 @@ namespace docklight
         }
 
         if (restore) {
-            wnck::minimize(window);
-            wnck_window_unmake_below(window);
+            //            wnck::minimize(window);
+            //            wnck_window_unmake_below(window);
         }
     }
 
