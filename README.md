@@ -28,9 +28,6 @@ This will create the diretory docklight.
 cd into it:
 ```
 
-
-
-
 ```bash
 cd docklight
 ```
@@ -62,11 +59,11 @@ Comment[en_US]=Start Applications, access and manage them easily.
 X-GNOME-Autostart-Delay=1
 ```
 
-
 named it "docklight5.desktop" and save it at
 ```bash
 /home/$USER/.config/autostart/docklight5.desktop
 ```
+
 ## Uninstallation
 
 ```bash
@@ -76,7 +73,22 @@ If you want to remove the configuration files, do the following bash statement:
 ```bash
 rm -rfd /home/$USER/.config/docklight
 ```
+## Compile the source code
 
+```bash
+cd docklight
+./autogen.sh
+./configure.sh
+make
+
+The final execuable is located at:
+/src/docklight
+
+```
+
+## Current state
+
+in development...
 
 
 
