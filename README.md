@@ -37,7 +37,9 @@ Start it with:
 docklight5
 ```
 You can start docklight with the following parameters:
-
+```bash
+![image](https://github.com/user-attachments/assets/9555d475-219b-43fc-9f16-237003d7f509)
+```
 
 
 You can start docklight after your linux login.
