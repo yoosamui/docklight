@@ -26,7 +26,7 @@
 #include <giomm/desktopappinfo.h>
 #include <gtkmm/icontheme.h>
 #include <gdkmm/pixbufloader.h>
-
+#include <thread>
 #include "utils/system.h"
 #include "utils/pixbuf.h"
 #include "utils/wnck.h"
@@ -76,6 +76,9 @@ namespace docklight
         guint count();
         bool save();
 
+        Glib::RefPtr<Gdk::Pixbuf> get_window_image(gulong xid);
+        void set_window_image(WnckWindow* window, bool initial = false);
+
       private:
         sigc::connection m_sigc;
         WnckWindow* m_wnckwindow = nullptr;
@@ -115,6 +118,7 @@ namespace docklight
         BamfMatcher* m_matcher = nullptr;
 
         bool m_startup_time_set = false;
+        std::map<gulong, Glib::RefPtr<Gdk::Pixbuf>> m_window_images;
     };
 
     Glib::RefPtr<DockItemProvider> create_provider();

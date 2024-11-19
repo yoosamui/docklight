@@ -156,6 +156,8 @@ namespace docklight
 
     int DockItemProvider::remove(gulong xid)
     {
+        m_window_images.erase(xid);
+
         auto count = m_container.remove<DockItemIcon>(xid);
         m_signal_update.emit(window_action_t::UPDATE, count);
 
@@ -294,8 +296,64 @@ namespace docklight
         return pixbuf ? true : false;
     }
 
+    Glib::RefPtr<Gdk::Pixbuf> DockItemProvider::get_window_image(gulong xid)
+    {
+        Glib::RefPtr<Gdk::Pixbuf> image;
+
+        if (m_window_images.count(xid)) {
+            image = m_window_images.at(xid);
+        }
+
+        return image;
+    }
+
+    void DockItemProvider::set_window_image(WnckWindow* window, bool initial)
+    {
+        if (system::is_mutter_window_manager()) return;
+
+        if (!WNCK_IS_WINDOW(window)) return;
+
+        Glib::RefPtr<Gdk::Pixbuf> image;
+
+        gint32 xid = wnck_window_get_xid(window);
+        bool restore = false;
+
+        if (initial && wnck_window_is_minimized(window)) {
+            int event_time = gtk_get_current_event_time();
+            //   wnck::unminimize(window);
+            // wnck::bring_above_window(window);
+
+            wnck_window_activate(window, 1 /*event_time*/);
+            wnck_window_make_below(window);
+
+            restore = true;
+        }
+
+        // if (wnck_window_is_pinned(window)) {
+        // wnck_window_unpin(window);
+        //}
+
+        int max = initial ? 4 : 3;
+
+        for (int i = 0; i < max; i++) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(5));
+            if (pixbuf::get_window_image(xid, image, Config()->get_preview_image_size())) {
+                m_window_images[xid] = image;
+            }
+        }
+
+        if (restore) {
+            wnck_window_unmake_below(window);
+            wnck::minimize(window);
+        }
+    }
+
     bool DockItemProvider::insert(WnckWindow* window)
     {
+        if (!WNCK_IS_WINDOW(window)) {
+            return false;
+        }
+
         // return if the window don't has a name.
         if (!wnck_window_has_name(window)) return false;
         m_wnckwindow = window;
@@ -348,6 +406,7 @@ namespace docklight
             m_signal_update.emit(window_action_t::UPDATE, data().size());
         }
 
+        set_window_image(window, true);
         return result;
     }
 

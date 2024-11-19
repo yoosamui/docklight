@@ -108,6 +108,7 @@ namespace docklight
         // May return NULL sometimes, since not all
         // window managers guarantee that a window is always active.
         m_active_window = wnck_screen_get_active_window(screen);
+        Provider()->set_window_image(m_active_window);
     }
 
     bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
@@ -197,12 +198,12 @@ namespace docklight
             Gtk::Widget::queue_draw();
         }
 
-        if (m_preview && m_preview_open && m_preview_open_index &&
-            (m_dockitem_index > m_preview_open_index + 1 ||
-             m_dockitem_index < m_preview_open_index - 1)) {
-            //
-            m_preview->hide_now();
-        }
+        // if (m_preview && m_preview_open && m_preview_open_index &&
+        //(m_dockitem_index > m_preview_open_index + 1 ||
+        // m_dockitem_index < m_preview_open_index - 1)) {
+        ////
+        // m_preview->hide_now();
+        //}
 
         // stop other handlers from being invoked for the event.
         return true;
