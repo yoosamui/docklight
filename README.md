@@ -12,13 +12,24 @@ Start Applications, access and manage them easily.
 </table>
 
 ## Installation
-clone this repository:
+clone this repository to get the stable version: !PENDING
+
+```bash
+git clone [(https://github.com/yoosamui/docklight)]
+This will create the diretory docklight.
+cd into it:
+```
+
+clone this repository to get the current version:
 
 ```bash
 git clone --branch current [(https://github.com/yoosamui/docklight)]
 This will create the diretory docklight.
 cd into it:
 ```
+
+
+
 
 ```bash
 cd docklight
