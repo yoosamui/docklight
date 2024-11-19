@@ -147,7 +147,9 @@ namespace docklight
 
     const Glib::ustring& DockItem::get_window_name()
     {
-        if (m_wnckwindow) m_window_name = wnck_window_get_name(m_wnckwindow);
+        if (WNCK_IS_WINDOW(m_wnckwindow)) {
+            m_window_name = wnck_window_get_name(m_wnckwindow);
+        }
 
         return m_window_name;
     }

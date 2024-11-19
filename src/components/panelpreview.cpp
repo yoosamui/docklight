@@ -79,6 +79,8 @@ namespace docklight
     bool PanelPreview::on_timeout_draw()
 
     {
+        read_images();
+
         Gtk::Widget::queue_draw();
         return true;
     }
@@ -319,6 +321,7 @@ namespace docklight
             m_current_images[idx++] = std::make_pair(m_image, it.second);
         }
 
+        read_images();
         Gtk::Widget::queue_draw();
     }
 
@@ -379,6 +382,7 @@ namespace docklight
         }
 
         wnck::activate_window(child->get_wnckwindow());
+        // read_images();  ////    Provider()->
         //  hide_now();
         return true;
     }
@@ -454,9 +458,14 @@ namespace docklight
         int startY = 0;
         int margin = Config()->get_preview_area_margin();
         int idx = 0;
+        int image_size = Config()->get_preview_image_size();
+
         for (auto& it : m_current_images) {
             Glib::RefPtr<Gdk::Pixbuf> image = it.first;
             auto child = it.second;
+
+            // Gdk::Cairo::set_source_pixbuf(cr, image, startX, startY);
+            // cr->paint();
 
             if (idx == m_dockpreview_index) {
                 cr->set_source_rgba(1, 1, 1, 0.2);
@@ -491,15 +500,25 @@ namespace docklight
                 cr->stroke();
             }
 
-            if (!m_image)
-                pixbuf::get_window_image(child->get_xid(), m_image,
-                                         Config()->get_preview_image_size());
+            // if (!m_image)
+            // pixbuf::get_window_image(child->get_xid(), m_image,
+            // Config()->get_preview_image_size());
+            // g_message("-------------------> %d x %d", image->get_width(), image->get_height());
 
-            int centerX = m_size / 2 - image->get_width() / 2;
-            int centerY = (m_size + margin) / 2 - image->get_height() / 2;
-            cr->rectangle(startX + centerX, startY + margin, image->get_width(), m_size);
+            int centerX = m_size / 2 - image_size / 2;
+            int centerY = (m_size + margin) / 2 - image_size / 2;
+
+            cr->rectangle(startX + centerX, startY + margin, image_size, m_size - margin);
             Gdk::Cairo::set_source_pixbuf(cr, image, startX + centerX, startY + centerY);
             cr->fill();
+
+            // int centerX = m_size / 2 - image->get_width() / 2;
+            // int centerY = (m_size + margin) / 2 - image->get_height() / 2;
+
+            // cr->rectangle(startX + centerX, startY + margin, image->get_width(), m_size);
+            // Gdk::Cairo::set_source_pixbuf(cr, image, startX + centerX, startY + centerY);
+            // cr->fill();
+            //  cr->paint();
 
             //  cell
             // cr->set_source_rgba(1, 1, 1, 1);
