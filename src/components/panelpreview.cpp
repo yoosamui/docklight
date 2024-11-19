@@ -396,16 +396,15 @@ namespace docklight
 
                 cr->stroke();
             }
-            // if (!m_image)
-            // pixbuf::get_window_image(child->get_xid(), m_image,
-            // Config()->get_preview_image_size());
-            // g_message("-------------------> %d x %d", image->get_width(),
-            // image->get_height());
 
-            int centerX = m_size / 2 - image_size / 2;
-            int centerY = (m_size + margin) / 2 - image_size / 2;
+            // int centerX = m_size / 2 - image_size / 2;
+            // int centerY = (m_size + margin) / 2 - image_size / 2;
+            // cr->rectangle(startX + centerX, startY + margin, image_size, m_size - margin);
 
+            int centerX = m_size / 2 - image->get_width() / 2;
+            int centerY = (m_size + margin) / 2 - image->get_height() / 2;
             cr->rectangle(startX + centerX, startY + margin, image_size, m_size - margin);
+
             Gdk::Cairo::set_source_pixbuf(cr, image, startX + centerX, startY + centerY);
             cr->fill();
 
