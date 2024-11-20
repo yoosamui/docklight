@@ -319,7 +319,6 @@ namespace docklight
         if (!WNCK_IS_WINDOW(window)) return;
 
         Glib::RefPtr<Gdk::Pixbuf> image;
-
         gint32 xid = wnck_window_get_xid(window);
         bool restore = false;
 
