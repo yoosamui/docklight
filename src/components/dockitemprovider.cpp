@@ -323,11 +323,11 @@ namespace docklight
         gint32 xid = wnck_window_get_xid(window);
         bool restore = false;
 
-        if (initial && wnck_window_is_minimized(window)) {
-            // int event_time = gtk_get_current_event_time();
-            //   wnck::unminimize(window);
-            // wnck::bring_above_window(window);
+        if (!wnck::is_window_on_current_desktop(window)) {
+            wnck::move_window_to_workspace(window);
+        }
 
+        if (initial && wnck_window_is_minimized(window)) {
             wnck_window_activate(window, 1 /*event_time*/);
             wnck_window_make_below(window);
 

@@ -70,7 +70,7 @@ namespace docklight
     {
         if (connect) {
             m_sigc_connection = Glib::signal_timeout().connect(
-                sigc::mem_fun(this, &PanelPreview::on_timeout_draw), 1000 / 1);
+                sigc::mem_fun(this, &PanelPreview::on_timeout_draw), 1000 / 2);
         } else {
             m_sigc_connection.disconnect();
         }
