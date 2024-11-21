@@ -18,6 +18,8 @@
 
 // clang-format off
 #include <thread>
+
+#include <sigc++/sigc++.h>
 #include <glibmm/main.h>
 #include <gtkmm/window.h>
 #include "utils/cairo.h"
@@ -64,23 +66,29 @@ namespace docklight
         void update();
 
         void read_images();
+        void on_container_updated(window_action_t action, int index);
 
       private:
-        bool m_block_leave = false;
-        Gdk::Rectangle m_close_button_rectangle;
+        sigc::connection m_sigc_updated;
         sigc::connection m_sigc_connection;
+
+        Gdk::Rectangle m_close_button_rectangle;
         Glib::RefPtr<Gdk::Pixbuf> m_image;
+
         std::vector<std::pair<Glib::RefPtr<Gdk::Pixbuf>, std::shared_ptr<DockItemIcon>>>
             m_current_images;
 
         std::vector<std::pair<gint, std::shared_ptr<DockItemIcon>>> m_windows;
-
         std::shared_ptr<DockItemIcon> m_dockitem;
+
         int m_last_dockpreview_index = 0;
         int m_dockitem_index = 0;
         int m_dockpreview_index = 0;
         int m_size = 0;
+
+        bool m_block_leave = false;
         bool m_visible = false;
+
         int m_x = 0;
         int m_y = 0;
     };

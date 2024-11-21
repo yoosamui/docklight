@@ -55,12 +55,15 @@ namespace docklight
                     Gdk::POINTER_MOTION_MASK
                    );
         // clang-format on
+        m_sigc_updated = Provider()->signal_update().connect(
+            sigc::mem_fun(this, &PanelPreview::on_container_updated));
 
         m_size = Config()->get_preview_area();
     }
 
     PanelPreview::~PanelPreview()
     {
+        m_sigc_updated.disconnect();
         connect_signal(false);
         g_message(MSG_FREE_OBJECT, "PanelPreview");
     }
@@ -137,6 +140,15 @@ namespace docklight
         }
     }
 
+    void PanelPreview::on_container_updated(window_action_t action, int index)
+    {
+        if (action == window_action_t::CLOSE) {
+            read_images();
+            update();
+            Gtk::Widget::queue_draw();
+        }
+    }
+
     void PanelPreview::show_at(int x, int y, int dockitem_index,
                                std::shared_ptr<DockItemIcon> dockitem)
     {
@@ -180,6 +192,8 @@ namespace docklight
         m_size = Config()->get_preview_area();
 
         auto size = m_current_images.size();
+        if (!size) close();
+
         resize(m_size * size, m_size);
 
         int x = m_x, y = m_y;

@@ -159,7 +159,7 @@ namespace docklight
         m_window_images.erase(xid);
 
         auto count = m_container.remove<DockItemIcon>(xid);
-        m_signal_update.emit(window_action_t::UPDATE, count);
+        m_signal_update.emit(window_action_t::CLOSE, count);
 
         return count;
     }
