@@ -55,9 +55,8 @@ namespace docklight
                     Gdk::POINTER_MOTION_MASK
                    );
         // clang-format on
-        // m_size = Config()->get_preview_image_size();
+
         m_size = Config()->get_preview_area();
-        // image_size();
     }
 
     PanelPreview::~PanelPreview()
@@ -352,10 +351,9 @@ namespace docklight
             Glib::RefPtr<Gdk::Pixbuf> image = it.first;
             auto child = it.second;
 
-            // Gdk::Cairo::set_source_pixbuf(cr, image, startX, startY);
-            // cr->paint();
-
             if (idx == m_dockpreview_index) {
+                //                cr->set_source_rgba(0.992, 0.858, 0.003, 1.0);  // 1, 1, 1, 0.2)
+                //                //GELB
                 cr->set_source_rgba(1, 1, 1, 0.2);
                 cr->rectangle(startX, startY, m_size, margin);
                 cr->fill();
@@ -367,13 +365,21 @@ namespace docklight
                 int y1 = startY + 1;
                 int y2 = PREVIEW_TITLE_SIZE - 10;
 
+                // close
                 m_close_button_rectangle =
-                    Gdk::Rectangle(x1, y1, PREVIEW_TITLE_SIZE, PREVIEW_TITLE_SIZE);
+                    Gdk::Rectangle(x1 - 6, y1 + 4, PREVIEW_TITLE_SIZE, PREVIEW_TITLE_SIZE);
 
-                cr->set_source_rgba(1, 1, 1, 1.0);
+                cr->rectangle(m_close_button_rectangle.get_x(), m_close_button_rectangle.get_y(),
+                              m_close_button_rectangle.get_width(),
+                              m_close_button_rectangle.get_height());
+
+                cr->set_source_rgba(0.992, 0.858, 0.003, 1.0);  // 1, 1, 1, 0.2)
+                cr->fill();
+
+                cr->set_source_rgba(0.870, 0.050, 0.062, 1.0);  // ROJO
                 cr->set_line_width(1.5);
 
-                x1 += 2;
+                x1 -= 1;
                 y1 += 10;
 
                 cr->move_to(x1, y1);
@@ -387,17 +393,6 @@ namespace docklight
 
                 cr->stroke();
             }
-
-            // int centerX = m_size / 2 - image_size / 2;
-            // int centerY = (m_size + margin) / 2 - image_size / 2;
-            // cr->rectangle(startX + centerX, startY + margin, image_size, m_size - margin);
-
-            int centerX = m_size / 2 - image->get_width() / 2;
-            int centerY = (m_size + margin) / 2 - image->get_height() / 2;
-            cr->rectangle(startX + centerX, startY + margin, image_size, m_size - margin);
-
-            Gdk::Cairo::set_source_pixbuf(cr, image, startX + centerX, startY + centerY);
-            cr->fill();
 
             // int centerX = m_size / 2 - image->get_width() / 2;
             // int centerY = (m_size + margin) / 2 - image->get_height() / 2;
@@ -420,7 +415,7 @@ namespace docklight
 
             if (m_dockitem) {
                 cr->save();
-                draw_text(cr, startX, startY, child->get_window_name());
+                draw_text(cr, startX, startY, child->get_window_name(), idx == m_dockpreview_index);
                 cr->restore();
             }
 
@@ -428,6 +423,18 @@ namespace docklight
             // cr->set_source_rgba(1, 1, 1, 1.0);
             // cairo::rounded_rectangle(cr, startX, startY + margin, m_size, m_size -
             // margin, 4.0); cr->stroke();
+
+            auto scaled_image = image;
+            if (image->get_width() > image_size) {
+                scaled_image = image->scale_simple(image_size, image_size, Gdk::INTERP_BILINEAR);
+            }
+
+            int centerX = m_size / 2 - scaled_image->get_width() / 2;
+            int centerY = (m_size + margin) / 2 - scaled_image->get_height() / 2;
+            cr->rectangle(startX + centerX, startY + margin, image_size, m_size - margin);
+
+            Gdk::Cairo::set_source_pixbuf(cr, scaled_image, startX + centerX, startY + centerY);
+            cr->fill();
 
             startX += m_size;
             startY = 0;
@@ -439,9 +446,10 @@ namespace docklight
     }
 
     void PanelPreview::draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int x, int y,
-                                 const std::string& text)
+                                 const std::string& text, bool indicator)
     {
-        cr->rectangle(x, y + 1, m_size - 26, Config()->get_preview_area_margin() - 1);
+        int offset = indicator ? 26 : 10;
+        cr->rectangle(x, y + 1, m_size - offset, Config()->get_preview_area_margin() - 1);
         cr->set_source_rgba(1, 1, 1, 0.f);  // for debuging set alpha to 1.f
         cr->clip_preserve();
         cr->stroke();
@@ -476,7 +484,14 @@ namespace docklight
         layout->get_pixel_size(text_width, text_height);
         cr->move_to(x + 8, (Config()->get_preview_area_margin() / 2) - 8);
 
-        cr->set_source_rgba(1, 1, 1, 1.f);
+        // if (indicator) {
+        // cr->set_source_rgba(0, 0, 0, 1.f);  // BLACK
+
+        //} else {
+        // cr->set_source_rgba(1, 1, 1, 1.f);  // WHITE;
+        //}
+
+        cr->set_source_rgba(1, 1, 1, 1.f);  // WHITE;
         layout->show_in_cairo_context(cr);
         cr->reset_clip();  // Reset the clipping!
     }

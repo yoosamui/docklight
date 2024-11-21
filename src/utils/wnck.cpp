@@ -54,6 +54,23 @@ namespace docklight
             return m_screen;
         }
 
+        Gdk::Rectangle get_window_geometry(WnckWindow* window)
+        {
+            if (!WNCK_IS_WINDOW(window)) {
+                return Gdk::Rectangle(0, 0, 0, 0);
+            }
+
+            int x;
+            int y;
+            int width;
+            int height;
+
+            wnck_window_get_client_window_geometry(window, &x, &y, &width, &height);
+            Gdk::Rectangle rect(x, y, width, height);
+
+            return rect;
+        }
+
         int count_in_workspace(WnckWindow* source_window, std::string& result)
         {
             GdkScreen* screen = gdk_screen_get_default();

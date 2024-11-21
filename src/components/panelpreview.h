@@ -38,7 +38,7 @@ namespace docklight
         ~PanelPreview();
 
         void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int x, int y,
-                       const std::string& text);
+                       const std::string& text, bool indicator);
         void show_at(int x, int y, int dockitem_index, std::shared_ptr<DockItemIcon> dockitem);
         void hide_now();
 

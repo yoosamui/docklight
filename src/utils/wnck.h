@@ -22,7 +22,7 @@
 
 // clang-format off
 #include <map>
-
+#include <gdkmm/rectangle.h>
 #include <functional>
 #include <libbamf/libbamf.h>
 #include <libwnck/libwnck.h>
@@ -38,6 +38,8 @@ namespace docklight
     {
         void init();
 
+        Gdk::Rectangle get_window_geometry(WnckWindow* window);
+
         void set_active_window(WnckWindow* active_window);
         bool is_window_on_current_desktop(WnckWindow* window);
 
@@ -47,8 +49,10 @@ namespace docklight
         void select_window(WnckWindow* window);
         void select_window(gulong hash, WnckWindow* active_window,
                            std::vector<WnckWindow*> window_list);
+
         void activate_window(WnckWindow* window);
         void bring_above_window(WnckWindow* window);
+
         int count_in_workspace(WnckWindow* window, std::string& result);
 
         void close_all_windows();

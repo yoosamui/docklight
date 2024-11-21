@@ -336,12 +336,16 @@ namespace docklight
         // if (wnck_window_is_pinned(window)) {
         // wnck_window_unpin(window);
         //}
+        //
 
+        // int size = wnck::get_window_geometry(window).get_width();
+        int size = Config()->get_preview_image_size();
         int max = initial ? 4 : 3;
 
         for (int i = 0; i < max; i++) {
             std::this_thread::sleep_for(std::chrono::milliseconds(5));
-            if (pixbuf::get_window_image(xid, image, Config()->get_preview_image_size())) {
+
+            if (pixbuf::get_window_image(xid, image, size)) {
                 m_window_images[xid] = image;
             }
         }
