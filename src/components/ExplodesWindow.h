@@ -29,7 +29,7 @@
 
 namespace docklight
 {
-    class ExplodesWindow : public TransparentWindow
+    class ExplodesWindow : public Gtk::Window  // public TransparentWindow
     {
       public:
         ExplodesWindow();

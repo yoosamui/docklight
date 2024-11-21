@@ -28,6 +28,7 @@
 #include "utils/pixbuf.h"
 #include "components/TransparentWindow.h"
 #include "components/dockitemicon.h"
+#include "components/ExplodesWindow.h"
 // clang-format on
 
 namespace docklight
@@ -69,6 +70,7 @@ namespace docklight
         void on_container_updated(window_action_t action, int index);
 
       private:
+        Glib::RefPtr<ExplodesWindow> m_anim;
         sigc::connection m_sigc_updated;
         sigc::connection m_sigc_connection;
 

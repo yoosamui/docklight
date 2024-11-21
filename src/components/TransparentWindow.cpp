@@ -44,7 +44,7 @@ TransparentWindow::TransparentWindow()
 
      Just don’t write code that crashes if not.
      */
-    //  set_keep_above(true);
+    set_keep_above(true);
 }
 
 // bool TransparentWindow::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
