@@ -39,6 +39,17 @@ namespace docklight
         return m_observer;
     }
 
+    void AppObserver::on_icon_changed(WnckWindow* window, gpointer user_data)
+    {
+        g_print("on_icon_chnaged!");
+    }
+
+    void AppObserver::on_actions_changed(WnckWindow* window, WnckWindowActions changed_mask,
+                                         WnckWindowActions new_state, gpointer user_data)
+    {
+        //
+    }
+
     void AppObserver::on_window_closed(WnckScreen* screen, WnckWindow* window, gpointer data)
     {
         if (!window) {
@@ -69,8 +80,9 @@ namespace docklight
 
         Provider()->insert(window);
 
-        // auto instance_name = wnck_window_get_class_instance_name(window);
-        // auto group_name = wnck_window_get_class_group_name(window);
+        /*auto instance_name = wnck_window_get_class_instance_name(window);
+        auto group_name = wnck_window_get_class_group_name(window);
+        g_message("->%s/ %s", instance_name, group_name);*/
 
         // Glib::RefPtr<Gdk::Pixbuf> image;
         // for (int i = 0; i < 2; i++)
@@ -133,6 +145,11 @@ namespace docklight
         g_signal_connect(G_OBJECT(wnckscreen), "window-closed",
                          G_CALLBACK(&AppObserver::on_window_closed), nullptr);
 
+        g_signal_connect(G_OBJECT(wnckscreen), "icon-changed",
+                         G_CALLBACK(&AppObserver::on_icon_changed), nullptr);
+
+        g_signal_connect(G_OBJECT(wnckscreen), "actions-changed",
+                         G_CALLBACK(&AppObserver::on_actions_changed), nullptr);
         g_message("Create AppObserver.");
     }
 

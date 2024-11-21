@@ -360,13 +360,27 @@ namespace docklight
             //}
         }
 
+        void close_window(std::vector<WnckWindow*> windows)
+        {
+            int event_time = gtk_get_current_event_time();
+            for (auto window : windows) {
+                if (!WNCK_IS_WINDOW(window)) {
+                    continue;
+                }
+                //(docklight:1764071): Gtk-CRITICAL **: 19:55:21.188:
+                // gtk_window_resize: assertion 'width > 0' failed
+                wnck_window_close(window, event_time);
+            }
+        }
+
         void close_window(WnckWindow* window)
         {
             if (!WNCK_IS_WINDOW(window)) {
                 return;
             }
 
-            wnck_window_close(window, gtk_get_current_event_time());
+            int event_time = gtk_get_current_event_time();
+            wnck_window_close(window, event_time);
         }
 
         void close_all_windows()

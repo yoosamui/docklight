@@ -57,6 +57,7 @@ namespace docklight
 
         void close_all_windows();
         void close_window(WnckWindow* window);
+        void close_window(std::vector<WnckWindow*> windows);
         void minimize(WnckWindow* window);
         void unminimize(WnckWindow* window);
         void minimize_all();

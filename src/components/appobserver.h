@@ -32,6 +32,10 @@ namespace docklight
         AppObserver();
 
       private:
+        static void on_actions_changed(WnckWindow* window, WnckWindowActions changed_mask,
+                                       WnckWindowActions new_state, gpointer user_data);
+
+        static void on_icon_changed(WnckWindow* window, gpointer user_data);
         static void on_window_closed(WnckScreen* screen, WnckWindow* window, gpointer data);
         static void on_window_opened(WnckScreen* screen, WnckWindow* window, gpointer data);
     };

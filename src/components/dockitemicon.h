@@ -40,6 +40,7 @@ namespace docklight
 
         const Glib::RefPtr<Gdk::Pixbuf>& get_icon() const;
         const Glib::RefPtr<Gdk::Pixbuf> get_icon(guint size);
+        const Glib::RefPtr<Gdk::Pixbuf> get_icon_from_window(guint size);
 
         const std::vector<gulong>& get_wnck_xid_list();
         const std::vector<WnckWindow*>& get_wnck_window_list();

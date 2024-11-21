@@ -161,12 +161,21 @@ namespace docklight
         std::shared_ptr<DockItemIcon> dockitem;
         if (!Provider()->get_dockitem_by_index(m_dockitem_index, dockitem)) return;
 
-        for (auto& item : dockitem->get_childmap()) {
-            auto window = item.second->get_wnckwindow();
-            if (!window) continue;
+        int xx = 0;
+        int yy = 0;
+        system::get_mouse_position(xx, yy);
 
-            wnck::close_window(window);
-        }
+        if (!m_anim) m_anim = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
+        m_anim->show_at(xx, yy);
+
+        wnck::close_window(dockitem->get_wnck_window_list());
+        //
+        // for (auto& item : dockitem->get_childmap()) {
+        // auto window = item.second->get_wnckwindow();
+        // if (!window) continue;
+
+        //  wnck::close_window(window);
+        //}
     }
 
     void DockMenu::on_item_menu_new_event()

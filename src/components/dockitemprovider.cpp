@@ -436,6 +436,8 @@ namespace docklight
         std::shared_ptr<DockItemIcon> dockitem = std::shared_ptr<DockItemIcon>(
             new DockItemIcon(xid, m_wnckwindow, instance_name, groupname, wintype));
 
+        g_message("Window_name %s/%s", window_name.c_str(), groupname.c_str());
+
         dockitem->set_desktop_file(desktop_file);
         dockitem->set_icon_name(icon_name);
         dockitem->set_icon(pixbuf);

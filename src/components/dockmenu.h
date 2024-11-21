@@ -23,7 +23,7 @@
 #include <gtkmm/checkmenuitem.h>
 #include <gtkmm/menu.h>
 #include <gtkmm/separatormenuitem.h>
-
+#include "components/ExplodesWindow.h"
 #include "utils/wnck.h"
 #include "components/position.h"
 // clang-format on
@@ -44,6 +44,8 @@ namespace docklight
 
     class DockMenu : public PanelBase
     {
+        Glib::RefPtr<ExplodesWindow> m_anim;
+
       public:
         DockMenu();
 

@@ -79,6 +79,25 @@ namespace docklight
         return m_icon;
     }
 
+    const Glib::RefPtr<Gdk::Pixbuf> DockItemIcon::get_icon_from_window(guint size)
+    {
+        auto pixbuf =
+            Glib::wrap(m_icon->gobj(), true)->scale_simple(size, size, Gdk::INTERP_BILINEAR);
+
+        if (WNCK_IS_WINDOW(m_wnckwindow)) {
+            auto gdkpixbuf = wnck_window_get_icon(m_wnckwindow);
+
+            if (gdkpixbuf) {
+                pixbuf =
+                    Glib::wrap(gdkpixbuf, true)->scale_simple(size, size, Gdk::INTERP_BILINEAR);
+            }
+        }
+
+        g_assert(pixbuf);
+
+        return pixbuf;
+    }
+
     const Glib::RefPtr<Gdk::Pixbuf> DockItemIcon::get_icon(guint size)
     {
         auto pixbuf =

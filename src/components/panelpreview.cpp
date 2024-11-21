@@ -269,16 +269,8 @@ namespace docklight
 
             m_anim = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
             m_anim->show_at(xx, yy);
-            // m_anim->show_at(geo.get_x() + event->x, geo.get_y() + event->y);
 
             m_current_images.erase(m_current_images.begin() + m_dockpreview_index);
-
-            // if (Config()->get_dock_location() == dock_location_t::right) {
-            //// if (m_dockpreview_index++ > (gint)m_dockitem->get_childmap().size() - 1)
-            //// m_dockpreview_index = 0;
-            //} else {
-            ////  if (m_dockpreview_index-- < 0) m_dockpreview_index = 0;
-            //}
 
             if (m_current_images.size() == 0) {
                 this->close();
