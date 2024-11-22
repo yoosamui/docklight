@@ -140,7 +140,7 @@ namespace docklight
         }
     }
 
-    void PanelPreview::on_container_updated(window_action_t action, int index)
+    void PanelPreview::on_container_updated(window_action_t action, int xid)
     {
         if (m_visible && action == window_action_t::CLOSE) {
             read_images();

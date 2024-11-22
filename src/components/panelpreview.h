@@ -67,7 +67,7 @@ namespace docklight
         void update();
 
         void read_images();
-        void on_container_updated(window_action_t action, int index);
+        void on_container_updated(window_action_t action, int xid);
 
       private:
         Glib::RefPtr<ExplodesWindow> m_anim;
