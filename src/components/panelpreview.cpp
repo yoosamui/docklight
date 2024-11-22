@@ -142,7 +142,7 @@ namespace docklight
 
     void PanelPreview::on_container_updated(window_action_t action, int index)
     {
-        if (action == window_action_t::CLOSE) {
+        if (m_visible && action == window_action_t::CLOSE) {
             read_images();
             update();
             Gtk::Widget::queue_draw();
@@ -192,7 +192,9 @@ namespace docklight
         m_size = Config()->get_preview_area();
 
         auto size = m_current_images.size();
-        if (!size) close();
+        if (!size) {
+            close();
+        }
 
         resize(m_size * size, m_size);
 
@@ -261,16 +263,16 @@ namespace docklight
         Gdk::Rectangle mouse_rect(event->x, event->y, 2, 2);
         if (m_close_button_rectangle.intersects(mouse_rect)) {
             m_block_leave = true;
-            wnck::close_window(child->get_wnckwindow());
 
             int xx = 0;
             int yy = 0;
             system::get_mouse_position(xx, yy);
 
-            m_anim = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
-            m_anim->show_at(xx, yy);
+            //   m_anim = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
+            //   m_anim->show_at(xx, yy);
 
             m_current_images.erase(m_current_images.begin() + m_dockpreview_index);
+            wnck::close_window(child->get_wnckwindow());
 
             if (m_current_images.size() == 0) {
                 this->close();
