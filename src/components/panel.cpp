@@ -318,19 +318,15 @@ namespace docklight
         if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return false;
 
         auto size = dockitem->get_childmap().size();
-        //  int required = system::is_mutter_window_manager() ? 1 : size;
 
         // Handle the preview right mouse button.
         if (size && event->button == 3 && !m_preview->get_visible()) {
             int diff = (int)((gtk_get_current_event_time() - m_mouseclickEventTime));
             if (diff > 200 && m_dockitem_index > 0) {
-                int x = 0;
-                int y = 0;
-
                 std::shared_ptr<DockItemIcon> dockitem;
                 if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return false;
 
-                m_preview->show_at(x, y, m_dockitem_index, dockitem);
+                m_preview->show_at(m_dockitem_index, dockitem);
                 m_preview_open_index = m_dockitem_index;
                 m_preview_open = true;
                 return true;
@@ -408,6 +404,7 @@ namespace docklight
                 }
 
                 m_item_menu.show_all();
+
                 m_item_menu.popup_at_pointer(nullptr);
                 m_item_menu.popup(sigc::mem_fun(*this, &Panel::on_item_menu_position), 0,
                                   event->time);

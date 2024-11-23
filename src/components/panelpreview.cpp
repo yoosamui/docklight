@@ -93,7 +93,7 @@ namespace docklight
 
     void PanelPreview::read_images()
     {
-        m_windows.clear();
+        //   m_windows.clear();
         m_current_images.clear();
 
         if (!system::is_mutter_window_manager()) {
@@ -140,17 +140,25 @@ namespace docklight
         }
     }
 
+    /**
+     *  Event emit from Provider on close app.
+     */
     void PanelPreview::on_container_updated(window_action_t action, int xid)
     {
         if (m_visible && action == window_action_t::CLOSE) {
+            auto vec = m_dockitem->get_wnck_xid_list();
+
+            // update only if xid could not be found
+            if (std::find(vec.begin(), vec.end(), xid) != vec.end()) return;
+
             read_images();
             update();
+
             Gtk::Widget::queue_draw();
         }
     }
 
-    void PanelPreview::show_at(int x, int y, int dockitem_index,
-                               std::shared_ptr<DockItemIcon> dockitem)
+    void PanelPreview::show_at(int dockitem_index, std::shared_ptr<DockItemIcon> dockitem)
     {
         connect_signal(true);
         m_dockitem_index = dockitem_index;
@@ -165,8 +173,6 @@ namespace docklight
         int xx = 0;
         int yy = 0;
 
-        // std::shared_ptr<DockItemIcon> dockitem;
-        // if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return false;
         int area = Config()->get_preview_area();
         int size = area * dockitem->get_childmap().size();
         Position()->get_preview_position(m_dockitem_index, xx, yy, size, area);
@@ -192,11 +198,12 @@ namespace docklight
         m_size = Config()->get_preview_area();
 
         auto size = m_current_images.size();
+
         if (!size) {
             close();
         }
 
-        resize(m_size * size, m_size);
+        if (size) resize(m_size * size, m_size);
 
         int x = m_x, y = m_y;
         if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {

@@ -85,11 +85,15 @@ namespace docklight
             Glib::wrap(m_icon->gobj(), true)->scale_simple(size, size, Gdk::INTERP_BILINEAR);
 
         if (WNCK_IS_WINDOW(m_wnckwindow)) {
-            auto gdkpixbuf = wnck_window_get_icon(m_wnckwindow);
+            Glib::ustring current_iconname(wnck_window_get_icon_name(m_wnckwindow));
 
-            if (gdkpixbuf) {
-                pixbuf =
-                    Glib::wrap(gdkpixbuf, true)->scale_simple(size, size, Gdk::INTERP_BILINEAR);
+            if (current_iconname != m_icon_name) {
+                auto gdkpixbuf = wnck_window_get_icon(m_wnckwindow);
+
+                if (gdkpixbuf) {
+                    pixbuf =
+                        Glib::wrap(gdkpixbuf, true)->scale_simple(size, size, Gdk::INTERP_BILINEAR);
+                }
             }
         }
 

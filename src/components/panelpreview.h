@@ -42,7 +42,7 @@ namespace docklight
 
         void draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int x, int y,
                        const std::string& text, bool indicator);
-        void show_at(int x, int y, int dockitem_index, std::shared_ptr<DockItemIcon> dockitem);
+        void show_at(int dockitem_index, std::shared_ptr<DockItemIcon> dockitem);
         void hide_now();
 
         bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
@@ -80,7 +80,7 @@ namespace docklight
         std::vector<std::pair<Glib::RefPtr<Gdk::Pixbuf>, std::shared_ptr<DockItemIcon>>>
             m_current_images;
 
-        std::vector<std::pair<gint, std::shared_ptr<DockItemIcon>>> m_windows;
+        // std::vector<std::pair<gint, std::shared_ptr<DockItemIcon>>> m_windows;
         std::shared_ptr<DockItemIcon> m_dockitem;
 
         int m_last_dockpreview_index = 0;
