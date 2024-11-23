@@ -146,15 +146,12 @@ namespace docklight
     void PanelPreview::on_container_updated(window_action_t action, int xid)
     {
         if (m_visible && action == window_action_t::CLOSE) {
-            auto vec = m_dockitem->get_wnck_xid_list();
+            if (m_last_deleted_xid == (gulong)xid) {
+                read_images();
+                update();
 
-            // update only if xid could not be found
-            if (std::find(vec.begin(), vec.end(), xid) != vec.end()) return;
-
-            read_images();
-            update();
-
-            Gtk::Widget::queue_draw();
+                Gtk::Widget::queue_draw();
+            }
         }
     }
 
@@ -198,9 +195,8 @@ namespace docklight
         m_size = Config()->get_preview_area();
 
         auto size = m_current_images.size();
-
         if (!size) {
-            close();
+            this->close();
         }
 
         if (size) resize(m_size * size, m_size);
@@ -211,12 +207,29 @@ namespace docklight
             int size = area * m_current_images.size();
 
             Position()->get_preview_position(m_dockitem_index, x, y, size, area);
-            move(x, y);
+            size = m_dockitem->get_childmap().size();
+            if (size) {
+                move(x, y);
+
+                m_x = x;
+                m_y = y;
+            }
         } else {
             if (Config()->get_dock_location() == dock_location_t::right) {
-                m_x += m_size;
-                if (m_x < 0) m_x = 0;
-                move(m_x, m_y);
+                int xx = 0;
+                int yy = 0;
+
+                int area = Config()->get_preview_area();
+                int size = area * m_dockitem->get_childmap().size();
+
+                Position()->get_preview_position(m_dockitem_index, xx, yy, size, area);
+                size = m_dockitem->get_childmap().size();
+                if (size) {
+                    move(xx, yy);
+
+                    m_x = xx;
+                    m_y = yy;
+                }
             }
         }
 
@@ -229,10 +242,15 @@ namespace docklight
     }
     void PanelPreview::hide_now()
     {
+        m_sigc_updated.disconnect();
+        m_sigc_connection.disconnect();
+
         connect_signal(false);
+        m_x = m_y = 0;
+        m_current_images.clear();
+        m_visible = false;
 
         hide();
-        m_visible = false;
     }
 
     bool PanelPreview::on_enter_notify_event(GdkEventCrossing* crossing_event)
@@ -275,10 +293,12 @@ namespace docklight
             int yy = 0;
             system::get_mouse_position(xx, yy);
 
-            //   m_anim = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
-            //   m_anim->show_at(xx, yy);
+            m_anim = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
+            m_anim->show_at(xx, yy);
 
             m_current_images.erase(m_current_images.begin() + m_dockpreview_index);
+            m_last_deleted_xid = child->get_xid();
+
             wnck::close_window(child->get_wnckwindow());
 
             if (m_current_images.size() == 0) {

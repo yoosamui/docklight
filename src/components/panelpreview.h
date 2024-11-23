@@ -83,6 +83,7 @@ namespace docklight
         // std::vector<std::pair<gint, std::shared_ptr<DockItemIcon>>> m_windows;
         std::shared_ptr<DockItemIcon> m_dockitem;
 
+        gulong m_last_deleted_xid = 0;
         int m_last_dockpreview_index = 0;
         int m_dockitem_index = 0;
         int m_dockpreview_index = 0;

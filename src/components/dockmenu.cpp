@@ -192,11 +192,14 @@ namespace docklight
     {
         Position()->get_dockmenu_position(0, x, y, m_home_menu.get_width(),
                                           m_home_menu.get_height());
+        push_in = true;
     }
 
     void DockMenu::on_item_menu_position(int& x, int& y, bool& push_in)
     {
         Position()->get_dockmenu_position(m_dockitem_index, x, y, m_item_menu.get_width(),
                                           m_item_menu.get_height());
+
+        push_in = true;
     }
 }  // namespace docklight

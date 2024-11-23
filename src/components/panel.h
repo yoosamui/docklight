@@ -65,8 +65,10 @@ namespace docklight
         // https://docs.gtk.org/gdk3/method.Window.get_scale_factor.html
         //
         guint get_scale_factor();
+
         bool on_button_press_event(GdkEventButton* event);
         bool on_button_release_event(GdkEventButton* event);
+
         bool on_motion_notify_event(GdkEventMotion* event);
         void on_container_updated(window_action_t action, int index);
 
@@ -92,10 +94,10 @@ namespace docklight
         // DockMenu::on_home_menu_position(x, y, push_in);
         //}
 
-        // void on_item_menu_position(int& x, int& y, bool& push_in) override
-        //{
-        // DockMenu::on_item_menu_position(x, y, push_in);
-        //}
+        //        void on_item_menu_position(int& x, int& y, bool& push_in)
+        //        {
+        //            DockMenu::on_item_menu_position(x, y, push_in);
+        //        }
         //
         // Gtk::DrawingArea m_drawing_area;
         // void on_drawingarea(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height);

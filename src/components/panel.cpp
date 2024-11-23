@@ -285,14 +285,15 @@ namespace docklight
     {
         if ((event->type != GDK_BUTTON_PRESS)) return false;
 
-        m_preview->hide_now();
-        m_preview_open_index = 0;
-
-        m_mouseclickEventTime = gtk_get_current_event_time();
         get_dockitem_index(event->x, event->y);
+        if (m_preview_open) {
+            m_mouseclickEventTime = gtk_get_current_event_time();
+
+            return true;
+        }
 
         // Handle the left mouse button.
-        if (event->button == 1 && m_dockitem_index > 0) {
+        if (event->button == 1 && m_dockitem_index) {
             std::shared_ptr<DockItemIcon> dockitem;
             if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return false;
 
@@ -305,8 +306,14 @@ namespace docklight
 
             wnck::select_window(dockitem->get_hash(), m_active_window,
                                 dockitem->get_wnck_window_list());
-            //     return true;
         }
+
+        m_preview->hide_now();
+        m_preview_open_index = 0;
+
+        m_mouseclickEventTime = gtk_get_current_event_time();
+        get_dockitem_index(event->x, event->y);
+
         return true;
     }
 
@@ -317,31 +324,31 @@ namespace docklight
         std::shared_ptr<DockItemIcon> dockitem;
         if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return false;
 
+        int diff = (int)((gtk_get_current_event_time() - m_mouseclickEventTime));
         auto size = dockitem->get_childmap().size();
 
-        // Handle the preview right mouse button.
-        if (size && event->button == 3 && !m_preview->get_visible()) {
-            int diff = (int)((gtk_get_current_event_time() - m_mouseclickEventTime));
-            if (diff > 200 && m_dockitem_index > 0) {
-                std::shared_ptr<DockItemIcon> dockitem;
-                if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return false;
-
-                m_preview->show_at(m_dockitem_index, dockitem);
-                m_preview_open_index = m_dockitem_index;
-                m_preview_open = true;
-                return true;
-            }
-        }
-
         if (m_preview_open) {
+            m_preview->hide_now();
             m_preview_open = false;
+            m_preview_open_index = 0;
+            m_mouseclickEventTime = gtk_get_current_event_time();
+
             return true;
         }
+        if (!m_preview_open && event->button == 3) {
+            // open preview
+            if (size) {
+                if (diff > 200 && m_dockitem_index > 0) {
+                    m_preview->show_at(m_dockitem_index, dockitem);
+                    m_preview_open_index = m_dockitem_index;
+                    m_preview_open = true;
 
-        // Handle the right mouse button.
-        if (event->button == 3) {
+                    return true;
+                }
+            }
+
+            // handle home menu
             if (m_dockitem_index == 0) {
-                // Home Menu
                 if (!m_home_menu.get_attach_widget()) {
                     m_home_menu.attach_to_widget(*this);
                 }
@@ -351,11 +358,15 @@ namespace docklight
                 m_HomeUnMinimizeAllWindowsMenuItem.set_sensitive(count);
                 m_home_menu_close_all_item.set_sensitive(count);
 
-                m_home_menu.popup(sigc::mem_fun(*this, &Panel::on_home_menu_position), 1,
+                m_home_menu.popup(sigc::mem_fun(*this, &Panel::on_home_menu_position), 0,
                                   event->time);
 
-            } else if (m_dockitem_index > 0) {
-                // Items Menu
+                m_preview_open = true;
+                return true;
+            }
+
+            // handle items menu
+            if (m_dockitem_index) {
                 m_item_menu_attach.set_active(dockitem->get_attached());
 
                 auto size = dockitem->get_childmap().size();
@@ -364,7 +375,7 @@ namespace docklight
                 m_item_menu_minimize_all.set_sensitive(size);
                 m_item_menu_unminimize_all.set_sensitive(size);
 
-                // populate childrens;
+                // remove old items
                 for (auto& itemMenu : m_item_menu.get_children()) {
                     auto type = dynamic_cast<Gtk::ImageMenuItem*>(itemMenu);
                     if (type) {
@@ -374,33 +385,36 @@ namespace docklight
 
                 if (m_separatorMenuItem) m_item_menu.remove(*m_separatorMenuItem);
 
-                m_separatorMenuItem = Gtk::manage(new Gtk::SeparatorMenuItem());
-                m_item_menu.append(*m_separatorMenuItem);
+                if (size) {
+                    m_separatorMenuItem = Gtk::manage(new Gtk::SeparatorMenuItem());
+                    m_item_menu.append(*m_separatorMenuItem);
 
-                for (auto& item : dockitem->get_childmap()) {
-                    auto child = item.second;
+                    // populate childrens;
+                    for (auto& item : dockitem->get_childmap()) {
+                        auto child = item.second;
 
-                    Gtk::ImageMenuItem* menu_item =
-                        Gtk::manage(new Gtk::ImageMenuItem(child->get_title()));
+                        Gtk::ImageMenuItem* menu_item =
+                            Gtk::manage(new Gtk::ImageMenuItem(child->get_title()));
 
-                    const Glib::RefPtr<Gdk::Pixbuf> pixbuf = child->get_icon_from_window(16);
-                    Gtk::Image* image = Gtk::manage(new Gtk::Image(pixbuf));
+                        Glib::RefPtr<Gdk::Pixbuf> pixbuf = child->get_icon_from_window(16);
+                        Gtk::Image* image = Gtk::manage(new Gtk::Image(pixbuf));
 
-                    menu_item->set_image(*image);
-                    menu_item->set_always_show_image(true);
-                    menu_item->set_label(child->get_window_name());
+                        menu_item->set_image(*image);
+                        menu_item->set_always_show_image(true);
+                        menu_item->set_label(child->get_window_name());
 
-                    std::string wstring;
-                    if (wnck::count_in_workspace(child->get_wnckwindow(), wstring)) {
-                        Glib::ustring label = wstring + child->get_window_name();
-                        menu_item->set_label(label);
+                        std::string wstring;
+                        if (wnck::count_in_workspace(child->get_wnckwindow(), wstring)) {
+                            Glib::ustring label = wstring + child->get_window_name();
+                            menu_item->set_label(label);
+                        }
+
+                        menu_item->signal_activate().connect(sigc::bind<WnckWindow*>(
+                            sigc::mem_fun(*this, &Panel::on_item_menu_childlist_event),
+                            child->get_wnckwindow()));
+
+                        m_item_menu.append(*menu_item);
                     }
-
-                    menu_item->signal_activate().connect(sigc::bind<WnckWindow*>(
-                        sigc::mem_fun(*this, &Panel::on_item_menu_childlist_event),
-                        child->get_wnckwindow()));
-
-                    m_item_menu.append(*menu_item);
                 }
 
                 m_item_menu.show_all();
