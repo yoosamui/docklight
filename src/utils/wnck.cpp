@@ -18,6 +18,8 @@
 // it replaces all occurrences of ready_to_go with the text _("Ready to go") before compilation.
 // This means that the gettext function is called during the preprocessing stage, and the
 // translation is performed.
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 
 #include "wnck.h"
 

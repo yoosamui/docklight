@@ -23,6 +23,8 @@
 #include "utils/system.h"
 #include "translations.h"
 // clang-format on
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 
 namespace docklight
 {

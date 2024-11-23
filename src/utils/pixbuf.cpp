@@ -8,6 +8,8 @@
 
 //#include "utils/position.h"
 //#include "utils/system.h"
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 
 namespace docklight
 {

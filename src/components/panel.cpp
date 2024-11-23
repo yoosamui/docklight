@@ -124,6 +124,7 @@ namespace docklight
     bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
     {
         //       m_sigc_draw.disconnect();
+        m_preview_open = false;
 
         m_mouse_enter = false;
         Gtk::Widget::queue_draw();
@@ -286,8 +287,9 @@ namespace docklight
         if ((event->type != GDK_BUTTON_PRESS)) return false;
 
         get_dockitem_index(event->x, event->y);
+
         if (m_preview_open) {
-            m_mouseclickEventTime = gtk_get_current_event_time();
+            m_mouseclickEventTime = 0;  // gtk_get_current_event_time();
 
             return true;
         }
@@ -367,8 +369,6 @@ namespace docklight
 
             // handle items menu
             if (m_dockitem_index) {
-                m_item_menu_attach.set_active(dockitem->get_attached());
-
                 auto size = dockitem->get_childmap().size();
 
                 m_item_menu_close_all.set_sensitive(size);
@@ -419,9 +419,10 @@ namespace docklight
 
                 m_item_menu.show_all();
 
+                m_item_menu_attach.set_active(dockitem->get_attached());
                 m_item_menu.popup_at_pointer(nullptr);
                 m_item_menu.popup(sigc::mem_fun(*this, &Panel::on_item_menu_position), 0,
-                                  /* gtk_get_current_event_time()*/ event->time);
+                                  event->time);
             }
         }
 
