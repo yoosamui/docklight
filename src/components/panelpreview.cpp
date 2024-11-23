@@ -218,20 +218,11 @@ namespace docklight
             }
         } else {
             if (Config()->get_dock_location() == dock_location_t::right) {
-                int xx = 0;
-                int yy = 0;
+                x += m_size;
+                move(x, y);
 
-                int area = Config()->get_preview_area();
-                int size = area * m_dockitem->get_childmap().size();
-
-                Position()->get_preview_position(m_dockitem_index, xx, yy, size, area);
-                size = m_dockitem->get_childmap().size();
-                if (size) {
-                    move(xx, yy);
-
-                    m_x = xx;
-                    m_y = yy;
-                }
+                m_x = x;
+                m_y = y;
             }
         }
 
