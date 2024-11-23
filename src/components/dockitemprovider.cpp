@@ -356,7 +356,7 @@ namespace docklight
 
         // int size = wnck::get_window_geometry(window).get_width();
         int size = Config()->get_preview_image_size();
-        int max = initial ? 4 : 3;
+        int max = initial ? 6 : 3;
 
         for (int i = 0; i < max; i++) {
             std::this_thread::sleep_for(std::chrono::milliseconds(5));
