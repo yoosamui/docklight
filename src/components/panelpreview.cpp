@@ -117,13 +117,12 @@ namespace docklight
                 }
 
                 auto window = child->get_wnckwindow();
-                if (!wnck_window_is_minimized(window) &&
+                if (!wnck_window_is_minimized(window) && !wnck_window_is_pinned(window) &&
                     wnck::is_window_on_current_desktop(window)) {
                     auto xid = it.first;
 
                     if (pixbuf::get_window_image(xid, m_image,
                                                  Config()->get_preview_image_size())) {
-                        //
                         Provider()->set_window_image(xid, m_image);
                     }
                 }

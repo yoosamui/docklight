@@ -320,23 +320,39 @@ namespace docklight
 
         Glib::RefPtr<Gdk::Pixbuf> image;
         gint32 xid = wnck_window_get_xid(window);
-        bool restore = false;
+        bool restore_min = false;
+        //       bool restore_pin = false;
 
         if (!wnck::is_window_on_current_desktop(window)) {
             wnck::move_window_to_workspace(window);
         }
 
+        //  g_print("--------------------------::::::::: %d %s\n", wnck_window_get_state(window),
+        //          wnck_window_get_name(window));
+
+        // if (wnck_window_get_state(window) == 8) {
+        // wnck_window_unpin(window);
+        // wnck_window_unstick(window);
+        // wnck_window_activate(window, 1);
+        // wnck_window_make_below(window);
+
+        // restore_pin = true;
+        //}
+
         if (initial && wnck_window_is_minimized(window)) {
             wnck_window_activate(window, 1 /*event_time*/);
             wnck_window_make_below(window);
 
-            restore = true;
+            restore_min = true;
         }
 
-        // if (wnck_window_is_pinned(window)) {
-        // wnck_window_unpin(window);
+        // if (initial && wnck_window_is_sticky(window)) {
+        // wnck_window_unstick(window);
+        // wnck_window_activate(window, 1);
+        ////// wnck_window_make_below(window);
+
+        // restore_pin = true;
         //}
-        //
 
         // int size = wnck::get_window_geometry(window).get_width();
         int size = Config()->get_preview_image_size();
@@ -350,7 +366,12 @@ namespace docklight
             }
         }
 
-        if (restore) {
+        // if (restore_pin) {
+        // wnck_window_unmake_below(window);
+        // wnck_window_stick(window);
+        //}
+
+        if (restore_min) {
             wnck_window_unmake_below(window);
             wnck::minimize(window);
         }

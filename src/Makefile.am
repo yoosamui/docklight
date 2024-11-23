@@ -31,8 +31,6 @@ utils/wnck.cpp \
 utils/struts.cpp \
 utils/cairo.cpp \
 utils/pixbuf.cpp \
-appwindow.cpp \
-appoptionsgroup.cpp \
 components/TransparentWindow.cpp \
 components/ExplodesWindow.cpp \
 components/coverwindow.cpp \
@@ -49,6 +47,8 @@ components/appobserver.cpp \
 components/dockitem.cpp \
 components/dockitemicon.cpp \
 components/position.cpp \
+appwindow.cpp \
+appoptionsgroup.cpp \
 main.cpp \
 $(NULL)
 
