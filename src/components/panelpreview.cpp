@@ -295,7 +295,7 @@ namespace docklight
             int yy = 0;
             system::get_mouse_position(xx, yy);
 
-            m_anim = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
+            if (!m_anim) m_anim = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
             m_anim->show_at(xx, yy);
 
             m_current_images.erase(m_current_images.begin() + m_dockpreview_index);
