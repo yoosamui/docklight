@@ -133,6 +133,11 @@ namespace docklight
         m_icon_ctx->set_source_rgba(0.0, 0.0, 0.0, 0.0);
 
         int size = Config()->get_icon_size();
+
+        if (m_mouse_enter && item->get_tag() == m_dockitem_index) {
+            size++;
+        }
+
         auto icon = item->get_icon(size);
 
         m_icon_ctx->set_operator(Cairo::Operator::OPERATOR_SOURCE);
