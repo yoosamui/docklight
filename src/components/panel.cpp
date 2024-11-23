@@ -331,7 +331,7 @@ namespace docklight
             m_preview->hide_now();
             m_preview_open = false;
             m_preview_open_index = 0;
-            m_mouseclickEventTime = gtk_get_current_event_time();
+            m_mouseclickEventTime = 0;  // gtk_get_current_event_time();
 
             return true;
         }
@@ -421,7 +421,7 @@ namespace docklight
 
                 m_item_menu.popup_at_pointer(nullptr);
                 m_item_menu.popup(sigc::mem_fun(*this, &Panel::on_item_menu_position), 0,
-                                  event->time);
+                                  /* gtk_get_current_event_time()*/ event->time);
             }
         }
 
