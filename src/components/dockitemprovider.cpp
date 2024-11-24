@@ -60,6 +60,7 @@ namespace docklight
         }
 
         dockitem->set_attached();
+        dockitem->set_title("Home");
         m_container.add(0, dockitem);
 
         auto const icon_theme = Gtk::IconTheme::get_default();
@@ -463,6 +464,9 @@ namespace docklight
 
         std::shared_ptr<DockItemIcon> owner;
         if (m_container.exist<DockItemIcon>(groupname, owner)) {
+            // dockitem->set_title(title_name);
+            owner->set_title(title_name);
+
             dockitem->set_title(window_name);
             if (wintype == WnckWindowType::WNCK_WINDOW_DIALOG) {
                 dockitem->set_title(window_icon_name);
@@ -611,8 +615,11 @@ namespace docklight
             }
 
             dockitem->set_attached(true);
+            dockitem->set_title(rec.icon_name);
             dockitem->set_icon_name(rec.icon_name);
             dockitem->set_desktop_file(rec.desktop_file);
+            dockitem->set_group_name(rec.group);
+            dockitem->set_instance_name(rec.instance);
 
             std::shared_ptr<DockItemIcon> owner;
             if (!m_container.exist<DockItemIcon>(rec.group, owner)) {
@@ -664,6 +671,7 @@ namespace docklight
                 return false;
             }
 
+            strncpy(rec.title, dockitem->get_title().c_str(), sizeof(rec.title) - 1);
             strncpy(rec.group, dockitem->get_group_name().c_str(), sizeof(rec.group) - 1);
             strncpy(rec.instance, dockitem->get_instance_name().c_str(), sizeof(rec.instance) - 1);
             strncpy(rec.icon_name, dockitem->get_icon_name().c_str(), sizeof(rec.icon_name) - 1);

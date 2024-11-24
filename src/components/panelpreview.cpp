@@ -148,10 +148,10 @@ namespace docklight
         //..    if (m_block_emit) return;
 
         if (m_visible && action == window_action_t::CLOSE) {
-            int xx = 0;
-            int yy = 0;
-            system::get_mouse_position(xx, yy);
-            m_anim->show_at(xx, yy);
+            // int xx = 0;
+            // int yy = 0;
+            // system::get_mouse_position(xx, yy);
+            // m_anim->show_at(xx, yy);
 
             read_images();
 
