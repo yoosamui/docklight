@@ -135,7 +135,7 @@ namespace docklight
         int size = Config()->get_icon_size();
 
         if (m_mouse_enter && item->get_tag() == m_dockitem_index) {
-            size++;
+            size -= 2;
         }
 
         auto icon = item->get_icon(size);

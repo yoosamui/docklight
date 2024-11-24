@@ -18,6 +18,7 @@
 
 // clang-format off
 #include "cairo.h"
+#include "blur.c"
 // clang-format on
 //
 namespace docklight

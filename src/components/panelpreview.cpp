@@ -450,7 +450,14 @@ namespace docklight
 
             if (m_dockitem) {
                 cr->save();
-                draw_text(cr, startX, startY, child->get_window_name(), idx == m_dockpreview_index);
+                std::string label = child->get_window_name();
+                std::string wstring;
+
+                if (wnck::count_in_workspace(child->get_wnckwindow(), wstring)) {
+                    label = wstring + label;
+                }
+
+                draw_text(cr, startX, startY, label, idx == m_dockpreview_index);
                 cr->restore();
             }
 
