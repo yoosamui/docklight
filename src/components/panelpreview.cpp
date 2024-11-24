@@ -58,6 +58,7 @@ namespace docklight
                    );
         // clang-format on
 
+        m_anim = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
         m_size = Config()->get_preview_area();
     }
 
@@ -147,6 +148,11 @@ namespace docklight
         //..    if (m_block_emit) return;
 
         if (m_visible && action == window_action_t::CLOSE) {
+            int xx = 0;
+            int yy = 0;
+            system::get_mouse_position(xx, yy);
+            m_anim->show_at(xx, yy);
+
             read_images();
 
             int size = m_dockitem->get_childmap().size();
@@ -285,13 +291,6 @@ namespace docklight
         Gdk::Rectangle mouse_rect(event->x, event->y, 2, 2);
         if (m_close_button_rectangle.intersects(mouse_rect)) {
             m_block_leave = true;
-
-            int xx = 0;
-            int yy = 0;
-            system::get_mouse_position(xx, yy);
-
-            // if (!m_anim) m_anim = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
-            // m_anim->show_at(xx, yy);
 
             m_current_images.erase(m_current_images.begin() + m_dockpreview_index);
 

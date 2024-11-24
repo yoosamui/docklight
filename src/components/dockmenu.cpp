@@ -169,13 +169,6 @@ namespace docklight
         m_anim->show_at(xx, yy);
 
         wnck::close_window(dockitem->get_wnck_window_list());
-        //
-        // for (auto& item : dockitem->get_childmap()) {
-        // auto window = item.second->get_wnckwindow();
-        // if (!window) continue;
-
-        //  wnck::close_window(window);
-        //}
     }
 
     void DockMenu::on_item_menu_new_event()
