@@ -144,6 +144,8 @@ namespace docklight
      */
     void PanelPreview::on_container_updated(window_action_t action, glong xid)
     {
+        //..    if (m_block_emit) return;
+
         if (m_visible && action == window_action_t::CLOSE) {
             read_images();
 
@@ -155,34 +157,6 @@ namespace docklight
 
             update();
 
-            // int xx = 0;
-            // int yy = 0;
-
-            // int area = Config()->get_preview_area();
-
-            // Position()->get_preview_position(m_dockitem_index, xx, yy, size, area);
-
-            // size = m_dockitem->get_childmap().size();
-
-            // resize(m_size * size, m_size);
-            // move(xx, yy);
-
-            // m_x = xx;
-            // m_y = yy;
-            //  this->show();
-            //   read_images();
-
-            // int size = m_dockitem->get_childmap().size();
-            // if (size) {
-            // int width = (m_size * size);
-            // if (width > m_size) {
-            // resize(width, m_size);
-            // move(m_x, m_y);
-            //}
-            //} else {
-            // this->close();
-            //}
-            //// update();
             ////  Gtk::Widget::queue_draw();
         }
     }
@@ -299,13 +273,10 @@ namespace docklight
         if (!child) return false;
 
         if (!system::is_mutter_window_manager()) {
-            if (event->button == 3) {
-                //   auto window = child->get_wnckwindow();
+            if (!system::is_mutter_window_manager() && event->button == 3) {
                 wnck::activate_window(child->get_wnckwindow());
                 read_images();
-
                 Gtk::Widget::queue_draw();
-
                 return true;
             }
         }
@@ -319,8 +290,8 @@ namespace docklight
             int yy = 0;
             system::get_mouse_position(xx, yy);
 
-            if (!m_anim) m_anim = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
-            m_anim->show_at(xx, yy);
+            // if (!m_anim) m_anim = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
+            // m_anim->show_at(xx, yy);
 
             m_current_images.erase(m_current_images.begin() + m_dockpreview_index);
 
@@ -331,14 +302,11 @@ namespace docklight
                 return true;
             }
 
-            update();
-
             return true;
         }
 
-        //  wnck::activate_window(child->get_wnckwindow());
-        //   read_images();
         wnck::activate_window(child->get_wnckwindow());
+
         return true;
     }
 

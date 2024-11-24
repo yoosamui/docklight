@@ -87,7 +87,6 @@ namespace docklight
         int m_dockitem_index = 0;
         int m_dockpreview_index = 0;
         int m_size = 0;
-
         bool m_block_leave = false;
         bool m_visible = false;
 
