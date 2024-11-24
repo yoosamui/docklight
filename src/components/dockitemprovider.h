@@ -38,7 +38,7 @@ namespace docklight
 {
 
     enum window_action_t { OPEN, CLOSE, UPDATE };
-    typedef sigc::signal<void, window_action_t, gint> type_signal_update;
+    typedef sigc::signal<void, window_action_t, glong> type_signal_update;
 
     class DockItemProvider : public Glib::Object
     {

@@ -67,7 +67,7 @@ namespace docklight
         void update();
 
         void read_images();
-        void on_container_updated(window_action_t action, int xid);
+        void on_container_updated(window_action_t action, glong xid);
 
       private:
         Glib::RefPtr<ExplodesWindow> m_anim;
@@ -83,7 +83,6 @@ namespace docklight
         // std::vector<std::pair<gint, std::shared_ptr<DockItemIcon>>> m_windows;
         std::shared_ptr<DockItemIcon> m_dockitem;
 
-        gulong m_last_deleted_xid = 0;
         int m_last_dockpreview_index = 0;
         int m_dockitem_index = 0;
         int m_dockpreview_index = 0;

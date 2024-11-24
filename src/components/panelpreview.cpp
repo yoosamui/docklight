@@ -57,8 +57,6 @@ namespace docklight
                     Gdk::POINTER_MOTION_MASK
                    );
         // clang-format on
-        m_sigc_updated = Provider()->signal_update().connect(
-            sigc::mem_fun(this, &PanelPreview::on_container_updated));
 
         m_size = Config()->get_preview_area();
     }
@@ -144,20 +142,56 @@ namespace docklight
     /**
      *  Event emit from Provider on close app.
      */
-    void PanelPreview::on_container_updated(window_action_t action, int xid)
+    void PanelPreview::on_container_updated(window_action_t action, glong xid)
     {
         if (m_visible && action == window_action_t::CLOSE) {
-            if (m_last_deleted_xid == (gulong)xid) {
-                read_images();
-                update();
+            read_images();
 
-                Gtk::Widget::queue_draw();
+            int size = m_dockitem->get_childmap().size();
+            if (!size) {
+                this->close();
+                return;
             }
+
+            update();
+
+            // int xx = 0;
+            // int yy = 0;
+
+            // int area = Config()->get_preview_area();
+
+            // Position()->get_preview_position(m_dockitem_index, xx, yy, size, area);
+
+            // size = m_dockitem->get_childmap().size();
+
+            // resize(m_size * size, m_size);
+            // move(xx, yy);
+
+            // m_x = xx;
+            // m_y = yy;
+            //  this->show();
+            //   read_images();
+
+            // int size = m_dockitem->get_childmap().size();
+            // if (size) {
+            // int width = (m_size * size);
+            // if (width > m_size) {
+            // resize(width, m_size);
+            // move(m_x, m_y);
+            //}
+            //} else {
+            // this->close();
+            //}
+            //// update();
+            ////  Gtk::Widget::queue_draw();
         }
     }
 
     void PanelPreview::show_at(int dockitem_index, std::shared_ptr<DockItemIcon> dockitem)
     {
+        m_sigc_updated = Provider()->signal_update().connect(
+            sigc::mem_fun(this, &PanelPreview::on_container_updated));
+
         connect_signal(true);
         m_dockitem_index = dockitem_index;
         m_dockitem = dockitem;
@@ -189,7 +223,7 @@ namespace docklight
 
     void PanelPreview::update()
     {
-        connect_signal(false);
+        //      connect_signal(false);
 
         int scalesize = get_scale_factor();
         Config()->set_image_size(scalesize);
@@ -225,7 +259,7 @@ namespace docklight
             }
         }
 
-        connect_signal(true);
+        //    connect_signal(true);
     }
 
     bool PanelPreview::get_visible() const
@@ -289,7 +323,6 @@ namespace docklight
             m_anim->show_at(xx, yy);
 
             m_current_images.erase(m_current_images.begin() + m_dockpreview_index);
-            m_last_deleted_xid = child->get_xid();
 
             wnck::close_window(child->get_wnckwindow());
 

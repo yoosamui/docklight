@@ -157,10 +157,10 @@ namespace docklight
     int DockItemProvider::remove(gulong xid)
     {
         m_window_images.erase(xid);
-
         auto count = m_container.remove<DockItemIcon>(xid);
-        m_signal_update.emit(window_action_t::CLOSE, xid);
 
+        g_message("provider send cklose");
+        m_signal_update.emit(window_action_t::CLOSE, xid);
         return count;
     }
 
