@@ -114,8 +114,8 @@ namespace docklight
 
     bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
     {
-        m_sigc_draw =
-            Glib::signal_timeout().connect(sigc::mem_fun(this, &Panel::on_timeout_draw), 1000 / 60);
+        // m_sigc_draw =
+        // Glib::signal_timeout().connect(sigc::mem_fun(this, &Panel::on_timeout_draw), 1000 / 60);
 
         m_mouse_move_count = 0.f;
         m_last_mouse_move_count_show = 0.f;
@@ -127,12 +127,13 @@ namespace docklight
 
     bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
     {
-        m_sigc_draw.disconnect();
+        //        m_sigc_draw.disconnect();
         m_preview_open = false;
 
         show_current_title(false);
 
         m_mouse_move_count = 0.f;
+
         m_mouse_enter = false;
         Gtk::Widget::queue_draw();
         return false;
@@ -151,9 +152,18 @@ namespace docklight
             int width = m_title->get_width();
             int area = Config()->get_dock_area();
 
-            int centerX = width / 2 - area / 2;
-            int x = Position()->get_x() + (m_dockitem_index * Config()->get_dock_area()) - centerX;
-            int y = Position()->get_y() - 50;
+            int centerX, centerY;
+            int x, y;
+
+            if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+                centerX = width / 2 - area / 2;
+                x = Position()->get_x() + (m_dockitem_index * Config()->get_dock_area()) - centerX;
+                y = Position()->get_y() - 50;
+            } else {
+                centerY = m_title->get_height() / 2 - area / 2;
+                y = Position()->get_y() + (m_dockitem_index * Config()->get_dock_area()) - centerY;
+                x = Position()->get_x() + 50;
+            }
 
             m_title->move(x, y);
             m_title->show_at(x, y, m_dockitem_index);
@@ -178,10 +188,10 @@ namespace docklight
         }
 
         if (m_last_mouse_move_count_show > 6) {
-            show_current_title(true);
+            // show_current_title(true);
             m_mouse_move = false;
-        } else if (m_last_mouse_move_count_hide > 4) {
-            show_current_title(false);
+        } else if (m_last_mouse_move_count_hide > 2) {
+            // show_current_title(false);
             m_mouse_move = true;
         }
 
@@ -249,6 +259,8 @@ namespace docklight
         m_mouse_move_count = 0;
 
         get_dockitem_index(event->x, event->y);
+
+        show_current_title(!m_mouse_move);  // fluent
 
         if (m_dockitem_index != m_last_index) {
             m_last_index = m_dockitem_index;
