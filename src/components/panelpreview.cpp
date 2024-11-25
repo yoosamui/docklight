@@ -94,6 +94,7 @@ namespace docklight
 
     void PanelPreview::read_images()
     {
+        m_block_draw = true;
         //   m_windows.clear();
         m_current_images.clear();
 
@@ -138,6 +139,7 @@ namespace docklight
                 }
             }
         }
+        m_block_draw = false;
     }
 
     /**
@@ -146,27 +148,39 @@ namespace docklight
     void PanelPreview::on_container_updated(window_action_t action, glong xid)
     {
         if (m_visible && action == window_action_t::CLOSE) {
-            // int x = 0;
-            // int y = 0;
-            // system::get_mouse_position(x, y);
-            // m_anim->show_at(x, y);
+            bool found = false;
 
-            // read_images();
+            for (auto& it : m_current_images) {
+                auto child = it.second;
 
-            // int size = m_dockitem->get_childmap().size();
-            // if (!size) {
-            // this->close();
-            // return;
-            //}
+                if (child->get_xid() != (gulong)xid) continue;
+                found = true;
+                break;
+            }
 
-            // update();
+            if (!found) return;
+
+            int x = 0;
+            int y = 0;
+            system::get_mouse_position(x, y);
+            m_anim->show_at(x, y);
+
+            read_images();
+
+            int size = m_dockitem->get_childmap().size();
+            if (!size) {
+                this->close();
+                return;
+            }
+
+            update();
         }
     }
 
     void PanelPreview::show_at(int dockitem_index, std::shared_ptr<DockItemIcon> dockitem)
     {
-        // m_sigc_updated = Provider()->signal_update().connect(
-        // sigc::mem_fun(this, &PanelPreview::on_container_updated));
+        m_sigc_updated = Provider()->signal_update().connect(
+            sigc::mem_fun(this, &PanelPreview::on_container_updated));
 
         connect_signal(true);
         m_dockitem_index = dockitem_index;
@@ -244,6 +258,8 @@ namespace docklight
     }
     void PanelPreview::hide_now()
     {
+        connect_signal(false);
+
         m_sigc_updated.disconnect();
         m_sigc_connection.disconnect();
 
@@ -273,23 +289,10 @@ namespace docklight
     {
         if ((event->type != GDK_BUTTON_PRESS)) return false;
 
-        get_dockpreview_index(event->x, event->y);
-
         auto size = m_current_images.size();
         if (!size) return true;
 
-        // g_print("----------------------INDEX %d %ld\n", m_dockpreview_index,
-        //         m_current_images.size());
-
-        std::shared_ptr<DockItemIcon> child;  // = m_current_images.at(m_dockpreview_index).second;
-        int idx = 0;
-        for (auto& it : m_current_images) {
-            //   Glib::RefPtr<Gdk::Pixbuf> image = it.first;
-
-            if (idx++ != m_dockpreview_index) continue;
-            child = it.second;
-            break;
-        }
+        std::shared_ptr<DockItemIcon> child = m_current_images.at(m_dockpreview_index).second;
 
         if (!child) {
             return false;
@@ -308,17 +311,19 @@ namespace docklight
             if (m_close_button_rectangle.intersects(mouse_rect)) {
                 m_block_leave = true;
 
-                m_current_images.erase(m_current_images.begin() + m_dockpreview_index);
-                get_dockpreview_index(event->x, event->y);
+                //  m_current_images.erase(m_current_images.begin() + m_dockpreview_index);
+                //   get_dockpreview_index(event->x, event->y);
 
                 auto window = child->get_wnckwindow();
                 wnck::close_window(window);
 
-                if (m_current_images.size() == 0) {
-                    this->close();
-                    return true;
-                }
+                // if (m_current_images.size() == 0) {
+                // this->close();
+                // return true;
+                //}
+                // ..  read_images();
 
+                //    update();
                 return true;
             }
 
@@ -394,6 +399,8 @@ namespace docklight
 
     bool PanelPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     {
+        if (m_block_draw) return true;
+
         cr->set_source_rgba(0.266, 0.309, 0.361, 1.0);
         cr->paint();
 

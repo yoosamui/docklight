@@ -158,10 +158,13 @@ namespace docklight
     int DockItemProvider::remove(gulong xid)
     {
         m_window_images.erase(xid);
+
+        // bye, bye
         auto count = m_container.remove<DockItemIcon>(xid);
 
-        //  g_message("provider send CLOSE");
-        //  m_signal_update.emit(window_action_t::CLOSE, xid);
+        g_message("provider send CLOSE");
+        m_signal_update.emit(window_action_t::CLOSE, xid);
+
         return count;
     }
 
@@ -615,7 +618,7 @@ namespace docklight
             }
 
             dockitem->set_attached(true);
-            dockitem->set_title(rec.icon_name);
+            dockitem->set_title(rec.title);
             dockitem->set_icon_name(rec.icon_name);
             dockitem->set_desktop_file(rec.desktop_file);
             dockitem->set_group_name(rec.group);
