@@ -160,7 +160,7 @@ namespace docklight
         m_window_images.erase(xid);
         auto count = m_container.remove<DockItemIcon>(xid);
 
-        g_message("provider send cklose");
+        // g_message("provider send cklose");
         m_signal_update.emit(window_action_t::CLOSE, xid);
         return count;
     }

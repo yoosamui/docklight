@@ -60,11 +60,22 @@ namespace docklight
         m_visible = false;
     }
 
-    void TitleWindow::show_at(int x, int y)
+    void TitleWindow::show_at(int x, int y, int index)
     {
         if (m_visible) return;
         // resize(2, this->get_height());
         // move(x, y);
+
+        /*resize(2, this->get_height());
+        int width = get_width();
+        int area = Config()->get_dock_area();
+
+        int centerX = width / 2 - area / 2;
+        int x = Position()->get_x() + (index * Config()->get_dock_area()) - centerX;
+        int y = Position()->get_y() - 50;*/
+
+        // move(x, y);
+
         show_all();
         m_visible = true;
     }

@@ -118,10 +118,10 @@ namespace docklight
             Glib::signal_timeout().connect(sigc::mem_fun(this, &Panel::on_timeout_draw), 1000 / 60);
 
         m_mouse_move_count = 0.f;
+        m_last_mouse_move_count_show = 0.f;
         m_last_mouse_move_count_hide = 0.f;
+
         m_mouse_enter = true;
-        //        m_title->show_at(0, 0);
-        show_current_title();
         return false;
     }
 
@@ -130,118 +130,62 @@ namespace docklight
         m_sigc_draw.disconnect();
         m_preview_open = false;
 
-        m_title->hide_now();
-        // m_mouse_move_timer.stop();
+        show_current_title(false);
+
         m_mouse_move_count = 0.f;
         m_mouse_enter = false;
         Gtk::Widget::queue_draw();
         return false;
     }
 
-    void Panel::show_current_title()
+    void Panel::show_current_title(bool show)
     {
-        if (!m_provider->get_dockitem_by_index(m_dockitem_index, m_dockitem)) return;
+        if (show) {
+            if (!m_provider->get_dockitem_by_index(m_dockitem_index, m_dockitem)) return;
 
-        int size = m_dockitem->get_childmap().size();
-        std::string extend = size ? " (" + std::to_string(size) + ")" : "";
-        std::string title = m_dockitem->get_title() + extend;
+            int size = m_dockitem->get_childmap().size();
+            std::string extend = size ? " (" + std::to_string(size) + ")" : "";
+            std::string title = m_dockitem->get_title() + extend;
 
-        int xx = 0;
-        int yy = 0;
+            m_title->set_text(title);
+            int width = m_title->get_width();
+            int area = Config()->get_dock_area();
 
-        m_title->set_text(title);
-        int width = m_title->get_width();
-        int area = Config()->get_dock_area();
-        Position()->get_preview_position(m_dockitem_index, xx, yy, width, area);
+            int centerX = width / 2 - area / 2;
+            int x = Position()->get_x() + (m_dockitem_index * Config()->get_dock_area()) - centerX;
+            int y = Position()->get_y() - 50;
 
-        int centerX = width / 2 - area / 2;
-        // int centerX = width / 2 - area / 2;
-        //  xx -= area / 2;
-        // xx -= centerX;
-
-        int x = Position()->get_x() + (m_dockitem_index * Config()->get_dock_area());  // + centerX;
-        // int y = Position()->get_y();
-        //..m_title->set_text(title);
-        // m_title->hide();
-
-        m_title->move(x - centerX, yy);
-
-        //  g_print("%d x %d\n", x, yy);
-        // m_title->show_at(x, yy);
-
-        //  int center = area / 2 - width / 2;
-        //  xx -= center;
-        m_title->show_at(x - centerX, yy);
+            m_title->move(x, y);
+            m_title->show_at(x, y, m_dockitem_index);
+        } else {
+            m_title->hide_now();
+        }
     }
 
     bool Panel::on_timeout_draw()
     {
-        //    g_print("%f \n", m_mouse_move_count);
-
         if (!m_mouse_enter) return true;
+        // if (m_last_index && == m_dockitem_index) {
+        // return true;
+        //}
+
         if (m_mouse_move_count > 1.1f) {
-            m_last_mouse_move_count++;
+            m_last_mouse_move_count_show++;
             m_last_mouse_move_count_hide = 0;
         } else {
-            m_last_mouse_move_count = 0;
             m_last_mouse_move_count_hide++;
+            m_last_mouse_move_count_show = 0;
         }
 
-        std::string status = "";
-
-        if (m_last_mouse_move_count > 3) {
-            //  status = "-->SHOW";
-            // if (m_provider->get_dockitem_by_index(m_dockitem_index, m_dockitem)) {
-            // int size = m_dockitem->get_childmap().size();
-            // std::string extend = size ? " (" + std::to_string(size) + ")" : "";
-            // std::string label = m_dockitem->get_title() + extend;
-
-            // show_current_title(label);
-            // return true;
-            //}
-
-            show_current_title();
+        if (m_last_mouse_move_count_show > 6) {
+            show_current_title(true);
+            m_mouse_move = false;
         } else if (m_last_mouse_move_count_hide > 4) {
-            //  status = "HIDE";
-            m_title->hide_now();
-        }
-
-        // g_print("%s\n", status.c_str());
-
-        if (m_last_title_index != m_dockitem_index) {
-            m_last_title_index = m_dockitem_index;
+            show_current_title(false);
+            m_mouse_move = true;
         }
 
         m_mouse_move_count = g_get_real_time();
-        return true;
-
-        //  if (m_last_title_index != 0) return true;
-        if (!m_mouse_enter) return true;
-        //      if (m_dockitem_index != m_last_index) return true;
-
-        //  g_print("%f \n", m_mouse_move_timer.elapsed());
-        // if (m_mouse_move_timer.elapsed() < 1.0f) {
-        // m_title->hide();
-
-        // return true;
-        //}
-
-        // if (m_mouse_move_timer.elapsed() < 0.1f) {
-        // m_title->hide();
-
-        // return true;
-        //}
-
-        if (m_last_title_index != m_dockitem_index) {
-            m_last_title_index = m_dockitem_index;
-        }
-
-        // m_title->hide();
-        //  if (m_last_mousemoveEventTime != m_mousemoveEventTime) {
-        //  m_last_mousemoveEventTime = m_mousemoveEventTime;
-
-        // get the current item
-        //        }
         return true;
     }
 
@@ -303,13 +247,13 @@ namespace docklight
         //  m_mouse_move_timer.reset();
 
         m_mouse_move_count = 0;
-        //     m_title->hide();
-        // g_get_real_time();
 
         get_dockitem_index(event->x, event->y);
 
         if (m_dockitem_index != m_last_index) {
             m_last_index = m_dockitem_index;
+            //
+            //   show_current_title(true);
             Gtk::Widget::queue_draw();
         }
 

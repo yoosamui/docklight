@@ -145,14 +145,7 @@ namespace docklight
      */
     void PanelPreview::on_container_updated(window_action_t action, glong xid)
     {
-        //..    if (m_block_emit) return;
-
         if (m_visible && action == window_action_t::CLOSE) {
-            // int xx = 0;
-            // int yy = 0;
-            // system::get_mouse_position(xx, yy);
-            // m_anim->show_at(xx, yy);
-
             read_images();
 
             int size = m_dockitem->get_childmap().size();
@@ -162,8 +155,6 @@ namespace docklight
             }
 
             update();
-
-            ////  Gtk::Widget::queue_draw();
         }
     }
 
@@ -203,7 +194,7 @@ namespace docklight
 
     void PanelPreview::update()
     {
-        //      connect_signal(false);
+        connect_signal(false);
 
         int scalesize = get_scale_factor();
         Config()->set_image_size(scalesize);
@@ -239,7 +230,7 @@ namespace docklight
             }
         }
 
-        //    connect_signal(true);
+        connect_signal(true);
     }
 
     bool PanelPreview::get_visible() const
@@ -275,33 +266,43 @@ namespace docklight
 
     bool PanelPreview::on_button_press_event(GdkEventButton* event)
     {
+        if ((event->type != GDK_BUTTON_PRESS)) return false;
+
+        get_dockpreview_index(event->x, event->y);
+        auto size = m_current_images.size();
+        if (!size) return true;
+
+        g_print("----------------------INDEX %d %ld\n", m_dockpreview_index,
+                m_current_images.size());
         auto child = m_current_images.at(m_dockpreview_index).second;
         if (!child) return false;
 
-        if (!system::is_mutter_window_manager()) {
-            if (!system::is_mutter_window_manager() && event->button == 3) {
-                wnck::activate_window(child->get_wnckwindow());
-                read_images();
-                Gtk::Widget::queue_draw();
-                return true;
-            }
+        if (!system::is_mutter_window_manager() && event->button == 3) {
+            wnck::activate_window(child->get_wnckwindow());
+            read_images();
+            Gtk::Widget::queue_draw();
+            return true;
         }
 
         // handle close button
-        Gdk::Rectangle mouse_rect(event->x, event->y, 2, 2);
-        if (m_close_button_rectangle.intersects(mouse_rect)) {
-            m_block_leave = true;
+        if (event->button == 1) {
+            Gdk::Rectangle mouse_rect(event->x, event->y, 2, 2);
+            if (m_close_button_rectangle.intersects(mouse_rect)) {
+                m_block_leave = true;
 
-            m_current_images.erase(m_current_images.begin() + m_dockpreview_index);
+                wnck::close_window(child->get_wnckwindow());
+                //                            wnck_window_close(window, event_time);
 
-            wnck::close_window(child->get_wnckwindow());
+                //  m_current_images.erase(m_current_images.begin() + m_dockpreview_index);
+                //  get_dockpreview_index(event->x, event->y);
 
-            if (m_current_images.size() == 0) {
-                this->close();
+                if (m_current_images.size() == 0) {
+                    this->close();
+                    return true;
+                }
+
                 return true;
             }
-
-            return true;
         }
 
         wnck::activate_window(child->get_wnckwindow());
@@ -367,6 +368,8 @@ namespace docklight
             }
             pos_x += start_pos + area;
         }
+
+        if (m_dockpreview_index < 1) m_dockpreview_index = 0;
 
         return m_dockpreview_index;
     }
