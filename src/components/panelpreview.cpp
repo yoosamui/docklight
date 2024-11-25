@@ -274,6 +274,7 @@ namespace docklight
         if ((event->type != GDK_BUTTON_PRESS)) return false;
 
         get_dockpreview_index(event->x, event->y);
+
         auto size = m_current_images.size();
         if (!size) return true;
 
@@ -307,10 +308,6 @@ namespace docklight
             if (m_close_button_rectangle.intersects(mouse_rect)) {
                 m_block_leave = true;
 
-                //  wnck::close_window(child->get_wnckwindow());
-                //   wnck_window_close(child->get_wnckwindow(), 1);
-                // std::this_thread::sleep_for(std::chrono::milliseconds(500));
-                // vec.erase(vec.begin() + index);
                 m_current_images.erase(m_current_images.begin() + m_dockpreview_index);
                 get_dockpreview_index(event->x, event->y);
 
