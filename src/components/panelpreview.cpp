@@ -146,22 +146,27 @@ namespace docklight
     void PanelPreview::on_container_updated(window_action_t action, glong xid)
     {
         if (m_visible && action == window_action_t::CLOSE) {
-            read_images();
+            // int x = 0;
+            // int y = 0;
+            // system::get_mouse_position(x, y);
+            // m_anim->show_at(x, y);
 
-            int size = m_dockitem->get_childmap().size();
-            if (!size) {
-                this->close();
-                return;
-            }
+            // read_images();
 
-            update();
+            // int size = m_dockitem->get_childmap().size();
+            // if (!size) {
+            // this->close();
+            // return;
+            //}
+
+            // update();
         }
     }
 
     void PanelPreview::show_at(int dockitem_index, std::shared_ptr<DockItemIcon> dockitem)
     {
-        m_sigc_updated = Provider()->signal_update().connect(
-            sigc::mem_fun(this, &PanelPreview::on_container_updated));
+        // m_sigc_updated = Provider()->signal_update().connect(
+        // sigc::mem_fun(this, &PanelPreview::on_container_updated));
 
         connect_signal(true);
         m_dockitem_index = dockitem_index;
@@ -272,17 +277,29 @@ namespace docklight
         auto size = m_current_images.size();
         if (!size) return true;
 
-        g_print("----------------------INDEX %d %ld\n", m_dockpreview_index,
-                m_current_images.size());
-        auto child = m_current_images.at(m_dockpreview_index).second;
-        if (!child) return false;
+        // g_print("----------------------INDEX %d %ld\n", m_dockpreview_index,
+        //         m_current_images.size());
 
-        if (!system::is_mutter_window_manager() && event->button == 3) {
-            wnck::activate_window(child->get_wnckwindow());
-            read_images();
-            Gtk::Widget::queue_draw();
-            return true;
+        std::shared_ptr<DockItemIcon> child;  // = m_current_images.at(m_dockpreview_index).second;
+        int idx = 0;
+        for (auto& it : m_current_images) {
+            //   Glib::RefPtr<Gdk::Pixbuf> image = it.first;
+
+            if (idx++ != m_dockpreview_index) continue;
+            child = it.second;
+            break;
         }
+
+        if (!child) {
+            return false;
+        }
+
+        // if (!system::is_mutter_window_manager() && event->button == 3) {
+        // wnck::activate_window(child->get_wnckwindow());
+        // read_images();
+        // Gtk::Widget::queue_draw();
+        // return true;
+        //}
 
         // handle close button
         if (event->button == 1) {
@@ -290,11 +307,15 @@ namespace docklight
             if (m_close_button_rectangle.intersects(mouse_rect)) {
                 m_block_leave = true;
 
-                wnck::close_window(child->get_wnckwindow());
-                //                            wnck_window_close(window, event_time);
+                //  wnck::close_window(child->get_wnckwindow());
+                //   wnck_window_close(child->get_wnckwindow(), 1);
+                // std::this_thread::sleep_for(std::chrono::milliseconds(500));
+                // vec.erase(vec.begin() + index);
+                m_current_images.erase(m_current_images.begin() + m_dockpreview_index);
+                get_dockpreview_index(event->x, event->y);
 
-                //  m_current_images.erase(m_current_images.begin() + m_dockpreview_index);
-                //  get_dockpreview_index(event->x, event->y);
+                auto window = child->get_wnckwindow();
+                wnck::close_window(window);
 
                 if (m_current_images.size() == 0) {
                     this->close();
@@ -303,9 +324,9 @@ namespace docklight
 
                 return true;
             }
-        }
 
-        wnck::activate_window(child->get_wnckwindow());
+            wnck::activate_window(child->get_wnckwindow());
+        }
 
         return true;
     }
