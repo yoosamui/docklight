@@ -159,10 +159,20 @@ namespace docklight
                 centerX = width / 2 - area / 2;
                 x = Position()->get_x() + (m_dockitem_index * Config()->get_dock_area()) - centerX;
                 y = Position()->get_y() - 50;
+
+                if (Config()->get_dock_location() == dock_location_t::top) {
+                    y = Position()->get_y() + 60;
+                }
             } else {
+                //
                 centerY = m_title->get_height() / 2 - area / 2;
                 y = Position()->get_y() + (m_dockitem_index * Config()->get_dock_area()) - centerY;
-                x = Position()->get_x() + 50;
+
+                if (Config()->get_dock_location() == dock_location_t::left) {
+                    x = Position()->get_x() + 50;
+                } else {
+                    x = Position()->get_x() - area - width + 20;
+                }
             }
 
             m_title->move(x, y);
