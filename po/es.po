@@ -1,0 +1,135 @@
+#
+#  <>, YEAR-2024.
+# yoo <j-gonzalez@email.de>, 2024.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Docklight-5\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-08-25 16:14+0700\n"
+"PO-Revision-Date: 2024-08-19 10:05+0700\n"
+"Last-Translator: yoo <j-gonzalez@email.de>\n"
+"Language-Team: English - United States <j-gonzalez@email.de>\n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Gtranslator 42.0\n"
+
+#: ../src/translations.h:36
+msgid "Application start."
+msgstr "Inicio de la aplicación."
+
+#: ../src/translations.h:38
+msgid "Application activated."
+msgstr "Aplicación activada."
+
+#: ../src/translations.h:40
+msgid "Initialize panel."
+msgstr "Inicializar panel."
+
+#: ../src/translations.h:42
+msgid "Sets the primary Monitor."
+msgstr "Establece el monitor principal."
+
+#: ../src/translations.h:44
+msgid "Sets the Panel location: top, right, bottom or left. Default bottom"
+msgstr ""
+"Establece la ubicación del panel: arriba, derecha, abajo o izquierda. Parte "
+"inferior predeterminada"
+
+#: ../src/translations.h:46
+msgid ""
+"The dock alignment settings are start, end, center or fill. Default center."
+msgstr ""
+"Los ajustes de alineación del muelle son inicio, fin, centro o relleno. "
+"Centro predeterminado."
+
+#: ../src/translations.h:48
+msgid "parsed values"
+msgstr "valores analizados"
+
+#: ../src/translations.h:50
+#, c-format
+msgid "Free the %s object."
+msgstr "Libere el objeto %s."
+
+#: ../src/translations.h:52
+msgid "Display detected monitors"
+msgstr "Mostrar monitores detectados"
+
+#: ../src/translations.h:54
+msgid "Default monitor"
+msgstr "Monitor predeterminado"
+
+#: ../src/translations.h:56
+msgid "monitor"
+msgstr "monitor"
+
+#: ../src/translations.h:58
+msgid "Geometry"
+msgstr "Geometría"
+
+#: ../src/translations.h:60
+msgid "Workarea"
+msgstr "Área de trabajo"
+
+#: ../src/translations.h:62
+msgid "Width"
+msgstr "Ancho"
+
+#: ../src/translations.h:64
+msgid "Height"
+msgstr "Altura"
+
+#: ../src/translations.h:66
+msgid "Model"
+msgstr "Modelo"
+
+#~ msgid "  location"
+#~ msgstr " ubicación"
+
+#~ msgid "  alignment"
+#~ msgstr " alineación"
+
+#~ msgid "Docklight"
+#~ msgstr "Docklight"
+
+#~ msgid "Supports short and long commandline options for the group."
+#~ msgstr "Admite opciones de línea de comandos cortas y largas para el grupo."
+
+#~ msgid "help - Options can be single letters, prefixed by a single dash."
+#~ msgstr ""
+#~ "ayuda - Las opciones pueden ser letras individuales, precedidas por un "
+#~ "solo guión."
+
+#~ msgid "Report bugs to."
+#~ msgstr "Reportar errores."
+
+#~ msgid "Ready to go"
+#~ msgstr "Listo para ir"
+
+#, c-format
+#~ msgid "Report bugs to. %s"
+#~ msgstr "Reportar errores a. %s"
+
+#~ msgid "Bindtext domain"
+#~ msgstr "Dominio Bindtext"
+
+#~ msgid "Bind textdomain codesetbindtext domain"
+#~ msgstr "Enlazar textdomain codesetbindtext domain"
+
+#~ msgid "HELLO YOU AND MORE"
+#~ msgstr "HOLA TU Y MAS"
+
+#, c-format
+#~ msgid "The contents is: %d"
+#~ msgstr "El contenido es: %d"
+
+#~ msgid "CAR"
+#~ msgstr "coche"
+
+#, c-format
+#~ msgid "HELLO MUNDO: %s\n"
+#~ msgstr "HOLA JUAN: %s\n"
