@@ -6,8 +6,11 @@
 
 #include "appwindow.h"
 #include "appoptionsgroup.h"
-
+#include "components/position.h"
 #include "translations.h"
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
 // clang-format on
 
 namespace docklight
@@ -17,92 +20,74 @@ namespace docklight
 
     AppWindow::AppWindow()
     {
-        this->set_title(DOCKLIGHT_APPNAME);
+#define DOCK_WINDOW 1
+#ifdef DOCK_WINDOW
+        // A window to implement a docking bar used for creating the dock panel.
+        set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
+        set_decorated(false);
+#else
+        set_decorated(true);
 
-        // m_panel.signal_update().connect(sigc::mem_fun(this, &AppWindow::on_update));
+#endif
+        set_resizable(true);
+        set_skip_taskbar_hint(true);
+        set_skip_pager_hint(true);
+        set_keep_above(true);
 
-        this->createWindow();
+        set_size_request(1, 1);
+
+        Config();
+        m_provider = create_provider();
+        m_observer = create_observer();
+        m_position = create_position(this);
+        m_panel = new Panel();
+
+        add(*m_panel);
+        show_all();
+        g_message("Create AppWindow.");
     }
 
     AppWindow::~AppWindow()
     {
-        g_print(MSG_FREE_OBJECT, "AppWindow");
-        g_print("\n");
-    }
-
-    void AppWindow::createWindow()
-    {
-        GdkScreen* screen;
-        GdkVisual* visual;
-
-        gtk_widget_set_app_paintable(GTK_WIDGET(gobj()), TRUE);
-        screen = gdk_screen_get_default();
-        visual = gdk_screen_get_rgba_visual(screen);
-
-        if (visual != nullptr && gdk_screen_is_composited(screen)) {
-            gtk_widget_set_visual(GTK_WIDGET(gobj()), visual);
-        }
-
-        // A window to implement a docking bar used for creating the dock panel.
-        //    this->set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
-        this->set_skip_taskbar_hint(true);
-        this->set_skip_pager_hint(true);
-        //    this->set_keep_above(true);
-        //    this->set_decorated(false);
-        // wnck_set_client_type(WNCK_CLIENT_TYPE_PAGER);
-
-        // this->set_default_size(1, 1);
-
-        // this->set_gravity(Gdk::Gravity::GRAVITY_STATIC);
-        // this->set_size_request(10, 10);
-
-        // A window to implement a docking bar used for creating the dock panel.
-        //    this->set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
-        // this->set_skip_taskbar_hint(true);
-        // this->set_skip_pager_hint(true);
-        // this->set_keep_above(true);
-        // this->set_decorated(false);
-        // wnck_handle_new(WNCK_CLIENT_TYPE_PAGER);
-
-        Glib::signal_timeout().connect(
-            sigc::mem_fun(static_cast<AppWindow*>(this), &AppWindow::on_timeout_draw), 100);
-
-        this->add(m_panel);
-        this->show_all();
-
-        //  device::monitor::
+        g_message(MSG_FREE_OBJECT, "AppWindow");
     }
 
     int AppWindow::init(Glib::RefPtr<Gtk::Application>& app)
     {
         app->signal_activate().connect(sigc::ptr_fun(&AppWindow::on_app_activated));
+
         app->signal_command_line().connect(
             sigc::bind(sigc::ptr_fun(&AppWindow::on_command_line), app), false);
 
         Gdk::Screen::get_default()->signal_monitors_changed().connect(
             sigc::mem_fun(this, &AppWindow::on_monitor_changed));
 
+        // m_sigc_updated = get_dockitem_provider()->signal_update().connect(
+        // sigc::mem_fun(this, &AppWindow::on_container_updated));
+
+        Config()->load();
+        m_panel->init(app);
+
         return EXIT_SUCCESS;
     }
 
-    void AppWindow::send_notification(const Glib::ustring& title, const Glib::ustring& text,
+    /*void AppWindow::send_notification(const Glib::ustring& title, const Glib::ustring& text,
                                       const Glib::ustring& icon_name)
     {
-        auto Notification = Gio::Notification::create(title);
+        [>auto Notification = Gio::Notification::create(title);
         Notification->set_body(text);
         auto Icon = Gio::ThemedIcon::create(icon_name);
         Notification->set_icon(Icon);
 
-        m_application->send_notification(Notification);
-    }
+        // TODO: just for testing
+        m_application->send_notification(Notification);<]
+    }*/
 
     void AppWindow::on_app_activated()
     {
-        g_print(MSG_APPLICATION_ACTIVATED);
-        std::cout << std::endl;
-        //        g_print(MSG_INITIALIZE_PANEL);
-        AppWindow::send_notification(DOCKLIGHT_APPNAME, MSG_APPLICATION_START,
-                                     "dialog-information");
+        g_message(MSG_APPLICATION_ACTIVATED);
+        // AppWindow::send_notification(DOCKLIGHT_APPNAME, MSG_APPLICATION_START,
+        //"dialog-information");
     }
 
     int AppWindow::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine>& command_line,
@@ -119,28 +104,24 @@ namespace docklight
 
             try {
                 ctx.parse(argc, argv);
-            } catch (const Glib::Error& ex) {
-                std::cout << "Exception: " << ex.what() << std::endl;
-                return EXIT_FAILURE;
-            }
-
-            try {
                 group.validate();
-
             } catch (const Glib::Error& ex) {
-                std::cout << "Exception: " << ex.what() << std::endl;
-                return EXIT_FAILURE;
-            };
+                g_warning("on_command_line:Exception: %s", ex.what().c_str());
+            }
 
             std::cout << group.toString() << std::endl;
+            auto const args_list = group.getList();
 
-            for (auto&& t : group.getList()) {
-                std::cout << "R:" << std::get<0>(t) << ", " << std::get<1>(t) << ", "
-                          << std::get<2>(t) << std::endl;
-            }
+            // add args to config
+            Config()->set_arguments(args_list);
         }
 
-        std::cout << "\n" << _("Display detected monitors") << " :" << std::endl;
+        g_message("Window Manager : %s", system::get_window_manager_name().c_str());
+        g_message("Is Mutter WM: %s", system::is_mutter_window_manager() ? "yes" : "No");
+
+        device::monitor::set_current_monitor(Config()->get_monitor_name());
+
+        std::cout << "\n" << MSG_DISPLAY_DETECTED_MONITORS << " :" << std::endl;
 
         for (int i = 0; i < device::monitor::get_monitor_count(); i++) {
             auto const m = device::monitor::get_monitor(i);
@@ -150,72 +131,33 @@ namespace docklight
             m->get_geometry(geometry);
             m->get_workarea(workarea);
 
-            g_print("Monitor# %d %s g: %d x %d  w: %d x %d\n", i, m->get_model().c_str(),
-                    geometry.get_width(), geometry.get_height(), workarea.get_width(),
-                    workarea.get_height());
+            // clang-format off
+            std::cout << MSG_MONITOR  << " " <<  MSG_MODEL  << ":" << m->get_model() << std::endl
+                      << MSG_GEOMETRY << " " <<  MSG_WIDTH  << "=" << geometry.get_width() << std::endl
+                      << MSG_GEOMETRY << " " <<  MSG_HEIGHT << "=" << geometry.get_height() << std::endl
+                      << MSG_WORKAREA << " " <<  MSG_WIDTH  << "=" << workarea.get_width() << std::endl
+                      << MSG_WORKAREA << " " <<  MSG_HEIGHT << "=" << workarea.get_height() << std::endl
+                      << std::endl;
+
+            // clang-format on
         }
 
-        g_print("Default monitor: %d %s\n", device::monitor::get_monitor_number(),
-                device::monitor::get_current()->get_model().c_str());
+        std::cout << MSG_DEFAULT_MONITOR << ": " << device::monitor::get_monitor_number() << ", "
+                  << device::monitor::get_current()->get_model() << std::endl;
 
         app->activate();
         return EXIT_SUCCESS;
     }
 
-    bool AppWindow::on_timeout_draw()
-    {
-        //    if (isset) return false;
-        //   isset = true;
-        //    this->update_position();
-        return true;
-    }
-
     bool AppWindow::on_button_press_event(GdkEventButton* event)
     {
-        if ((event->type == GDK_BUTTON_PRESS)) {
-            //  this->update_position();
-            g_print("Press\n");
-
-            // shared_ptr<DockItem> item = shared_ptr<DockItem>(new DockItem());
-            // shared_ptr<DockItem> item = shared_ptr<DockItem>(new DockItem());
-
-            // Glib::RefPtr<DockItem> item = Glib::RefPtr<DockItem>(new DockItem());
-            // item->m_image = m_icon;
-
-            // m_panel.add(item);
-        }
-        //  std::cout << m_display.get_screen_count() << std::endl;
-
         return true;
     }
 
     void AppWindow::on_monitor_changed()
     {
-        //     device::monitor::set_primary();
-        g_warning("!!!!!!!!!!!!!! on_monitor_change.\n");
-        update_position();
+        g_message("on_monitor_changed.");
+        m_position->on_monitor_changed();
     }
 
-    void AppWindow::update_position()
-    {
-        // position_util::set_window_position();
-        // g_print("AppWindow updated.\n");
-
-        /*// int area = 64 + 20;  // config::get_dock_area();
-        int area = config::get_dock_area();
-        auto const workarea = get_workarea();
-        //  auto const alignment = config::get_dock_alignment();
-        // auto const panel = m_window->get_panel();
-        int xpos = 0, ypos = 0, center = 0;
-
-        int width = m_panel.get_required_size();
-        //   g_print("---------- %d\n", width);
-        center = workarea.get_width() / 2 - width / 2;
-        xpos = workarea.get_x() + center;
-
-        ypos = workarea.get_y() + workarea.get_height() - area;
-
-        this->resize(width, area);
-        this->move(xpos, ypos);*/
-    }
 }  // namespace docklight

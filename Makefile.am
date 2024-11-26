@@ -16,17 +16,3 @@ DISTCLEANFILES = intltool-extract \
                  intltool-update \
                  po/.intltool-merge-cache	
 
-# Depending on the types of files that contain translatable strings, add code such as
-#desktopdir = $(datadir)/applications
-#desktop_in_files = programname.desktop.in
-#desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
-#@INTLTOOL_DESKTOP_RULE@
-
-
-		
-#dist_doc_DATA = README
-#DIST_SUBDIRS = data
-# this works - it deletes testSubDir in root
-#clean-local:
-#	-rm -rf testSubDir
-

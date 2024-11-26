@@ -23,7 +23,10 @@ namespace docklight
             const Glib::RefPtr<Gdk::Monitor> get_monitor(int monitor_num);
             const Glib::RefPtr<Gdk::Monitor> get_monitor();
             const Glib::RefPtr<Gdk::Monitor> get_current();
+
+            void set_current_monitor(Glib::ustring name);
             void set_current_monitor(int monitor_num);
+
             int get_monitor_number();
             Gdk::Rectangle get_workarea();
             Gdk::Rectangle get_geometry();

@@ -1,32 +1,17 @@
-SUBDIRS = icons	
+SUBDIRS = icons
 
-EXTRA_DIST = \
-	images/docklight.home.ico \
-	docklight.menu.desktop \
+policydir = /usr/share/polkit-1/actions
+policy_DATA = \
 	org.freedesktop.docklight.policy \
-	docklight.template.desktop \
-	docklight.ini \
-	docklight.launcher.sh \
 	$(NULL)
 
-#CLEANFILES = \
-#	docklight.menu.desktop \
-#	$(NULL)
-
-#/usr/share/polkit-1/actions
-policydir = /usr/share/polkit-1/actions
-policy_DATA = org.freedesktop.docklight.policy
-
-#/usr/local/share
-#applicationsdir = $(datadir)/applications
-#applications_DATA = 4autotools/docklight.menu.desktop
-
 applicationsdir = /usr/share/applications
-applications_DATA = docklight.menu.desktop
+applications_DATA = \
+	docklight.desktop \
+	$(NULL)
 
 
-#/docklight.data
-docklightdatadir = $(bindir)/data
+docklightdatadir = $(bindir)/docklight-5/data
 docklightdata_DATA = \
 		docklight.ini \
 		docklight.launcher.sh \
@@ -34,34 +19,33 @@ docklightdata_DATA = \
 		$(NULL)
 
 
-docklightimagesdir = $(bindir)/data/images
-docklightimages_DATA = 	images/docklight.home.ico \
+docklightimagesdir = $(bindir)/docklight-5/data/images
+docklightimages_DATA = 	\
+			images/docklight.home.ico \
+			images/docklight-home.svg \
+			images/explodes.svg \
 			images/*.png \
 			$(NULL)
 
 @INTLTOOL_DESKTOP_RULE@
 
-#if test -f "/usr/local/bin/docklight"; then rm -f "/usr/local/bin/docklight"; fi
-#ln -s  $(bindir)/docklight "/usr/local/bin/docklight"
+
+install-data-local:
+
+	if test -f $(srcdir)/docklight.sh; then cp $(srcdir)/docklight.sh $(bindir); fi
+	if test -f $(bindir)/docklight.sh; then chmod u+x $(bindir)/docklight.sh; fi
+	if test -f $(bindir)/docklight.sh; then mv $(bindir)/docklight.sh /bin; fi
+	if test -f /bin/docklight.sh && test ! -L /bin/docklight5; then ln -s /bin/docklight.sh /bin/docklight5; fi
+
+
 install-exec-hook:
-	if test ! -d $(bindir)/data; then mkdir $(bindir)/data; fi
-	if test ! -d $(bindir)/data/attachments; then mkdir $(bindir)/data/attachments; fi
-	chmod -R 0777 $(bindir)/data		
-	
-	
-	
 
-	
-#if test -d $(prefix); then rm -fr $(prefix); fi	
+	mkdir -p $(bindir)/docklight-5
+	if test -f $(bindir)/docklight; then mv $(bindir)/docklight  $(bindir)/docklight-5; fi
+
 uninstall-hook:
-	if test -L "/usr/local/bin/docklight"; then rm "/usr/local/bin/docklight"; fi
-	if test -d $(bindir)/data; then rm -fr $(bindir)/data; fi
-	if test -d "/usr/lib/docklight" ; then rm -fr "/usr/lib/docklight"; fi	
 
-
-#desktopdir = $(datadir)/applications
-#desktop_in_files = docklight.menu.desktop.in
-#desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
-#@INTLTOOL_DESKTOP_RULE@
-
+	if test -d $(bindir)/docklight-5; then rm -fdr $(bindir)/docklight-5; fi
+	if test -f /bin/docklight.sh; then rm -f /bin/docklight.sh; fi
+	if test	-L /bin/docklight5; then rm /bin/docklight5; fi
 

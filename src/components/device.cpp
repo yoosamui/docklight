@@ -78,10 +78,27 @@ namespace docklight
                 return m_monitor_number;
             }
 
+            void set_current_monitor(Glib::ustring name)
+            {
+                for (int i = 0; i < get_monitor_count(); i++) {
+                    auto m = get_monitor(i);
+
+                    if (m->is_primary() && name == "primary") {
+                        m_monitor_number = i;
+                        break;
+                    }
+
+                    if (m->get_model() == name) {
+                        m_monitor_number = i;
+                        break;
+                    }
+                }
+            }
+
             void set_current_monitor(int monitor_num)
             {
                 if (monitor_num > get_monitor_count()) {
-                    g_error("Invalid monitor number\n");
+                    g_warning("Invalid monitor number: %d\n", monitor_num);
                     return;
                 }
 
