@@ -115,7 +115,7 @@ namespace docklight
     bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
     {
         // m_sigc_draw =
-        // Glib::signal_timeout().connect(sigc::mem_fun(this, &Panel::on_timeout_draw), 1000 / 60);
+        // Glib::signal_timeout().connect(sigc::mem_fun(this, &Panel::on_timeout_draw), 1000 / 30);
 
         m_mouse_move_count = 0.f;
         m_last_mouse_move_count_show = 0.f;
@@ -127,7 +127,7 @@ namespace docklight
 
     bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
     {
-        //        m_sigc_draw.disconnect();
+        m_sigc_draw.disconnect();
         m_preview_open = false;
 
         show_current_title(false);
@@ -156,8 +156,15 @@ namespace docklight
             int x, y;
 
             if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-                centerX = width / 2 - area / 2;
-                x = Position()->get_x() + (m_dockitem_index * Config()->get_dock_area()) - centerX;
+                int min = std::min(width, area);
+                int max = std::max(width, area);
+
+                centerX = max / 2 - min / 2;
+                if (width == min) {
+                    centerX = (min / 2 - max / 2);
+                }
+
+                x = (Position()->get_x() + (m_dockitem_index * area)) - centerX;
                 y = Position()->get_y() - 50;
 
                 if (Config()->get_dock_location() == dock_location_t::top) {
@@ -165,17 +172,20 @@ namespace docklight
                 }
             } else {
                 //
-                centerY = m_title->get_height() / 2 - area / 2;
-                y = Position()->get_y() + (m_dockitem_index * Config()->get_dock_area()) - centerY;
+
+                int min = std::min(m_title->get_height(), area);
+                int max = std::max(m_title->get_height(), area);
+
+                centerY = max / 2 - min / 2;
+                y = Position()->get_y() + (m_dockitem_index * Config()->get_dock_area()) + centerY;
 
                 if (Config()->get_dock_location() == dock_location_t::left) {
-                    x = Position()->get_x() + 50;
+                    x = Position()->get_x() + area;
                 } else {
-                    x = Position()->get_x() - area - width + 20;
+                    x = Position()->get_x() - width;
                 }
             }
 
-            m_title->move(x, y);
             m_title->show_at(x, y, m_dockitem_index);
         } else {
             m_title->hide_now();
@@ -185,9 +195,10 @@ namespace docklight
     bool Panel::on_timeout_draw()
     {
         if (!m_mouse_enter) return true;
-        // if (m_last_index && == m_dockitem_index) {
-        // return true;
-        //}
+        if (m_last_index != m_dockitem_index) {
+            show_current_title(true);
+            return true;
+        }
 
         if (m_mouse_move_count > 1.1f) {
             m_last_mouse_move_count_show++;
@@ -197,11 +208,11 @@ namespace docklight
             m_last_mouse_move_count_show = 0;
         }
 
-        if (m_last_mouse_move_count_show > 6) {
-            // show_current_title(true);
+        if (m_last_mouse_move_count_show > 3) {
+            show_current_title(true);
             m_mouse_move = false;
-        } else if (m_last_mouse_move_count_hide > 2) {
-            // show_current_title(false);
+        } else if (m_last_mouse_move_count_hide > 3) {
+            show_current_title(false);
             m_mouse_move = true;
         }
 
@@ -267,15 +278,12 @@ namespace docklight
         //  m_mouse_move_timer.reset();
 
         m_mouse_move_count = 0;
-
         get_dockitem_index(event->x, event->y);
 
-        show_current_title(!m_mouse_move);  // fluent
+        show_current_title(true /*m_mouse_move*/);  // fluent
 
         if (m_dockitem_index != m_last_index) {
             m_last_index = m_dockitem_index;
-            //
-            //   show_current_title(true);
             Gtk::Widget::queue_draw();
         }
 

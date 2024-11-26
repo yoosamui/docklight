@@ -62,7 +62,6 @@ namespace docklight
 
     void TitleWindow::show_at(int x, int y, int index)
     {
-        if (m_visible) return;
         // resize(2, this->get_height());
         // move(x, y);
 
@@ -73,8 +72,17 @@ namespace docklight
         int centerX = width / 2 - area / 2;
         int x = Position()->get_x() + (index * Config()->get_dock_area()) - centerX;
         int y = Position()->get_y() - 50;*/
+        // auto text = m_Label.get_text();
 
-        // move(x, y);
+        // if (m_last_text != text) {
+        // m_last_text = text;
+        //} else {
+        // return;
+        //}
+
+        move(x, y);
+
+        if (m_visible) return;
 
         show_all();
         m_visible = true;

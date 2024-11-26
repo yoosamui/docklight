@@ -53,7 +53,9 @@ namespace docklight
       private:
         void connect_signal(bool connect);
         bool on_timeout_draw();
+        // bool on_timeout_close_window();
 
+        // void thread_func();
         guint get_dockpreview_index(int mx, int my);
         guint get_scale_factor();
 
@@ -70,6 +72,8 @@ namespace docklight
         void on_container_updated(window_action_t action, glong xid);
 
       private:
+        //  sigc::connection m_sigc_close_window;
+        //  std::shared_ptr<std::thread> m_bck_thread;
         Glib::RefPtr<ExplodesWindow> m_anim;
         // ExplodesWindow* m_anim;
         sigc::connection m_sigc_updated;
@@ -83,6 +87,8 @@ namespace docklight
 
         // std::vector<std::pair<gint, std::shared_ptr<DockItemIcon>>> m_windows;
         std::shared_ptr<DockItemIcon> m_dockitem;
+
+        //   WnckWindow* m_delete_pending_window = nullptr;
 
         int m_last_dockpreview_index = 0;
         int m_dockitem_index = 0;
