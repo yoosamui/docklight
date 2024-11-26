@@ -145,11 +145,11 @@ namespace docklight
         g_signal_connect(G_OBJECT(wnckscreen), "window-closed",
                          G_CALLBACK(&AppObserver::on_window_closed), nullptr);
 
-        g_signal_connect(G_OBJECT(wnckscreen), "icon-changed",
-                         G_CALLBACK(&AppObserver::on_icon_changed), nullptr);
+        // g_signal_connect(G_OBJECT(wnckscreen), "icon-changed",
+        // G_CALLBACK(&AppObserver::on_icon_changed), nullptr);
 
-        g_signal_connect(G_OBJECT(wnckscreen), "actions-changed",
-                         G_CALLBACK(&AppObserver::on_actions_changed), nullptr);
+        // g_signal_connect(G_OBJECT(wnckscreen), "actions-changed",
+        // G_CALLBACK(&AppObserver::on_actions_changed), nullptr);
         g_message("Create AppObserver.");
     }
 

@@ -32,6 +32,7 @@
 #include "utils/system.h"
 #include "translations.h"
 // clang-format on
+
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
@@ -67,6 +68,9 @@ namespace docklight
                    );
         // clang-format on
 
+        // m_sigc_close_window = Glib::signal_timeout().connect(
+        // sigc::mem_fun(this, &PanelPreview::on_timeout_close_window), 1000);
+
         m_anim = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
         m_size = Config()->get_preview_area();
     }
@@ -88,8 +92,34 @@ namespace docklight
         }
     }
 
-    bool PanelPreview::on_timeout_draw()
+    /*bool PanelPreview::on_timeout_close_window()
+    {
+        if (m_visible) {
+            if (m_delete_pending_window) {
+                wnck::close_window(m_delete_pending_window);
+                m_delete_pending_window = nullptr;
+            }
+        }
 
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        return true;
+    }
+
+    void PanelPreview::thread_func()
+    {
+        while (true) {
+            if (m_visible) {
+                if (m_delete_pending_window) {
+                    wnck::close_window(m_delete_pending_window);
+                    m_delete_pending_window = nullptr;
+                }
+            }
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        }
+    }*/
+
+    bool PanelPreview::on_timeout_draw()
     {
         read_images();
         Gtk::Widget::queue_draw();
@@ -103,6 +133,7 @@ namespace docklight
 
     void PanelPreview::read_images()
     {
+        m_block_draw = true;
         //   m_windows.clear();
         m_current_images.clear();
 
@@ -111,8 +142,8 @@ namespace docklight
             // int event_time = gtk_get_current_event_time();
             // GdkScreen* screen = gdk_screen_get_default();
             // int current_ws_number = gdk_x11_screen_get_current_desktop(screen);
-            // auto cws = wnck_screen_get_workspace(wnck::get_default_screen(), current_ws_number);
-            // int cws_number = 0;
+            // auto cws = wnck_screen_get_workspace(wnck::get_default_screen(),
+            // current_ws_number); int cws_number = 0;
 
             for (auto& it : m_dockitem->get_childmap()) {
                 auto child = it.second;
@@ -147,6 +178,7 @@ namespace docklight
                 }
             }
         }
+        m_block_draw = false;
     }
 
     /**
@@ -154,13 +186,23 @@ namespace docklight
      */
     void PanelPreview::on_container_updated(window_action_t action, glong xid)
     {
-        //..    if (m_block_emit) return;
-
         if (m_visible && action == window_action_t::CLOSE) {
-            int xx = 0;
-            int yy = 0;
-            system::get_mouse_position(xx, yy);
-            m_anim->show_at(xx, yy);
+            bool found = false;
+
+            for (auto& it : m_current_images) {
+                auto child = it.second;
+
+                if (child->get_xid() != (gulong)xid) continue;
+                found = true;
+                break;
+            }
+
+            if (!found) return;
+
+            int x = 0;
+            int y = 0;
+            system::get_mouse_position(x, y);
+            m_anim->show_at(x, y);
 
             read_images();
 
@@ -171,8 +213,6 @@ namespace docklight
             }
 
             update();
-
-            ////  Gtk::Widget::queue_draw();
         }
     }
 
@@ -212,7 +252,7 @@ namespace docklight
 
     void PanelPreview::update()
     {
-        //      connect_signal(false);
+        connect_signal(false);
 
         int scalesize = get_scale_factor();
         Config()->set_image_size(scalesize);
@@ -248,7 +288,7 @@ namespace docklight
             }
         }
 
-        //    connect_signal(true);
+        connect_signal(true);
     }
 
     bool PanelPreview::get_visible() const
@@ -257,6 +297,8 @@ namespace docklight
     }
     void PanelPreview::hide_now()
     {
+        connect_signal(false);
+
         m_sigc_updated.disconnect();
         m_sigc_connection.disconnect();
 
@@ -284,36 +326,39 @@ namespace docklight
 
     bool PanelPreview::on_button_press_event(GdkEventButton* event)
     {
-        auto child = m_current_images.at(m_dockpreview_index).second;
-        if (!child) return false;
+        if ((event->type != GDK_BUTTON_PRESS)) return false;
 
-        if (!system::is_mutter_window_manager()) {
-            if (!system::is_mutter_window_manager() && event->button == 3) {
-                wnck::activate_window(child->get_wnckwindow());
-                read_images();
-                Gtk::Widget::queue_draw();
+        auto size = m_current_images.size();
+        if (!size) return true;
+
+        std::shared_ptr<DockItemIcon> child = m_current_images.at(m_dockpreview_index).second;
+        if (!child) {
+            return false;
+        }
+        if (event->button == 1) {
+            Gdk::Rectangle mouse_rect(event->x, event->y, 2, 2);
+            if (m_close_button_rectangle.intersects(mouse_rect)) {
+                m_block_leave = true;
+
+                auto window = child->get_wnckwindow();
+
+                /* TODO: cause non reproducible CRASHING!
+                (docklight:1520525): Gdk-WARNING **: 11:15:10.429: The program 'docklight' received
+                an X Window System error. This probably reflects a bug in the program. The error was
+                'BadDrawable (invalid Pixmap or Window parameter)'. (Details: serial 12258
+                error_code 9 request_code 53 (core protocol) minor_code 0) (Note to programmers:
+                normally, X errors are reported asynchronously; that is, you will receive the error
+                a while after causing it. To debug your program, run it with the GDK_SYNCHRONIZE
+                environment variable to change this behavior. You can then get a meaningful
+                   backtrace from your debugger if you break on the gdk_x_error() function.)
+                 */
+                wnck::close_window(window);
+
                 return true;
             }
+
+            wnck::activate_window(child->get_wnckwindow());
         }
-
-        // handle close button
-        Gdk::Rectangle mouse_rect(event->x, event->y, 2, 2);
-        if (m_close_button_rectangle.intersects(mouse_rect)) {
-            m_block_leave = true;
-
-            m_current_images.erase(m_current_images.begin() + m_dockpreview_index);
-
-            wnck::close_window(child->get_wnckwindow());
-
-            if (m_current_images.size() == 0) {
-                this->close();
-                return true;
-            }
-
-            return true;
-        }
-
-        wnck::activate_window(child->get_wnckwindow());
 
         return true;
     }
@@ -444,11 +489,15 @@ bool Panel_preview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
             pos_x += start_pos + area;
         }
 
+        if (m_dockpreview_index < 1) m_dockpreview_index = 0;
+
         return m_dockpreview_index;
     }
 
     bool PanelPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     {
+        if (m_block_draw) return true;
+
         cr->set_source_rgba(0.266, 0.309, 0.361, 1.0);
         cr->paint();
 
@@ -463,7 +512,8 @@ bool Panel_preview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
             auto child = it.second;
 
             if (idx == m_dockpreview_index) {
-                //                cr->set_source_rgba(0.992, 0.858, 0.003, 1.0);  // 1, 1, 1, 0.2)
+                //                cr->set_source_rgba(0.992, 0.858, 0.003, 1.0);  // 1, 1,
+                //                1, 0.2)
                 //                //GELB
                 cr->set_source_rgba(1, 1, 1, 0.2);
                 cr->rectangle(startX, startY, m_size, margin);

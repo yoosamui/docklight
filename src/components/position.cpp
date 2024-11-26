@@ -65,6 +65,16 @@ namespace docklight
         return device::monitor::get_geometry();
     }
 
+    int PositionManager::get_x() const
+    {
+        return m_x;
+    }
+
+    int PositionManager::get_y() const
+    {
+        return m_y;
+    }
+
     Gdk::Rectangle PositionManager::get_window_geometry() const
     {
         return Gdk::Rectangle(m_x, m_y, m_window->get_width(), m_window->get_height());
