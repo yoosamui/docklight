@@ -9,14 +9,14 @@ Helps to access and manage application windows.
 clone this repository if you want to get the **stable** version:
 
 ```bash
-git clone [(https://github.com/yoosamui/docklight)]
+git clone https://github.com/yoosamui/docklight
 ```
 This will create the diretory docklight.
 
 clone this repository if you want to get the **current** version:
 
 ```bash
-git clone --branch current [(https://github.com/yoosamui/docklight)]
+git clone --branch current https://github.com/yoosamui/docklight
 ```
 This will create the directory docklight.
 
@@ -38,10 +38,14 @@ Start it with:
 
 ```bash
 docklight5
+or with parameters like so:
+docklight5 '-l left '
 ```
+
 You can start docklight with the following parameters:
 
 ![image](https://github.com/user-attachments/assets/9555d475-219b-43fc-9f16-237003d7f509)
+Remember that, parameters replace the config file values. 
 
 
 You should start docklight after your linux login.
@@ -89,6 +93,15 @@ cd docklight
 /src/docklight
 
 ```
+
+## Configure
+Change the icon or preview size values or event create new themes.
+
+
+The configurations directory is here: **/home/$USER/.config/docklight**
+
+The configuration Filename is: **docklight5.config**
+
 
 ## Current state
 
