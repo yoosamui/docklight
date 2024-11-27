@@ -45,6 +45,7 @@ docklight5 '-l left '
 You can start docklight with the following parameters:
 
 ![image](https://github.com/user-attachments/assets/9555d475-219b-43fc-9f16-237003d7f509)
+Remember that, parameters replace the config file values. 
 
 
 You should start docklight after your linux login.
