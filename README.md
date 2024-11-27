@@ -38,7 +38,10 @@ Start it with:
 
 ```bash
 docklight5
+or with parameters like so:
+docklight5 '-l left '
 ```
+
 You can start docklight with the following parameters:
 
 ![image](https://github.com/user-attachments/assets/9555d475-219b-43fc-9f16-237003d7f509)
