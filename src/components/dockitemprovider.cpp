@@ -584,10 +584,12 @@ namespace docklight
         char config_filename[PATH_MAX];
         sprintf(config_filename, "%s/%s", config_dir, "docklight5.config");
 
-        if (!system::file_exists(config_filename)) {
-            // TODO: replace with content
-            std::ofstream file(config_filename);
-            file.close();
+        const auto default_source = "data/docklight5.config";
+        if (!system::file_exists(config_filename) && system::file_exists(default_source)) {
+            std::ifstream src(default_source, std::ios::in);
+            std::ofstream dst(config_filename, std::ios::out);
+
+            dst << src.rdbuf();
         }
 
         return buff;
