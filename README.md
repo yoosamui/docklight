@@ -95,6 +95,9 @@ cd docklight
 ```
 
 ## Configure
+Change the icon or preview size values or event create new themes.
+
+
 The configurations directory is here: **/home/$USER/.config/docklight**
 
 The configuration Filename is: **docklight5.config**
