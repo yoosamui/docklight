@@ -3,7 +3,9 @@ Linux Dock with Preview.
 Helps to access and manage application windows.
 
 
-![image](https://github.com/user-attachments/assets/4812ee56-6ed9-4c01-96d8-2830f6fe3543)
+
+![image](https://github.com/user-attachments/assets/506580b6-8581-4671-b1c0-453899077437)
+
 
 ## Installation
 clone this repository if you want to get the **stable** version:
