@@ -94,6 +94,11 @@ cd docklight
 
 ```
 
+## Configure
+The configurations directory is here: **/home/$USER/.config/docklight**
+The configuration Filename is: **docklight5.config**
+
+
 ## Current state
 
 in development...
