@@ -30,8 +30,9 @@ namespace docklight
                                                GKeyFileFlags::G_KEY_FILE_NONE, &error);
         if (!found) {
             if (error) {
-                g_warning("Load: configuration could not be found. %s %s\n", error->message,
-                          filepath.c_str());
+                g_error("Load: configuration could not be found. %s %s\n", error->message,
+                        filepath.c_str());
+
                 g_error_free(error);
                 error = nullptr;
                 g_key_file_free(m_key_file);

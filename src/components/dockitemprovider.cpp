@@ -19,6 +19,8 @@
 // clang-format off
 #include "components/dockitemprovider.h"
 #include <glibmm/fileutils.h>
+#include <fstream>
+#include <iostream>
 // clang-format on
 
 namespace docklight
@@ -157,6 +159,7 @@ namespace docklight
 
     int DockItemProvider::remove(gulong xid)
     {
+        // Throws nothing.
         m_window_images.erase(xid);
 
         // bye, bye
@@ -577,6 +580,15 @@ namespace docklight
 
         char buff[PATH_MAX];
         sprintf(buff, "%s/%s", config_dir, "docklight5.dat");
+
+        char config_filename[PATH_MAX];
+        sprintf(config_filename, "%s/%s", config_dir, "docklight5.config");
+
+        if (!system::file_exists(config_filename)) {
+            // TODO: replace with content
+            std::ofstream file(config_filename);
+            file.close();
+        }
 
         return buff;
     }
