@@ -6,18 +6,23 @@ Helps to access and manage application windows.
 
 
 ## Installation
+clone this repository to get the stable version:
+```bash
+git clone [(https://github.com/yoosamui/docklight)]
+This will create the diretory docklight.
 
 clone this repository to get the current version:
 
 ```bash
 git clone --branch current [(https://github.com/yoosamui/docklight)]
 This will create the diretory docklight.
-cd into it:
 ```
+cd into it:
 
 ```bash
 cd docklight
 ```
+
 Now execute the following bash scripts:
 
 ```bash
@@ -36,7 +41,7 @@ You can start docklight with the following parameters:
 
 
 
-You can start docklight after your linux login.
+You should start docklight after your linux login.
 Create the folowing desktop file:
 
 ```bash
@@ -60,6 +65,7 @@ named it "docklight5.desktop" and save it at
 ## Uninstallation
 
 ```bash
+cd docklight
 sudo make uninstall
 ```
 If you want to remove the configuration files, do the following bash statement:
@@ -75,6 +81,7 @@ cd docklight
 make
 
 The final execuable is located at:
+cd docklight
 /src/docklight
 
 ```
