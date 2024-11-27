@@ -16,6 +16,7 @@ docklightdata_DATA = \
 		docklight.ini \
 		docklight.launcher.sh \
 		docklight.template.desktop \
+		docklight5.config \
 		$(NULL)
 
 
