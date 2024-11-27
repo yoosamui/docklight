@@ -24,6 +24,8 @@ namespace docklight
     {
         bool get_mouse_position(int& x, int& y);
         bool is_mutter_window_manager();
+        bool file_exists(std::string name);
+        std::string file_exists(const std::string& directory, std::string& file_name);
         bool is_directory_exists(const char* directory_name);
         bool create_directory_if_not_exitst(const char* directory_name);
 
