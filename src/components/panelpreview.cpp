@@ -137,7 +137,9 @@ namespace docklight
             // current_ws_number); int cws_number = 0;
 
             for (auto& it : m_dockitem->get_childmap()) {
+                auto xid = it.first;
                 auto child = it.second;
+                auto window = child->get_wnckwindow();
 
                 m_image = Provider()->get_window_image(child->get_xid());
 
@@ -146,17 +148,15 @@ namespace docklight
                                              Config()->get_preview_image_size());
                 }
 
-                // auto window = child->get_wnckwindow();
-                // if (window [>&& !wnck_window_is_minimized(window) &&
-                // !wnck_window_is_pinned(window)
-                //&& wnck::is_window_on_current_desktop(window)*/) {
-                // auto xid = it.first;
-
-                // if (pixbuf::get_window_image(xid, m_image,
-                // Config()->get_preview_image_size())) {
-                // Provider()->set_window_image(xid, m_image);
-                //}
-                //}
+                if (window && !wnck_window_is_minimized(window) && !wnck_window_is_pinned(window) &&
+                    wnck::is_window_on_current_desktop(window)) {
+                    pixbuf::get_window_image(child->get_xid(), m_image,
+                                             Config()->get_preview_image_size());
+                    // if (pixbuf::get_window_image(xid, m_image,
+                    // Config()->get_preview_image_size())) {
+                    // Provider()->set_window_image(xid, m_image);
+                    //}
+                }
 
                 auto pair = std::make_pair(m_image, child);
                 m_current_images.push_back(pair);
