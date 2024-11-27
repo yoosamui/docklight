@@ -100,7 +100,7 @@ namespace docklight
     }
     bool TitleWindow::on_draw(const Cairo::RefPtr<Cairo::Context> &cr)
     {
-        Gdk::Rectangle rect = Gdk::Rectangle(0, 0, this->get_width(), this->get_height());
+        // Gdk::Rectangle rect = Gdk::Rectangle(0, 0, this->get_width(), this->get_height());
         //..  cairo_util::fill(cr, m_theme.PanelTitle(), m_theme.PanelGradient(), rect);
         cr->paint();
 
