@@ -160,7 +160,9 @@ namespace docklight
     int DockItemProvider::remove(gulong xid)
     {
         // Throws nothing.
-        m_window_images.erase(xid);
+        if (m_window_images.count(xid)) {
+            m_window_images.erase(xid);
+        }
 
         // bye, bye
         auto count = m_container.remove<DockItemIcon>(xid);
@@ -316,7 +318,9 @@ namespace docklight
 
     void DockItemProvider::set_window_image(gulong xid, Glib::RefPtr<Gdk::Pixbuf> image)
     {
-        m_window_images[xid] = image;
+        if (image) {
+            m_window_images[xid] = image;
+        }
     }
 
     void DockItemProvider::set_window_image(WnckWindow* window, bool initial)
