@@ -135,23 +135,29 @@ namespace docklight
             // int current_ws_number = gdk_x11_screen_get_current_desktop(screen);
             // auto cws = wnck_screen_get_workspace(wnck::get_default_screen(),
             // current_ws_number); int cws_number = 0;
+            int size = Config()->get_preview_image_size();
 
             for (auto& it : m_dockitem->get_childmap()) {
                 auto xid = it.first;
                 auto child = it.second;
                 auto window = child->get_wnckwindow();
 
-                m_image = Provider()->get_window_image(child->get_xid());
+                m_image = Provider()->get_window_image(xid);
 
                 if (!m_image) {
-                    pixbuf::get_window_image(child->get_xid(), m_image,
-                                             Config()->get_preview_image_size());
+                    pixbuf::get_window_image(xid, m_image, size);
                 }
 
+                // g_print("pixbuf:: get_gdk_pixbuf_from_window: %d x %d\n", m_image->get_width(),
+                // m_image->get_height());
+
+                //   std::this_thread::sleep_for(std::chrono::milliseconds(5));
                 if (window && !wnck_window_is_minimized(window) && !wnck_window_is_pinned(window) &&
                     wnck::is_window_on_current_desktop(window)) {
-                    pixbuf::get_window_image(child->get_xid(), m_image,
-                                             Config()->get_preview_image_size());
+                    //          pixbuf::get_window_image(xid, m_image, size);
+
+                    // if (image) m_image = image;
+
                     // if (pixbuf::get_window_image(xid, m_image,
                     // Config()->get_preview_image_size())) {
                     // Provider()->set_window_image(xid, m_image);
