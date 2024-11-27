@@ -9,14 +9,14 @@ Helps to access and manage application windows.
 clone this repository if you want to get the **stable** version:
 
 ```bash
-git clone [(https://github.com/yoosamui/docklight)]
+git clone https://github.com/yoosamui/docklight
 ```
 This will create the diretory docklight.
 
 clone this repository if you want to get the **current** version:
 
 ```bash
-git clone --branch current [(https://github.com/yoosamui/docklight)]
+git clone --branch current https://github.com/yoosamui/docklight
 ```
 This will create the directory docklight.
 
