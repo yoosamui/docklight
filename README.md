@@ -6,14 +6,14 @@ Helps to access and manage application windows.
 
 
 ## Installation
-clone this repository to get the stable version:
+clone this repository if you want to get the **stable** version:
 
 ```bash
 git clone [(https://github.com/yoosamui/docklight)]
 ```
 This will create the diretory docklight.
 
-clone this repository to get the current version:
+clone this repository if you want to get the **current** version:
 
 ```bash
 git clone --branch current [(https://github.com/yoosamui/docklight)]
