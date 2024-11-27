@@ -29,7 +29,7 @@
 #include <unistd.h>
 #include <stdexcept>
 #include <string>
-
+#include <filesystem>
 #include "system.h"
 // clang-format on
 
@@ -87,6 +87,36 @@ namespace docklight
                 return std::string(pw->pw_name);
             }
             return {};
+        }
+
+        bool file_exists(std::string name)
+        {
+            struct stat buffer;
+            return (stat(name.c_str(), &buffer) == 0);
+        }
+        // ignore case
+        std::string file_exists(const std::string& directory, std::string& file_name)
+        {
+            DIR* dir = nullptr;
+            dir = opendir(directory.c_str());
+            if (dir == 0) {
+                return {};
+            }
+            std::string result = {};
+
+            struct dirent* hFile;
+            while ((hFile = readdir(dir)) != nullptr) {
+                if (!strcmp(hFile->d_name, ".")) continue;
+                if (!strcmp(hFile->d_name, "..")) continue;
+
+                if (strcasecmp(hFile->d_name, file_name.c_str()) == 0) {
+                    result = directory + hFile->d_name;
+                    break;
+                }
+            }
+
+            closedir(dir);
+            return result;
         }
 
         bool is_directory_exists(const char* directory_name)

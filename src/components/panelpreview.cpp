@@ -178,6 +178,8 @@ namespace docklight
     void PanelPreview::on_container_updated(window_action_t action, glong xid)
     {
         if (m_visible && action == window_action_t::CLOSE) {
+            g_message("Preview: receive CLOSE: signal xid: %lu", xid);
+
             bool found = false;
 
             for (auto& it : m_current_images) {
