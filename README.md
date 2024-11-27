@@ -10,7 +10,7 @@ clone this repository to get the current version:
 
 ```bash
 git clone --branch current [(https://github.com/yoosamui/docklight)]
-This will create the diretory docklight.
+This will create the directory docklight.
 cd into it:
 ```
 
@@ -35,7 +35,7 @@ You can start docklight with the following parameters:
 
 
 
-You can start docklight after your linux login.
+You also can start docklight after your linux login.
 Create the folowing desktop file:
 
 ```bash
