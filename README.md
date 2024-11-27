@@ -1,4 +1,5 @@
 # Docklight-5
+Linux Dock with Preview.
 Helps to access and manage application windows.
 
 ![image](https://github.com/user-attachments/assets/ca3dc03c-05c5-430d-b143-e553aeadeebe)
