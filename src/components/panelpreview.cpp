@@ -482,60 +482,56 @@ namespace docklight
 
                 cr->stroke();
             }
-            /*
-                        // int centerX = m_size / 2 - image->get_width() / 2;
-                        // int centerY = (m_size + margin) / 2 - image->get_height() / 2;
 
-                        // cr->rectangle(startX + centerX, startY + margin, image->get_width(),
-               m_size);
-                        // Gdk::Cairo::set_source_pixbuf(cr, image, startX + centerX, startY +
-               centerY);
-                        // cr->fill();
-                        //  cr->paint();
+            // int centerX = m_size / 2 - image->get_width() / 2;
+            // int centerY = (m_size + margin) / 2 - image->get_height() / 2;
 
-                        //  cell
-                        // cr->set_source_rgba(1, 1, 1, 1);
-                        // cairo::rounded_rectangle(cr, startX, startY, m_size, m_size, 4.0);
-                        // cr->stroke();
+            // cr->rectangle(startX + centerX, startY + margin, image->get_width() m_size);
+            // Gdk::Cairo::set_source_pixbuf(cr, image, startX + centerX, startY + centerY);
+            // cr->fill();
+            //  cr->paint();
 
-                        // border
-                        cr->set_source_rgba(5, 1, 0, 1);
-                        cr->set_line_width(0.4);
-                        cr->rectangle(startX + 8, startY + margin - 4, m_size - 16, 1);
-                        cr->stroke();
+            //  cell
+            // cr->set_source_rgba(1, 1, 1, 1);
+            // cairo::rounded_rectangle(cr, startX, startY, m_size, m_size, 4.0);
+            // cr->stroke();
 
-                        if (m_dockitem) {
-                            cr->save();
-                            std::string label = child->get_window_name();
-                            std::string wstring;
+            // border
+            cr->set_source_rgba(5, 1, 0, 1);
+            cr->set_line_width(0.4);
+            cr->rectangle(startX + 8, startY + margin - 4, m_size - 16, 1);
+            cr->stroke();
 
-                            if (wnck::count_in_workspace(child->get_wnckwindow(), wstring)) {
-                                label = wstring + label;
-                            }
+            if (m_dockitem) {
+                cr->save();
+                std::string label = child->get_window_name();
+                std::string wstring;
 
-                            draw_text(cr, startX, startY, label, idx == m_dockpreview_index);
-                            cr->restore();
-                        }
+                if (wnck::count_in_workspace(child->get_wnckwindow(), wstring)) {
+                    label = wstring + label;
+                }
 
-                        // image cell
-                        // cr->set_source_rgba(1, 1, 1, 1.0);
-                        // cairo::rounded_rectangle(cr, startX, startY + margin, m_size, m_size -
-                        // margin, 4.0); cr->stroke();
+                draw_text(cr, startX, startY, label, idx == m_dockpreview_index);
+                cr->restore();
+            }
 
-                        auto scaled_image = image;
-                        if (image->get_width() > image_size) {
-                            scaled_image = image->scale_simple(image_size, image_size,
-               Gdk::INTERP_BILINEAR);
-                        }
+            // image cell
+            // cr->set_source_rgba(1, 1, 1, 1.0);
+            // cairo::rounded_rectangle(cr, startX, startY + margin, m_size, m_size -
+            // margin, 4.0); cr->stroke();
 
-                        int centerX = m_size / 2 - scaled_image->get_width() / 2;
-                        int centerY = (m_size + margin) / 2 - scaled_image->get_height() / 2;
-                        cr->rectangle(startX + centerX, startY + margin, image_size, m_size -
-               margin);
+            auto scaled_image = image;
+            if (image->get_width() > image_size) {
+                scaled_image = image->scale_simple(image_size, image_size, Gdk::INTERP_BILINEAR);
+            }
 
-                        Gdk::Cairo::set_source_pixbuf(cr, scaled_image, startX + centerX, startY +
-               centerY); cr->fill();
-            */
+            int centerX = m_size / 2 - scaled_image->get_width() / 2;
+            int centerY = (m_size + margin) / 2 - scaled_image->get_height() / 2;
+            cr->rectangle(startX + centerX, startY + margin, image_size, m_size - margin);
+
+            Gdk::Cairo::set_source_pixbuf(cr, scaled_image, startX + centerX, startY + centerY);
+            cr->fill();
+
             startX += m_size;
             startY = 0;
 
