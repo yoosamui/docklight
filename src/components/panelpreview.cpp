@@ -77,7 +77,7 @@ namespace docklight
     {
         if (connect) {
             m_sigc_connection = Glib::signal_timeout().connect(
-                sigc::mem_fun(this, &PanelPreview::on_timeout_draw), 1000 / 2);
+                sigc::mem_fun(this, &PanelPreview::on_timeout_draw), 2000);
         } else {
             m_sigc_connection.disconnect();
         }
@@ -112,8 +112,11 @@ namespace docklight
 
     bool PanelPreview::on_timeout_draw()
     {
+        if (m_block_draw) return true;
+
         read_images();
         Gtk::Widget::queue_draw();
+
         return true;
     }
 
@@ -125,9 +128,9 @@ namespace docklight
     void PanelPreview::read_images()
     {
         m_block_draw = true;
-        //   m_windows.clear();
-        m_current_images.clear();
+        m_mutex.lock();
 
+        m_current_images.clear();
         if (!system::is_mutter_window_manager()) {
             // int millis = 10;
             // int event_time = gtk_get_current_event_time();
@@ -148,20 +151,22 @@ namespace docklight
                     pixbuf::get_window_image(xid, m_image, size);
                 }
 
-                // g_print("pixbuf:: get_gdk_pixbuf_from_window: %d x %d\n", m_image->get_width(),
-                // m_image->get_height());
-
-                //   std::this_thread::sleep_for(std::chrono::milliseconds(5));
                 if (window && !wnck_window_is_minimized(window) && !wnck_window_is_pinned(window) &&
                     wnck::is_window_on_current_desktop(window)) {
-                    //          pixbuf::get_window_image(xid, m_image, size);
+                    // TODO:  CRASH AHEAD! cannot use it here.
+                    //(docklight:3423784): Gdk-WARNING **: 19:45:54.596: The program 'docklight'
+                    // received an X Window System error.
+                    // This probably reflects a bug in the program.
+                    // The error was 'BadDrawable (invalid Pixmap or Window parameter)'.
+                    //(Details: serial 9504 error_code 9 request_code 53 (core protocol) minor_code
+                    // 0) (Note to programmers: normally, X errors are reported asynchronously; that
+                    // is, you will receive the error a while after causing it. To debug your
+                    // program, run it with the GDK_SYNCHRONIZE environment variable to change this
+                    // behavior. You can then get a meaningful backtrace from your debugger if you
+                    // break on the gdk_x_error() function.)
+                    // gdk_pixbuf_get_from_window can be the BUG source.
 
-                    // if (image) m_image = image;
-
-                    // if (pixbuf::get_window_image(xid, m_image,
-                    // Config()->get_preview_image_size())) {
-                    // Provider()->set_window_image(xid, m_image);
-                    //}
+                    pixbuf::get_window_image(xid, m_image, size);
                 }
 
                 auto pair = std::make_pair(m_image, child);
@@ -176,7 +181,9 @@ namespace docklight
                 }
             }
         }
+
         m_block_draw = false;
+        m_mutex.unlock();
     }
 
     /**

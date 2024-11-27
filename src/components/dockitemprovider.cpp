@@ -323,6 +323,27 @@ namespace docklight
         }
     }
 
+    void DockItemProvider::set_window_image_reload(WnckWindow* window, bool initial)
+    {
+        if (system::is_mutter_window_manager()) return;
+
+        if (!WNCK_IS_WINDOW(window)) return;
+
+        Glib::RefPtr<Gdk::Pixbuf> image;
+        int size = Config()->get_preview_image_size();
+        gint32 xid = wnck_window_get_xid(window);
+
+        if (pixbuf::get_window_image(xid, image, size)) {
+            m_window_images[xid] = image;
+        }
+
+        // Glib::RefPtr<Gdk::Pixbuf> image;
+        // gint32 xid = wnck_window_get_xid(window);
+
+        // wnck_window_activate(window, 1 [>event_time<]);
+        // wnck_window_make_below(window);
+    }
+
     void DockItemProvider::set_window_image(WnckWindow* window, bool initial)
     {
         if (system::is_mutter_window_manager()) return;
@@ -332,6 +353,7 @@ namespace docklight
         Glib::RefPtr<Gdk::Pixbuf> image;
         gint32 xid = wnck_window_get_xid(window);
         bool restore_min = false;
+
         //       bool restore_pin = false;
 
         if (!wnck::is_window_on_current_desktop(window)) {
@@ -588,10 +610,21 @@ namespace docklight
         char config_filename[PATH_MAX];
         sprintf(config_filename, "%s/%s", config_dir, "docklight5.config");
 
-        const auto default_source = "data/docklight5.config";
+        auto default_source = "data/docklight5.config";
         if (!system::file_exists(config_filename) && system::file_exists(default_source)) {
             std::ifstream src(default_source, std::ios::in);
             std::ofstream dst(config_filename, std::ios::out);
+
+            dst << src.rdbuf();
+        }
+
+        default_source = "data/docklight5.desktop";
+        char autostart_filename[PATH_MAX];
+        sprintf(autostart_filename, "/home/%s/.config/autostart/docklight5.desktop",
+                user_name.c_str());
+        if (!system::file_exists(autostart_filename) && system::file_exists(default_source)) {
+            std::ifstream src(default_source, std::ios::in);
+            std::ofstream dst(autostart_filename, std::ios::out);
 
             dst << src.rdbuf();
         }
