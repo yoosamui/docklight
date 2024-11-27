@@ -41,8 +41,8 @@
 #include <gtkmm/menuitem.h>
 
 #include "components/ExplodesWindow.h"
-//#include "components/coverwindow.h"
 #include "components/panelpreview.h"
+#include "components/titlewindow.h"
 namespace docklight
 {
 
@@ -106,20 +106,30 @@ namespace docklight
                                              WnckWindow* previously_active_window,
                                              gpointer user_data);
         void thread_func();
+        void show_current_title(bool show);
 
       private:
+        std::shared_ptr<DockItemIcon> m_dockitem;
+        Glib::RefPtr<TitleWindow> m_title;
         guint m_preview_open_index = 0;
         bool m_preview_open = false;
+        bool m_mouse_move = false;
         Glib::RefPtr<ExplodesWindow> m_composite;
         Glib::RefPtr<PanelPreview> m_preview;
         float m_mouseclickEventTime = 0.0f;
+        float m_mousemoveEventTime = 0.0f;
+        float m_last_mousemoveEventTime = 0.0f;
         Glib::Timer m_mouse_click_timer;
+        float m_mouse_move_count = 0.f;
+        float m_last_mouse_move_count_show = 0.f;
+        float m_last_mouse_move_count_hide = 0.f;
         std::shared_ptr<std::thread> m_bck_thread;
         Gtk::SeparatorMenuItem* m_separatorMenuItem = nullptr;
         // std::thread* m_bck_thread = nullptr;
         Glib::RefPtr<DockItemProvider> m_provider;
         easing::bounce m_bounce;
         guint m_last_index = 0;
+        guint m_last_title_index = 0;
         gint m_scroll_index = 0;
     };
 }  // namespace docklight

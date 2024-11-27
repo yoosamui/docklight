@@ -46,6 +46,9 @@ namespace docklight
         bool get_dockmenu_position(int index, int& x, int& y, int width, int height);
         bool get_preview_position(int index, int& x, int& y, int width, int height);
 
+        int get_x() const;
+        int get_y() const;
+
       private:
         std::string get_execpath();
 
