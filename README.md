@@ -39,7 +39,8 @@ Start it manually with:
 
 ```bash
 docklight5
-or with parameters like so:
+or
+with parameters like so:
 docklight5 '-l left '
 ```
 
