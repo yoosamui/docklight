@@ -80,7 +80,7 @@ namespace docklight
         void set_window_image(WnckWindow* window, bool initial = false);
         void set_window_image(gulong xid, Glib::RefPtr<Gdk::Pixbuf> image);
 
-        void set_window_image_reload(WnckWindow* window, bool initial);
+        //        void set_window_image_reload(WnckWindow* window, bool initial);
 
         void workspace_change();
 

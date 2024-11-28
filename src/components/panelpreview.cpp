@@ -49,7 +49,7 @@ namespace docklight
         set_keep_above(true);
 
         // clang-format off
-        // Set event masks
+
         add_events( Gdk::BUTTON_PRESS_MASK |
                     Gdk::BUTTON_RELEASE_MASK |
                     Gdk::SCROLL_MASK |
@@ -58,9 +58,7 @@ namespace docklight
                     Gdk::POINTER_MOTION_MASK
                    );
         // clang-format on
-
-        // m_sigc_close_window = Glib::signal_timeout().connect(
-        // sigc::mem_fun(this, &PanelPreview::on_timeout_close_window), 1000);
+        //
 
         m_anim = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
         m_size = Config()->get_preview_area();
@@ -83,41 +81,11 @@ namespace docklight
         }
     }
 
-    /*bool PanelPreview::on_timeout_close_window()
-    {
-        if (m_visible) {
-            if (m_delete_pending_window) {
-                wnck::close_window(m_delete_pending_window);
-                m_delete_pending_window = nullptr;
-            }
-        }
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-        return true;
-    }
-
-    void PanelPreview::thread_func()
-    {
-        while (true) {
-            if (m_visible) {
-                if (m_delete_pending_window) {
-                    wnck::close_window(m_delete_pending_window);
-                    m_delete_pending_window = nullptr;
-                }
-            }
-
-            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-        }
-    }*/
-
     bool PanelPreview::on_timeout_draw()
     {
-        return false;
-
         if (m_block_draw) return true;
 
         read_images();
-        Gtk::Widget::queue_draw();
 
         return true;
     }
@@ -134,12 +102,6 @@ namespace docklight
 
         m_current_images.clear();
         if (!system::is_mutter_window_manager()) {
-            // int millis = 10;
-            // int event_time = gtk_get_current_event_time();
-            // GdkScreen* screen = gdk_screen_get_default();
-            // int current_ws_number = gdk_x11_screen_get_current_desktop(screen);
-            // auto cws = wnck_screen_get_workspace(wnck::get_default_screen(),
-            // current_ws_number); int cws_number = 0;
             int size = Config()->get_preview_image_size();
 
             for (auto& it : m_dockitem->get_childmap()) {
@@ -155,22 +117,9 @@ namespace docklight
 
                 if (window && !wnck_window_is_minimized(window) && !wnck_window_is_pinned(window) &&
                     wnck::is_window_on_current_desktop(window)) {
-                    // ---------------------------------------------------------------
-                    // TODO:CRASH AHEAD! cannot use 'pixbuf::get_window_image' here.
-                    // ---------------------------------------------------------------
-                    //(docklight:3423784): Gdk-WARNING **: 19:45:54.596: The program 'docklight'
-                    // received an X Window System error.
-                    // This probably reflects a bug in the program.
-                    // The error was 'BadDrawable (invalid Pixmap or Window parameter)'.
-                    //(Details: serial 9504 error_code 9 request_code 53 (core protocol) minor_code
-                    // 0) (Note to programmers: normally, X errors are reported asynchronously; that
-                    // is, you will receive the error a while after causing it. To debug your
-                    // program, run it with the GDK_SYNCHRONIZE environment variable to change this
-                    // behavior. You can then get a meaningful backtrace from your debugger if you
-                    // break on the gdk_x_error() function.)
-                    // gdk_pixbuf_get_from_window can be the BUG source.
-
+                    //
                     pixbuf::get_window_image(xid, m_image, size);
+                    Provider()->set_window_image(xid, m_image);
                 }
 
                 auto pair = std::make_pair(m_image, child);
@@ -188,21 +137,24 @@ namespace docklight
 
         m_block_draw = false;
         m_mutex.unlock();
+
+        Gtk::Widget::queue_draw();
     }
 
     /**
-     *  Event emit from Provider on close app.
+     *  Event emit from Provider.
      */
     void PanelPreview::on_container_updated(window_action_t action, glong xid)
     {
-        if (m_visible && action == window_action_t::WORKSPACE) {
-            read_images();
-            Gtk::Widget::queue_draw();
+        if (!m_visible) return;
+
+        if (action == window_action_t::WORKSPACE) {
+            // read_images();
 
             return;
         }
 
-        if (m_visible && action == window_action_t::CLOSE) {
+        if (action == window_action_t::CLOSE) {
             bool found = false;
 
             for (auto& it : m_current_images) {
@@ -238,7 +190,8 @@ namespace docklight
         m_sigc_updated = Provider()->signal_update().connect(
             sigc::mem_fun(this, &PanelPreview::on_container_updated));
 
-        connect_signal(true);
+        //   connect_signal(true);
+
         m_dockitem_index = dockitem_index;
         m_dockitem = dockitem;
 
@@ -348,33 +301,22 @@ namespace docklight
         auto size = m_current_images.size();
         if (!size) return true;
 
-        //---PLAN B-
-        // read_images();
-        // Gtk::Widget::queue_draw();
-
-        //----
-
         std::shared_ptr<DockItemIcon> child = m_current_images.at(m_dockpreview_index).second;
         if (!child) {
             return false;
         }
+
+        // refresh;
+        if (event->button == 3) {
+            read_images();
+        }
+
         if (event->button == 1) {
             Gdk::Rectangle mouse_rect(event->x, event->y, 2, 2);
             if (m_close_button_rectangle.intersects(mouse_rect)) {
                 m_block_leave = true;
 
                 auto window = child->get_wnckwindow();
-
-                /* TODO: cause non reproducible CRASHING!
-                (docklight:1520525): Gdk-WARNING **: 11:15:10.429: The program 'docklight' received
-                an X Window System error. This probably reflects a bug in the program. The error was
-                'BadDrawable (invalid Pixmap or Window parameter)'. (Details: serial 12258
-                error_code 9 request_code 53 (core protocol) minor_code 0) (Note to programmers:
-                normally, X errors are reported asynchronously; that is, you will receive the error
-                a while after causing it. To debug your program, run it with the GDK_SYNCHRONIZE
-                environment variable to change this behavior. You can then get a meaningful
-                   backtrace from your debugger if you break on the gdk_x_error() function.)
-                 */
                 if (window) wnck::close_window(window);
 
                 return true;
