@@ -189,7 +189,10 @@ namespace docklight
         m_sigc_updated = Provider()->signal_update().connect(
             sigc::mem_fun(this, &PanelPreview::on_container_updated));
 
-        //   connect_signal(true);
+        //        if (system::is_mutter_window_manager())
+        {
+            connect_signal(true);
+        }
 
         m_dockitem_index = dockitem_index;
         m_dockitem = dockitem;
