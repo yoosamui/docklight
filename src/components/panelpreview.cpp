@@ -149,8 +149,7 @@ namespace docklight
         if (!m_visible) return;
 
         if (action == window_action_t::WORKSPACE) {
-            // read_images();
-
+            //   read_images();
             return;
         }
 
