@@ -222,14 +222,15 @@ namespace docklight
 
         if (item->get_childmap().size() > 0) {
             if (item->get_childmap().size() == 1) {
-                m_indicator_ctx->rectangle(2, 0, (m_indicator->get_width()) - 2,
+                m_indicator_ctx->rectangle(4, 0, (m_indicator->get_width()) - 8,
                                            m_indicator->get_height() - 1);
 
             } else {
                 m_indicator_ctx->rectangle(2, 0, (m_indicator->get_width() / 2) - 4,
                                            m_indicator->get_height() - 1);
-                m_indicator_ctx->rectangle((m_indicator->get_width() / 2) + 4, 0,
-                                           m_indicator->get_width() - 6,
+
+                m_indicator_ctx->rectangle((m_indicator->get_width() / 2) + 2, 0,
+                                           (m_indicator->get_width() / 2) - 4,
                                            m_indicator->get_height() - 1);
             }
         }
