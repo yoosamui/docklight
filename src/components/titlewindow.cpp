@@ -60,7 +60,7 @@ namespace docklight
         m_visible = false;
     }
 
-    void TitleWindow::show_at(int x, int y, int index)
+    void TitleWindow::show_at(int x, int y)
     {
         // resize(2, this->get_height());
         // move(x, y);

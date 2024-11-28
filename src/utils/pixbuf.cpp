@@ -299,7 +299,7 @@ namespace docklight
                 return nullptr;
             }
 
-            GdkWindow* rootwindow = gdk_get_default_root_window();
+            //  GdkWindow* rootwindow = gdk_get_default_root_window();
 
             GdkWindow* gdk_window = gdk_x11_window_foreign_new_for_display(gdk_display, xid);
             if (!gdk_window) {
@@ -310,10 +310,18 @@ namespace docklight
             guint winWidth = gdk_window_get_width(gdk_window);
             guint winHeight = gdk_window_get_height(gdk_window);
 
+            // Gdk::Rectangle geo = wnck::get_window_geometry(xid);
+
+            // g_print("pixbuf:: get_gdk_pixbuf_from_window: %d x %d\n", geo.get_width(),
+            // geo.get_height());
+
             winPixbuf = gdk_pixbuf_get_from_window(gdk_window, 0, 0, winWidth, winHeight);
             if (!winPixbuf) {
                 return nullptr;
             }
+
+            // g_print("pixbuf:: get_gdk_pixbuf_from_window: %d x %d\n", winPixbuf->width,
+            // winPixbuf->height);
 
             return winPixbuf;
         }

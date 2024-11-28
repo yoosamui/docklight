@@ -17,9 +17,8 @@ namespace docklight
         TitleWindow();
         ~TitleWindow();
         void set_text(const Glib::ustring text);
-        // void show_at(int x, int y);
         void show_at(int index);
-        void show_at(int x, int y, int index);
+        void show_at(int x, int y);
         void hide_now();
 
       private:

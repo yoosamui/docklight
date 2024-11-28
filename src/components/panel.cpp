@@ -186,7 +186,7 @@ namespace docklight
                 }
             }
 
-            m_title->show_at(x, y, m_dockitem_index);
+            m_title->show_at(x, y);
         } else {
             m_title->hide_now();
         }
@@ -267,6 +267,8 @@ namespace docklight
 
     void Panel::on_container_updated(window_action_t action, int index)
     {
+        if (action != window_action_t::UPDATE) return;
+
         container_updated();
         Gtk::Widget::queue_draw();
         g_message("Panel updated");

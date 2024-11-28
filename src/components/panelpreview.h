@@ -89,7 +89,7 @@ namespace docklight
         std::shared_ptr<DockItemIcon> m_dockitem;
 
         //   WnckWindow* m_delete_pending_window = nullptr;
-
+        std::mutex m_mutex;
         int m_last_dockpreview_index = 0;
         int m_dockitem_index = 0;
         int m_dockpreview_index = 0;
