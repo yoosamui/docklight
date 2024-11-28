@@ -12,7 +12,7 @@
 //  Docklight is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  public Glib::Object GNU General Public License for more details.
+//  public Glib::Object GNU General Public License for more details.
 //
 //  You should have received a copy of the GNU General Public License
 //  identification number, along with this program.  If not, see <http://www.gnu.org/licenses/>.
@@ -32,6 +32,10 @@ namespace docklight
         AppObserver();
 
       private:
+        static void on_active_workspace_changed_callback(WnckScreen* screen,
+                                                         WnckWorkspace* previously_active_space,
+                                                         gpointer user_data);
+
         static void on_actions_changed(WnckWindow* window, WnckWindowActions changed_mask,
                                        WnckWindowActions new_state, gpointer user_data);
 

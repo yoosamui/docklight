@@ -112,6 +112,8 @@ namespace docklight
 
     bool PanelPreview::on_timeout_draw()
     {
+        return false;
+
         if (m_block_draw) return true;
 
         read_images();
@@ -153,7 +155,9 @@ namespace docklight
 
                 if (window && !wnck_window_is_minimized(window) && !wnck_window_is_pinned(window) &&
                     wnck::is_window_on_current_desktop(window)) {
-                    // TODO:  CRASH AHEAD! cannot use it here.
+                    // ---------------------------------------------------------------
+                    // TODO:CRASH AHEAD! cannot use 'pixbuf::get_window_image' here.
+                    // ---------------------------------------------------------------
                     //(docklight:3423784): Gdk-WARNING **: 19:45:54.596: The program 'docklight'
                     // received an X Window System error.
                     // This probably reflects a bug in the program.
@@ -191,15 +195,21 @@ namespace docklight
      */
     void PanelPreview::on_container_updated(window_action_t action, glong xid)
     {
-        if (m_visible && action == window_action_t::CLOSE) {
-            g_message("Preview: receive CLOSE: signal xid: %lu", xid);
+        if (m_visible && action == window_action_t::WORKSPACE) {
+            read_images();
+            Gtk::Widget::queue_draw();
 
+            return;
+        }
+
+        if (m_visible && action == window_action_t::CLOSE) {
             bool found = false;
 
             for (auto& it : m_current_images) {
                 auto child = it.second;
 
                 if (child->get_xid() != (gulong)xid) continue;
+
                 found = true;
                 break;
             }
@@ -337,6 +347,12 @@ namespace docklight
 
         auto size = m_current_images.size();
         if (!size) return true;
+
+        //---PLAN B-
+        // read_images();
+        // Gtk::Widget::queue_draw();
+
+        //----
 
         std::shared_ptr<DockItemIcon> child = m_current_images.at(m_dockpreview_index).second;
         if (!child) {

@@ -157,6 +157,11 @@ namespace docklight
         return count;
     }
 
+    void DockItemProvider::workspace_change()
+    {
+        m_signal_update.emit(window_action_t::WORKSPACE, 0);
+    }
+
     int DockItemProvider::remove(gulong xid)
     {
         // Throws nothing.
@@ -164,10 +169,8 @@ namespace docklight
             m_window_images.erase(xid);
         }
 
-        // bye, bye
+        // Delete dockitem and notify preview.
         auto count = m_container.remove<DockItemIcon>(xid);
-
-        g_message("provider send CLOSE");
         m_signal_update.emit(window_action_t::CLOSE, xid);
 
         return count;
