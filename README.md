@@ -34,7 +34,7 @@ Now execute the following bash scripts:
 sudo ./install_dependencies.sh
 sudo ./install_docklight.sh
 ```
-docklight is now installed on your system and will start after login.
+docklight is now installed on your system and will start after next login.
 Start it manually with:
 
 ```bash
