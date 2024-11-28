@@ -49,6 +49,12 @@ namespace docklight
     {
         //
     }
+    void AppObserver::on_active_workspace_changed_callback(WnckScreen* screen,
+                                                           WnckWorkspace* previously_active_space,
+                                                           gpointer user_data)
+    {
+        Provider()->workspace_change();
+    }
 
     void AppObserver::on_window_closed(WnckScreen* screen, WnckWindow* window, gpointer data)
     {
@@ -144,6 +150,9 @@ namespace docklight
 
         g_signal_connect(G_OBJECT(wnckscreen), "window-closed",
                          G_CALLBACK(&AppObserver::on_window_closed), nullptr);
+
+        g_signal_connect(wnckscreen, "active-workspace-changed",
+                         G_CALLBACK(AppObserver::on_active_workspace_changed_callback), nullptr);
 
         // g_signal_connect(G_OBJECT(wnckscreen), "icon-changed",
         // G_CALLBACK(&AppObserver::on_icon_changed), nullptr);

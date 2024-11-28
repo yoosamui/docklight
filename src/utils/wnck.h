@@ -38,7 +38,9 @@ namespace docklight
     {
         void init();
 
+        WnckWindow* get_window_by_xid(gulong xid);
         Gdk::Rectangle get_window_geometry(WnckWindow* window);
+        Gdk::Rectangle get_window_geometry(gulong xid);
 
         void set_active_window(WnckWindow* active_window);
         bool is_window_on_current_desktop(WnckWindow* window);

@@ -56,6 +56,13 @@ namespace docklight
             return m_screen;
         }
 
+        Gdk::Rectangle get_window_geometry(gulong xid)
+        {
+            WnckWindow* window = get_window_by_xid(xid);
+
+            return get_window_geometry(window);
+        }
+
         Gdk::Rectangle get_window_geometry(WnckWindow* window)
         {
             if (!WNCK_IS_WINDOW(window)) {
@@ -102,6 +109,27 @@ namespace docklight
             return count;
         }
 
+        WnckWindow* get_window_by_xid(gulong xid)
+        {
+            GdkScreen* screen = gdk_screen_get_default();
+            int count = 0;
+
+            WnckScreen* wckscreen = get_default_screen();
+            GList* window_l;
+
+            for (window_l = wnck_screen_get_windows(wckscreen); window_l != nullptr;
+                 window_l = window_l->next) {
+                WnckWindow* window = WNCK_WINDOW(window_l->data);
+
+                if (!is_valid_window_type(window)) continue;
+
+                if (wnck_window_get_xid(window) != xid) continue;
+
+                return window;
+            }
+
+            return nullptr;
+        }
         std::vector<WnckWindow*> get_ordered_window_list(std::vector<WnckWindow*> windows_vector)
         {
             // GList* window_list;
