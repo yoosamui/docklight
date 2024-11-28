@@ -186,7 +186,7 @@ namespace docklight
                 }
             }
 
-            m_title->show_at(x, y, m_dockitem_index);
+            m_title->show_at(x, y);
         } else {
             m_title->hide_now();
         }
