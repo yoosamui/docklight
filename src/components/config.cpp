@@ -107,7 +107,8 @@ namespace docklight
 
     int Configuration::get_preview_area() const
     {
-        return m_image_size + get_preview_area_margin();
+        auto value = m_image_size + get_preview_area_margin();
+        return value;
     }
 
     void Configuration::set_custom_icon_size(guint size)

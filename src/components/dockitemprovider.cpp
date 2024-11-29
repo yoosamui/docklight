@@ -46,14 +46,14 @@ namespace docklight
         m_matcher = bamf_matcher_get_default();
         g_assert(BAMF_IS_MATCHER(m_matcher));
 
-        std::shared_ptr<DockItemIcon> dockitem = std::shared_ptr<DockItemIcon>(
+        m_home_dockitem = std::shared_ptr<DockItemIcon>(
             new DockItemIcon(0, nullptr, DOCKLIGHT_INSTANCENAME, DOCKLIGHT_INSTANCENAME, 0));
 
         std::string filename = "data/images/docklight-home.svg";
         try {
             auto size = Config()->get_icon_max_size();
             auto pixbuf = Gdk::Pixbuf::create_from_file(filename, size, size, true);
-            dockitem->set_icon(pixbuf);
+            m_home_dockitem->set_icon(pixbuf);
 
         } catch (const Glib::FileError& ex) {
             g_critical("get_from file: %s FileError: %s", filename.c_str(), ex.what().c_str());
@@ -61,9 +61,9 @@ namespace docklight
             g_critical("get_from file: %s PixbufError: %s", filename.c_str(), ex.what().c_str());
         }
 
-        dockitem->set_attached();
-        dockitem->set_title("Home");
-        m_container.add(0, dockitem);
+        m_home_dockitem->set_attached();
+        m_home_dockitem->set_title("Home");
+        m_container.add(0, m_home_dockitem);
 
         auto const icon_theme = Gtk::IconTheme::get_default();
         icon_theme->signal_changed().connect(
@@ -164,6 +164,9 @@ namespace docklight
 
     int DockItemProvider::remove(gulong xid)
     {
+        //        const std::lock_guard<std::mutex> lock(m_mutex);
+        const std::scoped_lock lock(m_mutex);
+
         if (m_window_images.count(xid)) {
             // Throws nothing.
             m_window_images.erase(xid);
@@ -376,9 +379,11 @@ namespace docklight
         //}
 
         if (initial && wnck_window_is_minimized(window)) {
-            wnck_window_activate(window, 1 /*event_time*/);
-            wnck_window_make_below(window);
+            //    wnck_window_activate(window, 1 [>event_time<]);
+            //    wnck_window_make_below(window);
 
+            m_window_images[xid] = m_home_dockitem->get_icon();
+            return;
             restore_min = true;
         }
 
@@ -391,7 +396,8 @@ namespace docklight
         //}
 
         // int size = wnck::get_window_geometry(window).get_width();
-        int size = Config()->get_preview_image_size();
+        // int size = Config()->get_preview_image_size();
+        int size = Config()->get_preview_image_max_size();
         int max = initial ? 6 : 3;
 
         for (int i = 0; i < max; i++) {
