@@ -520,6 +520,7 @@ namespace docklight
             if (!pixbuf) {
                 return nullptr;
             }
+// TODO Make it in config as choice
 #ifdef USE_EXACT_SCALE
             // source
             int winWidth = gdk_pixbuf_get_width(pixbuf);

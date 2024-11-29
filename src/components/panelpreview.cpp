@@ -98,7 +98,9 @@ namespace docklight
     void PanelPreview::read_images()
     {
         m_block_draw = true;
-        m_mutex.lock();
+
+        // m_mutex is automatically released when lock goes out of scope
+        const std::lock_guard<std::mutex> lock(m_mutex);
 
         m_current_images.clear();
         if (!system::is_mutter_window_manager()) {
@@ -136,7 +138,6 @@ namespace docklight
         }
 
         m_block_draw = false;
-        m_mutex.unlock();
 
         Gtk::Widget::queue_draw();
     }
