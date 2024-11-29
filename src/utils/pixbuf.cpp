@@ -10,7 +10,7 @@
 //#include "utils/system.h"
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #pragma GCC diagnostic ignored "-Wunused-parameter"
-
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 namespace docklight
 {
 
@@ -277,7 +277,7 @@ namespace docklight
             GdkPixbuf* win_pixbuf = get_gdk_pixbuf_from_window(xid);
             if (!win_pixbuf) return false;
 
-            GdkPixbuf* scaled_pixbuf = get_gdk_pixbuf_scaled(win_pixbuf, size, size);
+            GdkPixbuf* scaled_pixbuf = get_gdk_pixbuf_scaled(xid, win_pixbuf, size, size);
             if (!scaled_pixbuf) {
                 g_object_unref(win_pixbuf);
                 return false;
@@ -310,10 +310,7 @@ namespace docklight
             guint winWidth = gdk_window_get_width(gdk_window);
             guint winHeight = gdk_window_get_height(gdk_window);
 
-            // Gdk::Rectangle geo = wnck::get_window_geometry(xid);
-
-            // g_print("pixbuf:: get_gdk_pixbuf_from_window: %d x %d\n", geo.get_width(),
-            // geo.get_height());
+            Gdk::Rectangle geo = wnck::get_window_geometry(xid);
 
             winPixbuf = gdk_pixbuf_get_from_window(gdk_window, 0, 0, winWidth, winHeight);
             if (!winPixbuf) {
@@ -497,12 +494,80 @@ namespace docklight
             return pixbuf->scale_simple(scaledWidth, scaledHeight, Gdk::INTERP_BILINEAR);
         }
 
-        GdkPixbuf* get_gdk_pixbuf_scaled(const GdkPixbuf* pixbuf, const guint destWidth,
+        // Additional method to center the image when it's smaller than the destination
+        void centerImage(int& width, int& height, int maxWidth, int maxHeight)
+        {
+            if (width <= maxWidth && height <= maxHeight) {
+                return;  // No need to adjust
+            }
+
+            double scale = std::min(static_cast<double>(maxWidth) / width,
+                                    static_cast<double>(maxHeight) / height);
+
+            width = static_cast<int>(width * scale);
+            height = static_cast<int>(height * scale);
+
+            int x = (maxWidth - width) / 2;
+            int y = (maxHeight - height) / 2;
+
+            width += x;
+            height += y;
+        }
+
+        GdkPixbuf* get_gdk_pixbuf_scaled(gulong xid, const GdkPixbuf* pixbuf, const guint destWidth,
                                          const guint destHeight)
         {
             if (!pixbuf) {
                 return nullptr;
             }
+#ifdef USE_EXACT_SCALE
+            // source
+            int winWidth = gdk_pixbuf_get_width(pixbuf);
+            int winHeight = gdk_pixbuf_get_height(pixbuf);
+
+            // destination
+            int width = destWidth * 2;
+            int height = destHeight * 2;
+
+            // Calculate aspect ratios
+            double origAspect = static_cast<double>(winWidth) / winHeight;
+            double destAspect = static_cast<double>(width) / width;
+
+            int scaledWidth = 0, scaledHeight = 0;
+
+            if (origAspect > destAspect) {
+                // Resize width
+                int newWidth = destWidth;
+                int newHeight = static_cast<int>(destWidth / origAspect);
+
+                // Check if resized image fits within destination area
+                if (newHeight > (int)destHeight) {
+                    // Resize height instead
+                    newWidth = static_cast<int>(destHeight * origAspect);
+                    newHeight = destHeight;
+                }
+
+                scaledWidth = newWidth;
+                scaledHeight = newHeight;
+                //
+            } else {
+                // Resize height
+                int newWidth = static_cast<int>(destHeight * origAspect);
+                int newHeight = destHeight;
+
+                // Check if resized image fits within destination area
+                if (newWidth > (int)destWidth) {
+                    // Resize width instead
+                    newWidth = destWidth;
+                    newHeight = static_cast<int>(destWidth / origAspect);
+                }
+
+                scaledWidth = newWidth;
+                scaledHeight = newHeight;
+            }
+
+            return gdk_pixbuf_scale_simple(pixbuf, scaledWidth, scaledHeight, GDK_INTERP_BILINEAR);
+#else
 
             // sets the source size
             guint winWidth = gdk_pixbuf_get_width(pixbuf);
@@ -522,20 +587,21 @@ namespace docklight
 
             auto const workarea = Position()->get_workarea();
 
-            guint half_WindowWidth = workarea.get_width() / 3;
-            guint half_WindowHeight = workarea.get_height() / 3;
+            guint half_WindowWidth = workarea.get_width() / 2;
+            guint half_WindowHeight = workarea.get_height() / 2;
 
-            // ajust width size
-            if (winWidth > half_WindowWidth) {
-                scaledWidth = width - 6;
+            // ajust width size with 100 ofset
+            if (winWidth > half_WindowWidth + 100) {
+                scaledWidth = width;
             }
 
             // ajust height size
-            if (winHeight > half_WindowHeight) {
-                scaledHeight = height - 4;
+            if (winHeight > half_WindowHeight + 100) {
+                scaledHeight = height;
             }
 
             return gdk_pixbuf_scale_simple(pixbuf, scaledWidth, scaledHeight, GDK_INTERP_BILINEAR);
+#endif
         }
 
         /**
