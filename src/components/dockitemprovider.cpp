@@ -175,6 +175,7 @@ namespace docklight
         // Delete dockitem and notify preview.
         auto count = m_container.remove<DockItemIcon>(xid);
         m_signal_update.emit(window_action_t::CLOSE, xid);
+        m_signal_update.emit(window_action_t::UPDATE, xid);
 
         return count;
     }
