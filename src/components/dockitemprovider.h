@@ -124,6 +124,8 @@ namespace docklight
 
         bool m_startup_time_set = false;
         std::map<gulong, Glib::RefPtr<Gdk::Pixbuf>> m_window_images;
+        std::mutex m_mutex;
+        std::shared_ptr<DockItemIcon> m_home_dockitem;
     };
 
     Glib::RefPtr<DockItemProvider> create_provider();
