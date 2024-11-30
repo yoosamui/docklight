@@ -164,16 +164,16 @@ namespace docklight
 
     int DockItemProvider::remove(gulong xid)
     {
-        //        const std::lock_guard<std::mutex> lock(m_mutex);
-        const std::scoped_lock lock(m_mutex);
+        const std::lock_guard<std::mutex> lock(m_mutex);
 
         if (m_window_images.count(xid)) {
             // Throws nothing.
             m_window_images.erase(xid);
         }
 
-        // Delete dockitem and notify preview.
+        // Delete dockitem and notify
         auto count = m_container.remove<DockItemIcon>(xid);
+
         m_signal_update.emit(window_action_t::CLOSE, xid);
         m_signal_update.emit(window_action_t::UPDATE, xid);
 
