@@ -151,6 +151,7 @@ namespace docklight
 
     int DockItemIcon::remove_child(gulong xid)
     {
+        if (!m_map.count(xid)) return 0;
         return m_map.erase(xid);
     }
 
