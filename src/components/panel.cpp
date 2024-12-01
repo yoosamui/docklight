@@ -296,15 +296,33 @@ namespace docklight
         //  m_mousemoveEventTime = event->time;
         //  m_mouse_move_timer.reset();
 
+        //   m_mouse_move_count = 0;
+        get_dockitem_index(event->x, event->y);
+
         if (m_mouse_button == 1 && m_dad && m_drag_drop_starts) {
             int x = 0;
             int y = 0;
             system::get_mouse_position(x, y);
             m_dad->move_at(x, y);
-        }
 
-        //   m_mouse_move_count = 0;
-        get_dockitem_index(event->x, event->y);
+            m_drag_drop_item_move_index = m_dockitem_index;
+            Gtk::Widget::queue_draw();
+
+            if (m_drag_drop_item_index != m_dockitem_index) {
+                // TODO:Horizontali, verti
+                //
+                m_drag_drop_candrop = (y + m_dad->get_height()) > Position()->get_y();
+
+                //   Provider()->swap(m_drag_drop_item_index, m_dockitem_index);
+                //    m_drag_drop_item_index = m_dockitem_index;
+
+                /*std::shared_ptr<DockItemIcon> dockitem;
+                if (m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) {
+                    dockitem->set_visible(false);
+                     Gtk::Widget::queue_draw();
+                }*/
+            }
+        }
 
         show_current_title(true /*m_mouse_move*/);  // fluent
 
@@ -446,6 +464,7 @@ namespace docklight
     {
         if ((event->type != GDK_BUTTON_RELEASE)) return false;
 
+        get_dockitem_index(event->x, event->y);
         m_mouse_press = false;
 
         if (m_drag_drop_starts) {
@@ -456,8 +475,21 @@ namespace docklight
                 m_mouse_drag_drop_timer.stop();
                 m_sigc_draw.disconnect();
 
+                if (m_drag_drop_candrop) {
+                    m_drag_drop_candrop = false;
+                    Provider()->swap(m_drag_drop_item_index, m_dockitem_index);
+                }
+
                 dockitem->set_visible(true);
                 Gtk::Widget::queue_draw();
+
+                m_drag_drop_item_index = 0;
+                g_message("Finish DAD");
+                // std::shared_ptr<DockItemIcon> dockitem;
+                // if (m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) {
+                // dockitem->set_visible(false);
+                // Gtk::Widget::queue_draw();
+                //}
             }
         }
 

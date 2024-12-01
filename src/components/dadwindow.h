@@ -22,6 +22,9 @@ namespace docklight
         void move_at(int x, int y);
         void close_now();
 
+        guint get_x() { return m_x; }
+        guint get_y() { return m_y; }
+
       private:
         // bool on_motion_notify_event(GdkEventMotion* event);
 
@@ -40,6 +43,8 @@ namespace docklight
         Gtk::Label m_Label;
 
         int m_size = 0;
+        guint m_x = 0;
+        guint m_y = 0;
     };
 }  // namespace docklight
 

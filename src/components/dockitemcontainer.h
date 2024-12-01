@@ -55,6 +55,56 @@ namespace docklight
         template <typename T>
         std::vector<std::shared_ptr<DockItemIcon>>& data();
 
+        //  template <typename T>
+        void drop(int source_index, int dest_index)
+        {
+            int size = (int)m_dockitems.size();
+            if (source_index < 0 || source_index > size || dest_index < 0 || dest_index > size) {
+                return;
+            }
+
+            // Source item
+            std::shared_ptr<DockItemIcon> dockitem;
+            std::pair<gulong, std::any> p = m_dockitems.at(source_index);
+            std::any a = p.second;
+
+            g_message("CALLLLLLL %d", source_index);
+            if (factory::any_cast<std::shared_ptr<DockItemIcon>>(a, dockitem)) {
+                auto xid = dockitem->get_xid();
+                // remove<DockItemIcon>(xid);
+
+                m_dockitems.erase(m_dockitems.begin() + source_index);
+
+                auto pair = std::make_pair(xid, a);
+                m_dockitems.insert(m_dockitems.begin() + dest_index, pair);
+
+                g_message("done");
+            }
+
+            m_last_size = 0;
+        }
+
+        void swap(int source_index, int dest_index)
+        {
+            drop(source_index, dest_index);
+            return;
+
+            int size = (int)m_dockitems.size();
+            if (source_index < 0 || source_index > size || dest_index < 0 || dest_index > size) {
+                return;
+            }
+
+            // auto a = m_dockitems.at(source_index);
+
+            // remove(source->get_xid());
+
+            // people.insert(people.begin() + index, temp);
+            //  m_dockitems.insert(m_dockitems.begin() + dest_index.source;
+
+            std::iter_swap(m_dockitems.begin() + source_index, m_dockitems.begin() + dest_index);
+            m_last_size = 0;
+        }
+
       private:
         guint m_last_size = 0;
         std::vector<std::shared_ptr<DockItemIcon>> m_data;

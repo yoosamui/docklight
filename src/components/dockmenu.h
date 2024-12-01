@@ -40,6 +40,9 @@ namespace docklight
         gulong m_dockitem_active_index = 0;
         bool m_context_menu_active = false;
         bool m_mouse_enter = false;
+        guint m_drag_drop_item_index = 0;
+        guint m_drag_drop_item_move_index = 0;
+        bool m_drag_drop_starts = false;
     };
 
     class DockMenu : public PanelBase

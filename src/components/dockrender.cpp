@@ -255,14 +255,14 @@ namespace docklight
 
     bool DockRender::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     {
-        auto provider = Provider();
+        //   auto provider = Provider();
 
         m_posX = 0;
         m_posY = 0;
 
         guint separator_size = Config()->get_separator_size();
         auto area = Config()->get_dock_area() + separator_size;
-        auto data = provider->data();
+        auto data = Provider()->data();
         auto maxsize = data.size() * area;
 
         get_start_pos(maxsize, m_posX, m_posY);
@@ -275,6 +275,8 @@ namespace docklight
             draw_surface_indicator(dockitem);
 
             if (dockitem->get_visible()) {
+                // if (!(m_drag_drop_starts && dockitem->get_tag() == m_drag_drop_item_move_index))
+                // {
                 m_bck_ctx->set_source(m_cell, m_posX, m_posY);
                 m_bck_ctx->paint();
             }

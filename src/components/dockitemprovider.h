@@ -84,6 +84,8 @@ namespace docklight
 
         void workspace_change();
 
+        void swap(int s, int d);
+
       private:
         sigc::connection m_sigc;
         WnckWindow* m_wnckwindow = nullptr;

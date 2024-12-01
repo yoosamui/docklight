@@ -120,6 +120,12 @@ namespace docklight
         return m_container.exist<DockItemIcon>(xid);
     }
 
+    void DockItemProvider::swap(int s, int d)
+    {
+        m_container.swap(s, d);
+        save();
+    }
+
     bool DockItemProvider::get_dockitem_by_xid(gulong xid, std::shared_ptr<DockItemIcon>& dockitem)
     {
         for (auto& item : data()) {

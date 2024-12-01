@@ -72,6 +72,8 @@ namespace docklight
         y -= m_size / 2;
 
         move(x, y);
+        m_x = x;
+        m_y = y;
     }
 
     void DADWindow::show_at(int dockitem_index)
