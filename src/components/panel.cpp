@@ -117,7 +117,7 @@ namespace docklight
     bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
     {
         m_sigc_draw =
-            Glib::signal_timeout().connect(sigc::mem_fun(this, &Panel::on_timeout_draw), 100);
+            Glib::signal_timeout().connect(sigc::mem_fun(this, &Panel::on_timeout_draw), 1000 / 2);
 
         m_mouse_move_count = 0.f;
         m_last_mouse_move_count_show = 0.f;
@@ -129,7 +129,8 @@ namespace docklight
 
     bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
     {
-        m_sigc_draw.disconnect();
+        if (!m_drag_drop_starts) m_sigc_draw.disconnect();
+
         m_mouse_drag_drop_timer.stop();
 
         m_preview_open = false;
@@ -197,12 +198,35 @@ namespace docklight
         }
     }
 
+    void Panel::drag_drop(bool start)
+    {
+        if (start) {
+            std::shared_ptr<DockItemIcon> dockitem;
+            if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return;
+
+            Glib::RefPtr<Gdk::Pixbuf> icon = dockitem->get_icon(Config()->get_icon_size());
+
+            m_dad = new DADWindow(icon);
+            m_dad->show_at(m_dockitem_index);
+
+        } else {
+            if (m_dad) {
+                delete m_dad;
+                m_dad = nullptr;
+            }
+        }
+    }
+
     bool Panel::on_timeout_draw()
     {
         auto elt = m_mouse_drag_drop_timer.elapsed();
-        if (m_mouse_press && elt > 1.0) {
-            g_print("---------->%f\n", elt);
+        if (m_mouse_button == 1 && m_mouse_press && !m_drag_drop_starts && elt > 1.0) {
+            // g_print("---------->%f\n", elt);
+            //
+            drag_drop(true);
+
             m_mouse_drag_drop_timer.stop();
+            m_drag_drop_starts = true;
         }
 
         // m_mouse_move_count = g_get_real_time();
@@ -267,6 +291,13 @@ namespace docklight
     {
         //  m_mousemoveEventTime = event->time;
         //  m_mouse_move_timer.reset();
+
+        if (m_mouse_button == 1 && m_dad && m_drag_drop_starts) {
+            int x = 0;
+            int y = 0;
+            system::get_mouse_position(x, y);
+            m_dad->move_at(x, y);
+        }
 
         m_mouse_move_count = 0;
         get_dockitem_index(event->x, event->y);
@@ -364,12 +395,17 @@ namespace docklight
     bool Panel::on_button_press_event(GdkEventButton* event)
     {
         if ((event->type != GDK_BUTTON_PRESS)) return false;
+        m_mouse_button = event->button;
 
         m_mouse_press = true;
         get_dockitem_index(event->x, event->y);
 
-        // m_mouse_drag_and_dropEventTime = gtk_get_current_event_time();
+        if (m_drag_drop_starts) return false;
+
+        //  if (event->button == 1) {
         m_mouse_drag_drop_timer.start();
+        //   }
+
         if (m_preview_open) {
             m_mouseclickEventTime = 0;
 
@@ -406,8 +442,11 @@ namespace docklight
         if ((event->type != GDK_BUTTON_RELEASE)) return false;
 
         m_mouse_press = false;
-        // m_mouse_drag_and_dropEventTime = 0;
+
+        drag_drop(false);
         m_mouse_drag_drop_timer.stop();
+        m_drag_drop_starts = false;
+        m_sigc_draw.disconnect();
 
         std::shared_ptr<DockItemIcon> dockitem;
         if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return false;

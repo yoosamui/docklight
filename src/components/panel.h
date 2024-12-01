@@ -41,6 +41,7 @@
 #include <gtkmm/menuitem.h>
 
 #include "components/ExplodesWindow.h"
+#include "components/dadwindow.h"
 #include "components/panelpreview.h"
 #include "components/titlewindow.h"
 namespace docklight
@@ -107,6 +108,7 @@ namespace docklight
                                              gpointer user_data);
         void thread_func();
         void show_current_title(bool show);
+        void drag_drop(bool start);
 
       private:
         std::shared_ptr<DockItemIcon> m_dockitem;
@@ -134,6 +136,11 @@ namespace docklight
         guint m_last_title_index = 0;
         gint m_scroll_index = 0;
         bool m_mouse_press = false;
+        bool m_drag_drop_starts = false;
+        int m_mouse_button = 0;
+
+        // Glib::RefPtr<DADWindow> m_dad;
+        DADWindow* m_dad = nullptr;
     };
 }  // namespace docklight
 
