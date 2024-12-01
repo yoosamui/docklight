@@ -71,14 +71,11 @@ namespace docklight
             g_message("CALLLLLLL %d", source_index);
             if (factory::any_cast<std::shared_ptr<DockItemIcon>>(a, dockitem)) {
                 auto xid = dockitem->get_xid();
-                // remove<DockItemIcon>(xid);
 
                 m_dockitems.erase(m_dockitems.begin() + source_index);
 
                 auto pair = std::make_pair(xid, a);
                 m_dockitems.insert(m_dockitems.begin() + dest_index, pair);
-
-                g_message("done");
             }
 
             m_last_size = 0;
@@ -93,13 +90,6 @@ namespace docklight
             if (source_index < 0 || source_index > size || dest_index < 0 || dest_index > size) {
                 return;
             }
-
-            // auto a = m_dockitems.at(source_index);
-
-            // remove(source->get_xid());
-
-            // people.insert(people.begin() + index, temp);
-            //  m_dockitems.insert(m_dockitems.begin() + dest_index.source;
 
             std::iter_swap(m_dockitems.begin() + source_index, m_dockitems.begin() + dest_index);
             m_last_size = 0;

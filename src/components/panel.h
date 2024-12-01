@@ -24,8 +24,6 @@
 #include <math.h>
 
 #include "components/config.h"
-#include "utils/easing.h" // for testing
-#include  <thread>
 
 #include "utils/wnck.h"
 #include "components/dockitemicon.h"
@@ -33,8 +31,7 @@
 #include "components/TransparentWindow.h"
 #include "components/position.h"
 #include "components/dockrender.h"
-// clang-format on
-//
+
 #include <gdk/gdk.h>
 #include <gtkmm/image.h>
 #include <gtkmm/imagemenuitem.h>
@@ -44,9 +41,10 @@
 #include "components/dadwindow.h"
 #include "components/panelpreview.h"
 #include "components/titlewindow.h"
+// clang-format on
+
 namespace docklight
 {
-
     class Panel : public DockRender
     {
       public:
