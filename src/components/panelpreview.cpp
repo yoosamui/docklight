@@ -437,7 +437,7 @@ namespace docklight
                               m_close_button_rectangle.get_width(),
                               m_close_button_rectangle.get_height());
 
-                cr->set_source_rgba(0.992, 0.858, 0.003, 1.0);  // 1, 1, 1, 0.2)
+                cr->set_source_rgba(0.992, 0.858, 0.003, 0.0);  // 1, 1, 1, 0.2)
                 cr->fill();
 
                 cr->set_source_rgba(0.870, 0.050, 0.062, 1.0);  // ROJO
@@ -519,7 +519,7 @@ namespace docklight
     void PanelPreview::draw_text(const Cairo::RefPtr<Cairo::Context>& cr, int x, int y,
                                  const std::string& text, bool indicator)
     {
-        int offset = indicator ? 26 : 10;
+        int offset = indicator ? 36 : 10;
         cr->rectangle(x, y + 1, m_size - offset, Config()->get_preview_area_margin() - 1);
         cr->set_source_rgba(1, 1, 1, 0.f);  // for debuging set alpha to 1.f
         cr->clip_preserve();

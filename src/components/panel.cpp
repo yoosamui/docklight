@@ -44,6 +44,7 @@ namespace docklight
                    );
         // clang-format on
 
+        //   m_mouse_drag_drop_timer.stop();
         m_title = Glib::RefPtr<TitleWindow>(new TitleWindow());
         m_provider = Provider();
         g_message("Create Panel.");
@@ -70,6 +71,7 @@ namespace docklight
     {
         m_bck_thread->detach();
 
+        m_sigc_draw.disconnect();
         m_sigc_updated.disconnect();
         g_message(MSG_FREE_OBJECT, "Panel");
     }
@@ -114,8 +116,8 @@ namespace docklight
 
     bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
     {
-        // m_sigc_draw =
-        // Glib::signal_timeout().connect(sigc::mem_fun(this, &Panel::on_timeout_draw), 1000 / 30);
+        m_sigc_draw =
+            Glib::signal_timeout().connect(sigc::mem_fun(this, &Panel::on_timeout_draw), 100);
 
         m_mouse_move_count = 0.f;
         m_last_mouse_move_count_show = 0.f;
@@ -128,13 +130,16 @@ namespace docklight
     bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
     {
         m_sigc_draw.disconnect();
+        m_mouse_drag_drop_timer.stop();
+
         m_preview_open = false;
+        m_mouse_press = false;
+        m_mouse_enter = false;
 
         show_current_title(false);
 
         m_mouse_move_count = 0.f;
 
-        m_mouse_enter = false;
         Gtk::Widget::queue_draw();
         return false;
     }
@@ -194,29 +199,13 @@ namespace docklight
 
     bool Panel::on_timeout_draw()
     {
-        if (!m_mouse_enter) return true;
-        if (m_last_index != m_dockitem_index) {
-            show_current_title(true);
-            return true;
+        auto elt = m_mouse_drag_drop_timer.elapsed();
+        if (m_mouse_press && elt > 1.0) {
+            g_print("---------->%f\n", elt);
+            m_mouse_drag_drop_timer.stop();
         }
 
-        if (m_mouse_move_count > 1.1f) {
-            m_last_mouse_move_count_show++;
-            m_last_mouse_move_count_hide = 0;
-        } else {
-            m_last_mouse_move_count_hide++;
-            m_last_mouse_move_count_show = 0;
-        }
-
-        if (m_last_mouse_move_count_show > 3) {
-            show_current_title(true);
-            m_mouse_move = false;
-        } else if (m_last_mouse_move_count_hide > 3) {
-            show_current_title(false);
-            m_mouse_move = true;
-        }
-
-        m_mouse_move_count = g_get_real_time();
+        // m_mouse_move_count = g_get_real_time();
         return true;
     }
 
@@ -376,10 +365,13 @@ namespace docklight
     {
         if ((event->type != GDK_BUTTON_PRESS)) return false;
 
+        m_mouse_press = true;
         get_dockitem_index(event->x, event->y);
 
+        // m_mouse_drag_and_dropEventTime = gtk_get_current_event_time();
+        m_mouse_drag_drop_timer.start();
         if (m_preview_open) {
-            m_mouseclickEventTime = 0;  // gtk_get_current_event_time();
+            m_mouseclickEventTime = 0;
 
             return true;
         }
@@ -412,6 +404,10 @@ namespace docklight
     bool Panel::on_button_release_event(GdkEventButton* event)
     {
         if ((event->type != GDK_BUTTON_RELEASE)) return false;
+
+        m_mouse_press = false;
+        // m_mouse_drag_and_dropEventTime = 0;
+        m_mouse_drag_drop_timer.stop();
 
         std::shared_ptr<DockItemIcon> dockitem;
         if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return false;

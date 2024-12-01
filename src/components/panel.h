@@ -118,8 +118,10 @@ namespace docklight
         Glib::RefPtr<PanelPreview> m_preview;
         float m_mouseclickEventTime = 0.0f;
         float m_mousemoveEventTime = 0.0f;
+        //  float m_mouse_drag_and_dropEventTime = 0.0f;
         float m_last_mousemoveEventTime = 0.0f;
         Glib::Timer m_mouse_click_timer;
+        Glib::Timer m_mouse_drag_drop_timer;
         float m_mouse_move_count = 0.f;
         float m_last_mouse_move_count_show = 0.f;
         float m_last_mouse_move_count_hide = 0.f;
@@ -131,6 +133,7 @@ namespace docklight
         guint m_last_index = 0;
         guint m_last_title_index = 0;
         gint m_scroll_index = 0;
+        bool m_mouse_press = false;
     };
 }  // namespace docklight
 
