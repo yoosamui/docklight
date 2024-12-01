@@ -211,6 +211,7 @@ namespace docklight
             m_dad->show_at(m_dockitem_index);
 
             ////  container_updated();
+            m_drag_drop_starts = true;
             Gtk::Widget::queue_draw();
 
         } else {
@@ -218,19 +219,18 @@ namespace docklight
                 delete m_dad;
                 m_dad = nullptr;
             }
+            m_drag_drop_starts = false;
         }
     }
 
     bool Panel::on_timeout_draw()
     {
-        auto elt = m_mouse_drag_drop_timer.elapsed();
-        if (m_mouse_button == 1 && m_mouse_press && !m_drag_drop_starts && elt > 0.5) {
-            // g_print("---------->%f\n", elt);
+        if (m_mouse_button == 1 && m_mouse_press && !m_drag_drop_starts &&
+            m_mouse_drag_drop_timer.elapsed() > 0.5) {
             //
             drag_drop(true);
 
             m_mouse_drag_drop_timer.stop();
-            m_drag_drop_starts = true;
         }
 
         // m_mouse_move_count = g_get_real_time();
@@ -417,17 +417,17 @@ namespace docklight
     bool Panel::on_button_press_event(GdkEventButton* event)
     {
         if ((event->type != GDK_BUTTON_PRESS)) return false;
-        m_mouse_button = event->button;
-
-        m_mouse_press = true;
         get_dockitem_index(event->x, event->y);
-        m_drag_drop_item_index = m_dockitem_index;
 
+        m_mouse_button = event->button;
+        m_mouse_press = true;
+
+        m_drag_drop_item_index = m_dockitem_index;
         if (m_drag_drop_starts) return false;
 
-        //  if (event->button == 1) {
-        m_mouse_drag_drop_timer.start();
-        //   }
+        if (event->button == 1) {
+            m_mouse_drag_drop_timer.start();
+        }
 
         if (m_preview_open) {
             m_mouseclickEventTime = 0;
@@ -471,7 +471,9 @@ namespace docklight
             std::shared_ptr<DockItemIcon> dockitem;
             if (m_provider->get_dockitem_by_index(m_drag_drop_item_index, dockitem)) {
                 m_drag_drop_starts = false;
+
                 drag_drop(false);
+
                 m_mouse_drag_drop_timer.stop();
                 m_sigc_draw.disconnect();
 

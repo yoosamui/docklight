@@ -274,12 +274,12 @@ namespace docklight
             draw_surface_icon(dockitem);
             draw_surface_indicator(dockitem);
 
-            if (dockitem->get_visible()) {
-                // if (!(m_drag_drop_starts && dockitem->get_tag() == m_drag_drop_item_move_index))
-                // {
-                m_bck_ctx->set_source(m_cell, m_posX, m_posY);
-                m_bck_ctx->paint();
-            }
+            // if (dockitem->get_visible()) {
+            // if (!(m_drag_drop_starts && dockitem->get_tag() == m_drag_drop_item_move_index))
+            // {
+            m_bck_ctx->set_source(m_cell, m_posX, m_posY);
+            m_bck_ctx->paint();
+            // }
 
             if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
                 m_posX += area;
