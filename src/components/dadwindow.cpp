@@ -1,13 +1,14 @@
 #include "components/dadwindow.h"
 
-#include "components/config.h"
-#include "pango/pango-layout.h"
-#include "utils/cairo.h"
+//#include "components/config.h"
+//#include "pango/pango-layout.h"
+//#include "utils/cairo.h"
 
 namespace docklight
 {
 
-    DADWindow::DADWindow(Glib::RefPtr<Gdk::Pixbuf> icon)
+    DADWindow::DADWindow(const Glib::RefPtr<Configuration> &config,
+                         Glib::RefPtr<PositionManager> position, Glib::RefPtr<Gdk::Pixbuf> icon)
         : Gtk::Window(Gtk::WindowType::WINDOW_POPUP),
           m_HBox(Gtk::ORIENTATION_HORIZONTAL, 5),
           m_Label("", false)
@@ -35,7 +36,6 @@ namespace docklight
         font.set_size(8 * PANGO_SCALE);
         font.set_weight(Pango::WEIGHT_NORMAL);
 
-        // Gtk::Window::set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_TOOLTIP);
         m_HBox.set_margin_left(6);
         m_HBox.set_margin_right(6);
         m_HBox.set_margin_top(6);
@@ -45,6 +45,7 @@ namespace docklight
         m_HBox.add(m_Label);
 
         m_icon = icon;
+        m_config = config;
 
         m_size = Config()->get_icon_size();
         resize(m_size, m_size);
@@ -56,8 +57,8 @@ namespace docklight
     DADWindow::~DADWindow()
     {
         hide();
-        //  m_visible = false;
-        g_print("Free DADWindow\n");
+        m_visible = false;
+        g_message("Free DADWindow\n");
     }
 
     void DADWindow::close_now()

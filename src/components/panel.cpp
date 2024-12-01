@@ -44,7 +44,6 @@ namespace docklight
                    );
         // clang-format on
 
-        //   m_mouse_drag_drop_timer.stop();
         m_title = Glib::RefPtr<TitleWindow>(new TitleWindow());
         m_provider = Provider();
         g_message("Create Panel.");
@@ -119,10 +118,6 @@ namespace docklight
         m_sigc_draw =
             Glib::signal_timeout().connect(sigc::mem_fun(this, &Panel::on_timeout_draw), 1000 / 2);
 
-        m_mouse_move_count = 0.f;
-        m_last_mouse_move_count_show = 0.f;
-        m_last_mouse_move_count_hide = 0.f;
-
         m_mouse_enter = true;
         return false;
     }
@@ -138,8 +133,6 @@ namespace docklight
         m_mouse_enter = false;
 
         show_current_title(false);
-
-        m_mouse_move_count = 0.f;
 
         Gtk::Widget::queue_draw();
         return false;
@@ -207,7 +200,7 @@ namespace docklight
             dockitem->set_visible(false);
             Glib::RefPtr<Gdk::Pixbuf> icon = dockitem->get_icon(Config()->get_icon_size());
 
-            m_dad = new DADWindow(icon);
+            m_dad = new DADWindow(Config(), Position(), icon);
             m_dad->show_at(m_dockitem_index);
 
             ////  container_updated();
@@ -227,13 +220,9 @@ namespace docklight
     {
         if (m_mouse_button == 1 && m_mouse_press && !m_drag_drop_starts &&
             m_mouse_drag_drop_timer.elapsed() > 0.5) {
-            //
             drag_drop(true);
-
-            m_mouse_drag_drop_timer.stop();
         }
 
-        // m_mouse_move_count = g_get_real_time();
         return true;
     }
 
@@ -431,7 +420,6 @@ namespace docklight
 
         if (m_preview_open) {
             m_mouseclickEventTime = 0;
-
             return true;
         }
 
@@ -486,12 +474,6 @@ namespace docklight
                 Gtk::Widget::queue_draw();
 
                 m_drag_drop_item_index = 0;
-                g_message("Finish DAD");
-                // std::shared_ptr<DockItemIcon> dockitem;
-                // if (m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) {
-                // dockitem->set_visible(false);
-                // Gtk::Widget::queue_draw();
-                //}
             }
         }
 
