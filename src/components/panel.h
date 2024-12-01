@@ -138,6 +138,7 @@ namespace docklight
         bool m_mouse_press = false;
         bool m_drag_drop_starts = false;
         int m_mouse_button = 0;
+        int m_drag_drop_item_index = 0;
 
         // Glib::RefPtr<DADWindow> m_dad;
         DADWindow* m_dad = nullptr;

@@ -204,10 +204,14 @@ namespace docklight
             std::shared_ptr<DockItemIcon> dockitem;
             if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return;
 
+            dockitem->set_visible(false);
             Glib::RefPtr<Gdk::Pixbuf> icon = dockitem->get_icon(Config()->get_icon_size());
 
             m_dad = new DADWindow(icon);
             m_dad->show_at(m_dockitem_index);
+
+            ////  container_updated();
+            Gtk::Widget::queue_draw();
 
         } else {
             if (m_dad) {
@@ -220,7 +224,7 @@ namespace docklight
     bool Panel::on_timeout_draw()
     {
         auto elt = m_mouse_drag_drop_timer.elapsed();
-        if (m_mouse_button == 1 && m_mouse_press && !m_drag_drop_starts && elt > 1.0) {
+        if (m_mouse_button == 1 && m_mouse_press && !m_drag_drop_starts && elt > 0.5) {
             // g_print("---------->%f\n", elt);
             //
             drag_drop(true);
@@ -299,7 +303,7 @@ namespace docklight
             m_dad->move_at(x, y);
         }
 
-        m_mouse_move_count = 0;
+        //   m_mouse_move_count = 0;
         get_dockitem_index(event->x, event->y);
 
         show_current_title(true /*m_mouse_move*/);  // fluent
@@ -399,6 +403,7 @@ namespace docklight
 
         m_mouse_press = true;
         get_dockitem_index(event->x, event->y);
+        m_drag_drop_item_index = m_dockitem_index;
 
         if (m_drag_drop_starts) return false;
 
@@ -443,14 +448,21 @@ namespace docklight
 
         m_mouse_press = false;
 
-        drag_drop(false);
-        m_mouse_drag_drop_timer.stop();
-        m_drag_drop_starts = false;
-        m_sigc_draw.disconnect();
+        if (m_drag_drop_starts) {
+            std::shared_ptr<DockItemIcon> dockitem;
+            if (m_provider->get_dockitem_by_index(m_drag_drop_item_index, dockitem)) {
+                m_drag_drop_starts = false;
+                drag_drop(false);
+                m_mouse_drag_drop_timer.stop();
+                m_sigc_draw.disconnect();
+
+                dockitem->set_visible(true);
+                Gtk::Widget::queue_draw();
+            }
+        }
 
         std::shared_ptr<DockItemIcon> dockitem;
         if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return false;
-
         int diff = (int)((gtk_get_current_event_time() - m_mouseclickEventTime));
         auto size = dockitem->get_childmap().size();
 
