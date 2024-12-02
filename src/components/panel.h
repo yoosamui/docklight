@@ -28,7 +28,7 @@
 #include "utils/wnck.h"
 #include "components/dockitemicon.h"
 #include "dockitemprovider.h"
-#include "components/TransparentWindow.h"
+//#include "components/TransparentWindow.h"
 #include "components/position.h"
 #include "components/dockrender.h"
 
@@ -37,7 +37,7 @@
 #include <gtkmm/imagemenuitem.h>
 #include <gtkmm/menuitem.h>
 
-#include "components/ExplodesWindow.h"
+#include "components/animboomwindow.h"
 #include "components/dadwindow.h"
 #include "components/panelpreview.h"
 #include "components/titlewindow.h"
@@ -89,7 +89,7 @@ namespace docklight
 
       private:
         Glib::RefPtr<Configuration> m_config;
-        Glib::RefPtr<ExplodesWindow> m_composite;
+        Glib::RefPtr<AnimBoomWindow> m_composite;
         Glib::RefPtr<PanelPreview> m_preview;
         Glib::RefPtr<DockItemProvider> m_provider;
         Glib::RefPtr<PositionManager> m_position;

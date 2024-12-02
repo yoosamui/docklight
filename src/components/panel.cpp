@@ -47,7 +47,7 @@ namespace docklight
                      const Glib::RefPtr<PositionManager>& position)
     {
         // TODO::
-        m_composite = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
+        m_composite = Glib::RefPtr<AnimBoomWindow>(new AnimBoomWindow());
         m_preview = Glib::RefPtr<PanelPreview>(new PanelPreview());
 
         m_app = app;

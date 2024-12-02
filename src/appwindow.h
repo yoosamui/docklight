@@ -11,14 +11,14 @@
 #include "components/config.h"
 #include "components/appobserver.h"
 #include "components/dockitemprovider.h"
-#include "components/TransparentWindow.h"
-#include "components/ExplodesWindow.h"
+#include "components/compositewindow.h"
+#include "components/animboomwindow.h"
 // clang-format on
 
 namespace docklight
 {
 
-    class AppWindow : public TransparentWindow
+    class AppWindow : public CompositeWindow
     {
       public:
         AppWindow();
@@ -56,8 +56,8 @@ namespace docklight
       private:
         // Glib::RefPtr<Gtk::Window> m_window;
         //  sigc::connection m_sigc_updated;
-        //  Glib::RefPtr<ExplodesWindow> m_composite;
-        ExplodesWindow m_composite;
+        //  Glib::RefPtr<AnimBoomWindow> m_composite;
+        AnimBoomWindow m_composite;
         Panel* m_panel;
         // Panel m_panel;
         static Glib::RefPtr<Gtk::Application> m_application;

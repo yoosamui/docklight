@@ -20,6 +20,7 @@
 
 #include "panelpreview.h"
 
+#include <gdkmm/general.h>  // set_source_pixbuf()
 #include "utils/system.h"
 #include "translations.h"
 // clang-format on
@@ -60,7 +61,7 @@ namespace docklight
         // clang-format on
         //
 
-        m_anim = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
+        m_anim = Glib::RefPtr<AnimBoomWindow>(new AnimBoomWindow());
         m_size = Config()->get_preview_area();
     }
 

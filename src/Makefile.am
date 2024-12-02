@@ -13,10 +13,10 @@ docklight_CPPFLAGS = $(ALLCPPFLAGS)
 
 # release
 #docklight_CPPFLAGS += O2 -s -DNDEBUG -Wall -Wextra -Werror -std=c++11 -pedantic
-#docklight_CPPFLAGS +=  -s -DNDEBUG -Wall -Wextra -Werror -std=c++17 -pedantic
+docklight_CPPFLAGS +=  -s -DNDEBUG -Wall -Wextra -Werror -std=c++17 -pedantic
 
 # standard
-docklight_CPPFLAGS += -DDEBUG -Wall -std=c++17 -ggdb
+#docklight_CPPFLAGS += -DDEBUG -Wall -std=c++17 -ggdb
 
 
 ALLDADDLIBS = $(GTKMM_LIBS)
@@ -32,8 +32,8 @@ utils/struts.cpp \
 utils/cairo.cpp \
 utils/pixbuf.cpp \
 components/titlewindow.cpp \
-components/TransparentWindow.cpp \
-components/ExplodesWindow.cpp \
+components/compositewindow.cpp \
+components/animboomwindow.cpp \
 components/coverwindow.cpp \
 components/dadwindow.cpp \
 components/panel.cpp \

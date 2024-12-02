@@ -22,10 +22,10 @@
 #include <gtkmm/window.h>
 // clang-format on
 
-class TransparentWindow : public Gtk::Window
+class CompositeWindow : public Gtk::Window
 {
   public:
-    TransparentWindow();
+    CompositeWindow();
 
     // protected:
     //// Override default signal handler:

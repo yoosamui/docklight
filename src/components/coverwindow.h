@@ -24,7 +24,6 @@
 #include <gdk/gdkx.h>
 #include "utils/wnck.h"
 #include "utils/pixbuf.h"
-#include "components/TransparentWindow.h"
 #include "components/dockitemicon.h"
 // clang-format on
 #include "X11/X.h"

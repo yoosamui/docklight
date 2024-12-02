@@ -170,7 +170,7 @@ namespace docklight
         int yy = 0;
         system::get_mouse_position(xx, yy);
 
-        if (!m_anim) m_anim = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
+        if (!m_anim) m_anim = Glib::RefPtr<AnimBoomWindow>(new AnimBoomWindow());
         m_anim->show_at(xx, yy);
 
         wnck::close_window(dockitem->get_wnck_window_list());

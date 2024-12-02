@@ -16,10 +16,10 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // clang-format off
-#include "components/TransparentWindow.h"
+#include "components/compositewindow.h"
 // clang-format on
 
-TransparentWindow::TransparentWindow()
+CompositeWindow::CompositeWindow()
 {
     GdkScreen* screen;
     GdkVisual* visual;
@@ -47,7 +47,7 @@ TransparentWindow::TransparentWindow()
     set_keep_above(true);
 }
 
-// bool TransparentWindow::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
+// bool CompositeWindow::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
 //{
 // cr->save();
 ////  Clear destination layer (bounded)
