@@ -53,6 +53,11 @@ namespace docklight
         return m_wnckwindow;
     }
 
+    void DockItem::set_visible(bool visible)
+    {
+        m_visible = visible;
+    }
+
     void DockItem::set_active(bool active)
     {
         m_active_window = active;
@@ -138,6 +143,11 @@ namespace docklight
     inline bool DockItem::get_active() const
     {
         return m_active_window;
+    }
+
+    inline bool DockItem::get_visible() const
+    {
+        return m_visible;
     }
 
     inline bool DockItem::get_attached() const

@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 # Docklight-5
 Linux Dock with Preview.
+=======
+# Docklight
+>>>>>>> dev
 Helps to access and manage application windows.
 
 

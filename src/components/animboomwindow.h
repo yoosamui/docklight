@@ -20,7 +20,6 @@
 #include <glibmm/main.h>
 #include <gtkmm/window.h>
 
-#include "components/TransparentWindow.h"
 // clang-format on
 
 #define DF_EXPLODES_FRAMESPERSECOND 30
@@ -29,11 +28,11 @@
 
 namespace docklight
 {
-    class ExplodesWindow : public Gtk::Window  // public TransparentWindow
+    class AnimBoomWindow : public Gtk::Window
     {
       public:
-        ExplodesWindow();
-        ~ExplodesWindow();
+        AnimBoomWindow();
+        ~AnimBoomWindow();
 
         void show_at(int x, int y);
         bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;

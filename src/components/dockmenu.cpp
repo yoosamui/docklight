@@ -93,6 +93,11 @@ namespace docklight
         m_item_menu.signal_hide().connect(sigc::mem_fun(*this, &DockMenu::on_menu_hide_event));
     }
 
+    void DockMenu::on_home_menu_quit_event()
+    {
+        m_app->quit();
+    }
+
     void DockMenu::on_item_menu_attach_event()
     {
         bool attached = m_item_menu_attach.get_active();
@@ -165,7 +170,7 @@ namespace docklight
         int yy = 0;
         system::get_mouse_position(xx, yy);
 
-        if (!m_anim) m_anim = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
+        if (!m_anim) m_anim = Glib::RefPtr<AnimBoomWindow>(new AnimBoomWindow());
         m_anim->show_at(xx, yy);
 
         wnck::close_window(dockitem->get_wnck_window_list());

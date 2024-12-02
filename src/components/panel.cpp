@@ -18,15 +18,8 @@
 //  identification number, along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // clang-format off
-
-//#include <gdkmm/general.h>  // set_source_pixbuf()
-#include <glibmm/i18n.h>
-#include <iostream>
-#include <cmath>
-
 #include "components/panel.h"
 #include "translations.h"
-#include "components/position.h"
 // clang-format on
 
 namespace docklight
@@ -34,7 +27,6 @@ namespace docklight
     Panel::Panel()
     {
         // clang-format off
-        // Set event masks
         add_events( Gdk::BUTTON_PRESS_MASK |
                     Gdk::BUTTON_RELEASE_MASK |
                     Gdk::SCROLL_MASK |
@@ -45,13 +37,24 @@ namespace docklight
         // clang-format on
 
         m_title = Glib::RefPtr<TitleWindow>(new TitleWindow());
-        m_provider = Provider();
+        m_provider = m_provider;
         g_message("Create Panel.");
     }
 
-    void Panel::init(Glib::RefPtr<Gtk::Application> app)
+    void Panel::init(const Glib::RefPtr<Gtk::Application>& app,
+                     const Glib::RefPtr<Configuration>& config,
+                     const Glib::RefPtr<DockItemProvider>& provider,
+                     const Glib::RefPtr<PositionManager>& position)
     {
+        // TODO::
+        m_composite = Glib::RefPtr<AnimBoomWindow>(new AnimBoomWindow());
+        m_preview = Glib::RefPtr<PanelPreview>(new PanelPreview());
+
         m_app = app;
+        m_config = config;
+        m_provider = provider;
+        m_position = position;
+
         m_sigc_updated =
             m_provider->signal_update().connect(sigc::mem_fun(this, &Panel::on_container_updated));
 
@@ -59,18 +62,16 @@ namespace docklight
         g_signal_connect(wnckscreen, "active_window_changed",
                          G_CALLBACK(Panel::on_active_window_changed), nullptr);
 
-        m_position = Position();
         m_bck_thread = std::shared_ptr<std::thread>(new std::thread(&Panel::thread_func, this));
-
-        m_composite = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
-        m_preview = Glib::RefPtr<PanelPreview>(new PanelPreview());
     }
 
     Panel::~Panel()
     {
         m_bck_thread->detach();
 
+        m_sigc_draw.disconnect();
         m_sigc_updated.disconnect();
+
         g_message(MSG_FREE_OBJECT, "Panel");
     }
 
@@ -114,12 +115,8 @@ namespace docklight
 
     bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
     {
-        // m_sigc_draw =
-        // Glib::signal_timeout().connect(sigc::mem_fun(this, &Panel::on_timeout_draw), 1000 / 30);
-
-        m_mouse_move_count = 0.f;
-        m_last_mouse_move_count_show = 0.f;
-        m_last_mouse_move_count_hide = 0.f;
+        m_sigc_draw =
+            Glib::signal_timeout().connect(sigc::mem_fun(this, &Panel::on_timeout_draw), 1000 / 2);
 
         m_mouse_enter = true;
         return false;
@@ -127,14 +124,16 @@ namespace docklight
 
     bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
     {
-        m_sigc_draw.disconnect();
+        if (!m_drag_drop_starts) m_sigc_draw.disconnect();
+
+        m_mouse_drag_drop_timer.stop();
+
         m_preview_open = false;
+        m_mouse_press = false;
+        m_mouse_enter = false;
 
         show_current_title(false);
 
-        m_mouse_move_count = 0.f;
-
-        m_mouse_enter = false;
         Gtk::Widget::queue_draw();
         return false;
     }
@@ -150,12 +149,12 @@ namespace docklight
 
             m_title->set_text(title);
             int width = m_title->get_width();
-            int area = Config()->get_dock_area();
+            int area = m_config->get_dock_area();
 
             int centerX, centerY;
             int x, y;
 
-            if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+            if (m_config->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
                 int min = std::min(width, area);
                 int max = std::max(width, area);
 
@@ -167,19 +166,17 @@ namespace docklight
                 x = (Position()->get_x() + (m_dockitem_index * area)) - centerX;
                 y = Position()->get_y() - 50;
 
-                if (Config()->get_dock_location() == dock_location_t::top) {
+                if (m_config->get_dock_location() == dock_location_t::top) {
                     y = Position()->get_y() + 60;
                 }
             } else {
-                //
-
                 int min = std::min(m_title->get_height(), area);
                 int max = std::max(m_title->get_height(), area);
 
                 centerY = max / 2 - min / 2;
-                y = Position()->get_y() + (m_dockitem_index * Config()->get_dock_area()) + centerY;
+                y = Position()->get_y() + (m_dockitem_index * m_config->get_dock_area()) + centerY;
 
-                if (Config()->get_dock_location() == dock_location_t::left) {
+                if (m_config->get_dock_location() == dock_location_t::left) {
                     x = Position()->get_x() + area;
                 } else {
                     x = Position()->get_x() - width;
@@ -192,50 +189,54 @@ namespace docklight
         }
     }
 
-    bool Panel::on_timeout_draw()
+    void Panel::drag_drop(bool start)
     {
-        if (!m_mouse_enter) return true;
-        if (m_last_index != m_dockitem_index) {
-            show_current_title(true);
-            return true;
-        }
+        if (start) {
+            std::shared_ptr<DockItemIcon> dockitem;
+            if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return;
 
-        if (m_mouse_move_count > 1.1f) {
-            m_last_mouse_move_count_show++;
-            m_last_mouse_move_count_hide = 0;
+            dockitem->set_visible(false);
+            Glib::RefPtr<Gdk::Pixbuf> icon = dockitem->get_icon(m_config->get_icon_size());
+
+            m_dad = new DADWindow(m_config, Position(), icon);
+            m_dad->show_at(m_dockitem_index);
+
+            m_drag_drop_starts = true;
+            // show_current_title(false);
+
+            m_title->hide_now();
+            Gtk::Widget::queue_draw();
+
         } else {
-            m_last_mouse_move_count_hide++;
-            m_last_mouse_move_count_show = 0;
+            if (m_dad) {
+                delete m_dad;
+                m_dad = nullptr;
+            }
+            m_drag_drop_starts = false;
+            // show_current_title(true);
         }
-
-        if (m_last_mouse_move_count_show > 3) {
-            show_current_title(true);
-            m_mouse_move = false;
-        } else if (m_last_mouse_move_count_hide > 3) {
-            show_current_title(false);
-            m_mouse_move = true;
-        }
-
-        m_mouse_move_count = g_get_real_time();
-        return true;
     }
 
-    void Panel::on_home_menu_quit_event()
+    bool Panel::on_timeout_draw()
     {
-        m_app->quit();
+        if (m_mouse_button == 1 && m_mouse_press && !m_drag_drop_starts &&
+            m_mouse_drag_drop_timer.elapsed() > 0.2) {
+            drag_drop(true);
+        }
+
+        return true;
     }
 
     inline guint Panel::get_scale_factor()
     {
         const auto workarea = device::monitor::get_workarea();
-        const int max_icon_size = Config()->get_custom_icon_size();
+        const int max_icon_size = m_config->get_custom_icon_size();
         const int num_items = m_provider->data().size();
         const int item_width = max_icon_size;
-        int screen_width = 0;
 
-        screen_width = Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL
-                           ? workarea.get_width()
-                           : workarea.get_height();
+        int screen_width = m_config->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL
+                               ? workarea.get_width()
+                               : workarea.get_height();
 
         // Calculate the scaling factor
         float scaling_factor =
@@ -247,18 +248,18 @@ namespace docklight
             icon_size = max_icon_size;
         };
 
-        return icon_size - Config()->get_dock_area_margin();
+        return icon_size - m_config->get_dock_area_margin();
     }
 
     void Panel::container_updated(guint explicit_size)
     {
         auto size = m_provider->data().size();
-        auto separator_size = Config()->get_separator_size();
+        auto separator_size = m_config->get_separator_size();
         auto separators_count = (size * separator_size);
 
         // resize the icon if necesery
         int scaled_icon_size = get_scale_factor();
-        Config()->set_icon_size(scaled_icon_size);
+        m_config->set_icon_size(scaled_icon_size);
 
         // draw and positioning
         auto required_size = m_provider->required_size(separators_count);
@@ -276,25 +277,32 @@ namespace docklight
 
     bool Panel::on_motion_notify_event(GdkEventMotion* event)
     {
-        //  m_mousemoveEventTime = event->time;
-        //  m_mouse_move_timer.reset();
-
-        m_mouse_move_count = 0;
         get_dockitem_index(event->x, event->y);
 
-        show_current_title(true /*m_mouse_move*/);  // fluent
+        if (m_mouse_button == 1 && m_dad && m_drag_drop_starts) {
+            int x = 0;
+            int y = 0;
+            system::get_mouse_position(x, y);
+            m_dad->move_at(x, y);
+
+            Gtk::Widget::queue_draw();
+
+            if (m_drag_drop_item_index != m_dockitem_index) {
+                if (m_config->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+                    m_drag_drop_candrop = (y + m_dad->get_height()) > Position()->get_y();
+                } else {
+                    m_drag_drop_candrop = (x + m_dad->get_width()) > Position()->get_x();
+                }
+            }
+        }
+
+        // show the title window
+        if (!m_drag_drop_starts && !m_preview_open) show_current_title(true);
 
         if (m_dockitem_index != m_last_index) {
             m_last_index = m_dockitem_index;
             Gtk::Widget::queue_draw();
         }
-
-        // if (m_preview && m_preview_open && m_preview_open_index &&
-        //(m_dockitem_index > m_preview_open_index + 1 ||
-        // m_dockitem_index < m_preview_open_index - 1)) {
-        ////
-        // m_preview->hide_now();
-        //}
 
         // stop other handlers from being invoked for the event.
         return true;
@@ -305,8 +313,8 @@ namespace docklight
         gint pos_x = 0;
         gint pos_y = 0;
 
-        auto separator_size = Config()->get_separator_size();
-        auto area = Config()->get_dock_area() + separator_size;
+        auto separator_size = m_config->get_separator_size();
+        auto area = m_config->get_dock_area() + separator_size;
         auto size = m_provider->data().size();
         auto maxsize = size * area;
         auto start_pos = 0;
@@ -315,7 +323,7 @@ namespace docklight
 
         for (size_t idx = 0; idx < size; idx++) {
             m_dockitem_index = -1;
-            if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+            if (m_config->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
                 if (mx >= pos_x && mx <= pos_x + area) {
                     m_dockitem_index = idx;
                     break;
@@ -375,29 +383,21 @@ namespace docklight
     bool Panel::on_button_press_event(GdkEventButton* event)
     {
         if ((event->type != GDK_BUTTON_PRESS)) return false;
-
         get_dockitem_index(event->x, event->y);
 
-        if (m_preview_open) {
-            m_mouseclickEventTime = 0;  // gtk_get_current_event_time();
+        m_mouse_button = event->button;
+        m_mouse_press = true;
 
-            return true;
+        m_drag_drop_item_index = m_dockitem_index;
+        if (m_drag_drop_starts) return false;
+
+        if (event->button == 1) {
+            m_mouse_drag_drop_timer.start();
         }
 
-        // Handle the left mouse button.
-        if (event->button == 1 && m_dockitem_index) {
-            std::shared_ptr<DockItemIcon> dockitem;
-            if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return false;
-
-            auto size = dockitem->get_childmap().size();
-
-            if (!size) {
-                dockitem->launch();
-                return true;
-            }
-
-            wnck::select_window(dockitem->get_hash(), m_active_window,
-                                dockitem->get_wnck_window_list());
+        if (m_preview_open) {
+            m_mouseclickEventTime = 0;
+            return true;
         }
 
         m_preview->hide_now();
@@ -413,9 +413,50 @@ namespace docklight
     {
         if ((event->type != GDK_BUTTON_RELEASE)) return false;
 
+        get_dockitem_index(event->x, event->y);
+        m_mouse_press = false;
+
+        if (m_drag_drop_starts) {
+            std::shared_ptr<DockItemIcon> dockitem;
+            if (m_provider->get_dockitem_by_index(m_drag_drop_item_index, dockitem)) {
+                m_drag_drop_starts = false;
+
+                drag_drop(false);
+
+                m_mouse_drag_drop_timer.stop();
+                m_sigc_draw.disconnect();
+
+                if (m_drag_drop_candrop) {
+                    m_drag_drop_candrop = false;
+                    m_provider->drop(m_drag_drop_item_index, m_dockitem_index);
+                }
+
+                dockitem->set_visible(true);
+                Gtk::Widget::queue_draw();
+
+                m_drag_drop_item_index = 0;
+                return true;
+            }
+        }
+        // Handle the left mouse button.
+        if (event->button == 1 && m_dockitem_index) {
+            std::shared_ptr<DockItemIcon> dockitem;
+            if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return false;
+
+            auto size = dockitem->get_childmap().size();
+
+            if (!size) {
+                dockitem->launch();
+                return true;
+            }
+
+            wnck::select_window(dockitem->get_hash(), m_active_window,
+                                dockitem->get_wnck_window_list());
+            return true;
+        }
+
         std::shared_ptr<DockItemIcon> dockitem;
         if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return false;
-
         int diff = (int)((gtk_get_current_event_time() - m_mouseclickEventTime));
         auto size = dockitem->get_childmap().size();
 

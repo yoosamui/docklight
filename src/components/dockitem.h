@@ -41,6 +41,7 @@ namespace docklight
         bool m_has_desktop_file = true;
         bool m_attached = false;
         bool m_active_window = false;
+        bool m_visible = true;
 
         Glib::ustring m_title = {};
         Glib::ustring m_window_name = {};
@@ -68,6 +69,7 @@ namespace docklight
         virtual void set_icon_name(Glib::ustring icon_name) = 0;
         virtual void set_description(Glib::ustring icon_name) = 0;
         virtual void set_has_desktop_file(bool has) = 0;
+        virtual void set_visible(bool visible) = 0;
 
         // getters
         virtual WnckWindow* get_wnckwindow() const = 0;
@@ -80,6 +82,7 @@ namespace docklight
 
         virtual bool get_attached() const = 0;
         virtual bool get_active() const = 0;
+        virtual bool get_visible() const = 0;
 
         virtual gulong get_xid() const = 0;
         virtual gulong get_hash() const = 0;
@@ -114,6 +117,8 @@ namespace docklight
         void set_description(Glib::ustring description);
         void set_desktop_file(Glib::ustring desktop_file);
 
+        void set_visible(bool visible);
+
         // Getters
         virtual WnckWindow* get_wnckwindow() const;
         virtual guint get_container_size() { return 0; };
@@ -126,6 +131,7 @@ namespace docklight
         bool has_desktop_file() const;
         bool get_attached() const;
         bool get_active() const;
+        bool get_visible() const;
 
         gulong get_xid() const;
         gulong get_hash() const;

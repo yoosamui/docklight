@@ -19,7 +19,6 @@
 
 // clang-format off
 #include <any>
-//#include <gdkmm/pixbuf.h>
 #include <sigc++/sigc++.h>
 #include <libbamf/libbamf.h>
 #include <libwnck/libwnck.h>
@@ -83,6 +82,9 @@ namespace docklight
         //        void set_window_image_reload(WnckWindow* window, bool initial);
 
         void workspace_change();
+
+        void swap(int source, int dest);
+        void drop(int soruce, int dest);
 
       private:
         sigc::connection m_sigc;
