@@ -46,7 +46,7 @@ Exec=/bin/bash /usr/bin/docklight5
 X-GNOME-Autostart-enabled=true
 NoDisplay=false
 Hidden=false
-Name[en_US]=docklight-5
+Name[en_US]=docklight
 Comment[en_US]=Start Applications, access and manage them easily.
 X-GNOME-Autostart-Delay=1
 ```
