@@ -49,6 +49,7 @@ namespace docklight
         clone->m_wnckwindow = m_wnckwindow;
         clone->m_hash = m_hash;
         clone->m_active_window = m_active_window;
+        clone->m_visible = m_visible;
 
         // covariant return type.
         return clone;

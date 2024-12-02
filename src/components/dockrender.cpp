@@ -19,8 +19,10 @@
 // clang-format off
 #include "dockrender.h"
 // clang-format on
+
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #pragma GCC diagnostic ignored "-Wunused-parameter"
+
 namespace docklight
 {
 
@@ -255,14 +257,12 @@ namespace docklight
 
     bool DockRender::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     {
-        auto provider = Provider();
-
         m_posX = 0;
         m_posY = 0;
 
         guint separator_size = Config()->get_separator_size();
         auto area = Config()->get_dock_area() + separator_size;
-        auto data = provider->data();
+        auto data = Provider()->data();
         auto maxsize = data.size() * area;
 
         get_start_pos(maxsize, m_posX, m_posY);
@@ -274,9 +274,10 @@ namespace docklight
             draw_surface_icon(dockitem);
             draw_surface_indicator(dockitem);
 
-            m_bck_ctx->set_source(m_cell, m_posX, m_posY);
-            m_bck_ctx->paint();
-
+            if (dockitem->get_visible()) {
+                m_bck_ctx->set_source(m_cell, m_posX, m_posY);
+                m_bck_ctx->paint();
+            }
             if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
                 m_posX += area;
             } else {
@@ -284,10 +285,8 @@ namespace docklight
             }
 
             dockitem->set_tag(tag++);
+            //  }
         }
-
-        //  float scale = 0.71;  // 10.507936507936508;
-        //  cr->scale(scale, scale);
 
         cr->set_source(m_background, 0, 0);
         cr->paint();

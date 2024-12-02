@@ -55,6 +55,42 @@ namespace docklight
         template <typename T>
         std::vector<std::shared_ptr<DockItemIcon>>& data();
 
+        template <typename T>
+        void drop(int source_index, int dest_index)
+        {
+            int size = (int)m_dockitems.size();
+            if (source_index < 0 || source_index > size || dest_index < 0 || dest_index > size) {
+                return;
+            }
+
+            // Source item
+            std::shared_ptr<T> dockitem;
+            std::pair<gulong, std::any> p = m_dockitems.at(source_index);
+            std::any a = p.second;
+
+            if (factory::any_cast<std::shared_ptr<DockItemIcon>>(a, dockitem)) {
+                auto xid = dockitem->get_xid();
+
+                m_dockitems.erase(m_dockitems.begin() + source_index);
+
+                auto pair = std::make_pair(xid, a);
+                m_dockitems.insert(m_dockitems.begin() + dest_index, pair);
+            }
+
+            m_last_size = 0;
+        }
+
+        void swap(int source_index, int dest_index)
+        {
+            int size = (int)m_dockitems.size();
+            if (source_index < 0 || source_index > size || dest_index < 0 || dest_index > size) {
+                return;
+            }
+
+            std::iter_swap(m_dockitems.begin() + source_index, m_dockitems.begin() + dest_index);
+            m_last_size = 0;
+        }
+
       private:
         guint m_last_size = 0;
         std::vector<std::shared_ptr<DockItemIcon>> m_data;

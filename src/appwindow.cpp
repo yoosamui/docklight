@@ -36,14 +36,16 @@ namespace docklight
 
         set_size_request(1, 1);
 
-        Config();
+        m_config = create_config();
         m_provider = create_provider();
         m_observer = create_observer();
         m_position = create_position(this);
+
         m_panel = new Panel();
 
         add(*m_panel);
         show_all();
+
         g_message("Create AppWindow.");
     }
 
@@ -65,8 +67,8 @@ namespace docklight
         // m_sigc_updated = get_dockitem_provider()->signal_update().connect(
         // sigc::mem_fun(this, &AppWindow::on_container_updated));
 
-        Config()->load();
-        m_panel->init(app);
+        m_config->load();
+        m_panel->init(app, m_config, m_provider, m_position);
 
         return EXIT_SUCCESS;
     }

@@ -26,15 +26,13 @@
 #include <gdkmm/pixbuf.h>
 #include "utils/wnck.h"
 #include "utils/pixbuf.h"
-#include "components/TransparentWindow.h"
 #include "components/dockitemicon.h"
-#include "components/ExplodesWindow.h"
+#include "components/animboomwindow.h"
 // clang-format on
 
 namespace docklight
 {
-    class PanelPreview : public Gtk::Window  // TransparentWindow
-                                             // class PanelPreview : public TransparentWindow
+    class PanelPreview : public Gtk::Window
     {
       public:
         PanelPreview();
@@ -74,8 +72,8 @@ namespace docklight
       private:
         //  sigc::connection m_sigc_close_window;
         //  std::shared_ptr<std::thread> m_bck_thread;
-        Glib::RefPtr<ExplodesWindow> m_anim;
-        // ExplodesWindow* m_anim;
+        Glib::RefPtr<AnimBoomWindow> m_anim;
+        // AnimBoomWindow* m_anim;
         sigc::connection m_sigc_updated;
         sigc::connection m_sigc_connection;
 

@@ -11,35 +11,14 @@
 #include "components/config.h"
 #include "components/appobserver.h"
 #include "components/dockitemprovider.h"
-#include "components/TransparentWindow.h"
-#include "components/ExplodesWindow.h"
+#include "components/compositewindow.h"
+#include "components/animboomwindow.h"
 // clang-format on
-
-//#include <gtkmm.h>
-
-//#include <giomm/icon.h>
-//#include <giomm/notification.h>
-//#include <giomm/themedicon.h>
-//#include <giomm/notification.h>
-//#include <libwnck/libwnck.h>
-//#include <sigc++/sigc++.h>
-
-//#include "components/config.h"
-//#include "components/device.h"
-
-//##include "utils/position.h"
-//#include "utils/system.h"
-
-//#include <gtkmm/box.h>
-//#include <gtkmm/label.h>
-//#include <gtkmm/drawingarea.h>
-//#include <gtkmm/enums.hExplodesWindowude <gtkmm/frame.h>
 
 namespace docklight
 {
 
-    // class AppWindow : public Gtk::Window  // ublic TransparentWindow
-    class AppWindow : public TransparentWindow
+    class AppWindow : public CompositeWindow
     {
       public:
         AppWindow();
@@ -49,6 +28,7 @@ namespace docklight
         // Config* m_config = Config::getInstance();
       private:
         // instantiate listener
+        Glib::RefPtr<Configuration> m_config;
         Glib::RefPtr<AppObserver> m_observer;
         Glib::RefPtr<PositionManager> m_position;
         Glib::RefPtr<DockItemProvider> m_provider;
@@ -76,8 +56,8 @@ namespace docklight
       private:
         // Glib::RefPtr<Gtk::Window> m_window;
         //  sigc::connection m_sigc_updated;
-        //  Glib::RefPtr<ExplodesWindow> m_composite;
-        ExplodesWindow m_composite;
+        //  Glib::RefPtr<AnimBoomWindow> m_composite;
+        AnimBoomWindow m_composite;
         Panel* m_panel;
         // Panel m_panel;
         static Glib::RefPtr<Gtk::Application> m_application;

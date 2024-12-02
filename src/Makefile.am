@@ -32,9 +32,10 @@ utils/struts.cpp \
 utils/cairo.cpp \
 utils/pixbuf.cpp \
 components/titlewindow.cpp \
-components/TransparentWindow.cpp \
-components/ExplodesWindow.cpp \
+components/compositewindow.cpp \
+components/animboomwindow.cpp \
 components/coverwindow.cpp \
+components/dadwindow.cpp \
 components/panel.cpp \
 components/panelpreview.cpp \
 components/dockmenu.cpp \

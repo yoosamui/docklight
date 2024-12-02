@@ -20,6 +20,7 @@
 
 #include "coverwindow.h"
 
+#include <gdkmm/general.h>  // set_source_pixbuf()
 #include "utils/system.h"
 #include "translations.h"
 // clang-format on
