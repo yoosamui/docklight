@@ -1,20 +1,33 @@
-#include "components/dadwindow.h"
+//  Copyright (c) 2018-2024 Juan R. González
+//
+//
+//  This file is part of Docklight.
+//
+//  Docklight is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  Docklight is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  public Glib::Object GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  identification number, along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-//#include "components/config.h"
-//#include "pango/pango-layout.h"
-//#include "utils/cairo.h"
+// clang-format off
+#include "components/dadwindow.h"
+// clang-format on
 
 namespace docklight
 {
 
     DADWindow::DADWindow(const Glib::RefPtr<Configuration> &config,
-                         Glib::RefPtr<PositionManager> position, Glib::RefPtr<Gdk::Pixbuf> icon)
-        : Gtk::Window(Gtk::WindowType::WINDOW_POPUP),
-          m_HBox(Gtk::ORIENTATION_HORIZONTAL, 5),
-          m_Label("", false)
+                         const Glib::RefPtr<PositionManager> &position,
+                         Glib::RefPtr<Gdk::Pixbuf> icon)
+        : Gtk::Window(Gtk::WindowType::WINDOW_POPUP)
     {
-        //    m_theme = config::get_theme();
-
         GdkScreen *screen;
         GdkVisual *visual;
 
@@ -32,22 +45,11 @@ namespace docklight
         set_keep_above(true);
         set_keep_above(true);
 
-        font.set_family("System");
-        font.set_size(8 * PANGO_SCALE);
-        font.set_weight(Pango::WEIGHT_NORMAL);
-
-        m_HBox.set_margin_left(6);
-        m_HBox.set_margin_right(6);
-        m_HBox.set_margin_top(6);
-        m_HBox.set_margin_bottom(6);
-
-        add(m_HBox);
-        m_HBox.add(m_Label);
-
         m_icon = icon;
         m_config = config;
+        m_position = position;
 
-        m_size = Config()->get_icon_size();
+        m_size = m_config->get_icon_size();
         resize(m_size, m_size);
     }
 
@@ -57,14 +59,12 @@ namespace docklight
     DADWindow::~DADWindow()
     {
         hide();
-        m_visible = false;
-        g_message("Free DADWindow\n");
+        g_message("release DADWindow\n");
     }
 
     void DADWindow::close_now()
     {
         close();
-        m_visible = false;
     }
 
     void DADWindow::move_at(int x, int y)
@@ -81,17 +81,17 @@ namespace docklight
     {
         int xx, yy;
 
-        auto area = Config()->get_dock_area();
-        if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-            xx = Position()->get_x() + dockitem_index * area;
-            yy = Position()->get_y();
+        auto area = m_config->get_dock_area();
+        if (m_config->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+            xx = m_position->get_x() + dockitem_index * area;
+            yy = m_position->get_y();
 
         } else {
-            yy = Position()->get_y() + dockitem_index * area;
-            xx = Position()->get_x();
+            yy = m_position->get_y() + dockitem_index * area;
+            xx = m_position->get_x();
         }
 
-        int margin = Config()->get_dock_area_margin() / 2;
+        int margin = m_config->get_dock_area_margin() / 2;
 
         int x = xx + margin;
         int y = yy + margin;
@@ -99,7 +99,6 @@ namespace docklight
         move(x, y);
 
         show_all();
-        m_visible = true;
     }
 
     bool DADWindow::on_draw(const Cairo::RefPtr<Cairo::Context> &cr)
@@ -110,5 +109,6 @@ namespace docklight
 
         return true;
     }
+
 }  // namespace docklight
 

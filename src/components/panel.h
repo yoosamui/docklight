@@ -51,12 +51,14 @@ namespace docklight
         Panel();
         ~Panel();
 
-        void init(Glib::RefPtr<Gtk::Application> app);
+        void init(const Glib::RefPtr<Gtk::Application>& app,
+                  const Glib::RefPtr<Configuration>& config,
+                  const Glib::RefPtr<DockItemProvider>& provider,
+                  const Glib::RefPtr<PositionManager>& position);
+
         void container_updated(guint explicit_size = 0);
 
       private:
-        Glib::RefPtr<Gtk::Application> m_app;
-
         sigc::connection m_sigc_draw;
         sigc::connection m_sigc_updated;
 
@@ -74,13 +76,9 @@ namespace docklight
         bool on_enter_notify_event(GdkEventCrossing* crossing_event) override;
         bool on_leave_notify_event(GdkEventCrossing* crossing_event) override;
 
-        //  Glib::Timer m_animation_timer;
         bool on_scroll_event(GdkEventScroll* e) override;
 
-        // Menus
         void on_item_menu_childlist_event(WnckWindow* window);
-
-        void on_home_menu_quit_event() override;
 
         static void on_active_window_changed(WnckScreen* screen,
                                              WnckWindow* previously_active_window,
@@ -89,12 +87,14 @@ namespace docklight
         void show_current_title(bool show);
         void drag_drop(bool start);
 
+      private:
+        Glib::RefPtr<Configuration> m_config;
         Glib::RefPtr<ExplodesWindow> m_composite;
         Glib::RefPtr<PanelPreview> m_preview;
         Glib::RefPtr<DockItemProvider> m_provider;
+        Glib::RefPtr<PositionManager> m_position;
         DADWindow* m_dad = nullptr;
 
-      private:
         std::shared_ptr<DockItemIcon> m_dockitem;
 
         Glib::RefPtr<TitleWindow> m_title;

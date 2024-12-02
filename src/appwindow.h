@@ -15,30 +15,9 @@
 #include "components/ExplodesWindow.h"
 // clang-format on
 
-//#include <gtkmm.h>
-
-//#include <giomm/icon.h>
-//#include <giomm/notification.h>
-//#include <giomm/themedicon.h>
-//#include <giomm/notification.h>
-//#include <libwnck/libwnck.h>
-//#include <sigc++/sigc++.h>
-
-//#include "components/config.h"
-//#include "components/device.h"
-
-//##include "utils/position.h"
-//#include "utils/system.h"
-
-//#include <gtkmm/box.h>
-//#include <gtkmm/label.h>
-//#include <gtkmm/drawingarea.h>
-//#include <gtkmm/enums.hExplodesWindowude <gtkmm/frame.h>
-
 namespace docklight
 {
 
-    // class AppWindow : public Gtk::Window  // ublic TransparentWindow
     class AppWindow : public TransparentWindow
     {
       public:
@@ -49,6 +28,7 @@ namespace docklight
         // Config* m_config = Config::getInstance();
       private:
         // instantiate listener
+        Glib::RefPtr<Configuration> m_config;
         Glib::RefPtr<AppObserver> m_observer;
         Glib::RefPtr<PositionManager> m_position;
         Glib::RefPtr<DockItemProvider> m_provider;

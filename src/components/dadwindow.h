@@ -1,14 +1,31 @@
 #pragma once
+//  Copyright (c) 2018-2024 Juan R. González
+//
+//
+//  This file is part of Docklight.
+//
+//  Docklight is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  Docklight is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  public Glib::Object GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  identification number, along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+// clang-format off
 #include <gdkmm/general.h>
 #include <gtkmm/box.h>
 #include <gtkmm/label.h>
 #include <gtkmm/window.h>
 
 #include "components/position.h"
-//#include "utils/cairo.h"
-//#include "common.h"
 #include "components/config.h"
+// clang-format on
 
 namespace docklight
 {
@@ -16,8 +33,8 @@ namespace docklight
     class DADWindow : public Gtk::Window
     {
       public:
-        DADWindow(const Glib::RefPtr<Configuration>& config, Glib::RefPtr<PositionManager> position,
-                  Glib::RefPtr<Gdk::Pixbuf> icon);
+        DADWindow(const Glib::RefPtr<Configuration>& config,
+                  const Glib::RefPtr<PositionManager>& position, Glib::RefPtr<Gdk::Pixbuf> icon);
         ~DADWindow();
 
         void show_at(int dockitem_index);
@@ -28,22 +45,15 @@ namespace docklight
         guint get_y() { return m_y; }
 
       private:
+        bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr);
+
+      private:
         Glib::RefPtr<Gdk::Pixbuf> m_icon;
         Glib::RefPtr<Configuration> m_config;
         Glib::RefPtr<PositionManager> m_position;
 
-        bool m_visible = false;
-        std::string m_last_text;
-        //      config::style::Theme m_theme;
-        // Configuration::Style::Theme m_Theme = Configuration::get_Theme();
-        bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr);
-        Pango::FontDescription font;
-
-        // Child widgets:
-        Gtk::Box m_HBox;
-        Gtk::Label m_Label;
-
         int m_size = 0;
+
         guint m_x = 0;
         guint m_y = 0;
     };

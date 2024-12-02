@@ -27,7 +27,6 @@ namespace docklight
     Panel::Panel()
     {
         // clang-format off
-        // Set event masks
         add_events( Gdk::BUTTON_PRESS_MASK |
                     Gdk::BUTTON_RELEASE_MASK |
                     Gdk::SCROLL_MASK |
@@ -38,13 +37,24 @@ namespace docklight
         // clang-format on
 
         m_title = Glib::RefPtr<TitleWindow>(new TitleWindow());
-        m_provider = Provider();
+        m_provider = m_provider;
         g_message("Create Panel.");
     }
 
-    void Panel::init(Glib::RefPtr<Gtk::Application> app)
+    void Panel::init(const Glib::RefPtr<Gtk::Application>& app,
+                     const Glib::RefPtr<Configuration>& config,
+                     const Glib::RefPtr<DockItemProvider>& provider,
+                     const Glib::RefPtr<PositionManager>& position)
     {
+        // TODO::
+        m_composite = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
+        m_preview = Glib::RefPtr<PanelPreview>(new PanelPreview());
+
         m_app = app;
+        m_config = config;
+        m_provider = provider;
+        m_position = position;
+
         m_sigc_updated =
             m_provider->signal_update().connect(sigc::mem_fun(this, &Panel::on_container_updated));
 
@@ -52,11 +62,7 @@ namespace docklight
         g_signal_connect(wnckscreen, "active_window_changed",
                          G_CALLBACK(Panel::on_active_window_changed), nullptr);
 
-        m_position = Position();
         m_bck_thread = std::shared_ptr<std::thread>(new std::thread(&Panel::thread_func, this));
-
-        m_composite = Glib::RefPtr<ExplodesWindow>(new ExplodesWindow());
-        m_preview = Glib::RefPtr<PanelPreview>(new PanelPreview());
     }
 
     Panel::~Panel()
@@ -143,12 +149,12 @@ namespace docklight
 
             m_title->set_text(title);
             int width = m_title->get_width();
-            int area = Config()->get_dock_area();
+            int area = m_config->get_dock_area();
 
             int centerX, centerY;
             int x, y;
 
-            if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+            if (m_config->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
                 int min = std::min(width, area);
                 int max = std::max(width, area);
 
@@ -160,7 +166,7 @@ namespace docklight
                 x = (Position()->get_x() + (m_dockitem_index * area)) - centerX;
                 y = Position()->get_y() - 50;
 
-                if (Config()->get_dock_location() == dock_location_t::top) {
+                if (m_config->get_dock_location() == dock_location_t::top) {
                     y = Position()->get_y() + 60;
                 }
             } else {
@@ -168,9 +174,9 @@ namespace docklight
                 int max = std::max(m_title->get_height(), area);
 
                 centerY = max / 2 - min / 2;
-                y = Position()->get_y() + (m_dockitem_index * Config()->get_dock_area()) + centerY;
+                y = Position()->get_y() + (m_dockitem_index * m_config->get_dock_area()) + centerY;
 
-                if (Config()->get_dock_location() == dock_location_t::left) {
+                if (m_config->get_dock_location() == dock_location_t::left) {
                     x = Position()->get_x() + area;
                 } else {
                     x = Position()->get_x() - width;
@@ -190,12 +196,15 @@ namespace docklight
             if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return;
 
             dockitem->set_visible(false);
-            Glib::RefPtr<Gdk::Pixbuf> icon = dockitem->get_icon(Config()->get_icon_size());
+            Glib::RefPtr<Gdk::Pixbuf> icon = dockitem->get_icon(m_config->get_icon_size());
 
-            m_dad = new DADWindow(Config(), Position(), icon);
+            m_dad = new DADWindow(m_config, Position(), icon);
             m_dad->show_at(m_dockitem_index);
 
             m_drag_drop_starts = true;
+            // show_current_title(false);
+
+            m_title->hide_now();
             Gtk::Widget::queue_draw();
 
         } else {
@@ -204,35 +213,30 @@ namespace docklight
                 m_dad = nullptr;
             }
             m_drag_drop_starts = false;
+            // show_current_title(true);
         }
     }
 
     bool Panel::on_timeout_draw()
     {
         if (m_mouse_button == 1 && m_mouse_press && !m_drag_drop_starts &&
-            m_mouse_drag_drop_timer.elapsed() > 0.5) {
+            m_mouse_drag_drop_timer.elapsed() > 0.2) {
             drag_drop(true);
         }
 
         return true;
     }
 
-    void Panel::on_home_menu_quit_event()
-    {
-        m_app->quit();
-    }
-
     inline guint Panel::get_scale_factor()
     {
         const auto workarea = device::monitor::get_workarea();
-        const int max_icon_size = Config()->get_custom_icon_size();
+        const int max_icon_size = m_config->get_custom_icon_size();
         const int num_items = m_provider->data().size();
         const int item_width = max_icon_size;
-        int screen_width = 0;
 
-        screen_width = Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL
-                           ? workarea.get_width()
-                           : workarea.get_height();
+        int screen_width = m_config->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL
+                               ? workarea.get_width()
+                               : workarea.get_height();
 
         // Calculate the scaling factor
         float scaling_factor =
@@ -244,18 +248,18 @@ namespace docklight
             icon_size = max_icon_size;
         };
 
-        return icon_size - Config()->get_dock_area_margin();
+        return icon_size - m_config->get_dock_area_margin();
     }
 
     void Panel::container_updated(guint explicit_size)
     {
         auto size = m_provider->data().size();
-        auto separator_size = Config()->get_separator_size();
+        auto separator_size = m_config->get_separator_size();
         auto separators_count = (size * separator_size);
 
         // resize the icon if necesery
         int scaled_icon_size = get_scale_factor();
-        Config()->set_icon_size(scaled_icon_size);
+        m_config->set_icon_size(scaled_icon_size);
 
         // draw and positioning
         auto required_size = m_provider->required_size(separators_count);
@@ -281,11 +285,10 @@ namespace docklight
             system::get_mouse_position(x, y);
             m_dad->move_at(x, y);
 
-            m_drag_drop_item_move_index = m_dockitem_index;
             Gtk::Widget::queue_draw();
 
             if (m_drag_drop_item_index != m_dockitem_index) {
-                if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+                if (m_config->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
                     m_drag_drop_candrop = (y + m_dad->get_height()) > Position()->get_y();
                 } else {
                     m_drag_drop_candrop = (x + m_dad->get_width()) > Position()->get_x();
@@ -294,7 +297,7 @@ namespace docklight
         }
 
         // show the title window
-        show_current_title(true);
+        if (!m_drag_drop_starts && !m_preview_open) show_current_title(true);
 
         if (m_dockitem_index != m_last_index) {
             m_last_index = m_dockitem_index;
@@ -310,8 +313,8 @@ namespace docklight
         gint pos_x = 0;
         gint pos_y = 0;
 
-        auto separator_size = Config()->get_separator_size();
-        auto area = Config()->get_dock_area() + separator_size;
+        auto separator_size = m_config->get_separator_size();
+        auto area = m_config->get_dock_area() + separator_size;
         auto size = m_provider->data().size();
         auto maxsize = size * area;
         auto start_pos = 0;
@@ -320,7 +323,7 @@ namespace docklight
 
         for (size_t idx = 0; idx < size; idx++) {
             m_dockitem_index = -1;
-            if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+            if (m_config->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
                 if (mx >= pos_x && mx <= pos_x + area) {
                     m_dockitem_index = idx;
                     break;
@@ -397,22 +400,6 @@ namespace docklight
             return true;
         }
 
-        // Handle the left mouse button.
-        if (event->button == 1 && m_dockitem_index) {
-            std::shared_ptr<DockItemIcon> dockitem;
-            if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return false;
-
-            auto size = dockitem->get_childmap().size();
-
-            if (!size) {
-                dockitem->launch();
-                return true;
-            }
-
-            wnck::select_window(dockitem->get_hash(), m_active_window,
-                                dockitem->get_wnck_window_list());
-        }
-
         m_preview->hide_now();
         m_preview_open_index = 0;
 
@@ -441,14 +428,31 @@ namespace docklight
 
                 if (m_drag_drop_candrop) {
                     m_drag_drop_candrop = false;
-                    Provider()->swap(m_drag_drop_item_index, m_dockitem_index);
+                    m_provider->drop(m_drag_drop_item_index, m_dockitem_index);
                 }
 
                 dockitem->set_visible(true);
                 Gtk::Widget::queue_draw();
 
                 m_drag_drop_item_index = 0;
+                return true;
             }
+        }
+        // Handle the left mouse button.
+        if (event->button == 1 && m_dockitem_index) {
+            std::shared_ptr<DockItemIcon> dockitem;
+            if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return false;
+
+            auto size = dockitem->get_childmap().size();
+
+            if (!size) {
+                dockitem->launch();
+                return true;
+            }
+
+            wnck::select_window(dockitem->get_hash(), m_active_window,
+                                dockitem->get_wnck_window_list());
+            return true;
         }
 
         std::shared_ptr<DockItemIcon> dockitem;

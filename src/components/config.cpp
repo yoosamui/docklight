@@ -24,10 +24,19 @@
 namespace docklight
 {
     Glib::RefPtr<Configuration> m_config;
-    Glib::RefPtr<Configuration> Config()
+    Glib::RefPtr<Configuration> create_config()
     {
         if (!m_config) {
             m_config = Glib::RefPtr<Configuration>(new Configuration());
+        }
+
+        return m_config;
+    }
+
+    Glib::RefPtr<Configuration> Config()
+    {
+        if (!m_config) {
+            m_config = create_config();
         }
 
         return m_config;

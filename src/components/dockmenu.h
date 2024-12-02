@@ -35,14 +35,18 @@ namespace docklight
     {
       public:
       protected:
+        Glib::RefPtr<Gtk::Application> m_app;
+
         static WnckWindow* m_active_window;
-        guint m_dockitem_index = 0;
-        gulong m_dockitem_active_index = 0;
+
         bool m_context_menu_active = false;
         bool m_mouse_enter = false;
+        bool m_drag_drop_starts = false;
+
+        guint m_dockitem_index = 0;
         guint m_drag_drop_item_index = 0;
         guint m_drag_drop_item_move_index = 0;
-        bool m_drag_drop_starts = false;
+        gulong m_dockitem_active_index = 0;
     };
 
     class DockMenu : public PanelBase
@@ -77,7 +81,8 @@ namespace docklight
         Gtk::SeparatorMenuItem m_separatorMenuItem1;
 
         // events
-        virtual void on_home_menu_quit_event() {}
+
+        virtual void on_home_menu_quit_event();
         virtual void on_item_menu_new_event();
 
         virtual void on_home_menu_position(int& x, int& y, bool& push_in);

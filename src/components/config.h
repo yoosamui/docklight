@@ -66,6 +66,7 @@ namespace docklight
         int get_preview_image_size() const;
     };
 
+    Glib::RefPtr<Configuration> create_config();
     Glib::RefPtr<Configuration> Config();
 
 }  // namespace docklight

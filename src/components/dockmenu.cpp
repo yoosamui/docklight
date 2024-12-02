@@ -93,6 +93,11 @@ namespace docklight
         m_item_menu.signal_hide().connect(sigc::mem_fun(*this, &DockMenu::on_menu_hide_event));
     }
 
+    void DockMenu::on_home_menu_quit_event()
+    {
+        m_app->quit();
+    }
+
     void DockMenu::on_item_menu_attach_event()
     {
         bool attached = m_item_menu_attach.get_active();

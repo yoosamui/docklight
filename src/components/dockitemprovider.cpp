@@ -120,9 +120,15 @@ namespace docklight
         return m_container.exist<DockItemIcon>(xid);
     }
 
-    void DockItemProvider::swap(int s, int d)
+    void DockItemProvider::swap(int source, int dest)
     {
-        m_container.swap(s, d);
+        m_container.swap(source, dest);
+        save();
+    }
+
+    void DockItemProvider::drop(int source, int dest)
+    {
+        m_container.drop<DockItemIcon>(source, dest);
         save();
     }
 
