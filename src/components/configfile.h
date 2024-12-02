@@ -112,7 +112,7 @@ namespace docklight
         float read_hide_delay();
 
       private:
-        std::string m_filename = "docklight.config";
+        std::string m_filename = "docklight5.config";
         GKeyFile* m_key_file = nullptr;
     };
 

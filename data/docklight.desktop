@@ -1,12 +1,13 @@
 [Desktop Entry]
-Name=DockLight
+Name=Docklight
 GenericName=Dock
 Comment=This programm is a lightweight Dock launcher for opening common applications.
 Comment[de]=Docklight ist ein leichtes Dock Panel zum Öffnen gemeinsamer Anwendungen für den LINUX Desktop
 Comment[es]=Docklight es un Programa para abrir aplicaciones  para el escritorio de LINUX.
 Comment[fr]=Ce programme est un Dock lanceur léger pour l'ouverture des applications communes pour le bureau LINUX
 Comment[th]=โปรแกรมนี้ใช้งานไม่ยาก Dock Launcher สำหรับการใช้งานเท่าไปเท่านั้น จัดทำเพื่อแปลภาษาหน้าเดสก์ท็อปของ LINUX
-Exec=docklight
+Exec=docklight5
+#Icon=/usr/local/bin/docklight-5/data/images/docklight.home.ico
 Icon=docklight.home.svg
 Type=Application
 Terminal=false

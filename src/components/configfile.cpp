@@ -24,8 +24,6 @@ namespace docklight
             return false;
         }
 
-        g_error("%s", filepath.c_str());
-
         GError* error = nullptr;
         m_key_file = g_key_file_new();
         auto found = g_key_file_load_from_file(m_key_file, filepath.c_str(),

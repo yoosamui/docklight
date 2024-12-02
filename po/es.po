@@ -4,7 +4,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Docklight\n"
+"Project-Id-Version: Docklight-5\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-08-25 16:14+0700\n"
 "PO-Revision-Date: 2024-08-19 10:05+0700\n"

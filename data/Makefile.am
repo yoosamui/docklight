@@ -16,8 +16,8 @@ docklightdata_DATA = \
 		docklight.ini \
 		docklight.launcher.sh \
 		docklight.template.desktop \
-		docklight.config \
-		docklight.desktop \
+		docklight5.config \
+		docklight5.desktop \
 		$(NULL)
 
 
@@ -37,13 +37,13 @@ install-data-local:
 	if test -f $(srcdir)/docklight.sh; then cp $(srcdir)/docklight.sh $(bindir); fi
 	if test -f $(bindir)/docklight.sh; then chmod u+x $(bindir)/docklight.sh; fi
 	if test -f $(bindir)/docklight.sh; then mv $(bindir)/docklight.sh /bin; fi
-#	if test -f /bin/docklight.sh && test ! -L /bin/docklight5; then ln -s /bin/docklight.sh /bin/docklight5; fi
+	if test -f /bin/docklight.sh && test ! -L /bin/docklight5; then ln -s /bin/docklight.sh /bin/docklight5; fi
 
 
 install-exec-hook:
 
-#	mkdir -p $(bindir)/docklight-5
-#	if test -f $(bindir)/docklight; then mv $(bindir)/docklight  $(bindir)/docklight-5; fi
+	mkdir -p $(bindir)/docklight-5
+	if test -f $(bindir)/docklight; then mv $(bindir)/docklight  $(bindir)/docklight-5; fi
 
 uninstall-hook:
 

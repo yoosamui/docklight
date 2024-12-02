@@ -627,12 +627,12 @@ namespace docklight
         system::create_directory_if_not_exitst(config_dir);
 
         char buff[PATH_MAX];
-        sprintf(buff, "%s/%s", config_dir, "docklight.dat");
+        sprintf(buff, "%s/%s", config_dir, "docklight5.dat");
 
         char config_filename[PATH_MAX];
-        sprintf(config_filename, "%s/%s", config_dir, "docklight.config");
+        sprintf(config_filename, "%s/%s", config_dir, "docklight5.config");
 
-        auto default_source = "data/docklight.config";
+        auto default_source = "data/docklight5.config";
         if (!system::file_exists(config_filename) && system::file_exists(default_source)) {
             std::ifstream src(default_source, std::ios::in);
             std::ofstream dst(config_filename, std::ios::out);
@@ -640,9 +640,9 @@ namespace docklight
             dst << src.rdbuf();
         }
 
-        default_source = "data/docklight.desktop";
+        default_source = "data/docklight5.desktop";
         char autostart_filename[PATH_MAX];
-        sprintf(autostart_filename, "/home/%s/.config/autostart/docklight.desktop",
+        sprintf(autostart_filename, "/home/%s/.config/autostart/docklight5.desktop",
                 user_name.c_str());
         if (!system::file_exists(autostart_filename) && system::file_exists(default_source)) {
             std::ifstream src(default_source, std::ios::in);

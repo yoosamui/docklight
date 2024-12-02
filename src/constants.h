@@ -24,9 +24,10 @@
 #define Dl_VERSION_PATCH 0
 #define DL_VERSION_PRE_RELEASE "master"
 
+#define DL_VERSION 0.5.0
 // application
 #define DOCKLIGHT_INSTANCENAME "docklight"
-#define DOCKLIGHT_APPNAME "DockLight"
+#define DOCKLIGHT_APPNAME "Docklight-5"
 
 // core:
 #include <cstdio>
