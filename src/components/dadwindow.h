@@ -41,8 +41,8 @@ namespace docklight
         void move_at(int x, int y);
         void close_now();
 
-        int get_x() { return m_x; }
-        int get_y() { return m_y; }
+        // int get_x() { return m_xoffset; }
+        // int get_y() { return yoffset; }
 
       private:
         bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr);
@@ -54,8 +54,8 @@ namespace docklight
 
         int m_size = 0;
 
-        int m_x = 0;
-        int m_y = 0;
+        int m_xoffset = 0;
+        int m_yoffset = 0;
     };
 }  // namespace docklight
 

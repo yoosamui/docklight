@@ -415,6 +415,7 @@ namespace docklight
         get_dockitem_index(event->x, event->y);
         m_mouse_press = false;
 
+        // stops drag & drop
         if (m_drag_drop_starts) {
             // reset
             m_drag_drop_starts = false;
@@ -422,6 +423,7 @@ namespace docklight
             m_mouse_drag_drop_timer.stop();
             m_sigc_draw.disconnect();
 
+            // drop if is posible.
             std::shared_ptr<DockItemIcon> dockitem;
             if (m_provider->get_dockitem_by_index(m_drag_drop_item_index, dockitem)) {
                 if (m_drag_drop_candrop && m_dockitem_index &&
@@ -429,9 +431,6 @@ namespace docklight
                     m_drag_drop_candrop = false;
 
                     m_provider->drop(m_drag_drop_item_index, m_dockitem_index);
-
-                    g_print("DROP ---<>%s %d %d\n", dockitem->get_title().c_str(),
-                            m_drag_drop_item_index, m_dockitem_index);
                 }
 
                 dockitem->set_visible(true);
