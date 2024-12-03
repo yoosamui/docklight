@@ -36,16 +36,16 @@ docklight is now installed on your system and will start after next login.
 Start it manually with:
 
 ```bash
-docklight5
+docklight
 or
 with parameters like so:
-docklight5 '-l left '
+docklight '-l left '
 ```
 
 You can start docklight with the following parameters:
 
 ![image](https://github.com/user-attachments/assets/9555d475-219b-43fc-9f16-237003d7f509)
-Remember that, parameters replace the config file values. 
+Remember that, parameters replace the config file values.
 
 ## Uninstallation
 
