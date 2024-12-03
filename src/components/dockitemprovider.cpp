@@ -463,7 +463,6 @@ namespace docklight
         if (!m_startup_time_set) fill_window_image(window);
 
         set_window_image(window, true);
-        if (m_startup_time_set) g_message("LOAD SET");
         return result;
     }
 
