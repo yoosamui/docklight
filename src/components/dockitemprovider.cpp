@@ -1,3 +1,5 @@
+
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 //  Copyright (c) 2018-2024 Juan R. González
 //
 //
@@ -105,7 +107,7 @@ namespace docklight
         m_startup_time_set = true;
         on_theme_changed();
         m_signal_update.emit(window_action_t::UPDATE, data().size());
-
+        scan_initial_windows();
         m_sigc.disconnect();
         return false;
     }
@@ -342,93 +344,61 @@ namespace docklight
         }
     }
 
-    // void DockItemProvider::set_window_image_reload(WnckWindow* window, bool initial)
-    //{
-    // if (system::is_mutter_window_manager()) return;
+    void DockItemProvider::fill_window_image(WnckWindow* window)
+    {
+        if (m_startup_time_set) return;
 
-    // if (!WNCK_IS_WINDOW(window)) return;
+        if (system::is_mutter_window_manager()) return;
+        if (!WNCK_IS_WINDOW(window)) return;
 
-    // Glib::RefPtr<Gdk::Pixbuf> image;
-    // int size = Config()->get_preview_image_size();
-    // gint32 xid = wnck_window_get_xid(window);
+        WnckWorkspace* ws = wnck_window_get_workspace(window);
+        auto wsn = wnck_workspace_get_number(ws);
 
-    // if (pixbuf::get_window_image(xid, image, size)) {
-    // m_window_images[xid] = image;
-    //}
+        auto kp = std::make_pair(wsn, window);
+        m_windows_loaded.push_back(kp);
+    }
 
-    //// Glib::RefPtr<Gdk::Pixbuf> image;
-    //// gint32 xid = wnck_window_get_xid(window);
-
-    //// wnck_window_activate(window, 1 [>event_time<]);
-    //// wnck_window_make_below(window);
-    //}
+    void DockItemProvider::scan_initial_windows()
+    {
+        m_startup_allow_window_scan = true;
+        std::sort(m_windows_loaded.begin(), m_windows_loaded.end());
+        for (const auto& [key, val] : m_windows_loaded) {
+            set_window_image(val, true);
+        }
+    }
 
     void DockItemProvider::set_window_image(WnckWindow* window, bool initial)
     {
+        if (!m_startup_allow_window_scan) return;
         if (system::is_mutter_window_manager()) return;
-
         if (!WNCK_IS_WINDOW(window)) return;
 
         Glib::RefPtr<Gdk::Pixbuf> image;
         gint32 xid = wnck_window_get_xid(window);
-        bool restore_min = false;
-
-        //       bool restore_pin = false;
 
         if (!wnck::is_window_on_current_desktop(window)) {
             wnck::move_window_to_workspace(window);
+            // wnck_window_activate(window, 1);
         }
 
-        //  g_print("--------------------------::::::::: %d %s\n", wnck_window_get_state(window),
-        //          wnck_window_get_name(window));
+        if (wnck_window_is_minimized(window)) {
+            //
+            // wnck_window_activate(window, 1);
+            //  wnck_window_make_below(window);
 
-        // if (wnck_window_get_state(window) == 8) {
-        // wnck_window_unpin(window);
-        // wnck_window_unstick(window);
-        // wnck_window_activate(window, 1);
-        // wnck_window_make_below(window);
-
-        // restore_pin = true;
-        //}
-
-        if (initial && wnck_window_is_minimized(window)) {
-            //    wnck_window_activate(window, 1 [>event_time<]);
-            //    wnck_window_make_below(window);
-
-            m_window_images[xid] = m_home_dockitem->get_icon();
-            return;
-            restore_min = true;
-        }
-
-        // if (initial && wnck_window_is_sticky(window)) {
-        // wnck_window_unstick(window);
-        // wnck_window_activate(window, 1);
-        ////// wnck_window_make_below(window);
-
-        // restore_pin = true;
-        //}
-
-        // int size = wnck::get_window_geometry(window).get_width();
-        // int size = Config()->get_preview_image_size();
-        int size = Config()->get_preview_image_max_size();
-        int max = initial ? 6 : 3;
-
-        for (int i = 0; i < max; i++) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(5));
-
-            if (pixbuf::get_window_image(xid, image, size)) {
-                m_window_images[xid] = image;
+            std::shared_ptr<DockItemIcon> dockitem;
+            if (get_dockitem_by_xid(xid, dockitem)) {
+                m_window_images[xid] = dockitem->get_icon_from_window(64);
+                return;
             }
         }
 
-        // if (restore_pin) {
-        // wnck_window_unmake_below(window);
-        // wnck_window_stick(window);
-        //}
-
-        if (restore_min) {
-            wnck_window_unmake_below(window);
-            wnck::minimize(window);
+        int size = Config()->get_preview_image_max_size();
+        for (int i = 0; i < 2; i++) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(5));
+            if (pixbuf::get_window_image(xid, image, size)) {
+                m_window_images[xid] = image;
+            }
         }
     }
 
@@ -490,7 +460,10 @@ namespace docklight
             m_signal_update.emit(window_action_t::UPDATE, data().size());
         }
 
+        if (!m_startup_time_set) fill_window_image(window);
+
         set_window_image(window, true);
+        if (m_startup_time_set) g_message("LOAD SET");
         return result;
     }
 
