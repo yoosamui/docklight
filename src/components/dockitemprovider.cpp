@@ -104,10 +104,12 @@ namespace docklight
 
     bool DockItemProvider::on_timeout()
     {
+        scan_initial_windows();
+
         m_startup_time_set = true;
         on_theme_changed();
         m_signal_update.emit(window_action_t::UPDATE, data().size());
-        scan_initial_windows();
+
         m_sigc.disconnect();
         return false;
     }
@@ -360,11 +362,28 @@ namespace docklight
 
     void DockItemProvider::scan_initial_windows()
     {
+        if (m_startup_time_set) return;
+
         m_startup_allow_window_scan = true;
+
+        int event_time = gtk_get_current_event_time();
+        WnckWorkspace* cws = nullptr;
+
+        /*GdkScreen* screen = gdk_screen_get_default();
+o        guint32 current_ws_number = gdk_x11_screen_get_current_desktop(screen);*/
+
+        cws = wnck_screen_get_active_workspace(wnck::get_default_screen());
+
         std::sort(m_windows_loaded.begin(), m_windows_loaded.end());
         for (const auto& [key, val] : m_windows_loaded) {
+            // if (!cws) {
+            // cws = wnck_window_get_workspace(val);
+            //}
+
             set_window_image(val, true);
         }
+
+        if (cws) wnck_workspace_activate(cws, event_time);
     }
 
     void DockItemProvider::set_window_image(WnckWindow* window, bool initial)

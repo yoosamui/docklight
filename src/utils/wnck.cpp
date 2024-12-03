@@ -540,11 +540,46 @@ namespace docklight
             wnck_window_unminimize(window, ct);
         }
 
-        void minimize_all()
+        void minimize_group(std::vector<WnckWindow*> list)
+        {
+            GdkScreen* screen = gdk_screen_get_default();
+            int current_ws_number = gdk_x11_screen_get_current_desktop(screen);
+
+            for (auto window : list) {
+                if (!window) continue;
+                if (!is_valid_window_type(window)) continue;
+                if (wnck_window_is_minimized(window)) continue;
+
+                WnckWorkspace* ws = wnck_window_get_workspace(window);
+                if (wnck_workspace_get_number(ws) != current_ws_number) continue;
+
+                wnck_window_minimize(window);
+            }
+        }
+
+        void maximize_group(std::vector<WnckWindow*> list)
+        {
+            GdkScreen* screen = gdk_screen_get_default();
+            int current_ws_number = gdk_x11_screen_get_current_desktop(screen);
+
+            int ct = gtk_get_current_event_time();
+            for (auto window : list) {
+                if (!window) continue;
+                if (!is_valid_window_type(window)) continue;
+
+                WnckWorkspace* ws = wnck_window_get_workspace(window);
+                if (wnck_workspace_get_number(ws) != current_ws_number) continue;
+
+                wnck_window_unminimize(window, ct);
+            }
+        }
+
+        /*void minimize_all()
         {
             WnckScreen* screen = get_default_screen();
             GList* window_l;
-
+            int event_time = gtk_get_current_event_time();
+            auto cws = wnck_screen_get_active_workspace(wnck::get_default_screen());
             wnck_screen_force_update(screen);
             for (window_l = wnck_screen_get_windows(screen); window_l != nullptr;
                  window_l = window_l->next) {
@@ -553,8 +588,12 @@ namespace docklight
 
                 if (!is_valid_window_type(window)) continue;
 
+                // move_window_to_workspace(window);
+                WnckWorkspace* ws = wnck_window_get_workspace(window);
+                wnck_workspace_activate(ws, event_time);
                 wnck_window_minimize(window);
             }
+            if (cws) wnck_workspace_activate(cws, event_time);
         }
 
         void unminimize_all()
@@ -562,6 +601,7 @@ namespace docklight
             WnckScreen* screen = get_default_screen();
             GList* window_l;
 
+            auto ct = gtk_get_current_event_time();
             wnck_screen_force_update(m_screen);
             for (window_l = wnck_screen_get_windows(screen); window_l != nullptr;
                  window_l = window_l->next) {
@@ -570,12 +610,11 @@ namespace docklight
 
                 if (!is_valid_window_type(window)) continue;
 
-                auto ct = gtk_get_current_event_time();
                 if (wnck_window_is_minimized(window)) wnck_window_unminimize(window, ct);
 
-                wnck_window_activate(window, ct);
+                //   wnck_window_activate(window, ct);
             }
-        }
+        }*/
 
         WnckWindow* get_active()
         {

@@ -38,6 +38,8 @@ namespace docklight
     {
         void init();
 
+        WnckScreen* get_default_screen();
+
         WnckWindow* get_window_by_xid(gulong xid);
         Gdk::Rectangle get_window_geometry(WnckWindow* window);
         Gdk::Rectangle get_window_geometry(gulong xid);
@@ -62,8 +64,10 @@ namespace docklight
         void close_window(std::vector<WnckWindow*> windows);
         void minimize(WnckWindow* window);
         void unminimize(WnckWindow* window);
-        void minimize_all();
-        void unminimize_all();
+        void minimize_group(std::vector<WnckWindow*> list);
+        void maximize_group(std::vector<WnckWindow*> list);
+        // void minimize_all();
+        //  void unminimize_all();
 
         WnckScreen* get_default_screen();
         WnckWindow* get_active();
