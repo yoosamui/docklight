@@ -558,6 +558,8 @@ o        guint32 current_ws_number = gdk_x11_screen_get_current_desktop(screen);
                                             Glib::ustring window_icon_name, bool icon_is_fallback,
                                             WnckWindowType wintype)
     {
+        return true;
+
         Glib::RefPtr<Gdk::Pixbuf> pixbuf;
         Glib::ustring title_name;
         Glib::ustring icon_name = window_icon_name;
