@@ -1,6 +1,6 @@
 
 # Docklight
-Helps to access and manage application windows.
+ Manage access to applications.
 
 ![image](https://github.com/user-attachments/assets/b64b9a1d-a1cf-4f10-9e1c-b9619f81688e)
 
@@ -8,14 +8,14 @@ Helps to access and manage application windows.
 clone this repository if you want to get the **stable** version:
 
 ```bash
-git clone https://github.com/yoosamui/docklight
+$ git clone https://github.com/yoosamui/docklight
 ```
 This will create the directory docklight.
 
 clone this repository if you want to get the **current** version:
 
 ```bash
-git clone --branch current https://github.com/yoosamui/docklight
+$ git clone --branch current https://github.com/yoosamui/docklight
 ```
 This will create the directory docklight.
 
@@ -79,10 +79,22 @@ The configurations directory is here: **/home/$USER/.config/docklight**
 The configuration Filename is: **docklight5.config**
 
 
+## Mouse keys
+
+Left mouse click                : minimize/unminimize group.
+Left mouse press and hold       : activate drag & drop.
+Right mouse click               : activate context menu.
+Right mouse click longer press  : activate context image preview.
+Mouse wheel                     : scroll through the window group list.
+
 ## Current state
-03.12.2024 - 70%. done!
 
 in development...
+
+MS-Log:
+    12.09.2024 - 20%.
+    03.12.2024 - 70%.⚡
+
 
 
 
