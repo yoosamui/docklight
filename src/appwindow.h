@@ -13,6 +13,7 @@
 #include "components/dockitemprovider.h"
 #include "components/compositewindow.h"
 #include "components/animboomwindow.h"
+#include "config.h"
 // clang-format on
 
 namespace docklight
