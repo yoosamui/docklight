@@ -23,51 +23,50 @@ This will create the directory docklight.
 cd into it:
 
 ```bash
-cd docklight
+$ cd docklight
 ```
 
 Now execute the following bash scripts:
 
 ```bash
-sudo ./install_dependencies.sh
-sudo ./install_docklight.sh
+$ sudo ./install_dependencies.sh
+$ sudo ./install_docklight.sh
 ```
 docklight is now installed on your system and will start after next login.
 Start it manually with:
 
 ```bash
-docklight5
+$ docklight
 or
 with parameters like so:
-docklight5 '-l left '
+$ docklight '-l left '
 ```
 
 You can start docklight with the following parameters:
 
 ![image](https://github.com/user-attachments/assets/9555d475-219b-43fc-9f16-237003d7f509)
-Remember that, parameters replace the config file values. 
+Remember that, parameters replace the config file values.
 
 ## Uninstallation
 
 ```bash
-cd docklight
-sudo make uninstall
+$ cd docklight
+$ sudo make uninstall
 ```
 If you want to remove the configuration files, do the following bash statement:
 ```bash
-rm -rfd /home/$USER/.config/docklight
+$ rm -rfd /home/$USER/.config/docklight
 ```
 ## Compile the source code
 
 ```bash
-cd docklight
-./autogen.sh
-./configure.sh
-make
+$ cd docklight
+$ ./autogen.sh
+$ ./configure.sh
+$ make
 
 The final execuable is located at:
-cd docklight
-/src/docklight
+$ cd <YOUR_DOCKLIGHT_PATH>/src/docklight
 
 ```
 
@@ -81,6 +80,7 @@ The configuration Filename is: **docklight5.config**
 
 
 ## Current state
+03.12.2024 - 70%. done!
 
 in development...
 
