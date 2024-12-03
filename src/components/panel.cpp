@@ -351,14 +351,12 @@ namespace docklight
         get_dockitem_index(event->x, event->y);
 
         if (m_mouse_button == 1 && m_dad && m_drag_drop_starts) {
-            int x = 0;
-            int y = 0;
-            system::get_mouse_position(x, y);
-            m_dad->move_at(x, y);
-
-            //   Gtk::Widget::queue_draw();
-
             if (m_drag_drop_item_index != m_dockitem_index) {
+                int x = 0;
+                int y = 0;
+                system::get_mouse_position(x, y);
+                m_dad->move_at(x, y);
+
                 if (m_config->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
                     m_drag_drop_candrop = (y + m_dad->get_height()) > Position()->get_y();
                 } else {
