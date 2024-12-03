@@ -30,6 +30,7 @@
 #include "utils/pixbuf.h"
 #include "utils/wnck.h"
 #include "components/dockitemcontainer.h"
+//#include "components/dockitemicon.h"
 #include "components/config.h"
 // clang-format on
 
@@ -115,6 +116,9 @@ namespace docklight
 
         Glib::ustring get_config_filepath();
 
+        void fill_window_image(WnckWindow* window);
+
+        void scan_initial_windows();
         bool load();
 
       private:
@@ -125,6 +129,8 @@ namespace docklight
         BamfMatcher* m_matcher = nullptr;
 
         bool m_startup_time_set = false;
+        bool m_startup_allow_window_scan = false;
+        std::vector<std::pair<int, WnckWindow*>> m_windows_loaded;
         std::map<gulong, Glib::RefPtr<Gdk::Pixbuf>> m_window_images;
         std::mutex m_mutex;
         std::shared_ptr<DockItemIcon> m_home_dockitem;
