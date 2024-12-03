@@ -1,9 +1,9 @@
 PACKAGE=docklight
-VERSION=5.0.2
+VERSION=5.0.3
 INSTALLDIR=/usr/local/bin
 LOCALEDIR=/usr/local/bin/docklight-5/locale
 
-AC_INIT([docklight], [5.0.2], [bug-automake@gnu.org])
+AC_INIT([docklight], [5.0.3], [bug-automake@gnu.org])
 # this flags are for automake
 AM_INIT_AUTOMAKE([-Wall -Werror subdir-objects foreign])
 # find & probe c compiler
