@@ -120,6 +120,7 @@ namespace docklight
 
         g_message("Window Manager : %s", system::get_window_manager_name().c_str());
         g_message("Is Mutter WM: %s", system::is_mutter_window_manager() ? "yes" : "No");
+        g_message("DL Version: %s", PACKAGE_VERSION);
 
         device::monitor::set_current_monitor(Config()->get_monitor_name());
 

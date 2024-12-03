@@ -191,7 +191,7 @@ namespace docklight
 
     void Panel::drag_drop(bool start)
     {
-        if (start) {
+        if (start && !m_drag_drop_starts) {
             std::shared_ptr<DockItemIcon> dockitem;
             if (!m_provider->get_dockitem_by_index(m_dockitem_index, dockitem)) return;
 
@@ -202,7 +202,7 @@ namespace docklight
             m_dad->show_at(m_dockitem_index);
 
             m_drag_drop_starts = true;
-            // show_current_title(false);
+            m_drag_drop_item_index = m_dockitem_index;
 
             m_title->hide_now();
             Gtk::Widget::queue_draw();
@@ -213,13 +213,12 @@ namespace docklight
                 m_dad = nullptr;
             }
             m_drag_drop_starts = false;
-            // show_current_title(true);
         }
     }
 
     bool Panel::on_timeout_draw()
     {
-        if (m_mouse_button == 1 && m_mouse_press && !m_drag_drop_starts &&
+        if (m_mouse_button == 1 && m_mouse_press && !m_drag_drop_starts && m_dockitem_index &&
             m_mouse_drag_drop_timer.elapsed() > 0.2) {
             drag_drop(true);
         }
@@ -273,39 +272,6 @@ namespace docklight
         container_updated();
         Gtk::Widget::queue_draw();
         g_message("Panel updated");
-    }
-
-    bool Panel::on_motion_notify_event(GdkEventMotion* event)
-    {
-        get_dockitem_index(event->x, event->y);
-
-        if (m_mouse_button == 1 && m_dad && m_drag_drop_starts) {
-            int x = 0;
-            int y = 0;
-            system::get_mouse_position(x, y);
-            m_dad->move_at(x, y);
-
-            Gtk::Widget::queue_draw();
-
-            if (m_drag_drop_item_index != m_dockitem_index) {
-                if (m_config->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-                    m_drag_drop_candrop = (y + m_dad->get_height()) > Position()->get_y();
-                } else {
-                    m_drag_drop_candrop = (x + m_dad->get_width()) > Position()->get_x();
-                }
-            }
-        }
-
-        // show the title window
-        if (!m_drag_drop_starts && !m_preview_open) show_current_title(true);
-
-        if (m_dockitem_index != m_last_index) {
-            m_last_index = m_dockitem_index;
-            Gtk::Widget::queue_draw();
-        }
-
-        // stop other handlers from being invoked for the event.
-        return true;
     }
 
     inline guint Panel::get_dockitem_index(int mx, int my)
@@ -380,6 +346,39 @@ namespace docklight
         wnck::activate_window(window);
     }
 
+    bool Panel::on_motion_notify_event(GdkEventMotion* event)
+    {
+        get_dockitem_index(event->x, event->y);
+
+        if (m_mouse_button == 1 && m_dad && m_drag_drop_starts) {
+            int x = 0;
+            int y = 0;
+            system::get_mouse_position(x, y);
+            m_dad->move_at(x, y);
+
+            //   Gtk::Widget::queue_draw();
+
+            if (m_drag_drop_item_index != m_dockitem_index) {
+                if (m_config->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+                    m_drag_drop_candrop = (y + m_dad->get_height()) > Position()->get_y();
+                } else {
+                    m_drag_drop_candrop = (x + m_dad->get_width()) > Position()->get_x();
+                }
+            }
+        }
+
+        // show the title window
+        if (!m_drag_drop_starts && !m_preview_open) show_current_title(true);
+
+        if (m_dockitem_index != m_last_index) {
+            m_last_index = m_dockitem_index;
+            Gtk::Widget::queue_draw();
+        }
+
+        // stop other handlers from being invoked for the event.
+        return true;
+    }
+
     bool Panel::on_button_press_event(GdkEventButton* event)
     {
         if ((event->type != GDK_BUTTON_PRESS)) return false;
@@ -388,10 +387,10 @@ namespace docklight
         m_mouse_button = event->button;
         m_mouse_press = true;
 
-        m_drag_drop_item_index = m_dockitem_index;
         if (m_drag_drop_starts) return false;
 
-        if (event->button == 1) {
+        if (event->button == 1 && m_dockitem_index) {
+            m_drag_drop_item_index = m_dockitem_index;
             m_mouse_drag_drop_timer.start();
         }
 
@@ -416,25 +415,26 @@ namespace docklight
         get_dockitem_index(event->x, event->y);
         m_mouse_press = false;
 
+        // stops drag & drop
         if (m_drag_drop_starts) {
+            // reset
+            m_drag_drop_starts = false;
+            drag_drop(false);
+            m_mouse_drag_drop_timer.stop();
+            m_sigc_draw.disconnect();
+
+            // drop if is posible.
             std::shared_ptr<DockItemIcon> dockitem;
             if (m_provider->get_dockitem_by_index(m_drag_drop_item_index, dockitem)) {
-                m_drag_drop_starts = false;
-
-                drag_drop(false);
-
-                m_mouse_drag_drop_timer.stop();
-                m_sigc_draw.disconnect();
-
-                if (m_drag_drop_candrop) {
+                if (m_drag_drop_candrop && m_dockitem_index &&
+                    m_dockitem_index != m_drag_drop_item_index) {
                     m_drag_drop_candrop = false;
+
                     m_provider->drop(m_drag_drop_item_index, m_dockitem_index);
                 }
 
                 dockitem->set_visible(true);
                 Gtk::Widget::queue_draw();
-
-                m_drag_drop_item_index = 0;
                 return true;
             }
         }

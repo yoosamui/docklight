@@ -59,7 +59,7 @@ namespace docklight
     DADWindow::~DADWindow()
     {
         hide();
-        g_message("release DADWindow\n");
+        g_message("release DADWindow");
     }
 
     void DADWindow::close_now()
@@ -69,12 +69,10 @@ namespace docklight
 
     void DADWindow::move_at(int x, int y)
     {
-        x -= m_size / 2;
-        y -= m_size / 2;
+        x -= m_xoffset;
+        y -= m_yoffset;
 
-        move(x, y);
-        m_x = x;
-        m_y = y;
+        if (x && y) move(x, y);
     }
 
     void DADWindow::show_at(int dockitem_index)
@@ -82,21 +80,31 @@ namespace docklight
         int xx, yy;
 
         auto area = m_config->get_dock_area();
+        int margin = m_config->get_dock_area_margin() / 2;
+
+        int mx = 0;
+        int my = 0;
+        system::get_mouse_position(mx, my);
+
         if (m_config->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
             xx = m_position->get_x() + dockitem_index * area;
             yy = m_position->get_y();
 
+            if (!m_xoffset) m_xoffset = mx - xx - margin;
+            if (!m_yoffset) m_yoffset = my - (m_position->get_y() + margin);
+
         } else {
             yy = m_position->get_y() + dockitem_index * area;
             xx = m_position->get_x();
-        }
 
-        int margin = m_config->get_dock_area_margin() / 2;
+            if (!m_xoffset) m_xoffset = mx - (m_position->get_x() + margin);
+            if (!m_yoffset) m_yoffset = my - yy - margin;
+        }
 
         int x = xx + margin;
         int y = yy + margin;
 
-        move(x, y);
+        if (x && y) move(x, y);
 
         show_all();
     }

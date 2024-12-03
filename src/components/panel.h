@@ -28,7 +28,6 @@
 #include "utils/wnck.h"
 #include "components/dockitemicon.h"
 #include "dockitemprovider.h"
-//#include "components/TransparentWindow.h"
 #include "components/position.h"
 #include "components/dockrender.h"
 
