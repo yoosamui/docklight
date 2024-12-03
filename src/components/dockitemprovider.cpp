@@ -367,25 +367,17 @@ namespace docklight
         m_startup_allow_window_scan = true;
 
         int event_time = gtk_get_current_event_time();
-        WnckWorkspace* cws = nullptr;
-
-        /*GdkScreen* screen = gdk_screen_get_default();
-o        guint32 current_ws_number = gdk_x11_screen_get_current_desktop(screen);*/
-
-        cws = wnck_screen_get_active_workspace(wnck::get_default_screen());
+        WnckWorkspace* cws = wnck_screen_get_active_workspace(wnck::get_default_screen());
 
         std::sort(m_windows_loaded.begin(), m_windows_loaded.end());
         for (const auto& [key, val] : m_windows_loaded) {
-            // if (!cws) {
-            // cws = wnck_window_get_workspace(val);
-            //}
-
             set_window_image(val, true);
         }
 
         if (cws) wnck_workspace_activate(cws, event_time);
     }
 
+    // TODO: refactor needed here. Wait to code a WM extenmnsion.
     void DockItemProvider::set_window_image(WnckWindow* window, bool initial)
     {
         if (!m_startup_allow_window_scan) return;
@@ -397,14 +389,9 @@ o        guint32 current_ws_number = gdk_x11_screen_get_current_desktop(screen);
 
         if (!wnck::is_window_on_current_desktop(window)) {
             wnck::move_window_to_workspace(window);
-            // wnck_window_activate(window, 1);
         }
 
         if (wnck_window_is_minimized(window)) {
-            //
-            // wnck_window_activate(window, 1);
-            //  wnck_window_make_below(window);
-
             std::shared_ptr<DockItemIcon> dockitem;
             if (get_dockitem_by_xid(xid, dockitem)) {
                 m_window_images[xid] = dockitem->get_icon_from_window(64);
@@ -558,8 +545,6 @@ o        guint32 current_ws_number = gdk_x11_screen_get_current_desktop(screen);
                                             Glib::ustring window_icon_name, bool icon_is_fallback,
                                             WnckWindowType wintype)
     {
-        return true;
-
         Glib::RefPtr<Gdk::Pixbuf> pixbuf;
         Glib::ustring title_name;
         Glib::ustring icon_name = window_icon_name;
