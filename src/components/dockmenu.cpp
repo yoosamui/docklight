@@ -121,7 +121,7 @@ namespace docklight
 
     void DockMenu::on_HomeUnMinimizeAllWindows_event()
     {
-        auto tw = new TestWindow();  // wnck::unminimize_all();
+        wnck::unminimize_all();
     }
 
     void DockMenu::on_HomeCloseAllWindows_event()

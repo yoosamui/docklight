@@ -630,55 +630,6 @@ namespace docklight
             if (!pixbuf) {
                 return nullptr;
             }
-// TODO Make it in config as choice
-#ifdef USE_EXACT_SCALE
-            // source
-            int winWidth = gdk_pixbuf_get_width(pixbuf);
-            int winHeight = gdk_pixbuf_get_height(pixbuf);
-
-            // destination
-            int width = destWidth * 2;
-            int height = destHeight * 2;
-
-            // Calculate aspect ratios
-            double origAspect = static_cast<double>(winWidth) / winHeight;
-            double destAspect = static_cast<double>(width) / width;
-
-            int scaledWidth = 0, scaledHeight = 0;
-
-            if (origAspect > destAspect) {
-                // Resize width
-                int newWidth = destWidth;
-                int newHeight = static_cast<int>(destWidth / origAspect);
-
-                // Check if resized image fits within destination area
-                if (newHeight > (int)destHeight) {
-                    // Resize height instead
-                    newWidth = static_cast<int>(destHeight * origAspect);
-                    newHeight = destHeight;
-                }
-
-                scaledWidth = newWidth;
-                scaledHeight = newHeight;
-                //
-            } else {
-                // Resize height
-                int newWidth = static_cast<int>(destHeight * origAspect);
-                int newHeight = destHeight;
-
-                // Check if resized image fits within destination area
-                if (newWidth > (int)destWidth) {
-                    // Resize width instead
-                    newWidth = destWidth;
-                    newHeight = static_cast<int>(destWidth / origAspect);
-                }
-
-                scaledWidth = newWidth;
-                scaledHeight = newHeight;
-            }
-
-            return gdk_pixbuf_scale_simple(pixbuf, scaledWidth, scaledHeight, GDK_INTERP_BILINEAR);
-#else
 
             // sets the source size
             guint winWidth = gdk_pixbuf_get_width(pixbuf);
@@ -693,26 +644,25 @@ namespace docklight
             double maxSize = std::max(winWidth, winHeight);
             double aspectRatio = minSize / maxSize;
 
-            int scaledWidth = abs(winWidth * aspectRatio);
-            int scaledHeight = abs(winHeight * aspectRatio);
+            int scaledWidth = std::abs(winWidth * aspectRatio);
+            int scaledHeight = std::abs(winHeight * aspectRatio);
 
             auto const workarea = Position()->get_workarea();
 
             guint half_WindowWidth = workarea.get_width() / 2;
             guint half_WindowHeight = workarea.get_height() / 2;
 
-            // ajust width size with 100 ofset
+            // ajust width size with 100px ofset
             if (winWidth > half_WindowWidth + 100) {
                 scaledWidth = width;
             }
 
-            // ajust height size
+            // ajust height size with 100px ofset
             if (winHeight > half_WindowHeight + 100) {
                 scaledHeight = height;
             }
 
             return gdk_pixbuf_scale_simple(pixbuf, scaledWidth, scaledHeight, GDK_INTERP_BILINEAR);
-#endif
         }
 
         /**

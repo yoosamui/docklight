@@ -377,7 +377,8 @@ namespace docklight
         if (cws) wnck_workspace_activate(cws, event_time);
     }
 
-    // TODO: refactor needed here. Wait to code a WM extension.
+    // TODO: refactoring needed here. Wait to code a WM extension
+    // Xcomposite, Xrender may help
     void DockItemProvider::set_window_image(WnckWindow* window, bool initial)
     {
         if (!m_startup_allow_window_scan) return;
@@ -387,9 +388,8 @@ namespace docklight
         Glib::RefPtr<Gdk::Pixbuf> image;
         gint32 xid = wnck_window_get_xid(window);
 
-        if (!wnck::is_window_on_current_desktop(window)) {
-            wnck::move_window_to_workspace(window);
-        }
+        // need to move to the ws to access the image
+        wnck::move_window_to_workspace(window);
 
         if (wnck_window_is_minimized(window)) {
             std::shared_ptr<DockItemIcon> dockitem;
@@ -400,11 +400,10 @@ namespace docklight
         }
 
         int size = Config()->get_preview_image_max_size();
-        for (int i = 0; i < 6; i++) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        for (int i = 0; i < 2; i++) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
             if (pixbuf::get_window_image(xid, image, size)) {
                 m_window_images[xid] = image;
-                //    m_window_images[xid] = pixbuf::get_gdk_pixbuf_from_windowi2(xid);
             }
         }
     }
