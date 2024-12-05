@@ -99,6 +99,7 @@ clang-tidy.sh
 /src/Makefile.in
 /src/docklight
 /stamp-h1
+/src/svg/
 
 *.src.swp
 *.swp

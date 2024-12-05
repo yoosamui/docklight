@@ -289,36 +289,115 @@ namespace docklight
 
             return image ? true : false;
         }
-
-        GdkPixbuf* get_gdk_pixbuf_from_window(int xid)
+        //////
+        Glib::RefPtr<Gdk::Pixbuf> get_gdk_pixbuf_from_windowi2(int xid)
         {
             GdkPixbuf* winPixbuf = nullptr;
+            Glib::RefPtr<Gdk::Pixbuf> winpixbuf;
 
             GdkDisplay* gdk_display = gdk_display_get_default();
             if (!gdk_display) {
-                return nullptr;
+                return winpixbuf;
             }
 
             //  GdkWindow* rootwindow = gdk_get_default_root_window();
 
             GdkWindow* gdk_window = gdk_x11_window_foreign_new_for_display(gdk_display, xid);
             if (!gdk_window) {
-                return nullptr;
+                return winpixbuf;
             }
 
-            // Gets the window size
-            guint winWidth = gdk_window_get_width(gdk_window);
-            guint winHeight = gdk_window_get_height(gdk_window);
+            GdkPixbuf* pixbuf =
+                gdk_pixbuf_get_from_window(gdk_window, 0, 0, gdk_window_get_width(gdk_window),
+                                           gdk_window_get_height(gdk_window));
 
-            Gdk::Rectangle geo = wnck::get_window_geometry(xid);
+            if (gdk_window) {
+                auto mPreview = GTK_IMAGE(gtk_image_new());
+                gtk_widget_set_margin_top(GTK_WIDGET(mPreview), 6);
+                gtk_widget_set_margin_bottom(GTK_WIDGET(mPreview), 6);
+                // gtk_grid_attach(mGrid, GTK_WIDGET(mPreview), 0, 1, 3, 1);
+                //        gtk_widget_set_visible(GTK_WIDGET(mPreview), Settings::showPreviews);
 
-            winPixbuf = gdk_pixbuf_get_from_window(gdk_window, 0, 0, winWidth, winHeight);
-            if (!winPixbuf) {
-                return nullptr;
+                GdkWindow* window;
+                GdkPixbuf* pixbuf;
+                GdkPixbuf* thumbnail;
+
+                GdkDisplay* display = gdk_display_get_default();
+                gdk_x11_display_error_trap_push(display);
+                pixbuf =
+                    gdk_pixbuf_get_from_window(gdk_window, 0, 0, gdk_window_get_width(gdk_window),
+                                               gdk_window_get_height(gdk_window));
+
+                gdk_x11_display_error_trap_pop_ignored(display);
+                if (pixbuf) {
+                    gint scale_factor = gtk_widget_get_scale_factor(GTK_WIDGET(mPreview));
+
+                    double scale = 0.125;
+                    scale *= scale_factor;
+
+                    thumbnail = gdk_pixbuf_scale_simple(
+                        pixbuf, gdk_pixbuf_get_width(pixbuf) * scale,
+                        gdk_pixbuf_get_height(pixbuf) * scale, GDK_INTERP_BILINEAR);
+
+                    winpixbuf =
+                        Glib::wrap(pixbuf, true)->scale_simple(200, 200, Gdk::INTERP_BILINEAR);
+
+                    // cairo_surface_t* surface =
+                    // gdk_cairo_surface_create_from_pixbuf(thumbnail, scale_factor, NULL);
+
+                    // gtk_image_set_from_surface(mPreview, surface);
+
+                    // cairo_surface_destroy(surface);
+                    g_object_unref(thumbnail);
+                    g_object_unref(pixbuf);
+                }
+
+                g_object_unref(gdk_window);
             }
+
+            // Gets the gdk_window size
+            // guint winWidth = gdk_window_get_width(gdk_window);
+            // guint winHeight = gdk_window_get_height(gdk_window);
+
+            // Gdk::Rectangle geo = wnck::get_window_geometry(xid);
+
+            // winPixbuf = gdk_pixbuf_get_from_window(gdk_window, 0, 0, winWidth, winHeight);
+            // if (!winPixbuf) {
+            // return nullptr;
+            //}
 
             // g_print("pixbuf:: get_gdk_pixbuf_from_window: %d x %d\n", winPixbuf->width,
             // winPixbuf->height);
+
+            return winpixbuf;
+        }
+
+        GdkPixbuf* get_gdk_pixbuf_from_window(int xid)
+        {
+            GdkPixbuf* winPixbuf = nullptr;
+
+            GdkDisplay* display = gdk_display_get_default();
+            if (!display) {
+                return nullptr;
+            }
+
+            GdkWindow* gdk_window = gdk_x11_window_foreign_new_for_display(display, xid);
+            if (!gdk_window) {
+                return nullptr;
+            }
+
+            // Gets the gdk_window size
+            guint winWidth = gdk_window_get_width(gdk_window);
+            guint winHeight = gdk_window_get_height(gdk_window);
+
+            //  catch X11 errors if any.
+            gdk_x11_display_error_trap_push(display);
+            winPixbuf = gdk_pixbuf_get_from_window(gdk_window, 0, 0, winWidth, winHeight);
+            gdk_x11_display_error_trap_pop_ignored(display);
+
+            if (!winPixbuf) {
+                return nullptr;
+            }
 
             return winPixbuf;
         }
@@ -514,6 +593,37 @@ namespace docklight
             height += y;
         }
 
+        ////////////////
+        GdkPixbuf* get_gdk_pixbuf_scaled2(gulong xid, const GdkPixbuf* pixbuf,
+                                          const guint destWidth, const guint destHeight)
+        {
+            if (!pixbuf) {
+                return nullptr;
+            }
+
+            GdkDisplay* display = gdk_display_get_default();
+            int scaledWidth = 0, scaledHeight = 0;
+
+            auto mPreview = GTK_IMAGE(gtk_image_new());
+            gtk_widget_set_margin_top(GTK_WIDGET(mPreview), 6);
+            gtk_widget_set_margin_bottom(GTK_WIDGET(mPreview), 6);
+            gtk_widget_set_visible(GTK_WIDGET(mPreview), false);
+
+            gdk_x11_display_error_trap_pop_ignored(display);
+
+            // Retrieves the internal scale factor that maps from window coordinates to the actual
+            // device pixels. On traditional systems this is 1, on high density outputs, it can be a
+            // higher value (typically 2).
+            gint scale_factor = gtk_widget_get_scale_factor(GTK_WIDGET(mPreview));
+
+            double scale = 0.125;
+            scale *= scale_factor;
+
+            // g_object_unref(pixbuf);
+            return gdk_pixbuf_scale_simple(pixbuf, scaledWidth, scaledHeight, GDK_INTERP_BILINEAR);
+        }
+
+        //
         GdkPixbuf* get_gdk_pixbuf_scaled(gulong xid, const GdkPixbuf* pixbuf, const guint destWidth,
                                          const guint destHeight)
         {

@@ -574,7 +574,7 @@ namespace docklight
             }
         }
 
-        /*void minimize_all()
+        void minimize_all()
         {
             WnckScreen* screen = get_default_screen();
             GList* window_l;
@@ -614,7 +614,7 @@ namespace docklight
 
                 //   wnck_window_activate(window, ct);
             }
-        }*/
+        }
 
         WnckWindow* get_active()
         {

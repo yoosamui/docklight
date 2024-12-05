@@ -6,6 +6,8 @@ ALLCPPFLAGS = $(GTKMM_CFLAGS)
 ALLCPPFLAGS += $(WNCK_CFLAGS)
 ALLCPPFLAGS += -DPROGRAMNAME_LOCALEDIR=\""$(bindir)/docklight-5/locale"\"
 ALLCPPFLAGS += -DWNCK_I_KNOW_THIS_IS_UNSTABLE  -Lbamf3 -I/usr/include/libbamf3/
+#ALLCPPFLAGS += pkg-config --libs '-lX11 -lXcomposite -lXdamage -lXfixes -lXtst'
+#pkg-config --libs fontconfig
 docklight_CPPFLAGS = $(ALLCPPFLAGS)
 
 # detailed
@@ -17,10 +19,11 @@ docklight_CPPFLAGS = $(ALLCPPFLAGS)
 
 # standard
 docklight_CPPFLAGS += -DDEBUG -Wall -std=c++17 -ggdb
+#docklight_LDFLAGS = -lX11 -lXcomposite -lXdamage -lXfixes -lXtst
 
 
 ALLDADDLIBS = $(GTKMM_LIBS)
-#ALLDADDLIBS += $(LIBBAMF_PRIVATE_LIB)
+ALLDADDLIBS +=  -lX11 -lXcomposite -lXdamage -lXrender -lXfixes -lXtst
 
 docklight_LDADD = $(ALLDADDLIBS)
 
@@ -33,6 +36,7 @@ utils/cairo.cpp \
 utils/pixbuf.cpp \
 components/titlewindow.cpp \
 components/compositewindow.cpp \
+components/testwindow.cpp \
 components/animboomwindow.cpp \
 components/coverwindow.cpp \
 components/dadwindow.cpp \

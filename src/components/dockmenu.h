@@ -28,6 +28,7 @@
 #include "components/position.h"
 // clang-format on
 
+#include "components/testwindow.h"
 namespace docklight
 {
 

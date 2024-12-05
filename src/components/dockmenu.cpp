@@ -32,11 +32,11 @@ namespace docklight
         m_home_menu.set_halign(Gtk::Align::ALIGN_CENTER);
         m_home_menu_quit_item.set_label(MSG_QUIT);
         m_home_menu_close_all_item.set_label(MSG_CLOSE_ALL_WINDOWS);
-        //        m_HomeMinimizeAllWindowsMenuItem.set_label(MSG_MINIMIZE_ALL_WINDOWS);
-        //      m_HomeUnMinimizeAllWindowsMenuItem.set_label(MSG_MAXIMIZE_ALL_WINDOWS);
+        m_HomeMinimizeAllWindowsMenuItem.set_label(MSG_MINIMIZE_ALL_WINDOWS);
+        m_HomeUnMinimizeAllWindowsMenuItem.set_label(MSG_MAXIMIZE_ALL_WINDOWS);
 
-        //    m_home_menu.append(m_HomeUnMinimizeAllWindowsMenuItem);
-        //    m_home_menu.append(m_HomeMinimizeAllWindowsMenuItem);
+        m_home_menu.append(m_HomeUnMinimizeAllWindowsMenuItem);
+        m_home_menu.append(m_HomeMinimizeAllWindowsMenuItem);
         m_home_menu.append(m_home_menu_close_all_item);
         m_home_menu.append(m_separatorMenuHome1);
         m_home_menu.append(m_home_menu_quit_item);
@@ -64,11 +64,11 @@ namespace docklight
         m_home_menu_quit_item.signal_activate().connect(
             sigc::mem_fun(*this, &DockMenu::on_home_menu_quit_event));
 
-        /*m_HomeMinimizeAllWindowsMenuItem.signal_activate().connect(
+        m_HomeMinimizeAllWindowsMenuItem.signal_activate().connect(
             sigc::mem_fun(*this, &DockMenu::on_HomeMinimizeAllWindows_event));
 
         m_HomeUnMinimizeAllWindowsMenuItem.signal_activate().connect(
-            sigc::mem_fun(*this, &DockMenu::on_HomeUnMinimizeAllWindows_event));*/
+            sigc::mem_fun(*this, &DockMenu::on_HomeUnMinimizeAllWindows_event));
 
         m_home_menu_close_all_item.signal_activate().connect(
             sigc::mem_fun(*this, &DockMenu::on_HomeCloseAllWindows_event));
@@ -116,12 +116,12 @@ namespace docklight
 
     void DockMenu::on_HomeMinimizeAllWindows_event()
     {
-        //  wnck::minimize_all();
+        wnck::minimize_all();
     }
 
     void DockMenu::on_HomeUnMinimizeAllWindows_event()
     {
-        // wnck::unminimize_all();
+        auto tw = new TestWindow();  // wnck::unminimize_all();
     }
 
     void DockMenu::on_HomeCloseAllWindows_event()

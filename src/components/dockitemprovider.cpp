@@ -377,7 +377,7 @@ namespace docklight
         if (cws) wnck_workspace_activate(cws, event_time);
     }
 
-    // TODO: refactor needed here. Wait to code a WM extenmnsion.
+    // TODO: refactor needed here. Wait to code a WM extension.
     void DockItemProvider::set_window_image(WnckWindow* window, bool initial)
     {
         if (!m_startup_allow_window_scan) return;
@@ -400,10 +400,11 @@ namespace docklight
         }
 
         int size = Config()->get_preview_image_max_size();
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 6; i++) {
             std::this_thread::sleep_for(std::chrono::milliseconds(5));
             if (pixbuf::get_window_image(xid, image, size)) {
                 m_window_images[xid] = image;
+                //    m_window_images[xid] = pixbuf::get_gdk_pixbuf_from_windowi2(xid);
             }
         }
     }
@@ -487,6 +488,7 @@ namespace docklight
             return false;
         }
 
+        auto count = this->count();
         std::shared_ptr<DockItemIcon> dockitem = std::shared_ptr<DockItemIcon>(
             new DockItemIcon(xid, m_wnckwindow, instance_name, groupname, wintype));
 
@@ -536,7 +538,7 @@ namespace docklight
             dockitem->add_child(child);
         }
 
-        return true;
+        return count != this->count();
     }
 
     bool DockItemProvider::createFromWindow(gulong xid, GdkPixbuf* gdkpixbuf,
@@ -551,6 +553,7 @@ namespace docklight
 
         if (!get_window_icon(gdkpixbuf, pixbuf)) return false;
 
+        auto count = this->count();
         std::shared_ptr<DockItemIcon> dockitem = std::shared_ptr<DockItemIcon>(
             new DockItemIcon(xid, m_wnckwindow, instance_name, groupname, wintype));
 
@@ -592,7 +595,7 @@ namespace docklight
             dockitem->add_child(dockitem->clone());
         }
 
-        return true;
+        return count != this->count();
     }
 
     Glib::ustring DockItemProvider::get_config_filepath()
