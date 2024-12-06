@@ -10,26 +10,26 @@
 #include "utils/easing.h"
 #include "utils/wnck.h"
 
-// class DockRender : public Gtk::DrawingArea
 namespace docklight
 {
 
-    class PanelHide : Glib::Object
+    class PanelHide  //: Glib::Object
     {
         typedef sigc::signal<void, int, int> type_signal_hide;
-        type_signal_hide signal_hide();
 
       public:
         PanelHide();
         bool get_lock_render();
+
+        bool on_autohide();
+
+        type_signal_hide signal_hide();
 
       private:
         void connect_signal_handler(bool connect);
         void connect_signal_hide(bool connect);
         bool on_hide();
         void unhide();
-
-        bool on_autohide();
 
         static bool is_window_intersect(WnckWindow* window);
         static void on_active_window_changed(WnckScreen* screen,

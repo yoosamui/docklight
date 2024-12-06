@@ -19,22 +19,22 @@ namespace docklight
 
     void PanelHide::connect_signal_hide(bool connect)
     {
-        /*if (connect) {
+        if (connect) {
             m_sigc_hide =
                 Glib::signal_timeout().connect(sigc::mem_fun(this, &PanelHide::on_hide), 1000 / 20);
         } else {
             m_sigc_hide.disconnect();
-        }*/
+        }
     }
 
     void PanelHide::connect_signal_handler(bool connect)
     {
-        /*if (connect) {
+        if (connect) {
             m_sigc_autohide = Glib::signal_timeout().connect(
                 sigc::mem_fun(this, &PanelHide::on_autohide), 1000 / 2);
         } else {
             m_sigc_autohide.disconnect();
-        }*/
+        }
     }
 
     PanelHide::type_signal_hide PanelHide::signal_hide()
@@ -70,7 +70,6 @@ namespace docklight
     {
         if (!m_active_window) return true;
 
-        bool fullscreen = wnck_window_is_fullscreen(m_active_window);
         bool intersects = is_window_intersect(m_active_window);
 
         m_lock_render = intersects;

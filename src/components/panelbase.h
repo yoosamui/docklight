@@ -6,7 +6,6 @@
 #include <gtkmm/drawingarea.h>
 #include <libwnck/libwnck.h>
 
-//#include "components/panelhide.h"
 //  class Panelbase;
 
 // class PanelBase;

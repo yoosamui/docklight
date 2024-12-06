@@ -26,12 +26,11 @@
 #include "components/config.h"
 #include "components/dockitemprovider.h"
 #include "components/position.h"
-//#include "components/panehide.h"
+#include "components/panelhide.h"
 // clang-format on
 
 namespace docklight
 {
-
     // class DockRender : public Gtk::DrawingArea
     class DockRender : public DockMenu
     {
@@ -55,6 +54,8 @@ namespace docklight
         bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr);
 
         void on_autohide_update(int x, int y);
+
+        PanelHide m_panel_hide;
 
       protected:
         Glib::RefPtr<PositionManager> m_position;
