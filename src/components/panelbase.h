@@ -6,7 +6,7 @@
 #include <gtkmm/drawingarea.h>
 #include <libwnck/libwnck.h>
 
-#include "components/panelhide.h"
+//#include "components/panelhide.h"
 //  class Panelbase;
 
 // class PanelBase;
@@ -25,8 +25,6 @@ namespace docklight
         static WnckWindow* m_active_window;
         static bool m_lock_render;
         static bool m_last_fullscreen;
-
-        // PanelHide m_panel_hide;
 
         bool m_context_menu_active = false;
         bool m_mouse_enter = false;

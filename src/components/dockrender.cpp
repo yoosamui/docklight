@@ -29,6 +29,8 @@ namespace docklight
     DockRender::DockRender()
     {
         m_position = Position();
+        // m_panel_render.signal_update().connect(
+        // sigc::mem_fun(this, &DockRender::on_autohide_update));
 
         g_message("Create DockRender.");
     }
@@ -253,6 +255,11 @@ namespace docklight
         }
 
         m_cell_ctx->paint();
+    }
+
+    void DockRender::on_autohide_update(int x, int y)
+    {
+        //
     }
 
     bool DockRender::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)

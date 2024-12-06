@@ -26,6 +26,7 @@
 #include "components/config.h"
 #include "components/dockitemprovider.h"
 #include "components/position.h"
+//#include "components/panehide.h"
 // clang-format on
 
 namespace docklight
@@ -52,6 +53,8 @@ namespace docklight
         void draw_surface_indicator(std::shared_ptr<DockItemIcon>& item);
 
         bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr);
+
+        void on_autohide_update(int x, int y);
 
       protected:
         Glib::RefPtr<PositionManager> m_position;

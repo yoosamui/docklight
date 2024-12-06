@@ -17,14 +17,29 @@ namespace docklight
         connect_signal_handler(true);
     }
 
+    void PanelHide::connect_signal_hide(bool connect)
+    {
+        /*if (connect) {
+            m_sigc_hide =
+                Glib::signal_timeout().connect(sigc::mem_fun(this, &PanelHide::on_hide), 1000 / 20);
+        } else {
+            m_sigc_hide.disconnect();
+        }*/
+    }
+
     void PanelHide::connect_signal_handler(bool connect)
     {
-        if (connect) {
+        /*if (connect) {
             m_sigc_autohide = Glib::signal_timeout().connect(
-                sigc::mem_fun(this, &PanelHide::on_autohide), 1000 / 30);
+                sigc::mem_fun(this, &PanelHide::on_autohide), 1000 / 2);
         } else {
             m_sigc_autohide.disconnect();
-        }
+        }*/
+    }
+
+    PanelHide::type_signal_hide PanelHide::signal_hide()
+    {
+        return m_signal_hide;
     }
 
     void PanelHide::on_active_window_changed(WnckScreen* screen,
@@ -67,9 +82,18 @@ namespace docklight
             Provider()->emit_update();
 
             if (intersects) {
-                hide();
+                m_animation_timer.start();
+
+                m_startPosition = 0.f;
+                m_endPosition = 100.f;
+                m_initTime = 0.0f;
+                m_endTime = m_initTime + 10.5;
+
+                m_animation_time = 0;
+                connect_signal_hide(true);
             } else {
                 unhide();
+                m_animation_timer.start();
             }
         }
         //  }
@@ -77,10 +101,31 @@ namespace docklight
         return true;
     }
 
-    void PanelHide::hide()
+    bool PanelHide::on_hide()
     {
-        //
-        g_message("PanelHide::Hide");
+        float position = easing::map_clamp(m_animation_time, m_initTime, m_endTime, m_startPosition,
+                                           m_endPosition, &easing::linear::easeOut);
+
+        if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+            m_offset_x = 0;
+            m_offset_y = (int)position;
+        } else {
+            m_offset_x = (int)position;
+            m_offset_y = 0;
+        }
+
+        // m_signal_hide.emit(m_offset_x, m_offset_y);
+        m_animation_time++;
+
+        g_message("PanelHide::Hide %f", position);
+
+        if (m_animation_time > 10) {
+            m_sigc_hide.disconnect();
+
+            return true;
+        }
+
+        return true;
     }
 
     void PanelHide::unhide()

@@ -34,6 +34,7 @@ utils/wnck.cpp \
 utils/struts.cpp \
 utils/cairo.cpp \
 utils/pixbuf.cpp \
+utils/easing.cpp \
 components/titlewindow.cpp \
 components/compositewindow.cpp \
 components/testwindow.cpp \
