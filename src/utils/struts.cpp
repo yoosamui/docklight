@@ -50,7 +50,7 @@ namespace docklight::position
         m_strut_bottom_pos = -1;
         m_active = false;
 
-        g_print("Reset struts\n");
+        //    g_print("Reset struts\n");
     }
 
     void Struts::set_insets(long& insets)
@@ -106,7 +106,7 @@ namespace docklight::position
         Gdk::Rectangle monitor = device::monitor::get_geometry();
 
         switch (location) {
-            // clang-format off
+                // clang-format off
                 case dock_location_t::top:
                         if (m_strut_top_pos == -1) {
                             m_strut_top_pos = workarea.get_y();

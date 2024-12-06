@@ -173,6 +173,11 @@ namespace docklight
         return count;
     }
 
+    void DockItemProvider::emit_update()
+    {
+        m_signal_update.emit(window_action_t::UPDATE, 0);
+    }
+
     void DockItemProvider::workspace_change()
     {
         m_signal_update.emit(window_action_t::WORKSPACE, 0);

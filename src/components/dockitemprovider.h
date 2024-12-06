@@ -82,6 +82,7 @@ namespace docklight
 
         //        void set_window_image_reload(WnckWindow* window, bool initial);
 
+        void emit_update();
         void workspace_change();
 
         void swap(int source, int dest);

@@ -29,7 +29,6 @@
 
 namespace docklight
 {
-
     class ConfigBase : public Glib::Object
     {
       public:
@@ -75,8 +74,8 @@ namespace docklight
         dock_icon_alignment_t m_icon_alignment = dock_icon_alignment_t::center;
 
         //        TODO : TEST
-        // dock_autohide_type_t m_autohide_type = dock_autohide_type_t::intelihide;
-        dock_autohide_type_t m_autohide_type = dock_autohide_type_t::none;
+        dock_autohide_type_t m_autohide_type = dock_autohide_type_t::intelihide;
+        // dock_autohide_type_t m_autohide_type = dock_autohide_type_t::none; // default;
 
         dock_location_t m_location = dock_location_t::bottom;
         dock_indicator_type_t m_indicator_type = dock_indicator_type_t::dots;

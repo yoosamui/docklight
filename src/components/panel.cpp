@@ -62,6 +62,9 @@ namespace docklight
         g_signal_connect(wnckscreen, "active_window_changed",
                          G_CALLBACK(Panel::on_active_window_changed), nullptr);
 
+        // g_signal_connect(wnckscreen, "active_window_changed",
+        // G_CALLBACK(Panel::on_active_window_changed), nullptr);
+
         m_bck_thread = std::shared_ptr<std::thread>(new std::thread(&Panel::thread_func, this));
     }
 
@@ -106,10 +109,17 @@ namespace docklight
     void Panel::on_active_window_changed(WnckScreen* screen, WnckWindow* previously_active_window,
                                          gpointer user_data)
     {
+        static gulong m_state_change_id = 0;
+
         // Gets the active WnckWindow on screen.
         // May return NULL sometimes, since not all
         // window managers guarantee that a window is always active.
         m_active_window = wnck_screen_get_active_window(screen);
+
+        if (!m_active_window) {
+            return;
+        }
+
         if (m_active_window) Provider()->set_window_image(m_active_window);
     }
 

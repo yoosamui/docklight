@@ -20,6 +20,7 @@
 // clang-format off
 #include <gdkmm/general.h>
 
+//#include "components/panelhide.h"
 #include "utils/cairo.h"
 #include "components/dockmenu.h"
 #include "components/config.h"

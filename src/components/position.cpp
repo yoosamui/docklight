@@ -87,6 +87,27 @@ namespace docklight
         return std::string(result, (count > 0) ? count : 0);
     }
 
+    void PositionManager::window_intersects(bool intersects)
+    {
+        if (intersects && !m_lock) {
+            m_lock = true;
+            if (Config()->is_autohide_none()) {
+                m_struts.reset_struts();
+            }
+
+        } else if (m_lock) {
+            m_lock = false;
+            if (Config()->is_autohide_none()) {
+                m_struts.set_struts();
+            }
+        }
+    }
+
+    void PositionManager::show_now()
+    {
+        m_window->show();
+    }
+
     void PositionManager::on_monitor_changed()
     {
         unsigned int microsecond = 1000000;
@@ -241,7 +262,9 @@ namespace docklight
     }
     void PositionManager::set_position(guint required_size)
     {
-        // g_message("Position request: %d", required_size);
+        if (m_lock) return;
+        m_last_required_size = required_size;
+
         int area = Config()->get_dock_area();
 
         dock_alignment_t alignment = Config()->get_dock_alignment();

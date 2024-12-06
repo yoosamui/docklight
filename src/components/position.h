@@ -49,7 +49,13 @@ namespace docklight
         int get_x() const;
         int get_y() const;
 
+        void window_intersects(bool intersects);
+        void show_now();
+
       private:
+        bool m_lock = false;
+        bool m_last_required_size = 0;
+
         std::string get_execpath();
 
         std::string m_exepath;

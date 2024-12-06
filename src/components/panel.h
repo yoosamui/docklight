@@ -22,7 +22,7 @@
 #include <gtkmm/drawingarea.h>
 #include <glibmm/timer.h>
 #include <math.h>
-
+#include <gdkmm/rectangle.h>
 #include "components/config.h"
 
 #include "utils/wnck.h"
@@ -38,8 +38,10 @@
 
 #include "components/animboomwindow.h"
 #include "components/dadwindow.h"
+//#include "components/panelbase.h"
 #include "components/panelpreview.h"
 #include "components/titlewindow.h"
+
 // clang-format on
 
 namespace docklight
@@ -82,6 +84,13 @@ namespace docklight
         static void on_active_window_changed(WnckScreen* screen,
                                              WnckWindow* previously_active_window,
                                              gpointer user_data);
+
+        // static void on_state_changed(WnckWindow* window, WnckWindowState changed_mask,
+        // WnckWindowState new_state, gpointer user_data);
+
+        // static void on_actions_changed(WnckWindow* window, WnckWindowActions changed_mask,
+        // WnckWindowActions new_state, gpointer user_data);
+
         void thread_func();
         void show_current_title(bool show);
         void drag_drop(bool start);

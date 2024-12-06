@@ -40,6 +40,8 @@ components/testwindow.cpp \
 components/animboomwindow.cpp \
 components/coverwindow.cpp \
 components/dadwindow.cpp \
+components/panelbase.cpp \
+components/panelhide.cpp \
 components/panel.cpp \
 components/panelpreview.cpp \
 components/dockmenu.cpp \

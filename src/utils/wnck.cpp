@@ -177,6 +177,7 @@ namespace docklight
         void focus_window(WnckWindow* window, int event_time)
         {
             WnckWorkspace* ws = wnck_window_get_workspace(window);
+            if (!ws) return;
 
             wnck_workspace_activate(ws, event_time);
 
@@ -212,6 +213,7 @@ namespace docklight
             // Unminimize minimized windows if there is one or more;
             for (auto& window : window_list) {
                 WnckWorkspace* ws = wnck_window_get_workspace(window);
+                if (!ws) continue;
                 if (wnck_workspace_get_number(ws) != current_ws_number) continue;
 
                 WnckWindow* ca_window = nullptr;
@@ -222,6 +224,7 @@ namespace docklight
                 if (wnck_window_is_minimized(window) && wnck_window_is_in_viewport(window, ws)) {
                     for (auto& w : window_list) {
                         WnckWorkspace* ws = wnck_window_get_workspace(w);
+                        if (!ws) continue;
                         if (wnck_workspace_get_number(ws) != current_ws_number) continue;
 
                         // if (w == ca_window) continue;
@@ -239,6 +242,7 @@ namespace docklight
             // Minimize all windows if this application owns the active window
             for (auto& window : window_list) {
                 WnckWorkspace* ws = wnck_window_get_workspace(window);
+                if (!ws) continue;
                 if (wnck_workspace_get_number(ws) != current_ws_number) continue;
 
                 WnckScreen* wckscreen = wnck_window_get_screen(window);
@@ -249,6 +253,7 @@ namespace docklight
                     for (auto& w : window_list) {
                         if (!wnck_window_is_minimized(w)) {
                             WnckWorkspace* ws = wnck_window_get_workspace(w);
+                            if (!ws) continue;
                             if (wnck_workspace_get_number(ws) != current_ws_number) continue;
 
                             if (wnck_window_is_active(w)) {
@@ -266,6 +271,8 @@ namespace docklight
             // Get all windows on the current workspace in the foreground
             for (auto& window : window_list) {
                 WnckWorkspace* ws = wnck_window_get_workspace(window);
+                if (!ws) continue;
+
                 if (wnck_workspace_get_number(ws) != current_ws_number) continue;
                 if (wnck_window_is_in_viewport(window, ws)) {
                     WnckWindow* ca_window = nullptr;
@@ -276,6 +283,7 @@ namespace docklight
                     for (auto& w : window_list) {
                         if (!wnck_window_is_minimized(w)) {
                             WnckWorkspace* ws = wnck_window_get_workspace(w);
+                            if (!ws) continue;
                             if (wnck_workspace_get_number(ws) != current_ws_number) continue;
 
                             //      if (w == ca_window) continue;
@@ -568,6 +576,7 @@ namespace docklight
                 if (!is_valid_window_type(window)) continue;
 
                 WnckWorkspace* ws = wnck_window_get_workspace(window);
+                if (!ws) continue;
                 if (wnck_workspace_get_number(ws) != current_ws_number) continue;
 
                 wnck_window_unminimize(window, ct);
@@ -590,6 +599,7 @@ namespace docklight
 
                 // move_window_to_workspace(window);
                 WnckWorkspace* ws = wnck_window_get_workspace(window);
+                if (!ws) continue;
                 wnck_workspace_activate(ws, event_time);
                 wnck_window_minimize(window);
             }

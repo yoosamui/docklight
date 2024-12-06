@@ -257,6 +257,12 @@ namespace docklight
 
     bool DockRender::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     {
+        // if (m_panel_hide.get_lock_render()) {
+        //// cr->set_source_rgba(0.0, 0.0, 0.0, 0.0);
+        //// cr->paint();
+        // return true;
+        //}
+
         m_posX = 0;
         m_posY = 0;
 
