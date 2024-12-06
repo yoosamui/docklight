@@ -359,8 +359,9 @@ namespace docklight
         if (!WNCK_IS_WINDOW(window)) return;
 
         WnckWorkspace* ws = wnck_window_get_workspace(window);
-        auto wsn = wnck_workspace_get_number(ws);
+        if (!ws) return;
 
+        auto wsn = wnck_workspace_get_number(ws);
         auto kp = std::make_pair(wsn, window);
         m_windows_loaded.push_back(kp);
     }
@@ -385,6 +386,7 @@ namespace docklight
     // TODO: refactoring needed here. Wait to code a WM extension
     // Xcomposite, Xrender may help
     void DockItemProvider::set_window_image(WnckWindow* window, bool initial)
+
     {
         if (!m_startup_allow_window_scan) return;
         if (system::is_mutter_window_manager()) return;
@@ -474,6 +476,7 @@ namespace docklight
         if (!m_startup_time_set) fill_window_image(window);
 
         set_window_image(window, true);
+
         return result;
     }
 

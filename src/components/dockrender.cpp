@@ -262,7 +262,6 @@ namespace docklight
         //// cr->paint();
         // return true;
         //}
-
         m_posX = 0;
         m_posY = 0;
 

@@ -109,8 +109,6 @@ namespace docklight
     void Panel::on_active_window_changed(WnckScreen* screen, WnckWindow* previously_active_window,
                                          gpointer user_data)
     {
-        static gulong m_state_change_id = 0;
-
         // Gets the active WnckWindow on screen.
         // May return NULL sometimes, since not all
         // window managers guarantee that a window is always active.

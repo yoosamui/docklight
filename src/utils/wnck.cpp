@@ -348,7 +348,7 @@ namespace docklight
                 //}
 
                 WnckWorkspace* ws = wnck_window_get_workspace(window);
-                if (WNCK_IS_WORKSPACE(ws)) {
+                if (ws) {
                     //    if (!ws) continue;
 
                     if (wnck_workspace_get_number(ws) != number) continue;
