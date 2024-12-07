@@ -398,7 +398,7 @@ namespace docklight
         // need to move to the ws to access the image
         wnck::move_window_to_workspace(window);
 
-        if (wnck_window_is_minimized(window)) {
+        if (wnck_window_is_minimized(window) /*|| wnck_window_is_sticky(window)*/) {
             std::shared_ptr<DockItemIcon> dockitem;
             if (get_dockitem_by_xid(xid, dockitem)) {
                 m_window_images[xid] = dockitem->get_icon_from_window(64);

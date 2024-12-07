@@ -101,14 +101,15 @@ namespace docklight
                 m_endPosition = (float)m_area;
 
                 m_initTime = 0.f;
-                m_endTime = 7.0f;
+                m_endTime = 10.0f;
 
-                g_print("HIDE START\n");
+                // g_print("HIDE START\n");
                 m_animation_time = 0;
                 connect_signal_hide(true);
                 //  m_update_required = true;
                 //    m_visible = true;
             } else {
+                if (fullscreeen) return true;
                 if (m_visible) return true;
 
                 m_startPosition = (float)m_area;
@@ -118,7 +119,7 @@ namespace docklight
 
                 m_initTime = 0.f;
                 m_endTime = 5.0f;
-                g_print("UNHIDE START\n");
+                // g_print("UNHIDE START\n");
                 m_animation_time = 0;
                 connect_signal_unhide(true);
                 //  m_visible = false;
@@ -149,7 +150,7 @@ namespace docklight
         if ((int)position >= m_area) {
             m_sigc_hide.disconnect();
 
-            g_print("HIDE END\n");
+            // g_print("HIDE END\n");
             m_visible = false;
             Position()->hide_now();
             return true;
@@ -181,7 +182,7 @@ namespace docklight
         if ((int)position <= 0) {
             m_sigc_hide.disconnect();
 
-            g_print("UNHIDE END!\n");
+            //     g_print("UNHIDE END!\n");
             m_visible = true;
             return true;
         }

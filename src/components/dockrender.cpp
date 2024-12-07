@@ -65,7 +65,7 @@ namespace docklight
         //        if (m_panel_hide.m_visible) {
         ctx->set_source_rgba(0.266, 0.309, 0.361, 1.0);
         cairo::rounded_rectangle(ctx, 0, 0, m_background->get_width(), m_background->get_height(),
-                                 8.0);
+                                 6.0);
         ctx->fill();
         //      }
     }
