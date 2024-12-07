@@ -94,7 +94,6 @@ namespace docklight
             if (Config()->is_autohide_none()) {
                 m_struts.reset_struts();
             }
-
         } else if (m_lock) {
             m_lock = false;
             if (Config()->is_autohide_none()) {
@@ -105,7 +104,17 @@ namespace docklight
 
     void PositionManager::show_now()
     {
-        m_window->show();
+        //      m_window->set_visible(true);
+        //..  m_window->show();
+
+        // g_print("S H O W\n");
+    }
+
+    void PositionManager::hide_now()
+    {
+        // m_window->set_visible(false);
+
+        // m_window->hide();
     }
 
     void PositionManager::on_monitor_changed()

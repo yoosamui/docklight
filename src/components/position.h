@@ -51,6 +51,7 @@ namespace docklight
 
         void window_intersects(bool intersects);
         void show_now();
+        void hide_now();
 
       private:
         bool m_lock = false;

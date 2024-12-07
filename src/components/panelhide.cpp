@@ -114,6 +114,8 @@ namespace docklight
                 m_startPosition = (float)m_area;
                 m_endPosition = 0.f;
 
+                Position()->show_now();
+
                 m_initTime = 0.f;
                 m_endTime = 5.0f;
                 g_print("UNHIDE START\n");
@@ -149,6 +151,7 @@ namespace docklight
 
             g_print("HIDE END\n");
             m_visible = false;
+            Position()->hide_now();
             return true;
         }
 

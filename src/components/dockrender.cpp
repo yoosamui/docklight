@@ -55,7 +55,7 @@ namespace docklight
         // ctx->set_source_rgba(0.266, 0.309, 0.361, 1.0);
         // ctx->paint();
 
-#define STROKE_BCK_RECT 1
+//#define STROKE_BCK_RECT 1
 #ifdef STROKE_BCK_RECT
         ctx->set_line_width(1.0);
         ctx->set_source_rgba(1.0, 1.0, 1.0, 1.0);
@@ -65,7 +65,7 @@ namespace docklight
         //        if (m_panel_hide.m_visible) {
         ctx->set_source_rgba(0.266, 0.309, 0.361, 1.0);
         cairo::rounded_rectangle(ctx, 0, 0, m_background->get_width(), m_background->get_height(),
-                                 4.0);
+                                 8.0);
         ctx->fill();
         //      }
     }
