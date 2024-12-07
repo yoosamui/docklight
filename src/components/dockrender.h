@@ -62,8 +62,11 @@ namespace docklight
         void get_start_pos(gint maxsize, gint& x, gint& y);
 
       private:
-        gint m_posX = 0;
-        gint m_posY = 0;
+        //  gint m_posX = 0;
+        //  gint m_posY = 0;
+
+        int m_offsetX = 0;
+        int m_offsetY = 0;
 
         Cairo::RefPtr<Cairo::ImageSurface> m_cell;
         Cairo::RefPtr<Cairo::ImageSurface> m_icon;

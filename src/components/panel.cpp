@@ -293,7 +293,7 @@ namespace docklight
         auto maxsize = size * area;
         auto start_pos = 0;
 
-        get_start_pos(maxsize, pos_x, pos_y);
+        DockRender::get_start_pos(maxsize, pos_x, pos_y);
 
         for (size_t idx = 0; idx < size; idx++) {
             m_dockitem_index = -1;

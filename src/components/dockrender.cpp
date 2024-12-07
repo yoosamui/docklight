@@ -55,18 +55,19 @@ namespace docklight
         // ctx->set_source_rgba(0.266, 0.309, 0.361, 1.0);
         // ctx->paint();
 
-//#define STROKE_BCK_RECT 1
+#define STROKE_BCK_RECT 1
 #ifdef STROKE_BCK_RECT
         ctx->set_line_width(1.0);
         ctx->set_source_rgba(1.0, 1.0, 1.0, 1.0);
         ctx->rectangle(0, 0, m_background->get_width(), m_background->get_height());
         ctx->stroke();
 #endif
-
+        //        if (m_panel_hide.m_visible) {
         ctx->set_source_rgba(0.266, 0.309, 0.361, 1.0);
         cairo::rounded_rectangle(ctx, 0, 0, m_background->get_width(), m_background->get_height(),
                                  4.0);
         ctx->fill();
+        //      }
     }
 
     void DockRender::create_surface_cell()
@@ -175,7 +176,7 @@ namespace docklight
         m_indicator_ctx = Cairo::Context::create(m_indicator);
     }
 
-    inline void DockRender::get_start_pos(const gint maxsize, gint& x, gint& y)
+    void DockRender::get_start_pos(const gint maxsize, gint& x, gint& y)
     {
         auto center = 0;
         x = y = 0;
@@ -208,9 +209,9 @@ namespace docklight
     {
         g_assert(m_cell);
 
-        if (!m_indicator) {
-            create_surface_indicator(item);
-        }
+        //   if (!m_indicator) {
+        create_surface_indicator(item);
+        // }
 
         // clear
         m_indicator_ctx->save();
@@ -258,25 +259,21 @@ namespace docklight
 
     void DockRender::on_autohide_update(int x, int y)
     {
-        g_print("InRender\n");
+        m_offsetX = x;
+        m_offsetY = y;
+
+        Gtk::Widget::queue_draw();
     }
 
     bool DockRender::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     {
-        // if (m_panel_hide.get_lock_render()) {
-        //// cr->set_source_rgba(0.0, 0.0, 0.0, 0.0);
-        //// cr->paint();
-        // return true;
-        //}
-        m_posX = 0;
-        m_posY = 0;
+        int m_posX = 0;
+        int m_posY = 0;
 
         guint separator_size = Config()->get_separator_size();
         auto area = Config()->get_dock_area() + separator_size;
         auto data = Provider()->data();
         auto maxsize = data.size() * area;
-
-        get_start_pos(maxsize, m_posX, m_posY);
 
         draw_surface_background();
         guint tag = 0;
@@ -297,11 +294,11 @@ namespace docklight
             }
 
             dockitem->set_tag(tag++);
-            //  }
         }
 
-        cr->set_source(m_background, 0, 0);
+        cr->set_source(m_background, m_offsetX, m_offsetY);
         cr->paint();
+
         return true;
     }
 

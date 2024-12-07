@@ -7,7 +7,7 @@ namespace docklight
     PanelHide::PanelHide()
     {
         //
-
+        m_area = Config()->get_dock_area() / 2;
         m_active_window = nullptr;
 
         WnckScreen* wnckscreen = wnck::get_default_screen();
@@ -20,8 +20,18 @@ namespace docklight
     void PanelHide::connect_signal_hide(bool connect)
     {
         if (connect) {
-            m_sigc_hide =
-                Glib::signal_timeout().connect(sigc::mem_fun(this, &PanelHide::on_hide), 1000 / 20);
+            m_sigc_hide = Glib::signal_timeout().connect(sigc::mem_fun(this, &PanelHide::on_hide),
+                                                         1000 / m_frame_rate);
+        } else {
+            m_sigc_hide.disconnect();
+        }
+    }
+
+    void PanelHide::connect_signal_unhide(bool connect)
+    {
+        if (connect) {
+            m_sigc_hide = Glib::signal_timeout().connect(sigc::mem_fun(this, &PanelHide::on_unhide),
+                                                         1000 / m_frame_rate);
         } else {
             m_sigc_hide.disconnect();
         }
@@ -30,8 +40,8 @@ namespace docklight
     void PanelHide::connect_signal_handler(bool connect)
     {
         if (connect) {
-            m_sigc_autohide = Glib::signal_timeout().connect(
-                sigc::mem_fun(this, &PanelHide::on_autohide), 1000 / 2);
+            m_sigc_autohide =
+                Glib::signal_timeout().connect(sigc::mem_fun(this, &PanelHide::on_autohide), 200);
         } else {
             m_sigc_autohide.disconnect();
         }
@@ -71,28 +81,45 @@ namespace docklight
         if (!m_active_window) return true;
 
         bool intersects = is_window_intersect(m_active_window);
+        bool fullscreeen = wnck_window_is_fullscreen(m_active_window);
 
         m_lock_render = intersects;
+
         //  if (intersects) {
         if (m_last_intersects != intersects) {
             m_last_intersects = intersects;
             //   g_message("PanelHide::INTER %s", intersects ? "yes" : "no");
             Position()->window_intersects(intersects);
-            Provider()->emit_update();
+            //   Provider()->emit_update();
 
             if (intersects) {
-                m_animation_timer.start();
+                if (Config()->is_autohide_none() && !fullscreeen) {
+                    return true;
+                }
 
                 m_startPosition = 0.f;
-                m_endPosition = 100.f;
-                m_initTime = 0.0f;
-                m_endTime = m_initTime + 10.5;
+                m_endPosition = (float)m_area;
 
+                m_initTime = 0.f;
+                m_endTime = 7.0f;
+
+                g_print("HIDE START\n");
                 m_animation_time = 0;
                 connect_signal_hide(true);
+                //  m_update_required = true;
+                //    m_visible = true;
             } else {
-                unhide();
-                m_animation_timer.start();
+                if (m_visible) return true;
+
+                m_startPosition = (float)m_area;
+                m_endPosition = 0.f;
+
+                m_initTime = 0.f;
+                m_endTime = 5.0f;
+                g_print("UNHIDE START\n");
+                m_animation_time = 0;
+                connect_signal_unhide(true);
+                //  m_visible = false;
             }
         }
         //  }
@@ -113,23 +140,51 @@ namespace docklight
             m_offset_y = 0;
         }
 
-        // m_signal_hide.emit(m_offset_x, m_offset_y);
+        m_signal_hide.emit(m_offset_x, m_offset_y);
         m_animation_time++;
+        //    g_print(">>%d HIDE %d x %d\n", m_animation_time, m_offset_x, m_offset_y);
 
-        g_message("PanelHide::Hide %f", position);
-
-        if (m_animation_time > 10) {
+        if ((int)position >= m_area) {
             m_sigc_hide.disconnect();
 
+            g_print("HIDE END\n");
+            m_visible = false;
             return true;
         }
 
         return true;
     }
 
-    void PanelHide::unhide()
+    bool PanelHide::on_unhide()
     {
-        g_message("PanelHide::unhide");
+        float position = easing::map_clamp(m_animation_time, m_initTime, m_endTime, m_startPosition,
+                                           m_endPosition, &easing::linear::easeIn);
+
+        // {std::make_pair(Function::Bounce, Type::InOut), bounce::easeInOut},
+        if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+            m_offset_x = 0;
+            m_offset_y = (int)position;
+        } else {
+            m_offset_x = (int)position;
+            m_offset_y = 0;
+        }
+
+        m_signal_hide.emit(m_offset_x, m_offset_y);
+        m_animation_time++;
+        //  g_print("<< UNHIDE %d x %d\n", m_offset_x, m_offset_y);
+
+        //  / if (m_animation_time > 12)
+
+        if ((int)position <= 0) {
+            m_sigc_hide.disconnect();
+
+            g_print("UNHIDE END!\n");
+            m_visible = true;
+            return true;
+        }
+
+        return true;
+        // g_message("PanelHide::unhide");
     }
 
     bool PanelHide::get_lock_render()

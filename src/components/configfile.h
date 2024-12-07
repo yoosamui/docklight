@@ -75,7 +75,7 @@ namespace docklight
 
         //        TODO : TEST
         dock_autohide_type_t m_autohide_type = dock_autohide_type_t::intelihide;
-        // dock_autohide_type_t m_autohide_type = dock_autohide_type_t::none; // default;
+        // dock_autohide_type_t m_autohide_type = dock_autohide_type_t::none;  // default;
 
         dock_location_t m_location = dock_location_t::bottom;
         dock_indicator_type_t m_indicator_type = dock_indicator_type_t::dots;
