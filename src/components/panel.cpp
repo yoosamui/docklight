@@ -155,14 +155,14 @@ namespace docklight
     bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
     {
         m_mouse_enter = false;
-        if (m_panel_hide.get_visible() && m_panel_hide.get_intersects() && !m_context_menu_active &&
-            !m_preview_open) {
+        /*if (m_panel_hide.get_visible() && m_panel_hide.get_intersects() && !m_context_menu_active
+        && !m_preview_open) {
             //
             m_panel_hide.force_hide();
             show_current_title(false);
 
             return true;
-        }
+        }*/
 
         if (!m_drag_drop_starts) m_sigc_draw.disconnect();
 
