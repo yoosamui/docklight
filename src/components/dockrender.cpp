@@ -202,7 +202,6 @@ namespace docklight
     void DockRender::draw_surface_indicator(std::shared_ptr<DockItemIcon>& item)
     {
         g_assert(m_cell);
-
         create_surface_indicator(item);
 
         // clear

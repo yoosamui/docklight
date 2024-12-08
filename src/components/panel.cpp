@@ -130,6 +130,8 @@ namespace docklight
 
     bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
     {
+        m_mouse_enter = true;
+
         if (!m_panel_hide.get_visible()) {
             int x = 0;
             int y = 0;
@@ -152,6 +154,7 @@ namespace docklight
 
     bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
     {
+        m_mouse_enter = false;
         if (m_panel_hide.get_visible() && m_panel_hide.get_intersects() && !m_context_menu_active &&
             !m_preview_open) {
             //
