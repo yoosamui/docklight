@@ -74,7 +74,8 @@ namespace docklight
             int width;
             int height;
 
-            wnck_window_get_client_window_geometry(window, &x, &y, &width, &height);
+            /////wnck_window_get_client_window_geometry(window, &x, &y, &width, &height);
+            wnck_window_get_geometry(window, &x, &y, &width, &height);
             Gdk::Rectangle rect(x, y, width, height);
 
             return rect;

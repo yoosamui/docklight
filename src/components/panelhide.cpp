@@ -6,7 +6,6 @@ namespace docklight
     WnckWindow* PanelHide::m_active_window;
     PanelHide::PanelHide()
     {
-        //
         m_area = Config()->get_dock_area() / 2;
         m_active_window = nullptr;
 
@@ -27,15 +26,15 @@ namespace docklight
         }
     }
 
-    void PanelHide::connect_signal_unhide(bool connect)
-    {
-        if (connect) {
-            m_sigc_hide = Glib::signal_timeout().connect(sigc::mem_fun(this, &PanelHide::on_unhide),
-                                                         1000 / m_frame_rate);
-        } else {
-            m_sigc_hide.disconnect();
-        }
-    }
+    // void PanelHide::connect_signal_unhide(bool connect)
+    //{
+    // if (connect) {
+    // m_sigc_hide = Glib::signal_timeout().connect(sigc::mem_fun(this, &PanelHide::on_unhide),
+    // 1000 / m_frame_rate);
+    //} else {
+    // m_sigc_hide.disconnect();
+    //}
+    //}
 
     void PanelHide::connect_signal_handler(bool connect)
     {
@@ -60,20 +59,41 @@ namespace docklight
         // May return NULL sometimes, since not all
         // window managers guarantee that a window is always active.
         m_active_window = wnck_screen_get_active_window(screen);
-
-        if (!m_active_window) {
-            return;
-        }
     }
 
     bool PanelHide::is_window_intersect(WnckWindow* window)
     {
-        g_assert(window);
+        if (!window) return false;
+
+        WnckWindowType wt = wnck_window_get_window_type(window);
+        if (wt == WNCK_WINDOW_DESKTOP) return false;
 
         Gdk::Rectangle win_rect = wnck::get_window_geometry(window);
         Gdk::Rectangle dock_rect = Position()->get_window_geometry();
 
         return dock_rect.intersects(win_rect);
+    }
+
+    void PanelHide::get_offset(float position, int& offset_x, int& offset_y)
+    {
+        if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+            if (Config()->get_dock_location() == dock_location_t::top) {
+                offset_x = 0;
+                offset_y = -(int)position;
+            } else {
+                offset_x = 0;
+                offset_y = (int)position;
+            }
+        } else {
+            if (Config()->get_dock_location() == dock_location_t::left) {
+                offset_x = -(int)position;
+                offset_y = 0;
+                //
+            } else {
+                offset_x = (int)position;
+                offset_y = 0;
+            }
+        }
     }
 
     bool PanelHide::on_autohide()
@@ -83,16 +103,13 @@ namespace docklight
         bool intersects = is_window_intersect(m_active_window);
         bool fullscreeen = wnck_window_is_fullscreen(m_active_window);
 
-        m_lock_render = intersects;
-
-        //  if (intersects) {
         if (m_last_intersects != intersects) {
             m_last_intersects = intersects;
-            //   g_message("PanelHide::INTER %s", intersects ? "yes" : "no");
-            Position()->window_intersects(intersects);
-            //   Provider()->emit_update();
 
-            if (intersects) {
+            Position()->window_intersects(intersects);
+
+            if (intersects) {  // hide
+                if (!m_visible) return true;
                 if (Config()->is_autohide_none() && !fullscreeen) {
                     return true;
                 }
@@ -103,96 +120,74 @@ namespace docklight
                 m_initTime = 0.f;
                 m_endTime = 10.0f;
 
-                // g_print("HIDE START\n");
                 m_animation_time = 0;
                 connect_signal_hide(true);
-                //  m_update_required = true;
-                //    m_visible = true;
-            } else {
+            } else {  // show
+
                 if (fullscreeen) return true;
                 if (m_visible) return true;
 
                 m_startPosition = (float)m_area;
                 m_endPosition = 0.f;
 
-                Position()->show_now();
-
                 m_initTime = 0.f;
                 m_endTime = 5.0f;
-                // g_print("UNHIDE START\n");
+
                 m_animation_time = 0;
-                connect_signal_unhide(true);
-                //  m_visible = false;
+                connect_signal_hide(true);
             }
         }
-        //  }
-        // g_print("INTER %s\n", intersects ? "yes" : "no");
+
         return true;
     }
 
     bool PanelHide::on_hide()
     {
+        m_offset_x = 0;
+        m_offset_y = 0;
         float position = easing::map_clamp(m_animation_time, m_initTime, m_endTime, m_startPosition,
                                            m_endPosition, &easing::linear::easeOut);
 
-        if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-            m_offset_x = 0;
-            m_offset_y = (int)position;
-        } else {
-            m_offset_x = (int)position;
-            m_offset_y = 0;
-        }
+        get_offset(position, m_offset_x, m_offset_y);
 
         m_signal_hide.emit(m_offset_x, m_offset_y);
         m_animation_time++;
-        //    g_print(">>%d HIDE %d x %d\n", m_animation_time, m_offset_x, m_offset_y);
 
-        if ((int)position >= m_area) {
-            m_sigc_hide.disconnect();
+        if (m_visible) {
+            if ((int)position >= m_area) {
+                connect_signal_hide(false);
+                m_visible = false;
+                return true;
+            }
 
-            // g_print("HIDE END\n");
-            m_visible = false;
-            Position()->hide_now();
-            return true;
+        } else {
+            if ((int)position <= 0) {
+                connect_signal_hide(false);
+                m_visible = true;
+                return true;
+            }
         }
 
         return true;
     }
 
-    bool PanelHide::on_unhide()
+    void PanelHide::force_visible()
     {
-        float position = easing::map_clamp(m_animation_time, m_initTime, m_endTime, m_startPosition,
-                                           m_endPosition, &easing::linear::easeIn);
+        if (m_visible) return;
 
-        // {std::make_pair(Function::Bounce, Type::InOut), bounce::easeInOut},
-        if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-            m_offset_x = 0;
-            m_offset_y = (int)position;
-        } else {
-            m_offset_x = (int)position;
-            m_offset_y = 0;
-        }
+        m_startPosition = (float)m_area;
+        m_endPosition = 0.f;
 
-        m_signal_hide.emit(m_offset_x, m_offset_y);
-        m_animation_time++;
-        //  g_print("<< UNHIDE %d x %d\n", m_offset_x, m_offset_y);
+        m_initTime = 0.f;
+        m_endTime = 5.0f;
 
-        //  / if (m_animation_time > 12)
-
-        if ((int)position <= 0) {
-            m_sigc_hide.disconnect();
-
-            //     g_print("UNHIDE END!\n");
-            m_visible = true;
-            return true;
-        }
-
-        return true;
-        // g_message("PanelHide::unhide");
+        m_animation_time = 0;
+        connect_signal_hide(true);
     }
 
-    bool PanelHide::get_lock_render()
+    bool PanelHide::get_visible()
     {
-        return m_lock_render;
+        return m_visible;
     }
+
 }  // namespace docklight

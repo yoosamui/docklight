@@ -13,24 +13,27 @@
 namespace docklight
 {
 
-    class PanelHide  //: Glib::Object
+    class PanelHide  // : Glib::Object
     {
+        typedef sigc::signal<void, int, int> type_signal_hide;
+
       public:
         PanelHide();
-        bool get_lock_render();
+
+        void force_visible();
 
         bool on_autohide();
+        bool get_visible();
 
-        typedef sigc::signal<void, int, int> type_signal_hide;
         type_signal_hide signal_hide();
-        bool m_visible = true;
 
       private:
+        void get_offset(float position, int& offset_x, int& offset_y);
+
         void connect_signal_handler(bool connect);
         void connect_signal_hide(bool connect);
-        void connect_signal_unhide(bool connect);
+
         bool on_hide();
-        bool on_unhide();
 
         static bool is_window_intersect(WnckWindow* window);
         static void on_active_window_changed(WnckScreen* screen,
@@ -38,28 +41,26 @@ namespace docklight
                                              gpointer user_data);
 
       private:
-        const int m_frame_rate = 60;
-        type_signal_hide m_signal_hide;
-
-        sigc::connection m_sigc_hide;
-        sigc::connection m_sigc_autohide;
         static WnckWindow* m_active_window;
 
-        bool m_lock_render = false;
+        const int m_frame_rate = 60;
+
+        bool m_visible = true;
         bool m_last_intersects = false;
 
-        int m_animation_time = 0;
-        Glib::Timer m_animation_timer;
+        type_signal_hide m_signal_hide;
+        sigc::connection m_sigc_hide;
+        sigc::connection m_sigc_autohide;
 
         int m_offset_x = 0;
         int m_offset_y = 0;
-
+        int m_animation_time = 0;
         int m_area = 0;
 
         float m_startPosition = 0.f;
-        float m_endPosition = 100.f;
+        float m_endPosition = 0.f;
         float m_initTime = 0.0f;
-        float m_endTime = m_initTime + 10.5;
+        float m_endTime = 0.0;
     };
 
 }  // namespace docklight
