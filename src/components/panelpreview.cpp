@@ -118,8 +118,8 @@ namespace docklight
                     pixbuf::get_window_image(xid, m_image, size);
                 }
 
-                if (window && !wnck_window_is_minimized(window) && !wnck_window_is_pinned(window) &&
-                    wnck::is_window_on_current_desktop(window)) {
+                if (window && !wnck_window_is_minimized(window) ||
+                    !wnck_window_is_pinned(window) && wnck::is_window_on_current_desktop(window)) {
                     //
                     pixbuf::get_window_image(xid, m_image, size);
                     Provider()->set_window_image(xid, m_image);

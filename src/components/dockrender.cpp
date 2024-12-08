@@ -267,6 +267,8 @@ namespace docklight
         auto data = Provider()->data();
         auto maxsize = data.size() * area;
 
+        get_start_pos(maxsize, m_posX, m_posY);
+
         draw_surface_background();
         guint tag = 0;
         for (auto& dockitem : data) {

@@ -133,33 +133,35 @@ namespace docklight
             Position()->window_intersects(m_intersects);
 
             if (m_intersects) {  // hide
-                if (!m_visible) return true;
-                if (Config()->is_autohide_none() && !fullscreeen) {
-                    return true;
-                }
+                force_hide();
+                // if (!m_visible) return true;
+                // if (Config()->is_autohide_none() && !fullscreeen) {
+                // return true;
+                //}
 
-                m_start_position = 0.f;
-                m_end_position = (float)m_area;
+                // m_start_position = 0.f;
+                // m_end_position = (float)m_area;
 
-                m_init_time = 0.f;
-                m_end_time = m_hide_delay;
+                // m_init_time = 0.f;
+                // m_end_time = m_hide_delay;
 
-                m_animation_time = 0;
-                m_signal_before_hide.emit(0);
-                connect_signal_hide(true);
+                // m_animation_time = 0;
+                // m_signal_before_hide.emit(0);
+                // connect_signal_hide(true);
             } else {  // show
 
-                if (fullscreeen) return true;
-                if (m_visible) return true;
+                force_show();
+                // if (fullscreeen) return true;
+                // if (m_visible) return true;
 
-                m_start_position = (float)m_area;
-                m_end_position = 0.f;
+                // m_start_position = (float)m_area;
+                // m_end_position = 0.f;
 
-                m_init_time = 0.f;
-                m_end_time = m_show_delay;
+                // m_init_time = 0.f;
+                // m_end_time = m_show_delay;
 
-                m_animation_time = 0;
-                connect_signal_hide(true);
+                // m_animation_time = 0;
+                // connect_signal_hide(true);
             }
         }
 
@@ -200,8 +202,9 @@ namespace docklight
 
     void PanelHide::force_show()
     {
+        bool fullscreeen = wnck_window_is_fullscreen(m_active_window);
+        if (fullscreeen) return;
         if (m_visible) return;
-        if (wnck_window_is_fullscreen(m_active_window)) return;
 
         m_start_position = (float)m_area;
         m_end_position = 0.f;
@@ -211,12 +214,25 @@ namespace docklight
 
         m_animation_time = 0;
         connect_signal_hide(true);
+        // if (m_visible) return;
+        // if (wnck_window_is_fullscreen(m_active_window)) return;
+        //  m_start_position = (float)m_area;
+        //  m_end_position = 0.f;
+
+        // m_init_time = 0.f;
+        // m_end_time = m_show_delay;
+
+        // m_animation_time = 0;
+        // connect_signal_hide(true);
     }
 
     void PanelHide::force_hide()
     {
+        bool fullscreeen = wnck_window_is_fullscreen(m_active_window);
         if (!m_visible) return;
-        if (wnck_window_is_fullscreen(m_active_window)) return;
+        if (Config()->is_autohide_none() && !fullscreeen) {
+            return;
+        }
 
         m_start_position = 0.f;
         m_end_position = (float)m_area;
@@ -225,7 +241,20 @@ namespace docklight
         m_end_time = m_hide_delay;
 
         m_animation_time = 0;
+        m_signal_before_hide.emit(0);
         connect_signal_hide(true);
+
+        // if (!m_visible) return;
+        // if (wnck_window_is_fullscreen(m_active_window)) return;
+
+        // m_start_position = 0.f;
+        // m_end_position = (float)m_area;
+
+        // m_init_time = 0.f;
+        // m_end_time = m_hide_delay;
+
+        // m_animation_time = 0;
+        // connect_signal_hide(true);
     }
 
     bool PanelHide::get_visible() const
