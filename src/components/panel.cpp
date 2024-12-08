@@ -134,7 +134,6 @@ namespace docklight
             int x = 0;
             int y = 0;
             auto winrect = Position()->get_window_geometry();
-            //    auto area = Config()->get_dock_area();
 
             if (!system::get_mouse_position(x, y)) return true;
 
@@ -148,17 +147,18 @@ namespace docklight
         m_sigc_draw =
             Glib::signal_timeout().connect(sigc::mem_fun(this, &Panel::on_timeout_draw), 1000 / 2);
 
-        m_mouse_enter = true;
         return false;
     }
 
     bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
     {
-        if (m_panel_hide.get_visible() && m_panel_hide.get_intersects()) {
-            m_panel_hide.force_hide();
+        /*if (m_panel_hide.get_visible() && m_panel_hide.get_intersects() && !m_context_menu_active
+        && !m_preview_open) { m_panel_hide.force_hide();
+
+            show_current_title(false);
 
             return true;
-        }
+        }*/
 
         if (!m_drag_drop_starts) m_sigc_draw.disconnect();
 
@@ -384,7 +384,7 @@ namespace docklight
 
     void Panel::on_autohide_before_hide(int tag)
     {
-        g_print("before hide \n");
+        // TODO : allready exitst in  mouse release create a method
         m_preview->hide_now();
         m_preview_open = false;
         m_preview_open_index = 0;
@@ -392,14 +392,11 @@ namespace docklight
         m_preview->hide_now();
         m_preview_open_index = 0;
 
-        show_current_title(false);
         m_home_menu.hide();
+        m_item_menu.hide();
     }
 
-    void Panel::on_autohide_after_hide(int tag)
-    {
-        g_print("after hide \n");
-    }
+    void Panel::on_autohide_after_hide(int tag) {}
 
     bool Panel::on_motion_notify_event(GdkEventMotion* event)
     {

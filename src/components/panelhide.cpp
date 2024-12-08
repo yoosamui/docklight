@@ -142,7 +142,7 @@ namespace docklight
                 m_end_position = (float)m_area;
 
                 m_init_time = 0.f;
-                m_end_time = 10.0f;
+                m_end_time = m_hide_delay;
 
                 m_animation_time = 0;
                 m_signal_before_hide.emit(0);
@@ -156,7 +156,7 @@ namespace docklight
                 m_end_position = 0.f;
 
                 m_init_time = 0.f;
-                m_end_time = 5.0f;
+                m_end_time = m_show_delay;
 
                 m_animation_time = 0;
                 connect_signal_hide(true);
@@ -207,7 +207,7 @@ namespace docklight
         m_end_position = 0.f;
 
         m_init_time = 0.f;
-        m_end_time = 5.0f;
+        m_end_time = m_show_delay;
 
         m_animation_time = 0;
         connect_signal_hide(true);
@@ -222,7 +222,7 @@ namespace docklight
         m_end_position = (float)m_area;
 
         m_init_time = 0.f;
-        m_end_time = 10.0f;
+        m_end_time = m_hide_delay;
 
         m_animation_time = 0;
         connect_signal_hide(true);

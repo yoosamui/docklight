@@ -6,6 +6,8 @@
 #include <gtkmm/drawingarea.h>
 #include <libwnck/libwnck.h>
 
+//#include "components/panelhide.h"
+
 //  class Panelbase;
 
 // class PanelBase;
@@ -17,6 +19,8 @@ namespace docklight
     {
       public:
         PanelBase();
+
+        //        PanelHide m_panel_hide;
 
       protected:
         Glib::RefPtr<Gtk::Application> m_app;

@@ -29,7 +29,6 @@
 #include "components/panelbase.h"
 // clang-format on
 
-//#include "components/testwindow.h"
 namespace docklight
 {
     class DockMenu : public PanelBase

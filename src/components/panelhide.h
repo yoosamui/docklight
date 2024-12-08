@@ -72,6 +72,8 @@ namespace docklight
         static WnckWindow* m_active_window;
 
         const int m_frame_rate = 60;
+        const float m_hide_delay = 15.0f;
+        const float m_show_delay = 5.0f;
 
         bool m_visible = true;
         bool m_intersects = false;
