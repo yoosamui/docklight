@@ -72,6 +72,9 @@ namespace docklight
         bool on_motion_notify_event(GdkEventMotion* event);
         void on_container_updated(window_action_t action, int index);
 
+        void on_autohide_before_hide(int tag);
+        void on_autohide_after_hide(int tag);
+
         bool on_timeout_draw();
 
         bool on_enter_notify_event(GdkEventCrossing* crossing_event) override;

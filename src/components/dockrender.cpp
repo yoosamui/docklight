@@ -62,12 +62,10 @@ namespace docklight
         ctx->rectangle(0, 0, m_background->get_width(), m_background->get_height());
         ctx->stroke();
 #endif
-        //        if (m_panel_hide.m_visible) {
         ctx->set_source_rgba(0.266, 0.309, 0.361, 1.0);
         cairo::rounded_rectangle(ctx, 0, 0, m_background->get_width(), m_background->get_height(),
                                  6.0);
         ctx->fill();
-        //      }
     }
 
     void DockRender::create_surface_cell()
@@ -79,9 +77,7 @@ namespace docklight
 
     void DockRender::draw_surface_cell(std::shared_ptr<DockItemIcon>& item)
     {
-        //        if (!m_cell) {
         create_surface_cell();
-        //        }
 
         // clear
         m_cell_ctx->save();
@@ -128,9 +124,7 @@ namespace docklight
         g_assert(m_cell);
         g_assert(m_background);
 
-        // if (!m_icon) {
         create_surface_icon();
-        // }
 
         // clear
         m_icon_ctx->save();
@@ -209,9 +203,7 @@ namespace docklight
     {
         g_assert(m_cell);
 
-        //   if (!m_indicator) {
         create_surface_indicator(item);
-        // }
 
         // clear
         m_indicator_ctx->save();

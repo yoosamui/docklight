@@ -38,6 +38,13 @@ namespace docklight
 
         m_title = Glib::RefPtr<TitleWindow>(new TitleWindow());
         m_provider = m_provider;
+
+        m_panel_hide.signal_before_hide().connect(
+            sigc::mem_fun(this, &Panel::on_autohide_before_hide));
+
+        m_panel_hide.signal_after_hide().connect(
+            sigc::mem_fun(this, &Panel::on_autohide_after_hide));
+
         g_message("Create Panel.");
     }
 
@@ -118,11 +125,26 @@ namespace docklight
             return;
         }
 
-        if (m_active_window) Provider()->set_window_image(m_active_window);
+        Provider()->set_window_image(m_active_window);
     }
 
     bool Panel::on_enter_notify_event(GdkEventCrossing* crossing_event)
     {
+        if (!m_panel_hide.get_visible()) {
+            int x = 0;
+            int y = 0;
+            auto winrect = Position()->get_window_geometry();
+            //    auto area = Config()->get_dock_area();
+
+            if (!system::get_mouse_position(x, y)) return true;
+
+            if (y > winrect.get_y()) {
+                m_panel_hide.force_show();
+            }
+
+            return true;
+        }
+
         m_sigc_draw =
             Glib::signal_timeout().connect(sigc::mem_fun(this, &Panel::on_timeout_draw), 1000 / 2);
 
@@ -132,6 +154,12 @@ namespace docklight
 
     bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
     {
+        if (m_panel_hide.get_visible() && m_panel_hide.get_intersects()) {
+            m_panel_hide.force_hide();
+
+            return true;
+        }
+
         if (!m_drag_drop_starts) m_sigc_draw.disconnect();
 
         m_mouse_drag_drop_timer.stop();
@@ -354,8 +382,31 @@ namespace docklight
         wnck::activate_window(window);
     }
 
+    void Panel::on_autohide_before_hide(int tag)
+    {
+        g_print("before hide \n");
+        m_preview->hide_now();
+        m_preview_open = false;
+        m_preview_open_index = 0;
+        m_mouseclickEventTime = 0;
+        m_preview->hide_now();
+        m_preview_open_index = 0;
+
+        show_current_title(false);
+        m_home_menu.hide();
+    }
+
+    void Panel::on_autohide_after_hide(int tag)
+    {
+        g_print("after hide \n");
+    }
+
     bool Panel::on_motion_notify_event(GdkEventMotion* event)
     {
+        if (!m_panel_hide.get_visible()) {
+            return true;
+        }
+
         get_dockitem_index(event->x, event->y);
 
         if (m_mouse_button == 1 && m_dad && m_drag_drop_starts) {
@@ -385,6 +436,7 @@ namespace docklight
 
     bool Panel::on_button_press_event(GdkEventButton* event)
     {
+        if (!m_panel_hide.get_visible()) return true;
         if ((event->type != GDK_BUTTON_PRESS)) return false;
         get_dockitem_index(event->x, event->y);
 
@@ -414,6 +466,7 @@ namespace docklight
 
     bool Panel::on_button_release_event(GdkEventButton* event)
     {
+        if (!m_panel_hide.get_visible()) return true;
         if ((event->type != GDK_BUTTON_RELEASE)) return false;
 
         get_dockitem_index(event->x, event->y);

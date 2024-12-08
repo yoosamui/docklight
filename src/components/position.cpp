@@ -102,20 +102,9 @@ namespace docklight
         }
     }
 
-    void PositionManager::show_now()
-    {
-        //      m_window->set_visible(true);
-        //..  m_window->show();
+    void PositionManager::show_now() {}
 
-        // g_print("S H O W\n");
-    }
-
-    void PositionManager::hide_now()
-    {
-        // m_window->set_visible(false);
-
-        // m_window->hide();
-    }
+    void PositionManager::hide_now() {}
 
     void PositionManager::on_monitor_changed()
     {
@@ -271,7 +260,7 @@ namespace docklight
     }
     void PositionManager::set_position(guint required_size)
     {
-        if (m_lock) return;
+        //        if (m_lock) return;
         m_last_required_size = required_size;
 
         int area = Config()->get_dock_area();

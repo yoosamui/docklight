@@ -20,7 +20,6 @@
 // clang-format off
 #include <gdkmm/general.h>
 
-//#include "components/panelhide.h"
 #include "utils/cairo.h"
 #include "components/dockmenu.h"
 #include "components/config.h"
@@ -31,7 +30,6 @@
 
 namespace docklight
 {
-    // class DockRender : public Gtk::DrawingArea
     class DockRender : public DockMenu
     {
       public:
@@ -55,16 +53,13 @@ namespace docklight
 
         void on_autohide_update(int x, int y);
 
-        PanelHide m_panel_hide;
-
       protected:
         Glib::RefPtr<PositionManager> m_position;
+
+        PanelHide m_panel_hide;
         void get_start_pos(gint maxsize, gint& x, gint& y);
 
       private:
-        //  gint m_posX = 0;
-        //  gint m_posY = 0;
-
         int m_offsetX = 0;
         int m_offsetY = 0;
 

@@ -1,4 +1,23 @@
 #pragma once
+//  Copyright (c) 2018-2024 Juan R. González
+//
+//
+//  This file is part of Docklight.
+//
+//  Docklight is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  Docklight is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  public Glib::Object GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  identification number, along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+// clang-format off
 
 #include <glibmm/main.h>
 #include <glibmm/timer.h>
@@ -10,24 +29,33 @@
 #include "utils/easing.h"
 #include "utils/wnck.h"
 
+// clang-format on
+
 namespace docklight
 {
 
     class PanelHide  // : Glib::Object
     {
         typedef sigc::signal<void, int, int> type_signal_hide;
+        typedef sigc::signal<void, int> type_signal_before_hide;
+        typedef sigc::signal<void, int> type_signal_after_hide;
 
       public:
         PanelHide();
+        ~PanelHide();
 
-        void force_visible();
+        void force_show();
+        void force_hide();
+        bool get_intersects() const;
 
-        bool on_autohide();
-        bool get_visible();
+        bool get_visible() const;
 
         type_signal_hide signal_hide();
+        type_signal_before_hide signal_before_hide();
+        type_signal_after_hide signal_after_hide();
 
       private:
+        bool on_autohide();
         void get_offset(float position, int& offset_x, int& offset_y);
 
         void connect_signal_handler(bool connect);
@@ -46,21 +74,25 @@ namespace docklight
         const int m_frame_rate = 60;
 
         bool m_visible = true;
+        bool m_intersects = false;
         bool m_last_intersects = false;
 
         type_signal_hide m_signal_hide;
-        sigc::connection m_sigc_hide;
+        type_signal_before_hide m_signal_before_hide;
+        type_signal_after_hide m_signal_after_hide;
+
         sigc::connection m_sigc_autohide;
+        sigc::connection m_sigc_hide;
 
         int m_offset_x = 0;
         int m_offset_y = 0;
         int m_animation_time = 0;
         int m_area = 0;
 
-        float m_startPosition = 0.f;
-        float m_endPosition = 0.f;
-        float m_initTime = 0.0f;
-        float m_endTime = 0.0;
+        float m_start_position = 0.f;
+        float m_end_position = 0.f;
+        float m_init_time = 0.0f;
+        float m_end_time = 0.0;
     };
 
 }  // namespace docklight
