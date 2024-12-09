@@ -84,8 +84,8 @@ namespace docklight
         int sx, sy;
         Position()->get_start_pos(sx, sy);
 
-        xx = Position()->get_workarea().get_x() + sx;
-        yy = Position()->get_workarea().get_y() + sy;
+        xx = Position()->get_x() + sx;
+        yy = Position()->get_y() + sy;
 
         int mx = 0;
         int my = 0;
@@ -99,8 +99,8 @@ namespace docklight
             if (!m_yoffset) m_yoffset = my - (m_position->get_y() + margin);
 
         } else {
-            yy += m_position->get_y() + dockitem_index * area;
-            xx += m_position->get_x();
+            yy += dockitem_index * area;
+            xx = m_position->get_x();
 
             if (!m_xoffset) m_xoffset = mx - (m_position->get_x() + margin);
             if (!m_yoffset) m_yoffset = my - yy - margin;
