@@ -222,8 +222,11 @@ namespace docklight
                     x = Position()->get_x() - width;
                 }
             }
+            // start position
+            int xx = 0, yy = 0;
+            Position()->get_start_pos(xx, yy);
 
-            m_title->show_at(x, y);
+            m_title->show_at(x + xx, y + yy);
         } else {
             m_title->hide_now();
         }
@@ -322,10 +325,10 @@ namespace docklight
         auto separator_size = m_config->get_separator_size();
         auto area = m_config->get_dock_area() + separator_size;
         auto size = m_provider->data().size();
-        auto maxsize = size * area;
+        //       auto maxsize = size * area;
         auto start_pos = 0;
 
-        DockRender::get_start_pos(maxsize, pos_x, pos_y);
+        Position()->get_start_pos(pos_x, pos_y);
 
         for (size_t idx = 0; idx < size; idx++) {
             m_dockitem_index = -1;

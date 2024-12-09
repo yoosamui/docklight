@@ -79,6 +79,21 @@ namespace docklight
                 }
             }
 
+            // icon alignment
+            std::string icon_alignment = read_icon_alignment();
+            if (!icon_alignment.empty()) {
+                if (icon_alignment == "start") {
+                    m_icon_alignment = dock_icon_alignment_t::start;
+                } else if (icon_alignment == "end") {
+                    m_icon_alignment = dock_icon_alignment_t::end;
+                } else if (icon_alignment == "center") {
+                    m_icon_alignment = dock_icon_alignment_t::center;
+                } else {
+                    g_warning("configuration: invalid icon alignment. %s\n",
+                              icon_alignment.c_str());
+                }
+            }
+
             // Indicator type
             std::string indicator = read_indicator_type_key();
             if (!indicator.empty()) {
@@ -200,6 +215,20 @@ namespace docklight
     {
         GError* error = nullptr;
         char* value = g_key_file_get_string(m_key_file, "dock", "alignment", &error);
+        if (error) {
+            g_error_free(error);
+            error = nullptr;
+
+            return std::string{};
+        }
+
+        return value;
+    }
+
+    std::string ConfigFile::read_icon_alignment()
+    {
+        GError* error = nullptr;
+        char* value = g_key_file_get_string(m_key_file, "dock", "icon_alignment", &error);
         if (error) {
             g_error_free(error);
             error = nullptr;

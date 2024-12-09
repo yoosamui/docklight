@@ -53,8 +53,8 @@ namespace docklight
     void PanelHide::connect_signal_handler(bool connect)
     {
         if (connect) {
-            m_sigc_autohide =
-                Glib::signal_timeout().connect(sigc::mem_fun(this, &PanelHide::on_autohide), 200);
+            m_sigc_autohide = Glib::signal_timeout().connect(
+                sigc::mem_fun(this, &PanelHide::on_autohide), 1000 / 3);
         } else {
             m_sigc_autohide.disconnect();
         }

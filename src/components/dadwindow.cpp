@@ -72,7 +72,10 @@ namespace docklight
         x -= m_xoffset;
         y -= m_yoffset;
 
-        if (x && y) move(x, y);
+        int sx = 0, sy = 0;
+        Position()->get_start_pos(sx, sy);
+
+        if (x && y) move(x + sx, y + sy);
     }
 
     void DADWindow::show_at(int dockitem_index)

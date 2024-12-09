@@ -96,6 +96,7 @@ namespace docklight
         std::string read_filepath();
         std::string read_location();
         std::string read_alignment();
+        std::string read_icon_alignment();
         std::string read_indicator_type_key();
         std::string read_monitor_name();
 

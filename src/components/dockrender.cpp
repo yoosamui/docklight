@@ -170,34 +170,34 @@ namespace docklight
         m_indicator_ctx = Cairo::Context::create(m_indicator);
     }
 
-    void DockRender::get_start_pos(const gint maxsize, gint& x, gint& y)
-    {
-        auto center = 0;
-        x = y = 0;
+    // void DockRender::get_start_pos(const gint maxsize, gint& x, gint& y)
+    //{
+    // auto center = 0;
+    // x = y = 0;
 
-        if (Config()->get_dock_alignment() != dock_alignment_t::fill) return;
+    // if (Config()->get_dock_alignment() != dock_alignment_t::fill) return;
 
-        if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-            if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::center) {
-                center = m_position->get_workarea().get_width() / 2 - maxsize / 2;
-                x = m_position->get_workarea().get_x() + center;
+    // if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+    // if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::center) {
+    // center = m_position->get_workarea().get_width() / 2 - maxsize / 2;
+    // x = m_position->get_workarea().get_x() + center;
 
-            } else if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::end) {
-                x = m_position->get_workarea().get_width() - maxsize;
-            }
+    //} else if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::end) {
+    // x = m_position->get_workarea().get_width() - maxsize;
+    //}
 
-        } else {  // Vertical
-            if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::center) {
-                auto vertical_addition = Config()->get_dock_area() + Config()->get_separator_size();
-                center =
-                    m_position->get_workarea().get_height() / 2 - (maxsize + vertical_addition) / 2;
-                y = m_position->get_workarea().get_y() + center;
+    //} else {  // Vertical
+    // if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::center) {
+    // auto vertical_addition = Config()->get_dock_area() + Config()->get_separator_size();
+    // center =
+    // m_position->get_workarea().get_height() / 2 - (maxsize + vertical_addition) / 2;
+    // y = m_position->get_workarea().get_y() + center;
 
-            } else if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::end) {
-                y = m_position->get_workarea().get_height() - maxsize;
-            }
-        }
-    }
+    //} else if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::end) {
+    // y = m_position->get_workarea().get_height() - maxsize;
+    //}
+    //}
+    //}
 
     void DockRender::draw_surface_indicator(std::shared_ptr<DockItemIcon>& item)
     {
@@ -264,9 +264,9 @@ namespace docklight
         guint separator_size = Config()->get_separator_size();
         auto area = Config()->get_dock_area() + separator_size;
         auto data = Provider()->data();
-        auto maxsize = data.size() * area;
+        //  auto maxsize = data.size() * area;
 
-        get_start_pos(maxsize, m_posX, m_posY);
+        Position()->get_start_pos(m_posX, m_posY);
 
         draw_surface_background();
         guint tag = 0;
