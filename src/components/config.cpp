@@ -158,8 +158,6 @@ namespace docklight
 
     dock_alignment_t Configuration::get_dock_alignment() const
     {
-        if (m_alignment != dock_alignment_t::fill) exit(1);
-
         return m_alignment;
     }
 
