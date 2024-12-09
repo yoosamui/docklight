@@ -44,10 +44,9 @@ namespace docklight
         PanelHide();
         ~PanelHide();
 
-        void force_show();
-        void force_hide();
         bool get_intersects() const;
 
+        void force_show();
         bool get_visible() const;
 
         type_signal_hide signal_hide();
@@ -56,6 +55,9 @@ namespace docklight
 
       private:
         bool on_autohide();
+
+        void show_now();
+        void hide_now();
         void get_offset(float position, int& offset_x, int& offset_y);
 
         void connect_signal_handler(bool connect);

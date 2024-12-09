@@ -125,43 +125,17 @@ namespace docklight
         if (!m_active_window) return true;
 
         m_intersects = is_window_intersect(m_active_window);
-        bool fullscreeen = wnck_window_is_fullscreen(m_active_window);
+        // bool fullscreeen = wnck_window_is_fullscreen(m_active_window);
 
         if (m_last_intersects != m_intersects) {
             m_last_intersects = m_intersects;
 
             Position()->window_intersects(m_intersects);
 
-            if (m_intersects) {  // hide
-                force_hide();
-                // if (!m_visible) return true;
-                // if (Config()->is_autohide_none() && !fullscreeen) {
-                // return true;
-                //}
-
-                // m_start_position = 0.f;
-                // m_end_position = (float)m_area;
-
-                // m_init_time = 0.f;
-                // m_end_time = m_hide_delay;
-
-                // m_animation_time = 0;
-                // m_signal_before_hide.emit(0);
-                // connect_signal_hide(true);
-            } else {  // show
-
-                force_show();
-                // if (fullscreeen) return true;
-                // if (m_visible) return true;
-
-                // m_start_position = (float)m_area;
-                // m_end_position = 0.f;
-
-                // m_init_time = 0.f;
-                // m_end_time = m_show_delay;
-
-                // m_animation_time = 0;
-                // connect_signal_hide(true);
+            if (m_intersects) {
+                hide_now();
+            } else {
+                show_now();
             }
         }
 
@@ -200,7 +174,7 @@ namespace docklight
         return true;
     }
 
-    void PanelHide::force_show()
+    void PanelHide::show_now()
     {
         bool fullscreeen = wnck_window_is_fullscreen(m_active_window);
         if (fullscreeen) return;
@@ -214,6 +188,9 @@ namespace docklight
 
         m_animation_time = 0;
         connect_signal_hide(true);
+
+        //   m_last_intersects = false;
+
         // if (m_visible) return;
         // if (wnck_window_is_fullscreen(m_active_window)) return;
         //  m_start_position = (float)m_area;
@@ -226,7 +203,7 @@ namespace docklight
         // connect_signal_hide(true);
     }
 
-    void PanelHide::force_hide()
+    void PanelHide::hide_now()
     {
         bool fullscreeen = wnck_window_is_fullscreen(m_active_window);
         if (!m_visible) return;
@@ -255,6 +232,11 @@ namespace docklight
 
         // m_animation_time = 0;
         // connect_signal_hide(true);
+    }
+
+    void PanelHide::force_show()
+    {
+        show_now();
     }
 
     bool PanelHide::get_visible() const

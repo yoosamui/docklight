@@ -303,6 +303,8 @@ namespace docklight
     {
         if ((event->type != GDK_BUTTON_PRESS)) return false;
 
+        get_dockpreview_index(event->x, event->y);
+
         auto size = m_current_images.size();
         if (!size) return true;
 
@@ -336,7 +338,7 @@ namespace docklight
 
     bool PanelPreview::on_button_release_event(GdkEventButton* event)
     {
-        //
+        get_dockpreview_index(event->x, event->y);
         return true;
     }
 
