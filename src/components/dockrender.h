@@ -57,7 +57,7 @@ namespace docklight
         Glib::RefPtr<PositionManager> m_position;
 
         PanelHide m_panel_hide;
-        //        void get_start_pos(gint maxsize, gint& x, gint& y);
+        //   void get_start_pos(gint maxsize, gint& x, gint& y);
 
       private:
         int m_offsetX = 0;

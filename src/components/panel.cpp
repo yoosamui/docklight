@@ -420,9 +420,17 @@ namespace docklight
             m_dad->move_at(x, y);
 
             if (m_config->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-                m_drag_drop_candrop = (y + m_dad->get_height()) > Position()->get_y();
+                if (Config()->get_dock_location() == dock_location_t::top) {
+                    m_drag_drop_candrop = (y - m_dad->get_height()) < Position()->get_y();
+                } else {
+                    m_drag_drop_candrop = (y + m_dad->get_height()) > Position()->get_y();
+                }
             } else {
-                m_drag_drop_candrop = (x + m_dad->get_width()) > Position()->get_x();
+                if (Config()->get_dock_location() == dock_location_t::left) {
+                    m_drag_drop_candrop = (x - (m_dad->get_width() * 2)) < Position()->get_x();
+                } else {
+                    m_drag_drop_candrop = (x + (m_dad->get_width() * 2)) > Position()->get_x();
+                }
             }
         }
 

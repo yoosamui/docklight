@@ -129,30 +129,30 @@ namespace docklight
         auto center = 0;
         x = y = 0;
 
-        // guint separator_size = Config()->get_separator_size();
-        // auto area = Config()->get_dock_area() + separator_size;
-        // auto data = Provider()->data();
-        auto maxsize = m_last_required_size;  // data.size() * area;
+        auto maxsize = m_last_required_size;
 
         if (Config()->get_dock_alignment() != dock_alignment_t::fill) return;
 
         if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
             if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::center) {
-                center = get_workarea().get_width() / 2 - maxsize / 2;
-                x = get_workarea().get_x() + center;
+                auto dock_rect = Position()->get_window_geometry();
+                center = dock_rect.get_width() / 2 - maxsize / 2;
+                x = center;
 
             } else if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::end) {
-                x = get_workarea().get_width() - maxsize;
+                auto dock_rect = Position()->get_window_geometry();
+                x = dock_rect.get_width() - maxsize;
             }
 
         } else {  // Vertical
             if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::center) {
-                auto vertical_addition = Config()->get_dock_area() + Config()->get_separator_size();
-                center = get_workarea().get_height() / 2 - (maxsize + vertical_addition) / 2;
-                y = get_workarea().get_y() + center;
+                auto dock_rect = Position()->get_window_geometry();
+                center = dock_rect.get_height() / 2 - maxsize / 2;
+                y = center;
 
             } else if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::end) {
-                y = get_workarea().get_height() - maxsize;
+                auto dock_rect = Position()->get_window_geometry();
+                y = dock_rect.get_height() - maxsize;
             }
         }
     }
@@ -274,7 +274,8 @@ namespace docklight
 
             if (Config()->get_dock_location() == dock_location_t::right) {
                 // x = workarea.get_x() + workarea.get_width() - area;
-                x = workarea.get_x() + workarea.get_width() - width;
+                x = workarea.get_x() + workarea.get_width() - width - area;
+
             } else {
                 x += area;
             }
