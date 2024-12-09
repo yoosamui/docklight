@@ -273,7 +273,6 @@ namespace docklight
             }
 
             if (Config()->get_dock_location() == dock_location_t::right) {
-                // x = workarea.get_x() + workarea.get_width() - area;
                 x = workarea.get_x() + workarea.get_width() - width - area;
 
             } else {
