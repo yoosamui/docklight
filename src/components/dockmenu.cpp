@@ -89,6 +89,9 @@ namespace docklight
         m_item_menu_unminimize_all.signal_activate().connect(
             sigc::mem_fun(*this, &DockMenu::on_item_menu_unminimize_all_event));
 
+        m_home_menu.signal_show().connect(sigc::mem_fun(*this, &DockMenu::on_menu_show_event));
+        m_home_menu.signal_hide().connect(sigc::mem_fun(*this, &DockMenu::on_menu_hide_event));
+
         m_item_menu.signal_show().connect(sigc::mem_fun(*this, &DockMenu::on_menu_show_event));
         m_item_menu.signal_hide().connect(sigc::mem_fun(*this, &DockMenu::on_menu_hide_event));
     }

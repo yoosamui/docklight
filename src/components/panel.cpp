@@ -132,16 +132,18 @@ namespace docklight
     {
         m_mouse_enter = true;
 
+        if (Config()->is_autohide()) m_panel_hide.set_autohide_allow(false);
+
         if (!m_panel_hide.get_visible()) {
             int x = 0;
             int y = 0;
-            auto winrect = Position()->get_window_geometry();
+            // auto winrect = Position()->get_window_geometry();
 
             if (!system::get_mouse_position(x, y)) return true;
 
-            if (y > winrect.get_y()) {
-                m_panel_hide.force_show();
-            }
+            //  if (y > winrect.get_y()) {
+            m_panel_hide.force_show();
+            //  }
 
             return true;
         }
@@ -155,25 +157,19 @@ namespace docklight
     bool Panel::on_leave_notify_event(GdkEventCrossing* crossing_event)
     {
         m_mouse_enter = false;
-        /*if (m_panel_hide.get_visible() && m_panel_hide.get_intersects() && !m_context_menu_active
-        && !m_preview_open) {
-            //
-            m_panel_hide.force_hide();
-            show_current_title(false);
-
-            return true;
-        }*/
+        m_mouse_press = false;
 
         if (!m_drag_drop_starts) m_sigc_draw.disconnect();
 
         m_mouse_drag_drop_timer.stop();
-
-        m_preview_open = false;
-        m_mouse_press = false;
-        m_mouse_enter = false;
-
         show_current_title(false);
 
+        if (Config()->is_autohide() && !m_context_menu_active && !m_preview->get_visible()) {
+            m_panel_hide.set_autohide_allow(true);
+            return true;
+        }
+
+        m_preview_open = false;
         Gtk::Widget::queue_draw();
         return false;
     }

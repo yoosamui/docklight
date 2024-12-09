@@ -49,6 +49,9 @@ namespace docklight
         void force_show();
         bool get_visible() const;
 
+        bool get_autohide_allow() const;
+        void set_autohide_allow(bool allow);
+
         type_signal_hide signal_hide();
         type_signal_before_hide signal_before_hide();
         type_signal_after_hide signal_after_hide();
@@ -73,6 +76,8 @@ namespace docklight
       private:
         static WnckWindow* m_active_window;
 
+        Glib::Timer m_autohide_timer;
+
         const int m_frame_rate = 60;
         const float m_hide_delay = 15.0f;
         const float m_show_delay = 5.0f;
@@ -80,6 +85,7 @@ namespace docklight
         bool m_visible = true;
         bool m_intersects = false;
         bool m_last_intersects = false;
+        bool m_autohide_allow = true;
 
         type_signal_hide m_signal_hide;
         type_signal_before_hide m_signal_before_hide;
