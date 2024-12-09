@@ -56,7 +56,7 @@ namespace docklight
 
       private:
         bool m_lock = false;
-        int m_last_required_size = 0;
+        guint m_last_required_size = 0;
 
         std::string get_execpath();
 
