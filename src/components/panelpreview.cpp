@@ -295,6 +295,10 @@ namespace docklight
     {
         if (m_block_leave) return true;
 
+        if (Config()->is_autohide()) {
+            Autohide()->set_autohide_allow(true);
+        }
+
         hide_now();
         return true;
     }

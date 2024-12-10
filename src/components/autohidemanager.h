@@ -34,15 +34,15 @@
 namespace docklight
 {
 
-    class PanelHide  // : Glib::Object
+    class AutohideManager : public Glib::Object
     {
         typedef sigc::signal<void, int, int> type_signal_hide;
         typedef sigc::signal<void, int> type_signal_before_hide;
         typedef sigc::signal<void, int> type_signal_after_hide;
 
       public:
-        PanelHide();
-        ~PanelHide();
+        AutohideManager();
+        ~AutohideManager();
 
         bool get_intersects() const;
 
@@ -104,5 +104,8 @@ namespace docklight
         float m_init_time = 0.0f;
         float m_end_time = 0.0;
     };
+
+    Glib::RefPtr<AutohideManager> create_autohide();
+    Glib::RefPtr<AutohideManager> Autohide();
 
 }  // namespace docklight

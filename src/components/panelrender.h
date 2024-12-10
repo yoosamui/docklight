@@ -25,16 +25,16 @@
 #include "components/config.h"
 #include "components/dockitemprovider.h"
 #include "components/position.h"
-#include "components/panelhide.h"
+#include "components/autohidemanager.h"
 // clang-format on
 
 namespace docklight
 {
-    class DockRender : public DockMenu
+    class PanelRender : public DockMenu
     {
       public:
-        DockRender();
-        virtual ~DockRender();
+        PanelRender();
+        virtual ~PanelRender();
 
       private:
         void create_surface_background();
@@ -55,9 +55,6 @@ namespace docklight
 
       protected:
         Glib::RefPtr<PositionManager> m_position;
-
-        PanelHide m_panel_hide;
-        //   void get_start_pos(gint maxsize, gint& x, gint& y);
 
       private:
         int m_offsetX = 0;

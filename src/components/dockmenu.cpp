@@ -115,6 +115,10 @@ namespace docklight
     void DockMenu::on_menu_hide_event()
     {
         m_context_menu_active = false;
+
+        if (Config()->is_autohide()) {
+            Autohide()->set_autohide_allow(true);
+        }
     }
 
     void DockMenu::on_HomeMinimizeAllWindows_event()

@@ -29,7 +29,7 @@
 #include "components/dockitemicon.h"
 #include "dockitemprovider.h"
 #include "components/position.h"
-#include "components/dockrender.h"
+#include "components/panelrender.h"
 
 #include <gdk/gdk.h>
 #include <gtkmm/image.h>
@@ -46,7 +46,7 @@
 
 namespace docklight
 {
-    class Panel : public DockRender
+    class Panel : public PanelRender
     {
       public:
         Panel();

@@ -47,6 +47,18 @@ namespace docklight
                 m_monitor_name = monitor_name;
             }
 
+            std::string autohide = read_autohide();
+            if (!autohide.empty()) {
+                if (autohide == "autohide") {
+                    m_autohide_mode = dock_autohide_type_t::autohide;
+                } else if (autohide == "intelihide") {
+                    m_autohide_mode = dock_autohide_type_t::intelihide;
+                } else if (autohide == "none") {
+                    m_autohide_mode = dock_autohide_type_t::none;
+                } else {
+                    g_warning("configuration: invalid autohide mode. %s\n", autohide.c_str());
+                }
+            }
             // location
             std::string location = read_location();
             if (!location.empty()) {
@@ -156,6 +168,20 @@ namespace docklight
         sprintf(buff, "%s/%s", config_dir, m_filename.c_str());
 
         return buff;
+    }
+
+    std::string ConfigFile::read_autohide()
+    {
+        GError* error = nullptr;
+        char* value = g_key_file_get_string(m_key_file, "dock", "autohide_mode", &error);
+        if (error) {
+            g_error_free(error);
+            error = nullptr;
+
+            return std::string{};
+        }
+
+        return value;
     }
 
     int ConfigFile::read_icon_size()

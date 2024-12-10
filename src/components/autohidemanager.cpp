@@ -145,7 +145,6 @@ namespace docklight
         m_intersects = is_window_intersect(m_active_window);
 
         if (Config()->is_autohide()) {
-            g_print("%f \n", m_autohide_timer.elapsed());
             if (m_autohide_allow && (int)m_visible && m_autohide_timer.elapsed() > 2) {
                 m_autohide_timer.stop();
                 hide_now();

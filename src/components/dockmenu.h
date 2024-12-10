@@ -27,6 +27,7 @@
 #include "utils/wnck.h"
 #include "components/position.h"
 #include "components/panelbase.h"
+#include "components/autohidemanager.h"
 // clang-format on
 
 namespace docklight

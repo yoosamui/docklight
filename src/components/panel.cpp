@@ -39,10 +39,10 @@ namespace docklight
         m_title = Glib::RefPtr<TitleWindow>(new TitleWindow());
         m_provider = m_provider;
 
-        m_panel_hide.signal_before_hide().connect(
+        Autohide()->signal_before_hide().connect(
             sigc::mem_fun(this, &Panel::on_autohide_before_hide));
 
-        m_panel_hide.signal_after_hide().connect(
+        Autohide()->signal_after_hide().connect(
             sigc::mem_fun(this, &Panel::on_autohide_after_hide));
 
         g_message("Create Panel.");
@@ -132,9 +132,9 @@ namespace docklight
     {
         m_mouse_enter = true;
 
-        if (Config()->is_autohide()) m_panel_hide.set_autohide_allow(false);
+        if (Config()->is_autohide()) Autohide()->set_autohide_allow(false);
 
-        if (!m_panel_hide.get_visible()) {
+        if (!Autohide()->get_visible()) {
             int x = 0;
             int y = 0;
             // auto winrect = Position()->get_window_geometry();
@@ -142,7 +142,7 @@ namespace docklight
             if (!system::get_mouse_position(x, y)) return true;
 
             //  if (y > winrect.get_y()) {
-            m_panel_hide.force_show();
+            Autohide()->force_show();
             //  }
 
             return true;
@@ -164,8 +164,8 @@ namespace docklight
         m_mouse_drag_drop_timer.stop();
         show_current_title(false);
 
-        if (Config()->is_autohide() && !m_context_menu_active && !m_preview->get_visible()) {
-            m_panel_hide.set_autohide_allow(true);
+        if (!m_context_menu_active && !m_preview->get_visible() && !m_drag_drop_starts) {
+            Autohide()->set_autohide_allow(true);
             return true;
         }
 
@@ -403,7 +403,7 @@ namespace docklight
 
     bool Panel::on_motion_notify_event(GdkEventMotion* event)
     {
-        if (!m_panel_hide.get_visible()) {
+        if (!Autohide()->get_visible()) {
             return true;
         }
 
@@ -444,7 +444,7 @@ namespace docklight
 
     bool Panel::on_button_press_event(GdkEventButton* event)
     {
-        if (!m_panel_hide.get_visible()) return true;
+        if (!Autohide()->get_visible()) return true;
         if ((event->type != GDK_BUTTON_PRESS)) return false;
         get_dockitem_index(event->x, event->y);
 
@@ -474,7 +474,7 @@ namespace docklight
 
     bool Panel::on_button_release_event(GdkEventButton* event)
     {
-        if (!m_panel_hide.get_visible()) return true;
+        if (!Autohide()->get_visible()) return true;
         if ((event->type != GDK_BUTTON_RELEASE)) return false;
 
         get_dockitem_index(event->x, event->y);

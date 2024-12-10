@@ -28,6 +28,7 @@
 #include "utils/pixbuf.h"
 #include "components/dockitemicon.h"
 #include "components/animboomwindow.h"
+#include "components/autohidemanager.h"
 // clang-format on
 
 namespace docklight
@@ -70,10 +71,8 @@ namespace docklight
         void on_container_updated(window_action_t action, glong xid);
 
       private:
-        //  sigc::connection m_sigc_close_window;
-        //  std::shared_ptr<std::thread> m_bck_thread;
         Glib::RefPtr<AnimBoomWindow> m_anim;
-        // AnimBoomWindow* m_anim;
+
         sigc::connection m_sigc_updated;
         sigc::connection m_sigc_connection;
 

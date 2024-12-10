@@ -17,7 +17,7 @@
 //  identification number, along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // clang-format off
-#include "dockrender.h"
+#include "panelrender.h"
 // clang-format on
 
 #pragma GCC diagnostic ignored "-Wunused-variable"
@@ -26,20 +26,20 @@
 namespace docklight
 {
 
-    DockRender::DockRender()
+    PanelRender::PanelRender()
     {
         m_position = Position();
-        m_panel_hide.signal_hide().connect(sigc::mem_fun(this, &DockRender::on_autohide_update));
+        Autohide()->signal_hide().connect(sigc::mem_fun(this, &PanelRender::on_autohide_update));
 
-        g_message("Create DockRender.");
+        g_message("Create PanelRender.");
     }
 
-    DockRender::~DockRender()
+    PanelRender::~PanelRender()
     {
-        g_message("DockRender destructed.");
+        g_message("PanelRender destructed.");
     }
 
-    void DockRender::create_surface_background()
+    void PanelRender::create_surface_background()
     {
         Gdk::Rectangle bckrect = m_position->get_window_geometry();
         m_background = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, bckrect.get_width(),
@@ -47,7 +47,7 @@ namespace docklight
 
         m_bck_ctx = Cairo::Context::create(m_background);
     }
-    void DockRender::draw_surface_background()
+    void PanelRender::draw_surface_background()
     {
         // recreate this surface is mandatory.
         create_surface_background();
@@ -68,14 +68,14 @@ namespace docklight
         ctx->fill();
     }
 
-    void DockRender::create_surface_cell()
+    void PanelRender::create_surface_cell()
     {
         int size = Config()->get_dock_area();
         m_cell = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, size, size);
         m_cell_ctx = Cairo::Context::create(m_cell);
     }
 
-    void DockRender::draw_surface_cell(std::shared_ptr<DockItemIcon>& item)
+    void PanelRender::draw_surface_cell(std::shared_ptr<DockItemIcon>& item)
     {
         create_surface_cell();
 
@@ -111,7 +111,7 @@ namespace docklight
         m_cell_ctx->restore();
     }
 
-    void DockRender::create_surface_icon()
+    void PanelRender::create_surface_icon()
     {
         int size = Config()->get_icon_size();
 
@@ -119,7 +119,7 @@ namespace docklight
         m_icon_ctx = Cairo::Context::create(m_icon);
     }
 
-    void DockRender::draw_surface_icon(std::shared_ptr<DockItemIcon>& item)
+    void PanelRender::draw_surface_icon(std::shared_ptr<DockItemIcon>& item)
     {
         g_assert(m_cell);
         g_assert(m_background);
@@ -154,7 +154,7 @@ namespace docklight
         m_cell_ctx->paint();
     }
 
-    void DockRender::create_surface_indicator(std::shared_ptr<DockItemIcon>& item)
+    void PanelRender::create_surface_indicator(std::shared_ptr<DockItemIcon>& item)
     {
         int height = Config()->DEF_INDICATOR_SIZE;
         int width = Config()->get_icon_size();
@@ -171,7 +171,7 @@ namespace docklight
     }
 
     // relative to panel
-    /*void DockRender::get_start_pos(const gint maxsize, gint& x, gint& y)
+    /*void PanelRender::get_start_pos(const gint maxsize, gint& x, gint& y)
     {
         auto center = 0;
         x = y = 0;
@@ -208,7 +208,7 @@ namespace docklight
         }
     }  // namespace docklight*/
 
-    void DockRender::draw_surface_indicator(std::shared_ptr<DockItemIcon>& item)
+    void PanelRender::draw_surface_indicator(std::shared_ptr<DockItemIcon>& item)
     {
         g_assert(m_cell);
         create_surface_indicator(item);
@@ -257,7 +257,7 @@ namespace docklight
         m_cell_ctx->paint();
     }
 
-    void DockRender::on_autohide_update(int x, int y)
+    void PanelRender::on_autohide_update(int x, int y)
     {
         m_offsetX = x;
         m_offsetY = y;
@@ -265,7 +265,7 @@ namespace docklight
         Gtk::Widget::queue_draw();
     }
 
-    bool DockRender::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
+    bool PanelRender::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     {
         int m_posX = 0;
         int m_posY = 0;
