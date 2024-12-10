@@ -65,7 +65,7 @@ $ ./autogen.sh
 $ ./configure.sh
 $ make
 
-The final execuable is located at:
+The final executable is located at:
 $ cd <YOUR_DOCKLIGHT_PATH>/src/docklight
 
 ```
@@ -81,10 +81,14 @@ The configuration Filename is: **docklight5.config**
 
 ## Mouse keys
 
-Left mouse click                : minimize/unminimize group.
+Left mouse click                : minimize/unminimize group
+.
 Left mouse press and hold       : activate drag & drop.
+
 Right mouse click               : activate context menu.
+
 Right mouse click longer press  : activate context image preview.
+
 Mouse wheel                     : scroll through the window group list.
 
 ## Current state
@@ -92,9 +96,10 @@ Mouse wheel                     : scroll through the window group list.
 in development...
 
 MS-Log:
-    12.09.2024 - 20%.
-    03.12.2024 - 70%.⚡
 
+    12.09.2024 - 20%.
+
+    03.12.2024 - 70%.⚡
 
 
 
