@@ -14,16 +14,54 @@
 //  GNU General Public License for more details.
 
 // clang-format off
+
+#include <X11/Xlib.h>  //-lX11
+#include <gdk/gdkx.h>
+#include <gtk/gtk.h>  //$$(pkg-config --cflags --libs gtk+-3.0)
+// Include gtk
+#include <gtk/gtk.h>
 #include <glibmm/main.h>
+#include <gdkmm/rectangle.h>
 #include "constants.h"
+#include <X11/extensions/Xrender.h>
+#include <X11/Intrinsic.h>
+#include <X11/Xutil.h>
+#include <X11/extensions/Xcomposite.h>
+#include <X11/extensions/Xdamage.h>
+
+//#include <X11/extensions/composite.h>
+
+//#ifdef HAVE_XCOMPOSITE
+//#include <X11/extensions/Xcomposite.h>
+//#endif
+
+//#ifdef HAVE_XDAMAGE
+//#include <X11/extensions/Xdamage.h>
+//#endif
+
+//#ifdef HAVE_RANDR
+//#include <X11/extensions/Xrandr.h>
+//#endif
+
 // clang-format on
 
 namespace docklight
 {
     namespace system
     {
+        // test
+        void xdraw_window_image2(gulong xid);
+        void xget_render_picture_attributes(XID wId);
+        void XDrawOnWidget(GtkWidget* widget);
+        void xdraw_window_image(GtkWidget* widget, gulong xid, int width, int height);
+
+        // Xlib
+        Gdk::Rectangle xget_window_attributes(XID wId, bool& has_alpha);
+        void redirecting_all_toplevel_windows_to_offscreen_pixmaps();
+        bool is_composite();
         bool get_mouse_position(int& x, int& y);
         bool is_mutter_window_manager();
+
         bool file_exists(std::string name);
         std::string file_exists(const std::string& directory, std::string& file_name);
         bool is_directory_exists(const char* directory_name);

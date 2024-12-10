@@ -87,6 +87,25 @@ namespace docklight
         return std::string(result, (count > 0) ? count : 0);
     }
 
+    void PositionManager::window_intersects(bool intersects)
+    {
+        if (intersects && !m_lock) {
+            m_lock = true;
+            if (Config()->is_autohide_none()) {
+                m_struts.reset_struts();
+            }
+        } else if (m_lock) {
+            m_lock = false;
+            if (Config()->is_autohide_none()) {
+                m_struts.set_struts();
+            }
+        }
+    }
+
+    void PositionManager::show_now() {}
+
+    void PositionManager::hide_now() {}
+
     void PositionManager::on_monitor_changed()
     {
         unsigned int microsecond = 1000000;
@@ -103,6 +122,39 @@ namespace docklight
         usleep(3 * microsecond);  // sleeps for 3 seconds
         execl(exec_file, "docklight", "-l", location_name, "-m", monitor_name, nullptr);
         g_warning("Restart failed!\n");
+    }
+
+    void PositionManager::get_start_pos(gint& x, gint& y)
+    {
+        auto center = 0;
+        x = y = 0;
+
+        auto maxsize = m_last_required_size;
+
+        if (Config()->get_dock_alignment() != dock_alignment_t::fill) return;
+
+        if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+            if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::center) {
+                auto dock_rect = Position()->get_window_geometry();
+                center = dock_rect.get_width() / 2 - maxsize / 2;
+                x = center;
+
+            } else if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::end) {
+                auto dock_rect = Position()->get_window_geometry();
+                x = dock_rect.get_width() - maxsize;
+            }
+
+        } else {  // Vertical
+            if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::center) {
+                auto dock_rect = Position()->get_window_geometry();
+                center = dock_rect.get_height() / 2 - maxsize / 2;
+                y = center;
+
+            } else if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::end) {
+                auto dock_rect = Position()->get_window_geometry();
+                y = dock_rect.get_height() - maxsize;
+            }
+        }
     }
 
     bool PositionManager::get_dockmenu_position(int index, int& x, int& y, int width, int height)
@@ -221,8 +273,8 @@ namespace docklight
             }
 
             if (Config()->get_dock_location() == dock_location_t::right) {
-                // x = workarea.get_x() + workarea.get_width() - area;
-                x = workarea.get_x() + workarea.get_width() - width;
+                x = workarea.get_x() + workarea.get_width() - width - area;
+
             } else {
                 x += area;
             }
@@ -241,7 +293,10 @@ namespace docklight
     }
     void PositionManager::set_position(guint required_size)
     {
-        // g_message("Position request: %d", required_size);
+        if (m_last_required_size != required_size) {
+            m_last_required_size = required_size;
+        }
+
         int area = Config()->get_dock_area();
 
         dock_alignment_t alignment = Config()->get_dock_alignment();

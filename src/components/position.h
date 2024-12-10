@@ -42,6 +42,7 @@ namespace docklight
         void force_position();
         void reset_position();
         void set_position(guint required_size);
+        void get_start_pos(gint& x, gint& y);
 
         bool get_dockmenu_position(int index, int& x, int& y, int width, int height);
         bool get_preview_position(int index, int& x, int& y, int width, int height);
@@ -49,7 +50,14 @@ namespace docklight
         int get_x() const;
         int get_y() const;
 
+        void window_intersects(bool intersects);
+        void show_now();
+        void hide_now();
+
       private:
+        bool m_lock = false;
+        guint m_last_required_size = 0;
+
         std::string get_execpath();
 
         std::string m_exepath;

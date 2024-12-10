@@ -47,6 +47,18 @@ namespace docklight
                 m_monitor_name = monitor_name;
             }
 
+            std::string autohide = read_autohide();
+            if (!autohide.empty()) {
+                if (autohide == "autohide") {
+                    m_autohide_mode = dock_autohide_type_t::autohide;
+                } else if (autohide == "intelihide") {
+                    m_autohide_mode = dock_autohide_type_t::intelihide;
+                } else if (autohide == "none") {
+                    m_autohide_mode = dock_autohide_type_t::none;
+                } else {
+                    g_warning("configuration: invalid autohide mode. %s\n", autohide.c_str());
+                }
+            }
             // location
             std::string location = read_location();
             if (!location.empty()) {
@@ -76,6 +88,21 @@ namespace docklight
                     m_alignment = dock_alignment_t::fill;
                 } else {
                     g_warning("configuration: invalid alignment. %s\n", alignment.c_str());
+                }
+            }
+
+            // icon alignment
+            std::string icon_alignment = read_icon_alignment();
+            if (!icon_alignment.empty()) {
+                if (icon_alignment == "start") {
+                    m_icon_alignment = dock_icon_alignment_t::start;
+                } else if (icon_alignment == "end") {
+                    m_icon_alignment = dock_icon_alignment_t::end;
+                } else if (icon_alignment == "center") {
+                    m_icon_alignment = dock_icon_alignment_t::center;
+                } else {
+                    g_warning("configuration: invalid icon alignment. %s\n",
+                              icon_alignment.c_str());
                 }
             }
 
@@ -143,6 +170,20 @@ namespace docklight
         return buff;
     }
 
+    std::string ConfigFile::read_autohide()
+    {
+        GError* error = nullptr;
+        char* value = g_key_file_get_string(m_key_file, "dock", "autohide_mode", &error);
+        if (error) {
+            g_error_free(error);
+            error = nullptr;
+
+            return std::string{};
+        }
+
+        return value;
+    }
+
     int ConfigFile::read_icon_size()
     {
         GError* error = nullptr;
@@ -200,6 +241,20 @@ namespace docklight
     {
         GError* error = nullptr;
         char* value = g_key_file_get_string(m_key_file, "dock", "alignment", &error);
+        if (error) {
+            g_error_free(error);
+            error = nullptr;
+
+            return std::string{};
+        }
+
+        return value;
+    }
+
+    std::string ConfigFile::read_icon_alignment()
+    {
+        GError* error = nullptr;
+        char* value = g_key_file_get_string(m_key_file, "dock", "icon_alignment", &error);
         if (error) {
             g_error_free(error);
             error = nullptr;

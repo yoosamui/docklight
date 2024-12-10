@@ -17,7 +17,7 @@
 //  identification number, along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // clang-format off
-#include "dockrender.h"
+#include "panelrender.h"
 // clang-format on
 
 #pragma GCC diagnostic ignored "-Wunused-variable"
@@ -26,19 +26,20 @@
 namespace docklight
 {
 
-    DockRender::DockRender()
+    PanelRender::PanelRender()
     {
         m_position = Position();
+        Autohide()->signal_hide().connect(sigc::mem_fun(this, &PanelRender::on_autohide_update));
 
-        g_message("Create DockRender.");
+        g_message("Create PanelRender.");
     }
 
-    DockRender::~DockRender()
+    PanelRender::~PanelRender()
     {
-        g_message("DockRender destructed.");
+        g_message("PanelRender destructed.");
     }
 
-    void DockRender::create_surface_background()
+    void PanelRender::create_surface_background()
     {
         Gdk::Rectangle bckrect = m_position->get_window_geometry();
         m_background = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, bckrect.get_width(),
@@ -46,7 +47,7 @@ namespace docklight
 
         m_bck_ctx = Cairo::Context::create(m_background);
     }
-    void DockRender::draw_surface_background()
+    void PanelRender::draw_surface_background()
     {
         // recreate this surface is mandatory.
         create_surface_background();
@@ -61,25 +62,22 @@ namespace docklight
         ctx->rectangle(0, 0, m_background->get_width(), m_background->get_height());
         ctx->stroke();
 #endif
-
         ctx->set_source_rgba(0.266, 0.309, 0.361, 1.0);
         cairo::rounded_rectangle(ctx, 0, 0, m_background->get_width(), m_background->get_height(),
-                                 4.0);
+                                 6.0);
         ctx->fill();
     }
 
-    void DockRender::create_surface_cell()
+    void PanelRender::create_surface_cell()
     {
         int size = Config()->get_dock_area();
         m_cell = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, size, size);
         m_cell_ctx = Cairo::Context::create(m_cell);
     }
 
-    void DockRender::draw_surface_cell(std::shared_ptr<DockItemIcon>& item)
+    void PanelRender::draw_surface_cell(std::shared_ptr<DockItemIcon>& item)
     {
-        //        if (!m_cell) {
         create_surface_cell();
-        //        }
 
         // clear
         m_cell_ctx->save();
@@ -113,7 +111,7 @@ namespace docklight
         m_cell_ctx->restore();
     }
 
-    void DockRender::create_surface_icon()
+    void PanelRender::create_surface_icon()
     {
         int size = Config()->get_icon_size();
 
@@ -121,14 +119,12 @@ namespace docklight
         m_icon_ctx = Cairo::Context::create(m_icon);
     }
 
-    void DockRender::draw_surface_icon(std::shared_ptr<DockItemIcon>& item)
+    void PanelRender::draw_surface_icon(std::shared_ptr<DockItemIcon>& item)
     {
         g_assert(m_cell);
         g_assert(m_background);
 
-        // if (!m_icon) {
         create_surface_icon();
-        // }
 
         // clear
         m_icon_ctx->save();
@@ -158,7 +154,7 @@ namespace docklight
         m_cell_ctx->paint();
     }
 
-    void DockRender::create_surface_indicator(std::shared_ptr<DockItemIcon>& item)
+    void PanelRender::create_surface_indicator(std::shared_ptr<DockItemIcon>& item)
     {
         int height = Config()->DEF_INDICATOR_SIZE;
         int width = Config()->get_icon_size();
@@ -174,7 +170,8 @@ namespace docklight
         m_indicator_ctx = Cairo::Context::create(m_indicator);
     }
 
-    inline void DockRender::get_start_pos(const gint maxsize, gint& x, gint& y)
+    // relative to panel
+    /*void PanelRender::get_start_pos(const gint maxsize, gint& x, gint& y)
     {
         auto center = 0;
         x = y = 0;
@@ -183,13 +180,21 @@ namespace docklight
 
         if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
             if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::center) {
-                center = m_position->get_workarea().get_width() / 2 - maxsize / 2;
-                x = m_position->get_workarea().get_x() + center;
+                auto dock_rect = Position()->get_window_geometry();
+                center = dock_rect.get_width() / 2 - maxsize / 2;
+                x = center;
+
+                // icenter = m_position->get_workarea().get_width() / 2 - maxsize / 2;
+                // auto dock_rect = Position()->get_window_geometry();
+
+                // x = dock_rect.get_x() - dock_rect.get_width() - center;
+                // m_position->get_x()-m_position;
+
+                //    center;  // m_position->get_workarea().get_x() + center;
 
             } else if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::end) {
                 x = m_position->get_workarea().get_width() - maxsize;
             }
-
         } else {  // Vertical
             if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::center) {
                 auto vertical_addition = Config()->get_dock_area() + Config()->get_separator_size();
@@ -201,15 +206,12 @@ namespace docklight
                 y = m_position->get_workarea().get_height() - maxsize;
             }
         }
-    }
+    }  // namespace docklight*/
 
-    void DockRender::draw_surface_indicator(std::shared_ptr<DockItemIcon>& item)
+    void PanelRender::draw_surface_indicator(std::shared_ptr<DockItemIcon>& item)
     {
         g_assert(m_cell);
-
-        if (!m_indicator) {
-            create_surface_indicator(item);
-        }
+        create_surface_indicator(item);
 
         // clear
         m_indicator_ctx->save();
@@ -255,17 +257,28 @@ namespace docklight
         m_cell_ctx->paint();
     }
 
-    bool DockRender::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
+    void PanelRender::on_autohide_update(int x, int y)
     {
-        m_posX = 0;
-        m_posY = 0;
+        m_offsetX = x;
+        m_offsetY = y;
+
+        Gtk::Widget::queue_draw();
+    }
+
+    bool PanelRender::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
+    {
+        int m_posX = 0;
+        int m_posY = 0;
 
         guint separator_size = Config()->get_separator_size();
         auto area = Config()->get_dock_area() + separator_size;
         auto data = Provider()->data();
-        auto maxsize = data.size() * area;
+        //  auto maxsize = data.size() * area;
 
-        get_start_pos(maxsize, m_posX, m_posY);
+        Position()->get_start_pos(m_posX, m_posY);
+        // get_start_pos(maxsize, m_posX, m_posY);
+
+        // g_print("%d x %d\n", m_posX, m_posY);
 
         draw_surface_background();
         guint tag = 0;
@@ -286,11 +299,11 @@ namespace docklight
             }
 
             dockitem->set_tag(tag++);
-            //  }
         }
 
-        cr->set_source(m_background, 0, 0);
+        cr->set_source(m_background, m_offsetX, m_offsetY);
         cr->paint();
+
         return true;
     }
 

@@ -42,6 +42,13 @@ namespace docklight
         static void on_icon_changed(WnckWindow* window, gpointer user_data);
         static void on_window_closed(WnckScreen* screen, WnckWindow* window, gpointer data);
         static void on_window_opened(WnckScreen* screen, WnckWindow* window, gpointer data);
+        // static void on_state_changed(WnckWindow* window, WnckWindowState changed_mask,
+        // WnckWindowState new_state, gpointer user_data);
+        // static void on_active_window_changed(WnckScreen* screen,
+        // WnckWindow* previously_active_window,
+        // gpointer user_data);
+
+      private:
     };
 
     Glib::RefPtr<AppObserver> create_observer();

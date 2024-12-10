@@ -118,7 +118,7 @@ namespace docklight
                     pixbuf::get_window_image(xid, m_image, size);
                 }
 
-                if (window && !wnck_window_is_minimized(window) && !wnck_window_is_pinned(window) &&
+                if (window && !wnck_window_is_minimized(window) &&
                     wnck::is_window_on_current_desktop(window)) {
                     //
                     pixbuf::get_window_image(xid, m_image, size);
@@ -295,6 +295,10 @@ namespace docklight
     {
         if (m_block_leave) return true;
 
+        if (Config()->is_autohide()) {
+            Autohide()->set_autohide_allow(true);
+        }
+
         hide_now();
         return true;
     }
@@ -302,6 +306,8 @@ namespace docklight
     bool PanelPreview::on_button_press_event(GdkEventButton* event)
     {
         if ((event->type != GDK_BUTTON_PRESS)) return false;
+
+        get_dockpreview_index(event->x, event->y);
 
         auto size = m_current_images.size();
         if (!size) return true;
@@ -336,7 +342,7 @@ namespace docklight
 
     bool PanelPreview::on_button_release_event(GdkEventButton* event)
     {
-        //
+        get_dockpreview_index(event->x, event->y);
         return true;
     }
 

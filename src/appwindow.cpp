@@ -40,6 +40,7 @@ namespace docklight
         m_provider = create_provider();
         m_observer = create_observer();
         m_position = create_position(this);
+        m_autohide = create_autohide();
 
         m_panel = new Panel();
 
@@ -119,8 +120,14 @@ namespace docklight
         }
 
         g_message("Window Manager : %s", system::get_window_manager_name().c_str());
+        g_message("Is Composite : %s", system::is_composite() ? "yes" : "no");
         g_message("Is Mutter WM: %s", system::is_mutter_window_manager() ? "yes" : "No");
         g_message("DL Version: %s", PACKAGE_VERSION);
+
+        // if (system::is_composite()) {
+        // system::redirecting_all_toplevel_windows_to_offscreen_pixmaps();
+        // g_message("Redirect toplevel_windows");
+        //}
 
         device::monitor::set_current_monitor(Config()->get_monitor_name());
 

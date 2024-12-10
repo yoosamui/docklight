@@ -29,30 +29,31 @@ namespace docklight
 
     std::shared_ptr<DockItemIcon> DockItemIcon::clone()
     {
-        auto clone = std::shared_ptr<DockItemIcon>(
+        // auto clone = std::shared_ptr<DockItemIcon>(
+        m_clone = std::shared_ptr<DockItemIcon>(
             new DockItemIcon(m_xid, nullptr, m_instance_name, m_group_name, m_wintype));
 
-        clone->m_has_desktop_file = m_has_desktop_file;
-        clone->m_attached = m_attached;
-        clone->m_title = m_title;
-        clone->m_window_name = m_window_name;
-        clone->m_desktop_file = m_desktop_file;
-        clone->m_icon_name = m_icon_name;
-        clone->m_description = m_description;
-        clone->m_icon = m_icon;
-        clone->m_image = m_image;
-        clone->m_wintype = m_wintype;
-        clone->m_tag = m_tag;
-        clone->m_width = m_width;
-        clone->m_height = m_height;
-        clone->m_attached = m_attached;
-        clone->m_wnckwindow = m_wnckwindow;
-        clone->m_hash = m_hash;
-        clone->m_active_window = m_active_window;
-        clone->m_visible = m_visible;
+        m_clone->m_has_desktop_file = m_has_desktop_file;
+        m_clone->m_attached = m_attached;
+        m_clone->m_title = m_title;
+        m_clone->m_window_name = m_window_name;
+        m_clone->m_desktop_file = m_desktop_file;
+        m_clone->m_icon_name = m_icon_name;
+        m_clone->m_description = m_description;
+        m_clone->m_icon = m_icon;
+        m_clone->m_image = m_image;
+        m_clone->m_wintype = m_wintype;
+        m_clone->m_tag = m_tag;
+        m_clone->m_width = m_width;
+        m_clone->m_height = m_height;
+        m_clone->m_attached = m_attached;
+        m_clone->m_wnckwindow = m_wnckwindow;
+        m_clone->m_hash = m_hash;
+        m_clone->m_active_window = m_active_window;
+        m_clone->m_visible = m_visible;
 
         // covariant return type.
-        return clone;
+        return m_clone;
     }
 
     guint DockItemIcon::get_container_size()
@@ -69,9 +70,10 @@ namespace docklight
         m_icon = icon;
     }
 
-    void DockItemIcon::add_child(std::shared_ptr<DockItemIcon> child)
+    bool DockItemIcon::add_child(std::shared_ptr<DockItemIcon> child)
     {
-        m_map.insert({child->get_xid(), child});
+        auto pair = m_map.insert({child->get_xid(), child});
+        return pair.second;
     }
 
     const Glib::RefPtr<Gdk::Pixbuf>& DockItemIcon::get_icon() const

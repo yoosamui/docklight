@@ -25,17 +25,16 @@
 #include "components/config.h"
 #include "components/dockitemprovider.h"
 #include "components/position.h"
+#include "components/autohidemanager.h"
 // clang-format on
 
 namespace docklight
 {
-
-    // class DockRender : public Gtk::DrawingArea
-    class DockRender : public DockMenu
+    class PanelRender : public DockMenu
     {
       public:
-        DockRender();
-        virtual ~DockRender();
+        PanelRender();
+        virtual ~PanelRender();
 
       private:
         void create_surface_background();
@@ -52,13 +51,14 @@ namespace docklight
 
         bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr);
 
+        void on_autohide_update(int x, int y);
+
       protected:
         Glib::RefPtr<PositionManager> m_position;
-        void get_start_pos(gint maxsize, gint& x, gint& y);
 
       private:
-        gint m_posX = 0;
-        gint m_posY = 0;
+        int m_offsetX = 0;
+        int m_offsetY = 0;
 
         Cairo::RefPtr<Cairo::ImageSurface> m_cell;
         Cairo::RefPtr<Cairo::ImageSurface> m_icon;

@@ -77,24 +77,29 @@ namespace docklight
 
     void DADWindow::show_at(int dockitem_index)
     {
-        int xx, yy;
-
         auto area = m_config->get_dock_area();
         int margin = m_config->get_dock_area_margin() / 2;
+
+        int xx, yy;
+        int sx, sy;
+        Position()->get_start_pos(sx, sy);
+
+        xx = Position()->get_x() + sx;
+        yy = Position()->get_y() + sy;
 
         int mx = 0;
         int my = 0;
         system::get_mouse_position(mx, my);
 
         if (m_config->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-            xx = m_position->get_x() + dockitem_index * area;
+            xx += dockitem_index * area;
             yy = m_position->get_y();
 
             if (!m_xoffset) m_xoffset = mx - xx - margin;
             if (!m_yoffset) m_yoffset = my - (m_position->get_y() + margin);
 
         } else {
-            yy = m_position->get_y() + dockitem_index * area;
+            yy += dockitem_index * area;
             xx = m_position->get_x();
 
             if (!m_xoffset) m_xoffset = mx - (m_position->get_x() + margin);

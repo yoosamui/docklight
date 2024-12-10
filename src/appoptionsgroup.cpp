@@ -26,10 +26,10 @@ namespace docklight
     AppOptionsGroup::AppOptionsGroup()
         : Glib::OptionGroup("Docklight",
                             "Supports short and long commandline options for the group.",
-                            "help - Options can be single letters, prefixed by a single dash."),
-          m_arg_monitor("primary"),
-          m_arg_location("bottom"),
-          m_arg_alignment("center")
+                            "help - Options can be single letters, prefixed by a single dash.")
+    // m_arg_monitor("primary"),
+    // m_arg_location("bottom"),
+    // m_arg_alignment("center")
     {
         m_entry_monitor.set_long_name("monitor");
         m_entry_monitor.set_short_name('m');
