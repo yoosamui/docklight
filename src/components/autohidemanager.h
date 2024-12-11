@@ -24,7 +24,7 @@
 #include <gtkmm/window.h>
 #include <sigc++/sigc++.h>
 
-#include "components/dockmenu.h"
+//#include "components/dockmenu.h"
 #include "components/position.h"
 #include "utils/easing.h"
 #include "utils/wnck.h"
