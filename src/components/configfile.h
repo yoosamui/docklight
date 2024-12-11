@@ -36,14 +36,14 @@ namespace docklight
     class ConfigBase : public Glib::Object
     {
       public:
-        static constexpr const int DEF_INDICATOR_SIZE = 2;
+        static constexpr const int DEF_INDICATOR_SIZE = 8;
         static const int DEF_ICON_MAXSIZE = 128;
 
       protected:
         // parsed and optimized at compile time
         static constexpr const int DEF_MIN_ITEM_SIZE = 24;
         // no access from draussen
-        static constexpr const int DEF_DOCKAREA_MARGIN = 12;
+        static constexpr const int DEF_DOCKAREA_MARGIN = 16;
         static constexpr const int DEF_PREVIEWAREA_MARGIN = 32;
         static constexpr const int DEF_ICON_SIZE = 128;
         static constexpr const int DEF_PREVIEW_IMAGE_SIZE = 248;
@@ -91,6 +91,8 @@ namespace docklight
     class ConfigFile : public ConfigBase
     {
       protected:
+        Theme m_theme;
+
       public:
         ConfigFile();
         ~ConfigFile();
@@ -120,7 +122,6 @@ namespace docklight
       private:
         std::string m_filename = "docklight5.config";
         GKeyFile* m_key_file = nullptr;
-        Theme m_theme;
 
         std::string get_style(GKeyFile* key_file);
         std::string get_style_item(GKeyFile* key_file, const std::string& style_name,

@@ -85,7 +85,8 @@ namespace docklight
 
     bool ConfigFile::load()
     {
-        // set_default_style();
+        set_default_style();
+
         std::string filepath = read_filepath();
         if (filepath.empty()) {
             g_warning("Configuration could not be found!");
@@ -221,6 +222,7 @@ namespace docklight
             }
             // styles
             std::string style_name = this->get_style(m_key_file);
+
             if (!style_name.empty()) {
                 auto key_file = m_key_file;
                 Color fill;

@@ -41,7 +41,7 @@ namespace docklight
     WnckWindow* AutohideManager::m_active_window;
     AutohideManager::AutohideManager()
     {
-        m_area = Config()->get_dock_area() / 2;
+        m_area = Config()->get_dock_area();
         m_active_window = nullptr;
 
         WnckScreen* wnckscreen = wnck::get_default_screen();

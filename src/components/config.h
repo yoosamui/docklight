@@ -64,6 +64,8 @@ namespace docklight
         int get_icon_max_size();
         int get_preview_image_max_size();
         int get_preview_image_size() const;
+
+        Theme get_theme();
     };
 
     Glib::RefPtr<Configuration> create_config();
