@@ -25,10 +25,14 @@
 
 #include "utils/system.h"
 #include "constants.h"
+#include "utils/themes.h"
 // clang-format on
+//
 
 namespace docklight
 {
+    using namespace style;
+
     class ConfigBase : public Glib::Object
     {
       public:
@@ -116,6 +120,15 @@ namespace docklight
       private:
         std::string m_filename = "docklight5.config";
         GKeyFile* m_key_file = nullptr;
+        Theme m_theme;
+
+        std::string get_style(GKeyFile* key_file);
+        std::string get_style_item(GKeyFile* key_file, const std::string& style_name,
+                                   const std::string& item_name);
+
+        void set_default_style();
+        void get_color_from_string(const std::string& s, Color& fill, Color& stroke,
+                                   double& lineWidth, double& ratio, int& mask);
     };
 
 }  // namespace docklight

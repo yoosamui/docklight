@@ -15,6 +15,74 @@ namespace docklight
         m_key_file = nullptr;
     }
 
+    void ConfigFile::get_color_from_string(const std::string& s, Color& fill, Color& stroke,
+                                           double& lineWidth, double& ratio, int& mask)
+    {
+        std::string currentLocale = setlocale(LC_NUMERIC, NULL);
+        setlocale(LC_NUMERIC, "C");
+
+        const int MAXBUFF = 64;
+        int maxlength = s.size();
+        std::string token = "";
+        double values[MAXBUFF] = {0};
+        int index = 0;
+        for (int i = 0; i < maxlength; i++) {
+            if (index < MAXBUFF) {
+                char c = s[i];
+                if (c != ',' && c != ' ') {
+                    token += c;
+                }
+
+                if ((c == ',') || i + 1 == maxlength) {
+                    double value = 0.0;
+                    try {
+                        value = std::stod(token);
+                        values[index] = value;
+
+                    } catch (...) {
+                        g_critical("get_color_from_string: can't convert the token: %s\n",
+                                   s.c_str());
+                    }
+
+                    token = "";
+                    index++;
+                }
+            }
+        }
+
+        fill.red = values[0];
+        fill.green = values[1];
+        fill.blue = values[2];
+        fill.alpha = values[3];
+
+        stroke.red = values[4];
+        stroke.green = values[5];
+        stroke.blue = values[6];
+        stroke.alpha = values[7];
+
+        lineWidth = values[8];
+        ratio = values[9];
+        mask = (int)values[10];
+
+        setlocale(LC_NUMERIC, currentLocale.c_str());
+    }
+
+    void ConfigFile::set_default_style()
+    {
+        // clang-format off
+        m_theme.set_Panel(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 1, 1, 0), 0, 3, 0));
+        m_theme.set_PanelCell(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 1, 1, 1), 0.5, 3, 0));
+        m_theme.set_PanelDrag(new ColorWindow(Color(1, 1, 1, 0.4), Color(1, 1, 1, 1), 2.5, 3, 0));
+        m_theme.set_PanelIndicator(new ColorWindow(Color(1, 1, 1, 0.7), Color(1, 1, 1, 1), 2, 0, 0));
+        m_theme.set_PanelSeparator(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 1, 1, 1.0), 1.0, 0, 0));
+        m_theme.set_PanelTitle(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 1, 1, 1.0), 1.0, 0, 0));
+        m_theme.set_Preview(new ColorWindow());
+        m_theme.set_PreviewCell(new ColorWindow(Color(1, 1, 1, 0.2), Color(1, 1, 1, 1), 1, 3, 0));
+        m_theme.set_PreviewTitleText(new ColorWindow(Color(1,1,1,0.4), Color(1, 1, 1, 1), 0, 0, 0));
+        m_theme.set_PreviewClose(new ColorWindow(Color(0.854, 0.062, 0.133, 1), Color(1, 1, 1, 1), 2.0, 0, 0));
+        // clang-format on
+    }
+
     bool ConfigFile::load()
     {
         // set_default_style();
@@ -151,10 +219,127 @@ namespace docklight
             if (m_hide_delay < 0.0 || m_hide_delay > 4.0) {
                 m_hide_delay = DEF_AUTOHIDE_HIDE_DELAY;
             }
+            // styles
+            std::string style_name = this->get_style(m_key_file);
+            if (!style_name.empty()) {
+                auto key_file = m_key_file;
+                Color fill;
+                Color stroke;
+                double lineWidth;
+                double ratio;
+                int mask;
+
+                // clang-format off
+                const std::string panel = get_style_item(key_file, style_name, "panel");
+                if (!panel.empty()) {
+                    get_color_from_string(panel.c_str(), fill, stroke, lineWidth, ratio, mask);
+                    m_theme.set_Panel(new ColorWindow(fill, stroke, lineWidth, ratio, mask));
+                }
+
+                const std::string panel_gradient = get_style_item(key_file, style_name, "panel_gradient");
+                if (!panel_gradient.empty()) {
+                    get_color_from_string(panel_gradient.c_str(), fill, stroke, lineWidth, ratio, mask);
+                    m_theme.set_PanelGradient(new ColorWindow(fill, stroke, lineWidth, ratio, mask));
+                }
+
+                const std::string panel_cell = get_style_item(key_file, style_name, "panel_cell");
+                if (!panel_cell.empty()) {
+                    get_color_from_string(panel_cell.c_str(), fill, stroke, lineWidth, ratio, mask);
+                    m_theme.set_PanelCell(new ColorWindow(fill, stroke, lineWidth, ratio, mask));
+                }
+
+                const std::string panel_indicator = get_style_item(key_file, style_name, "panel_indicator");
+                if (!panel_cell.empty()) {
+                    get_color_from_string(panel_indicator.c_str(), fill, stroke, lineWidth, ratio, mask);
+                    m_theme.set_PanelIndicator(new ColorWindow(fill, stroke, lineWidth, ratio, mask));
+                }
+
+                const std::string panel_separator = get_style_item(key_file, style_name, "panel_separator");
+                if (!panel_cell.empty()) {
+                    get_color_from_string(panel_separator.c_str(), fill, stroke, lineWidth, ratio, mask);
+                    m_theme.set_PanelSeparator(new ColorWindow(fill, stroke, lineWidth, ratio, mask));
+                }
+
+                const std::string panel_drag = get_style_item(key_file, style_name, "panel_drag");
+                if (!panel_cell.empty()) {
+                    get_color_from_string(panel_drag.c_str(), fill, stroke, lineWidth, ratio, mask);
+                    m_theme.set_PanelDrag(new ColorWindow(fill, stroke, lineWidth, ratio, mask));
+                }
+
+                // preview
+                const std::string preview = get_style_item(key_file, style_name, "preview");
+                if (!preview.empty()) {
+                    get_color_from_string(preview.c_str(), fill, stroke, lineWidth, ratio, mask);
+                    m_theme.set_Preview(new ColorWindow(fill, stroke, lineWidth, ratio, mask));
+                }
+
+                const std::string preview_gradient = get_style_item(key_file, style_name, "preview_gradient");
+                if (!preview_gradient.empty()) {
+                    get_color_from_string(preview_gradient.c_str(), fill, stroke, lineWidth, ratio, mask);
+                    m_theme.set_PreviewGradient(new ColorWindow(fill, stroke, lineWidth, ratio, mask));
+                }
+
+                const std::string preview_cell = get_style_item(key_file, style_name, "preview_cell");
+                if (!preview_cell.empty()) {
+                    get_color_from_string(preview_cell.c_str(), fill, stroke, lineWidth, ratio,  mask);
+                    m_theme.set_PreviewCell(new ColorWindow(fill, stroke, lineWidth, ratio, mask));
+                }
+
+                const std::string preview_title_text =  get_style_item(key_file, style_name, "preview_title_text");
+                if (!preview_title_text.empty()) {
+                    get_color_from_string(preview_title_text.c_str(), fill, stroke, lineWidth,  ratio, mask);
+                    m_theme.set_PreviewTitleText( new ColorWindow(fill, stroke, lineWidth, ratio, mask));
+                }
+
+                const std::string preview_close =  get_style_item(key_file, style_name, "preview_close");
+                if (!preview_close.empty()) {
+                    get_color_from_string(preview_close.c_str(), fill, stroke, lineWidth,  ratio, mask);
+                    m_theme.set_PreviewClose( new ColorWindow(fill, stroke, lineWidth, ratio, mask));
+                }
+
+                // clang-format on
+            }
         }
         return found;
     }
 
+    std::string ConfigFile::get_style(GKeyFile* key_file)
+    {
+        GError* error = nullptr;
+        char* value = g_key_file_get_string(key_file, "dock", "style", &error);
+        if (error) {
+            g_error_free(error);
+            error = nullptr;
+
+            return std::string{};
+        }
+
+        // check if exits
+        if (g_key_file_get_string(key_file, value, "panel", &error) == nullptr) {
+            g_error_free(error);
+            error = nullptr;
+
+            return std::string{};
+        }
+
+        return value;
+    }
+
+    std::string ConfigFile::get_style_item(GKeyFile* key_file, const std::string& style_name,
+                                           const std::string& item_name)
+    {
+        GError* error = nullptr;
+        char* value =
+            g_key_file_get_string(key_file, style_name.c_str(), item_name.c_str(), &error);
+        if (!value || error) {
+            g_error_free(error);
+            error = nullptr;
+
+            return std::string{};
+        }
+
+        return value;
+    }
     std::string ConfigFile::read_filepath()
     {
         auto user_name = system::get_current_user();

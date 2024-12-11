@@ -35,6 +35,7 @@ utils/struts.cpp \
 utils/cairo.cpp \
 utils/pixbuf.cpp \
 utils/easing.cpp \
+utils/themes.cpp \
 components/titlewindow.cpp \
 components/compositewindow.cpp \
 components/animboomwindow.cpp \
