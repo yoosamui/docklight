@@ -45,6 +45,7 @@ namespace docklight
         // no access from draussen
         static constexpr const int DEF_DOCKAREA_MARGIN = 16;
         static constexpr const int DEF_PREVIEWAREA_MARGIN = 32;
+        static constexpr const int DEF_ICON_DEFAULT_SIZE = 58;
         static constexpr const int DEF_ICON_SIZE = 128;
         static constexpr const int DEF_PREVIEW_IMAGE_SIZE = 248;
         static constexpr const int DEF_PREVIEW_IMAGE_MAX_SIZE = 512;

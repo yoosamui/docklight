@@ -160,7 +160,7 @@ namespace docklight
             Position()->window_intersects(m_intersects);
 
             if (m_intersects) {
-                hide_now();
+                if (m_autohide_allow) hide_now();
             } else {
                 show_now();
             }

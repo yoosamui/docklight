@@ -89,12 +89,9 @@ namespace docklight
         Glib::RefPtr<Pango::Layout> layout = m_Label.get_layout();
         pango_layout_set_alignment(layout->gobj(), PANGO_ALIGN_CENTER);
 
-        //        / cairo::stroke(cr, m_theme.PanelTitleText(), rect);
-        // cr->stroke();
-        cr->set_source_rgba(m_theme.PanelTitleText().Stroke().Color::red,
-                            m_theme.PanelTitleText().Stroke().Color::green,
-                            m_theme.PanelTitleText().Stroke().Color::blue,
-                            m_theme.PanelTitleText().Stroke().Color::alpha);
+        cr->set_source_rgba(
+            m_theme.PanelTitle().Stroke().Color::red, m_theme.PanelTitle().Stroke().Color::green,
+            m_theme.PanelTitle().Stroke().Color::blue, m_theme.PanelTitle().Stroke().Color::alpha);
 
         cr->stroke();
 

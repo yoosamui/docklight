@@ -71,16 +71,17 @@ namespace docklight
     void ConfigFile::set_default_style()
     {
         // clang-format off
-        m_theme.set_Panel(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 1, 1, 0), 0, 3, 0));
-        m_theme.set_PanelCell(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 1, 1, 1), 0.5, 3, 0));
-        m_theme.set_PanelDrag(new ColorWindow(Color(1, 1, 1, 0.4), Color(1, 1, 1, 1), 2.5, 3, 0));
+        m_theme.set_Panel(new ColorWindow(Color(0.549, 0.572, 0.674,1.0),Color(0, 0, 0, 0), 0, 6, 0));
+        m_theme.set_PanelGradient(new ColorWindow(Color(0.074, 0.098, 0.109,1.0),Color(0, 0, 0, 0), 3, 0.1, 0));
+ //       m_theme.set_PanelCell(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 1, 1, 1), 0.5, 3, 0));
+ //       m_theme.set_PanelDrag(new ColorWindow(Color(1, 1, 1, 0.4), Color(1, 1, 1, 1), 2.5, 3, 0));
         m_theme.set_PanelIndicator(new ColorWindow(Color(1, 1, 1, 0.7), Color(1, 1, 1, 1), 2, 0, 0));
-        m_theme.set_PanelSeparator(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 1, 1, 1.0), 1.0, 0, 0));
-        m_theme.set_PanelTitle(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 1, 1, 1.0), 1.0, 0, 0));
-        m_theme.set_Preview(new ColorWindow());
-        m_theme.set_PreviewCell(new ColorWindow(Color(1, 1, 1, 0.2), Color(1, 1, 1, 1), 1, 3, 0));
-        m_theme.set_PreviewTitle(new ColorWindow(Color(1,1,1,0.4), Color(1, 1, 1, 1), 0, 0, 0));
-        m_theme.set_PreviewClose(new ColorWindow(Color(0.854, 0.062, 0.133, 1), Color(1, 1, 1, 1), 2.0, 0, 0));
+//        m_theme.set_PanelSeparator(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 1, 1, 1.0), 1.0, 0, 0));
+        m_theme.set_PanelTitle(new ColorWindow(Color(0,0,0,1),Color(1, 1, 1, 1), 1, 6, 0));
+        m_theme.set_Preview(new ColorWindow(Color(0.549, 0.572, 0.674,1.0),Color(0, 0,0, 0), 0, 6, 0));
+//        m_theme.set_PreviewCell(new ColorWindow(Color(1, 1, 1, 0.2), Color(1, 1, 1, 1), 1, 3, 0));
+        m_theme.set_PreviewTitle(new ColorWindow(Color(0.549, 0.572, 0.674,1.0), Color(1, 1, 1, 1), 0, 3, 0));
+        m_theme.set_PreviewClose(new ColorWindow(Color(0,0,0,0), Color(1, 1, 1, 1), 1.0, 0, 0));
         // clang-format on
     }
 
@@ -394,11 +395,14 @@ namespace docklight
     {
         GError* error = nullptr;
         int value = g_key_file_get_integer(m_key_file, "dock", "icon_size", &error);
+
+        if (value <= 0) value = DEF_ICON_MAXSIZE;
+
         if (error) {
             g_error_free(error);
             error = nullptr;
 
-            return DEF_ICON_MAXSIZE;
+            return DEF_ICON_DEFAULT_SIZE;
         }
 
         return value;
@@ -408,6 +412,7 @@ namespace docklight
     {
         GError* error = nullptr;
         int value = g_key_file_get_integer(m_key_file, "dock", "preview_image_size", &error);
+        if (value <= 0) value = DEF_PREVIEW_IMAGE_MAX_SIZE;
         if (error) {
             g_error_free(error);
             error = nullptr;
