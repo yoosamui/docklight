@@ -189,8 +189,14 @@ namespace docklight
             }
 
             // the icon size
-            m_icon_size = m_custom_icon_size = read_icon_size();
-            m_image_size = m_custom_image_size = read_image_size();
+            m_icon_size = read_icon_size();
+            if (m_icon_size > DEF_ICON_MAXSIZE) m_icon_size = DEF_ICON_MAXSIZE;
+            m_custom_icon_size = m_icon_size;
+
+            // the preview size
+            m_image_size = read_image_size();
+            if (m_image_size > DEF_PREVIEW_IMAGE_MAX_SIZE) m_icon_size = DEF_PREVIEW_IMAGE_MAX_SIZE;
+            m_custom_image_size = m_image_size;
 
             // separator show line
             m_show_separator_line = read_separator_show_line();
