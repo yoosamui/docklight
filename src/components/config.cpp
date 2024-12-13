@@ -52,6 +52,11 @@ namespace docklight
         //
     }
 
+    Theme& Configuration::get_theme()
+    {
+        return m_theme;
+    }
+
     const Glib::ustring& Configuration::get_monitor_name() const
     {
         return m_monitor_name;

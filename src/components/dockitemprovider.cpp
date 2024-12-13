@@ -392,6 +392,8 @@ namespace docklight
         if (system::is_mutter_window_manager()) return;
         if (!WNCK_IS_WINDOW(window)) return;
 
+        const std::lock_guard<std::mutex> lock(m_mutex);
+
         Glib::RefPtr<Gdk::Pixbuf> image;
         gint32 xid = wnck_window_get_xid(window);
 

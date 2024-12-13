@@ -125,6 +125,10 @@ namespace docklight
             return;
         }
 
+        if (!wnck::is_valid_window_type(m_active_window)) {
+            return;
+        }
+
         Provider()->set_window_image(m_active_window);
     }
 

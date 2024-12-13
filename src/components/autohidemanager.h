@@ -24,7 +24,7 @@
 #include <gtkmm/window.h>
 #include <sigc++/sigc++.h>
 
-#include "components/dockmenu.h"
+//#include "components/dockmenu.h"
 #include "components/position.h"
 #include "utils/easing.h"
 #include "utils/wnck.h"
@@ -79,7 +79,7 @@ namespace docklight
         Glib::Timer m_autohide_timer;
 
         const int m_frame_rate = 60;
-        const float m_hide_delay = 15.0f;
+        const float m_hide_delay = 25.0f;
         const float m_show_delay = 5.0f;
 
         bool m_visible = true;

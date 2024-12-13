@@ -41,7 +41,7 @@ namespace docklight
     WnckWindow* AutohideManager::m_active_window;
     AutohideManager::AutohideManager()
     {
-        m_area = Config()->get_dock_area() / 2;
+        m_area = Config()->get_dock_area();
         m_active_window = nullptr;
 
         WnckScreen* wnckscreen = wnck::get_default_screen();
@@ -49,7 +49,7 @@ namespace docklight
                          G_CALLBACK(AutohideManager::on_active_window_changed), nullptr);
 
         connect_signal_handler(true);
-        m_autohide_timer.start();
+        if (Config()->is_autohide()) m_autohide_timer.start();
     }
 
     AutohideManager::~AutohideManager()
@@ -72,7 +72,7 @@ namespace docklight
     {
         if (connect) {
             m_sigc_autohide = Glib::signal_timeout().connect(
-                sigc::mem_fun(this, &AutohideManager::on_autohide), 1000 / 2);
+                sigc::mem_fun(this, &AutohideManager::on_autohide), 1000 / 1);
         } else {
             m_sigc_autohide.disconnect();
         }
@@ -145,7 +145,7 @@ namespace docklight
         m_intersects = is_window_intersect(m_active_window);
 
         if (Config()->is_autohide()) {
-            if (m_autohide_allow && (int)m_visible && m_autohide_timer.elapsed() > 2) {
+            if (m_autohide_allow && (int)m_visible && m_autohide_timer.elapsed() > 3) {
                 m_autohide_timer.stop();
                 hide_now();
             }
@@ -153,7 +153,7 @@ namespace docklight
             return true;
         }
 
-        // intelihide  | fill
+        // intelihide  | none
         if (m_last_intersects != m_intersects) {
             m_last_intersects = m_intersects;
 
@@ -205,9 +205,10 @@ namespace docklight
 
     void AutohideManager::show_now()
     {
+        if (m_visible) return;
+
         bool fullscreeen = wnck_window_is_fullscreen(m_active_window);
         if (fullscreeen) return;
-        if (m_visible) return;
 
         m_start_position = (float)m_area;
         m_end_position = 0.f;
@@ -221,8 +222,9 @@ namespace docklight
 
     void AutohideManager::hide_now()
     {
-        bool fullscreeen = wnck_window_is_fullscreen(m_active_window);
         if (!m_visible) return;
+
+        bool fullscreeen = wnck_window_is_fullscreen(m_active_window);
         if (Config()->is_autohide_none() && !fullscreeen) {
             return;
         }

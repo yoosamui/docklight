@@ -48,6 +48,7 @@ namespace docklight
         bool get_visible() const;
 
         guint get_width();
+        guint get_size();
 
       private:
         void connect_signal(bool connect);
@@ -91,11 +92,14 @@ namespace docklight
         int m_dockitem_index = 0;
         int m_dockpreview_index = 0;
         int m_size = 0;
+        int m_items = 0;
         bool m_block_leave = false;
         bool m_visible = false;
         bool m_block_draw = false;
         int m_x = 0;
         int m_y = 0;
+
+        Theme* m_theme = &Config()->get_theme();
     };
 
 }  // namespace docklight

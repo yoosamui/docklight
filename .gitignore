@@ -23,6 +23,7 @@ clang-tidy.sh
 *.deps
 .dirstamp
 :*.pot
+/po/*.pot
 /ABOUT-NLS
 /Makefile
 /Makefile.in

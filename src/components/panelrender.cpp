@@ -31,6 +31,7 @@ namespace docklight
         m_position = Position();
         Autohide()->signal_hide().connect(sigc::mem_fun(this, &PanelRender::on_autohide_update));
 
+        //  m_theme->= Config()->get_theme();
         g_message("Create PanelRender.");
     }
 
@@ -52,8 +53,8 @@ namespace docklight
         // recreate this surface is mandatory.
         create_surface_background();
         Cairo::RefPtr<Cairo::Context> ctx = Cairo::Context::create(m_background);
-        // ctx->set_source_rgba(0.266, 0.309, 0.361, 1.0);
-        // ctx->paint();
+        ctx->set_source_rgba(0, 0, 0, 0.0);
+        ctx->paint();
 
 //#define STROKE_BCK_RECT 1
 #ifdef STROKE_BCK_RECT
@@ -62,10 +63,11 @@ namespace docklight
         ctx->rectangle(0, 0, m_background->get_width(), m_background->get_height());
         ctx->stroke();
 #endif
-        ctx->set_source_rgba(0.266, 0.309, 0.361, 1.0);
-        cairo::rounded_rectangle(ctx, 0, 0, m_background->get_width(), m_background->get_height(),
-                                 6.0);
-        ctx->fill();
+
+        Gdk::Rectangle rect =
+            Gdk::Rectangle(0, 0, m_background->get_width(), m_background->get_height());
+        cairo::fill(ctx, m_theme->Panel(), m_theme->PanelGradient(), rect);
+        cairo::stroke(ctx, m_theme->Panel(), rect);
     }
 
     void PanelRender::create_surface_cell()
@@ -170,44 +172,6 @@ namespace docklight
         m_indicator_ctx = Cairo::Context::create(m_indicator);
     }
 
-    // relative to panel
-    /*void PanelRender::get_start_pos(const gint maxsize, gint& x, gint& y)
-    {
-        auto center = 0;
-        x = y = 0;
-
-        if (Config()->get_dock_alignment() != dock_alignment_t::fill) return;
-
-        if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-            if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::center) {
-                auto dock_rect = Position()->get_window_geometry();
-                center = dock_rect.get_width() / 2 - maxsize / 2;
-                x = center;
-
-                // icenter = m_position->get_workarea().get_width() / 2 - maxsize / 2;
-                // auto dock_rect = Position()->get_window_geometry();
-
-                // x = dock_rect.get_x() - dock_rect.get_width() - center;
-                // m_position->get_x()-m_position;
-
-                //    center;  // m_position->get_workarea().get_x() + center;
-
-            } else if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::end) {
-                x = m_position->get_workarea().get_width() - maxsize;
-            }
-        } else {  // Vertical
-            if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::center) {
-                auto vertical_addition = Config()->get_dock_area() + Config()->get_separator_size();
-                center =
-                    m_position->get_workarea().get_height() / 2 - (maxsize + vertical_addition) / 2;
-                y = m_position->get_workarea().get_y() + center;
-
-            } else if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::end) {
-                y = m_position->get_workarea().get_height() - maxsize;
-            }
-        }
-    }  // namespace docklight*/
-
     void PanelRender::draw_surface_indicator(std::shared_ptr<DockItemIcon>& item)
     {
         g_assert(m_cell);
@@ -219,23 +183,49 @@ namespace docklight
         m_indicator_ctx->set_operator(Cairo::Operator::OPERATOR_SOURCE);
         m_indicator_ctx->paint_with_alpha(1.0);
 
-        // draw indicators
-        m_indicator_ctx->set_line_width(2.0);
+        // TODO style here
+        //  draw indicators
+        m_indicator_ctx->set_line_width(0.5);
         // Yellow
-        m_indicator_ctx->set_source_rgba(0.980, 0.929, 0.50, 1.0);
 
-        if (item->get_childmap().size() > 0) {
+        //  auto m_theme->= Config()->get_theme();
+        //
+        // g_print("Indic %f\n", m_theme->PanelIndicator().Fill().Color::red);
+        m_indicator_ctx->set_source_rgba(m_theme->PanelIndicator().Fill().Color::red,
+                                         m_theme->PanelIndicator().Fill().Color::green,
+                                         m_theme->PanelIndicator().Fill().Color::blue,
+                                         m_theme->PanelIndicator().Fill().Color::alpha);
+
+        //  m_indicator_ctx->set_source_rgba(0.980, 0.929, 0.50, 1.0);
+        auto const indicator_type = Config()->get_indicator_type();
+
+        if (indicator_type == dock_indicator_type_t::dots) {
+            int center = (m_cell->get_width() / 2);
+
             if (item->get_childmap().size() == 1) {
-                m_indicator_ctx->rectangle(4, 0, (m_indicator->get_width()) - 8,
-                                           m_indicator->get_height() - 1);
+                m_indicator_ctx->arc(center - 7, 5, 1.6, 0, 2 * M_PI);
+            } else if (item->get_childmap().size() > 1) {
+                m_indicator_ctx->arc(center - 7 - 4, 5, 1.6, 0, 2 * M_PI);
+                m_indicator_ctx->arc(center - 7 + 4, 5, 1.6, 0, 2 * M_PI);
+            }
+        } else {
+            int hsize = m_indicator->get_height() / 4;
+            int icon_size = Config()->get_icon_size();
+            int y = m_indicator->get_height() - hsize;
 
-            } else {
-                m_indicator_ctx->rectangle(2, 0, (m_indicator->get_width() / 2) - 4,
-                                           m_indicator->get_height() - 1);
+            if (icon_size > 0 && icon_size <= 16) hsize = m_indicator->get_height() / 9;
+            if (icon_size >= 16 && icon_size <= 32) hsize = m_indicator->get_height() / 8;
+            if (icon_size >= 32 && icon_size <= 64) hsize = m_indicator->get_height() / 7;
+            if (icon_size >= 64 && icon_size <= 128) hsize = m_indicator->get_height() / 4;
 
-                m_indicator_ctx->rectangle((m_indicator->get_width() / 2) + 2, 0,
-                                           (m_indicator->get_width() / 2) - 4,
-                                           m_indicator->get_height() - 1);
+            if (item->get_childmap().size() == 1) {
+                m_indicator_ctx->rectangle(4, y, (m_indicator->get_width()) - 8, hsize);
+
+            } else if (item->get_childmap().size() > 1) {
+                m_indicator_ctx->rectangle(2, y, (m_indicator->get_width() / 2) - 4, hsize);
+
+                m_indicator_ctx->rectangle((m_indicator->get_width() / 2) + 2, y,
+                                           (m_indicator->get_width() / 2) - 4, hsize);
             }
         }
 
