@@ -2,7 +2,8 @@
 # Docklight
  Manage access to applications.
 
-![image](https://github.com/user-attachments/assets/b64b9a1d-a1cf-4f10-9e1c-b9619f81688e)
+![image](https://github.com/user-attachments/assets/7994983c-8d4f-4ace-91e8-20a88a236521)
+
 
 ## Installation
 clone this repository if you want to get the **stable** version:
