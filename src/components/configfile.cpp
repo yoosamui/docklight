@@ -64,7 +64,7 @@ namespace docklight
         ratio = values[9];
         mask = (int)values[10];
 
-        g_message("RATIO %f", ratio);  // m_theme->Panel().Ratio());
+        // g_message("Theme RED %f", fill.red);  // m_theme->Panel().Ratio());
         setlocale(LC_NUMERIC, currentLocale.c_str());
     }
 
@@ -264,19 +264,19 @@ namespace docklight
                 }
 
                 const std::string panel_indicator = get_style_item(key_file, style_name, "panel_indicator");
-                if (!panel_cell.empty()) {
+                if (!panel_indicator.empty()) {
                     get_color_from_string(panel_indicator.c_str(), fill, stroke, lineWidth, ratio, mask);
                     m_theme.set_PanelIndicator(new ColorWindow(fill, stroke, lineWidth, ratio, mask));
                 }
 
                 const std::string panel_separator = get_style_item(key_file, style_name, "panel_separator");
-                if (!panel_cell.empty()) {
+                if (!panel_separator.empty()) {
                     get_color_from_string(panel_separator.c_str(), fill, stroke, lineWidth, ratio, mask);
                     m_theme.set_PanelSeparator(new ColorWindow(fill, stroke, lineWidth, ratio, mask));
                 }
 
                 const std::string panel_drag = get_style_item(key_file, style_name, "panel_drag");
-                if (!panel_cell.empty()) {
+                if (!panel_drag.empty()) {
                     get_color_from_string(panel_drag.c_str(), fill, stroke, lineWidth, ratio, mask);
                     m_theme.set_PanelDrag(new ColorWindow(fill, stroke, lineWidth, ratio, mask));
                 }
@@ -300,9 +300,9 @@ namespace docklight
                     m_theme.set_PreviewCell(new ColorWindow(fill, stroke, lineWidth, ratio, mask));
                 }
 
-                const std::string preview_title_text =  get_style_item(key_file, style_name, "preview_title");
-                if (!preview_title_text.empty()) {
-                    get_color_from_string(preview_title_text.c_str(), fill, stroke, lineWidth,  ratio, mask);
+                const std::string preview_title =  get_style_item(key_file, style_name, "preview_title");
+                if (!preview_title.empty()) {
+                    get_color_from_string(preview_title.c_str(), fill, stroke, lineWidth,  ratio, mask);
                     m_theme.set_PreviewTitle( new ColorWindow(fill, stroke, lineWidth, ratio, mask));
                 }
 

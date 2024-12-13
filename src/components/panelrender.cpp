@@ -187,14 +187,16 @@ namespace docklight
         //  draw indicators
         m_indicator_ctx->set_line_width(0.5);
         // Yellow
-        //       m_indicator_ctx->set_source_rgba(0.980, 0.929, 0.50, 1.0);
 
         //  auto m_theme->= Config()->get_theme();
-        m_indicator_ctx->set_source_rgba(m_theme->PanelIndicator().Stroke().Color::red,
-                                         m_theme->PanelIndicator().Stroke().Color::green,
-                                         m_theme->PanelIndicator().Stroke().Color::blue,
-                                         m_theme->PanelIndicator().Stroke().Color::alpha);
+        //
+        // g_print("Indic %f\n", m_theme->PanelIndicator().Fill().Color::red);
+        m_indicator_ctx->set_source_rgba(m_theme->PanelIndicator().Fill().Color::red,
+                                         m_theme->PanelIndicator().Fill().Color::green,
+                                         m_theme->PanelIndicator().Fill().Color::blue,
+                                         m_theme->PanelIndicator().Fill().Color::alpha);
 
+        //  m_indicator_ctx->set_source_rgba(0.980, 0.929, 0.50, 1.0);
         auto const indicator_type = Config()->get_indicator_type();
 
         if (indicator_type == dock_indicator_type_t::dots) {
