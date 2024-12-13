@@ -45,7 +45,7 @@ namespace docklight
             Color m_Fill = Color(0.0, 0.50, 0.66, 0.9);
             Color m_Stroke = Color(1, 1, 1, 0);
             double m_LineWidth = 1.0;
-            double m_Ratio = 0;
+            double m_Ratio = 0.f;
             int m_Mask = 0;
         };
 
@@ -65,7 +65,7 @@ namespace docklight
             ColorWindow& Preview() const { return *m_Preview; }
             ColorWindow& PreviewGradient() const { return *m_PreviewGradient; }
             ColorWindow& PreviewCell() const { return *m_PreviewCell; }
-            ColorWindow& PreviewTitleText() const { return *m_PreviewTitleText; }
+            ColorWindow& PreviewTitle() const { return *m_PreviewTitle; }
             ColorWindow& PreviewClose() const { return *m_PreviewClose; }
             ColorWindow& Separator() const { return *m_Separator; }
 
@@ -236,18 +236,18 @@ namespace docklight
                 m_PreviewCell = cw;
             }
 
-            void set_PreviewTitleText(ColorWindow* cw)
+            void set_PreviewTitle(ColorWindow* cw)
             {
                 if (cw == nullptr) {
                     return;
                 }
 
-                if (m_PreviewTitleText != nullptr) {
-                    delete m_PreviewTitleText;
-                    m_PreviewTitleText = nullptr;
+                if (m_PreviewTitle != nullptr) {
+                    delete m_PreviewTitle;
+                    m_PreviewTitle = nullptr;
                 }
 
-                m_PreviewTitleText = cw;
+                m_PreviewTitle = cw;
             }
 
             void set_PreviewClose(ColorWindow* cw)
@@ -291,7 +291,7 @@ namespace docklight
             ColorWindow* m_Preview = new ColorWindow();
             ColorWindow* m_PreviewGradient = new ColorWindow();
             ColorWindow* m_PreviewCell = new ColorWindow();
-            ColorWindow* m_PreviewTitleText = new ColorWindow();
+            ColorWindow* m_PreviewTitle = new ColorWindow();
             ColorWindow* m_PreviewClose = new ColorWindow();
             ColorWindow* m_Separator = new ColorWindow();
         };

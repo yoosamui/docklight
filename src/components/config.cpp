@@ -52,7 +52,7 @@ namespace docklight
         //
     }
 
-    Theme Configuration::get_theme()
+    Theme& Configuration::get_theme()
     {
         return m_theme;
     }

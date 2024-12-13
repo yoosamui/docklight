@@ -69,6 +69,8 @@ namespace docklight
         Cairo::RefPtr<Cairo::Context> m_bck_ctx;
         Cairo::RefPtr<Cairo::Context> m_cell_ctx;
         Cairo::RefPtr<Cairo::Context> m_indicator_ctx;
+
+        Theme* m_theme = &Config()->get_theme();
     };
 
 }  // namespace docklight

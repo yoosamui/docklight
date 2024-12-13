@@ -31,6 +31,7 @@ namespace docklight
         m_position = Position();
         Autohide()->signal_hide().connect(sigc::mem_fun(this, &PanelRender::on_autohide_update));
 
+        //  m_theme->= Config()->get_theme();
         g_message("Create PanelRender.");
     }
 
@@ -63,15 +64,10 @@ namespace docklight
         ctx->stroke();
 #endif
 
-        auto m_theme = Config()->get_theme();
-
-        Gdk::Rectangle rect = Position()->get_window_geometry();
-        cairo::fill(ctx, m_theme.Panel(), m_theme.PanelGradient(), rect);
-        cairo::stroke(ctx, m_theme.Panel(), rect);
-
-        cairo::rounded_rectangle(ctx, 0, 0, m_background->get_width(), m_background->get_height(),
-                                 6.0);
-        ctx->fill();
+        Gdk::Rectangle rect =
+            Gdk::Rectangle(0, 0, m_background->get_width(), m_background->get_height());
+        cairo::fill(ctx, m_theme->Panel(), m_theme->PanelGradient(), rect);
+        cairo::stroke(ctx, m_theme->Panel(), rect);
     }
 
     void PanelRender::create_surface_cell()
@@ -193,11 +189,11 @@ namespace docklight
         // Yellow
         //       m_indicator_ctx->set_source_rgba(0.980, 0.929, 0.50, 1.0);
 
-        auto m_theme = Config()->get_theme();
-        m_indicator_ctx->set_source_rgba(m_theme.PanelIndicator().Stroke().Color::red,
-                                         m_theme.PanelIndicator().Stroke().Color::green,
-                                         m_theme.PanelIndicator().Stroke().Color::blue,
-                                         m_theme.PanelIndicator().Stroke().Color::alpha);
+        //  auto m_theme->= Config()->get_theme();
+        m_indicator_ctx->set_source_rgba(m_theme->PanelIndicator().Stroke().Color::red,
+                                         m_theme->PanelIndicator().Stroke().Color::green,
+                                         m_theme->PanelIndicator().Stroke().Color::blue,
+                                         m_theme->PanelIndicator().Stroke().Color::alpha);
 
         auto const indicator_type = Config()->get_indicator_type();
 

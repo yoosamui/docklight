@@ -64,6 +64,7 @@ namespace docklight
         ratio = values[9];
         mask = (int)values[10];
 
+        g_message("RATIO %f", ratio);  // m_theme->Panel().Ratio());
         setlocale(LC_NUMERIC, currentLocale.c_str());
     }
 
@@ -78,7 +79,7 @@ namespace docklight
         m_theme.set_PanelTitle(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 1, 1, 1.0), 1.0, 0, 0));
         m_theme.set_Preview(new ColorWindow());
         m_theme.set_PreviewCell(new ColorWindow(Color(1, 1, 1, 0.2), Color(1, 1, 1, 1), 1, 3, 0));
-        m_theme.set_PreviewTitleText(new ColorWindow(Color(1,1,1,0.4), Color(1, 1, 1, 1), 0, 0, 0));
+        m_theme.set_PreviewTitle(new ColorWindow(Color(1,1,1,0.4), Color(1, 1, 1, 1), 0, 0, 0));
         m_theme.set_PreviewClose(new ColorWindow(Color(0.854, 0.062, 0.133, 1), Color(1, 1, 1, 1), 2.0, 0, 0));
         // clang-format on
     }
@@ -222,7 +223,7 @@ namespace docklight
             }
             // styles
             std::string style_name = this->get_style(m_key_file);
-
+            g_message("Theme Name:%s", style_name.c_str());
             if (!style_name.empty()) {
                 auto key_file = m_key_file;
                 Color fill;
@@ -242,6 +243,18 @@ namespace docklight
                 if (!panel_gradient.empty()) {
                     get_color_from_string(panel_gradient.c_str(), fill, stroke, lineWidth, ratio, mask);
                     m_theme.set_PanelGradient(new ColorWindow(fill, stroke, lineWidth, ratio, mask));
+                }
+
+                const std::string panel_title = get_style_item(key_file, style_name, "panel_title");
+                if (!panel_title.empty()) {
+                    get_color_from_string(panel_title.c_str(), fill, stroke, lineWidth, ratio, mask);
+                    m_theme.set_PanelTitle(new ColorWindow(fill, stroke, lineWidth, ratio, mask));
+                }
+
+                const std::string panel_title_text = get_style_item(key_file, style_name, "panel_title_text");
+                if (!panel_title_text.empty()) {
+                    get_color_from_string(panel_title_text.c_str(), fill, stroke, lineWidth, ratio, mask);
+                    m_theme.set_PanelTitleText(new ColorWindow(fill, stroke, lineWidth, ratio, mask));
                 }
 
                 const std::string panel_cell = get_style_item(key_file, style_name, "panel_cell");
@@ -287,10 +300,10 @@ namespace docklight
                     m_theme.set_PreviewCell(new ColorWindow(fill, stroke, lineWidth, ratio, mask));
                 }
 
-                const std::string preview_title_text =  get_style_item(key_file, style_name, "preview_title_text");
+                const std::string preview_title_text =  get_style_item(key_file, style_name, "preview_title");
                 if (!preview_title_text.empty()) {
                     get_color_from_string(preview_title_text.c_str(), fill, stroke, lineWidth,  ratio, mask);
-                    m_theme.set_PreviewTitleText( new ColorWindow(fill, stroke, lineWidth, ratio, mask));
+                    m_theme.set_PreviewTitle( new ColorWindow(fill, stroke, lineWidth, ratio, mask));
                 }
 
                 const std::string preview_close =  get_style_item(key_file, style_name, "preview_close");

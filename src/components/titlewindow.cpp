@@ -80,13 +80,24 @@ namespace docklight
     }
     bool TitleWindow::on_draw(const Cairo::RefPtr<Cairo::Context> &cr)
     {
-        // TODO theme
-        cr->paint();
+        auto m_theme = Config()->get_theme();
+
+        Gdk::Rectangle rect = Gdk::Rectangle(0, 0, this->get_width(), this->get_height());
+        cairo::fill(cr, m_theme.PanelTitle(), m_theme.PanelTitle(), rect);
+        cr->fill();
 
         Glib::RefPtr<Pango::Layout> layout = m_Label.get_layout();
         pango_layout_set_alignment(layout->gobj(), PANGO_ALIGN_CENTER);
 
-        cr->set_source_rgba(1, 1, 1, 1);
+        //        / cairo::stroke(cr, m_theme.PanelTitleText(), rect);
+        // cr->stroke();
+        cr->set_source_rgba(m_theme.PanelTitleText().Stroke().Color::red,
+                            m_theme.PanelTitleText().Stroke().Color::green,
+                            m_theme.PanelTitleText().Stroke().Color::blue,
+                            m_theme.PanelTitleText().Stroke().Color::alpha);
+
+        cr->stroke();
+
         cr->move_to(6, 6);
         layout->show_in_cairo_context(cr);
         cr->reset_clip();
