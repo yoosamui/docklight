@@ -74,7 +74,7 @@ namespace docklight
         m_theme.set_Panel(new ColorWindow(Color(0.549, 0.572, 0.674,1.0),Color(0, 0, 0, 0), 0, 6, 0));
         m_theme.set_PanelGradient(new ColorWindow(Color(0.074, 0.098, 0.109,1.0),Color(0, 0, 0, 0), 3, 0.1, 0));
         m_theme.set_PanelIndicator(new ColorWindow(Color(0, 0.50, 0.66, 1),Color(1, 1, 1, 1), 0.5, 3, 0));
-        m_theme.set_PanelIndicator(new ColorWindow(Color(1,1,0,1), Color(0, 0, 0, 1), 1, 0, 0));
+        m_theme.set_PanelIndicator(new ColorWindow(Color( 1,1,0,1), Color(0, 0, 0, 1), 1, 0, 0));
         m_theme.set_PanelTitle(new ColorWindow(Color(0,0,0,1),Color(1, 1, 1, 1), 1, 6, 0));
         m_theme.set_Preview(new ColorWindow(Color(0.549, 0.572, 0.674,1.0),Color(0, 0,0, 0), 0, 6, 0));
         m_theme.set_PreviewTitle(new ColorWindow(Color(0.549, 0.572, 0.674,1.0), Color(1, 1, 1, 1), 0, 3, 0));

@@ -69,9 +69,6 @@ namespace docklight
         g_signal_connect(wnckscreen, "active_window_changed",
                          G_CALLBACK(Panel::on_active_window_changed), nullptr);
 
-        // g_signal_connect(wnckscreen, "active_window_changed",
-        // G_CALLBACK(Panel::on_active_window_changed), nullptr);
-
         m_bck_thread = std::shared_ptr<std::thread>(new std::thread(&Panel::thread_func, this));
     }
 
@@ -136,9 +133,10 @@ namespace docklight
     {
         m_mouse_enter = true;
 
-        if (Config()->is_autohide()) Autohide()->set_autohide_allow(false);
+        if (Config()->is_autohide()) Autohide()->set_hide_allow(false);
 
         if (!Autohide()->get_visible()) {
+            if (Config()->is_intelihide()) return true;
             int x = 0;
             int y = 0;
             // auto winrect = Position()->get_window_geometry();
@@ -169,7 +167,7 @@ namespace docklight
         show_current_title(false);
 
         if (!m_context_menu_active && !m_preview->get_visible() && !m_drag_drop_starts) {
-            Autohide()->set_autohide_allow(true);
+            Autohide()->set_hide_allow(true);
             return true;
         }
 
@@ -401,9 +399,14 @@ namespace docklight
 
         m_home_menu.hide();
         m_item_menu.hide();
+
+        m_transient = true;
     }
 
-    void Panel::on_autohide_after_hide(int tag) {}
+    void Panel::on_autohide_after_hide(int tag)
+    {
+        m_transient = false;
+    }
 
     bool Panel::on_motion_notify_event(GdkEventMotion* event)
     {
@@ -435,7 +438,7 @@ namespace docklight
         }
 
         // show the title window
-        if (!m_drag_drop_starts && !m_preview_open) show_current_title(true);
+        if (!m_transient && !m_drag_drop_starts && !m_preview_open) show_current_title(true);
 
         if (m_dockitem_index != m_last_index) {
             m_last_index = m_dockitem_index;

@@ -50,7 +50,7 @@ namespace docklight
         bool get_visible() const;
 
         bool get_autohide_allow() const;
-        void set_autohide_allow(bool allow);
+        void set_hide_allow(bool allow);
 
         type_signal_hide signal_hide();
         type_signal_before_hide signal_before_hide();
@@ -79,13 +79,13 @@ namespace docklight
         Glib::Timer m_autohide_timer;
 
         const int m_frame_rate = 60;
-        const float m_hide_delay = 25.0f;
-        const float m_show_delay = 5.0f;
+        const float m_hide_delay = 40.0f;
+        const float m_show_delay = 10.0f;
 
         bool m_visible = true;
         bool m_intersects = false;
         bool m_last_intersects = false;
-        bool m_autohide_allow = true;
+        bool m_hide_allow = true;
 
         type_signal_hide m_signal_hide;
         type_signal_before_hide m_signal_before_hide;

@@ -112,6 +112,7 @@ namespace docklight
 
         guint m_preview_open_index = 0;
 
+        bool m_transient = false;
         bool m_preview_open = false;
         bool m_mouse_move = false;
         bool m_mouse_press = false;

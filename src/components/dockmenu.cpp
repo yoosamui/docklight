@@ -117,7 +117,7 @@ namespace docklight
         m_context_menu_active = false;
 
         if (Config()->is_autohide()) {
-            Autohide()->set_autohide_allow(true);
+            Autohide()->set_hide_allow(true);
         }
     }
 
