@@ -24,6 +24,14 @@ autopoint \
 intltool \
 libbamf3-dev \
 bamfdaemon \
+libxtst-dev \
+libxss-dev \
+libxtst6-dbg \
+libxext6-dbg \
+libxss1-dbg \
+libxcomposite-dev \
+libxdamage-dev \
+libxrender-dev \
 gnupg -y
 
 echo "done."

@@ -71,6 +71,8 @@ namespace docklight
         void read_images();
         void on_container_updated(window_action_t action, glong xid);
 
+        void thread_func();
+
       private:
         Glib::RefPtr<AnimBoomWindow> m_anim;
 
@@ -85,6 +87,7 @@ namespace docklight
 
         // std::vector<std::pair<gint, std::shared_ptr<DockItemIcon>>> m_windows;
         std::shared_ptr<DockItemIcon> m_dockitem;
+        std::shared_ptr<std::thread> m_bck_thread;
 
         //   WnckWindow* m_delete_pending_window = nullptr;
         std::mutex m_mutex;
@@ -95,6 +98,7 @@ namespace docklight
         int m_items = 0;
         bool m_block_leave = false;
         bool m_visible = false;
+        bool m_anim_start = false;
         bool m_block_draw = false;
         int m_x = 0;
         int m_y = 0;

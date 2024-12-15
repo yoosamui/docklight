@@ -63,10 +63,13 @@ namespace docklight
 
         m_anim = Glib::RefPtr<AnimBoomWindow>(new AnimBoomWindow());
         m_size = Config()->get_preview_area();
+        m_bck_thread =
+            std::shared_ptr<std::thread>(new std::thread(&PanelPreview::thread_func, this));
     }
 
     PanelPreview::~PanelPreview()
     {
+        m_bck_thread->detach();
         m_sigc_updated.disconnect();
         connect_signal(false);
         g_message(MSG_FREE_OBJECT, "PanelPreview");
@@ -79,6 +82,22 @@ namespace docklight
                 sigc::mem_fun(this, &PanelPreview::on_timeout_draw), 2000);
         } else {
             m_sigc_connection.disconnect();
+        }
+    }
+
+    void PanelPreview::thread_func()
+    {
+        while (true) {
+            if (m_anim_start) {
+                m_anim_start = false;
+                // TODO: move to animation
+                int x = 0;
+                int y = 0;
+                system::get_mouse_position(x, y);
+                m_anim->show_at(x, y);
+            }
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
     }
 
@@ -170,10 +189,11 @@ namespace docklight
 
             if (!found) return;
 
-            int x = 0;
+            m_anim_start = true;
+            /*int x = 0;
             int y = 0;
             system::get_mouse_position(x, y);
-            m_anim->show_at(x, y);
+            m_anim->show_at(x, y);*/
 
             read_images();
 
