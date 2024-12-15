@@ -29,6 +29,7 @@ libxss-dev \
 libxcomposite-dev \
 libxdamage-dev \
 libxrender-dev \
+libxt-dev \
 gnupg -y
 
 echo "done."
