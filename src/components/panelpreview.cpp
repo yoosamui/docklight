@@ -299,7 +299,7 @@ namespace docklight
         if (m_block_leave) return true;
 
         if (Config()->is_autohide()) {
-            Autohide()->set_autohide_allow(true);
+            Autohide()->set_hide_allow(true);
         }
 
         hide_now();
@@ -558,7 +558,7 @@ namespace docklight
 
         // get the text dimensions (it updates the variables -- by reference)
         layout->get_pixel_size(text_width, text_height);
-        cr->move_to(x + 8, (Config()->get_preview_area_margin() / 2) - 9);
+        cr->move_to(x + 8, (Config()->get_preview_area_margin() / 2) - 10);
 
         cr->set_source_rgba(m_theme->PreviewTitle().Stroke().Color::red,
                             m_theme->PreviewTitle().Stroke().Color::green,

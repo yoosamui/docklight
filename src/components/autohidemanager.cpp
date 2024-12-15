@@ -145,7 +145,7 @@ namespace docklight
         m_intersects = is_window_intersect(m_active_window);
 
         if (Config()->is_autohide()) {
-            if (m_autohide_allow && (int)m_visible && m_autohide_timer.elapsed() > 3) {
+            if (m_hide_allow && (int)m_visible && m_autohide_timer.elapsed() > 3) {
                 m_autohide_timer.stop();
                 hide_now();
             }
@@ -160,7 +160,7 @@ namespace docklight
             Position()->window_intersects(m_intersects);
 
             if (m_intersects) {
-                hide_now();
+                if (m_hide_allow) hide_now();
             } else {
                 show_now();
             }
@@ -257,16 +257,18 @@ namespace docklight
 
     bool AutohideManager::get_autohide_allow() const
     {
-        return m_autohide_allow;
+        return m_hide_allow;
     }
 
-    void AutohideManager::set_autohide_allow(bool allow)
+    void AutohideManager::set_hide_allow(bool allow)
     {
+        if (allow == m_hide_allow) return;
+
         m_autohide_timer.reset();
         m_autohide_timer.stop();
 
         if (allow) m_autohide_timer.start();
 
-        m_autohide_allow = allow;
+        m_hide_allow = allow;
     }
 }  // namespace docklight
