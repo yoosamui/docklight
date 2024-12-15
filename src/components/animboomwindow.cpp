@@ -117,6 +117,7 @@ namespace docklight
         }
 
         hide();
+        connect_signal(false);
         return true;
     }
     void AnimBoomWindow::show_at(int x, int y)
@@ -133,7 +134,8 @@ namespace docklight
     bool AnimBoomWindow::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     {
         // Replace destination layer (bounded)
-        cr->set_operator(Cairo::Operator::OPERATOR_SOURCE);
+        // cr->set_operator(Cairo::Operator::OPERATOR_SOURCE);
+        //        cr->set_operator(Cairo::Operator::OPERATOR_CLEAR);
 
         int ypos = -m_size * (int)(m_frames * (m_frame_time - m_start_time) / DF_EXPLODES_TIMEMAX);
         Gdk::Cairo::set_source_pixbuf(cr, m_image, 0, ypos);
