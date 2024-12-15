@@ -37,10 +37,10 @@ docklight is now installed on your system and will start after next login.
 Start it manually with:
 
 ```bash
-$ docklight
+$ docklight5
 or
 with parameters like so:
-$ docklight '-l left '
+$ docklight5 '-l left '
 ```
 
 You can start docklight with the following parameters:
