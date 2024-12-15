@@ -262,6 +262,8 @@ namespace docklight
 
     void AutohideManager::set_hide_allow(bool allow)
     {
+        if (allow == m_hide_allow) return;
+
         m_autohide_timer.reset();
         m_autohide_timer.stop();
 

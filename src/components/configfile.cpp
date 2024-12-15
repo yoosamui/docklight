@@ -208,7 +208,7 @@ namespace docklight
             // separator margin
             // m_separator_margin = read_separator_margin();
             // if (m_separator_margin < 0 || m_separator_margin > 20) {
-            // m_separator_margin = DEF_ICON_SIZE;
+            // m_separator_margin = DEF_SEPARATOR_MARGIN;
             //}
 
             m_anchor_margin = read_anchor_margin();

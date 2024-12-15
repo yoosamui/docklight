@@ -135,20 +135,20 @@ namespace docklight
 
         if (Config()->is_autohide()) Autohide()->set_hide_allow(false);
 
-        if (!Autohide()->get_visible()) {
-            if (Config()->is_intelihide()) return true;
-            int x = 0;
-            int y = 0;
-            // auto winrect = Position()->get_window_geometry();
+        // if (!Autohide()->get_visible()) {
+        // if (Config()->is_intelihide()) return true;
+        ////  int x = 0;
+        //// .. int y = 0;
+        //// auto winrect = Position()->get_window_geometry();
 
-            if (!system::get_mouse_position(x, y)) return true;
+        ////  if (!system::get_mouse_position(x, y)) return true;
 
-            //  if (y > winrect.get_y()) {
-            Autohide()->force_show();
-            //  }
+        ////  if (y > winrect.get_y()) {
+        // Autohide()->force_show();
+        ////  }
 
-            return true;
-        }
+        // return true;
+        //}
 
         m_sigc_draw =
             Glib::signal_timeout().connect(sigc::mem_fun(this, &Panel::on_timeout_draw), 1000 / 2);
@@ -406,15 +406,51 @@ namespace docklight
     void Panel::on_autohide_after_hide(int tag)
     {
         m_transient = false;
+        m_force_show = true;
     }
 
     bool Panel::on_motion_notify_event(GdkEventMotion* event)
     {
-        if (!Autohide()->get_visible()) {
+        get_dockitem_index(event->x, event->y);
+
+        if (Config()->is_intelihide()) return true;
+
+        if (m_force_show && !m_transient && !Autohide()->get_visible() && Config()->is_autohide()) {
+            auto area = Config()->get_dock_area();
+
+            if (m_config->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+                if (Config()->get_dock_location() == dock_location_t::top) {
+                    if (event->y < 2) {
+                        m_force_show = false;
+                        Autohide()->force_show();
+                    }
+                } else {
+                    if (event->y > area - 2) {
+                        m_force_show = false;
+                        Autohide()->force_show();
+                    }
+                }
+
+            } else {
+                if (Config()->get_dock_location() == dock_location_t::left) {
+                    if (event->x < 2) {
+                        m_force_show = false;
+                        Autohide()->force_show();
+                    }
+                } else {
+                    if (event->x > area - 2) {
+                        m_force_show = false;
+                        Autohide()->force_show();
+                    }
+                }
+            }
+
             return true;
         }
 
-        get_dockitem_index(event->x, event->y);
+        if (m_transient || !Autohide()->get_visible()) {
+            return true;
+        }
 
         if (m_mouse_button == 1 && m_dad && m_drag_drop_starts) {
             int x = 0;
@@ -451,7 +487,7 @@ namespace docklight
 
     bool Panel::on_button_press_event(GdkEventButton* event)
     {
-        if (!Autohide()->get_visible()) return true;
+        if (m_transient || !Autohide()->get_visible()) return true;
         if ((event->type != GDK_BUTTON_PRESS)) return false;
         get_dockitem_index(event->x, event->y);
 
@@ -481,7 +517,7 @@ namespace docklight
 
     bool Panel::on_button_release_event(GdkEventButton* event)
     {
-        if (!Autohide()->get_visible()) return true;
+        if (m_transient || !Autohide()->get_visible()) return true;
         if ((event->type != GDK_BUTTON_RELEASE)) return false;
 
         get_dockitem_index(event->x, event->y);
