@@ -187,8 +187,6 @@ namespace docklight
     {
         const std::lock_guard<std::mutex> lock(m_mutex);
 
-        Animation()->start("explode");
-
         if (m_window_images.count(xid)) {
             // Throws nothing.
             m_window_images.erase(xid);
