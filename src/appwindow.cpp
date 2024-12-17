@@ -41,6 +41,7 @@ namespace docklight
         m_observer = create_observer();
         m_position = create_position(this);
         m_autohide = create_autohide();
+        m_animation = create_animation_manager();
 
         m_panel = new Panel();
 

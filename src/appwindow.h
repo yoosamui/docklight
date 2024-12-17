@@ -12,7 +12,7 @@
 #include "components/appobserver.h"
 #include "components/dockitemprovider.h"
 #include "components/compositewindow.h"
-#include "components/animboomwindow.h"
+#include "components/animation.h"
 #include "components/autohidemanager.h"
 #include "config.h"
 // clang-format on
@@ -35,6 +35,7 @@ namespace docklight
         Glib::RefPtr<PositionManager> m_position;
         Glib::RefPtr<DockItemProvider> m_provider;
         Glib::RefPtr<AutohideManager> m_autohide;
+        Glib::RefPtr<AnimationManager> m_animation;
 
         //    bool on_timeout_draw();
         bool on_button_press_event(GdkEventButton* event) override;

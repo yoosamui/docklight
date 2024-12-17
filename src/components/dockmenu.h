@@ -23,7 +23,6 @@
 #include <gtkmm/checkmenuitem.h>
 #include <gtkmm/menu.h>
 #include <gtkmm/separatormenuitem.h>
-#include "components/animboomwindow.h"
 #include "utils/wnck.h"
 #include "components/position.h"
 #include "components/panelbase.h"
@@ -34,8 +33,6 @@ namespace docklight
 {
     class DockMenu : public PanelBase
     {
-        Glib::RefPtr<AnimBoomWindow> m_anim;
-
       public:
         DockMenu();
 
