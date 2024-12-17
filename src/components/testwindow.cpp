@@ -19,7 +19,7 @@
 #include <iostream>
 
 #include <gdkmm/general.h>  // set_source_pixbuf()
-#include "animboomwindow.h"
+#include "testwindow.h"
 #include "utils/system.h"
 #include "translations.h"
 // clang-format on
@@ -27,9 +27,10 @@
 namespace docklight
 {
 
-    AnimBoomWindow::AnimBoomWindow() : Gtk::Window(Gtk::WindowType::WINDOW_POPUP)
+    TestWindow::TestWindow()
+    //: Gtk::Window(Gtk::WindowType::WINDOW_POPUP)
     {
-        GdkScreen* screen;
+        /*GdkScreen* screen;
         GdkVisual* visual;
 
         gtk_widget_set_app_paintable(GTK_WIDGET(gobj()), TRUE);
@@ -38,13 +39,15 @@ namespace docklight
 
         if (visual != NULL && gdk_screen_is_composited(screen)) {
             gtk_widget_set_visual(GTK_WIDGET(gobj()), visual);
-        }
+        }*/
+        set_decorated(true);
 
         set_resizable(true);
-        set_skip_taskbar_hint(true);
-        set_skip_pager_hint(true);
+        // set_skip_taskbar_hint(true);
+        // set_skip_pager_hint(true);
         set_keep_above(true);
 
+        set_size_request(400, 400);
         // set_resizable(true);
         // set_skip_taskbar_hint(true);
         // set_skip_pager_hint(true);
@@ -56,38 +59,42 @@ namespace docklight
         // set_can_focus(false);
         // set_type_hint(Gdk::WindowTypeHint::WINDOW_TYPE_HINT_DOCK);
 
-        set_keep_above(true);
+        // set_keep_above(true);
 
-        auto filename = "data/images/explodes.svg";
+        //  m_testdraw = new TestDraw();
+        //    add(m_t2);
 
-        try {
-            m_image = Gdk::Pixbuf::create_from_file(filename);
-            m_size = m_image->get_width();
-            m_frames = std::floor(m_image->get_height() / m_size);
-        } catch (const std::exception& ex) {
-            g_critical("Exception 'AnimBoomWindow'. :%s", ex.what());
-        } catch (...) {
-            std::exception_ptr p = std::current_exception();
-            auto message =
-                "Exception 'AnimBoomWindow'. Unable to load the desired image: %s, type: %s";
-            g_critical(message, filename, p ? p.__cxa_exception_type()->name() : "unknown type");
-        }
+        show_all();
 
-        m_size = m_image->get_width();
-        set_size_request(m_size, m_size);
+        // m_widget = GTK_WIDGET(m_t2.gobj());
+        m_widget = GTK_WIDGET(this->gobj());
+        GdkWindow* gdk_window = gtk_widget_get_window(m_widget);
+        gulong xid = gdk_x11_window_get_xid(gdk_window);
+
+        system::xdraw_window_image2(xid);
+
+        g_print("-->%lu\n", xid);
+        bool has_alpha = false;
+        // system::xget_render_picture_attributes(xid);
+        //         system::xdraw_window_image(m_widget, xid, 200, 200);
+        //  Gdk::Rectangle r = system::xget_window_attributes(xid, has_alpha);
+        ///
+        // m_widget = GTK_WIDGET(this->gobj());
+
+        //        system::XDrawOnWidget(m_widget);
     }
 
-    AnimBoomWindow::~AnimBoomWindow()
+    TestWindow::~TestWindow()
     {
         connect_signal(false);
-        g_message(MSG_FREE_OBJECT, "AnimBoomWindow");
+        g_message(MSG_FREE_OBJECT, "TestWindow");
     }
 
-    void AnimBoomWindow::connect_signal(bool connect)
+    void TestWindow::connect_signal(bool connect)
     {
         if (connect) {
             m_sigc_connection = Glib::signal_timeout().connect(
-                sigc::mem_fun(this, &AnimBoomWindow::on_timeout_draw), DF_EXPLODES_FRAMERATE);
+                sigc::mem_fun(this, &TestWindow::on_timeout_draw), DF_EXPLODES_FRAMERATE);
         } else {
             m_sigc_connection.disconnect();
         }
@@ -107,7 +114,7 @@ namespace docklight
      Just don’t write code that crashes if not.
      */
     // set_keep_above();
-    bool AnimBoomWindow::on_timeout_draw()
+    bool TestWindow::on_timeout_draw()
 
     {
         m_frame_time = g_get_real_time();
@@ -117,10 +124,9 @@ namespace docklight
         }
 
         hide();
-        connect_signal(false);
         return true;
     }
-    void AnimBoomWindow::show_at(int x, int y)
+    void TestWindow::show_at(int x, int y)
     {
         m_start_time = g_get_real_time();
         m_frame_time = m_start_time;
@@ -131,16 +137,15 @@ namespace docklight
         move(x - (m_size / 2), y - (m_size / 2));
     }
 
-    bool AnimBoomWindow::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
+    /*bool TestWindow::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     {
         // Replace destination layer (bounded)
-        // cr->set_operator(Cairo::Operator::OPERATOR_SOURCE);
-        //        cr->set_operator(Cairo::Operator::OPERATOR_CLEAR);
+        cr->set_operator(Cairo::Operator::OPERATOR_SOURCE);
 
-        int ypos = -m_size * (int)(m_frames * (m_frame_time - m_start_time) / DF_EXPLODES_TIMEMAX);
-        Gdk::Cairo::set_source_pixbuf(cr, m_image, 0, ypos);
+        //    int ypos = -m_size * (int)(m_frames * (m_frame_time - m_start_time) /
+        //    DF_EXPLODES_TIMEMAX); Gdk::Cairo::set_source_pixbuf(cr, m_image, 0, ypos);
         cr->paint();
 
         return false;
-    }
+    }*/
 }  // namespace docklight

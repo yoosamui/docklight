@@ -22,14 +22,14 @@
 #include <gtkmm/drawingarea.h>
 #include <glibmm/timer.h>
 #include <math.h>
-
+#include <gdkmm/rectangle.h>
 #include "components/config.h"
 
 #include "utils/wnck.h"
 #include "components/dockitemicon.h"
 #include "dockitemprovider.h"
 #include "components/position.h"
-#include "components/dockrender.h"
+#include "components/panelrender.h"
 
 #include <gdk/gdk.h>
 #include <gtkmm/image.h>
@@ -38,13 +38,15 @@
 
 #include "components/animboomwindow.h"
 #include "components/dadwindow.h"
+//#include "components/panelbase.h"
 #include "components/panelpreview.h"
 #include "components/titlewindow.h"
+
 // clang-format on
 
 namespace docklight
 {
-    class Panel : public DockRender
+    class Panel : public PanelRender
     {
       public:
         Panel();
@@ -70,6 +72,9 @@ namespace docklight
         bool on_motion_notify_event(GdkEventMotion* event);
         void on_container_updated(window_action_t action, int index);
 
+        void on_autohide_before_hide(int tag);
+        void on_autohide_after_hide(int tag);
+
         bool on_timeout_draw();
 
         bool on_enter_notify_event(GdkEventCrossing* crossing_event) override;
@@ -82,6 +87,13 @@ namespace docklight
         static void on_active_window_changed(WnckScreen* screen,
                                              WnckWindow* previously_active_window,
                                              gpointer user_data);
+
+        // static void on_state_changed(WnckWindow* window, WnckWindowState changed_mask,
+        // WnckWindowState new_state, gpointer user_data);
+
+        // static void on_actions_changed(WnckWindow* window, WnckWindowActions changed_mask,
+        // WnckWindowActions new_state, gpointer user_data);
+
         void thread_func();
         void show_current_title(bool show);
         void drag_drop(bool start);
@@ -100,9 +112,11 @@ namespace docklight
 
         guint m_preview_open_index = 0;
 
+        bool m_transient = false;
         bool m_preview_open = false;
         bool m_mouse_move = false;
         bool m_mouse_press = false;
+        bool m_force_show = false;
 
         float m_mouseclickEventTime = 0.f;
 

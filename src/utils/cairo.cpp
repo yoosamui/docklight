@@ -43,12 +43,12 @@ namespace docklight
             cr->arc(x + radius, y + radius, radius, M_PI, M_PI * 1.5);
         }
 
-        /*void stroke(const Cairo::RefPtr<Cairo::Context>& cr, const ColorWindow& solid_style,
+        void stroke(const Cairo::RefPtr<Cairo::Context>& cr, const ColorWindow& solid_style,
                     const Gdk::Rectangle& rect)
         {
             if (solid_style.Stroke().Color::alpha != 0.0) {
-                cairo_util::rounded_rectangle(cr, rect.get_x(), rect.get_y(), rect.get_width(),
-                                              rect.get_height(), solid_style.Ratio());
+                rounded_rectangle(cr, rect.get_x(), rect.get_y(), rect.get_width(),
+                                  rect.get_height(), solid_style.Ratio());
 
                 cr->set_source_rgba(
                     solid_style.Stroke().Color::red, solid_style.Stroke().Color::green,
@@ -73,8 +73,8 @@ namespace docklight
                 return;
             }
 
-            cairo_util::rounded_rectangle(cr, rect.get_x(), rect.get_y(), rect.get_width(),
-                                          rect.get_height(), solid_style.Ratio());
+            rounded_rectangle(cr, rect.get_x(), rect.get_y(), rect.get_width(), rect.get_height(),
+                              solid_style.Ratio());
             // instance
             cairo_pattern_t* pattern = nullptr;
 
@@ -82,14 +82,14 @@ namespace docklight
             double base_offset = gradient_style.Ratio();
             if (base_offset > 0.f) {
                 // get dock location
-                auto const location = config::get_dock_location();
+                auto const location = Config()->get_dock_location();
 
                 // gradient directions
                 // 0 = left to right, 1 = right to left, 2 = top to bottom, 3 = bottom to top
                 auto const gradient_direction = (int)gradient_style.LineWidth();
                 // handle dock orientation
                 //
-                if (config::get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+                if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
                     switch (gradient_direction) {
                         case 1:
                             pattern = cairo_pattern_create_linear(rect.get_width(), rect.get_y(),
@@ -182,7 +182,7 @@ namespace docklight
             if (pattern) {
                 cairo_pattern_destroy(pattern);
             }
-        }*/
+        }
 
     }  // namespace cairo
 }  // namespace docklight

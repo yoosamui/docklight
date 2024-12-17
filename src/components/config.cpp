@@ -52,6 +52,11 @@ namespace docklight
         //
     }
 
+    Theme& Configuration::get_theme()
+    {
+        return m_theme;
+    }
+
     const Glib::ustring& Configuration::get_monitor_name() const
     {
         return m_monitor_name;
@@ -213,17 +218,17 @@ namespace docklight
 
     bool Configuration::is_autohide_none() const
     {
-        return m_autohide_type == dock_autohide_type_t::none;
+        return m_autohide_mode == dock_autohide_type_t::none;
     }
 
     bool Configuration::is_autohide() const
     {
-        return m_autohide_type == dock_autohide_type_t::autohide;
+        return m_autohide_mode == dock_autohide_type_t::autohide;
     }
 
     bool Configuration::is_intelihide() const
     {
-        return m_autohide_type == dock_autohide_type_t::intelihide;
+        return m_autohide_mode == dock_autohide_type_t::intelihide;
     }
 
     void Configuration::set_arguments(

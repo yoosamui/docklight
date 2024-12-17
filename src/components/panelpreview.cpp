@@ -59,9 +59,7 @@ namespace docklight
                     Gdk::POINTER_MOTION_MASK
                    );
         // clang-format on
-        //
 
-        m_anim = Glib::RefPtr<AnimBoomWindow>(new AnimBoomWindow());
         m_size = Config()->get_preview_area();
     }
 
@@ -69,6 +67,7 @@ namespace docklight
     {
         m_sigc_updated.disconnect();
         connect_signal(false);
+
         g_message(MSG_FREE_OBJECT, "PanelPreview");
     }
 
@@ -81,6 +80,22 @@ namespace docklight
             m_sigc_connection.disconnect();
         }
     }
+
+    /*void PanelPreview::thread_func()
+    {
+        while (true) {
+            if (m_anim_start) {
+                m_anim_start = false;
+                // TODO: move to animation
+                int x = 0;
+                int y = 0;
+                system::get_mouse_position(x, y);
+                m_anim->show_at(x, y);
+            }
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
+    }*/
 
     bool PanelPreview::on_timeout_draw()
     {
@@ -118,7 +133,9 @@ namespace docklight
                     pixbuf::get_window_image(xid, m_image, size);
                 }
 
-                if (window && !wnck_window_is_minimized(window) && !wnck_window_is_pinned(window) &&
+                if (window &&
+                    (!wnck_window_is_minimized(window) && !wnck_window_is_pinned(window) &&
+                     !wnck_window_is_sticky(window)) &&
                     wnck::is_window_on_current_desktop(window)) {
                     //
                     pixbuf::get_window_image(xid, m_image, size);
@@ -170,15 +187,16 @@ namespace docklight
 
             if (!found) return;
 
-            int x = 0;
-            int y = 0;
-            system::get_mouse_position(x, y);
-            m_anim->show_at(x, y);
-
             read_images();
 
             int size = m_dockitem->get_childmap().size();
+            m_items = size * m_size;
             if (!size) {
+                if (Config()->is_autohide()) {
+                    Autohide()->set_hide_allow(true);
+                }
+
+                this->hide_now();
                 this->close();
                 return;
             }
@@ -214,6 +232,8 @@ namespace docklight
         Position()->get_preview_position(m_dockitem_index, xx, yy, size, area);
 
         size = dockitem->get_childmap().size();
+
+        m_items = size * m_size;
 
         resize(m_size * size, m_size);
         move(xx, yy);
@@ -277,7 +297,6 @@ namespace docklight
         m_sigc_updated.disconnect();
         m_sigc_connection.disconnect();
 
-        connect_signal(false);
         m_x = m_y = 0;
         m_current_images.clear();
         m_visible = false;
@@ -295,6 +314,10 @@ namespace docklight
     {
         if (m_block_leave) return true;
 
+        if (Config()->is_autohide()) {
+            Autohide()->set_hide_allow(true);
+        }
+
         hide_now();
         return true;
     }
@@ -302,6 +325,8 @@ namespace docklight
     bool PanelPreview::on_button_press_event(GdkEventButton* event)
     {
         if ((event->type != GDK_BUTTON_PRESS)) return false;
+
+        get_dockpreview_index(event->x, event->y);
 
         auto size = m_current_images.size();
         if (!size) return true;
@@ -336,7 +361,7 @@ namespace docklight
 
     bool PanelPreview::on_button_release_event(GdkEventButton* event)
     {
-        //
+        get_dockpreview_index(event->x, event->y);
         return true;
     }
 
@@ -398,54 +423,80 @@ namespace docklight
         return m_dockpreview_index;
     }
 
+    guint PanelPreview::get_size()
+    {
+        return m_items;
+    }
     bool PanelPreview::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     {
         if (m_block_draw) return true;
 
-        cr->set_source_rgba(0.266, 0.309, 0.361, 1.0);
+        cr->set_source_rgba(0, 0, 0, 0);
         cr->paint();
+
+        // background
+        int size = get_size();
+
+        // auto rect = Gdk::Rectangle(0, 0, size, m_size);
+        // cr->set_source_rgba(0, 0, 0, 0);
+
+        ////        cairo::fill(cr, m_theme->Preview(), m_theme.PanelGradient(), rect);
+        // cr->fill();
 
         int startX = 0;
         int startY = 0;
         int margin = Config()->get_preview_area_margin();
+        int area = Config()->get_preview_area();
         int idx = 0;
         int image_size = Config()->get_preview_image_size();
+        int PREVIEW_TITLE_SIZE = 28;
 
         for (auto& it : m_current_images) {
             Glib::RefPtr<Gdk::Pixbuf> image = it.first;
             auto child = it.second;
 
+            // preview title and title text
+            cr->save();
+            Gdk::Rectangle rect_title = Gdk::Rectangle(startX, startY, m_size, PREVIEW_TITLE_SIZE);
+            cairo::fill(cr, m_theme->PreviewTitle(), m_theme->PanelGradient(), rect_title);
+            cr->restore();
+
             if (idx == m_dockpreview_index) {
-                //                cr->set_source_rgba(0.992, 0.858, 0.003, 1.0);  // 1, 1,
-                //                1, 0.2)
-                //                //GELB
                 cr->set_source_rgba(1, 1, 1, 0.2);
-                cr->rectangle(startX, startY, m_size, margin);
+                cr->rectangle(startX, startY, m_size, PREVIEW_TITLE_SIZE);
                 cr->fill();
 
-                int PREVIEW_TITLE_SIZE = 20;
-
-                int x1 = startX + m_size - PREVIEW_TITLE_SIZE - 2;
-                int x2 = PREVIEW_TITLE_SIZE - 10;
+                int x1 = startX + m_size - PREVIEW_TITLE_SIZE + 8;
+                int x2 = PREVIEW_TITLE_SIZE - 20;
                 int y1 = startY + 1;
-                int y2 = PREVIEW_TITLE_SIZE - 10;
+                int y2 = PREVIEW_TITLE_SIZE - 20;
 
                 // close
                 m_close_button_rectangle =
-                    Gdk::Rectangle(x1 - 6, y1 + 4, PREVIEW_TITLE_SIZE, PREVIEW_TITLE_SIZE);
+                    Gdk::Rectangle(x1 - 6, y1 + 3, PREVIEW_TITLE_SIZE - 8, PREVIEW_TITLE_SIZE - 8);
 
                 cr->rectangle(m_close_button_rectangle.get_x(), m_close_button_rectangle.get_y(),
                               m_close_button_rectangle.get_width(),
                               m_close_button_rectangle.get_height());
 
-                cr->set_source_rgba(0.992, 0.858, 0.003, 0.0);  // 1, 1, 1, 0.2)
+                cr->set_source_rgba(m_theme->PreviewClose().Fill().Color::red,
+                                    m_theme->PreviewClose().Fill().Color::green,
+                                    m_theme->PreviewClose().Fill().Color::blue,
+                                    m_theme->PreviewClose().Fill().Color::alpha);
+
                 cr->fill();
 
-                cr->set_source_rgba(0.870, 0.050, 0.062, 1.0);  // ROJO
+                cr->set_source_rgba(m_theme->PreviewClose().Stroke().Color::red,
+                                    m_theme->PreviewClose().Stroke().Color::green,
+                                    m_theme->PreviewClose().Stroke().Color::blue,
+                                    m_theme->PreviewClose().Stroke().Color::alpha);
+
                 cr->set_line_width(1.5);
 
                 x1 -= 1;
-                y1 += 10;
+                y1 += 9;
+                x2 += 2;
+                y2 += 2;
 
                 cr->move_to(x1, y1);
                 cr->line_to(x1, y1);
@@ -459,27 +510,7 @@ namespace docklight
                 cr->stroke();
             }
 
-            // int centerX = m_size / 2 - image->get_width() / 2;
-            // int centerY = (m_size + margin) / 2 - image->get_height() / 2;
-
-            // cr->rectangle(startX + centerX, startY + margin, image->get_width() m_size);
-            // Gdk::Cairo::set_source_pixbuf(cr, image, startX + centerX, startY + centerY);
-            // cr->fill();
-            //  cr->paint();
-
-            //  cell
-            // cr->set_source_rgba(1, 1, 1, 1);
-            // cairo::rounded_rectangle(cr, startX, startY, m_size, m_size, 4.0);
-            // cr->stroke();
-
-            // border
-            cr->set_source_rgba(5, 1, 0, 1);
-            cr->set_line_width(0.4);
-            cr->rectangle(startX + 8, startY + margin - 4, m_size - 16, 1);
-            cr->stroke();
-
             if (m_dockitem) {
-                cr->save();
                 std::string label = child->get_window_name();
                 std::string wstring;
 
@@ -488,19 +519,19 @@ namespace docklight
                 }
 
                 draw_text(cr, startX, startY, label, idx == m_dockpreview_index);
-                cr->restore();
             }
 
             // image cell
-            // cr->set_source_rgba(1, 1, 1, 1.0);
-            // cairo::rounded_rectangle(cr, startX, startY + margin, m_size, m_size -
-            // margin, 4.0); cr->stroke();
+            Gdk::Rectangle rect_cell =
+                Gdk::Rectangle(startX, startY + PREVIEW_TITLE_SIZE, m_size, m_size);
+            cairo::fill(cr, m_theme->Preview(), m_theme->PanelGradient(), rect_cell);
 
             auto scaled_image = image;
             if (image->get_width() > image_size) {
                 scaled_image = image->scale_simple(image_size, image_size, Gdk::INTERP_BILINEAR);
             }
 
+            // image
             int centerX = m_size / 2 - scaled_image->get_width() / 2;
             int centerY = (m_size + margin) / 2 - scaled_image->get_height() / 2;
             cr->rectangle(startX + centerX, startY + margin, image_size, m_size - margin);
@@ -526,17 +557,6 @@ namespace docklight
         cr->clip_preserve();
         cr->stroke();
 
-        /*//    cr->set_source_rgba(1, 1, 1, 1.f);  // for debuging set alpha to 1.f
-        if (m_theme.PreviewTitleText().Stroke().Color::alpha != 0.0) {
-            cr->set_source_rgba(m_theme.PreviewTitleText().Stroke().Color::red,
-                                m_theme.PreviewTitleText().Stroke().Color::green,
-                                m_theme.PreviewTitleText().Stroke().Color::blue,
-                                m_theme.PreviewTitleText().Stroke().Color::alpha);
-
-            cr->stroke();
-        }
-        */
-
         // http://developer.gnome.org/pangomm/unstable/classPango_1_1FontDescription.html
         Pango::FontDescription font;
 
@@ -554,16 +574,13 @@ namespace docklight
 
         // get the text dimensions (it updates the variables -- by reference)
         layout->get_pixel_size(text_width, text_height);
-        cr->move_to(x + 8, (Config()->get_preview_area_margin() / 2) - 8);
+        cr->move_to(x + 8, (Config()->get_preview_area_margin() / 2) - 10);
 
-        // if (indicator) {
-        // cr->set_source_rgba(0, 0, 0, 1.f);  // BLACK
+        cr->set_source_rgba(m_theme->PreviewTitle().Stroke().Color::red,
+                            m_theme->PreviewTitle().Stroke().Color::green,
+                            m_theme->PreviewTitle().Stroke().Color::blue,
+                            m_theme->PreviewTitle().Stroke().Color::alpha);
 
-        //} else {
-        // cr->set_source_rgba(1, 1, 1, 1.f);  // WHITE;
-        //}
-
-        cr->set_source_rgba(1, 1, 1, 1.f);  // WHITE;
         layout->show_in_cairo_context(cr);
         cr->reset_clip();  // Reset the clipping!
     }

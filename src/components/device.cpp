@@ -78,6 +78,25 @@ namespace docklight
                 return m_monitor_number;
             }
 
+            bool is_current_monitor(Glib::ustring name)
+            {
+                for (int i = 0; i < get_monitor_count(); i++) {
+                    //                    if (i != m_monitor_number) continue;
+
+                    auto m = get_monitor(i);
+
+                    // if (m->is_primary() && name == "primary") {
+                    // return true;
+                    //}
+
+                    if (i == m_monitor_number && m->get_model() == name) {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
             void set_current_monitor(Glib::ustring name)
             {
                 for (int i = 0; i < get_monitor_count(); i++) {

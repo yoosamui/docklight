@@ -21,6 +21,7 @@
 #include <glibmm/object.h>
 #include <gdkmm/pixbuf.h>
 #include <sstream>
+#include <iostream>
 #include "components/dockitem.h"
 // clang-format on
 
@@ -35,7 +36,7 @@ namespace docklight
         int remove_child(gulong xid);
 
         void set_icon(Glib::RefPtr<Gdk::Pixbuf> icon);
-        void add_child(std::shared_ptr<DockItemIcon> child);
+        bool add_child(std::shared_ptr<DockItemIcon> child);
         //  void remove_all() { return m_map.clear(); }
 
         const Glib::RefPtr<Gdk::Pixbuf>& get_icon() const;
@@ -55,5 +56,6 @@ namespace docklight
         std::map<gulong, std::shared_ptr<DockItemIcon>> m_map;
         std::vector<WnckWindow*> m_wnck_window_list;
         std::vector<gulong> m_wnck_xid_list;
+        std::shared_ptr<DockItemIcon> m_clone;
     };
 }  // namespace docklight

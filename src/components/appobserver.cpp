@@ -49,12 +49,51 @@ namespace docklight
     {
         //
     }
+
+    // void AppObserver::on_active_window_changed(WnckScreen* screen,
+    // WnckWindow* previously_active_window,
+    // gpointer user_data)
+    //{
+    // static gulong m_state_change_id = 0;
+    // WnckWindow* active_window = wnck_screen_get_active_window(screen);
+    // if (!active_window) {
+    // return;
+    //}
+
+    // WnckWindowType wt = wnck_window_get_window_type(active_window);
+    // if (wt == WNCK_WINDOW_DESKTOP) {
+    // return;
+    //}
+
+    // if (previously_active_window && m_state_change_id) {
+    // g_signal_handler_disconnect(previously_active_window, m_state_change_id);
+    //}
+
+    // m_state_change_id = g_signal_connect_after(
+    // active_window, "state-changed", G_CALLBACK(AppObserver::on_state_changed), nullptr);
+    //}
+
     void AppObserver::on_active_workspace_changed_callback(WnckScreen* screen,
                                                            WnckWorkspace* previously_active_space,
                                                            gpointer user_data)
     {
+        WnckWindow* active_window = wnck_screen_get_active_window(screen);
+        if (!active_window) {
+            return;
+        }
+
         Provider()->workspace_change();
     }
+
+    // void AppObserver::on_state_changed(WnckWindow* window, WnckWindowState changed_mask,
+    // WnckWindowState new_state, gpointer user_data)
+
+    //{
+    // bool fullscreen = wnck_window_is_fullscreen(window);
+    // g_print("FULLSCREEN %s\n", fullscreen ? "yes" : "no");
+
+    // Position()->fullscreen_change(fullscreen);
+    //}
 
     void AppObserver::on_window_closed(WnckScreen* screen, WnckWindow* window, gpointer data)
     {
@@ -153,6 +192,9 @@ namespace docklight
 
         g_signal_connect(wnckscreen, "active-workspace-changed",
                          G_CALLBACK(AppObserver::on_active_workspace_changed_callback), nullptr);
+
+        // g_signal_connect(wnckscreen, "active_window_changed",
+        // G_CALLBACK(AppObserver::on_active_window_changed), nullptr);
 
         // g_signal_connect(G_OBJECT(wnckscreen), "icon-changed",
         // G_CALLBACK(&AppObserver::on_icon_changed), nullptr);

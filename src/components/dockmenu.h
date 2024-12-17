@@ -23,36 +23,16 @@
 #include <gtkmm/checkmenuitem.h>
 #include <gtkmm/menu.h>
 #include <gtkmm/separatormenuitem.h>
-#include "components/animboomwindow.h"
 #include "utils/wnck.h"
 #include "components/position.h"
+#include "components/panelbase.h"
+#include "components/autohidemanager.h"
 // clang-format on
 
 namespace docklight
 {
-
-    class PanelBase : public Gtk::DrawingArea
-    {
-      public:
-      protected:
-        Glib::RefPtr<Gtk::Application> m_app;
-
-        static WnckWindow* m_active_window;
-
-        bool m_context_menu_active = false;
-        bool m_mouse_enter = false;
-        bool m_drag_drop_starts = false;
-
-        guint m_dockitem_index = 0;
-        guint m_drag_drop_item_index = 0;
-        guint m_drag_drop_item_move_index = 0;
-        gulong m_dockitem_active_index = 0;
-    };
-
     class DockMenu : public PanelBase
     {
-        Glib::RefPtr<AnimBoomWindow> m_anim;
-
       public:
         DockMenu();
 

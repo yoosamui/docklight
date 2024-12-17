@@ -21,7 +21,7 @@
 #include <cairomm/context.h>
 #include <gdkmm/rectangle.h>
 #include <glibmm/main.h>
-
+#include "utils/cairo.h"
 #include "components/config.h"
 // clang-format on
 
@@ -36,14 +36,14 @@ namespace docklight
         void rounded_rectangle(const Cairo::RefPtr<Cairo::Context>& cr, double x, double y,
                                double width, double height, double radius);
 
-        /*void stroke(const Cairo::RefPtr<Cairo::Context>& cr, const ColorWindow& solid_style,
+        void stroke(const Cairo::RefPtr<Cairo::Context>& cr, const ColorWindow& solid_style,
                     const Gdk::Rectangle& rect);
 
         void fill(const Cairo::RefPtr<Cairo::Context>& cr, const ColorWindow& solid_style,
                   const Gdk::Rectangle& rect);
 
         void fill(const Cairo::RefPtr<Cairo::Context>& cr, const ColorWindow& solid_style,
-                  const ColorWindow& gradient_style, const Gdk::Rectangle& rect);*/
+                  const ColorWindow& gradient_style, const Gdk::Rectangle& rect);
 
     }  // namespace cairo
 

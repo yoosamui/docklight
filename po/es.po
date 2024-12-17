@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Docklight-5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-25 16:14+0700\n"
-"PO-Revision-Date: 2024-08-19 10:05+0700\n"
+"POT-Creation-Date: 2024-12-11 16:17+0700\n"
+"PO-Revision-Date: 2024-12-11 16:17+0700\n"
 "Last-Translator: yoo <j-gonzalez@email.de>\n"
 "Language-Team: English - United States <j-gonzalez@email.de>\n"
 "Language: en_US\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Gtranslator 42.0\n"
+"X-Generator: Poedit 3.2.2\n"
 
 #: ../src/translations.h:36
 msgid "Application start."
@@ -30,8 +30,9 @@ msgid "Initialize panel."
 msgstr "Inicializar panel."
 
 #: ../src/translations.h:42
-msgid "Sets the primary Monitor."
-msgstr "Establece el monitor principal."
+msgid ""
+"Sets the primary Monitor.Settings are primary oder the monitor name e.g DP-3"
+msgstr ""
 
 #: ../src/translations.h:44
 msgid "Sets the Panel location: top, right, bottom or left. Default bottom"
@@ -47,45 +48,90 @@ msgstr ""
 "Centro predeterminado."
 
 #: ../src/translations.h:48
+msgid "The icon alignment settings are start, end or center. Default center."
+msgstr ""
+"Los ajustes de alineación  son:  start, end  or center . Centro es "
+"predeterminado."
+
+#: ../src/translations.h:50
 msgid "parsed values"
 msgstr "valores analizados"
 
-#: ../src/translations.h:50
+#: ../src/translations.h:52
 #, c-format
 msgid "Free the %s object."
 msgstr "Libere el objeto %s."
 
-#: ../src/translations.h:52
+#: ../src/translations.h:54
 msgid "Display detected monitors"
 msgstr "Mostrar monitores detectados"
 
-#: ../src/translations.h:54
+#: ../src/translations.h:56
 msgid "Default monitor"
 msgstr "Monitor predeterminado"
 
-#: ../src/translations.h:56
+#: ../src/translations.h:58
 msgid "monitor"
 msgstr "monitor"
 
-#: ../src/translations.h:58
+#: ../src/translations.h:60
 msgid "Geometry"
 msgstr "Geometría"
 
-#: ../src/translations.h:60
+#: ../src/translations.h:62
 msgid "Workarea"
 msgstr "Área de trabajo"
 
-#: ../src/translations.h:62
+#: ../src/translations.h:64
 msgid "Width"
 msgstr "Ancho"
 
-#: ../src/translations.h:64
+#: ../src/translations.h:66
 msgid "Height"
 msgstr "Altura"
 
-#: ../src/translations.h:66
+#: ../src/translations.h:68
 msgid "Model"
 msgstr "Modelo"
+
+#: ../src/translations.h:70
+msgid "Quit"
+msgstr "Salir"
+
+#: ../src/translations.h:72
+msgid "Close"
+msgstr "Cerrar"
+
+#: ../src/translations.h:74
+msgid "Maximize"
+msgstr "Maximizar"
+
+#: ../src/translations.h:76
+msgid "Minimize"
+msgstr "Minimizar"
+
+#: ../src/translations.h:78
+msgid "Close all windows"
+msgstr "Cearras todas  las ventanas"
+
+#: ../src/translations.h:80
+msgid "New"
+msgstr "Nuevo"
+
+#: ../src/translations.h:82
+msgid "Attach"
+msgstr "Agarrar"
+
+#: ../src/translations.h:84
+msgid "Minimize all windows"
+msgstr "Minimizar todas las ventanas"
+
+#: ../src/translations.h:86
+msgid "Maximinize all windows"
+msgstr "Maximinizar todas las ventanas"
+
+#~ msgid "Sets the primary Monitor."
+#~ msgstr "Establece el monitor principal."
 
 #~ msgid "  location"
 #~ msgstr " ubicación"

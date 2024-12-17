@@ -2,7 +2,8 @@
 # Docklight
  Manage access to applications.
 
-![image](https://github.com/user-attachments/assets/b64b9a1d-a1cf-4f10-9e1c-b9619f81688e)
+![image](https://github.com/user-attachments/assets/7994983c-8d4f-4ace-91e8-20a88a236521)
+
 
 ## Installation
 clone this repository if you want to get the **stable** version:
@@ -36,10 +37,10 @@ docklight is now installed on your system and will start after next login.
 Start it manually with:
 
 ```bash
-$ docklight
+$ docklight5
 or
 with parameters like so:
-$ docklight '-l left '
+$ docklight5 '-l left '
 ```
 
 You can start docklight with the following parameters:
@@ -65,7 +66,7 @@ $ ./autogen.sh
 $ ./configure.sh
 $ make
 
-The final execuable is located at:
+The final executable is located at:
 $ cd <YOUR_DOCKLIGHT_PATH>/src/docklight
 
 ```
@@ -81,10 +82,14 @@ The configuration Filename is: **docklight5.config**
 
 ## Mouse keys
 
-Left mouse click                : minimize/unminimize group.
+Left mouse click                : minimize/unminimize group
+.
 Left mouse press and hold       : activate drag & drop.
+
 Right mouse click               : activate context menu.
+
 Right mouse click longer press  : activate context image preview.
+
 Mouse wheel                     : scroll through the window group list.
 
 ## Current state
@@ -92,9 +97,10 @@ Mouse wheel                     : scroll through the window group list.
 in development...
 
 MS-Log:
-    12.09.2024 - 20%.
-    03.12.2024 - 70%.⚡
 
+    12.09.2024 - 20%.
+
+    03.12.2024 - 70%.⚡
 
 
 

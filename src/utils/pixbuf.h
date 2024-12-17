@@ -27,6 +27,10 @@ namespace docklight
         bool get_window_image(gulong xid, Glib::RefPtr<Gdk::Pixbuf>& image,
                               guint size = Config()->get_preview_image_size());
         GdkPixbuf* get_gdk_pixbuf_from_window(int xid);
+        Glib::RefPtr<Gdk::Pixbuf> get_gdk_pixbuf_from_windowi2(int xid);
+
+        GdkPixbuf* get_gdk_pixbuf_scaled2(gulong xid, const GdkPixbuf* pixbuf,
+                                          const guint destWidth, const guint destHeight);
 
         GdkPixbuf* get_gdk_pixbuf_scaled(gulong xid, const GdkPixbuf* pixbuf, const guint destWidth,
                                          const guint destHeight);

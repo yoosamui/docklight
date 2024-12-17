@@ -19,6 +19,8 @@ namespace docklight
 
         namespace monitor
         {
+            bool is_current_monitor(Glib::ustring name);
+
             const Glib::RefPtr<Gdk::Monitor> get_primary();
             const Glib::RefPtr<Gdk::Monitor> get_monitor(int monitor_num);
             const Glib::RefPtr<Gdk::Monitor> get_monitor();

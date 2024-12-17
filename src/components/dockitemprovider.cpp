@@ -173,6 +173,11 @@ namespace docklight
         return count;
     }
 
+    void DockItemProvider::emit_update()
+    {
+        m_signal_update.emit(window_action_t::UPDATE, 0);
+    }
+
     void DockItemProvider::workspace_change()
     {
         m_signal_update.emit(window_action_t::WORKSPACE, 0);
@@ -339,13 +344,6 @@ namespace docklight
         return image;
     }
 
-    void DockItemProvider::set_window_image(gulong xid, Glib::RefPtr<Gdk::Pixbuf> image)
-    {
-        if (image) {
-            m_window_images[xid] = image;
-        }
-    }
-
     void DockItemProvider::fill_window_image(WnckWindow* window)
     {
         if (m_startup_time_set) return;
@@ -354,8 +352,9 @@ namespace docklight
         if (!WNCK_IS_WINDOW(window)) return;
 
         WnckWorkspace* ws = wnck_window_get_workspace(window);
-        auto wsn = wnck_workspace_get_number(ws);
+        if (!ws) return;
 
+        auto wsn = wnck_workspace_get_number(ws);
         auto kp = std::make_pair(wsn, window);
         m_windows_loaded.push_back(kp);
     }
@@ -367,44 +366,41 @@ namespace docklight
         m_startup_allow_window_scan = true;
 
         int event_time = gtk_get_current_event_time();
-        WnckWorkspace* cws = nullptr;
-
-        /*GdkScreen* screen = gdk_screen_get_default();
-o        guint32 current_ws_number = gdk_x11_screen_get_current_desktop(screen);*/
-
-        cws = wnck_screen_get_active_workspace(wnck::get_default_screen());
+        WnckWorkspace* cws = wnck_screen_get_active_workspace(wnck::get_default_screen());
 
         std::sort(m_windows_loaded.begin(), m_windows_loaded.end());
         for (const auto& [key, val] : m_windows_loaded) {
-            // if (!cws) {
-            // cws = wnck_window_get_workspace(val);
-            //}
-
             set_window_image(val, true);
         }
 
         if (cws) wnck_workspace_activate(cws, event_time);
     }
 
+    void DockItemProvider::set_window_image(gulong xid, Glib::RefPtr<Gdk::Pixbuf> image)
+    {
+        if (image) {
+            m_window_images[xid] = image;
+        }
+    }
+
+    // TODO: refactoring needed here. Wait to code a WM extension
+    // Xcomposite, Xrender may help
     void DockItemProvider::set_window_image(WnckWindow* window, bool initial)
+
     {
         if (!m_startup_allow_window_scan) return;
         if (system::is_mutter_window_manager()) return;
         if (!WNCK_IS_WINDOW(window)) return;
 
+        const std::lock_guard<std::mutex> lock(m_mutex);
+
         Glib::RefPtr<Gdk::Pixbuf> image;
         gint32 xid = wnck_window_get_xid(window);
 
-        if (!wnck::is_window_on_current_desktop(window)) {
-            wnck::move_window_to_workspace(window);
-            // wnck_window_activate(window, 1);
-        }
+        // need to move to the ws to access the image
+        wnck::move_window_to_workspace(window);
 
-        if (wnck_window_is_minimized(window)) {
-            //
-            // wnck_window_activate(window, 1);
-            //  wnck_window_make_below(window);
-
+        if (initial && wnck_window_is_minimized(window) /*|| wnck_window_is_sticky(window)*/) {
             std::shared_ptr<DockItemIcon> dockitem;
             if (get_dockitem_by_xid(xid, dockitem)) {
                 m_window_images[xid] = dockitem->get_icon_from_window(64);
@@ -414,7 +410,7 @@ o        guint32 current_ws_number = gdk_x11_screen_get_current_desktop(screen);
 
         int size = Config()->get_preview_image_max_size();
         for (int i = 0; i < 2; i++) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(5));
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
             if (pixbuf::get_window_image(xid, image, size)) {
                 m_window_images[xid] = image;
             }
@@ -482,6 +478,7 @@ o        guint32 current_ws_number = gdk_x11_screen_get_current_desktop(screen);
         if (!m_startup_time_set) fill_window_image(window);
 
         set_window_image(window, true);
+
         return result;
     }
 
@@ -500,6 +497,7 @@ o        guint32 current_ws_number = gdk_x11_screen_get_current_desktop(screen);
             return false;
         }
 
+        auto count = this->count();
         std::shared_ptr<DockItemIcon> dockitem = std::shared_ptr<DockItemIcon>(
             new DockItemIcon(xid, m_wnckwindow, instance_name, groupname, wintype));
 
@@ -549,7 +547,7 @@ o        guint32 current_ws_number = gdk_x11_screen_get_current_desktop(screen);
             dockitem->add_child(child);
         }
 
-        return true;
+        return count != this->count();
     }
 
     bool DockItemProvider::createFromWindow(gulong xid, GdkPixbuf* gdkpixbuf,
@@ -564,6 +562,7 @@ o        guint32 current_ws_number = gdk_x11_screen_get_current_desktop(screen);
 
         if (!get_window_icon(gdkpixbuf, pixbuf)) return false;
 
+        auto count = this->count();
         std::shared_ptr<DockItemIcon> dockitem = std::shared_ptr<DockItemIcon>(
             new DockItemIcon(xid, m_wnckwindow, instance_name, groupname, wintype));
 
@@ -605,7 +604,7 @@ o        guint32 current_ws_number = gdk_x11_screen_get_current_desktop(screen);
             dockitem->add_child(dockitem->clone());
         }
 
-        return true;
+        return count != this->count();
     }
 
     Glib::ustring DockItemProvider::get_config_filepath()

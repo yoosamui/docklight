@@ -66,8 +66,8 @@ namespace docklight
         void unminimize(WnckWindow* window);
         void minimize_group(std::vector<WnckWindow*> list);
         void maximize_group(std::vector<WnckWindow*> list);
-        // void minimize_all();
-        //  void unminimize_all();
+        void minimize_all();
+        void unminimize_all();
 
         WnckScreen* get_default_screen();
         WnckWindow* get_active();

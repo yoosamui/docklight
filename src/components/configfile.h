@@ -25,23 +25,27 @@
 
 #include "utils/system.h"
 #include "constants.h"
+#include "utils/themes.h"
 // clang-format on
+//
 
 namespace docklight
 {
+    using namespace style;
 
     class ConfigBase : public Glib::Object
     {
       public:
-        static constexpr const int DEF_INDICATOR_SIZE = 2;
+        static constexpr const int DEF_INDICATOR_SIZE = 8;
         static const int DEF_ICON_MAXSIZE = 128;
 
       protected:
         // parsed and optimized at compile time
         static constexpr const int DEF_MIN_ITEM_SIZE = 24;
         // no access from draussen
-        static constexpr const int DEF_DOCKAREA_MARGIN = 12;
+        static constexpr const int DEF_DOCKAREA_MARGIN = 16;
         static constexpr const int DEF_PREVIEWAREA_MARGIN = 32;
+        static constexpr const int DEF_ICON_DEFAULT_SIZE = 58;
         static constexpr const int DEF_ICON_SIZE = 128;
         static constexpr const int DEF_PREVIEW_IMAGE_SIZE = 248;
         static constexpr const int DEF_PREVIEW_IMAGE_MAX_SIZE = 512;
@@ -75,8 +79,9 @@ namespace docklight
         dock_icon_alignment_t m_icon_alignment = dock_icon_alignment_t::center;
 
         //        TODO : TEST
-        // dock_autohide_type_t m_autohide_type = dock_autohide_type_t::intelihide;
-        dock_autohide_type_t m_autohide_type = dock_autohide_type_t::none;
+        //        dock_autohide_type_t m_autohide_type = dock_autohide_type_t::autohide;
+        //        dock_autohide_type_t m_autohide_type = dock_autohide_type_t::intelihide;
+        dock_autohide_type_t m_autohide_mode = dock_autohide_type_t::none;  // default;
 
         dock_location_t m_location = dock_location_t::bottom;
         dock_indicator_type_t m_indicator_type = dock_indicator_type_t::dots;
@@ -87,6 +92,8 @@ namespace docklight
     class ConfigFile : public ConfigBase
     {
       protected:
+        Theme m_theme;
+
       public:
         ConfigFile();
         ~ConfigFile();
@@ -97,8 +104,10 @@ namespace docklight
         std::string read_filepath();
         std::string read_location();
         std::string read_alignment();
+        std::string read_icon_alignment();
         std::string read_indicator_type_key();
         std::string read_monitor_name();
+        std::string read_autohide();
 
         bool read_separator_show_line();
 
@@ -114,6 +123,14 @@ namespace docklight
       private:
         std::string m_filename = "docklight5.config";
         GKeyFile* m_key_file = nullptr;
+
+        std::string get_style(GKeyFile* key_file);
+        std::string get_style_item(GKeyFile* key_file, const std::string& style_name,
+                                   const std::string& item_name);
+
+        void set_default_style();
+        void get_color_from_string(const std::string& s, Color& fill, Color& stroke,
+                                   double& lineWidth, double& ratio, int& mask);
     };
 
 }  // namespace docklight
