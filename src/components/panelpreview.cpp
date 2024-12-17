@@ -59,19 +59,15 @@ namespace docklight
                     Gdk::POINTER_MOTION_MASK
                    );
         // clang-format on
-        //
 
-        m_anim = Glib::RefPtr<AnimBoomWindow>(new AnimBoomWindow());
         m_size = Config()->get_preview_area();
-        m_bck_thread =
-            std::shared_ptr<std::thread>(new std::thread(&PanelPreview::thread_func, this));
     }
 
     PanelPreview::~PanelPreview()
     {
-        m_bck_thread->detach();
         m_sigc_updated.disconnect();
         connect_signal(false);
+
         g_message(MSG_FREE_OBJECT, "PanelPreview");
     }
 
@@ -85,7 +81,7 @@ namespace docklight
         }
     }
 
-    void PanelPreview::thread_func()
+    /*void PanelPreview::thread_func()
     {
         while (true) {
             if (m_anim_start) {
@@ -99,7 +95,7 @@ namespace docklight
 
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
-    }
+    }*/
 
     bool PanelPreview::on_timeout_draw()
     {
@@ -137,7 +133,9 @@ namespace docklight
                     pixbuf::get_window_image(xid, m_image, size);
                 }
 
-                if (window && !wnck_window_is_minimized(window) &&
+                if (window &&
+                    (!wnck_window_is_minimized(window) && !wnck_window_is_pinned(window) &&
+                     !wnck_window_is_sticky(window)) &&
                     wnck::is_window_on_current_desktop(window)) {
                     //
                     pixbuf::get_window_image(xid, m_image, size);
@@ -189,17 +187,16 @@ namespace docklight
 
             if (!found) return;
 
-            m_anim_start = true;
-            /*int x = 0;
-            int y = 0;
-            system::get_mouse_position(x, y);
-            m_anim->show_at(x, y);*/
-
             read_images();
 
             int size = m_dockitem->get_childmap().size();
             m_items = size * m_size;
             if (!size) {
+                if (Config()->is_autohide()) {
+                    Autohide()->set_hide_allow(true);
+                }
+
+                this->hide_now();
                 this->close();
                 return;
             }
@@ -300,7 +297,6 @@ namespace docklight
         m_sigc_updated.disconnect();
         m_sigc_connection.disconnect();
 
-        connect_signal(false);
         m_x = m_y = 0;
         m_current_images.clear();
         m_visible = false;

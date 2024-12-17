@@ -133,7 +133,13 @@ namespace docklight
     {
         m_mouse_enter = true;
 
-        if (Config()->is_autohide()) Autohide()->set_hide_allow(false);
+        if (!Autohide()->get_visible() && Config()->is_intelihide()) return true;
+
+        if (Config()->is_autohide()) {
+            Autohide()->set_hide_allow(false);
+
+            if (!Autohide()->get_visible()) m_force_show = true;
+        }
 
         // if (!Autohide()->get_visible()) {
         // if (Config()->is_intelihide()) return true;

@@ -344,13 +344,6 @@ namespace docklight
         return image;
     }
 
-    void DockItemProvider::set_window_image(gulong xid, Glib::RefPtr<Gdk::Pixbuf> image)
-    {
-        if (image) {
-            m_window_images[xid] = image;
-        }
-    }
-
     void DockItemProvider::fill_window_image(WnckWindow* window)
     {
         if (m_startup_time_set) return;
@@ -381,6 +374,13 @@ namespace docklight
         }
 
         if (cws) wnck_workspace_activate(cws, event_time);
+    }
+
+    void DockItemProvider::set_window_image(gulong xid, Glib::RefPtr<Gdk::Pixbuf> image)
+    {
+        if (image) {
+            m_window_images[xid] = image;
+        }
     }
 
     // TODO: refactoring needed here. Wait to code a WM extension

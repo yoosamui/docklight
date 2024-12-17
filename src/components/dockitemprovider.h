@@ -32,6 +32,7 @@
 #include "components/dockitemcontainer.h"
 //#include "components/dockitemicon.h"
 #include "components/config.h"
+#include "components/animation.h"
 // clang-format on
 
 namespace docklight

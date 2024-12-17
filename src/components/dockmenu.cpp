@@ -163,13 +163,6 @@ namespace docklight
         std::shared_ptr<DockItemIcon> dockitem;
         if (!Provider()->get_dockitem_by_index(m_dockitem_index, dockitem)) return;
 
-        int xx = 0;
-        int yy = 0;
-        system::get_mouse_position(xx, yy);
-
-        if (!m_anim) m_anim = Glib::RefPtr<AnimBoomWindow>(new AnimBoomWindow());
-        m_anim->show_at(xx, yy);
-
         wnck::close_window(dockitem->get_wnck_window_list());
     }
 

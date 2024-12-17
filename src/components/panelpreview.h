@@ -27,7 +27,7 @@
 #include "utils/wnck.h"
 #include "utils/pixbuf.h"
 #include "components/dockitemicon.h"
-#include "components/animboomwindow.h"
+
 #include "components/autohidemanager.h"
 // clang-format on
 
@@ -74,7 +74,7 @@ namespace docklight
         void thread_func();
 
       private:
-        Glib::RefPtr<AnimBoomWindow> m_anim;
+        // Glib::RefPtr<AnimBoomWindow> m_anim;
 
         sigc::connection m_sigc_updated;
         sigc::connection m_sigc_connection;
@@ -87,7 +87,7 @@ namespace docklight
 
         // std::vector<std::pair<gint, std::shared_ptr<DockItemIcon>>> m_windows;
         std::shared_ptr<DockItemIcon> m_dockitem;
-        std::shared_ptr<std::thread> m_bck_thread;
+        //        std::shared_ptr<std::thread> m_bck_thread;
 
         //   WnckWindow* m_delete_pending_window = nullptr;
         std::mutex m_mutex;
@@ -98,7 +98,7 @@ namespace docklight
         int m_items = 0;
         bool m_block_leave = false;
         bool m_visible = false;
-        bool m_anim_start = false;
+        //  bool m_anim_start = false;
         bool m_block_draw = false;
         int m_x = 0;
         int m_y = 0;
