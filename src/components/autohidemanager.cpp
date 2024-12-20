@@ -18,6 +18,9 @@
 
 #include "components/autohidemanager.h"
 
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
 namespace docklight
 {
 
@@ -62,7 +65,7 @@ namespace docklight
     {
         if (connect) {
             m_sigc_hide = Glib::signal_timeout().connect(
-                sigc::mem_fun(this, &AutohideManager::on_hide), 1000 / m_frame_rate);
+                sigc::mem_fun(this, &AutohideManager::on_hide), 1000 / 60);
         } else {
             m_sigc_hide.disconnect();
         }

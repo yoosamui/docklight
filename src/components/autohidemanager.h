@@ -78,9 +78,8 @@ namespace docklight
 
         Glib::Timer m_autohide_timer;
 
-        const int m_frame_rate = 60;
-        const float m_hide_delay = 40.0f;
-        const float m_show_delay = 10.0f;
+        const float m_hide_delay = 40.f;
+        const float m_show_delay = 10.f;
 
         bool m_visible = true;
         bool m_intersects = false;
@@ -101,8 +100,8 @@ namespace docklight
 
         float m_start_position = 0.f;
         float m_end_position = 0.f;
-        float m_init_time = 0.0f;
-        float m_end_time = 0.0;
+        float m_init_time = 0.f;
+        float m_end_time = 0.f;
     };
 
     Glib::RefPtr<AutohideManager> create_autohide();
