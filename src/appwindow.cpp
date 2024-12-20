@@ -123,7 +123,71 @@ namespace docklight
         GdkScreen* screen = gdk_screen_get_default();
         auto is_composite = gdk_screen_is_composited(screen);
 
+        /*GdkRGBA* background_color = NULL;
+        PangoFontDescription* font_desc = NULL;
+        gint border_radius = 0;
+        GtkStyleContext* style_context = nullptr;
+        // auto ww = Widget::get_style_context();
+
+        gtk_style_context_get_style(style_context);
+        if (style_context) {
+            gtk_style_context_get(style_context, gtk_style_context_get_state(style_context),
+                                  GTK_STYLE_PROPERTY_BACKGROUND_COLOR, &background_color, NULL,
+                                  NULL, NULL, NULL, NULL);
+            gtk_style_context_get(style_context, gtk_style_context_get_state(style_context),
+                                  GTK_STYLE_PROPERTY_BACKGROUND_COLOR, &background_color,
+                                  GTK_STYLE_PROPERTY_FONT, &font_desc,
+                                  GTK_STYLE_PROPERTY_BORDER_RADIUS, &border_radius, NULL);
+
+            g_print("%f\n", background_color->red);
+
+            if (background_color != NULL) gdk_rgba_free(background_color);
+            if (font_desc != NULL) pango_font_description_free(font_desc);
+        }
+*/
+        GtkSettings* settings;
+        gchar* theme_name;
+        settings = gtk_settings_get_default();
+        g_object_get(settings, "gtk-theme-name", &theme_name, NULL);
+
+        // Get default settings
+        //  GtkSettings* settings = gtk_settings_get_default();
+
+        // Create a sample window
+        GtkWidget* window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+        gtk_window_set_title(GTK_WINDOW(window), "Background Color Example");
+        gtk_window_set_default_size(GTK_WINDOW(window), 300, 200);
+
+        // Get style context for the window
+        GtkStyleContext* context = gtk_widget_get_style_context(window);
+
+        // Get background color
+        GdkRGBA* bcolor = NULL;
+        GdkRGBA* fcolor = NULL;
+
+        gtk_style_context_get(context, gtk_style_context_get_state(context),
+                              GTK_STYLE_PROPERTY_BACKGROUND_COLOR, &bcolor, NULL, NULL, NULL, NULL,
+                              NULL);
+
+        gtk_style_context_get(context, gtk_style_context_get_state(context),
+                              GTK_STYLE_PROPERTY_COLOR, &fcolor, NULL, NULL, NULL, NULL, NULL);
+
+        //        gtk_style_context_get_background_color(context, GTK_STATE_FLAG_SELECTED, &bcolor);
+
+        // gtk_style_context_get_background_color(context, GTK_STATE_FLAG_NORMAL, &color);
+        g_message("bcolor: %f,%f,%f %f", bcolor->red, bcolor->green, bcolor->blue, bcolor->alpha);
+        g_message("fcolor: %f,%f,%f %f", fcolor->red, fcolor->green, fcolor->blue, fcolor->alpha);
+
+        if (bcolor) gdk_rgba_free(bcolor);
+        if (fcolor) gdk_rgba_free(fcolor);
+
+        // Print color values
+        // std::cout << "Background color: RGBA(" << static_cast<double>(color.red) << ", "
+        //<< static_cast<double>(color.green) << ", " << static_cast<double>(color.blue)
+        //<< ", " << static_cast<double>(color.alpha) << ")" << std::endl;
+
         g_message("Window Manager : %s", system::get_window_manager_name().c_str());
+        g_message("Theme name : %s", theme_name);
         g_message("Is Composite : %s", is_composite ? "yes" : "no");
         g_message("Is Mutter WM: %s", system::is_mutter_window_manager() ? "yes" : "No");
         g_message("DL Version: %s", PACKAGE_VERSION);
