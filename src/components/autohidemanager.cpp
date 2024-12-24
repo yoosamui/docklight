@@ -133,7 +133,6 @@ namespace docklight
             if (Config()->get_dock_location() == dock_location_t::left) {
                 offset_x = -(int)position;
                 offset_y = 0;
-                //
             } else {
                 offset_x = (int)position;
                 offset_y = 0;
@@ -181,6 +180,10 @@ namespace docklight
                               m_end_position, &easing::linear::easeOut);
 
         get_offset(position, m_offset_x, m_offset_y);
+
+        g_print("%d) %f %f %f %f Y=%d\n", m_animation_time, m_init_time, m_end_time,
+                m_start_position, m_end_position, m_offset_y);
+        //        g_print("%f %f\n", m_start_position, m_end_position);
 
         m_signal_hide.emit(m_offset_x, m_offset_y);
         m_animation_time++;

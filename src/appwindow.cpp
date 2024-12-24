@@ -145,6 +145,7 @@ namespace docklight
             if (font_desc != NULL) pango_font_description_free(font_desc);
         }
 */
+        // https://docs.gtk.org/gtk3/method.StyleContext.get.html
         GtkSettings* settings;
         gchar* theme_name;
         settings = gtk_settings_get_default();
@@ -155,8 +156,8 @@ namespace docklight
 
         // Create a sample window
         GtkWidget* window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-        gtk_window_set_title(GTK_WINDOW(window), "Background Color Example");
-        gtk_window_set_default_size(GTK_WINDOW(window), 300, 200);
+        //  gtk_window_set_title(GTK_WINDOW(window), "Background Color Example");
+        //  gtk_window_set_default_size(GTK_WINDOW(window), 300, 200);
 
         // Get style context for the window
         GtkStyleContext* context = gtk_widget_get_style_context(window);
