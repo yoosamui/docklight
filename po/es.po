@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Docklight-5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-11 16:17+0700\n"
-"PO-Revision-Date: 2024-12-11 16:17+0700\n"
+"POT-Creation-Date: 2024-12-24 13:08+0700\n"
+"PO-Revision-Date: 2024-12-24 13:07+0700\n"
 "Last-Translator: yoo <j-gonzalez@email.de>\n"
 "Language-Team: English - United States <j-gonzalez@email.de>\n"
 "Language: en_US\n"
@@ -17,116 +17,119 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 3.2.2\n"
 
-#: ../src/translations.h:36
+#: ../src/translations.h:31
 msgid "Application start."
 msgstr "Inicio de la aplicación."
 
-#: ../src/translations.h:38
+#: ../src/translations.h:33
 msgid "Application activated."
 msgstr "Aplicación activada."
 
-#: ../src/translations.h:40
+#: ../src/translations.h:35
 msgid "Initialize panel."
 msgstr "Inicializar panel."
 
-#: ../src/translations.h:42
+#: ../src/translations.h:37
 msgid ""
 "Sets the primary Monitor.Settings are primary oder the monitor name e.g DP-3"
 msgstr ""
+"Establece el monitor principal. Los ajustes son primary o el nombre del "
+"monitor, por ejemplo, DP-3"
 
-#: ../src/translations.h:44
+#: ../src/translations.h:39
 msgid "Sets the Panel location: top, right, bottom or left. Default bottom"
 msgstr ""
 "Establece la ubicación del panel: arriba, derecha, abajo o izquierda. Parte "
 "inferior predeterminada"
 
-#: ../src/translations.h:46
+#: ../src/translations.h:41
 msgid ""
 "The dock alignment settings are start, end, center or fill. Default center."
 msgstr ""
 "Los ajustes de alineación del muelle son inicio, fin, centro o relleno. "
 "Centro predeterminado."
 
-#: ../src/translations.h:48
+#: ../src/translations.h:43
 msgid "The icon alignment settings are start, end or center. Default center."
 msgstr ""
 "Los ajustes de alineación  son:  start, end  or center . Centro es "
 "predeterminado."
 
-#: ../src/translations.h:50
+#: ../src/translations.h:45
 msgid "parsed values"
 msgstr "valores analizados"
 
-#: ../src/translations.h:52
+#: ../src/translations.h:47
 #, c-format
 msgid "Free the %s object."
 msgstr "Libere el objeto %s."
 
-#: ../src/translations.h:54
+#: ../src/translations.h:49
 msgid "Display detected monitors"
 msgstr "Mostrar monitores detectados"
 
-#: ../src/translations.h:56
+#: ../src/translations.h:51
 msgid "Default monitor"
 msgstr "Monitor predeterminado"
 
-#: ../src/translations.h:58
+#: ../src/translations.h:53
 msgid "monitor"
 msgstr "monitor"
 
-#: ../src/translations.h:60
+#: ../src/translations.h:55
 msgid "Geometry"
 msgstr "Geometría"
 
-#: ../src/translations.h:62
+#: ../src/translations.h:57
 msgid "Workarea"
 msgstr "Área de trabajo"
 
-#: ../src/translations.h:64
+#: ../src/translations.h:59
 msgid "Width"
 msgstr "Ancho"
 
-#: ../src/translations.h:66
+#: ../src/translations.h:61
 msgid "Height"
 msgstr "Altura"
 
-#: ../src/translations.h:68
+#: ../src/translations.h:63
 msgid "Model"
 msgstr "Modelo"
 
-#: ../src/translations.h:70
+#: ../src/translations.h:65
 msgid "Quit"
 msgstr "Salir"
 
-#: ../src/translations.h:72
-msgid "Close"
+#: ../src/translations.h:67
+#, fuzzy
+msgid "Close all"
 msgstr "Cerrar"
 
-#: ../src/translations.h:74
+#: ../src/translations.h:69
 msgid "Maximize"
-msgstr "Maximizar"
+msgstr "Maximizar todo"
 
-#: ../src/translations.h:76
+#: ../src/translations.h:71
 msgid "Minimize"
-msgstr "Minimizar"
+msgstr "Minimizar todo"
 
-#: ../src/translations.h:78
+#: ../src/translations.h:73
 msgid "Close all windows"
 msgstr "Cearras todas  las ventanas"
 
-#: ../src/translations.h:80
+#: ../src/translations.h:75
 msgid "New"
 msgstr "Nuevo"
 
-#: ../src/translations.h:82
+#: ../src/translations.h:77
 msgid "Attach"
 msgstr "Agarrar"
 
-#: ../src/translations.h:84
+#: ../src/translations.h:79
 msgid "Minimize all windows"
 msgstr "Minimizar todas las ventanas"
 
-#: ../src/translations.h:86
+#: ../src/translations.h:81
 msgid "Maximinize all windows"
 msgstr "Maximinizar todas las ventanas"
 

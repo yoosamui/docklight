@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-19 09:22+0700\n"
+"POT-Creation-Date: 2024-12-24 14:57+0700\n"
 "PO-Revision-Date: 2017-07-22 18:02+0700\n"
 "Last-Translator: \n"
 "Language-Team: THAI <LL@li.org>\n"
@@ -17,53 +17,118 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.8.11\n"
 
-#. clang-format off
-#: ../src/translations.h:21
+#: ../src/translations.h:31
 #, fuzzy
 msgid "Application start."
 msgstr "โปรแกรม"
 
-#: ../src/translations.h:23
+#: ../src/translations.h:33
 #, fuzzy
 msgid "Application activated."
 msgstr "โปรแกรม"
 
-#: ../src/translations.h:25
+#: ../src/translations.h:35
 msgid "Initialize panel."
 msgstr ""
 
-#: ../src/translations.h:27
-msgid "Sets the primary Monitor."
+#: ../src/translations.h:37
+msgid ""
+"Sets the primary Monitor.Settings are primary oder the monitor name e.g DP-3"
 msgstr ""
 
-#: ../src/translations.h:29
+#: ../src/translations.h:39
 msgid "Sets the Panel location: top, right, bottom or left. Default bottom"
 msgstr ""
 
-#: ../src/translations.h:31
+#: ../src/translations.h:41
 msgid ""
 "The dock alignment settings are start, end, center or fill. Default center."
 msgstr ""
 
-#: ../src/translations.h:33
+#: ../src/translations.h:43
+msgid "The icon alignment settings are start, end or center. Default center."
+msgstr ""
+
+#: ../src/translations.h:45
 msgid "parsed values"
 msgstr ""
 
-#: ../src/translations.h:35
+#: ../src/translations.h:47
 #, c-format
 msgid "Free the %s object."
 msgstr ""
 
-#: ../src/translations.h:37
+#: ../src/translations.h:49
 msgid "Display detected monitors"
 msgstr ""
 
-#: ../src/translations.h:39
+#: ../src/translations.h:51
 msgid "Default monitor"
 msgstr ""
 
-#: ../src/translations.h:41
+#: ../src/translations.h:53
 msgid "monitor"
+msgstr ""
+
+#: ../src/translations.h:55
+msgid "Geometry"
+msgstr ""
+
+#: ../src/translations.h:57
+msgid "Workarea"
+msgstr ""
+
+#: ../src/translations.h:59
+msgid "Width"
+msgstr ""
+
+#: ../src/translations.h:61
+msgid "Height"
+msgstr ""
+
+#: ../src/translations.h:63
+msgid "Model"
+msgstr ""
+
+#: ../src/translations.h:65
+msgid "Quit"
+msgstr "ปิดการใช้งาน"
+
+#: ../src/translations.h:67
+msgid "Close all"
+msgstr "ปิดหน้าต่างทั้งหมด"
+
+#: ../src/translations.h:69
+#, fuzzy
+msgid "Maximize"
+msgstr "พับหน้าต่างทั้งหมด"
+
+#: ../src/translations.h:71
+#, fuzzy
+msgid "Minimize"
+msgstr "พับหน้าต่างทั้งหมด"
+
+#: ../src/translations.h:73
+#, fuzzy
+msgid "Close all windows"
+msgstr "ปิดหน้าต่างทั้งหมด"
+
+#: ../src/translations.h:75
+msgid "New"
+msgstr ""
+
+#: ../src/translations.h:77
+#, fuzzy
+msgid "Attach"
+msgstr "แนบกับ Dock"
+
+#: ../src/translations.h:79
+#, fuzzy
+msgid "Minimize all windows"
+msgstr "พับหน้าต่างทั้งหมด"
+
+#: ../src/translations.h:81
+msgid "Maximinize all windows"
 msgstr ""
 
 #~ msgid ""
@@ -222,14 +287,8 @@ msgstr ""
 #~ msgid "Minimize all except active"
 #~ msgstr "พับหน้าต่างที่ไม่ใช้งานชั่วคราว"
 
-#~ msgid "Minimize all"
-#~ msgstr "พับหน้าต่างทั้งหมด"
-
 #~ msgid "Close all except active"
 #~ msgstr "ปิดหน้าต่างที่ไม่ใช้งาน"
-
-#~ msgid "Close all"
-#~ msgstr "ปิดหน้าต่างทั้งหมด"
 
 #~ msgid "Preferences"
 #~ msgstr "การตั้งค่า"
@@ -243,14 +302,8 @@ msgstr ""
 #~ msgid "About"
 #~ msgstr "เกี่ยวกับ"
 
-#~ msgid "Quit"
-#~ msgstr "ปิดการใช้งาน"
-
 #~ msgid "Open new"
 #~ msgstr "เปิดหน้าต่างใหม่"
-
-#~ msgid "Attach to Dock"
-#~ msgstr "แนบกับ Dock"
 
 #~ msgid "Detach from Dock"
 #~ msgstr "แยกออกจาก Dock"

@@ -311,7 +311,13 @@ namespace docklight
         // set the out parameter.
         icon_name = iconname;
         // This is the name taken from the desktop file.
-        title_name = appinfo->get_string("Name");
+        title_name = appinfo->get_name();
+        //        title_name = appinfo->get_string("Name");
+
+        //     auto aname = appinfo->get_name();
+        //     auto dname = appinfo->get_display_name();
+
+        //        g_message("--->%s %s", aname.c_str(), dname.c_str());
 
         // get the default theme
         Glib::RefPtr<Gtk::IconTheme> theme = Gtk::IconTheme::get_default();
