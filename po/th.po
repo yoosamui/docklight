@@ -8,87 +8,83 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-12-24 14:57+0700\n"
-"PO-Revision-Date: 2017-07-22 18:02+0700\n"
+"PO-Revision-Date: 2024-12-25 16:41+0700\n"
 "Last-Translator: \n"
 "Language-Team: THAI <LL@li.org>\n"
 "Language: th\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.11\n"
+"X-Generator: Poedit 3.2.2\n"
 
 #: ../src/translations.h:31
-#, fuzzy
 msgid "Application start."
 msgstr "โปรแกรม"
 
 #: ../src/translations.h:33
-#, fuzzy
 msgid "Application activated."
 msgstr "โปรแกรม"
 
 #: ../src/translations.h:35
 msgid "Initialize panel."
-msgstr ""
+msgstr "เริ่มต้นแผงควบคุม"
 
 #: ../src/translations.h:37
-msgid ""
-"Sets the primary Monitor.Settings are primary oder the monitor name e.g DP-3"
-msgstr ""
+msgid "Sets the primary Monitor.Settings are primary oder the monitor name e.g DP-3"
+msgstr "ตั้งค่าจอภาพหลัก การตั้งค่าเป็นหลักหรือชื่อจอภาพ เช่น DP-3"
 
 #: ../src/translations.h:39
 msgid "Sets the Panel location: top, right, bottom or left. Default bottom"
-msgstr ""
+msgstr "ตั้งค่าตำแหน่งของแผงควบคุม: ด้านบน ด้านขวา ด้านล่าง หรือด้านซ้าย ค่าเริ่มต้นคือด้านล่าง"
 
 #: ../src/translations.h:41
-msgid ""
-"The dock alignment settings are start, end, center or fill. Default center."
-msgstr ""
+msgid "The dock alignment settings are start, end, center or fill. Default center."
+msgstr "การตั้งค่าการจัดตำแหน่งท่าเรือคือ เริ่มต้น สิ้นสุด ตรงกลาง หรือเต็มหน้าจอ ค่าเริ่มต้นคือ ตรงกลาง"
 
 #: ../src/translations.h:43
 msgid "The icon alignment settings are start, end or center. Default center."
-msgstr ""
+msgstr "การตั้งค่าการจัดตำแหน่งไอคอนคือ เริ่มต้น สิ้นสุด หรือตรงกลาง ค่าเริ่มต้นคือ ตรงกลาง"
 
 #: ../src/translations.h:45
 msgid "parsed values"
-msgstr ""
+msgstr "ค่าที่ถูกวิเคราะห์"
 
 #: ../src/translations.h:47
 #, c-format
 msgid "Free the %s object."
-msgstr ""
+msgstr "ปล่อยหน่วยความจำของวัตถุ %s"
 
 #: ../src/translations.h:49
 msgid "Display detected monitors"
-msgstr ""
+msgstr "แสดงจอภาพที่ตรวจพบ"
 
 #: ../src/translations.h:51
 msgid "Default monitor"
-msgstr ""
+msgstr "จอภาพเริ่มต้น"
 
 #: ../src/translations.h:53
 msgid "monitor"
-msgstr ""
+msgstr "จอภาพ"
 
 #: ../src/translations.h:55
 msgid "Geometry"
-msgstr ""
+msgstr "เรขาคณิต"
 
 #: ../src/translations.h:57
 msgid "Workarea"
-msgstr ""
+msgstr "พื้นที่ทำงาน"
 
 #: ../src/translations.h:59
 msgid "Width"
-msgstr ""
+msgstr "Width"
 
 #: ../src/translations.h:61
 msgid "Height"
-msgstr ""
+msgstr "ความสูง"
 
 #: ../src/translations.h:63
 msgid "Model"
-msgstr ""
+msgstr "รุ่น"
 
 #: ../src/translations.h:65
 msgid "Quit"
@@ -99,44 +95,35 @@ msgid "Close all"
 msgstr "ปิดหน้าต่างทั้งหมด"
 
 #: ../src/translations.h:69
-#, fuzzy
 msgid "Maximize"
 msgstr "พับหน้าต่างทั้งหมด"
 
 #: ../src/translations.h:71
-#, fuzzy
 msgid "Minimize"
 msgstr "พับหน้าต่างทั้งหมด"
 
 #: ../src/translations.h:73
-#, fuzzy
 msgid "Close all windows"
 msgstr "ปิดหน้าต่างทั้งหมด"
 
 #: ../src/translations.h:75
 msgid "New"
-msgstr ""
+msgstr "ใหม่"
 
 #: ../src/translations.h:77
-#, fuzzy
 msgid "Attach"
 msgstr "แนบกับ Dock"
 
 #: ../src/translations.h:79
-#, fuzzy
 msgid "Minimize all windows"
 msgstr "พับหน้าต่างทั้งหมด"
 
 #: ../src/translations.h:81
 msgid "Maximinize all windows"
-msgstr ""
+msgstr "พับหน้าต่างทั้งหมด"
 
-#~ msgid ""
-#~ "This program is a lightweight Dock Launcher for opening common "
-#~ "applications for the GNOME Desktop"
-#~ msgstr ""
-#~ "โปรแกรมนี้ใช้งานไม่ยาก Dock Launcher สำหรับการใช้งานเท่าไปเท่านั้น "
-#~ "จัดทำเพื่อแปลภาษาหน้าเดสก์ท็อปของ GNOME "
+#~ msgid "This program is a lightweight Dock Launcher for opening common applications for the GNOME Desktop"
+#~ msgstr "โปรแกรมนี้ใช้งานไม่ยาก Dock Launcher สำหรับการใช้งานเท่าไปเท่านั้น จัดทำเพื่อแปลภาษาหน้าเดสก์ท็อปของ GNOME "
 
 #~ msgid "Create Launcher"
 #~ msgstr "สร้างตัวเปิดโปรแกรม"
@@ -194,8 +181,7 @@ msgstr ""
 #~ msgid ""
 #~ "The command you enter is invalid.\n"
 #~ "\n"
-#~ "Some Applications are scripts files and others requires Administrator "
-#~ "privileges:\n"
+#~ "Some Applications are scripts files and others requires Administrator privileges:\n"
 #~ "for scrips files you need to add the bash on the beginning:\n"
 #~ "\n"
 #~ "/bin/sh \"/usr/local/scriptfile.sh\"\n"
@@ -205,14 +191,12 @@ msgstr ""
 #~ "pkexec Application\n"
 #~ "\n"
 #~ "Please make sure that the Application starts from the command line.\n"
-#~ "Open a terminal and navigate to the directory where the application is "
-#~ "locate\n"
+#~ "Open a terminal and navigate to the directory where the application is locate\n"
 #~ "and trying the command from there..."
 #~ msgstr ""
 #~ "คำสั่งที่คุณป้อนไม่ถูกต้อง\n"
 #~ "\n"
-#~ "บางโปรแกรมเป็น ไฟล์สคริปต์หรือ ผู้อื่นต้องการใช้สิทธิ์ผู้ดูแลระบบ สำหรับ สคริปไฟล์คุณต้องการเพิ่ม "
-#~ "bash การทำงานเบื้องต้น\n"
+#~ "บางโปรแกรมเป็น ไฟล์สคริปต์หรือ ผู้อื่นต้องการใช้สิทธิ์ผู้ดูแลระบบ สำหรับ สคริปไฟล์คุณต้องการเพิ่ม bash การทำงานเบื้องต้น\n"
 #~ "\n"
 #~ "/bin/sh \"/usr/local/scriptfile.sh\"\n"
 #~ "/usr/bin/bash \"/home/yoo/Develop/scriptfile\"\n"

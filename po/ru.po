@@ -23,329 +23,366 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.1.12\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-22 18:01+0700\n"
-"PO-Revision-Date: 2017-07-22 18:01+0700\n"
+"POT-Creation-Date: 2024-12-25 16:28+0700\n"
+"PO-Revision-Date: 2024-12-25 16:28+0700\n"
 "Last-Translator: Juan Gonzalez <j-gonzalez@email.de>\n"
 "Language-Team: https://github.com/yoosamui/docklight\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.11\n"
+"X-Generator: Poedit 3.2.2\n"
 
-#
-#: ../src/About.cpp:115
+#: ../src/translations.h:31
+msgid "Application start."
+msgstr "Запуск приложения."
+
+#: ../src/translations.h:33
+msgid "Application activated."
+msgstr "Приложение активировано."
+
+#: ../src/translations.h:35
+msgid "Initialize panel."
+msgstr "Инициализация панели."
+
+#: ../src/translations.h:37
 msgid ""
-"This program is a lightweight Dock Launcher for opening common applications "
-"for the GNOME Desktop"
+"Sets the primary Monitor.Settings are primary oder the monitor name e.g DP-3"
 msgstr ""
-"Это программа является легким Dock Лаунчеом для запуска обычных приложений "
-"для GNOME Desktop"
+"Устанавливает основной монитор. Настройки: основной или имя монитора, "
+"например DP-3"
 
-#: ../src/LauncherWindow.cpp:35 ../src/LauncherWindow.cpp:72
-msgid "Create Launcher"
-msgstr "Создать Лаунчер"
+#: ../src/translations.h:39
+msgid "Sets the Panel location: top, right, bottom or left. Default bottom"
+msgstr ""
+"Устанавливает положение панели: верх, право, низ или лево. По умолчанию - низ"
 
-#: ../src/LauncherWindow.cpp:36
-msgid "Test Launcher"
-msgstr "Протестировать Лаунчер"
+#: ../src/translations.h:41
+msgid ""
+"The dock alignment settings are start, end, center or fill. Default center."
+msgstr ""
+"Настройки выравнивания дока: начало, конец, центр или заполнить. По "
+"умолчанию - центр."
 
-#: ../src/LauncherWindow.cpp:37 ../src/SessionWindow.cpp:125
-msgid "Cancel"
-msgstr "Отменить"
+#: ../src/translations.h:43
+msgid "The icon alignment settings are start, end or center. Default center."
+msgstr ""
+"Настройки выравнивания значков: начало, конец или центр. По умолчанию - "
+"центр."
 
-#: ../src/LauncherWindow.cpp:69
-msgid "Command: "
-msgstr "Команда: "
+#: ../src/translations.h:45
+msgid "parsed values"
+msgstr "Разобранные значения"
 
-#: ../src/LauncherWindow.cpp:70
-msgid "Choose command"
-msgstr "Выбрать команду"
-
-#: ../src/LauncherWindow.cpp:71
-msgid "Choose Icon"
-msgstr "Выбрать Иконку"
-
-#: ../src/LauncherWindow.cpp:74
-msgid "Available"
-msgstr "Доступно"
-
-#: ../src/LauncherWindow.cpp:76
-msgid "Name: "
-msgstr "Имя:"
-
-#: ../src/LauncherWindow.cpp:77
-msgid "Comment: "
-msgstr "Комментарий: "
-
-#: ../src/LauncherWindow.cpp:78
-msgid "Icon: "
-msgstr "Иконка: "
-
-#: ../src/LauncherWindow.cpp:79
-msgid "Categories: "
-msgstr "Категория: "
-
-#: ../src/LauncherWindow.cpp:80
-msgid "Close"
-msgstr "Закрыть"
-
-#: ../src/LauncherWindow.cpp:83
-msgid "Docklight Launcher"
-msgstr "Docklight Лаунчер"
-
-#: ../src/LauncherWindow.cpp:216
+#: ../src/translations.h:47
 #, c-format
-msgid ""
-"Launcher for %s could not be found.\n"
-"You need to create a Launcher for this Application."
-msgstr ""
-"Лаунчер для %s не найден.\n"
-"Вам нужно создать Лаунчер для этой Программы."
+msgid "Free the %s object."
+msgstr "Освободить объект %s."
 
-#: ../src/LauncherWindow.cpp:221
-msgid " Application"
-msgstr " Приложение"
+#: ../src/translations.h:49
+msgid "Display detected monitors"
+msgstr "Отобразить обнаруженные мониторы"
 
-#: ../src/LauncherWindow.cpp:241
-msgid "Launcher test Failed!"
-msgstr "Лаунчер-Тест провален!"
+#: ../src/translations.h:51
+msgid "Default monitor"
+msgstr "Монитор по умолчанию"
 
-#. dialog.set_icon_name()
-#: ../src/LauncherWindow.cpp:243
-msgid ""
-"The command you enter is invalid.\n"
-"\n"
-"Some Applications are scripts files and others requires Administrator "
-"privileges:\n"
-"for scrips files you need to add the bash on the beginning:\n"
-"\n"
-"/bin/sh \"/usr/local/scriptfile.sh\"\n"
-"/usr/bin/bash \"/home/yoo/Develop/scriptfile\"\n"
-"\n"
-"for Applications that requires Administrator privileges:\n"
-"pkexec Application\n"
-"\n"
-"Please make sure that the Application starts from the command line.\n"
-"Open a terminal and navigate to the directory where the application is "
-"locate\n"
-"and trying the command from there..."
-msgstr ""
-"Введенная команда не найдена.\n"
-"\n"
-"Некоторые Приложения и скрипты требуют Административный Доступ:\n"
-"для скриптов вам нужно добавить bash в начале:\n"
-"\n"
-"/bin/sh \"/usr/local/scriptfile.sh\"\n"
-"/usr/bin/bash \"/home/yoo/Develop/scriptfile\"\n"
-"\n"
-"для Приложений, которые требуют Административный доступ:\n"
-"pkexec Приложение\n"
-"\n"
-"Убедитесь, что Приложение запускается с командной строки.\n"
-"Откройте терминал и пройдите в директорию, где находится приложение\n"
-"и запустите команду оттуда..."
+#: ../src/translations.h:53
+msgid "monitor"
+msgstr "монитор"
 
-#: ../src/LauncherWindow.cpp:276
-msgid ""
-"\n"
-"\n"
-"Copy template Error!\n"
-"\n"
-msgstr ""
-"\n"
-"\n"
-"Ошибка при копировании шаблона!\n"
-"\n"
+#: ../src/translations.h:55
+msgid "Geometry"
+msgstr "Геометрия"
 
-#: ../src/LauncherWindow.cpp:362
-msgid ""
-"\n"
-"\n"
-"Permissions required. Please try again!\n"
-"\n"
-msgstr ""
-"\n"
-"\n"
-"Требуется разрешение. Попробуйте еще раз!\n"
-"\n"
+#: ../src/translations.h:57
+msgid "Workarea"
+msgstr "Рабочая область"
 
-#: ../src/LauncherWindow.cpp:368
-msgid ""
-"\n"
-"\n"
-"Launcher created successfully!\n"
-"\n"
-msgstr ""
-"\n"
-"\n"
-"Лаунчер создан успешно!\n"
-"\n"
+#: ../src/translations.h:59
+msgid "Width"
+msgstr "Ширина"
 
-#: ../src/LauncherWindow.cpp:376 ../src/LauncherWindow.cpp:402
-msgid "Please choose a file"
-msgstr "Пожалуйста выберите файл "
+#: ../src/translations.h:61
+msgid "Height"
+msgstr "Высота"
 
-#. Add response buttons the the dialog:
-#: ../src/LauncherWindow.cpp:382 ../src/LauncherWindow.cpp:408
-msgid "_Cancel"
-msgstr "_Отмена"
+#: ../src/translations.h:63
+msgid "Model"
+msgstr "Модель"
 
-#: ../src/LauncherWindow.cpp:383 ../src/LauncherWindow.cpp:409
-msgid "_Open"
-msgstr "_Открыть"
-
-#: ../src/LauncherWindow.cpp:412
-msgid "Image files"
-msgstr "Изображения"
-
-#: ../src/LauncherWindow.cpp:438
-msgid "Browser could not be found!\n"
-msgstr "Browser не найден!\n"
-
-#: ../src/LauncherWindow.cpp:462
-msgid "Fields Name and Command can't be empty!\n"
-msgstr "Поля и Команда не могут быть пустыми!\n"
-
-#: ../src/DockPanel.cpp:120 ../src/DockPanel.cpp:121
-msgid "Desktop"
-msgstr "Рабочий стол"
-
-#. Menus
-#. Home Menu items
-#: ../src/DockPanel.cpp:132
-msgid "Autohide"
-msgstr "Авто-скрытие"
-
-#: ../src/DockPanel.cpp:137 ../src/DockPanel.cpp:226
-msgid "Show all"
-msgstr "Показать все"
-
-#: ../src/DockPanel.cpp:141 ../src/DockPanel.cpp:230
-msgid "Minimize all except active"
-msgstr "Скрыть все кроме активных"
-
-#: ../src/DockPanel.cpp:146 ../src/DockPanel.cpp:234
-msgid "Minimize all"
-msgstr "Скрыть все"
-
-#: ../src/DockPanel.cpp:150 ../src/DockPanel.cpp:244
-msgid "Close all except active"
-msgstr "Закрыть все кроме активных"
-
-#: ../src/DockPanel.cpp:155 ../src/DockPanel.cpp:248
-msgid "Close all"
-msgstr "Закрыть все"
-
-#: ../src/DockPanel.cpp:174 ../src/Preferences.cpp:44
-msgid "Preferences"
-msgstr "Настройки"
-
-#: ../src/DockPanel.cpp:178
-msgid "Session-group"
-msgstr "Сессия"
-
-#: ../src/DockPanel.cpp:182
-msgid "Help"
-msgstr "Помощь"
-
-#: ../src/DockPanel.cpp:186
-msgid "About"
-msgstr "О программе"
-
-#: ../src/DockPanel.cpp:190
+#: ../src/translations.h:65
 msgid "Quit"
 msgstr "Выйти"
 
-#. Item Menu
-#: ../src/DockPanel.cpp:207 ../src/DockPanel.cpp:641
-msgid "Open new"
-msgstr "Открыть новую"
+#: ../src/translations.h:67
+msgid "Close all"
+msgstr "Закрыть все"
 
-#: ../src/DockPanel.cpp:214
-msgid "Attach to Dock"
+#: ../src/translations.h:69
+msgid "Maximize"
+msgstr "Скрыть все"
+
+#: ../src/translations.h:71
+msgid "Minimize"
+msgstr "Скрыть все"
+
+#: ../src/translations.h:73
+msgid "Close all windows"
+msgstr "Закрыть все"
+
+#: ../src/translations.h:75
+msgid "New"
+msgstr "Новый"
+
+#: ../src/translations.h:77
+msgid "Attach"
 msgstr "Прикрепить к Dock"
 
-#: ../src/DockPanel.cpp:219
-msgid "Detach from Dock"
-msgstr "Открепить от Dock"
+#: ../src/translations.h:79
+msgid "Minimize all windows"
+msgstr "Скрыть все"
 
-#: ../src/DockPanel.cpp:645
-msgid "Configure"
-msgstr "Настроить"
+#: ../src/translations.h:81
+msgid "Maximinize all windows"
+msgstr "Развернуть все"
 
-#: ../src/DockPanel.cpp:1245 ../src/DockPanel.cpp:2021
+#
+#~ msgid ""
+#~ "This program is a lightweight Dock Launcher for opening common "
+#~ "applications for the GNOME Desktop"
+#~ msgstr ""
+#~ "Это программа является легким Dock Лаунчеом для запуска обычных "
+#~ "приложений для GNOME Desktop"
+
+#~ msgid "Create Launcher"
+#~ msgstr "Создать Лаунчер"
+
+#~ msgid "Test Launcher"
+#~ msgstr "Протестировать Лаунчер"
+
+#~ msgid "Cancel"
+#~ msgstr "Отменить"
+
+#~ msgid "Command: "
+#~ msgstr "Команда: "
+
+#~ msgid "Choose command"
+#~ msgstr "Выбрать команду"
+
+#~ msgid "Choose Icon"
+#~ msgstr "Выбрать Иконку"
+
+#~ msgid "Available"
+#~ msgstr "Доступно"
+
+#~ msgid "Name: "
+#~ msgstr "Имя: "
+
+#~ msgid "Comment: "
+#~ msgstr "Комментарий: "
+
+#~ msgid "Icon: "
+#~ msgstr "Иконка: "
+
+#~ msgid "Categories: "
+#~ msgstr "Категория: "
+
+#~ msgid "Close"
+#~ msgstr "Закрыть"
+
+#~ msgid "Docklight Launcher"
+#~ msgstr "Docklight Лаунчер"
+
 #, c-format
-msgid "Session-group %d"
-msgstr "Сессия %d"
+#~ msgid ""
+#~ "Launcher for %s could not be found.\n"
+#~ "You need to create a Launcher for this Application."
+#~ msgstr ""
+#~ "Лаунчер для %s не найден.\n"
+#~ "Вам нужно создать Лаунчер для этой Программы."
 
-#: ../src/DockPanel.cpp:1912
+#~ msgid " Application"
+#~ msgstr " Приложение"
+
+#~ msgid "Launcher test Failed!"
+#~ msgstr "Лаунчер-Тест провален!"
+
+#~ msgid ""
+#~ "The command you enter is invalid.\n"
+#~ "\n"
+#~ "Some Applications are scripts files and others requires Administrator "
+#~ "privileges:\n"
+#~ "for scrips files you need to add the bash on the beginning:\n"
+#~ "\n"
+#~ "/bin/sh \"/usr/local/scriptfile.sh\"\n"
+#~ "/usr/bin/bash \"/home/yoo/Develop/scriptfile\"\n"
+#~ "\n"
+#~ "for Applications that requires Administrator privileges:\n"
+#~ "pkexec Application\n"
+#~ "\n"
+#~ "Please make sure that the Application starts from the command line.\n"
+#~ "Open a terminal and navigate to the directory where the application is "
+#~ "locate\n"
+#~ "and trying the command from there..."
+#~ msgstr ""
+#~ "Введенная команда не найдена.\n"
+#~ "\n"
+#~ "Некоторые Приложения и скрипты требуют Административный Доступ:\n"
+#~ "для скриптов вам нужно добавить bash в начале:\n"
+#~ "\n"
+#~ "/bin/sh \"/usr/local/scriptfile.sh\"\n"
+#~ "/usr/bin/bash \"/home/yoo/Develop/scriptfile\"\n"
+#~ "\n"
+#~ "для Приложений, которые требуют Административный доступ:\n"
+#~ "pkexec Приложение\n"
+#~ "\n"
+#~ "Убедитесь, что Приложение запускается с командной строки.\n"
+#~ "Откройте терминал и пройдите в директорию, где находится приложение\n"
+#~ "и запустите команду оттуда..."
+
+#~ msgid ""
+#~ "\n"
+#~ "\n"
+#~ "Copy template Error!\n"
+#~ "\n"
+#~ msgstr ""
+#~ "\n"
+#~ "\n"
+#~ "Ошибка при копировании шаблона!\n"
+#~ "\n"
+
+#~ msgid ""
+#~ "\n"
+#~ "\n"
+#~ "Permissions required. Please try again!\n"
+#~ "\n"
+#~ msgstr ""
+#~ "\n"
+#~ "\n"
+#~ "Требуется разрешение. Попробуйте еще раз!\n"
+#~ "\n"
+
+#~ msgid ""
+#~ "\n"
+#~ "\n"
+#~ "Launcher created successfully!\n"
+#~ "\n"
+#~ msgstr ""
+#~ "\n"
+#~ "\n"
+#~ "Лаунчер создан успешно!\n"
+#~ "\n"
+
+#~ msgid "Please choose a file"
+#~ msgstr "Пожалуйста выберите файл  "
+
+#~ msgid "_Cancel"
+#~ msgstr "_Отмена"
+
+#~ msgid "_Open"
+#~ msgstr "_Открыть"
+
+#~ msgid "Image files"
+#~ msgstr "Изображения"
+
+#~ msgid "Browser could not be found!\n"
+#~ msgstr "Browser не найден!\n"
+
+#~ msgid "Fields Name and Command can't be empty!\n"
+#~ msgstr "Поля и Команда не могут быть пустыми!\n"
+
+#~ msgid "Desktop"
+#~ msgstr "Рабочий стол"
+
+#~ msgid "Autohide"
+#~ msgstr "Авто-скрытие"
+
+#~ msgid "Show all"
+#~ msgstr "Показать все"
+
+#~ msgid "Minimize all except active"
+#~ msgstr "Скрыть все кроме активных"
+
+#~ msgid "Close all except active"
+#~ msgstr "Закрыть все кроме активных"
+
+#~ msgid "Preferences"
+#~ msgstr "Настройки"
+
+#~ msgid "Session-group"
+#~ msgstr "Сессия"
+
+#~ msgid "Help"
+#~ msgstr "Помощь"
+
+#~ msgid "About"
+#~ msgstr "О программе"
+
+#~ msgid "Open new"
+#~ msgstr "Открыть новую"
+
+#~ msgid "Detach from Dock"
+#~ msgstr "Открепить от Dock"
+
+#~ msgid "Configure"
+#~ msgstr "Настроить"
+
 #, c-format
-msgid ""
-"(%s) %d windows.\n"
-"there are to many windows open for a Preview.\n"
-"Close some windows and try again."
-msgstr ""
-"(%s) %d окна.\n"
-"открыто слишком много окон для Предпросмотра.\n"
-"Закройте некоторые окна и Попробуйте еще раз."
+#~ msgid "Session-group %d"
+#~ msgstr "Сессия %d"
 
-#: ../src/Launcher.cpp:36
-msgid "Gpk-update-viewer"
-msgstr "Gpk-просмотр-обновлений"
-
-#: ../src/Launcher.cpp:37
-msgid "Gpk-application"
-msgstr "Gpk-приложение"
-
-#: ../src/Preferences.cpp:41
-msgid "Autohide on start"
-msgstr "Авто-скрытие при запуске"
-
-#: ../src/SessionWindow.cpp:47
-msgid "Launch"
-msgstr "Запустить"
-
-#: ../src/SessionWindow.cpp:48
-msgid "Remove"
-msgstr "Удалить"
-
-#: ../src/SessionWindow.cpp:122
-msgid "Application"
-msgstr "Приложение"
-
-#: ../src/SessionWindow.cpp:123
-msgid "Add to list"
-msgstr "Добавить в список"
-
-#: ../src/SessionWindow.cpp:124
-msgid "Save"
-msgstr "Сохранить"
-
-#: ../src/SessionWindow.cpp:126
-msgid "Session Name"
-msgstr "заглавие"
-
-#: ../src/SessionWindow.cpp:222
 #, c-format
-msgid "Session group %d"
-msgstr "Сессия %d"
+#~ msgid ""
+#~ "(%s) %d windows.\n"
+#~ "there are to many windows open for a Preview.\n"
+#~ "Close some windows and try again."
+#~ msgstr ""
+#~ "(%s) %d окна.\n"
+#~ "открыто слишком много окон для Предпросмотра.\n"
+#~ "Закройте некоторые окна и Попробуйте еще раз."
 
-#: ../src/SessionWindow.cpp:444
-msgid ""
-"\n"
-"\n"
-"Session group successfully saved!\n"
-"\n"
-msgstr ""
-"\n"
-"\n"
-"Сессия успешно сохранена!\n"
-"\n"
+#~ msgid "Gpk-update-viewer"
+#~ msgstr "Gpk-просмотр-обновлений"
 
-#: ../src/SessionWindow.cpp:467
-msgid "Click here to get the Application name!"
-msgstr "Нажмите здесь чтобы получить имя Приложения!"
+#~ msgid "Gpk-application"
+#~ msgstr "Gpk-приложение"
+
+#~ msgid "Autohide on start"
+#~ msgstr "Авто-скрытие при запуске"
+
+#~ msgid "Launch"
+#~ msgstr "Запустить"
+
+#~ msgid "Remove"
+#~ msgstr "Удалить"
+
+#~ msgid "Add to list"
+#~ msgstr "Добавить в список"
+
+#~ msgid "Save"
+#~ msgstr "Сохранить"
+
+#~ msgid "Session Name"
+#~ msgstr "заглавие "
+
+#, c-format
+#~ msgid "Session group %d"
+#~ msgstr "Сессия %d"
+
+#~ msgid ""
+#~ "\n"
+#~ "\n"
+#~ "Session group successfully saved!\n"
+#~ "\n"
+#~ msgstr ""
+#~ "\n"
+#~ "\n"
+#~ "Сессия успешно сохранена!\n"
+#~ "\n"
+
+#~ msgid "Click here to get the Application name!"
+#~ msgstr "Нажмите здесь чтобы получить имя Приложения!"
 
 #~ msgid "Add active"
 #~ msgstr "Добавить активный"

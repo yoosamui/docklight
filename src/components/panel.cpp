@@ -419,9 +419,8 @@ namespace docklight
     {
         get_dockitem_index(event->x, event->y);
 
-        if (!Autohide()->get_visible() && Config()->is_intelihide()) return true;
-
-        if (m_force_show && !Autohide()->get_visible() && Config()->is_autohide()) {
+        if (m_force_show && !Autohide()->get_visible() &&
+            (Config()->is_autohide() || Config()->is_intelihide())) {
             auto area = Config()->get_dock_area();
 
             if (m_config->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
