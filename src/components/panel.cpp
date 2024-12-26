@@ -419,7 +419,7 @@ namespace docklight
     {
         get_dockitem_index(event->x, event->y);
 
-        if (m_force_show && !Autohide()->get_visible() &&
+        if (m_force_show && !Autohide()->get_fullscreen() && !Autohide()->get_visible() &&
             (Config()->is_autohide() || Config()->is_intelihide())) {
             auto area = Config()->get_dock_area();
 

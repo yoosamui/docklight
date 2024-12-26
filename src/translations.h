@@ -66,13 +66,13 @@
 #define MSG_CLOSE_ALL \
     _("Close all")
 #define MSG_SHOW_ALL \
-    _("Maximize")
+    _("Maximize all")
 #define MSG_MINIMIZE_ALL \
-    _("Minimize")
+    _("Minimize all")
 #define MSG_CLOSE_ALL_WINDOWS \
-    _("Close all windows")
+    _("Close all")
 #define MSG_OPEN_NEW \
-    _("New")
+    _("Open new")
 #define MSG_ATTACH \
     _("Attach")
 #define MSG_MINIMIZE_ALL_WINDOWS \

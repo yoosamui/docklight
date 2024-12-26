@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-24 14:57+0700\n"
-"PO-Revision-Date: 2024-12-25 16:41+0700\n"
+"POT-Creation-Date: 2024-12-26 10:37+0700\n"
+"PO-Revision-Date: 2024-12-26 10:39+0700\n"
 "Last-Translator: \n"
 "Language-Team: THAI <LL@li.org>\n"
 "Language: th\n"
@@ -19,11 +19,11 @@ msgstr ""
 
 #: ../src/translations.h:31
 msgid "Application start."
-msgstr "โปรแกรม"
+msgstr "เริ่มต้นแอปพลิเคชัน"
 
 #: ../src/translations.h:33
 msgid "Application activated."
-msgstr "โปรแกรม"
+msgstr "แอปพลิเคชันเปิดใช้งาน"
 
 #: ../src/translations.h:35
 msgid "Initialize panel."
@@ -76,7 +76,7 @@ msgstr "พื้นที่ทำงาน"
 
 #: ../src/translations.h:59
 msgid "Width"
-msgstr "Width"
+msgstr "ความกว้าง"
 
 #: ../src/translations.h:61
 msgid "Height"
@@ -88,31 +88,27 @@ msgstr "รุ่น"
 
 #: ../src/translations.h:65
 msgid "Quit"
-msgstr "ปิดการใช้งาน"
+msgstr "ออก"
 
-#: ../src/translations.h:67
+#: ../src/translations.h:67 ../src/translations.h:73
 msgid "Close all"
-msgstr "ปิดหน้าต่างทั้งหมด"
+msgstr "ปิดทั้งหมด"
 
 #: ../src/translations.h:69
-msgid "Maximize"
-msgstr "พับหน้าต่างทั้งหมด"
+msgid "Maximize all"
+msgstr "ขยายเต็มหน้าจอ"
 
 #: ../src/translations.h:71
-msgid "Minimize"
-msgstr "พับหน้าต่างทั้งหมด"
-
-#: ../src/translations.h:73
-msgid "Close all windows"
-msgstr "ปิดหน้าต่างทั้งหมด"
+msgid "Minimize all"
+msgstr "พับหน้าต่าง"
 
 #: ../src/translations.h:75
-msgid "New"
-msgstr "ใหม่"
+msgid "Open new"
+msgstr "เปิดหน้าต่างใหม่"
 
 #: ../src/translations.h:77
 msgid "Attach"
-msgstr "แนบกับ Dock"
+msgstr "แนบ"
 
 #: ../src/translations.h:79
 msgid "Minimize all windows"
@@ -120,7 +116,13 @@ msgstr "พับหน้าต่างทั้งหมด"
 
 #: ../src/translations.h:81
 msgid "Maximinize all windows"
-msgstr "พับหน้าต่างทั้งหมด"
+msgstr "เปิดหน้าต่างทั้งหมด"
+
+#~ msgid "Close all windows"
+#~ msgstr "ปิดหน้าต่างทั้งหมด"
+
+#~ msgid "New"
+#~ msgstr "ใหม่"
 
 #~ msgid "This program is a lightweight Dock Launcher for opening common applications for the GNOME Desktop"
 #~ msgstr "โปรแกรมนี้ใช้งานไม่ยาก Dock Launcher สำหรับการใช้งานเท่าไปเท่านั้น จัดทำเพื่อแปลภาษาหน้าเดสก์ท็อปของ GNOME "
@@ -285,9 +287,6 @@ msgstr "พับหน้าต่างทั้งหมด"
 
 #~ msgid "About"
 #~ msgstr "เกี่ยวกับ"
-
-#~ msgid "Open new"
-#~ msgstr "เปิดหน้าต่างใหม่"
 
 #~ msgid "Detach from Dock"
 #~ msgstr "แยกออกจาก Dock"

@@ -57,6 +57,7 @@ namespace docklight
 
     AutohideManager::~AutohideManager()
     {
+        connect_signal_handler(false);
         m_sigc_hide.disconnect();
         m_sigc_autohide.disconnect();
     }
@@ -144,27 +145,64 @@ namespace docklight
     {
         if (!m_active_window) return true;
 
-        m_intersects = is_window_intersect(m_active_window);
+        WnckWindowType wt = wnck_window_get_window_type(m_active_window);
+        if (wt == WNCK_WINDOW_DESKTOP) return true;
 
+        m_area = Config()->get_dock_area();
+
+        m_intersects = is_window_intersect(m_active_window);
+        m_fullscreen = wnck_window_is_fullscreen(m_active_window) && m_intersects;
+
+        // none
+        if (Config()->is_autohide_none() && m_fullscreen) {
+            hide_now();
+            return true;
+        }
+
+        if (!m_visible && Config()->is_autohide_none() && !m_fullscreen) {
+            show_now();
+            return true;
+        }
+
+        // autohide
         if (Config()->is_autohide()) {
+            if (m_fullscreen) {
+                m_autohide_timer.stop();
+                hide_now();
+                return true;
+            }
+
             if (m_hide_allow && (int)m_visible && m_autohide_timer.elapsed() > 2) {
                 m_autohide_timer.stop();
                 hide_now();
+                return true;
             }
 
             return true;
         }
 
-        // intelihide  | none
-        if (m_last_intersects != m_intersects) {
-            m_last_intersects = m_intersects;
+        // intelihide
+        if (Config()->is_intelihide()) {
+            if (m_fullscreen) {
+                hide_now();
+                return true;
+            }
 
-            Position()->window_intersects(m_intersects);
+            if (m_last_intersects != m_intersects) {
+                m_last_intersects = m_intersects;
 
-            if (m_intersects) {
-                if (m_hide_allow) hide_now();
-            } else {
+                if (m_intersects) {
+                    hide_now();
+                    return true;
+                } else {
+                    show_now();
+                    return true;
+                }
+            }
+
+            if (!m_visible && !m_intersects) {
                 show_now();
+                return true;
             }
         }
 
@@ -175,15 +213,12 @@ namespace docklight
     {
         m_offset_x = 0;
         m_offset_y = 0;
+
         float position =
             easing::map_clamp(m_animation_time, m_init_time, m_end_time, m_start_position,
                               m_end_position, &easing::linear::easeOut);
 
         get_offset(position, m_offset_x, m_offset_y);
-
-        g_print("%d) %f %f %f %f Y=%d\n", m_animation_time, m_init_time, m_end_time,
-                m_start_position, m_end_position, m_offset_y);
-        //        g_print("%f %f\n", m_start_position, m_end_position);
 
         m_signal_hide.emit(m_offset_x, m_offset_y);
         m_animation_time++;
@@ -198,7 +233,7 @@ namespace docklight
             }
 
         } else {
-            if ((int)position <= 0) {
+            if ((int)position < 1) {
                 connect_signal_hide(false);
                 m_visible = true;
 
@@ -213,9 +248,6 @@ namespace docklight
     {
         if (m_visible) return;
 
-        bool fullscreeen = wnck_window_is_fullscreen(m_active_window);
-        if (fullscreeen) return;
-
         m_start_position = (float)m_area;
         m_end_position = 0.f;
 
@@ -229,11 +261,6 @@ namespace docklight
     void AutohideManager::hide_now()
     {
         if (!m_visible) return;
-
-        bool fullscreeen = wnck_window_is_fullscreen(m_active_window);
-        if (Config()->is_autohide_none() && !fullscreeen) {
-            return;
-        }
 
         m_start_position = 0.f;
         m_end_position = (float)m_area;
@@ -254,6 +281,11 @@ namespace docklight
     bool AutohideManager::get_visible() const
     {
         return m_visible;
+    }
+
+    bool AutohideManager::get_fullscreen() const
+    {
+        return m_fullscreen;
     }
 
     bool AutohideManager::get_intersects() const

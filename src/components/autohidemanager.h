@@ -45,6 +45,7 @@ namespace docklight
         ~AutohideManager();
 
         bool get_intersects() const;
+        bool get_fullscreen() const;
 
         void force_show();
         bool get_visible() const;
@@ -85,6 +86,7 @@ namespace docklight
         bool m_intersects = false;
         bool m_last_intersects = false;
         bool m_hide_allow = true;
+        bool m_fullscreen = false;
 
         type_signal_hide m_signal_hide;
         type_signal_before_hide m_signal_before_hide;
