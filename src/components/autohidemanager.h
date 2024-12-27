@@ -45,6 +45,7 @@ namespace docklight
         ~AutohideManager();
 
         bool get_intersects() const;
+        bool get_fullscreen() const;
 
         void force_show();
         bool get_visible() const;
@@ -78,14 +79,14 @@ namespace docklight
 
         Glib::Timer m_autohide_timer;
 
-        const int m_frame_rate = 60;
-        const float m_hide_delay = 40.0f;
-        const float m_show_delay = 10.0f;
+        const float m_hide_delay = 40.f;
+        const float m_show_delay = 10.f;
 
         bool m_visible = true;
         bool m_intersects = false;
         bool m_last_intersects = false;
         bool m_hide_allow = true;
+        bool m_fullscreen = false;
 
         type_signal_hide m_signal_hide;
         type_signal_before_hide m_signal_before_hide;
@@ -101,8 +102,8 @@ namespace docklight
 
         float m_start_position = 0.f;
         float m_end_position = 0.f;
-        float m_init_time = 0.0f;
-        float m_end_time = 0.0;
+        float m_init_time = 0.f;
+        float m_end_time = 0.f;
     };
 
     Glib::RefPtr<AutohideManager> create_autohide();
