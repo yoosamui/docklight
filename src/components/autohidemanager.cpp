@@ -216,9 +216,12 @@ namespace docklight
 
         float position =
             easing::map_clamp(m_animation_time, m_init_time, m_end_time, m_start_position,
-                              m_end_position, &easing::linear::easeOut);
+                              m_end_position, &easing::linear::easeInOut);
 
         get_offset(position, m_offset_x, m_offset_y);
+
+        g_message("%2d) TIME:%f %f - POS  %f %f Y:%d ", m_animation_time, position * m_init_time,
+                  m_end_time, m_start_position, m_end_position, m_offset_y);
 
         m_signal_hide.emit(m_offset_x, m_offset_y);
         m_animation_time++;
@@ -240,13 +243,14 @@ namespace docklight
                 return true;
             }
         }
-
         return true;
     }
 
     void AutohideManager::show_now()
     {
         if (m_visible) return;
+
+        //  const std::lock_guard<std::mutex> lock(m_mutex);
 
         m_start_position = (float)m_area;
         m_end_position = 0.f;
@@ -255,12 +259,16 @@ namespace docklight
         m_end_time = m_show_delay;
 
         m_animation_time = 0;
+
+        // m_frame_time = g_get_monotonic_time();
         connect_signal_hide(true);
     }
 
     void AutohideManager::hide_now()
     {
         if (!m_visible) return;
+
+        // const std::lock_guard<std::mutex> lock(m_mutex);
 
         m_start_position = 0.f;
         m_end_position = (float)m_area;
@@ -270,6 +278,7 @@ namespace docklight
 
         m_animation_time = 0;
         m_signal_before_hide.emit(0);
+        //_frame_time = g_get_real_time();
         connect_signal_hide(true);
     }
 

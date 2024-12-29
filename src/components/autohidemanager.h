@@ -24,7 +24,7 @@
 #include <gtkmm/window.h>
 #include <sigc++/sigc++.h>
 
-//#include "components/dockmenu.h"
+#include <thread>
 #include "components/position.h"
 #include "utils/easing.h"
 #include "utils/wnck.h"
@@ -79,7 +79,7 @@ namespace docklight
 
         Glib::Timer m_autohide_timer;
 
-        const float m_hide_delay = 40.f;
+        const float m_hide_delay = 20.f;
         const float m_show_delay = 10.f;
 
         bool m_visible = true;
@@ -104,6 +104,8 @@ namespace docklight
         float m_end_position = 0.f;
         float m_init_time = 0.f;
         float m_end_time = 0.f;
+
+        std::mutex m_mutex;
     };
 
     Glib::RefPtr<AutohideManager> create_autohide();
