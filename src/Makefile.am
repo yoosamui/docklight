@@ -11,7 +11,7 @@ ALLCPPFLAGS += -DWNCK_I_KNOW_THIS_IS_UNSTABLE  -Lbamf3 -I/usr/include/libbamf3/
 docklight_CPPFLAGS = $(ALLCPPFLAGS)
 
 # detailed
-#docklight_CPPFLAGS += -Wall -Wextra -Werror -std=c++20 -pedantic
+#docklight_CPPFLAGS += -Wall -Wextra -Werror -std=c++17 -pedantic
 
 # release
 #docklight_CPPFLAGS += O2 -s -DNDEBUG -Wall -Wextra -Werror -std=c++11 -pedantic
