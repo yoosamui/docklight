@@ -24,7 +24,7 @@
 #include <gtkmm/window.h>
 #include <sigc++/sigc++.h>
 
-//#include "components/dockmenu.h"
+#include <thread>
 #include "components/position.h"
 #include "utils/easing.h"
 #include "utils/wnck.h"
@@ -66,8 +66,10 @@ namespace docklight
 
         void connect_signal_handler(bool connect);
         void connect_signal_hide(bool connect);
+        void connect_signal_show(bool connect);
 
         bool on_hide();
+        bool on_show();
 
         static bool is_window_intersect(WnckWindow* window);
         static void on_active_window_changed(WnckScreen* screen,
@@ -79,7 +81,7 @@ namespace docklight
 
         Glib::Timer m_autohide_timer;
 
-        const float m_hide_delay = 40.f;
+        const float m_hide_delay = 20.f;
         const float m_show_delay = 10.f;
 
         bool m_visible = true;
@@ -94,6 +96,7 @@ namespace docklight
 
         sigc::connection m_sigc_autohide;
         sigc::connection m_sigc_hide;
+        sigc::connection m_sigc_show;
 
         int m_offset_x = 0;
         int m_offset_y = 0;
@@ -104,6 +107,8 @@ namespace docklight
         float m_end_position = 0.f;
         float m_init_time = 0.f;
         float m_end_time = 0.f;
+
+        std::mutex m_mutex;
     };
 
     Glib::RefPtr<AutohideManager> create_autohide();

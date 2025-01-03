@@ -193,7 +193,7 @@ namespace docklight
 
             // the preview size
             m_image_size = read_image_size();
-            if (m_image_size > DEF_PREVIEW_IMAGE_MAX_SIZE) m_icon_size = DEF_PREVIEW_IMAGE_MAX_SIZE;
+            if (m_image_size > DEF_PREVIEW_IMAGE_MAX_SIZE) m_image_size = DEF_PREVIEW_IMAGE_MAX_SIZE;
             m_custom_image_size = m_image_size;
 
             // separator show line
