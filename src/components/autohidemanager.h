@@ -66,8 +66,10 @@ namespace docklight
 
         void connect_signal_handler(bool connect);
         void connect_signal_hide(bool connect);
+        void connect_signal_show(bool connect);
 
         bool on_hide();
+        bool on_show();
 
         static bool is_window_intersect(WnckWindow* window);
         static void on_active_window_changed(WnckScreen* screen,
@@ -94,6 +96,7 @@ namespace docklight
 
         sigc::connection m_sigc_autohide;
         sigc::connection m_sigc_hide;
+        sigc::connection m_sigc_show;
 
         int m_offset_x = 0;
         int m_offset_y = 0;

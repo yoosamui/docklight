@@ -62,6 +62,15 @@ namespace docklight
         m_sigc_autohide.disconnect();
     }
 
+    void AutohideManager::connect_signal_show(bool connect)
+    {
+        if (connect) {
+            m_sigc_show = Glib::signal_timeout().connect(
+                sigc::mem_fun(this, &AutohideManager::on_show), 1000 / 60);
+        } else {
+            m_sigc_show.disconnect();
+        }
+    }
     void AutohideManager::connect_signal_hide(bool connect)
     {
         if (connect) {
@@ -165,14 +174,14 @@ namespace docklight
         }
 
         // autohide
-        if (Config()->is_autohide()) {
+        if (m_visible && Config()->is_autohide()) {
             if (m_fullscreen) {
                 m_autohide_timer.stop();
                 hide_now();
                 return true;
             }
 
-            if (m_hide_allow && (int)m_visible && m_autohide_timer.elapsed() > 2) {
+            if (m_autohide_timer.elapsed() > 2) {
                 m_autohide_timer.stop();
                 hide_now();
                 return true;
@@ -209,24 +218,45 @@ namespace docklight
         return true;
     }
 
-    bool AutohideManager::on_hide()
+    bool AutohideManager::on_show()
     {
         m_offset_x = 0;
         m_offset_y = 0;
+
+        auto m_start_position = (float)m_area;
+        auto m_end_position = 0.f;
+
+        auto m_init_time = 0.f;
+        auto m_end_time = m_show_delay;
 
         float position =
             easing::map_clamp(m_animation_time, m_init_time, m_end_time, m_start_position,
                               m_end_position, &easing::linear::easeInOut);
 
+        // if ((int)position == 0) {
+        // g_print("Reset\n");
+        // connect_signal_show(false);
+        // return true;
+        //}
+
         get_offset(position, m_offset_x, m_offset_y);
 
-        g_message("%2d) TIME:%f %f - POS  %f %f Y:%d ", m_animation_time, position * m_init_time,
-                  m_end_time, m_start_position, m_end_position, m_offset_y);
+        g_message("SHOW %2d) TIME:%f %f - POS  %f %f Y:%d %f area:%d", m_animation_time,
+                  position * m_init_time, m_end_time, m_start_position, m_end_position, m_offset_y,
+                  position, m_area);
 
         m_signal_hide.emit(m_offset_x, m_offset_y);
         m_animation_time++;
 
-        if (m_visible) {
+        if ((int)position < 1) {
+            connect_signal_show(false);
+            m_visible = true;
+
+            return false;
+        }
+
+        /*if (m_visible) {
+            // if ((int)position >= m_area) {
             if ((int)position >= m_area) {
                 connect_signal_hide(false);
                 m_visible = false;
@@ -236,13 +266,71 @@ namespace docklight
             }
 
         } else {
+            // if ((int)position < 1) {
             if ((int)position < 1) {
                 connect_signal_hide(false);
                 m_visible = true;
 
                 return true;
             }
+        }*/
+
+        //        connect_signal_hide(false);
+        return true;
+    }
+    bool AutohideManager::on_hide()
+    {
+        m_offset_x = 0;
+        m_offset_y = 0;
+
+        auto m_start_position = 0.f;
+        auto m_end_position = (float)m_area;
+
+        auto m_init_time = 0.f;
+        auto m_end_time = m_hide_delay;
+
+        float position =
+            easing::map_clamp(m_animation_time, m_init_time, m_end_time, m_start_position,
+                              m_end_position, &easing::linear::easeInOut);
+
+        get_offset(position, m_offset_x, m_offset_y);
+
+        g_message("HIDE %2d) TIME:%f %f - POS  %f %f Y:%d %f area:%d", m_animation_time,
+                  position * m_init_time, m_end_time, m_start_position, m_end_position, m_offset_y,
+                  position, m_area);
+
+        m_signal_hide.emit(m_offset_x, m_offset_y);
+        m_animation_time++;
+
+        if ((int)position >= m_area) {
+            connect_signal_hide(false);
+            m_visible = false;
+
+            m_signal_after_hide.emit(0);
+            return false;
         }
+
+        /*if (m_visible) {
+            // if ((int)position >= m_area) {
+            if ((int)position >= m_area) {
+                connect_signal_hide(false);
+                m_visible = false;
+
+                m_signal_after_hide.emit(0);
+                return true;
+            }
+
+        } else {
+            // if ((int)position < 1) {
+            if ((int)position < 1) {
+                connect_signal_hide(false);
+                m_visible = true;
+
+                return true;
+            }
+        }*/
+
+        //        connect_signal_hide(false);
         return true;
     }
 
@@ -261,7 +349,7 @@ namespace docklight
         m_animation_time = 0;
 
         // m_frame_time = g_get_monotonic_time();
-        connect_signal_hide(true);
+        connect_signal_show(true);
     }
 
     void AutohideManager::hide_now()
