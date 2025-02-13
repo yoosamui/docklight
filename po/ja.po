@@ -1,0 +1,116 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-12-27 22:31+0700\n"
+"PO-Revision-Date: 2024-12-27 22:50+0700\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ja_JP\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 3.2.2\n"
+"X-Poedit-Basepath: .\n"
+
+#: ../src/translations.h:31
+msgid "Application start."
+msgstr "アプリケーションの起動."
+
+#: ../src/translations.h:33
+msgid "Application activated."
+msgstr "アプリケーションがアクティブ化されました."
+
+#: ../src/translations.h:35
+msgid "Initialize panel."
+msgstr "パネルの初期化."
+
+#: ../src/translations.h:37
+msgid "Sets the primary Monitor.Settings are primary oder the monitor name e.g DP-3"
+msgstr "プライマリモニターを設定します。設定はプライマリまたはモニター名 (例: DP-3)"
+
+#: ../src/translations.h:39
+msgid "Sets the Panel location: top, right, bottom or left. Default bottom"
+msgstr "パネルの位置を設定します: 上、右、下、または左。デフォルトは下"
+
+#: ../src/translations.h:41
+msgid "The dock alignment settings are start, end, center or fill. Default center."
+msgstr "ドックの配置設定は、開始、終了、中央、または塗りつぶしです。デフォルトは中央."
+
+#: ../src/translations.h:43
+msgid "The icon alignment settings are start, end or center. Default center."
+msgstr "アイコンの配置設定は、開始、終了、または中央です。デフォルトは中央."
+
+#: ../src/translations.h:45
+msgid "parsed values"
+msgstr "解析された値"
+
+#: ../src/translations.h:47
+#, c-format
+msgid "Free the %s object."
+msgstr "Free the %s object."
+
+#: ../src/translations.h:49
+msgid "Display detected monitors"
+msgstr "検出されたモニターを表示します"
+
+#: ../src/translations.h:51
+msgid "Default monitor"
+msgstr "デフォルトモニター"
+
+#: ../src/translations.h:53
+msgid "monitor"
+msgstr "モニター"
+
+#: ../src/translations.h:55
+msgid "Geometry"
+msgstr "ジオメトリ"
+
+#: ../src/translations.h:57
+msgid "Workarea"
+msgstr "作業領域"
+
+#: ../src/translations.h:59
+msgid "Width"
+msgstr "幅"
+
+#: ../src/translations.h:61
+msgid "Height"
+msgstr "高さ"
+
+#: ../src/translations.h:63
+msgid "Model"
+msgstr "モデル"
+
+#: ../src/translations.h:65
+msgid "Quit"
+msgstr "終了"
+
+#: ../src/translations.h:67 ../src/translations.h:73
+msgid "Close all"
+msgstr "すべて閉じる"
+
+#: ../src/translations.h:69
+msgid "Maximize all"
+msgstr "すべてを最小化"
+
+#: ../src/translations.h:71
+msgid "Minimize all"
+msgstr "すべてを最小化"
+
+#: ../src/translations.h:75
+msgid "Open new"
+msgstr "新規"
+
+#: ../src/translations.h:77
+msgid "Attach"
+msgstr "添付"
+
+#: ../src/translations.h:79
+msgid "Minimize all windows"
+msgstr "すべてを最小化"
+
+#: ../src/translations.h:81
+msgid "Maximinize all windows"
+msgstr "すべてを最大化"

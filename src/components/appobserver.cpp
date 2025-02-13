@@ -126,8 +126,8 @@ namespace docklight
         Provider()->insert(window);
 
         /*auto instance_name = wnck_window_get_class_instance_name(window);
-        auto group_name = wnck_window_get_class_group_name(window);
-        g_message("->%s/ %s", instance_name, group_name);*/
+         auto group_name = wnck_window_get_class_group_name(window);
+         g_message("->%s/ %s", instance_name, group_name);*/
 
         // Glib::RefPtr<Gdk::Pixbuf> image;
         // for (int i = 0; i < 2; i++)

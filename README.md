@@ -6,6 +6,9 @@
 
 
 ## Installation
+Docklight for Debian/Ubuntu Linux platform (64-bit)
+
+For non Debian/Ubuntu Systems change the package manager in the install_dependecies.sh script.
 clone this repository if you want to get the **stable** version:
 
 ```bash
@@ -26,8 +29,7 @@ cd into it:
 ```bash
 $ cd docklight
 ```
-
-Now execute the following bash scripts:
+Eexecute the following bash scripts:
 
 ```bash
 $ sudo ./install_dependencies.sh
@@ -93,14 +95,6 @@ Right mouse click longer press  : activate context image preview.
 Mouse wheel                     : scroll through the window group list.
 
 ## Current state
-
-in development...
-
-MS-Log:
-
-    12.09.2024 - 20%.
-
-    03.12.2024 - 70%.⚡
-
+beta version: 5.1.64
 
 

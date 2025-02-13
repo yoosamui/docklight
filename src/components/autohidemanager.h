@@ -24,7 +24,7 @@
 #include <gtkmm/window.h>
 #include <sigc++/sigc++.h>
 
-//#include "components/dockmenu.h"
+#include <thread>
 #include "components/position.h"
 #include "utils/easing.h"
 #include "utils/wnck.h"
@@ -45,6 +45,7 @@ namespace docklight
         ~AutohideManager();
 
         bool get_intersects() const;
+        bool get_fullscreen() const;
 
         void force_show();
         bool get_visible() const;
@@ -65,8 +66,10 @@ namespace docklight
 
         void connect_signal_handler(bool connect);
         void connect_signal_hide(bool connect);
+        void connect_signal_show(bool connect);
 
         bool on_hide();
+        bool on_show();
 
         static bool is_window_intersect(WnckWindow* window);
         static void on_active_window_changed(WnckScreen* screen,
@@ -78,14 +81,14 @@ namespace docklight
 
         Glib::Timer m_autohide_timer;
 
-        const int m_frame_rate = 60;
-        const float m_hide_delay = 40.0f;
-        const float m_show_delay = 10.0f;
+        const float m_hide_delay = 20.f;
+        const float m_show_delay = 10.f;
 
         bool m_visible = true;
         bool m_intersects = false;
         bool m_last_intersects = false;
         bool m_hide_allow = true;
+        bool m_fullscreen = false;
 
         type_signal_hide m_signal_hide;
         type_signal_before_hide m_signal_before_hide;
@@ -93,6 +96,7 @@ namespace docklight
 
         sigc::connection m_sigc_autohide;
         sigc::connection m_sigc_hide;
+        sigc::connection m_sigc_show;
 
         int m_offset_x = 0;
         int m_offset_y = 0;
@@ -101,8 +105,10 @@ namespace docklight
 
         float m_start_position = 0.f;
         float m_end_position = 0.f;
-        float m_init_time = 0.0f;
-        float m_end_time = 0.0;
+        float m_init_time = 0.f;
+        float m_end_time = 0.f;
+
+        std::mutex m_mutex;
     };
 
     Glib::RefPtr<AutohideManager> create_autohide();

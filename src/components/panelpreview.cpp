@@ -522,8 +522,8 @@ namespace docklight
             }
 
             // image cell
-            Gdk::Rectangle rect_cell =
-                Gdk::Rectangle(startX, startY + PREVIEW_TITLE_SIZE, m_size, m_size);
+            Gdk::Rectangle rect_cell = Gdk::Rectangle(startX, startY + PREVIEW_TITLE_SIZE, m_size,
+                                                      m_size - PREVIEW_TITLE_SIZE);
             cairo::fill(cr, m_theme->Preview(), m_theme->PanelGradient(), rect_cell);
 
             auto scaled_image = image;

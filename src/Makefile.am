@@ -11,14 +11,14 @@ ALLCPPFLAGS += -DWNCK_I_KNOW_THIS_IS_UNSTABLE  -Lbamf3 -I/usr/include/libbamf3/
 docklight_CPPFLAGS = $(ALLCPPFLAGS)
 
 # detailed
-#docklight_CPPFLAGS += -Wall -Wextra -Werror -std=c++20 -pedantic
+#docklight_CPPFLAGS += -Wall -Wextra -Werror -std=c++17 -pedantic
 
 # release
 #docklight_CPPFLAGS += O2 -s -DNDEBUG -Wall -Wextra -Werror -std=c++11 -pedantic
-#docklight_CPPFLAGS +=  -s -DNDEBUG -Wall -Wextra -Werror -std=c++17 -pedantic
+docklight_CPPFLAGS +=  -s -DNDEBUG -Wall -Wextra -Werror -std=c++17 -pedantic
 
 # standard
-docklight_CPPFLAGS += -DDEBUG -Wall -std=c++17 -ggdb
+#docklight_CPPFLAGS += -DDEBUG -Wall -std=c++17 -ggdb
 #docklight_LDFLAGS = -lX11 -lXcomposite -lXdamage -lXfixes -lXtst
 
 

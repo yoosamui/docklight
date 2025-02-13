@@ -154,6 +154,11 @@ namespace docklight
             return true;
         }
 
+        if (Config()->is_intelihide()) {
+            //
+            m_last_intersects = 0;
+        }
+
         // intelihide  | fill
         if (m_last_intersects != m_intersects) {
             m_last_intersects = m_intersects;

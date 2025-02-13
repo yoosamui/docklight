@@ -7,71 +7,125 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-19 09:22+0700\n"
-"PO-Revision-Date: 2017-07-22 18:02+0700\n"
+"POT-Creation-Date: 2024-12-26 10:37+0700\n"
+"PO-Revision-Date: 2024-12-26 10:39+0700\n"
 "Last-Translator: \n"
 "Language-Team: THAI <LL@li.org>\n"
 "Language: th\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.11\n"
-
-#. clang-format off
-#: ../src/translations.h:21
-#, fuzzy
-msgid "Application start."
-msgstr "โปรแกรม"
-
-#: ../src/translations.h:23
-#, fuzzy
-msgid "Application activated."
-msgstr "โปรแกรม"
-
-#: ../src/translations.h:25
-msgid "Initialize panel."
-msgstr ""
-
-#: ../src/translations.h:27
-msgid "Sets the primary Monitor."
-msgstr ""
-
-#: ../src/translations.h:29
-msgid "Sets the Panel location: top, right, bottom or left. Default bottom"
-msgstr ""
+"X-Generator: Poedit 3.2.2\n"
 
 #: ../src/translations.h:31
-msgid ""
-"The dock alignment settings are start, end, center or fill. Default center."
-msgstr ""
+msgid "Application start."
+msgstr "เริ่มต้นแอปพลิเคชัน"
 
 #: ../src/translations.h:33
-msgid "parsed values"
-msgstr ""
+msgid "Application activated."
+msgstr "แอปพลิเคชันเปิดใช้งาน"
 
 #: ../src/translations.h:35
-#, c-format
-msgid "Free the %s object."
-msgstr ""
+msgid "Initialize panel."
+msgstr "เริ่มต้นแผงควบคุม"
 
 #: ../src/translations.h:37
-msgid "Display detected monitors"
-msgstr ""
+msgid "Sets the primary Monitor.Settings are primary oder the monitor name e.g DP-3"
+msgstr "ตั้งค่าจอภาพหลัก การตั้งค่าเป็นหลักหรือชื่อจอภาพ เช่น DP-3"
 
 #: ../src/translations.h:39
-msgid "Default monitor"
-msgstr ""
+msgid "Sets the Panel location: top, right, bottom or left. Default bottom"
+msgstr "ตั้งค่าตำแหน่งของแผงควบคุม: ด้านบน ด้านขวา ด้านล่าง หรือด้านซ้าย ค่าเริ่มต้นคือด้านล่าง"
 
 #: ../src/translations.h:41
-msgid "monitor"
-msgstr ""
+msgid "The dock alignment settings are start, end, center or fill. Default center."
+msgstr "การตั้งค่าการจัดตำแหน่งท่าเรือคือ เริ่มต้น สิ้นสุด ตรงกลาง หรือเต็มหน้าจอ ค่าเริ่มต้นคือ ตรงกลาง"
 
-#~ msgid ""
-#~ "This program is a lightweight Dock Launcher for opening common "
-#~ "applications for the GNOME Desktop"
-#~ msgstr ""
-#~ "โปรแกรมนี้ใช้งานไม่ยาก Dock Launcher สำหรับการใช้งานเท่าไปเท่านั้น "
-#~ "จัดทำเพื่อแปลภาษาหน้าเดสก์ท็อปของ GNOME "
+#: ../src/translations.h:43
+msgid "The icon alignment settings are start, end or center. Default center."
+msgstr "การตั้งค่าการจัดตำแหน่งไอคอนคือ เริ่มต้น สิ้นสุด หรือตรงกลาง ค่าเริ่มต้นคือ ตรงกลาง"
+
+#: ../src/translations.h:45
+msgid "parsed values"
+msgstr "ค่าที่ถูกวิเคราะห์"
+
+#: ../src/translations.h:47
+#, c-format
+msgid "Free the %s object."
+msgstr "ปล่อยหน่วยความจำของวัตถุ %s"
+
+#: ../src/translations.h:49
+msgid "Display detected monitors"
+msgstr "แสดงจอภาพที่ตรวจพบ"
+
+#: ../src/translations.h:51
+msgid "Default monitor"
+msgstr "จอภาพเริ่มต้น"
+
+#: ../src/translations.h:53
+msgid "monitor"
+msgstr "จอภาพ"
+
+#: ../src/translations.h:55
+msgid "Geometry"
+msgstr "เรขาคณิต"
+
+#: ../src/translations.h:57
+msgid "Workarea"
+msgstr "พื้นที่ทำงาน"
+
+#: ../src/translations.h:59
+msgid "Width"
+msgstr "ความกว้าง"
+
+#: ../src/translations.h:61
+msgid "Height"
+msgstr "ความสูง"
+
+#: ../src/translations.h:63
+msgid "Model"
+msgstr "รุ่น"
+
+#: ../src/translations.h:65
+msgid "Quit"
+msgstr "ออก"
+
+#: ../src/translations.h:67 ../src/translations.h:73
+msgid "Close all"
+msgstr "ปิดทั้งหมด"
+
+#: ../src/translations.h:69
+msgid "Maximize all"
+msgstr "ขยายเต็มหน้าจอ"
+
+#: ../src/translations.h:71
+msgid "Minimize all"
+msgstr "พับหน้าต่าง"
+
+#: ../src/translations.h:75
+msgid "Open new"
+msgstr "เปิดหน้าต่างใหม่"
+
+#: ../src/translations.h:77
+msgid "Attach"
+msgstr "แนบ"
+
+#: ../src/translations.h:79
+msgid "Minimize all windows"
+msgstr "พับหน้าต่างทั้งหมด"
+
+#: ../src/translations.h:81
+msgid "Maximinize all windows"
+msgstr "เปิดหน้าต่างทั้งหมด"
+
+#~ msgid "Close all windows"
+#~ msgstr "ปิดหน้าต่างทั้งหมด"
+
+#~ msgid "New"
+#~ msgstr "ใหม่"
+
+#~ msgid "This program is a lightweight Dock Launcher for opening common applications for the GNOME Desktop"
+#~ msgstr "โปรแกรมนี้ใช้งานไม่ยาก Dock Launcher สำหรับการใช้งานเท่าไปเท่านั้น จัดทำเพื่อแปลภาษาหน้าเดสก์ท็อปของ GNOME "
 
 #~ msgid "Create Launcher"
 #~ msgstr "สร้างตัวเปิดโปรแกรม"
@@ -129,8 +183,7 @@ msgstr ""
 #~ msgid ""
 #~ "The command you enter is invalid.\n"
 #~ "\n"
-#~ "Some Applications are scripts files and others requires Administrator "
-#~ "privileges:\n"
+#~ "Some Applications are scripts files and others requires Administrator privileges:\n"
 #~ "for scrips files you need to add the bash on the beginning:\n"
 #~ "\n"
 #~ "/bin/sh \"/usr/local/scriptfile.sh\"\n"
@@ -140,14 +193,12 @@ msgstr ""
 #~ "pkexec Application\n"
 #~ "\n"
 #~ "Please make sure that the Application starts from the command line.\n"
-#~ "Open a terminal and navigate to the directory where the application is "
-#~ "locate\n"
+#~ "Open a terminal and navigate to the directory where the application is locate\n"
 #~ "and trying the command from there..."
 #~ msgstr ""
 #~ "คำสั่งที่คุณป้อนไม่ถูกต้อง\n"
 #~ "\n"
-#~ "บางโปรแกรมเป็น ไฟล์สคริปต์หรือ ผู้อื่นต้องการใช้สิทธิ์ผู้ดูแลระบบ สำหรับ สคริปไฟล์คุณต้องการเพิ่ม "
-#~ "bash การทำงานเบื้องต้น\n"
+#~ "บางโปรแกรมเป็น ไฟล์สคริปต์หรือ ผู้อื่นต้องการใช้สิทธิ์ผู้ดูแลระบบ สำหรับ สคริปไฟล์คุณต้องการเพิ่ม bash การทำงานเบื้องต้น\n"
 #~ "\n"
 #~ "/bin/sh \"/usr/local/scriptfile.sh\"\n"
 #~ "/usr/bin/bash \"/home/yoo/Develop/scriptfile\"\n"
@@ -222,14 +273,8 @@ msgstr ""
 #~ msgid "Minimize all except active"
 #~ msgstr "พับหน้าต่างที่ไม่ใช้งานชั่วคราว"
 
-#~ msgid "Minimize all"
-#~ msgstr "พับหน้าต่างทั้งหมด"
-
 #~ msgid "Close all except active"
 #~ msgstr "ปิดหน้าต่างที่ไม่ใช้งาน"
-
-#~ msgid "Close all"
-#~ msgstr "ปิดหน้าต่างทั้งหมด"
 
 #~ msgid "Preferences"
 #~ msgstr "การตั้งค่า"
@@ -242,15 +287,6 @@ msgstr ""
 
 #~ msgid "About"
 #~ msgstr "เกี่ยวกับ"
-
-#~ msgid "Quit"
-#~ msgstr "ปิดการใช้งาน"
-
-#~ msgid "Open new"
-#~ msgstr "เปิดหน้าต่างใหม่"
-
-#~ msgid "Attach to Dock"
-#~ msgstr "แนบกับ Dock"
 
 #~ msgid "Detach from Dock"
 #~ msgstr "แยกออกจาก Dock"

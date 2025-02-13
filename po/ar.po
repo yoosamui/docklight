@@ -1,0 +1,124 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-12-24 14:26+0700\n"
+"PO-Revision-Date: 2024-12-24 14:26+0700\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
+"X-Generator: Poedit 3.2.2\n"
+"X-Poedit-Basepath: .\n"
+
+#: ../src/translations.h:31
+msgid "Application start."
+msgstr "بدء التطبيق."
+
+#: ../src/translations.h:33
+msgid "Application activated."
+msgstr "تم تنشيط التطبيق."
+
+#: ../src/translations.h:35
+msgid "Initialize panel."
+msgstr "تهيئة اللوحة."
+
+#: ../src/translations.h:37
+msgid ""
+"Sets the primary Monitor.Settings are primary oder the monitor name e.g DP-3"
+msgstr "يضبط الشاشة الرئيسية. الإعدادات هي أساسية أو اسم الشاشة مثل DP-3"
+
+#: ../src/translations.h:39
+msgid "Sets the Panel location: top, right, bottom or left. Default bottom"
+msgstr "يضبط موقع اللوحة: أعلى أو يمين أو أسفل أو يسار. الافتراضي أسفل"
+
+#: ../src/translations.h:41
+msgid ""
+"The dock alignment settings are start, end, center or fill. Default center."
+msgstr ""
+"إعدادات محاذاة الرصيف هي بداية أو نهاية أو مركز أو ملء. الافتراضي مركز."
+
+#: ../src/translations.h:43
+msgid "The icon alignment settings are start, end or center. Default center."
+msgstr "إعدادات محاذاة الأيقونة هي بداية أو نهاية أو مركز. الافتراضي مركز."
+
+#: ../src/translations.h:45
+msgid "parsed values"
+msgstr "قيم تم تحليلها تحرير كائن %s"
+
+#: ../src/translations.h:47
+#, c-format
+msgid "Free the %s object."
+msgstr "تحرير كائن %s."
+
+#: ../src/translations.h:49
+msgid "Display detected monitors"
+msgstr "عرض الشاشات المكتشفة"
+
+#: ../src/translations.h:51
+msgid "Default monitor"
+msgstr "الشاشة الافتراضية"
+
+#: ../src/translations.h:53
+msgid "monitor"
+msgstr "شاشة"
+
+#: ../src/translations.h:55
+msgid "Geometry"
+msgstr "هندسة"
+
+#: ../src/translations.h:57
+msgid "Workarea"
+msgstr "منطقة العمل"
+
+#: ../src/translations.h:59
+msgid "Width"
+msgstr "عرض"
+
+#: ../src/translations.h:61
+msgid "Height"
+msgstr "ارتفاع"
+
+#: ../src/translations.h:63
+msgid "Model"
+msgstr "نموذج"
+
+#: ../src/translations.h:65
+msgid "Quit"
+msgstr "الخروج"
+
+#: ../src/translations.h:67
+msgid "Close all"
+msgstr "إغلاق الكل"
+
+#: ../src/translations.h:69
+msgid "Maximize"
+msgstr "تكبير"
+
+#: ../src/translations.h:71
+msgid "Minimize"
+msgstr "تصغير"
+
+#: ../src/translations.h:73
+msgid "Close all windows"
+msgstr "إغلاق جميع النوافذ"
+
+#: ../src/translations.h:75
+msgid "New"
+msgstr "جديد"
+
+#: ../src/translations.h:77
+msgid "Attach"
+msgstr "إرفاق"
+
+#: ../src/translations.h:79
+msgid "Minimize all windows"
+msgstr "تكبيرتصغير"
+
+#: ../src/translations.h:81
+msgid "Maximinize all windows"
+msgstr "تكبير"
