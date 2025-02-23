@@ -119,7 +119,7 @@ namespace docklight
             exec_file = "src/docklight";
         }
 
-        usleep(3 * microsecond);  // sleeps for 3 seconds
+        usleep(10 * microsecond);  // sleeps for 10 seconds
         execl(exec_file, "docklight", "-l", location_name, "-m", monitor_name, nullptr);
         g_warning("Restart failed!\n");
     }
