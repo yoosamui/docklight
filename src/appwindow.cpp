@@ -232,4 +232,66 @@ namespace docklight
         m_position->on_monitor_changed();
     }
 
+    void AppWindow::set_window_passthrought(bool passthrough)
+    {
+#ifdef GDK_WINDOWING_X11
+        auto gdk_window = get_window();
+        if (!gdk_window) return;
+
+        Display* dpy = GDK_WINDOW_XDISPLAY(gdk_window->gobj());
+        ::Window xid = GDK_WINDOW_XID(gdk_window->gobj());
+
+        int w = get_width();
+        int h = get_height();
+
+        const int OFFSET = 10;
+
+        // Create a region of the Full window that receives input
+        Region region = XCreateRegion();
+        XRectangle full{0, 0, static_cast<unsigned short>(w), static_cast<unsigned short>(h)};
+        XUnionRectWithRegion(&full, region, region);
+
+        Region hole_region = XCreateRegion();
+        XRectangle hole;
+
+        if (passthrough) {
+            //  g_message("Passthrough ON");
+
+            // Subtract rectangle click-through
+            if (Config()->get_dock_location() == dock_location_t::bottom) {
+                hole = XRectangle{0, 0, static_cast<unsigned short>(w),
+                                  static_cast<unsigned short>(h - OFFSET)};
+
+            } else if (Config()->get_dock_location() == dock_location_t::top) {
+                hole = XRectangle{0, OFFSET, static_cast<unsigned short>(w),
+                                  static_cast<unsigned short>(h - OFFSET)};
+
+            } else if (Config()->get_dock_location() == dock_location_t::left) {
+                hole = XRectangle{OFFSET, 0, static_cast<unsigned short>(w - OFFSET),
+                                  static_cast<unsigned short>(h - OFFSET)};
+
+            } else if (Config()->get_dock_location() == dock_location_t::right) {
+                hole = XRectangle{0, 0, static_cast<unsigned short>(w - OFFSET),
+                                  static_cast<unsigned short>(h)};
+            }
+
+            XUnionRectWithRegion(&hole, hole_region, hole_region);
+            XSubtractRegion(region, hole_region, region);
+            XDestroyRegion(hole_region);
+
+        } else {
+            // g_message("passthrough OFF");
+
+            // Full window receives input → region covers whole window
+            XRectangle full{0, 0, static_cast<unsigned short>(w), static_cast<unsigned short>(h)};
+            XUnionRectWithRegion(&full, region, region);
+        }
+
+        // Apply region as input mask
+        XShapeCombineRegion(dpy, xid, ShapeInput, 0, 0, region, ShapeSet);
+        XDestroyRegion(region);
+        XFlush(dpy);
+
+#endif
+    }
 }  // namespace docklight

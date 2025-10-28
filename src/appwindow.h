@@ -42,67 +42,7 @@ namespace docklight
         int init(Glib::RefPtr<Gtk::Application>& app);
         // Config* m_config = Config::getInstance();
 
-        void set_window_passthrought(bool passthrough)
-        {
-#ifdef GDK_WINDOWING_X11
-            auto gdk_window = get_window();
-            if (!gdk_window) return;
-
-            Display* dpy = GDK_WINDOW_XDISPLAY(gdk_window->gobj());
-            ::Window xid = GDK_WINDOW_XID(gdk_window->gobj());
-
-            int w = get_width();
-            int h = get_height();
-
-            // Create a region of the Full window that receives input
-            Region region = XCreateRegion();
-            XRectangle full{0, 0, static_cast<unsigned short>(w), static_cast<unsigned short>(h)};
-            XUnionRectWithRegion(&full, region, region);
-
-            Region hole_region = XCreateRegion();
-            XRectangle hole;
-
-            if (passthrough) {
-                //  g_message("Passthrough ON");
-
-                // Subtract rectangle click-through
-                if (Config()->get_dock_location() == dock_location_t::bottom) {
-                    hole = XRectangle{0, 0, static_cast<unsigned short>(w),
-                                      static_cast<unsigned short>(h - 10)};
-
-                } else if (Config()->get_dock_location() == dock_location_t::top) {
-                    hole = XRectangle{0, 10, static_cast<unsigned short>(w),
-                                      static_cast<unsigned short>(h - 10)};
-
-                } else if (Config()->get_dock_location() == dock_location_t::left) {
-                    hole = XRectangle{10, 0, static_cast<unsigned short>(w - 10),
-                                      static_cast<unsigned short>(h - 10)};
-
-                } else if (Config()->get_dock_location() == dock_location_t::right) {
-                    hole = XRectangle{0, 0, static_cast<unsigned short>(w - 10),
-                                      static_cast<unsigned short>(h)};
-                }
-
-                XUnionRectWithRegion(&hole, hole_region, hole_region);
-                XSubtractRegion(region, hole_region, region);
-                XDestroyRegion(hole_region);
-
-            } else {
-                // g_message("passthrough OFF");
-
-                // Full window receives input → region covers whole window
-                XRectangle full{0, 0, static_cast<unsigned short>(w),
-                                static_cast<unsigned short>(h)};
-                XUnionRectWithRegion(&full, region, region);
-            }
-
-            // Apply region as input mask
-            XShapeCombineRegion(dpy, xid, ShapeInput, 0, 0, region, ShapeSet);
-            XDestroyRegion(region);
-            XFlush(dpy);
-
-#endif
-        }
+        void set_window_passthrought(bool passthrough);
 
       private:
         // instantiate listener
