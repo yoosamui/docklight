@@ -8,8 +8,6 @@
 #include "appoptionsgroup.h"
 #include "components/position.h"
 #include "translations.h"
-#pragma GCC diagnostic ignored "-Wunused-variable"
-#pragma GCC diagnostic ignored "-Wunused-parameter"
 
 // clang-format on
 

@@ -23,7 +23,7 @@ docklight_CPPFLAGS +=  -s -DNDEBUG -Wall -Wextra -Werror -std=c++17 -pedantic
 
 
 ALLDADDLIBS = $(GTKMM_LIBS)
-ALLDADDLIBS +=  -lX11 -lXcomposite -lXdamage -lXrender -lXfixes -lXtst
+ALLDADDLIBS +=  -lXext -lX11 -lXcomposite -lXdamage -lXrender -lXfixes -lXtst
 
 docklight_LDADD = $(ALLDADDLIBS)
 

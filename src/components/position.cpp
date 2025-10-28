@@ -21,10 +21,14 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <linux/limits.h>
+
 // clang-format on
 
 namespace docklight
 {
+
+    class AppWindow;
+
     Glib::RefPtr<PositionManager> m_position_manager;
     Glib::RefPtr<PositionManager> create_position(Gtk::Window* window)
     {
@@ -53,6 +57,16 @@ namespace docklight
     {
         //
         return m_window;
+    }
+
+    void PositionManager::set_window_passthrought(bool passthrough)
+    {
+        if (!m_window) return;
+
+        auto win = dynamic_cast<IAppWindow*>(m_window);
+        if (!win) return;
+
+        win->set_window_passthrought(passthrough);
     }
 
     Gdk::Rectangle PositionManager::get_workarea() const

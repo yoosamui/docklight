@@ -252,6 +252,7 @@ namespace docklight
             connect_signal_show(false);
             m_visible = true;
 
+            Position()->set_window_passthrought(false);
             return false;
         }
 
@@ -307,6 +308,8 @@ namespace docklight
             m_visible = false;
 
             m_signal_after_hide.emit(0);
+
+            Position()->set_window_passthrought(true);
             return false;
         }
 
