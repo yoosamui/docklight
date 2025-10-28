@@ -249,10 +249,10 @@ namespace docklight
         m_animation_time++;
 
         if ((int)position < 1) {
+            Position()->set_window_passthrought(false);
             connect_signal_show(false);
             m_visible = true;
 
-            Position()->set_window_passthrought(false);
             return false;
         }
 

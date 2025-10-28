@@ -53,73 +53,43 @@ namespace docklight
 
             int w = get_width();
             int h = get_height();
-            g_message("%d %d ", w, h);
-            // Full window receives input
+
+            // Create a region of the Full window that receives input
             Region region = XCreateRegion();
             XRectangle full{0, 0, static_cast<unsigned short>(w), static_cast<unsigned short>(h)};
             XUnionRectWithRegion(&full, region, region);
 
+            Region hole_region = XCreateRegion();
+            XRectangle hole;
+
             if (passthrough) {
-                g_message("Passthrough ON");
+                //  g_message("Passthrough ON");
 
-                {
-                    if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-                        if (Config()->get_dock_location() == dock_location_t::bottom) {
-                            // Subtract small rectangle click-through
-                            XRectangle hole{0, 0, static_cast<unsigned short>(w),
-                                            static_cast<unsigned short>(h - 10)};
-                            Region hole_region = XCreateRegion();
-                            XUnionRectWithRegion(&hole, hole_region, hole_region);
-                            XSubtractRegion(region, hole_region, region);
-                            XDestroyRegion(hole_region);
-                        } else {
-                            // Subtract small rectangle click-through
-                            XRectangle hole{0, 10, static_cast<unsigned short>(w),
-                                            static_cast<unsigned short>(h - 10)};
-                            Region hole_region = XCreateRegion();
-                            XUnionRectWithRegion(&hole, hole_region, hole_region);
-                            XSubtractRegion(region, hole_region, region);
-                            XDestroyRegion(hole_region);
-                        }
-                        //
-                    } else {
-                        // g_message(
-                        //"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA "
-                        //"ON");
-                        if (Config()->get_dock_location() == dock_location_t::left) {
-                            // Subtract small rectangle  click-through
-                            XRectangle hole{10, 0, static_cast<unsigned short>(w - 10),
-                                            static_cast<unsigned short>(h)};
-                            //
-                            Region hole_region = XCreateRegion();
-                            XUnionRectWithRegion(&hole, hole_region, hole_region);
-                            XSubtractRegion(region, hole_region, region);
-                            XDestroyRegion(hole_region);
+                // Subtract rectangle click-through
+                if (Config()->get_dock_location() == dock_location_t::bottom) {
+                    hole = XRectangle{0, 0, static_cast<unsigned short>(w),
+                                      static_cast<unsigned short>(h - 10)};
 
-                        } else {
-                            // Subtract small rectangle  click-through
-                            XRectangle hole{0, 0, static_cast<unsigned short>(w - 10),
-                                            static_cast<unsigned short>(h)};
-                            //
-                            Region hole_region = XCreateRegion();
-                            XUnionRectWithRegion(&hole, hole_region, hole_region);
-                            XSubtractRegion(region, hole_region, region);
-                            XDestroyRegion(hole_region);
-                        }
+                } else if (Config()->get_dock_location() == dock_location_t::top) {
+                    hole = XRectangle{0, 10, static_cast<unsigned short>(w),
+                                      static_cast<unsigned short>(h - 10)};
 
-                        //
-                    }
+                } else if (Config()->get_dock_location() == dock_location_t::left) {
+                    hole = XRectangle{10, 0, static_cast<unsigned short>(w - 10),
+                                      static_cast<unsigned short>(h - 10)};
 
-                    //// Subtract small rectangle (10x10 top-left) → click-through
-                    // XRectangle hole{0, 0, static_cast<unsigned short>(w),
-                    // static_cast<unsigned short>(h - 10)};
-                    /*Region hole_region = XCreateRegion();
-                    XUnionRectWithRegion(&hole, hole_region, hole_region);
-                    XSubtractRegion(region, hole_region, region);
-                    XDestroyRegion(hole_region);*/
+                } else if (Config()->get_dock_location() == dock_location_t::right) {
+                    hole = XRectangle{0, 0, static_cast<unsigned short>(w - 10),
+                                      static_cast<unsigned short>(h)};
                 }
+
+                XUnionRectWithRegion(&hole, hole_region, hole_region);
+                XSubtractRegion(region, hole_region, region);
+                XDestroyRegion(hole_region);
+
             } else {
-                g_message("passthrough OFF");
+                // g_message("passthrough OFF");
+
                 // Full window receives input → region covers whole window
                 XRectangle full{0, 0, static_cast<unsigned short>(w),
                                 static_cast<unsigned short>(h)};
