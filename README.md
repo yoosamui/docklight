@@ -95,6 +95,6 @@ Right mouse click longer press  : activate context image preview.
 Mouse wheel                     : scroll through the window group list.
 
 ## Current state
-beta version: 5.1.64
+beta version: 5.2.64
 
 

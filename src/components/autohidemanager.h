@@ -81,8 +81,8 @@ namespace docklight
 
         Glib::Timer m_autohide_timer;
 
-        const float m_hide_delay = 20.f;
-        const float m_show_delay = 10.f;
+        const float m_hide_delay = 10.f;
+        const float m_show_delay = 12.f;
 
         bool m_visible = true;
         bool m_intersects = false;

@@ -241,14 +241,15 @@ namespace docklight
 
         get_offset(position, m_offset_x, m_offset_y);
 
-        g_message("SHOW %2d) TIME:%f %f - POS  %f %f Y:%d %f area:%d", m_animation_time,
-                  position * m_init_time, m_end_time, m_start_position, m_end_position, m_offset_y,
-                  position, m_area);
+        // g_message("SHOW %2d) TIME:%f %f - POS  %f %f Y:%d %f area:%d", m_animation_time,
+        // position * m_init_time, m_end_time, m_start_position, m_end_position, m_offset_y,
+        // position, m_area);
 
         m_signal_hide.emit(m_offset_x, m_offset_y);
         m_animation_time++;
 
         if ((int)position < 1) {
+            Position()->set_window_passthrought(false);
             connect_signal_show(false);
             m_visible = true;
 
@@ -295,9 +296,9 @@ namespace docklight
 
         get_offset(position, m_offset_x, m_offset_y);
 
-        g_message("HIDE %2d) TIME:%f %f - POS  %f %f Y:%d %f area:%d", m_animation_time,
-                  position * m_init_time, m_end_time, m_start_position, m_end_position, m_offset_y,
-                  position, m_area);
+        // g_message("HIDE %2d) TIME:%f %f - POS  %f %f Y:%d %f area:%d", m_animation_time,
+        // position * m_init_time, m_end_time, m_start_position, m_end_position, m_offset_y,
+        // position, m_area);
 
         m_signal_hide.emit(m_offset_x, m_offset_y);
         m_animation_time++;
@@ -307,6 +308,8 @@ namespace docklight
             m_visible = false;
 
             m_signal_after_hide.emit(0);
+
+            Position()->set_window_passthrought(true);
             return false;
         }
 

@@ -652,13 +652,12 @@ namespace docklight
             guint half_WindowWidth = workarea.get_width() / 2;
             guint half_WindowHeight = workarea.get_height() / 2;
 
-            // ajust width size with 100px ofset
-            if (winWidth > half_WindowWidth + 100) {
+            const int ajust_value = 200;
+            if (winWidth > half_WindowWidth + ajust_value) {
                 scaledWidth = width;
             }
 
-            // ajust height size with 100px ofset
-            if (winHeight > half_WindowHeight + 100) {
+            if (winHeight > half_WindowHeight + ajust_value) {
                 scaledHeight = height;
             }
 
