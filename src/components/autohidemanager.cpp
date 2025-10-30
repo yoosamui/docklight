@@ -154,8 +154,8 @@ namespace docklight
     {
         if (!m_active_window) return true;
 
-        WnckWindowType wt = wnck_window_get_window_type(m_active_window);
-        if (wt == WNCK_WINDOW_DESKTOP) return true;
+        // WnckWindowType wt = wnck_window_get_window_type(m_active_window);
+        // if (wt == WNCK_WINDOW_DESKTOP) return true;
 
         m_area = Config()->get_dock_area();
 
