@@ -1,6 +1,16 @@
 #pragma once
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 
 // clang-format off
+#include <gtkmm.h>
+#include <gdk/gdkx.h>       // For GDK_WINDOW_XDISPLAY, GDK_WINDOW_XID
+
+#include <X11/Xlib.h>
+#include <X11/extensions/shape.h>
+#include <iostream>
+
+
 #include <gtkmm/application.h>
 #include <glibmm/main.h>
 #include <gtkmm/window.h>
@@ -15,19 +25,25 @@
 #include "components/animation.h"
 #include "components/autohidemanager.h"
 #include "config.h"
+
 // clang-format on
 
 namespace docklight
 {
 
-    class AppWindow : public CompositeWindow
+    class AppWindow : public CompositeWindow, public IAppWindow
     {
       public:
         AppWindow();
         ~AppWindow();
 
+        IAppWindow* as_interface() { return this; }
+
         int init(Glib::RefPtr<Gtk::Application>& app);
         // Config* m_config = Config::getInstance();
+
+        void set_window_passthrought(bool passthrough);
+
       private:
         // instantiate listener
         Glib::RefPtr<Configuration> m_config;

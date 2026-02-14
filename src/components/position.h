@@ -1,4 +1,6 @@
 #pragma once
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 //  Copyright(c) 2018 - 2024 Juan R.González
 //
 //
@@ -24,10 +26,17 @@
 #include "components/device.h"
 #include "components/config.h"
 #include "utils/struts.h"
+
 // clang-format on
 
 namespace docklight
 {
+    class IAppWindow
+    {
+      public:
+        virtual void set_window_passthrought(bool passthrough) = 0;
+    };
+
     class PositionManager : public Glib::Object
     {
       public:
@@ -50,6 +59,7 @@ namespace docklight
         int get_x() const;
         int get_y() const;
 
+        void set_window_passthrought(bool passthrough);
         void window_intersects(bool intersects);
         void show_now();
         void hide_now();

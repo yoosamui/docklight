@@ -1,3 +1,7 @@
+#include <algorithm> // This provides std::sort
+#include <vector>    // Usually needed for the containers you are sorting
+#include <iostream>
+
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU General Public License for more details.

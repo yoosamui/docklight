@@ -1,5 +1,5 @@
 PACKAGE=docklight
-VERSION=5.1.64
+VERSION=5.2.64
 INSTALLDIR=/usr/local/bin
 LOCALEDIR=/usr/local/bin/docklight-5/locale
 
