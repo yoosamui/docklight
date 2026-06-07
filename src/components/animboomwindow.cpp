@@ -58,7 +58,7 @@ namespace docklight
 
         set_keep_above(true);
 
-        auto filename = "data/images/explodes.svg";
+        auto filename = system::get_data_path("data/images/explodes.svg");
 
         try {
             m_image = Gdk::Pixbuf::create_from_file(filename);
@@ -70,8 +70,13 @@ namespace docklight
             std::exception_ptr p = std::current_exception();
             auto message =
                 "Exception 'AnimBoomWindow'. Unable to load the desired image: %s, type: %s";
-            g_critical(message, filename, p ? p.__cxa_exception_type()->name() : "unknown type");
+            g_critical(message, filename.c_str(),
+                       p ? p.__cxa_exception_type()->name() : "unknown type");
         }
+
+        // The image is optional eye-candy: if it failed to load, leave this
+        // window disabled rather than dereferencing a null pixbuf (crash).
+        if (!m_image) return;
 
         m_size = m_image->get_width();
         set_size_request(m_size, m_size);
@@ -133,6 +138,8 @@ namespace docklight
 
     bool AnimBoomWindow::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
     {
+        if (!m_image) return false;
+
         // Replace destination layer (bounded)
         // cr->set_operator(Cairo::Operator::OPERATOR_SOURCE);
         //        cr->set_operator(Cairo::Operator::OPERATOR_CLEAR);

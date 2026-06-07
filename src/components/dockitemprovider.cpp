@@ -51,7 +51,7 @@ namespace docklight
         m_home_dockitem = std::shared_ptr<DockItemIcon>(
             new DockItemIcon(0, nullptr, DOCKLIGHT_INSTANCENAME, DOCKLIGHT_INSTANCENAME, 0));
 
-        std::string filename = "data/images/docklight-home.svg";
+        std::string filename = system::get_data_path("data/images/docklight-home.svg");
         try {
             auto size = Config()->get_icon_max_size();
             auto pixbuf = Gdk::Pixbuf::create_from_file(filename, size, size, true);
@@ -621,7 +621,7 @@ namespace docklight
         char config_filename[PATH_MAX];
         sprintf(config_filename, "%s/%s", config_dir, "docklight5.config");
 
-        auto default_source = "data/docklight5.config";
+        auto default_source = system::get_data_path("data/docklight5.config");
         if (!system::file_exists(config_filename) && system::file_exists(default_source)) {
             std::ifstream src(default_source, std::ios::in);
             std::ofstream dst(config_filename, std::ios::out);
@@ -629,7 +629,7 @@ namespace docklight
             dst << src.rdbuf();
         }
 
-        default_source = "data/docklight5.desktop";
+        default_source = system::get_data_path("data/docklight5.desktop");
         char autostart_filename[PATH_MAX];
         sprintf(autostart_filename, "/home/%s/.config/autostart/docklight5.desktop",
                 user_name.c_str());
