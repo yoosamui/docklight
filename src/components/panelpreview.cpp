@@ -331,6 +331,10 @@ namespace docklight
         auto size = m_current_images.size();
         if (!size) return true;
 
+        // m_dockpreview_index is derived from the child-map size, which can be
+        // larger than m_current_images when some window images failed to load.
+        if (m_dockpreview_index < 0 || (size_t)m_dockpreview_index >= size) return true;
+
         std::shared_ptr<DockItemIcon> child = m_current_images.at(m_dockpreview_index).second;
         if (!child) {
             return false;

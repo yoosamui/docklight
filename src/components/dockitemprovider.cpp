@@ -154,7 +154,7 @@ namespace docklight
                                                  std::shared_ptr<DockItemIcon>& dockitem)
     {
         auto v = data();
-        if (index > (guint)v.size()) return false;
+        if (index >= (guint)v.size()) return false;
 
         dockitem = v.at(index);
         return dockitem ? true : false;
@@ -611,15 +611,16 @@ namespace docklight
         Glib::ustring user_name = system::get_current_user();
 
         char config_dir[200];
-        sprintf(config_dir, "/home/%s/.config/docklight", user_name.c_str());
+        snprintf(config_dir, sizeof(config_dir), "/home/%s/.config/docklight", user_name.c_str());
 
         system::create_directory_if_not_exitst(config_dir);
 
         char buff[PATH_MAX];
-        sprintf(buff, "%s/%s", config_dir, "docklight5.dat");
+        snprintf(buff, sizeof(buff), "%s/%s", config_dir, "docklight5.dat");
 
         char config_filename[PATH_MAX];
-        sprintf(config_filename, "%s/%s", config_dir, "docklight5.config");
+        snprintf(config_filename, sizeof(config_filename), "%s/%s", config_dir,
+                 "docklight5.config");
 
         auto default_source = system::get_data_path("data/docklight5.config");
         if (!system::file_exists(config_filename) && system::file_exists(default_source)) {
@@ -631,8 +632,8 @@ namespace docklight
 
         default_source = system::get_data_path("data/docklight5.desktop");
         char autostart_filename[PATH_MAX];
-        sprintf(autostart_filename, "/home/%s/.config/autostart/docklight5.desktop",
-                user_name.c_str());
+        snprintf(autostart_filename, sizeof(autostart_filename),
+                 "/home/%s/.config/autostart/docklight5.desktop", user_name.c_str());
         if (!system::file_exists(autostart_filename) && system::file_exists(default_source)) {
             std::ifstream src(default_source, std::ios::in);
             std::ofstream dst(autostart_filename, std::ios::out);
@@ -728,6 +729,18 @@ namespace docklight
 
             try {
                 dockitem->get_icon()->save_to_buffer(iconBuffer, buffer_size);
+
+                // pixbuff is a fixed-size field; a larger serialized icon would
+                // overflow the record, so skip it rather than corrupt memory.
+                if (buffer_size > sizeof(rec.pixbuff)) {
+                    g_warning("provider::save: icon too large (%zu > %zu), skipping '%s'.",
+                              (size_t)buffer_size, sizeof(rec.pixbuff),
+                              dockitem->get_instance_name().c_str());
+                    delete[](gchar*) iconBuffer;
+                    continue;
+                }
+
+                memset(rec.pixbuff, 0, sizeof(rec.pixbuff));
                 memcpy(rec.pixbuff, iconBuffer, buffer_size);
                 delete[](gchar*) iconBuffer;
 
