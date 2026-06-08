@@ -37,7 +37,7 @@ namespace docklight
         // clang-format on
 
         m_title = Glib::RefPtr<TitleWindow>(new TitleWindow());
-        m_provider = m_provider;
+        // m_provider is assigned in init(); it is left as a null RefPtr until then.
 
         Autohide()->signal_before_hide().connect(
             sigc::mem_fun(this, &Panel::on_autohide_before_hide));

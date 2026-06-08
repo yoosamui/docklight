@@ -82,7 +82,8 @@ namespace docklight
     DockItemProvider::~DockItemProvider()
     {
         m_sigc.disconnect();
-        g_object_unref(m_matcher);
+        // m_matcher comes from bamf_matcher_get_default() (transfer none): it is
+        // a library-owned singleton, so we must not unref it here.
     }
 
     bool DockItemProvider::attach(guint index, bool attach)
@@ -236,6 +237,7 @@ namespace docklight
                 auto icon = Glib::wrap(gdkpixbuf, true)
                                 ->scale_simple(icon_max_size, icon_max_size, Gdk::INTERP_BILINEAR);
                 dockitem->set_icon(icon);
+                updated = true;
             }
         }
 
@@ -393,7 +395,6 @@ namespace docklight
 
         const std::lock_guard<std::mutex> lock(m_mutex);
 
-        Glib::RefPtr<Gdk::Pixbuf> image;
         gint32 xid = wnck_window_get_xid(window);
 
         // need to move to the ws to access the image
@@ -407,13 +408,25 @@ namespace docklight
             }
         }
 
+        // Capture the image after a short delay so the window has time to render
+        // following the workspace move. Defer it onto the main loop instead of
+        // blocking it with sleep() (this runs on the GTK main thread, once per
+        // window during the startup scan).
+        Glib::signal_timeout().connect(
+            sigc::bind(sigc::mem_fun(*this, &DockItemProvider::capture_window_image), xid), 20);
+    }
+
+    bool DockItemProvider::capture_window_image(gint32 xid)
+    {
+        const std::lock_guard<std::mutex> lock(m_mutex);
+
+        Glib::RefPtr<Gdk::Pixbuf> image;
         int size = Config()->get_preview_image_max_size();
-        for (int i = 0; i < 2; i++) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
-            if (pixbuf::get_window_image(xid, image, size)) {
-                m_window_images[xid] = image;
-            }
+        if (pixbuf::get_window_image(xid, image, size)) {
+            m_window_images[xid] = image;
         }
+
+        return false;  // one-shot
     }
 
     bool DockItemProvider::insert(WnckWindow* window)

@@ -119,6 +119,7 @@ namespace docklight
         Glib::ustring get_config_filepath();
 
         void fill_window_image(WnckWindow* window);
+        bool capture_window_image(gint32 xid);
 
         void scan_initial_windows();
         bool load();
