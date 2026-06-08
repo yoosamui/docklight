@@ -234,7 +234,9 @@ namespace docklight
             }
 
             if (gdkpixbuf) {
-                auto icon = Glib::wrap(gdkpixbuf, true)
+                // gtk_icon_theme_load_icon() returns an owned ref (transfer full),
+                // so wrap without copying to avoid leaking it.
+                auto icon = Glib::wrap(gdkpixbuf, false)
                                 ->scale_simple(icon_max_size, icon_max_size, Gdk::INTERP_BILINEAR);
                 dockitem->set_icon(icon);
                 updated = true;
