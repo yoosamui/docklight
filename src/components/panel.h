@@ -94,7 +94,9 @@ namespace docklight
         // static void on_actions_changed(WnckWindow* window, WnckWindowActions changed_mask,
         // WnckWindowActions new_state, gpointer user_data);
 
-        void thread_func();
+        // Runs on the GTK main loop (NOT a worker thread): reads the dock-item
+        // container and calls queue_draw(), neither of which is thread safe.
+        bool on_active_window_check();
         void show_current_title(bool show);
         void drag_drop(bool start);
 
@@ -126,7 +128,8 @@ namespace docklight
         bool m_drag_drop_starts = false;
         bool m_drag_drop_candrop = false;
 
-        std::shared_ptr<std::thread> m_bck_thread;
+        sigc::connection m_sigc_active;
+        WnckWindow* m_last_active_window = nullptr;
 
         Gtk::SeparatorMenuItem* m_separatorMenuItem = nullptr;
 

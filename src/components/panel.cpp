@@ -69,12 +69,16 @@ namespace docklight
         g_signal_connect(wnckscreen, "active_window_changed",
                          G_CALLBACK(Panel::on_active_window_changed), nullptr);
 
-        m_bck_thread = std::shared_ptr<std::thread>(new std::thread(&Panel::thread_func, this));
+        // Poll on the main loop instead of a background thread: this reads the
+        // shared dock-item container and calls queue_draw(), neither of which is
+        // safe off the GTK main thread.
+        m_sigc_active = Glib::signal_timeout().connect(
+            sigc::mem_fun(this, &Panel::on_active_window_check), 100);
     }
 
     Panel::~Panel()
     {
-        m_bck_thread->detach();
+        m_sigc_active.disconnect();
 
         m_sigc_draw.disconnect();
         m_sigc_updated.disconnect();
@@ -82,32 +86,30 @@ namespace docklight
         g_message(MSG_FREE_OBJECT, "Panel");
     }
 
-    void Panel::thread_func()
+    bool Panel::on_active_window_check()
     {
-        WnckWindow* window = nullptr;
-        while (true) {
-            if (window != m_active_window) {
-                window = m_active_window;
+        if (m_last_active_window != m_active_window) {
+            m_last_active_window = m_active_window;
 
-                if (!window) continue;
+            WnckWindow* window = m_active_window;
+            if (!window) return true;
 
-                size_t idx = 1;
-                for (; idx < m_provider->data().size(); idx++) {
-                    auto dockitem = m_provider->data().at(idx);
-                    auto xid_list = dockitem->get_wnck_xid_list();
-                    gulong xid = wnck_window_get_xid(window);
+            auto& items = m_provider->data();
+            for (size_t idx = 1; idx < items.size(); idx++) {
+                auto dockitem = items.at(idx);
+                auto xid_list = dockitem->get_wnck_xid_list();
+                gulong xid = wnck_window_get_xid(window);
 
-                    if (std::find(xid_list.begin(), xid_list.end(), xid) != xid_list.end()) {
-                        m_dockitem_active_index = idx;
-                        Gtk::Widget::queue_draw();
+                if (std::find(xid_list.begin(), xid_list.end(), xid) != xid_list.end()) {
+                    m_dockitem_active_index = idx;
+                    Gtk::Widget::queue_draw();
 
-                        break;
-                    }
+                    break;
                 }
             }
-
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
+
+        return true;
     }
 
     void Panel::on_active_window_changed(WnckScreen* screen, WnckWindow* previously_active_window,

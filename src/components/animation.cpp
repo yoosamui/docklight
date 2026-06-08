@@ -37,8 +37,17 @@ namespace docklight
 
     AnimationManager::AnimationManager()
     {
-        m_bck_thread =
-            std::shared_ptr<std::thread>(new std::thread(&AnimationManager::thread_func, this));
+        m_anim = Glib::RefPtr<AnimBoomWindow>(new AnimBoomWindow());
+
+        // Poll on the main loop instead of a background thread: show_at() touches
+        // a Gtk::Window, which is only legal on the GTK main thread.
+        m_sigc_timer = Glib::signal_timeout().connect(
+            sigc::mem_fun(this, &AnimationManager::on_timeout), 100);
+    }
+
+    AnimationManager::~AnimationManager()
+    {
+        m_sigc_timer.disconnect();
     }
 
     void AnimationManager::start(Glib::ustring name)
@@ -48,22 +57,20 @@ namespace docklight
         m_run = true;
     }
 
-    void AnimationManager::thread_func()
+    bool AnimationManager::on_timeout()
     {
-        auto anim = Glib::RefPtr<AnimBoomWindow>(new AnimBoomWindow());
-        while (true) {
-            if (m_run) {
-                m_run = false;
+        if (m_run) {
+            m_run = false;
 
-                if (anim) {
-                    int x = 0;
-                    int y = 0;
-                    system::get_mouse_position(x, y);
+            if (m_anim) {
+                int x = 0;
+                int y = 0;
+                system::get_mouse_position(x, y);
 
-                    anim->show_at(x, y);
-                }
+                m_anim->show_at(x, y);
             }
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
+
+        return true;
     }
 }  // namespace docklight
