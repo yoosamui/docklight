@@ -2,6 +2,11 @@
 # Docklight
  Manage access to applications.
 
+
+> This project is actively under development. Features, APIs, configuration parameters, and documentation may change between releases.
+
+
+
 ![image](https://github.com/user-attachments/assets/7994983c-8d4f-4ace-91e8-20a88a236521)
 
 
