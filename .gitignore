@@ -17,6 +17,7 @@ src/.deps/
 *.EX
 *.in~
 *~
+.vscode/
 clang-format.sh
 clang-tidy.sh
 *.swp
