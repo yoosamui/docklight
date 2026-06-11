@@ -455,17 +455,27 @@ namespace docklight
         // following the workspace move. Defer it onto the main loop instead of
         // blocking it with sleep() (this runs on the GTK main thread, once per
         // window during the startup scan).
+        //
+        // Bind only the xid, never the raw WnckWindow*: the window may be closed
+        // (and the GObject finalized by libwnck) before this one-shot fires, which
+        // would leave a dangling pointer. capture_window_image() re-resolves the
+        // window from the live list and bails if it is gone.
         Glib::signal_timeout().connect(sigc::bind(sigc::mem_fun(*this,
                                                                 &DockItemProvider::capture_window_image),
-                                                  xid, window),
+                                                  xid),
                                        20);
     }
 
-    bool DockItemProvider::capture_window_image(gint32 xid, WnckWindow *window)
+    bool DockItemProvider::capture_window_image(gint32 xid)
     {
         const std::lock_guard<std::mutex> lock(m_mutex);
 
-        if (!WNCK_IS_WINDOW(window))
+        // Re-resolve the window from its xid against the current window list.
+        // WNCK_IS_WINDOW() is NOT a valid liveness check for a freed pointer (it
+        // dereferences the instance to read its GType), so we must look it up
+        // fresh instead of trusting a pointer captured 20ms ago.
+        WnckWindow *window = wnck::get_window_by_xid(xid);
+        if (!window || !WNCK_IS_WINDOW(window))
         {
             return false;
         }
