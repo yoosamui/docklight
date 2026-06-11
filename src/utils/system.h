@@ -63,5 +63,12 @@ namespace docklight
         Glib::ustring get_current_user();
         Glib::ustring get_current_path();
 
+        // Resolve a bundled data file (e.g. "data/images/explodes.svg") to an
+        // absolute path, independent of the current working directory. Tries the
+        // cwd, the executable's directory (installed layout) and its parent (the
+        // dev tree, where the binary lives in src/). Falls back to the relative
+        // path unchanged so error messages stay meaningful.
+        std::string get_data_path(const std::string& relative);
+
     }  // namespace system
 }  // namespace docklight

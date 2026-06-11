@@ -169,5 +169,26 @@ namespace docklight
 
             return result;
         }
+
+        std::string get_data_path(const std::string& relative)
+        {
+            // 1. Current working directory (installed launcher cd's into the
+            //    install dir, so this keeps the original behaviour working).
+            if (file_exists(relative)) return relative;
+
+            const std::string exe_dir = get_current_path();
+            if (!exe_dir.empty()) {
+                // 2. Next to the executable (installed: docklight-5/data/...).
+                std::string beside = exe_dir + "/" + relative;
+                if (file_exists(beside)) return beside;
+
+                // 3. One level up (dev tree: binary in src/, data in ../data).
+                std::string parent = exe_dir + "/../" + relative;
+                if (file_exists(parent)) return parent;
+            }
+
+            // Nothing found: return the relative path so callers log it as-is.
+            return relative;
+        }
     }  // namespace system
 }  // namespace docklight

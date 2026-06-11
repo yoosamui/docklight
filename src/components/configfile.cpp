@@ -364,12 +364,12 @@ namespace docklight
         auto user_name = system::get_current_user();
 
         char config_dir[512];
-        sprintf(config_dir, "/home/%s/.config/docklight", user_name.c_str());
+        snprintf(config_dir, sizeof(config_dir), "/home/%s/.config/docklight", user_name.c_str());
 
         system::create_directory_if_not_exitst(config_dir);
 
         char buff[PATH_MAX];
-        sprintf(buff, "%s/%s", config_dir, m_filename.c_str());
+        snprintf(buff, sizeof(buff), "%s/%s", config_dir, m_filename.c_str());
 
         return buff;
     }

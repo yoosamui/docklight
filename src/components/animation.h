@@ -20,7 +20,6 @@
 #include <glibmm/main.h>
 #include <gtkmm/window.h>
 
-#include <thread>
 #include "utils/system.h"
 
 #include "components/animboomwindow.h"
@@ -33,15 +32,18 @@ namespace docklight
     {
       public:
         AnimationManager();
+        ~AnimationManager();
 
         void start(Glib::ustring name);
 
       private:
-        void thread_func();
+        // Runs on the GTK main loop (NOT a worker thread): GTK/GDK is single
+        // threaded, so the animation window can only be touched from here.
+        bool on_timeout();
 
       private:
-        // backgound  worker
-        std::shared_ptr<std::thread> m_bck_thread;
+        sigc::connection m_sigc_timer;
+        Glib::RefPtr<AnimBoomWindow> m_anim;
         Glib::ustring m_name;
         bool m_run = false;
     };

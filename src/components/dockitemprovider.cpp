@@ -31,7 +31,8 @@ namespace docklight
     Glib::RefPtr<DockItemProvider> m_provider;
     Glib::RefPtr<DockItemProvider> create_provider()
     {
-        if (!m_provider) {
+        if (!m_provider)
+        {
             m_provider = Glib::RefPtr<DockItemProvider>(new DockItemProvider());
         }
         return m_provider;
@@ -51,15 +52,19 @@ namespace docklight
         m_home_dockitem = std::shared_ptr<DockItemIcon>(
             new DockItemIcon(0, nullptr, DOCKLIGHT_INSTANCENAME, DOCKLIGHT_INSTANCENAME, 0));
 
-        std::string filename = "data/images/docklight-home.svg";
-        try {
+        std::string filename = system::get_data_path("data/images/docklight-home.svg");
+        try
+        {
             auto size = Config()->get_icon_max_size();
             auto pixbuf = Gdk::Pixbuf::create_from_file(filename, size, size, true);
             m_home_dockitem->set_icon(pixbuf);
-
-        } catch (const Glib::FileError& ex) {
+        }
+        catch (const Glib::FileError &ex)
+        {
             g_critical("get_from file: %s FileError: %s", filename.c_str(), ex.what().c_str());
-        } catch (const Gdk::PixbufError& ex) {
+        }
+        catch (const Gdk::PixbufError &ex)
+        {
             g_critical("get_from file: %s PixbufError: %s", filename.c_str(), ex.what().c_str());
         }
 
@@ -82,20 +87,24 @@ namespace docklight
     DockItemProvider::~DockItemProvider()
     {
         m_sigc.disconnect();
-        g_object_unref(m_matcher);
+        // m_matcher comes from bamf_matcher_get_default() (transfer none): it is
+        // a library-owned singleton, so we must not unref it here.
     }
 
     bool DockItemProvider::attach(guint index, bool attach)
     {
-        if (index < 1 || index > data().size()) return false;
+        if (index < 1 || index > data().size())
+            return false;
 
         std::shared_ptr<DockItemIcon> dockitem;
-        if (!get_dockitem_by_index(index, dockitem)) return false;
+        if (!get_dockitem_by_index(index, dockitem))
+            return false;
 
         dockitem->set_attached(attach);
         save();
 
-        if (!attach && dockitem->get_childmap().size() == 0) {
+        if (!attach && dockitem->get_childmap().size() == 0)
+        {
             remove(0);
         }
 
@@ -136,12 +145,15 @@ namespace docklight
         save();
     }
 
-    bool DockItemProvider::get_dockitem_by_xid(gulong xid, std::shared_ptr<DockItemIcon>& dockitem)
+    bool DockItemProvider::get_dockitem_by_xid(gulong xid, std::shared_ptr<DockItemIcon> &dockitem)
     {
-        for (auto& item : data()) {
-            for (auto it : item->get_childmap()) {
+        for (auto &item : data())
+        {
+            for (auto it : item->get_childmap())
+            {
                 auto child = it.second;
-                if (child->get_xid() != xid) continue;
+                if (child->get_xid() != xid)
+                    continue;
 
                 dockitem = child->clone();
                 break;
@@ -151,16 +163,17 @@ namespace docklight
     }
 
     bool DockItemProvider::get_dockitem_by_index(guint index,
-                                                 std::shared_ptr<DockItemIcon>& dockitem)
+                                                 std::shared_ptr<DockItemIcon> &dockitem)
     {
         auto v = data();
-        if (index > (guint)v.size()) return false;
+        if (index >= (guint)v.size())
+            return false;
 
         dockitem = v.at(index);
         return dockitem ? true : false;
     }
 
-    std::vector<std::shared_ptr<DockItemIcon>>& DockItemProvider::data()
+    std::vector<std::shared_ptr<DockItemIcon>> &DockItemProvider::data()
     {
         return m_container.data<DockItemIcon>();
     }
@@ -187,7 +200,8 @@ namespace docklight
     {
         const std::lock_guard<std::mutex> lock(m_mutex);
 
-        if (m_window_images.count(xid)) {
+        if (m_window_images.count(xid))
+        {
             // Throws nothing.
             m_window_images.erase(xid);
         }
@@ -204,7 +218,8 @@ namespace docklight
     guint DockItemProvider::DockItemProvider::count()
     {
         guint count = data().size();
-        for (auto& dockitem : data()) {
+        for (auto &dockitem : data())
+        {
             count += dockitem->get_childmap().size();
         }
 
@@ -214,40 +229,48 @@ namespace docklight
     void DockItemProvider::on_theme_changed()
     {
         bool updated = false;
-        GError* error = nullptr;
-        GtkIconTheme* icon_theme = gtk_icon_theme_get_default();
+        GError *error = nullptr;
+        GtkIconTheme *icon_theme = gtk_icon_theme_get_default();
         guint icon_max_size = Config()->get_icon_max_size();
 
-        for (auto& dockitem : data()) {
-            GdkPixbuf* gdkpixbuf =
+        for (auto &dockitem : data())
+        {
+            GdkPixbuf *gdkpixbuf =
                 gtk_icon_theme_load_icon(icon_theme,
-                                         dockitem->get_icon_name().c_str(),  // icon name
-                                         icon_max_size,                      // icon size
-                                         GTK_ICON_LOOKUP_FORCE_SIZE,         // flags //
+                                         dockitem->get_icon_name().c_str(), // icon name
+                                         icon_max_size,                     // icon size
+                                         GTK_ICON_LOOKUP_FORCE_SIZE,        // flags //
                                          &error);
-            if (error) {
+            if (error)
+            {
                 std::string error_message = error->message;
                 g_error_free(error);
                 error = nullptr;
                 continue;
             }
 
-            if (gdkpixbuf) {
-                auto icon = Glib::wrap(gdkpixbuf, true)
+            if (gdkpixbuf)
+            {
+                // gtk_icon_theme_load_icon() returns an owned ref (transfer full),
+                // so wrap without copying to avoid leaking it.
+                auto icon = Glib::wrap(gdkpixbuf, false)
                                 ->scale_simple(icon_max_size, icon_max_size, Gdk::INTERP_BILINEAR);
                 dockitem->set_icon(icon);
+                updated = true;
             }
         }
 
-        if (updated) {
+        if (updated)
+        {
             g_message("Icon theme updated.");
             m_signal_update.emit(window_action_t::UPDATE, 0);
         }
     }
 
-    bool DockItemProvider::get_window_icon(GdkPixbuf* gdkpixbuf, Glib::RefPtr<Gdk::Pixbuf>& pixbuf)
+    bool DockItemProvider::get_window_icon(GdkPixbuf *gdkpixbuf, Glib::RefPtr<Gdk::Pixbuf> &pixbuf)
     {
-        if (!gdkpixbuf) return false;
+        if (!gdkpixbuf)
+            return false;
 
         auto maxicon_size = Config()->get_icon_max_size();
         pixbuf = Glib::wrap(gdkpixbuf, true)
@@ -256,7 +279,7 @@ namespace docklight
         return pixbuf ? true : false;
     }
 
-    bool DockItemProvider::get_theme_icon(guint xid, Glib::RefPtr<Gdk::Pixbuf>& pixbuf)
+    bool DockItemProvider::get_theme_icon(guint xid, Glib::RefPtr<Gdk::Pixbuf> &pixbuf)
     {
         Glib::ustring title_name;
         Glib::ustring desktop_file;
@@ -265,25 +288,28 @@ namespace docklight
         return get_theme_icon(xid, pixbuf, title_name, desktop_file, icon_name);
     }
 
-    bool DockItemProvider::get_theme_icon(guint xid, Glib::RefPtr<Gdk::Pixbuf>& pixbuf,
-                                          Glib::ustring& title_name, Glib::ustring& desktop_file,
-                                          Glib::ustring& icon_name)
+    bool DockItemProvider::get_theme_icon(guint xid, Glib::RefPtr<Gdk::Pixbuf> &pixbuf,
+                                          Glib::ustring &title_name, Glib::ustring &desktop_file,
+                                          Glib::ustring &icon_name)
     {
         // This matcher is owned by bamf and shared between other callers.
-        BamfMatcher* matcher = bamf_matcher_get_default();
-        if (!matcher) {
+        BamfMatcher *matcher = bamf_matcher_get_default();
+        if (!matcher)
+        {
             g_warning("get_theme_icon::bamfMatcher: the object has not been created.");
             return false;
         }
 
-        BamfApplication* bamfapp = bamf_matcher_get_application_for_xid(matcher, xid);
-        if (!bamfapp) {
+        BamfApplication *bamfapp = bamf_matcher_get_application_for_xid(matcher, xid);
+        if (!bamfapp)
+        {
             // g_warning("get_theme_icon::BamfApplication: the object has not been created.");
             return false;
         }
 
-        const char* desktopfile = bamf_application_get_desktop_file(bamfapp);
-        if (!desktopfile) {
+        const char *desktopfile = bamf_application_get_desktop_file(bamfapp);
+        if (!desktopfile)
+        {
             g_warning("get_theme_icon::desktop_file: the object has not been created.");
 
             return false;
@@ -294,14 +320,16 @@ namespace docklight
         Glib::RefPtr<Gio::DesktopAppInfo> appinfo =
             Gio::DesktopAppInfo::create_from_filename(desktop_file);
 
-        if (!appinfo) {
+        if (!appinfo)
+        {
             g_warning("get_theme_icon::Gio::DesktopAppInfo: the object has not been created.");
             return false;
         }
 
         Glib::ustring iconname = appinfo->get_string("Icon");
 
-        if (iconname.empty()) {
+        if (iconname.empty())
+        {
             g_warning(
                 "get_theme_icon::g_desktop_app_info_get_string, icon_name : the object has not "
                 "been created.");
@@ -314,16 +342,19 @@ namespace docklight
 
         // get the default theme
         Glib::RefPtr<Gtk::IconTheme> theme = Gtk::IconTheme::get_default();
-        if (!theme) {
+        if (!theme)
+        {
             g_warning("get_theme_icon::Gtk::IconTheme: the object has not been created.");
             return false;
         }
-        try {
+        try
+        {
             // Always get the icon scaled to the requested size.
             pixbuf = theme->load_icon(icon_name, Config()->get_icon_max_size(),
                                       Gtk::IconLookupFlags::ICON_LOOKUP_FORCE_SIZE);
-
-        } catch (...) {
+        }
+        catch (...)
+        {
             g_warning("get_theme_icon::pixbuf: Exception the object has not been created. (%s)",
                       icon_name.c_str());
             return false;
@@ -336,22 +367,27 @@ namespace docklight
     {
         Glib::RefPtr<Gdk::Pixbuf> image;
 
-        if (m_window_images.count(xid)) {
+        if (m_window_images.count(xid))
+        {
             image = m_window_images.at(xid);
         }
 
         return image;
     }
 
-    void DockItemProvider::fill_window_image(WnckWindow* window)
+    void DockItemProvider::fill_window_image(WnckWindow *window)
     {
-        if (m_startup_time_set) return;
+        if (m_startup_time_set)
+            return;
 
-        if (system::is_mutter_window_manager()) return;
-        if (!WNCK_IS_WINDOW(window)) return;
+        if (system::is_mutter_window_manager())
+            return;
+        if (!WNCK_IS_WINDOW(window))
+            return;
 
-        WnckWorkspace* ws = wnck_window_get_workspace(window);
-        if (!ws) return;
+        WnckWorkspace *ws = wnck_window_get_workspace(window);
+        if (!ws)
+            return;
 
         auto wsn = wnck_workspace_get_number(ws);
         auto kp = std::make_pair(wsn, window);
@@ -360,91 +396,141 @@ namespace docklight
 
     void DockItemProvider::scan_initial_windows()
     {
-        if (m_startup_time_set) return;
+        if (m_startup_time_set)
+            return;
 
         m_startup_allow_window_scan = true;
 
         int event_time = gtk_get_current_event_time();
-        WnckWorkspace* cws = wnck_screen_get_active_workspace(wnck::get_default_screen());
+        WnckWorkspace *cws = wnck_screen_get_active_workspace(wnck::get_default_screen());
 
         std::sort(m_windows_loaded.begin(), m_windows_loaded.end());
-        for (const auto& [key, val] : m_windows_loaded) {
+        for (const auto &[key, val] : m_windows_loaded)
+        {
             set_window_image(val, true);
         }
 
-        if (cws) wnck_workspace_activate(cws, event_time);
+        if (cws)
+            wnck_workspace_activate(cws, event_time);
     }
 
     void DockItemProvider::set_window_image(gulong xid, Glib::RefPtr<Gdk::Pixbuf> image)
     {
-        if (image) {
+        if (image)
+        {
             m_window_images[xid] = image;
         }
     }
 
     // TODO: refactoring needed here. Wait to code a WM extension
     // Xcomposite, Xrender may help
-    void DockItemProvider::set_window_image(WnckWindow* window, bool initial)
+    void DockItemProvider::set_window_image(WnckWindow *window, bool initial)
 
     {
-        if (!m_startup_allow_window_scan) return;
-        if (system::is_mutter_window_manager()) return;
-        if (!WNCK_IS_WINDOW(window)) return;
+        if (!m_startup_allow_window_scan)
+            return;
+        if (system::is_mutter_window_manager())
+            return;
+        if (!WNCK_IS_WINDOW(window))
+            return;
 
         const std::lock_guard<std::mutex> lock(m_mutex);
 
-        Glib::RefPtr<Gdk::Pixbuf> image;
         gint32 xid = wnck_window_get_xid(window);
 
         // need to move to the ws to access the image
         wnck::move_window_to_workspace(window);
 
-        if (initial && wnck_window_is_minimized(window) /*|| wnck_window_is_sticky(window)*/) {
+        if (initial && wnck_window_is_minimized(window) /*|| wnck_window_is_sticky(window)*/)
+        {
             std::shared_ptr<DockItemIcon> dockitem;
-            if (get_dockitem_by_xid(xid, dockitem)) {
+            if (get_dockitem_by_xid(xid, dockitem))
+            {
                 m_window_images[xid] = dockitem->get_icon_from_window(64);
                 return;
             }
         }
 
-        int size = Config()->get_preview_image_max_size();
-        for (int i = 0; i < 2; i++) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
-            if (pixbuf::get_window_image(xid, image, size)) {
-                m_window_images[xid] = image;
-            }
-        }
+        // Capture the image after a short delay so the window has time to render
+        // following the workspace move. Defer it onto the main loop instead of
+        // blocking it with sleep() (this runs on the GTK main thread, once per
+        // window during the startup scan).
+        //
+        // Bind only the xid, never the raw WnckWindow*: the window may be closed
+        // (and the GObject finalized by libwnck) before this one-shot fires, which
+        // would leave a dangling pointer. capture_window_image() re-resolves the
+        // window from the live list and bails if it is gone.
+        Glib::signal_timeout().connect(sigc::bind(sigc::mem_fun(*this,
+                                                                &DockItemProvider::capture_window_image),
+                                                  xid),
+                                       20);
     }
 
-    bool DockItemProvider::insert(WnckWindow* window)
+    bool DockItemProvider::capture_window_image(gint32 xid)
     {
-        if (!WNCK_IS_WINDOW(window)) {
+        const std::lock_guard<std::mutex> lock(m_mutex);
+
+        // Re-resolve the window from its xid against the current window list.
+        // WNCK_IS_WINDOW() is NOT a valid liveness check for a freed pointer (it
+        // dereferences the instance to read its GType), so we must look it up
+        // fresh instead of trusting a pointer captured 20ms ago.
+        WnckWindow *window = wnck::get_window_by_xid(xid);
+        if (!window || !WNCK_IS_WINDOW(window))
+        {
+            return false;
+        }
+
+        // Re-activate the window's workspace right before the capture. The
+        // delayed callback may run after the startup scan has moved the active
+        // workspace away from the window we are sampling, which is what causes
+        // stale or wrong preview thumbnails.
+        wnck::move_window_to_workspace(window);
+
+        Glib::RefPtr<Gdk::Pixbuf> image;
+        int size = Config()->get_preview_image_max_size();
+        if (pixbuf::get_window_image(xid, image, size))
+        {
+            m_window_images[xid] = image;
+        }
+
+        return false; // one-shot
+    }
+
+    bool DockItemProvider::insert(WnckWindow *window)
+    {
+        if (!WNCK_IS_WINDOW(window))
+        {
             return false;
         }
 
         // return if the window don't has a name.
-        if (!wnck_window_has_name(window)) return false;
+        if (!wnck_window_has_name(window))
+            return false;
         m_wnckwindow = window;
 
         // return if the DockItem exist.
         gint32 xid = wnck_window_get_xid(window);
 
-        if (exist(xid)) return false;
+        if (exist(xid))
+            return false;
 
-        const char* window_name = wnck_window_get_name(window);
-        if (!window_name) return false;
+        const char *window_name = wnck_window_get_name(window);
+        if (!window_name)
+            return false;
 
         auto gdkpixbuf = wnck_window_get_icon(window);
         auto wintype = wnck_window_get_window_type(window);
         auto icon_is_fallback = wnck_window_get_icon_is_fallback(window);
 
         auto instance_name = wnck_window_get_class_instance_name(window);
-        if (!instance_name) {
+        if (!instance_name)
+        {
             instance_name = window_name;
         }
 
         auto group_name = wnck_window_get_class_group_name(window);
-        if (!group_name) {
+        if (!group_name)
+        {
             group_name = window_name;
         }
 
@@ -452,12 +538,14 @@ namespace docklight
         std::string groupname(group_name);
 
         std::locale loc("en_US.UTF-8");
-        for (auto& c : groupname) {
+        for (auto &c : groupname)
+        {
             c = std::tolower(c, loc);
         }
 
         auto window_icon_name = wnck_window_get_icon_name(window);
-        if (!window_icon_name) {
+        if (!window_icon_name)
+        {
             window_icon_name = window_name;
         }
 
@@ -465,23 +553,26 @@ namespace docklight
         bool result = createFromDesktopFile(xid, gdkpixbuf, instance_name, groupname, window_name,
                                             window_icon_name, icon_is_fallback, wintype);
 
-        if (!result) {
+        if (!result)
+        {
             result = createFromWindow(xid, gdkpixbuf, instance_name, groupname, window_name,
                                       window_icon_name, icon_is_fallback, wintype);
         }
 
-        if (result && m_startup_time_set) {
+        if (result && m_startup_time_set)
+        {
             m_signal_update.emit(window_action_t::UPDATE, data().size());
         }
 
-        if (!m_startup_time_set) fill_window_image(window);
+        if (!m_startup_time_set)
+            fill_window_image(window);
 
         set_window_image(window, true);
 
         return result;
     }
 
-    bool DockItemProvider::createFromDesktopFile(gulong xid, GdkPixbuf* gdkpixbuf,
+    bool DockItemProvider::createFromDesktopFile(gulong xid, GdkPixbuf *gdkpixbuf,
                                                  Glib::ustring instance_name, std::string groupname,
                                                  Glib::ustring window_name,
                                                  Glib::ustring window_icon_name,
@@ -492,7 +583,8 @@ namespace docklight
         Glib::ustring desktop_file;
         Glib::ustring icon_name;
 
-        if (!get_theme_icon(xid, pixbuf, title_name, desktop_file, icon_name)) {
+        if (!get_theme_icon(xid, pixbuf, title_name, desktop_file, icon_name))
+        {
             return false;
         }
 
@@ -505,25 +597,30 @@ namespace docklight
         dockitem->set_icon(pixbuf);
 
         std::shared_ptr<DockItemIcon> owner;
-        if (m_container.exist<DockItemIcon>(groupname, owner)) {
+        if (m_container.exist<DockItemIcon>(groupname, owner))
+        {
             // dockitem->set_title(title_name);
             owner->set_title(title_name);
 
             dockitem->set_title(window_name);
-            if (wintype == WnckWindowType::WNCK_WINDOW_DIALOG) {
+            if (wintype == WnckWindowType::WNCK_WINDOW_DIALOG)
+            {
                 dockitem->set_title(window_icon_name);
             }
 
-            if (icon_is_fallback) {
+            if (icon_is_fallback)
+            {
                 dockitem->set_icon(owner->get_icon());
             }
 
-            if (get_window_icon(gdkpixbuf, pixbuf)) {
+            if (get_window_icon(gdkpixbuf, pixbuf))
+            {
                 dockitem->set_icon(pixbuf);
             }
             owner->add_child(dockitem);
-
-        } else {
+        }
+        else
+        {
             dockitem->set_title(title_name);
             m_container.add(xid, dockitem);
 
@@ -531,15 +628,18 @@ namespace docklight
             std::shared_ptr<DockItemIcon> child = dockitem->clone();
             child->set_title(window_icon_name);
 
-            if (wintype == WnckWindowType::WNCK_WINDOW_DIALOG) {
+            if (wintype == WnckWindowType::WNCK_WINDOW_DIALOG)
+            {
                 child->set_title(window_icon_name);
             }
 
-            if (icon_is_fallback) {
+            if (icon_is_fallback)
+            {
                 child->set_icon(dockitem->get_icon());
             }
 
-            if (get_window_icon(gdkpixbuf, pixbuf)) {
+            if (get_window_icon(gdkpixbuf, pixbuf))
+            {
                 child->set_icon(pixbuf);
             }
 
@@ -549,7 +649,7 @@ namespace docklight
         return count != this->count();
     }
 
-    bool DockItemProvider::createFromWindow(gulong xid, GdkPixbuf* gdkpixbuf,
+    bool DockItemProvider::createFromWindow(gulong xid, GdkPixbuf *gdkpixbuf,
                                             Glib::ustring instance_name, std::string groupname,
                                             Glib::ustring window_name,
                                             Glib::ustring window_icon_name, bool icon_is_fallback,
@@ -559,33 +659,39 @@ namespace docklight
         Glib::ustring title_name;
         Glib::ustring icon_name = window_icon_name;
 
-        if (!get_window_icon(gdkpixbuf, pixbuf)) return false;
+        if (!get_window_icon(gdkpixbuf, pixbuf))
+            return false;
 
         auto count = this->count();
         std::shared_ptr<DockItemIcon> dockitem = std::shared_ptr<DockItemIcon>(
             new DockItemIcon(xid, m_wnckwindow, instance_name, groupname, wintype));
 
         std::shared_ptr<DockItemIcon> owner;
-        if (m_container.exist<DockItemIcon>(groupname, owner)) {
+        if (m_container.exist<DockItemIcon>(groupname, owner))
+        {
             dockitem->set_title(window_icon_name);
             dockitem->set_icon_name(icon_name);
             dockitem->set_icon(pixbuf);
 
-            if (icon_is_fallback) {
+            if (icon_is_fallback)
+            {
                 dockitem->set_icon(owner->get_icon());
             }
 
-            if (owner->get_childmap().count(xid)) {
+            if (owner->get_childmap().count(xid))
+            {
                 m_container.remove<DockItemIcon>(xid);
-
-            } else {
+            }
+            else
+            {
                 dockitem->set_icon(owner->get_icon());
             }
 
             // add the new child to the owner.
             owner->add_child(dockitem);
-
-        } else if (!m_container.exist<DockItemIcon>(xid, true) && !icon_is_fallback) {
+        }
+        else if (!m_container.exist<DockItemIcon>(xid, true) && !icon_is_fallback)
+        {
             dockitem->set_title(groupname);
             dockitem->set_icon_name(icon_name);
             dockitem->set_icon_name(window_icon_name);
@@ -595,7 +701,8 @@ namespace docklight
             m_container.add(xid, dockitem);
 
             dockitem->set_title(window_name);
-            if (wintype == WnckWindowType::WNCK_WINDOW_DIALOG) {
+            if (wintype == WnckWindowType::WNCK_WINDOW_DIALOG)
+            {
                 dockitem->set_title(window_icon_name);
             }
 
@@ -611,29 +718,32 @@ namespace docklight
         Glib::ustring user_name = system::get_current_user();
 
         char config_dir[200];
-        sprintf(config_dir, "/home/%s/.config/docklight", user_name.c_str());
+        snprintf(config_dir, sizeof(config_dir), "/home/%s/.config/docklight", user_name.c_str());
 
         system::create_directory_if_not_exitst(config_dir);
 
         char buff[PATH_MAX];
-        sprintf(buff, "%s/%s", config_dir, "docklight5.dat");
+        snprintf(buff, sizeof(buff), "%s/%s", config_dir, "docklight5.dat");
 
         char config_filename[PATH_MAX];
-        sprintf(config_filename, "%s/%s", config_dir, "docklight5.config");
+        snprintf(config_filename, sizeof(config_filename), "%s/%s", config_dir,
+                 "docklight5.config");
 
-        auto default_source = "data/docklight5.config";
-        if (!system::file_exists(config_filename) && system::file_exists(default_source)) {
+        auto default_source = system::get_data_path("data/docklight5.config");
+        if (!system::file_exists(config_filename) && system::file_exists(default_source))
+        {
             std::ifstream src(default_source, std::ios::in);
             std::ofstream dst(config_filename, std::ios::out);
 
             dst << src.rdbuf();
         }
 
-        default_source = "data/docklight5.desktop";
+        default_source = system::get_data_path("data/docklight5.desktop");
         char autostart_filename[PATH_MAX];
-        sprintf(autostart_filename, "/home/%s/.config/autostart/docklight5.desktop",
-                user_name.c_str());
-        if (!system::file_exists(autostart_filename) && system::file_exists(default_source)) {
+        snprintf(autostart_filename, sizeof(autostart_filename),
+                 "/home/%s/.config/autostart/docklight5.desktop", user_name.c_str());
+        if (!system::file_exists(autostart_filename) && system::file_exists(default_source))
+        {
             std::ifstream src(default_source, std::ios::in);
             std::ofstream dst(autostart_filename, std::ios::out);
 
@@ -646,36 +756,43 @@ namespace docklight
     bool DockItemProvider::load()
     {
         auto file_name = get_config_filepath();
-        if (file_name == "") {
+        if (file_name == "")
+        {
             g_warning("provider::load file not available.");
             return false;
         }
 
         attach_rec_t rec;
-        FILE* file_reader;
+        FILE *file_reader;
 
         file_reader = fopen(file_name.c_str(), "rb");
 
-        if (!file_reader) {
+        if (!file_reader)
+        {
             g_critical("provider::load: can't open file.");
             return false;
         }
 
-        while (true) {
+        while (true)
+        {
             auto sn = fread(&rec, sizeof(rec), 1, file_reader);
-            if (feof(file_reader) != 0) break;
-            if (sn == 0) continue;
+            if (feof(file_reader) != 0)
+                break;
+            if (sn == 0)
+                continue;
 
             std::shared_ptr<DockItemIcon> dockitem = std::shared_ptr<DockItemIcon>(
                 new DockItemIcon(0, nullptr, rec.instance, rec.group, 0));
 
-            try {
+            try
+            {
                 auto loader = Gdk::PixbufLoader::create();
                 loader->write(rec.pixbuff, sizeof(rec.pixbuff));
                 dockitem->set_icon(loader->get_pixbuf());
                 loader->close();
-
-            } catch (...) {
+            }
+            catch (...)
+            {
                 g_warning("provider::PixbufError \n");
             }
 
@@ -687,7 +804,8 @@ namespace docklight
             dockitem->set_instance_name(rec.instance);
 
             std::shared_ptr<DockItemIcon> owner;
-            if (!m_container.exist<DockItemIcon>(rec.group, owner)) {
+            if (!m_container.exist<DockItemIcon>(rec.group, owner))
+            {
                 m_container.add(0, dockitem);
                 continue;
             }
@@ -701,37 +819,57 @@ namespace docklight
     bool DockItemProvider::save()
     {
         auto file_name = get_config_filepath();
-        if (file_name.empty()) {
+        if (file_name.empty())
+        {
             g_critical("provider::save: can't open file.");
             return false;
         }
 
-        FILE* file_writer;
-        gchar* iconBuffer;
+        FILE *file_writer;
+        gchar *iconBuffer;
         gsize buffer_size;
         attach_rec_t rec;
 
         file_writer = fopen(file_name.c_str(), "wb");
 
-        if (!file_writer) {
+        if (!file_writer)
+        {
             g_critical("provider::save: can't create file.");
             return false;
         }
 
-        for (auto& dockitem : data()) {
+        for (auto &dockitem : data())
+        {
             if (!dockitem->get_attached() ||
-                dockitem->get_instance_name() == DOCKLIGHT_INSTANCENAME) {
+                dockitem->get_instance_name() == DOCKLIGHT_INSTANCENAME)
+            {
                 continue;
             }
 
-            if (!dockitem->get_icon()) continue;
+            if (!dockitem->get_icon())
+                continue;
 
-            try {
+            try
+            {
                 dockitem->get_icon()->save_to_buffer(iconBuffer, buffer_size);
-                memcpy(rec.pixbuff, iconBuffer, buffer_size);
-                delete[](gchar*) iconBuffer;
 
-            } catch (...) {
+                // pixbuff is a fixed-size field; a larger serialized icon would
+                // overflow the record, so skip it rather than corrupt memory.
+                if (buffer_size > sizeof(rec.pixbuff))
+                {
+                    g_warning("provider::save: icon too large (%zu > %zu), skipping '%s'.",
+                              (size_t)buffer_size, sizeof(rec.pixbuff),
+                              dockitem->get_instance_name().c_str());
+                    delete[] (gchar *)iconBuffer;
+                    continue;
+                }
+
+                memset(rec.pixbuff, 0, sizeof(rec.pixbuff));
+                memcpy(rec.pixbuff, iconBuffer, buffer_size);
+                delete[] (gchar *)iconBuffer;
+            }
+            catch (...)
+            {
                 g_critical("provider::save: Gdk::PixbufError ");
                 return false;
             }
@@ -744,10 +882,11 @@ namespace docklight
                     sizeof(rec.desktop_file) - 1);
 
             size_t result = fwrite(&rec, sizeof(rec), 1, file_writer);
-            if (result == 0) g_critical("provider::save:: Error writing file fwrite\n");
+            if (result == 0)
+                g_critical("provider::save:: Error writing file fwrite\n");
         }
 
         fclose(file_writer);
         return true;
     }
-}  // namespace docklight
+} // namespace docklight
