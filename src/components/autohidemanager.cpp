@@ -339,6 +339,10 @@ namespace docklight
 
     void AutohideManager::show_now()
     {
+
+        m_sigc_hide.disconnect();
+
+    
         if (m_visible) return;
 
         //  const std::lock_guard<std::mutex> lock(m_mutex);
@@ -352,11 +356,14 @@ namespace docklight
         m_animation_time = 0;
 
         // m_frame_time = g_get_monotonic_time();
-        connect_signal_show(true);
+        if (!m_sigc_show.connected())
+            connect_signal_show(true);
     }
 
     void AutohideManager::hide_now()
     {
+        m_sigc_show.disconnect();
+
         if (!m_visible) return;
 
         // const std::lock_guard<std::mutex> lock(m_mutex);
@@ -368,9 +375,11 @@ namespace docklight
         m_end_time = m_hide_delay;
 
         m_animation_time = 0;
+        
         m_signal_before_hide.emit(0);
         //_frame_time = g_get_real_time();
-        connect_signal_hide(true);
+        if (!m_sigc_hide.connected())
+            connect_signal_hide(true);
     }
 
     void AutohideManager::force_show()
