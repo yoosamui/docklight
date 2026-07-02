@@ -325,6 +325,7 @@ namespace docklight
 
     inline guint Panel::get_dockitem_index(int mx, int my)
     {
+        m_dockitem_index = -1;
         gint pos_x = 0;
         gint pos_y = 0;
 
@@ -337,7 +338,6 @@ namespace docklight
         Position()->get_start_pos(pos_x, pos_y);
 
         for (size_t idx = 0; idx < size; idx++) {
-            m_dockitem_index = -1;
             if (m_config->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
                 if (mx >= pos_x && mx <= pos_x + area) {
                     m_dockitem_index = idx;
@@ -530,6 +530,11 @@ namespace docklight
         get_dockitem_index(event->x, event->y);
         m_mouse_press = false;
 
+        if ((int)m_dockitem_index < 0 || m_dockitem_index >= m_provider->data().size()) {
+            return false; 
+        }
+
+
         // stops drag & drop
         if (m_drag_drop_starts) {
             // reset
@@ -564,9 +569,17 @@ namespace docklight
                 dockitem->launch();
                 return true;
             }
-
-            wnck::select_window(dockitem->get_hash(), m_active_window,
-                                dockitem->get_wnck_window_list());
+            
+            // Extraemos los datos a variables locales porque wnck::select_window 
+            // puede disparar señales GTK que destruyan 'dockitem' o modifiquen el vector.
+            auto hash_copy = dockitem->get_hash();
+            WnckWindow* active_copy = m_active_window;
+            auto wnck_list_copy = dockitem->get_wnck_window_list(); 
+                      
+            
+	    // Ahora llamamos a la función usando las copias locales, no los punteros al objeto
+            wnck::select_window(hash_copy, active_copy, wnck_list_copy);
+            //wnck::select_window(dockitem->get_hash(), m_active_window,dockitem->get_wnck_window_list());
             return true;
         }
 

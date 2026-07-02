@@ -14,11 +14,19 @@ docklight_CPPFLAGS = $(ALLCPPFLAGS)
 #docklight_CPPFLAGS += -Wall -Wextra -Werror -std=c++17 -pedantic
 
 # release
-#docklight_CPPFLAGS += O2 -s -DNDEBUG -Wall -Wextra -Werror -std=c++11 -pedantic
+##docklight_CPPFLAGS += O2 -s -DNDEBUG -Wall -Wextra -Werror -std=c++11 -pedantic
 docklight_CPPFLAGS +=  -s -DNDEBUG -Wall -Wextra -Werror -std=c++17 -pedantic
 
-# standard
-#docklight_CPPFLAGS += -DDEBUG -Wall -std=c++17 -ggdb
+
+
+
+# standard debug
+#
+# -g adds debug information.
+# -O0 disables optimizations, making debugging easier.
+
+docklight_CPPFLAGS += -DDEBUG -Wall -std=c++17 -ggdb -O0
+
 #docklight_LDFLAGS = -lX11 -lXcomposite -lXdamage -lXfixes -lXtst
 
 
