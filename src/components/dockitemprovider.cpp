@@ -422,10 +422,15 @@ namespace docklight
         }
     }
 
-    // TODO: refactoring needed here. Wait to code a WM extension
-    // Xcomposite, Xrender may help
-    void DockItemProvider::set_window_image(WnckWindow *window, bool initial)
 
+
+
+   
+
+// ####################################
+    
+
+    void DockItemProvider::set_window_image(WnckWindow *window, bool initial)
     {
         if (!m_startup_allow_window_scan)
             return;
@@ -435,66 +440,83 @@ namespace docklight
             return;
 
         const std::lock_guard<std::mutex> lock(m_mutex);
-
         gint32 xid = wnck_window_get_xid(window);
 
-        // need to move to the ws to access the image
-        wnck::move_window_to_workspace(window);
-
-        if (initial && wnck_window_is_minimized(window) /*|| wnck_window_is_sticky(window)*/)
-        {
+        // NUEVA LÓGICA: Si la ventana está minimizada o en otro workspace,
+        // NO intentamos tomar la foto. Usaremos el icono como fallback.
+        if (wnck_window_is_minimized(window)) {
             std::shared_ptr<DockItemIcon> dockitem;
-            if (get_dockitem_by_xid(xid, dockitem))
-            {
+            if (get_dockitem_by_xid(xid, dockitem)) {
                 m_window_images[xid] = dockitem->get_icon_from_window(64);
-                return;
             }
+            return;
         }
 
-        // Capture the image after a short delay so the window has time to render
-        // following the workspace move. Defer it onto the main loop instead of
-        // blocking it with sleep() (this runs on the GTK main thread, once per
-        // window during the startup scan).
-        //
-        // Bind only the xid, never the raw WnckWindow*: the window may be closed
-        // (and the GObject finalized by libwnck) before this one-shot fires, which
-        // would leave a dangling pointer. capture_window_image() re-resolves the
-        // window from the live list and bails if it is gone.
+        WnckWorkspace *ws = wnck_window_get_workspace(window);
+        WnckScreen *screen = wnck::get_default_screen();
+        WnckWorkspace *active_ws = wnck_screen_get_active_workspace(screen);
+
+        if (!ws || (ws != active_ws && !wnck_window_is_sticky(window))) {
+            // La ventana está en otro escritorio y no es sticky.
+            // No cambiamos de escritorio. Usamos el icono.
+            std::shared_ptr<DockItemIcon> dockitem;
+            if (get_dockitem_by_xid(xid, dockitem)) {
+                m_window_images[xid] = dockitem->get_icon_from_window(64);
+            }
+            return;
+        }
+
+        // Si llegamos aquí, la ventana está VISIBLE en el escritorio actual.
+        // Ya no necesitamos mover el workspace, así que eliminamos el move_window_to_workspace.
+        
+        // Aumentamos el timeout a 150ms o 200ms para dar tiempo a que 
+        // Xorg y el compositor terminen de pintar la ventana si acaba de aparecer.
         Glib::signal_timeout().connect(sigc::bind(sigc::mem_fun(*this,
                                                                 &DockItemProvider::capture_window_image),
                                                   xid),
-                                       20);
+                                       1500); // Cambiado de 20 a 150
     }
 
     bool DockItemProvider::capture_window_image(gint32 xid)
     {
         const std::lock_guard<std::mutex> lock(m_mutex);
 
-        // Re-resolve the window from its xid against the current window list.
-        // WNCK_IS_WINDOW() is NOT a valid liveness check for a freed pointer (it
-        // dereferences the instance to read its GType), so we must look it up
-        // fresh instead of trusting a pointer captured 20ms ago.
         WnckWindow *window = wnck::get_window_by_xid(xid);
         if (!window || !WNCK_IS_WINDOW(window))
-        {
             return false;
-        }
 
-        // Re-activate the window's workspace right before the capture. The
-        // delayed callback may run after the startup scan has moved the active
-        // workspace away from the window we are sampling, which is what causes
-        // stale or wrong preview thumbnails.
-        wnck::move_window_to_workspace(window);
+        // Doble comprobación de seguridad: asegurar que sigue sin estar minimizada
+        // y sigue en el workspace actual (el usuario pudo haber cambiado de escritorio 
+        // en los 150ms de espera).
+        if (wnck_window_is_minimized(window)) return false;
+
+        WnckWorkspace *ws = wnck_window_get_workspace(window);
+        WnckScreen *screen = wnck::get_default_screen();
+        if (ws != wnck_screen_get_active_workspace(screen) && !wnck_window_is_sticky(window))
+            return false;
 
         Glib::RefPtr<Gdk::Pixbuf> image;
         int size = Config()->get_preview_image_max_size();
-        if (pixbuf::get_window_image(xid, image, size))
-        {
+        
+        if (pixbuf::get_window_image(xid, image, size)) {
             m_window_images[xid] = image;
+        } else {
+            // Si get_window_image falla (por ejemplo, la ventana se cerró en ese instante
+            // o el compositor bloqueó la lectura), limpiamos la cache para que no se muestre basura.
+            if (m_window_images.count(xid)) {
+                m_window_images.erase(xid);
+            }
         }
 
         return false; // one-shot
     }
+
+
+// 3333333333333333333333333333333
+
+
+    
+    
 
     bool DockItemProvider::insert(WnckWindow *window)
     {
