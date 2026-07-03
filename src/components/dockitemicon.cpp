@@ -1,5 +1,5 @@
 
-//  Copyright (c) 2018-2024 Juan R. González
+//  Copyright (c) 2018-2026 yoosamui
 //
 //
 //  This file is part of Docklight.
