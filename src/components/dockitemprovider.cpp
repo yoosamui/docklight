@@ -474,7 +474,7 @@ namespace docklight
         Glib::signal_timeout().connect(sigc::bind(sigc::mem_fun(*this,
                                                                 &DockItemProvider::capture_window_image),
                                                   xid),
-                                       1500); // Cambiado de 20 a 150
+                                       200); // 
     }
 
     bool DockItemProvider::capture_window_image(gint32 xid)
