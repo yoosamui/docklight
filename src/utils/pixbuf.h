@@ -5,43 +5,64 @@
 
 #include "components/config.h"
 #include "components/position.h"
-//#include "common.h"
+
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+
+#include <X11/extensions/Xcomposite.h>
+
+#include <cairo/cairo.h>
+#include <cairo/cairo-xlib.h>
+
+#include <gdk/gdkx.h>
+
+// #include "common.h"
 
 namespace docklight
 {
     namespace pixbuf
     {
+
+        bool xcomposite_supported();
+
         void invert_pixels(Glib::RefPtr<Gdk::Pixbuf> image);
 
-        const Glib::RefPtr<Gdk::Pixbuf> get_from_file(const std::string& filename, int width,
+        const Glib::RefPtr<Gdk::Pixbuf> get_from_file(const std::string &filename, int width,
                                                       int height);
 
-        const Glib::RefPtr<Gdk::Pixbuf> get_window_icon(WnckWindow* window,
-                                                        const std::string& icon_name, int size);
+        const Glib::RefPtr<Gdk::Pixbuf> get_window_icon(WnckWindow *window,
+                                                        const std::string &icon_name, int size);
 
-        const Glib::RefPtr<Gdk::Pixbuf> PixbufConvert(GdkPixbuf* icon);
+        const Glib::RefPtr<Gdk::Pixbuf> PixbufConvert(GdkPixbuf *icon);
 
-        GdkPixbuf* get_pixbuf_from_window_raw(int xid);
+        GdkPixbuf *get_pixbuf_from_window_raw(int xid);
         const Glib::RefPtr<Gdk::Pixbuf> get_pixbuf_from_window(int xid);
         const Glib::RefPtr<Gdk::Pixbuf> get_pixbuf_from_window(int xid, int width, int height);
-        bool get_window_image(gulong xid, Glib::RefPtr<Gdk::Pixbuf>& image,
+        bool get_window_image(gulong xid, Glib::RefPtr<Gdk::Pixbuf> &image,
                               guint size = Config()->get_preview_image_size());
-        GdkPixbuf* get_gdk_pixbuf_from_window(int xid);
+        GdkPixbuf *get_gdk_pixbuf_from_window(int xid);
         Glib::RefPtr<Gdk::Pixbuf> get_gdk_pixbuf_from_windowi2(int xid);
 
-        GdkPixbuf* get_gdk_pixbuf_scaled2(gulong xid, const GdkPixbuf* pixbuf,
+        GdkPixbuf *get_gdk_pixbuf_scaled2(gulong xid, const GdkPixbuf *pixbuf,
                                           const guint destWidth, const guint destHeight);
 
-        GdkPixbuf* get_gdk_pixbuf_scaled(gulong xid, const GdkPixbuf* pixbuf, const guint destWidth,
+        GdkPixbuf *get_gdk_pixbuf_scaled(gulong xid, const GdkPixbuf *pixbuf, const guint destWidth,
                                          const guint destHeight);
 
-        Glib::RefPtr<Gdk::Pixbuf> get_pixbuf_scaled(const Glib::RefPtr<Gdk::Pixbuf>& pixbuf,
+        Glib::RefPtr<Gdk::Pixbuf> get_pixbuf_scaled(const Glib::RefPtr<Gdk::Pixbuf> &pixbuf,
                                                     const guint destWidth, const guint destHeight,
-                                                    guint& scaledWidth, guint& scaledHeight);
+                                                    guint &scaledWidth, guint &scaledHeight);
 
-        int compare_pixels(const Glib::RefPtr<Gdk::Pixbuf>& pixbuf_a,
-                           const Glib::RefPtr<Gdk::Pixbuf>& pixbuf_b, bool validate);
+        int compare_pixels(const Glib::RefPtr<Gdk::Pixbuf> &pixbuf_a,
+                           const Glib::RefPtr<Gdk::Pixbuf> &pixbuf_b, bool validate);
 
-        int compare_pixels(const GdkPixbuf* pixbuf_a, const GdkPixbuf* pixbuf_b, bool validate);
-    }  // namespace pixbuf
-}  // namespace docklight
+        int compare_pixels(const GdkPixbuf *pixbuf_a, const GdkPixbuf *pixbuf_b, bool validate);
+
+        bool get_window_image_xcomposite(gulong xid, Glib::RefPtr<Gdk::Pixbuf> &image, guint size);
+        GdkPixbuf *get_gdk_pixbuf_from_xcomposite(gulong xid);
+        Pixmap get_window_pixmap(gulong xid);
+        // GdkPixbuf *get_gdk_pixbuf_from_xcomposite(int xid);
+        GdkPixbuf *get_gdk_pixbuf_from_xcomposite(gulong xid);
+
+    } // namespace pixbuf
+} // namespace docklight

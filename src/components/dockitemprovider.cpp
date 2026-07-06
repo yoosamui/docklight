@@ -471,46 +471,72 @@ namespace docklight
         
         // Aumentamos el timeout a 150ms o 200ms para dar tiempo a que 
         // Xorg y el compositor terminen de pintar la ventana si acaba de aparecer.
+        /*
         Glib::signal_timeout().connect(sigc::bind(sigc::mem_fun(*this,
                                                                 &DockItemProvider::capture_window_image),
                                                   xid),
                                        200); // 
+         */ 
+
+         // Cancel any previous pending capture for this window.
+        auto it = m_capture_connections.find(xid);
+        if (it != m_capture_connections.end()) {
+            it->second.disconnect();
+            m_capture_connections.erase(it);
+        }
+
+        // Schedule a new capture.
+        m_capture_connections[xid] =
+            Glib::signal_timeout().connect(
+                sigc::bind(
+                    sigc::mem_fun(*this,
+                                &DockItemProvider::capture_window_image),
+                    xid),
+                200);
     }
 
+   
     bool DockItemProvider::capture_window_image(gint32 xid)
     {
-        const std::lock_guard<std::mutex> lock(m_mutex);
+        {
+            std::lock_guard<std::mutex> lock(m_mutex);
+
+            auto it = m_capture_connections.find(xid);
+            if (it != m_capture_connections.end())
+                m_capture_connections.erase(it);
+        }
 
         WnckWindow *window = wnck::get_window_by_xid(xid);
+
         if (!window || !WNCK_IS_WINDOW(window))
             return false;
 
-        // Doble comprobación de seguridad: asegurar que sigue sin estar minimizada
-        // y sigue en el workspace actual (el usuario pudo haber cambiado de escritorio 
-        // en los 150ms de espera).
-        if (wnck_window_is_minimized(window)) return false;
+        if (wnck_window_is_minimized(window))
+            return false;
 
         WnckWorkspace *ws = wnck_window_get_workspace(window);
         WnckScreen *screen = wnck::get_default_screen();
-        if (ws != wnck_screen_get_active_workspace(screen) && !wnck_window_is_sticky(window))
+
+        if (ws != wnck_screen_get_active_workspace(screen) &&
+            !wnck_window_is_sticky(window))
             return false;
 
         Glib::RefPtr<Gdk::Pixbuf> image;
         int size = Config()->get_preview_image_max_size();
-        
-        if (pixbuf::get_window_image(xid, image, size)) {
+
+        if (pixbuf::get_window_image(xid, image, size))
+        {
+            std::lock_guard<std::mutex> lock(m_mutex);
             m_window_images[xid] = image;
-        } else {
-            // Si get_window_image falla (por ejemplo, la ventana se cerró en ese instante
-            // o el compositor bloqueó la lectura), limpiamos la cache para que no se muestre basura.
-            if (m_window_images.count(xid)) {
-                m_window_images.erase(xid);
-            }
+        }
+        else
+        {
+            std::lock_guard<std::mutex> lock(m_mutex);
+            m_window_images.erase(xid);
         }
 
-        return false; // one-shot
+        return false;
     }
-
 
 // 3333333333333333333333333333333
 
