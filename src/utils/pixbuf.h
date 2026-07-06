@@ -35,16 +35,19 @@ namespace docklight
 
         const Glib::RefPtr<Gdk::Pixbuf> PixbufConvert(GdkPixbuf *icon);
 
-        GdkPixbuf *get_pixbuf_from_window_raw(int xid);
-        const Glib::RefPtr<Gdk::Pixbuf> get_pixbuf_from_window(int xid);
-        const Glib::RefPtr<Gdk::Pixbuf> get_pixbuf_from_window(int xid, int width, int height);
+        // GdkPixbuf *get_pixbuf_from_window_raw(int xid);
+        // const Glib::RefPtr<Gdk::Pixbuf> get_pixbuf_from_window(int xid);
+        // const Glib::RefPtr<Gdk::Pixbuf> get_pixbuf_from_window(int xid, int width, int height);
+
         bool get_window_image(gulong xid, Glib::RefPtr<Gdk::Pixbuf> &image,
                               guint size = Config()->get_preview_image_size());
-        GdkPixbuf *get_gdk_pixbuf_from_window(int xid);
-        Glib::RefPtr<Gdk::Pixbuf> get_gdk_pixbuf_from_windowi2(int xid);
 
-        GdkPixbuf *get_gdk_pixbuf_scaled2(gulong xid, const GdkPixbuf *pixbuf,
-                                          const guint destWidth, const guint destHeight);
+        //        GdkPixbuf *get_gdk_pixbuf_from_window(int xid);
+
+        // Glib::RefPtr<Gdk::Pixbuf> get_gdk_pixbuf_from_windowi2(int xid);
+
+        // GdkPixbuf *get_gdk_pixbuf_scaled2(gulong xid, const GdkPixbuf *pixbuf,
+        //                                   const guint destWidth, const guint destHeight);
 
         GdkPixbuf *get_gdk_pixbuf_scaled(gulong xid, const GdkPixbuf *pixbuf, const guint destWidth,
                                          const guint destHeight);
@@ -58,11 +61,13 @@ namespace docklight
 
         int compare_pixels(const GdkPixbuf *pixbuf_a, const GdkPixbuf *pixbuf_b, bool validate);
 
-        bool get_window_image_xcomposite(gulong xid, Glib::RefPtr<Gdk::Pixbuf> &image, guint size);
-        GdkPixbuf *get_gdk_pixbuf_from_xcomposite(gulong xid);
-        Pixmap get_window_pixmap(gulong xid);
-        // GdkPixbuf *get_gdk_pixbuf_from_xcomposite(int xid);
-        GdkPixbuf *get_gdk_pixbuf_from_xcomposite(gulong xid);
+        const Glib::RefPtr<Gdk::Pixbuf> PixbufConvert(GdkPixbuf *icon);
+
+        // bool get_window_image_xcomposite(gulong xid, Glib::RefPtr<Gdk::Pixbuf> &image, guint size);
+        //  GdkPixbuf *get_gdk_pixbuf_from_xcomposite(gulong xid);
+        //  Pixmap get_window_pixmap(gulong xid);
+        //   GdkPixbuf *get_gdk_pixbuf_from_xcomposite(int xid);
+        //  GdkPixbuf *get_gdk_pixbuf_from_xcomposite(gulong xid);
 
     } // namespace pixbuf
 } // namespace docklight

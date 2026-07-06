@@ -269,6 +269,7 @@ namespace docklight
         // https://gist.github.com/mmozeiko/2401933b1fa89e5d5bd238b33eab0465
         // https://developer.gnome.org/gdk-pixbuf/stable/gdk-pixbuf-File-saving.html#gdk-pixbuf-save
         // https://mail.gnome.org/archives/gtk-list/2004-October/msg00186.html
+        /*
         const Glib::RefPtr<Gdk::Pixbuf> get_pixbuf_from_window(int xid)
 
         {
@@ -318,28 +319,32 @@ namespace docklight
 
             return result_pixbuf;
         }
+*/
 
-        Pixmap get_window_pixmap(gulong xid)
-        {
-            GdkDisplay *gdk_display = gdk_display_get_default();
-            if (!gdk_display)
-                return None;
+        /*
+                Pixmap get_window_pixmap(gulong xid)
+                {
+                    GdkDisplay *gdk_display = gdk_display_get_default();
+                    if (!gdk_display)
+                        return None;
 
-            Display *display = GDK_DISPLAY_XDISPLAY(gdk_display);
+                    Display *display = GDK_DISPLAY_XDISPLAY(gdk_display);
 
-            int eventBase;
-            int errorBase;
+                    int eventBase;
+                    int errorBase;
 
-            // Verify the XComposite extension exists.
-            if (!XCompositeQueryExtension(display, &eventBase, &errorBase))
-                return None;
+                    // Verify the XComposite extension exists.
+                    if (!XCompositeQueryExtension(display, &eventBase, &errorBase))
+                        return None;
 
-            // Ask XComposite for the redirected pixmap.
-            Pixmap pixmap = XCompositeNameWindowPixmap(display, xid);
+                    // Ask XComposite for the redirected pixmap.
+                    Pixmap pixmap = XCompositeNameWindowPixmap(display, xid);
 
-            return pixmap;
-        }
+                    return pixmap;
+                }
+                    */
 
+        /*
         bool get_window_image(gulong xid, Glib::RefPtr<Gdk::Pixbuf> &image, guint size)
         {
 
@@ -347,16 +352,25 @@ namespace docklight
             // {
             // }
 
-            //GdkPixbuf *win_pixbuf = get_gdk_pixbuf_from_xcomposite(xid);
+            // GdkPixbuf *win_pixbuf = get_gdk_pixbuf_from_xcomposite(xid);
             GdkPixbuf *win_pixbuf = capture::capture_window(xid);
 
+            static bool setinfo = true;
             if (win_pixbuf)
             {
-                std::cout << "[Docklight] USING XCOMPOSITE" << std::endl;
+                if (setinfo)
+                {
+                    std::cout << "[Docklight] USING X11 CAPTURE" << std::endl;
+                    setinfo = false;
+                }
             }
             else
             {
-                std::cout << "[Docklight] USING GDK FALLBACK" << std::endl;
+                if (setinfo)
+                {
+                    std::cout << "[Docklight] USING GDK FALLBACK" << std::endl;
+                }
+
                 win_pixbuf = get_gdk_pixbuf_from_window(xid);
             }
 
@@ -379,8 +393,51 @@ namespace docklight
             // return image != nullptr;
             return static_cast<bool>(image);
         }
+            */
+
+        /*
+    const Glib::RefPtr<Gdk::Pixbuf> PixbufConvert(GdkPixbuf *icon)
+    {
+        //   ...
+
+        return nullptr;
+    }
+
+    */
+
+        bool get_window_image(gulong xid,
+                              Glib::RefPtr<Gdk::Pixbuf> &image,
+                              guint size)
+        {
+
+            GdkPixbuf *raw = capture::capture_window(xid);
+
+            if (!raw)
+                return false;
+
+            GdkPixbuf *scaled = raw;
+
+            if (size > 0)
+            {
+                scaled = get_gdk_pixbuf_scaled(
+                    xid,
+                    raw,
+                    size,
+                    size);
+
+                g_object_unref(raw);
+
+                if (!scaled)
+                    return false;
+            }
+
+            image = Glib::wrap(scaled, true);
+
+            return static_cast<bool>(image);
+        }
 
         //////
+        /*
         Glib::RefPtr<Gdk::Pixbuf> get_gdk_pixbuf_from_windowi2(int xid)
         {
             GdkPixbuf *winPixbuf = nullptr;
@@ -466,105 +523,109 @@ namespace docklight
 
             return winpixbuf;
         }
+*/
 
-        GdkPixbuf *get_gdk_pixbuf_from_xcomposite(gulong xid)
-        {
-            GdkDisplay *gdk_display = gdk_display_get_default();
-
-            if (!gdk_display)
-                return nullptr;
-
-            Display *display = GDK_DISPLAY_XDISPLAY(gdk_display);
-
-            int eventBase, errorBase;
-
-            if (!XCompositeQueryExtension(display, &eventBase, &errorBase))
-                return nullptr;
-
-            gdk_x11_display_error_trap_push(gdk_display);
-
-            // We are NOT using pixmap anymore
-            Window win = (Window)xid;
-
-            gdk_x11_display_error_trap_pop_ignored(gdk_display);
-
-            if (win == None)
-                return nullptr;
-
-            // =====================================================
-            // SAFE PIXEL CAPTURE
-            // =====================================================
-
-            Window root;
-            int x, y;
-            unsigned int width, height, border, depth;
-
-            if (!XGetGeometry(display, win, &root, &x, &y, &width, &height, &border, &depth))
-                return nullptr;
-
-            if (width == 0 || height == 0)
-                return nullptr;
-
-            XImage *img = XGetImage(
-                display,
-                win,
-                0, 0,
-                width,
-                height,
-                AllPlanes,
-                ZPixmap);
-
-            if (!img)
-                return nullptr;
-
-            GdkPixbuf *pixbuf =
-                gdk_pixbuf_new(
-                    GDK_COLORSPACE_RGB,
-                    TRUE,
-                    8,
-                    width,
-                    height);
-
-            if (!pixbuf)
-            {
-                XDestroyImage(img);
-                return nullptr;
-            }
-
-            // =====================================================
-            // FIXED COPY LOOP (COLOR CORRECTION HERE)
-            // =====================================================
-
-            guchar *dst = gdk_pixbuf_get_pixels(pixbuf);
-            guchar *src = (guchar *)img->data;
-
-            int dst_stride = gdk_pixbuf_get_rowstride(pixbuf);
-            int src_stride = img->bytes_per_line;
-
-            for (unsigned int y = 0; y < height; y++)
-            {
-                guchar *d = dst + y * dst_stride;
-                guchar *s = src + y * src_stride;
-
-                for (unsigned int x = 0; x < width; x++)
+        /*
+                GdkPixbuf *get_gdk_pixbuf_from_xcomposite(gulong xid)
                 {
-                    guchar b = s[x * 4 + 0];
-                    guchar g = s[x * 4 + 1];
-                    guchar r = s[x * 4 + 2];
-                    guchar a = s[x * 4 + 3];
+                    GdkDisplay *gdk_display = gdk_display_get_default();
 
-                    d[x * 4 + 0] = r;
-                    d[x * 4 + 1] = g;
-                    d[x * 4 + 2] = b;
-                    d[x * 4 + 3] = a;
+                    if (!gdk_display)
+                        return nullptr;
+
+                    Display *display = GDK_DISPLAY_XDISPLAY(gdk_display);
+
+                    int eventBase, errorBase;
+
+                    if (!XCompositeQueryExtension(display, &eventBase, &errorBase))
+                        return nullptr;
+
+                    gdk_x11_display_error_trap_push(gdk_display);
+
+                    // We are NOT using pixmap anymore
+                    Window win = (Window)xid;
+
+                    gdk_x11_display_error_trap_pop_ignored(gdk_display);
+
+                    if (win == None)
+                        return nullptr;
+
+                    // =====================================================
+                    // SAFE PIXEL CAPTURE
+                    // =====================================================
+
+                    Window root;
+                    int x, y;
+                    unsigned int width, height, border, depth;
+
+                    if (!XGetGeometry(display, win, &root, &x, &y, &width, &height, &border, &depth))
+                        return nullptr;
+
+                    if (width == 0 || height == 0)
+                        return nullptr;
+
+                    XImage *img = XGetImage(
+                        display,
+                        win,
+                        0, 0,
+                        width,
+                        height,
+                        AllPlanes,
+                        ZPixmap);
+
+                    if (!img)
+                        return nullptr;
+
+                    GdkPixbuf *pixbuf =
+                        gdk_pixbuf_new(
+                            GDK_COLORSPACE_RGB,
+                            TRUE,
+                            8,
+                            width,
+                            height);
+
+                    if (!pixbuf)
+                    {
+                        XDestroyImage(img);
+                        return nullptr;
+                    }
+
+                    // =====================================================
+                    // FIXED COPY LOOP (COLOR CORRECTION HERE)
+                    // =====================================================
+
+                    guchar *dst = gdk_pixbuf_get_pixels(pixbuf);
+                    guchar *src = (guchar *)img->data;
+
+                    int dst_stride = gdk_pixbuf_get_rowstride(pixbuf);
+                    int src_stride = img->bytes_per_line;
+
+                    for (unsigned int y = 0; y < height; y++)
+                    {
+                        guchar *d = dst + y * dst_stride;
+                        guchar *s = src + y * src_stride;
+
+                        for (unsigned int x = 0; x < width; x++)
+                        {
+                            guchar b = s[x * 4 + 0];
+                            guchar g = s[x * 4 + 1];
+                            guchar r = s[x * 4 + 2];
+                            guchar a = s[x * 4 + 3];
+
+                            d[x * 4 + 0] = r;
+                            d[x * 4 + 1] = g;
+                            d[x * 4 + 2] = b;
+                            d[x * 4 + 3] = a;
+                        }
+                    }
+
+                    XDestroyImage(img);
+
+                    return pixbuf;
                 }
-            }
+        */
 
-            XDestroyImage(img);
-
-            return pixbuf;
-        }
-
+        /*
         GdkPixbuf *get_gdk_pixbuf_from_window(int xid)
         {
             GdkPixbuf *winPixbuf = nullptr;
@@ -621,7 +682,10 @@ namespace docklight
             return winPixbuf;
         }
 
-        const Glib::RefPtr<Gdk::Pixbuf> get_pixbuf_from_window(int xid, int width, int height)
+        */
+
+        /*
+                const Glib::RefPtr<Gdk::Pixbuf> get_pixbuf_from_window(int xid, int width, int height)
         {
             Glib::RefPtr<Gdk::Pixbuf> result_pixbuf;
 
@@ -671,6 +735,8 @@ namespace docklight
             return result_pixbuf;
         }
 
+        */
+        /*
         GdkPixbuf *get_pixbuf_from_window_raw(int xid)
         {
             GdkDisplay *gdk_display = gdk_display_get_default();
@@ -715,6 +781,7 @@ namespace docklight
 
             return winPixbuf;
         }
+*/
 
         /*Glib::RefPtr<Gdk::Pixbuf> get_pixbuf_scaled(const Glib::RefPtr<Gdk::Pixbuf>& pixbuf,
                                                     const guint destWidth, const guint destHeight,
@@ -823,6 +890,7 @@ namespace docklight
         }
 
         ////////////////
+        /*
         GdkPixbuf *get_gdk_pixbuf_scaled2(gulong xid, const GdkPixbuf *pixbuf,
                                           const guint destWidth, const guint destHeight)
         {
@@ -852,6 +920,8 @@ namespace docklight
             // g_object_unref(pixbuf);
             return gdk_pixbuf_scale_simple(pixbuf, scaledWidth, scaledHeight, GDK_INTERP_BILINEAR);
         }
+
+        */
 
         //
         GdkPixbuf *get_gdk_pixbuf_scaled(gulong xid, const GdkPixbuf *pixbuf, const guint destWidth,
@@ -884,6 +954,7 @@ namespace docklight
             guint half_WindowHeight = workarea.get_height() / 2;
 
             const int ajust_value = 200;
+            /*
             if (winWidth > half_WindowWidth + ajust_value)
             {
                 scaledWidth = width;
@@ -893,6 +964,13 @@ namespace docklight
             {
                 scaledHeight = height;
             }
+*/
+            std::cout
+                << "[Scale] source="
+                << winWidth << "x" << winHeight
+                << "  target="
+                << scaledWidth << "x" << scaledHeight
+                << '\n';
 
             return gdk_pixbuf_scale_simple(pixbuf, scaledWidth, scaledHeight, GDK_INTERP_BILINEAR);
         }
