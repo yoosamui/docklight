@@ -1,4 +1,6 @@
 #include "utils/pixbuf.h"
+// #include "components/capture.h"
+#include "components/capture.h"
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <gdk/gdkx.h>
@@ -11,6 +13,7 @@
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+
 namespace docklight
 {
 
@@ -344,7 +347,8 @@ namespace docklight
             // {
             // }
 
-            GdkPixbuf *win_pixbuf = get_gdk_pixbuf_from_xcomposite(xid);
+            //GdkPixbuf *win_pixbuf = get_gdk_pixbuf_from_xcomposite(xid);
+            GdkPixbuf *win_pixbuf = capture::capture_window(xid);
 
             if (win_pixbuf)
             {

@@ -64,6 +64,7 @@ components/appobserver.cpp \
 components/dockitem.cpp \
 components/dockitemicon.cpp \
 components/position.cpp \
+components/capture.cpp \
 appwindow.cpp \
 appoptionsgroup.cpp \
 main.cpp \
