@@ -111,6 +111,10 @@ namespace docklight::capture
 
         Window win = static_cast<Window>(xid);
 
+        if (win == None)
+            return nullptr;
+
+        XSync(display, False);
         return XGetImage(
             display,
             win,
@@ -122,6 +126,31 @@ namespace docklight::capture
             ZPixmap);
     }
 
+    GdkPixbuf *capture_window(gulong xid)
+    {
+        WindowGeometry geo;
+
+        if (!query_geometry(xid, geo))
+            return nullptr;
+
+        XImage *img = capture_ximage(xid, geo);
+
+        if (!img)
+            return nullptr;
+
+        if (!is_standard_bgra(img))
+        {
+            XDestroyImage(img);
+            return nullptr;
+        }
+
+        GdkPixbuf *pixbuf = convert_bgra_to_pixbuf(img, geo);
+
+        XDestroyImage(img);
+
+        return pixbuf;
+    }
+    /*
     GdkPixbuf *capture_window(gulong xid)
     {
         WindowGeometry geo;
@@ -149,5 +178,5 @@ namespace docklight::capture
 
         return pixbuf;
     }
-
+*/
 }
