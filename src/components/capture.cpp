@@ -126,12 +126,66 @@ namespace docklight::capture
             ZPixmap);
     }
 
+    GdkPixbuf *capture_window_gdk(gulong xid)
+    {
+        GdkDisplay *display = gdk_display_get_default();
+
+        if (!display)
+            return nullptr;
+
+        GdkWindow *window =
+            gdk_x11_window_foreign_new_for_display(
+                display,
+                static_cast<Window>(xid));
+
+        if (!window)
+            return nullptr;
+
+        GdkPixbuf *pixbuf =
+            gdk_pixbuf_get_from_window(
+                window,
+                0,
+                0,
+                gdk_window_get_width(window),
+                gdk_window_get_height(window));
+
+        g_object_unref(window);
+
+        return pixbuf;
+    }
+
     GdkPixbuf *capture_window(gulong xid)
+    {
+
+        if (GdkPixbuf *pixbuf = capture_window_gdk(xid))
+        {
+            // std::cout << "[Capture] GDK\n";
+            return pixbuf;
+        }
+
+        std::cout << "[Capture] X11 fallback\n";
+        return capture_window_x11(xid);
+    }
+
+    GdkPixbuf *capture_window_x11(gulong xid)
     {
         WindowGeometry geo;
 
         if (!query_geometry(xid, geo))
             return nullptr;
+
+        // Sanity checks
+        if (geo.width <= 0 || geo.height <= 0)
+            return nullptr;
+
+        if (geo.width > 10000 || geo.height > 10000)
+        {
+            g_warning("Suspicious geometry: xid=%lu width=%u height=%u",
+                      (unsigned long)xid,
+                      geo.width,
+                      geo.height);
+            return nullptr;
+        }
 
         XImage *img = capture_ximage(xid, geo);
 
@@ -151,14 +205,16 @@ namespace docklight::capture
         return pixbuf;
     }
     /*
-    GdkPixbuf *capture_window(gulong xid)
+    GdkPixbuf *capture_window_x11(gulong xid)
     {
+
+        // =====================================================
+        // X11 backend
+        // =====================================================
+
         WindowGeometry geo;
 
         if (!query_geometry(xid, geo))
-            return nullptr;
-
-        if (geo.width == 0 || geo.height == 0)
             return nullptr;
 
         XImage *img = capture_ximage(xid, geo);
@@ -178,5 +234,6 @@ namespace docklight::capture
 
         return pixbuf;
     }
-*/
+        */
+
 }

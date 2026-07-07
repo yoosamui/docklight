@@ -26,10 +26,14 @@ namespace docklight::capture
         unsigned int depth;
     };
 
+    GdkPixbuf *capture_window_x11(gulong xid);
+
+    GdkPixbuf *capture_window_gdk(gulong xid);
     GdkPixbuf *capture_window(gulong xid);
     bool query_geometry(gulong xid, WindowGeometry &geo);
     GdkPixbuf *convert_bgra_to_pixbuf(XImage *img, const WindowGeometry &geo);
     bool is_standard_bgra(const XImage *img);
     XImage *capture_ximage(gulong xid, const WindowGeometry &geo);
+    GdkPixbuf *capture_window_gdk(gulong xid);
     Display *get_display();
 }
