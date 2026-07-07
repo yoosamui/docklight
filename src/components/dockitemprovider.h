@@ -138,6 +138,8 @@ namespace docklight
     DockItemContainer m_container;
     BamfMatcher *m_matcher = nullptr;
 
+    std::unordered_map<gint32, sigc::connection> m_capture_connections;
+
     bool m_startup_time_set = false;
     bool m_startup_allow_window_scan = false;
     std::vector<std::pair<int, WnckWindow *>> m_windows_loaded;
