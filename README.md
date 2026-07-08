@@ -12,7 +12,7 @@ A lightweight Linux dock for managing application windows and launching applicat
 
 # Installation
 
-**Supported platform:** Debian/Ubuntu (64-bit)
+**Supported platform:** Linux with X11 
 
 > **Note**
 >
