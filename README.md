@@ -6,9 +6,8 @@ A lightweight Linux dock for managing application windows and launching applicat
 >
 > Docklight is currently under active development. Features, APIs, configuration options, and documentation may change between releases.
 
-![Docklight Screenshot](https://github.com/user-attachments/assets/7994983c-8d4f-4ace-91e8-20a88a236521)
+<img width="356" height="57" alt="image" src="https://github.com/user-attachments/assets/9613effa-2c7f-4fb1-9438-ff6409e9f837" />
 
----
 
 # Installation
 
