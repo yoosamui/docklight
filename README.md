@@ -1,105 +1,147 @@
-
 # Docklight
- Manage access to applications.
 
+A lightweight Linux dock for managing application windows and launching applications.
 
-> This project is actively under development. Features, APIs, configuration parameters, and documentation may change between releases.
+> **⚠️ Active Development**
+>
+> Docklight is currently under active development. Features, APIs, configuration options, and documentation may change between releases.
 
+![Docklight Screenshot](https://github.com/user-attachments/assets/7994983c-8d4f-4ace-91e8-20a88a236521)
 
+---
 
-![image](https://github.com/user-attachments/assets/7994983c-8d4f-4ace-91e8-20a88a236521)
+# Installation
 
+**Supported platform:** Debian/Ubuntu (64-bit)
 
-## Installation
-Docklight for Debian/Ubuntu Linux platform (64-bit)
+> **Note**
+>
+> If you are using a non-Debian distribution, edit `install_dependencies.sh` and replace the package manager commands with those appropriate for your system.
 
-For non Debian/Ubuntu Systems change the package manager in the install_dependecies.sh script.
-clone this repository if you want to get the **stable** version:
+## Stable release
 
-```bash
-$ git clone https://github.com/yoosamui/docklight
-```
-This will create the directory docklight.
-
-clone this repository if you want to get the **current** version:
-
-```bash
-$ git clone --branch current https://github.com/yoosamui/docklight
-```
-This will create the directory docklight.
-
-
-cd into it:
+Clone the stable branch:
 
 ```bash
-$ cd docklight
+git clone https://github.com/yoosamui/docklight
+cd docklight
 ```
-Eexecute the following bash scripts:
+
+## Development version
+
+Clone the latest development branch:
 
 ```bash
-$ sudo ./install_dependencies.sh
-$ sudo ./install_docklight.sh
+git clone --branch current https://github.com/yoosamui/docklight
+cd docklight
 ```
-docklight is now installed on your system and will start after next login.
-Start it manually with:
+
+## Install
+
+Run the installation scripts:
 
 ```bash
-$ docklight5
-or
-with parameters like so:
-$ docklight5 '-l left '
+sudo ./install_dependencies.sh
+sudo ./install_docklight.sh
 ```
 
-You can start docklight with the following parameters:
+Docklight will start automatically after your next login.
 
-![image](https://github.com/user-attachments/assets/9555d475-219b-43fc-9f16-237003d7f509)
-Remember that, parameters replace the config file values.
-
-## Uninstallation
+To start it immediately:
 
 ```bash
-$ cd docklight
-$ sudo make uninstall
+docklight5
 ```
-If you want to remove the configuration files, do the following bash statement:
-```bash
-$ rm -rfd /home/$USER/.config/docklight
-```
-## Compile the source code
+
+or launch it with command-line options:
 
 ```bash
-$ cd docklight
-$ ./autogen.sh
-$ ./configure.sh
-$ make
-
-The final executable is located at:
-$ cd <YOUR_DOCKLIGHT_PATH>/src/docklight
-
+docklight5 -l left
 ```
 
-## Configure
-Change the icon or preview size values or event create new themes.
+> **Note**
+>
+> Command-line parameters override the values defined in the configuration file.
 
+### Available command-line options
 
-The configurations directory is here: **/home/$USER/.config/docklight**
+![Command Line Options](https://github.com/user-attachments/assets/9555d475-219b-43fc-9f16-237003d7f509)
 
-The configuration Filename is: **docklight5.config**
+---
 
+# Uninstallation
 
-## Mouse keys
+From the project directory:
 
-Left mouse click                : minimize/unminimize group
-.
-Left mouse press and hold       : activate drag & drop.
+```bash
+cd docklight
+sudo make uninstall
+```
 
-Right mouse click               : activate context menu.
+To also remove your personal configuration:
 
-Right mouse click longer press  : activate context image preview.
+```bash
+rm -rf ~/.config/docklight
+```
 
-Mouse wheel                     : scroll through the window group list.
+---
 
-## Current state
-beta version: 5.2.64
+# Building from Source
 
+```bash
+cd docklight
+./autogen.sh
+./configure.sh
+make
+```
+
+The compiled executable is located at:
+
+```text
+src/docklight
+```
+
+---
+
+# Configuration
+
+Docklight stores its configuration in:
+
+```text
+~/.config/docklight
+```
+
+Configuration file:
+
+```text
+docklight5.config
+```
+
+You can customize:
+
+* Icon size
+* Window preview size
+* Themes
+* Appearance
+* Behavior
+
+---
+
+# Mouse Controls
+
+| Action             | Result                                         |
+| ------------------ | ---------------------------------------------- |
+| Left click         | Minimize or restore the application group      |
+| Left click + hold  | Start drag & drop                              |
+| Right click        | Open the context menu                          |
+| Right click + hold | Show image preview                             |
+| Mouse wheel        | Cycle through windows in the application group |
+
+---
+
+# Current Status
+
+**Version:** `5.3.0`
+
+**Status:** Beta
 
