@@ -355,7 +355,46 @@ namespace docklight
 
     inline guint Panel::get_dockitem_index(int mx, int my)
     {
-        // m_dockitem_index = -1;
+        gint pos_x = 0;
+        gint pos_y = 0;
+
+        Position()->get_start_pos(pos_x, pos_y);
+
+        const gint separator_size = m_config->get_separator_size();
+        const gint area = m_config->get_dock_area() + separator_size;
+        const guint size = static_cast<guint>(m_provider->data().size());
+
+        for (guint idx = 0; idx < size; ++idx)
+        {
+            if (m_config->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL)
+            {
+                if (mx >= pos_x && mx < pos_x + area)
+                {
+                    m_dockitem_index = idx;
+                    return idx;
+                }
+
+                pos_x += area;
+            }
+            else
+            {
+                if (my >= pos_y && my < pos_y + area)
+                {
+                    m_dockitem_index = idx;
+                    return idx;
+                }
+
+                pos_y += area;
+            }
+        }
+
+        return G_MAXUINT; // Not found
+    }
+
+    /*
+    inline guint Panel::get_dockitem_index(int mx, int my)
+    {
+
         gint pos_x = 0;
         gint pos_y = 0;
 
@@ -367,8 +406,10 @@ namespace docklight
 
         Position()->get_start_pos(pos_x, pos_y);
 
+
         for (size_t idx = 0; idx < size; idx++)
         {
+            m_dockitem_index = -1;
             if (m_config->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL)
             {
                 if (mx >= pos_x && mx <= pos_x + area)
@@ -391,6 +432,8 @@ namespace docklight
 
         return m_dockitem_index;
     }
+
+    */
 
     bool Panel::on_scroll_event(GdkEventScroll *e)
     {
