@@ -141,7 +141,5 @@ You can customize:
 
 # Current Status
 
-**Version:** `5.3.0`
-
-**Status:** Beta
+**Version:** `5.3.0` **Status:** RC
 
