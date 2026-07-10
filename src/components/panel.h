@@ -46,98 +46,97 @@
 
 namespace docklight
 {
-    class Panel : public PanelRender
-    {
-      public:
-        Panel();
-        ~Panel();
+  class Panel : public PanelRender
+  {
+  public:
+    Panel();
+    ~Panel();
 
-        void init(const Glib::RefPtr<Gtk::Application>& app,
-                  const Glib::RefPtr<Configuration>& config,
-                  const Glib::RefPtr<DockItemProvider>& provider,
-                  const Glib::RefPtr<PositionManager>& position);
+    void init(const Glib::RefPtr<Gtk::Application> &app,
+              const Glib::RefPtr<Configuration> &config,
+              const Glib::RefPtr<DockItemProvider> &provider,
+              const Glib::RefPtr<PositionManager> &position);
 
-        void container_updated(guint explicit_size = 0);
+    void container_updated(guint explicit_size = 0);
 
-      private:
-        sigc::connection m_sigc_draw;
-        sigc::connection m_sigc_updated;
+  private:
+    sigc::connection m_sigc_draw;
+    sigc::connection m_sigc_updated;
 
-        guint get_scale_factor();
-        guint get_dockitem_index(int mx, int my);
+    guint get_scale_factor();
+    void set_dockitem_index(int mx, int my);
 
-        bool on_button_press_event(GdkEventButton* event);
-        bool on_button_release_event(GdkEventButton* event);
+    bool on_button_press_event(GdkEventButton *event);
+    bool on_button_release_event(GdkEventButton *event);
 
-        bool on_motion_notify_event(GdkEventMotion* event);
-        void on_container_updated(window_action_t action, int index);
+    bool on_motion_notify_event(GdkEventMotion *event);
+    void on_container_updated(window_action_t action, int index);
 
-        void on_autohide_before_hide(int tag);
-        void on_autohide_after_hide(int tag);
+    void on_autohide_before_hide(int tag);
+    void on_autohide_after_hide(int tag);
 
-        bool on_timeout_draw();
+    bool on_timeout_draw();
 
-        bool on_enter_notify_event(GdkEventCrossing* crossing_event) override;
-        bool on_leave_notify_event(GdkEventCrossing* crossing_event) override;
+    bool on_enter_notify_event(GdkEventCrossing *crossing_event) override;
+    bool on_leave_notify_event(GdkEventCrossing *crossing_event) override;
 
-        bool on_scroll_event(GdkEventScroll* e) override;
+    bool on_scroll_event(GdkEventScroll *e) override;
 
-        void on_item_menu_childlist_event(WnckWindow* window);
+    void on_item_menu_childlist_event(WnckWindow *window);
 
-        static void on_active_window_changed(WnckScreen* screen,
-                                             WnckWindow* previously_active_window,
-                                             gpointer user_data);
+    static void on_active_window_changed(WnckScreen *screen,
+                                         WnckWindow *previously_active_window,
+                                         gpointer user_data);
 
-        // static void on_state_changed(WnckWindow* window, WnckWindowState changed_mask,
-        // WnckWindowState new_state, gpointer user_data);
+    // static void on_state_changed(WnckWindow* window, WnckWindowState changed_mask,
+    // WnckWindowState new_state, gpointer user_data);
 
-        // static void on_actions_changed(WnckWindow* window, WnckWindowActions changed_mask,
-        // WnckWindowActions new_state, gpointer user_data);
+    // static void on_actions_changed(WnckWindow* window, WnckWindowActions changed_mask,
+    // WnckWindowActions new_state, gpointer user_data);
 
-        // Runs on the GTK main loop (NOT a worker thread): reads the dock-item
-        // container and calls queue_draw(), neither of which is thread safe.
-        bool on_active_window_check();
-        void show_current_title(bool show);
-        void drag_drop(bool start);
+    // Runs on the GTK main loop (NOT a worker thread): reads the dock-item
+    // container and calls queue_draw(), neither of which is thread safe.
+    bool on_active_window_check();
+    void show_current_title(bool show);
+    void drag_drop(bool start);
 
-      private:
-        Glib::RefPtr<Configuration> m_config;
-        Glib::RefPtr<AnimBoomWindow> m_composite;
-        Glib::RefPtr<PanelPreview> m_preview;
-        Glib::RefPtr<DockItemProvider> m_provider;
-        Glib::RefPtr<PositionManager> m_position;
-        DADWindow* m_dad = nullptr;
+  private:
+    Glib::RefPtr<Configuration> m_config;
+    Glib::RefPtr<AnimBoomWindow> m_composite;
+    Glib::RefPtr<PanelPreview> m_preview;
+    Glib::RefPtr<DockItemProvider> m_provider;
+    Glib::RefPtr<PositionManager> m_position;
+    DADWindow *m_dad = nullptr;
 
-        std::shared_ptr<DockItemIcon> m_dockitem;
+    std::shared_ptr<DockItemIcon> m_dockitem;
 
-        Glib::RefPtr<TitleWindow> m_title;
+    Glib::RefPtr<TitleWindow> m_title;
 
-        guint m_preview_open_index = 0;
+    guint m_preview_open_index = 0;
 
-        bool m_transient = false;
-        bool m_preview_open = false;
-        bool m_mouse_move = false;
-        bool m_mouse_press = false;
-        bool m_force_show = false;
+    bool m_transient = false;
+    bool m_preview_open = false;
+    bool m_mouse_move = false;
+    bool m_mouse_press = false;
+    bool m_force_show = false;
 
-        float m_mouseclickEventTime = 0.f;
+    float m_mouseclickEventTime = 0.f;
 
-        Glib::Timer m_mouse_click_timer;
-        Glib::Timer m_mouse_drag_drop_timer;
+    Glib::Timer m_mouse_click_timer;
+    Glib::Timer m_mouse_drag_drop_timer;
 
-        bool m_drag_drop_starts = false;
-        bool m_drag_drop_candrop = false;
+    bool m_drag_drop_starts = false;
+    bool m_drag_drop_candrop = false;
 
-        sigc::connection m_sigc_active;
-        WnckWindow* m_last_active_window = nullptr;
+    sigc::connection m_sigc_active;
+    WnckWindow *m_last_active_window = nullptr;
 
-        Gtk::SeparatorMenuItem* m_separatorMenuItem = nullptr;
+    Gtk::SeparatorMenuItem *m_separatorMenuItem = nullptr;
 
-        guint m_mouse_button = 0;
-        guint m_last_index = 0;
-        guint m_last_title_index = 0;
+    guint m_mouse_button = 0;
+    guint m_last_index = 0;
+    guint m_last_title_index = 0;
 
-        gint m_scroll_index = 0;
-    };
-}  // namespace docklight
-
+    gint m_scroll_index = 0;
+  };
+} // namespace docklight
