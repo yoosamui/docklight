@@ -28,7 +28,8 @@ namespace docklight
 
     Glib::RefPtr<AutohideManager> create_autohide()
     {
-        if (!m_autohide) {
+        if (!m_autohide)
+        {
             m_autohide = Glib::RefPtr<AutohideManager>(new AutohideManager());
         }
 
@@ -41,18 +42,19 @@ namespace docklight
         return m_autohide;
     }
 
-    WnckWindow* AutohideManager::m_active_window;
+    WnckWindow *AutohideManager::m_active_window;
     AutohideManager::AutohideManager()
     {
         m_area = Config()->get_dock_area();
         m_active_window = nullptr;
 
-        WnckScreen* wnckscreen = wnck::get_default_screen();
+        WnckScreen *wnckscreen = wnck::get_default_screen();
         g_signal_connect(wnckscreen, "active_window_changed",
                          G_CALLBACK(AutohideManager::on_active_window_changed), nullptr);
 
         connect_signal_handler(true);
-        if (Config()->is_autohide()) m_autohide_timer.start();
+        if (Config()->is_autohide())
+            m_autohide_timer.start();
     }
 
     AutohideManager::~AutohideManager()
@@ -64,29 +66,38 @@ namespace docklight
 
     void AutohideManager::connect_signal_show(bool connect)
     {
-        if (connect) {
+        if (connect)
+        {
             m_sigc_show = Glib::signal_timeout().connect(
                 sigc::mem_fun(this, &AutohideManager::on_show), 1000 / 60);
-        } else {
+        }
+        else
+        {
             m_sigc_show.disconnect();
         }
     }
     void AutohideManager::connect_signal_hide(bool connect)
     {
-        if (connect) {
+        if (connect)
+        {
             m_sigc_hide = Glib::signal_timeout().connect(
                 sigc::mem_fun(this, &AutohideManager::on_hide), 1000 / 60);
-        } else {
+        }
+        else
+        {
             m_sigc_hide.disconnect();
         }
     }
 
     void AutohideManager::connect_signal_handler(bool connect)
     {
-        if (connect) {
+        if (connect)
+        {
             m_sigc_autohide = Glib::signal_timeout().connect(
                 sigc::mem_fun(this, &AutohideManager::on_autohide), 1000 / 1);
-        } else {
+        }
+        else
+        {
             m_sigc_autohide.disconnect();
         }
     }
@@ -106,8 +117,8 @@ namespace docklight
         return m_signal_after_hide;
     }
 
-    void AutohideManager::on_active_window_changed(WnckScreen* screen,
-                                                   WnckWindow* previously_active_window,
+    void AutohideManager::on_active_window_changed(WnckScreen *screen,
+                                                   WnckWindow *previously_active_window,
                                                    gpointer user_data)
     {
         // Gets the active WnckWindow on screen.
@@ -116,12 +127,14 @@ namespace docklight
         m_active_window = wnck_screen_get_active_window(screen);
     }
 
-    bool AutohideManager::is_window_intersect(WnckWindow* window)
+    bool AutohideManager::is_window_intersect(WnckWindow *window)
     {
-        if (!window) return false;
+        if (!window)
+            return false;
 
         WnckWindowType wt = wnck_window_get_window_type(window);
-        if (wt == WNCK_WINDOW_DESKTOP) return false;
+        if (wt == WNCK_WINDOW_DESKTOP)
+            return false;
 
         Gdk::Rectangle win_rect = wnck::get_window_geometry(window);
         Gdk::Rectangle dock_rect = Position()->get_window_geometry();
@@ -129,21 +142,30 @@ namespace docklight
         return dock_rect.intersects(win_rect);
     }
 
-    void AutohideManager::get_offset(float position, int& offset_x, int& offset_y)
+    void AutohideManager::get_offset(float position, int &offset_x, int &offset_y)
     {
-        if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-            if (Config()->get_dock_location() == dock_location_t::top) {
+        if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL)
+        {
+            if (Config()->get_dock_location() == dock_location_t::top)
+            {
                 offset_x = 0;
                 offset_y = -(int)position;
-            } else {
+            }
+            else
+            {
                 offset_x = 0;
                 offset_y = (int)position;
             }
-        } else {
-            if (Config()->get_dock_location() == dock_location_t::left) {
+        }
+        else
+        {
+            if (Config()->get_dock_location() == dock_location_t::left)
+            {
                 offset_x = -(int)position;
                 offset_y = 0;
-            } else {
+            }
+            else
+            {
                 offset_x = (int)position;
                 offset_y = 0;
             }
@@ -152,7 +174,8 @@ namespace docklight
 
     bool AutohideManager::on_autohide()
     {
-        if (!m_active_window) return true;
+        if (!m_active_window)
+            return true;
 
         // WnckWindowType wt = wnck_window_get_window_type(m_active_window);
         // if (wt == WNCK_WINDOW_DESKTOP) return true;
@@ -163,25 +186,30 @@ namespace docklight
         m_fullscreen = wnck_window_is_fullscreen(m_active_window) && m_intersects;
 
         // none
-        if (Config()->is_autohide_none() && m_fullscreen) {
+        if (Config()->is_autohide_none() && m_fullscreen)
+        {
             hide_now();
             return true;
         }
 
-        if (!m_visible && Config()->is_autohide_none() && !m_fullscreen) {
+        if (!m_visible && Config()->is_autohide_none() && !m_fullscreen)
+        {
             show_now();
             return true;
         }
 
         // autohide
-        if (m_visible && Config()->is_autohide()) {
-            if (m_fullscreen) {
+        if (m_visible && Config()->is_autohide())
+        {
+            if (m_fullscreen)
+            {
                 m_autohide_timer.stop();
                 hide_now();
                 return true;
             }
 
-            if (m_autohide_timer.elapsed() > 2) {
+            if (m_autohide_timer.elapsed() > 2)
+            {
                 m_autohide_timer.stop();
                 hide_now();
                 return true;
@@ -191,25 +219,32 @@ namespace docklight
         }
 
         // intelihide
-        if (Config()->is_intelihide()) {
-            if (m_fullscreen) {
+        if (Config()->is_intelihide())
+        {
+            if (m_fullscreen)
+            {
                 hide_now();
                 return true;
             }
 
-            if (m_last_intersects != m_intersects) {
+            if (m_last_intersects != m_intersects)
+            {
                 m_last_intersects = m_intersects;
 
-                if (m_intersects) {
+                if (m_intersects)
+                {
                     hide_now();
                     return true;
-                } else {
+                }
+                else
+                {
                     show_now();
                     return true;
                 }
             }
 
-            if (!m_visible && !m_intersects) {
+            if (!m_visible && !m_intersects)
+            {
                 show_now();
                 return true;
             }
@@ -248,7 +283,8 @@ namespace docklight
         m_signal_hide.emit(m_offset_x, m_offset_y);
         m_animation_time++;
 
-        if ((int)position < 1) {
+        if ((int)position < 1)
+        {
             Position()->set_window_passthrought(false);
             connect_signal_show(false);
             m_visible = true;
@@ -303,7 +339,8 @@ namespace docklight
         m_signal_hide.emit(m_offset_x, m_offset_y);
         m_animation_time++;
 
-        if ((int)position >= m_area) {
+        if ((int)position >= m_area)
+        {
             connect_signal_hide(false);
             m_visible = false;
 
@@ -342,8 +379,8 @@ namespace docklight
 
         m_sigc_hide.disconnect();
 
-    
-        if (m_visible) return;
+        if (m_visible)
+            return;
 
         //  const std::lock_guard<std::mutex> lock(m_mutex);
 
@@ -364,7 +401,8 @@ namespace docklight
     {
         m_sigc_show.disconnect();
 
-        if (!m_visible) return;
+        if (!m_visible)
+            return;
 
         // const std::lock_guard<std::mutex> lock(m_mutex);
 
@@ -375,7 +413,7 @@ namespace docklight
         m_end_time = m_hide_delay;
 
         m_animation_time = 0;
-        
+
         m_signal_before_hide.emit(0);
         //_frame_time = g_get_real_time();
         if (!m_sigc_hide.connected())
@@ -409,13 +447,15 @@ namespace docklight
 
     void AutohideManager::set_hide_allow(bool allow)
     {
-        if (allow == m_hide_allow) return;
+        if (allow == m_hide_allow)
+            return;
 
         m_autohide_timer.reset();
         m_autohide_timer.stop();
 
-        if (allow) m_autohide_timer.start();
+        if (allow)
+            m_autohide_timer.start();
 
         m_hide_allow = allow;
     }
-}  // namespace docklight
+} // namespace docklight

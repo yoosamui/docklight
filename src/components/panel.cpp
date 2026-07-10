@@ -141,7 +141,7 @@ namespace docklight
     {
         m_mouse_enter = true;
 
-        if (!Autohide()->get_visible() && Config()->is_intelihide())
+        if (!Autohide()->get_visible() /* && Config()->is_intelihide()*/)
             return true;
 
         if (Config()->is_autohide())
@@ -151,21 +151,6 @@ namespace docklight
             if (!Autohide()->get_visible())
                 m_force_show = true;
         }
-
-        // if (!Autohide()->get_visible()) {
-        // if (Config()->is_intelihide()) return true;
-        ////  int x = 0;
-        //// .. int y = 0;
-        //// auto winrect = Position()->get_window_geometry();
-
-        ////  if (!system::get_mouse_position(x, y)) return true;
-
-        ////  if (y > winrect.get_y()) {
-        // Autohide()->force_show();
-        ////  }
-
-        // return true;
-        //}
 
         m_sigc_draw =
             Glib::signal_timeout().connect(sigc::mem_fun(this, &Panel::on_timeout_draw), 1000 / 2);
@@ -334,7 +319,7 @@ namespace docklight
         auto separator_size = m_config->get_separator_size();
         auto separators_count = (size * separator_size);
 
-        // resize the icon if necesery
+        // resize the icon if necessary
         int scaled_icon_size = get_scale_factor();
         m_config->set_icon_size(scaled_icon_size);
 
@@ -350,11 +335,13 @@ namespace docklight
 
         container_updated();
         Gtk::Widget::queue_draw();
+
         g_message("Panel updated");
     }
 
-    inline guint Panel::get_dockitem_index(int mx, int my)
+    inline void Panel::set_dockitem_index(int mx, int my)
     {
+
         gint pos_x = 0;
         gint pos_y = 0;
 
@@ -371,7 +358,7 @@ namespace docklight
                 if (mx >= pos_x && mx < pos_x + area)
                 {
                     m_dockitem_index = idx;
-                    return idx;
+                    break;
                 }
 
                 pos_x += area;
@@ -381,59 +368,13 @@ namespace docklight
                 if (my >= pos_y && my < pos_y + area)
                 {
                     m_dockitem_index = idx;
-                    return idx;
+                    break;
                 }
 
                 pos_y += area;
             }
         }
-
-        return G_MAXUINT; // Not found
     }
-
-    /*
-    inline guint Panel::get_dockitem_index(int mx, int my)
-    {
-
-        gint pos_x = 0;
-        gint pos_y = 0;
-
-        auto separator_size = m_config->get_separator_size();
-        auto area = m_config->get_dock_area() + separator_size;
-        auto size = m_provider->data().size();
-        //       auto maxsize = size * area;
-        auto start_pos = 0;
-
-        Position()->get_start_pos(pos_x, pos_y);
-
-
-        for (size_t idx = 0; idx < size; idx++)
-        {
-            m_dockitem_index = -1;
-            if (m_config->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL)
-            {
-                if (mx >= pos_x && mx <= pos_x + area)
-                {
-                    m_dockitem_index = idx;
-                    break;
-                }
-                pos_x += start_pos + area;
-            }
-            else
-            { // Vertical
-                if (my >= pos_y && my <= pos_y + area)
-                {
-                    m_dockitem_index = idx;
-                    break;
-                }
-                pos_y += start_pos + area;
-            }
-        }
-
-        return m_dockitem_index;
-    }
-
-    */
 
     bool Panel::on_scroll_event(GdkEventScroll *e)
     {
@@ -473,6 +414,7 @@ namespace docklight
         WnckWindow *window = child->get_wnckwindow();
         if (!window)
             return false;
+
         wnck::bring_above_window(window);
 
         return true;
@@ -507,7 +449,7 @@ namespace docklight
 
     bool Panel::on_motion_notify_event(GdkEventMotion *event)
     {
-        get_dockitem_index(event->x, event->y);
+        set_dockitem_index(event->x, event->y);
 
         if (m_force_show && !Autohide()->get_fullscreen() && !Autohide()->get_visible() &&
             (Config()->is_autohide() || Config()->is_intelihide()))
@@ -612,7 +554,7 @@ namespace docklight
             return true;
         if ((event->type != GDK_BUTTON_PRESS))
             return false;
-        get_dockitem_index(event->x, event->y);
+        set_dockitem_index(event->x, event->y);
 
         m_mouse_button = event->button;
         m_mouse_press = true;
@@ -636,7 +578,7 @@ namespace docklight
         m_preview_open_index = 0;
 
         m_mouseclickEventTime = gtk_get_current_event_time();
-        get_dockitem_index(event->x, event->y);
+        set_dockitem_index(event->x, event->y);
 
         return true;
     }
@@ -648,7 +590,7 @@ namespace docklight
         if ((event->type != GDK_BUTTON_RELEASE))
             return false;
 
-        get_dockitem_index(event->x, event->y);
+        set_dockitem_index(event->x, event->y);
         m_mouse_press = false;
 
         if ((int)m_dockitem_index < 0 || m_dockitem_index >= m_provider->data().size())

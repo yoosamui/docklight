@@ -207,6 +207,7 @@ namespace docklight
             it->second.disconnect();
             m_capture_connections.erase(it);
         }
+        
 
         if (m_window_images.count(xid))
         {

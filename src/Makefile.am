@@ -25,7 +25,7 @@ docklight_CPPFLAGS +=  -s -DNDEBUG -Wall -Wextra -Werror -std=c++17 -pedantic
 # -g adds debug information.
 # -O0 disables optimizations, making debugging easier.
 
-#docklight_CPPFLAGS += -DDEBUG -Wall -std=c++17 -ggdb -O0
+docklight_CPPFLAGS += -DDEBUG -Wall -std=c++17 -ggdb -O0
 
 #docklight_LDFLAGS = -lX11 -lXcomposite -lXdamage -lXfixes -lXtst
 
