@@ -320,7 +320,6 @@ namespace docklight
         auto separator_size = m_config->get_separator_size();
         auto separators_count = (size * separator_size);
 
-        std::cout << size << std::endl;
         // resize the icon if necessary
         int scaled_icon_size = get_scale_factor();
         m_config->set_icon_size(scaled_icon_size);
