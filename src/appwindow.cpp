@@ -54,7 +54,7 @@ namespace docklight
         g_message(MSG_FREE_OBJECT, "AppWindow");
     }
 
-    int AppWindow::init(Glib::RefPtr<Gtk::Application>& app)
+    int AppWindow::init(Glib::RefPtr<Gtk::Application> &app)
     {
         app->signal_activate().connect(sigc::ptr_fun(&AppWindow::on_app_activated));
 
@@ -92,22 +92,26 @@ namespace docklight
         //"dialog-information");
     }
 
-    int AppWindow::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine>& command_line,
-                                   Glib::RefPtr<Gtk::Application>& app)
+    int AppWindow::on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine> &command_line,
+                                   Glib::RefPtr<Gtk::Application> &app)
     {
         int argc = 0;
-        char** argv = command_line->get_arguments(argc);
+        char **argv = command_line->get_arguments(argc);
         AppWindow::m_application = app;
 
-        if (argc > 1) {
+        if (argc > 1)
+        {
             Glib::OptionContext ctx;
             AppOptionsGroup group;
             ctx.set_main_group(group);
 
-            try {
+            try
+            {
                 ctx.parse(argc, argv);
                 group.validate();
-            } catch (const Glib::Error& ex) {
+            }
+            catch (const Glib::Error &ex)
+            {
                 g_warning("on_command_line:Exception: %s", ex.what().c_str());
             }
 
@@ -118,7 +122,7 @@ namespace docklight
             Config()->set_arguments(args_list);
         }
 
-        GdkScreen* screen = gdk_screen_get_default();
+        GdkScreen *screen = gdk_screen_get_default();
         auto is_composite = gdk_screen_is_composited(screen);
 
         /*GdkRGBA* background_color = NULL;
@@ -144,8 +148,8 @@ namespace docklight
         }
 */
         // https://docs.gtk.org/gtk3/method.StyleContext.get.html
-        GtkSettings* settings;
-        gchar* theme_name;
+        GtkSettings *settings;
+        gchar *theme_name;
         settings = gtk_settings_get_default();
         g_object_get(settings, "gtk-theme-name", &theme_name, NULL);
 
@@ -153,16 +157,16 @@ namespace docklight
         //  GtkSettings* settings = gtk_settings_get_default();
 
         // Create a sample window
-        GtkWidget* window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+        GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
         //  gtk_window_set_title(GTK_WINDOW(window), "Background Color Example");
         //  gtk_window_set_default_size(GTK_WINDOW(window), 300, 200);
 
         // Get style context for the window
-        GtkStyleContext* context = gtk_widget_get_style_context(window);
+        GtkStyleContext *context = gtk_widget_get_style_context(window);
 
         // Get background color
-        GdkRGBA* bcolor = NULL;
-        GdkRGBA* fcolor = NULL;
+        GdkRGBA *bcolor = NULL;
+        GdkRGBA *fcolor = NULL;
 
         gtk_style_context_get(context, gtk_style_context_get_state(context),
                               GTK_STYLE_PROPERTY_BACKGROUND_COLOR, &bcolor, NULL, NULL, NULL, NULL,
@@ -177,8 +181,10 @@ namespace docklight
         g_message("bcolor: %f,%f,%f %f", bcolor->red, bcolor->green, bcolor->blue, bcolor->alpha);
         g_message("fcolor: %f,%f,%f %f", fcolor->red, fcolor->green, fcolor->blue, fcolor->alpha);
 
-        if (bcolor) gdk_rgba_free(bcolor);
-        if (fcolor) gdk_rgba_free(fcolor);
+        if (bcolor)
+            gdk_rgba_free(bcolor);
+        if (fcolor)
+            gdk_rgba_free(fcolor);
 
         // Print color values
         // std::cout << "Background color: RGBA(" << static_cast<double>(color.red) << ", "
@@ -193,9 +199,11 @@ namespace docklight
 
         device::monitor::set_current_monitor(Config()->get_monitor_name());
 
-        std::cout << "\n" << MSG_DISPLAY_DETECTED_MONITORS << " :" << std::endl;
+        std::cout << "\n"
+                  << MSG_DISPLAY_DETECTED_MONITORS << " :" << std::endl;
 
-        for (int i = 0; i < device::monitor::get_monitor_count(); i++) {
+        for (int i = 0; i < device::monitor::get_monitor_count(); i++)
+        {
             auto const m = device::monitor::get_monitor(i);
 
             Gdk::Rectangle geometry, workarea;
@@ -221,7 +229,7 @@ namespace docklight
         return EXIT_SUCCESS;
     }
 
-    bool AppWindow::on_button_press_event(GdkEventButton* event)
+    bool AppWindow::on_button_press_event(GdkEventButton *event)
     {
         return true;
     }
@@ -232,17 +240,47 @@ namespace docklight
         m_position->on_monitor_changed();
     }
 
+    // every time the window changes size, the input region is automatically rebuilt using the current window dimensions.
+    bool AppWindow::on_configure_event(GdkEventConfigure *event)
+    {
+        Gtk::Window::on_configure_event(event);
+
+        set_window_passthrought(m_passthrough);
+        return false;
+    }
+
     void AppWindow::set_window_passthrought(bool passthrough)
     {
+        m_passthrough = passthrough;
+
 #ifdef GDK_WINDOWING_X11
         auto gdk_window = get_window();
-        if (!gdk_window) return;
+        if (!gdk_window)
+            return;
 
-        Display* dpy = GDK_WINDOW_XDISPLAY(gdk_window->gobj());
+        Display *dpy = GDK_WINDOW_XDISPLAY(gdk_window->gobj());
         ::Window xid = GDK_WINDOW_XID(gdk_window->gobj());
 
-        int w = get_width();
-        int h = get_height();
+        ::Window root;
+        int x, y;
+        unsigned int w, h;
+        unsigned int border, depth;
+
+        XGetGeometry(
+            dpy,
+            xid,
+            &root,
+            &x,
+            &y,
+            &w,
+            &h,
+            &border,
+            &depth);
+        // int w = get_width();
+        // int h = get_height();
+
+        // int w = width;
+        // int h = height;
 
         const int OFFSET = 10;
 
@@ -254,23 +292,28 @@ namespace docklight
         Region hole_region = XCreateRegion();
         XRectangle hole;
 
-        if (passthrough) {
+        if (passthrough)
+        {
             //  g_message("Passthrough ON");
 
             // Subtract rectangle click-through
-            if (Config()->get_dock_location() == dock_location_t::bottom) {
+            if (Config()->get_dock_location() == dock_location_t::bottom)
+            {
                 hole = XRectangle{0, 0, static_cast<unsigned short>(w),
                                   static_cast<unsigned short>(h - OFFSET)};
-
-            } else if (Config()->get_dock_location() == dock_location_t::top) {
+            }
+            else if (Config()->get_dock_location() == dock_location_t::top)
+            {
                 hole = XRectangle{0, OFFSET, static_cast<unsigned short>(w),
                                   static_cast<unsigned short>(h - OFFSET)};
-
-            } else if (Config()->get_dock_location() == dock_location_t::left) {
+            }
+            else if (Config()->get_dock_location() == dock_location_t::left)
+            {
                 hole = XRectangle{OFFSET, 0, static_cast<unsigned short>(w - OFFSET),
                                   static_cast<unsigned short>(h - OFFSET)};
-
-            } else if (Config()->get_dock_location() == dock_location_t::right) {
+            }
+            else if (Config()->get_dock_location() == dock_location_t::right)
+            {
                 hole = XRectangle{0, 0, static_cast<unsigned short>(w - OFFSET),
                                   static_cast<unsigned short>(h)};
             }
@@ -278,8 +321,9 @@ namespace docklight
             XUnionRectWithRegion(&hole, hole_region, hole_region);
             XSubtractRegion(region, hole_region, region);
             XDestroyRegion(hole_region);
-
-        } else {
+        }
+        else
+        {
             // g_message("passthrough OFF");
 
             // Full window receives input → region covers whole window
@@ -294,4 +338,4 @@ namespace docklight
 
 #endif
     }
-}  // namespace docklight
+} // namespace docklight

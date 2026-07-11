@@ -134,14 +134,15 @@ namespace docklight
             return;
         }
 
-        Provider()->set_window_image(m_active_window);
+        // no creo que sea necesario
+        // Provider()->set_window_image(m_active_window);
     }
 
     bool Panel::on_enter_notify_event(GdkEventCrossing *crossing_event)
     {
         m_mouse_enter = true;
 
-        if (!Autohide()->get_visible() /* && Config()->is_intelihide()*/)
+        if (!Autohide()->get_visible() && Config()->is_intelihide())
             return true;
 
         if (Config()->is_autohide())
@@ -319,6 +320,7 @@ namespace docklight
         auto separator_size = m_config->get_separator_size();
         auto separators_count = (size * separator_size);
 
+        std::cout << size << std::endl;
         // resize the icon if necessary
         int scaled_icon_size = get_scale_factor();
         m_config->set_icon_size(scaled_icon_size);
@@ -334,6 +336,10 @@ namespace docklight
             return;
 
         container_updated();
+
+        //        while (Gtk::Main::events_pending())
+        //            Gtk::Main::iteration();
+
         Gtk::Widget::queue_draw();
 
         g_message("Panel updated");
@@ -341,7 +347,6 @@ namespace docklight
 
     inline void Panel::set_dockitem_index(int mx, int my)
     {
-
         gint pos_x = 0;
         gint pos_y = 0;
 
@@ -351,12 +356,15 @@ namespace docklight
         const gint area = m_config->get_dock_area() + separator_size;
         const guint size = static_cast<guint>(m_provider->data().size());
 
-        for (guint idx = 0; idx < size; ++idx)
+        for (guint idx = 0; idx < size; idx++)
         {
+
             if (m_config->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL)
             {
+
                 if (mx >= pos_x && mx < pos_x + area)
                 {
+
                     m_dockitem_index = idx;
                     break;
                 }
@@ -376,6 +384,109 @@ namespace docklight
         }
     }
 
+    /*
+    inline void Panel::set_dockitem_index(int mx, int my)
+    {
+
+        static guint last_size = UINT_MAX;
+
+        int old = m_dockitem_index;
+        // m_dockitem_index = -1;
+
+        gint pos_x = 0;
+        gint pos_y = 0;
+
+        Position()->get_start_pos(pos_x, pos_y);
+
+        const gint separator_size = m_config->get_separator_size();
+        const gint area = m_config->get_dock_area() + separator_size;
+        const guint size = static_cast<guint>(m_provider->data().size());
+
+        if (size != last_size)
+        {
+            last_size = size;
+            std::cout << "HIT SIZE CHANGED -> " << size << '\n';
+        }
+
+        std::cout
+            << "calculated=" << size * area
+            << '\n';
+
+        std::cout
+            << "hit size = "
+            << m_provider->data().size()
+            << '\n';
+
+        for (guint idx = 0; idx < size; idx++)
+        {
+            std::shared_ptr<DockItemIcon> dockitem;
+            m_provider->get_dockitem_by_index(idx, dockitem);
+
+            std::cout
+                << idx
+                << " widget=" << dockitem->get_width()
+                << " area=" << area
+                << " pos=" << pos_x
+                << '\n';
+
+            if (m_config->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL)
+            {
+
+                std::cout
+                    << "widget width = " << dockitem->get_width()
+                    << '\n';
+
+                if (idx == size - 1)
+                {
+                    std::cout
+                        << "LAST IDX="
+                        << idx
+                        << " pos="
+                        << pos_x
+                        << '\n';
+                }
+                if (mx >= pos_x && mx < pos_x + area)
+                {
+                    std::cout
+                        << "MATCH idx="
+                        << idx
+                        << " mx="
+                        << mx
+                        << " range=["
+                        << pos_x
+                        << ","
+                        << pos_x + area
+                        << ")\n";
+
+                    m_dockitem_index = idx;
+                    break;
+                }
+
+                pos_x += area;
+            }
+            else
+            {
+                if (my >= pos_y && my < pos_y + area)
+                {
+                    m_dockitem_index = idx;
+                    break;
+                }
+
+                pos_y += area;
+            }
+        }
+
+        std::cout
+            << "mx=" << mx
+            << " final_pos=" << pos_x
+            << '\n';
+
+        std::cout
+            << "old=" << old
+            << " new=" << m_dockitem_index
+            << '\n';
+    }
+*/
     bool Panel::on_scroll_event(GdkEventScroll *e)
     {
         if (m_dockitem_index < 1)

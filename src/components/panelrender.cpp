@@ -56,7 +56,7 @@ namespace docklight
         ctx->set_source_rgba(0, 0, 0, 0.0);
         ctx->paint();
 
-//#define STROKE_BCK_RECT 1
+// #define STROKE_BCK_RECT 1
 #ifdef STROKE_BCK_RECT
         ctx->set_line_width(1.0);
         ctx->set_source_rgba(1.0, 1.0, 1.0, 1.0);
@@ -77,7 +77,7 @@ namespace docklight
         m_cell_ctx = Cairo::Context::create(m_cell);
     }
 
-    void PanelRender::draw_surface_cell(std::shared_ptr<DockItemIcon>& item)
+    void PanelRender::draw_surface_cell(std::shared_ptr<DockItemIcon> &item)
     {
         create_surface_cell();
 
@@ -87,7 +87,7 @@ namespace docklight
         m_cell_ctx->set_operator(Cairo::Operator::OPERATOR_SOURCE);
         m_cell_ctx->paint_with_alpha(1.0);
 
-//#define STROKE_SURFACE_RECT 1
+// #define STROKE_SURFACE_RECT 1
 #ifdef STROKE_SURFACE_RECT
         // Surface rect TEST
         m_cell_ctx->set_line_width(1.0);
@@ -96,12 +96,14 @@ namespace docklight
         m_cell_ctx->stroke();
 #endif
 
-        if (m_mouse_enter && item->get_tag() == m_dockitem_index) {
+        if (m_mouse_enter && item->get_tag() == m_dockitem_index)
+        {
             m_cell_ctx->set_source_rgba(1.0, 1.0, 1.0, 0.1);
             m_cell_ctx->paint();
         }
 
-        if (!m_mouse_enter && item->get_tag() && item->get_tag() == m_dockitem_active_index) {
+        if (!m_mouse_enter && item->get_tag() && item->get_tag() == m_dockitem_active_index)
+        {
             m_cell_ctx->set_source_rgba(0.0, 1.0, 1.0, 0.3);
             m_cell_ctx->paint();
 
@@ -121,7 +123,7 @@ namespace docklight
         m_icon_ctx = Cairo::Context::create(m_icon);
     }
 
-    void PanelRender::draw_surface_icon(std::shared_ptr<DockItemIcon>& item)
+    void PanelRender::draw_surface_icon(std::shared_ptr<DockItemIcon> &item)
     {
         g_assert(m_cell);
         g_assert(m_background);
@@ -134,7 +136,8 @@ namespace docklight
 
         int size = Config()->get_icon_size();
 
-        if (m_mouse_enter && item->get_tag() == m_dockitem_index) {
+        if (m_mouse_enter && item->get_tag() == m_dockitem_index)
+        {
             size -= 2;
         }
 
@@ -156,7 +159,7 @@ namespace docklight
         m_cell_ctx->paint();
     }
 
-    void PanelRender::create_surface_indicator(std::shared_ptr<DockItemIcon>& item)
+    void PanelRender::create_surface_indicator(std::shared_ptr<DockItemIcon> &item)
     {
         int height = Config()->DEF_INDICATOR_SIZE;
         int width = Config()->get_icon_size();
@@ -164,7 +167,8 @@ namespace docklight
         float factor = std::abs(Config()->get_icon_size() / Config()->DEF_ICON_MAXSIZE);
         height += factor;
 
-        if (height < Config()->DEF_INDICATOR_SIZE) {
+        if (height < Config()->DEF_INDICATOR_SIZE)
+        {
             height = Config()->DEF_INDICATOR_SIZE;
         }
 
@@ -172,7 +176,7 @@ namespace docklight
         m_indicator_ctx = Cairo::Context::create(m_indicator);
     }
 
-    void PanelRender::draw_surface_indicator(std::shared_ptr<DockItemIcon>& item)
+    void PanelRender::draw_surface_indicator(std::shared_ptr<DockItemIcon> &item)
     {
         g_assert(m_cell);
         create_surface_indicator(item);
@@ -199,29 +203,41 @@ namespace docklight
         //  m_indicator_ctx->set_source_rgba(0.980, 0.929, 0.50, 1.0);
         auto const indicator_type = Config()->get_indicator_type();
 
-        if (indicator_type == dock_indicator_type_t::dots) {
+        if (indicator_type == dock_indicator_type_t::dots)
+        {
             int center = (m_cell->get_width() / 2);
 
-            if (item->get_childmap().size() == 1) {
+            if (item->get_childmap().size() == 1)
+            {
                 m_indicator_ctx->arc(center - 7, 5, 1.6, 0, 2 * M_PI);
-            } else if (item->get_childmap().size() > 1) {
+            }
+            else if (item->get_childmap().size() > 1)
+            {
                 m_indicator_ctx->arc(center - 7 - 4, 5, 1.6, 0, 2 * M_PI);
                 m_indicator_ctx->arc(center - 7 + 4, 5, 1.6, 0, 2 * M_PI);
             }
-        } else {
+        }
+        else
+        {
             int hsize = m_indicator->get_height() / 4;
             int icon_size = Config()->get_icon_size();
             int y = m_indicator->get_height() - hsize;
 
-            if (icon_size > 0 && icon_size <= 16) hsize = m_indicator->get_height() / 9;
-            if (icon_size >= 16 && icon_size <= 32) hsize = m_indicator->get_height() / 8;
-            if (icon_size >= 32 && icon_size <= 64) hsize = m_indicator->get_height() / 7;
-            if (icon_size >= 64 && icon_size <= 128) hsize = m_indicator->get_height() / 4;
+            if (icon_size > 0 && icon_size <= 16)
+                hsize = m_indicator->get_height() / 9;
+            if (icon_size >= 16 && icon_size <= 32)
+                hsize = m_indicator->get_height() / 8;
+            if (icon_size >= 32 && icon_size <= 64)
+                hsize = m_indicator->get_height() / 7;
+            if (icon_size >= 64 && icon_size <= 128)
+                hsize = m_indicator->get_height() / 4;
 
-            if (item->get_childmap().size() == 1) {
+            if (item->get_childmap().size() == 1)
+            {
                 m_indicator_ctx->rectangle(4, y, (m_indicator->get_width()) - 8, hsize);
-
-            } else if (item->get_childmap().size() > 1) {
+            }
+            else if (item->get_childmap().size() > 1)
+            {
                 m_indicator_ctx->rectangle(2, y, (m_indicator->get_width() / 2) - 4, hsize);
 
                 m_indicator_ctx->rectangle((m_indicator->get_width() / 2) + 2, y,
@@ -233,12 +249,14 @@ namespace docklight
         m_indicator_ctx->restore();
 
         // add to cell surface
-        if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+        if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL)
+        {
             int centerX = (Config()->get_dock_area() / 2) - (m_indicator->get_width() / 2);
             m_cell_ctx->set_source(m_indicator, centerX,
                                    m_cell->get_height() - m_indicator->get_height());
-
-        } else {
+        }
+        else
+        {
             int centerX = (Config()->get_dock_area() / 2) - (m_indicator->get_width() / 2);
             m_cell_ctx->set_source(m_indicator, centerX,
                                    m_cell->get_height() - m_indicator->get_height());
@@ -255,7 +273,7 @@ namespace docklight
         Gtk::Widget::queue_draw();
     }
 
-    bool PanelRender::on_draw(const Cairo::RefPtr<Cairo::Context>& cr)
+    bool PanelRender::on_draw(const Cairo::RefPtr<Cairo::Context> &cr)
     {
         int m_posX = 0;
         int m_posY = 0;
@@ -263,32 +281,34 @@ namespace docklight
         guint separator_size = Config()->get_separator_size();
         auto area = Config()->get_dock_area() + separator_size;
         auto data = Provider()->data();
-        //  auto maxsize = data.size() * area;
 
         Position()->get_start_pos(m_posX, m_posY);
-        // get_start_pos(maxsize, m_posX, m_posY);
-
-        // g_print("%d x %d\n", m_posX, m_posY);
 
         draw_surface_background();
         guint tag = 0;
-        for (auto& dockitem : data) {
+        for (auto &dockitem : data)
+        {
+
+            dockitem->set_tag(tag++);
+
             draw_surface_cell(dockitem);
             draw_surface_icon(dockitem);
             draw_surface_indicator(dockitem);
 
-            if (dockitem->get_visible()) {
+            if (dockitem->get_visible())
+            {
                 m_bck_ctx->set_source(m_cell, m_posX, m_posY);
                 m_bck_ctx->paint();
             }
 
-            if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+            if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL)
+            {
                 m_posX += area;
-            } else {
+            }
+            else
+            {
                 m_posY += area;
             }
-
-            dockitem->set_tag(tag++);
         }
 
         cr->set_source(m_background, m_offsetX, m_offsetY);
@@ -297,4 +317,4 @@ namespace docklight
         return true;
     }
 
-}  // namespace docklight
+} // namespace docklight

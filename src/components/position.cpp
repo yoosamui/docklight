@@ -22,6 +22,12 @@
 #include <stdio.h>
 #include <linux/limits.h>
 
+
+#ifdef GDK_WINDOWING_X11
+#include <gdk/gdkx.h>
+#include <X11/Xlib.h>
+#endif
+
 // clang-format on
 
 namespace docklight
@@ -30,9 +36,10 @@ namespace docklight
     class AppWindow;
 
     Glib::RefPtr<PositionManager> m_position_manager;
-    Glib::RefPtr<PositionManager> create_position(Gtk::Window* window)
+    Glib::RefPtr<PositionManager> create_position(Gtk::Window *window)
     {
-        if (!m_position_manager) {
+        if (!m_position_manager)
+        {
             m_position_manager = Glib::RefPtr<PositionManager>(new PositionManager(window));
         }
         return m_position_manager;
@@ -44,7 +51,7 @@ namespace docklight
         return m_position_manager;
     }
 
-    PositionManager::PositionManager(Gtk::Window* window)
+    PositionManager::PositionManager(Gtk::Window *window)
     {
         m_window = window;
         m_struts.init(window);
@@ -53,7 +60,7 @@ namespace docklight
         g_message("Create PositionManager.");
     }
 
-    const Gtk::Window* PositionManager::get_window() const
+    const Gtk::Window *PositionManager::get_window() const
     {
         //
         return m_window;
@@ -61,10 +68,12 @@ namespace docklight
 
     void PositionManager::set_window_passthrought(bool passthrough)
     {
-        if (!m_window) return;
+        if (!m_window)
+            return;
 
-        auto win = dynamic_cast<IAppWindow*>(m_window);
-        if (!win) return;
+        auto win = dynamic_cast<IAppWindow *>(m_window);
+        if (!win)
+            return;
 
         win->set_window_passthrought(passthrough);
     }
@@ -79,6 +88,7 @@ namespace docklight
         return device::monitor::get_geometry();
     }
 
+    /*
     int PositionManager::get_x() const
     {
         return m_x;
@@ -93,6 +103,71 @@ namespace docklight
     {
         return Gdk::Rectangle(m_x, m_y, m_window->get_width(), m_window->get_height());
     }
+    */
+
+    int PositionManager::get_x() const
+    {
+        return get_window_geometry().get_x();
+    }
+
+    int PositionManager::get_y() const
+    {
+        return get_window_geometry().get_y();
+    }
+
+    Gdk::Rectangle PositionManager::get_window_geometry() const
+    {
+
+#ifdef GDK_WINDOWING_X11
+        auto gdk_window = m_window->get_window();
+        if (gdk_window)
+        {
+            Display *dpy = GDK_WINDOW_XDISPLAY(gdk_window->gobj());
+            ::Window xid = GDK_WINDOW_XID(gdk_window->gobj());
+
+            ::Window root;
+            int x, y;
+            unsigned int width, height;
+            unsigned int border, depth;
+
+            if (XGetGeometry(dpy,
+                             xid,
+                             &root,
+                             &x,
+                             &y,
+                             &width,
+                             &height,
+                             &border,
+                             &depth))
+            {
+                // Translate to root coordinates
+                int root_x, root_y;
+                ::Window child;
+
+                XTranslateCoordinates(
+                    dpy,
+                    xid,
+                    root,
+                    0,
+                    0,
+                    &root_x,
+                    &root_y,
+                    &child);
+
+                return Gdk::Rectangle(root_x,
+                                      root_y,
+                                      static_cast<int>(width),
+                                      static_cast<int>(height));
+            }
+        }
+#endif
+
+        // Fallback
+        return Gdk::Rectangle(m_x,
+                              m_y,
+                              m_window->get_width(),
+                              m_window->get_height());
+    }
 
     std::string PositionManager::get_execpath()
     {
@@ -103,14 +178,19 @@ namespace docklight
 
     void PositionManager::window_intersects(bool intersects)
     {
-        if (intersects && !m_lock) {
+        if (intersects && !m_lock)
+        {
             m_lock = true;
-            if (Config()->is_autohide_none()) {
+            if (Config()->is_autohide_none())
+            {
                 m_struts.reset_struts();
             }
-        } else if (m_lock) {
+        }
+        else if (m_lock)
+        {
             m_lock = false;
-            if (Config()->is_autohide_none()) {
+            if (Config()->is_autohide_none())
+            {
                 m_struts.set_struts();
             }
         }
@@ -129,49 +209,57 @@ namespace docklight
         auto exec_file = "docklight";
 
         size_t found = m_exepath.find("/sources/docklight");
-        if (found != std::string::npos) {
+        if (found != std::string::npos)
+        {
             exec_file = "src/docklight";
         }
 
-        usleep(10 * microsecond);  // sleeps for 10 seconds
+        usleep(10 * microsecond); // sleeps for 10 seconds
         execl(exec_file, "docklight", "-l", location_name, "-m", monitor_name, nullptr);
         g_warning("Restart failed!\n");
     }
 
-    void PositionManager::get_start_pos(gint& x, gint& y)
+    void PositionManager::get_start_pos(gint &x, gint &y)
     {
         auto center = 0;
         x = y = 0;
 
         auto maxsize = m_last_required_size;
 
-        if (Config()->get_dock_alignment() != dock_alignment_t::fill) return;
+        if (Config()->get_dock_alignment() != dock_alignment_t::fill)
+            return;
 
-        if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-            if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::center) {
+        if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL)
+        {
+            if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::center)
+            {
                 auto dock_rect = Position()->get_window_geometry();
                 center = dock_rect.get_width() / 2 - maxsize / 2;
                 x = center;
-
-            } else if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::end) {
+            }
+            else if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::end)
+            {
                 auto dock_rect = Position()->get_window_geometry();
                 x = dock_rect.get_width() - maxsize;
             }
-
-        } else {  // Vertical
-            if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::center) {
+        }
+        else
+        { // Vertical
+            if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::center)
+            {
                 auto dock_rect = Position()->get_window_geometry();
                 center = dock_rect.get_height() / 2 - maxsize / 2;
                 y = center;
-
-            } else if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::end) {
+            }
+            else if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::end)
+            {
                 auto dock_rect = Position()->get_window_geometry();
                 y = dock_rect.get_height() - maxsize;
             }
         }
     }
 
-    bool PositionManager::get_dockmenu_position(int index, int& x, int& y, int width, int height)
+    bool PositionManager::get_dockmenu_position(int index, int &x, int &y, int width, int height)
     {
         auto const area = Config()->get_dock_area();
         auto workarea = get_workarea();
@@ -181,13 +269,17 @@ namespace docklight
 
         int maxsize = area * Provider()->data().size();
 
-        if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-            if (Config()->get_dock_alignment() == dock_alignment_t::fill) {
-                if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::center) {
+        if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL)
+        {
+            if (Config()->get_dock_alignment() == dock_alignment_t::fill)
+            {
+                if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::center)
+                {
                     int center = workarea.get_width() / 2 - maxsize / 2;
                     x = workarea.get_x() + center;
-
-                } else if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::end) {
+                }
+                else if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::end)
+                {
                     x = workarea.get_width() - maxsize;
                 }
             }
@@ -195,18 +287,26 @@ namespace docklight
             int center = (area / 2) - (width / 2);
             x += (area * index) + center;
 
-            if (Config()->get_dock_location() == dock_location_t::top) {
-                y = m_y + area;  // + height;
-            } else {
+            if (Config()->get_dock_location() == dock_location_t::top)
+            {
+                y = m_y + area; // + height;
+            }
+            else
+            {
                 y = m_y - height;
             }
-
-        } else {  // Vertical
-            if (Config()->get_dock_alignment() == dock_alignment_t::fill) {
-                if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::center) {
+        }
+        else
+        { // Vertical
+            if (Config()->get_dock_alignment() == dock_alignment_t::fill)
+            {
+                if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::center)
+                {
                     int center = workarea.get_height() / 2 - maxsize / 2;
                     y = workarea.get_y() + center;
-                } else if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::end) {
+                }
+                else if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::end)
+                {
                     y = workarea.get_height() + workarea.get_y() - maxsize;
                 }
             }
@@ -214,11 +314,14 @@ namespace docklight
             int center = (area / 2) - (height / 2);
             y += (area * index) + center;
 
-            if (Config()->get_dock_location() == dock_location_t::right) {
+            if (Config()->get_dock_location() == dock_location_t::right)
+            {
                 // x = workarea.get_x() + workarea.get_width() - area;
                 // x = m_x;  // workarea.get_x() + workarea.get_width() - width;
                 x -= width;
-            } else {
+            }
+            else
+            {
                 x += area;
             }
         }
@@ -229,22 +332,26 @@ namespace docklight
     // int size = area * dockitem->get_childmap().size();
     // Position()->get_preview_position(m_dockitem_index, x, y, size, area);
 
-    bool PositionManager::get_preview_position(int index, int& x, int& y, int width, int height)
+    bool PositionManager::get_preview_position(int index, int &x, int &y, int width, int height)
     {
         auto const area = Config()->get_dock_area();
         auto workarea = get_workarea();
 
         x = m_x;
-        y = m_y;  //- height;
+        y = m_y; //- height;
 
         int maxsize = area * Provider()->data().size();
-        if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
-            if (Config()->get_dock_alignment() == dock_alignment_t::fill) {
-                if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::center) {
+        if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL)
+        {
+            if (Config()->get_dock_alignment() == dock_alignment_t::fill)
+            {
+                if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::center)
+                {
                     int center = workarea.get_width() / 2 - maxsize / 2;
                     x = workarea.get_x() + center;
-
-                } else if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::end) {
+                }
+                else if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::end)
+                {
                     x = workarea.get_width() - maxsize;
                 }
             }
@@ -253,24 +360,32 @@ namespace docklight
             x += (area * index) + center;
             y -= height;
 
-            if (x < workarea.get_x()) {
+            if (x < workarea.get_x())
+            {
                 x = workarea.get_x();
             }
 
-            if (x + width > workarea.get_x() + workarea.get_width()) {
+            if (x + width > workarea.get_x() + workarea.get_width())
+            {
                 x = workarea.get_x() + workarea.get_width() - width;
             }
 
-            if (Config()->get_dock_location() == dock_location_t::top) {
+            if (Config()->get_dock_location() == dock_location_t::top)
+            {
                 y += area + height;
             }
-
-        } else {  // Vertical
-            if (Config()->get_dock_alignment() == dock_alignment_t::fill) {
-                if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::center) {
+        }
+        else
+        { // Vertical
+            if (Config()->get_dock_alignment() == dock_alignment_t::fill)
+            {
+                if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::center)
+                {
                     int center = workarea.get_height() / 2 - maxsize / 2;
                     y = workarea.get_y() + center;
-                } else if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::end) {
+                }
+                else if (Config()->get_dock_icon_alignment() == dock_icon_alignment_t::end)
+                {
                     y = workarea.get_height() + workarea.get_y() - maxsize;
                 }
             }
@@ -278,18 +393,22 @@ namespace docklight
             int center = (area / 2) - (height / 2);
             y += (area * index) + center;
 
-            if (y < workarea.get_y()) {
+            if (y < workarea.get_y())
+            {
                 y = workarea.get_y();
             }
 
-            if (y + height > workarea.get_y() + workarea.get_height()) {
+            if (y + height > workarea.get_y() + workarea.get_height())
+            {
                 y = workarea.get_y() + get_workarea().get_height() - height;
             }
 
-            if (Config()->get_dock_location() == dock_location_t::right) {
+            if (Config()->get_dock_location() == dock_location_t::right)
+            {
                 x = workarea.get_x() + workarea.get_width() - width - area;
-
-            } else {
+            }
+            else
+            {
                 x += area;
             }
         }
@@ -307,7 +426,8 @@ namespace docklight
     }
     void PositionManager::set_position(guint required_size)
     {
-        if (m_last_required_size != required_size) {
+        if (m_last_required_size != required_size)
+        {
             m_last_required_size = required_size;
         }
 
@@ -319,54 +439,68 @@ namespace docklight
 
         guint xpos = 0, ypos = 0, center = 0;
 
-        if (Config()->is_autohide_none()) {
+        if (Config()->is_autohide_none())
+        {
             m_struts.set_struts();
         }
 
-        if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL) {
+        if (Config()->get_dock_orientation() == Gtk::ORIENTATION_HORIZONTAL)
+        {
             int width = required_size;
-            if (width <= 0) return;
+            if (width <= 0)
+                return;
 
-            if (width > workarea.get_width()) {
+            if (width > workarea.get_width())
+            {
                 width = workarea.get_width();
             }
 
-            switch (alignment) {
-                case dock_alignment_t::start:
-                    xpos = workarea.get_x();
-                    break;
+            switch (alignment)
+            {
+            case dock_alignment_t::start:
+                xpos = workarea.get_x();
+                break;
 
-                case dock_alignment_t::end:
-                    xpos = workarea.get_x() + workarea.get_width() - width;
-                    break;
+            case dock_alignment_t::end:
+                xpos = workarea.get_x() + workarea.get_width() - width;
+                break;
 
-                case dock_alignment_t::center:
-                    center = workarea.get_width() / 2 - width / 2;
-                    xpos = workarea.get_x() + center;
-                    break;
+            case dock_alignment_t::center:
+                center = workarea.get_width() / 2 - width / 2;
+                xpos = workarea.get_x() + center;
+                break;
 
-                default:  // fill
-                    xpos = workarea.get_x();
-                    width = workarea.get_width();
-                    break;
+            default: // fill
+                xpos = workarea.get_x();
+                width = workarea.get_width();
+                break;
             }
 
-            if (Config()->get_dock_location() == dock_location_t::bottom) {
+            if (Config()->get_dock_location() == dock_location_t::bottom)
+            {
                 // bottom
-                if (!m_struts.active()) {
+                if (!m_struts.active())
+                {
                     ypos = workarea.get_height() - area;
-                    if (workarea.get_y() != 0) {
+                    if (workarea.get_y() != 0)
+                    {
                         ypos = workarea.get_height() + workarea.get_y() - area;
                     }
-                } else {
+                }
+                else
+                {
                     ypos = m_struts.get_bottom_pos() - area;
                 }
-
-            } else {
+            }
+            else
+            {
                 // top
-                if (!m_struts.active()) {
+                if (!m_struts.active())
+                {
                     ypos = workarea.get_y();
-                } else {
+                }
+                else
+                {
                     ypos = m_struts.get_top_pos();
                 }
             }
@@ -378,48 +512,60 @@ namespace docklight
             m_x = xpos;
             m_width = width;
             m_height = area;
-
-        } else  // orientation vertical
+        }
+        else // orientation vertical
         {
             int height = required_size;
-            if (height <= 0) return;
+            if (height <= 0)
+                return;
 
-            if (height > workarea.get_height()) {
+            if (height > workarea.get_height())
+            {
                 height = workarea.get_height();
             }
 
-            switch (alignment) {
-                case dock_alignment_t::start:
-                    ypos = workarea.get_y();
-                    break;
+            switch (alignment)
+            {
+            case dock_alignment_t::start:
+                ypos = workarea.get_y();
+                break;
 
-                case dock_alignment_t::end:
-                    ypos = workarea.get_y() + workarea.get_height() - height;
-                    break;
+            case dock_alignment_t::end:
+                ypos = workarea.get_y() + workarea.get_height() - height;
+                break;
 
-                case dock_alignment_t::center:
-                    center = workarea.get_height() / 2 - height / 2;
-                    ypos = workarea.get_y() + center;
-                    break;
+            case dock_alignment_t::center:
+                center = workarea.get_height() / 2 - height / 2;
+                ypos = workarea.get_y() + center;
+                break;
 
-                default:  // fill
-                    ypos = workarea.get_y();
-                    height = workarea.get_height();
-                    break;
+            default: // fill
+                ypos = workarea.get_y();
+                height = workarea.get_height();
+                break;
             }
 
-            if (Config()->get_dock_location() == dock_location_t::right) {
+            if (Config()->get_dock_location() == dock_location_t::right)
+            {
                 // right
-                if (!m_struts.active()) {
+                if (!m_struts.active())
+                {
                     xpos = workarea.get_width() + workarea.get_x() - area;
-                } else {
+                }
+                else
+                {
                     xpos = m_struts.get_right_pos() - area;
                 }
-            } else {
+            }
+            else
+            {
                 // left
-                if (!m_struts.active()) {
+                if (!m_struts.active())
+                {
                     xpos = workarea.get_x();
-                } else {
+                }
+                else
+                {
                     xpos = m_struts.get_left_pos();
                 }
             }
@@ -434,5 +580,4 @@ namespace docklight
         }
     }
 
-}  // namespace docklight
-
+} // namespace docklight

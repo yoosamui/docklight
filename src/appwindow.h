@@ -31,56 +31,61 @@
 namespace docklight
 {
 
-    class AppWindow : public CompositeWindow, public IAppWindow
-    {
-      public:
-        AppWindow();
-        ~AppWindow();
+  class AppWindow : public CompositeWindow, public IAppWindow
+  {
+  public:
+    AppWindow();
+    ~AppWindow();
 
-        IAppWindow* as_interface() { return this; }
+    IAppWindow *as_interface() { return this; }
 
-        int init(Glib::RefPtr<Gtk::Application>& app);
-        // Config* m_config = Config::getInstance();
+    int init(Glib::RefPtr<Gtk::Application> &app);
+    // Config* m_config = Config::getInstance();
 
-        void set_window_passthrought(bool passthrough);
+    // void set_window_passthrought(bool passthrough, int width, int height);
+    void set_window_passthrought(bool passthrough);
 
-      private:
-        // instantiate listener
-        Glib::RefPtr<Configuration> m_config;
-        Glib::RefPtr<AppObserver> m_observer;
-        Glib::RefPtr<PositionManager> m_position;
-        Glib::RefPtr<DockItemProvider> m_provider;
-        Glib::RefPtr<AutohideManager> m_autohide;
-        Glib::RefPtr<AnimationManager> m_animation;
+  private:
+    bool m_passthrough = false;
 
-        //    bool on_timeout_draw();
-        bool on_button_press_event(GdkEventButton* event) override;
-        // bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
+    // instantiate listener
+    Glib::RefPtr<Configuration> m_config;
+    Glib::RefPtr<AppObserver> m_observer;
+    Glib::RefPtr<PositionManager> m_position;
+    Glib::RefPtr<DockItemProvider> m_provider;
+    Glib::RefPtr<AutohideManager> m_autohide;
+    Glib::RefPtr<AnimationManager> m_animation;
 
-        //  void createWindow();
-        void on_monitor_changed();
+    //    bool on_timeout_draw();
+    bool on_button_press_event(GdkEventButton *event) override;
+    // bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 
-        static void send_Notify(const Glib::ustring& title, const Glib::ustring& text,
-                                const Glib::ustring& icon_name);
-        static int on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine>& command_line,
-                                   Glib::RefPtr<Gtk::Application>& app);
+    //  void createWindow();
+    void on_monitor_changed();
 
-        //  void on_container_updated(window_action_t action, gint index);
-        static void on_app_activated();
-        // static void send_notification(const Glib::ustring& title, const Glib::ustring& text,
-        // const Glib::ustring& icon_name);
+    bool on_configure_event(GdkEventConfigure *event);
 
-        // bool on_enter_notify_event(GdkEventCrossing* crossing_event);
-        // bool on_leave_notify_event(GdkEventCrossing* crossing_event);
+    static void send_Notify(const Glib::ustring &title, const Glib::ustring &text,
+                            const Glib::ustring &icon_name);
+    static int on_command_line(const Glib::RefPtr<Gio::ApplicationCommandLine> &command_line,
+                               Glib::RefPtr<Gtk::Application> &app);
 
-      private:
-        // Glib::RefPtr<Gtk::Window> m_window;
-        //  sigc::connection m_sigc_updated;
-        //  Glib::RefPtr<AnimBoomWindow> m_composite;
-        AnimBoomWindow m_composite;
-        Panel* m_panel;
-        // Panel m_panel;
-        static Glib::RefPtr<Gtk::Application> m_application;
-    };
+    //  void on_container_updated(window_action_t action, gint index);
+    static void on_app_activated();
+    // static void send_notification(const Glib::ustring& title, const Glib::ustring& text,
+    // const Glib::ustring& icon_name);
 
-}  // namespace docklight
+    // bool on_enter_notify_event(GdkEventCrossing* crossing_event);
+    // bool on_leave_notify_event(GdkEventCrossing* crossing_event);
+
+  private:
+    // Glib::RefPtr<Gtk::Window> m_window;
+    //  sigc::connection m_sigc_updated;
+    //  Glib::RefPtr<AnimBoomWindow> m_composite;
+    AnimBoomWindow m_composite;
+    Panel *m_panel;
+    // Panel m_panel;
+    static Glib::RefPtr<Gtk::Application> m_application;
+  };
+
+} // namespace docklight
