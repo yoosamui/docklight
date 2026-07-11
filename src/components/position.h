@@ -31,55 +31,55 @@
 
 namespace docklight
 {
-    class IAppWindow
-    {
-      public:
-        virtual void set_window_passthrought(bool passthrough) = 0;
-    };
+  class IAppWindow
+  {
+  public:
+    virtual void set_window_passthrought(bool passthrough) = 0;
+  };
 
-    class PositionManager : public Glib::Object
-    {
-      public:
-        PositionManager(Gtk::Window* window);
+  class PositionManager : public Glib::Object
+  {
+  public:
+    PositionManager(Gtk::Window *window);
 
-        const Gtk::Window* get_window() const;
-        Gdk::Rectangle get_workarea() const;
-        Gdk::Rectangle get_monitor() const;
-        Gdk::Rectangle get_window_geometry() const;
+    const Gtk::Window *get_window() const;
+    Gdk::Rectangle get_workarea() const;
+    Gdk::Rectangle get_monitor() const;
+    Gdk::Rectangle get_window_geometry() const;
 
-        void on_monitor_changed();
-        void force_position();
-        void reset_position();
-        void set_position(guint required_size);
-        void get_start_pos(gint& x, gint& y);
+    void on_monitor_changed();
+    void force_position();
+    void reset_position();
+    void set_position(guint required_size);
+    void get_start_pos(gint &x, gint &y);
 
-        bool get_dockmenu_position(int index, int& x, int& y, int width, int height);
-        bool get_preview_position(int index, int& x, int& y, int width, int height);
+    bool get_dockmenu_position(int index, int &x, int &y, int width, int height);
+    bool get_preview_position(int index, int &x, int &y, int width, int height);
 
-        int get_x() const;
-        int get_y() const;
+    int get_x() const;
+    int get_y() const;
 
-        void set_window_passthrought(bool passthrough);
-        void window_intersects(bool intersects);
-        void show_now();
-        void hide_now();
+    void set_window_passthrought(bool passthrough);
+    void window_intersects(bool intersects);
+    void show_now();
+    void hide_now();
 
-      private:
-        bool m_lock = false;
-        guint m_last_required_size = 0;
+  private:
+    bool m_lock = false;
+    guint m_last_required_size = 0;
 
-        std::string get_execpath();
+    std::string get_execpath();
 
-        std::string m_exepath;
-        position::Struts m_struts;
-        Gtk::Window* m_window;
+    std::string m_exepath;
+    position::Struts m_struts;
+    Gtk::Window *m_window;
 
-        guint m_width = 1;
-        guint m_height = 1;
-        guint m_y = 0;
-        guint m_x = 0;
-    };
+    guint m_width = 1;
+    guint m_height = 1;
+    guint m_y = 0;
+    guint m_x = 0;
+  };
 
-    Glib::RefPtr<PositionManager> create_position(Gtk::Window* window);
-    Glib::RefPtr<PositionManager> Position();
-}  // namespace docklight
+  Glib::RefPtr<PositionManager> create_position(Gtk::Window *window);
+  Glib::RefPtr<PositionManager> Position();
+} // namespace docklight

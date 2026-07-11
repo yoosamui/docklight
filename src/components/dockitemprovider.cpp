@@ -449,9 +449,7 @@ namespace docklight
             m_window_images[xid] = image;
         }
     }
-
-    // ####################################
-
+    
     void DockItemProvider::set_window_image(WnckWindow *window, bool initial)
     {
         if (!m_startup_allow_window_scan)
